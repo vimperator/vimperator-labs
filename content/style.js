@@ -488,7 +488,7 @@ liberator.registerObserver("load_commands", function ()
                 height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 overflow: hidden !important;
             ]]>;
-            let [key, css] = args.arguments[0];
+            let [key, css] = args.arguments;
             if (!css && !(key && special))
             {
                 let str = template.tabular(["Key", "Sample", "CSS"],
@@ -509,9 +509,11 @@ liberator.registerObserver("load_commands", function ()
             argCount: 2,
             bang: true,
             // TODO: add this as a standard highlight completion function?
-            completer: function (context) [0,
-                    completion.filter([[v.class, ""] for (v in highlight)], context.filter)
-                ],
+            completer: function (context, args)
+            {
+                if (args.completeArg == 0)
+                    context.completions = [[v.class, ""] for (v in highlight)];
+            },
             hereDoc: true,
             literal: true,
             options: [[["-append", "-a"], commands.OPTION_NOARG]],

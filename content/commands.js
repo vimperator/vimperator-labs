@@ -618,17 +618,20 @@ function Commands() //{{{
                 {
                     let opt = args.completeOpt;
                     let context = complete.fork(opt[0][0], args.completeStart);
+                    context.filter = args.completeFilter;
                     if (typeof opt[3] == "function")
                         var compl = opt[3](context, args);
                     else
                         compl = opt[3] || [];
                     context.title = [opt[0][0]];
-                    context.completions = completion.filter(compl.map(function ([k, v]) [args.quote(k), v]), args.completeFilter);;
+                    context.quote = args.quote;
+                    context.completions = compl;
                 }
                 complete.advance(args.completeStart);
                 complete.title = ["Options"];
                 if (completeOpts)
                     complete.completions = completeOpts;
+
             }
 
             // check for correct number of arguments

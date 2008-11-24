@@ -91,10 +91,10 @@ CompletionContext.prototype = {
         let self = this;
         let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
         let items = this.contextList.map(function (context) {
-            let prefix = self.value.substring(minStart, context.offset);
             if (!context.hasItems)
                 return [];
-            return context.items;
+            let prefix = self.value.substring(minStart, context.offset);
+            return [{ text: prefix + item.text, item: item.item } for ([i, item] in Iterator(context.items))];
         });
         return { start: minStart, items: util.Array.flatten(items) }
     },
@@ -1167,7 +1167,6 @@ function Completion() //{{{
                         if (compObject != null)
                         {
                             cmdContext.advance(compObject.start);
-                            cmdContext.title = ["Completions"];
                             cmdContext.filterFunc = function (k) k;
                             cmdContext.completions = compObject.items;
                         }
@@ -1333,7 +1332,6 @@ function Completion() //{{{
             context.title = ["Shell Command", "Path"];
             context.generate = function ()
             {
-                liberator.dump("generate");
                 const environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                                      .getService(Components.interfaces.nsIEnvironment);
 
