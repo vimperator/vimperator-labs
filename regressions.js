@@ -8,7 +8,8 @@
 // NOTE: It is preferable to run this script in a clean profile or at least do NOT use
 // :mkvimperatorrc afterwards, as it can remove commands/mappings, etc.
 //
-// Usage: :regr[essions]
+// Usage: :[count]regr[essions]
+// When [count] is given, just run this test. TODO: move to :regressions [spec]?
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +89,7 @@ var Tests = {
 
 commands.addUserCommand(["regr[essions]"],
     "Run regression tests",
-    function (args, special)
+    function (args, special, count)
     {
         // TODO: might need to increase the 'messages' option temprarily
         // TODO: count (better even range) support to just run test 34 of 102
@@ -101,41 +102,50 @@ commands.addUserCommand(["regr[essions]"],
 			let now = Date.now();
             let totalTests = tests.length + functions.length;
 			let successfulTests = 0;
-            let currentTest = 1;
+            let currentTest = 0;
 
+			// TODO: might want to unify 'tests' and 'functions' handling
             // 1.) run commands and mappings tests
-            tests.forEach(function (test) {
+			for (let [, test] in Iterator(tests))
+			{
+				if (count >= 1 && ++currentTest != count)
+					continue;
+
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-                liberator.echomsg("Running test " + currentTest++ + " of " + totalTests + ": " + testDescription);
+                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription);
                 Tests.resetEnvironment();
                 if ("init" in test)
                     test.init();
 
                 test.cmds.forEach(function (cmd) {
-                    if (cmd.indexOf(":") == 0)
+                    if (cmd[0] == ":")
                         liberator.execute(cmd);
                     else
                         events.feedkeys(cmd);
                 });
 
                 if (!test.verify())
-                    liberator.echoerr("Test failed: " + testDescription);
+                    liberator.echoerr("Test " + currentTest + " failed: " + testDescription);
 				else
 					successfulTests++;
-            });
+            }
 
             // 2.) Run function tests
-            functions.forEach(function (func) {
-                liberator.echomsg("Running test " + currentTest++ + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
+			for (let [, func] in Iterator(functions))
+			{
+				if (count >= 1 && ++currentTest != count)
+					continue;
+
+                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
                 Tests.resetEnvironment();
 
                 if (!func())
-                    liberator.echoerr("Test failed!");
+                    liberator.echoerr("Test " + currentTest + " failed!");
 				else
 					successfulTests++;
-            });
+            }
 
-			liberator.echomsg(successfulTests + " of " + totalTests + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
+			liberator.echomsg(successfulTests + " of " + (count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
             liberator.execute(":messages");
         }
 
@@ -146,7 +156,8 @@ commands.addUserCommand(["regr[essions]"],
     },
     {
         bang: true,
-        argCount: 0
+		argCount: 0,
+		count: true
     });
 
 // vimperator: set et ts=4 sw=4 :
