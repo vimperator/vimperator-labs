@@ -98,7 +98,9 @@ commands.addUserCommand(["regr[essions]"],
         
         function run () 
         {
+			let now = Date.now();
             let totalTests = tests.length + functions.length;
+			let successfulTests = 0;
             let currentTest = 1;
 
             // 1.) run commands and mappings tests
@@ -118,6 +120,8 @@ commands.addUserCommand(["regr[essions]"],
 
                 if (!test.verify())
                     liberator.echoerr("Test failed: " + testDescription);
+				else
+					successfulTests++;
             });
 
             // 2.) Run function tests
@@ -127,8 +131,11 @@ commands.addUserCommand(["regr[essions]"],
 
                 if (!func())
                     liberator.echoerr("Test failed!");
+				else
+					successfulTests++;
             });
 
+			liberator.echomsg(successfulTests + " of " + totalTests + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
             liberator.execute(":messages");
         }
 
