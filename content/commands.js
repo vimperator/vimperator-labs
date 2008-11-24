@@ -466,14 +466,14 @@ function Commands() //{{{
             outer:
             while (i < str.length)
             {
-                if (complete)
-                    resetCompletions();
-
                 // skip whitespace
                 while (/\s/.test(str[i]) && i < str.length)
                     i++;
                 if (i == str.length && !complete)
                     break;
+
+                if (complete)
+                    resetCompletions();
 
                 var sub = str.substr(i);
                 //liberator.dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
@@ -635,7 +635,7 @@ function Commands() //{{{
             }
 
             // check for correct number of arguments
-            if (!complete && (args.arguments.length == 0 && (argCount == "1" || argCount == "+") ||
+            if (!complete && (args.arguments.length == 0 && /^[1+]$/.test(argCount) ||
                     // TODO: what is this for? -- djk
                     literal && argCount == "+" && /^\s*$/.test(args.literalArg)))
             {
@@ -643,7 +643,7 @@ function Commands() //{{{
                 return null;
             }
             else if (args.arguments.length == 1 && (argCount == "0") ||
-                     args.arguments.length > 1  && (argCount == "0" || argCount == "1" || argCount == "?"))
+                     args.arguments.length > 1  && /^[01?]$/.test(argCount))
             {
                 if (!complete)
                     liberator.echoerr("E488: Trailing characters");
