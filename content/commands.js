@@ -632,7 +632,9 @@ function Commands() //{{{
             }
 
             // check for correct number of arguments
-            if (!complete && (args.arguments.length == 0 && (argCount == "1" || argCount == "+") || literal && argCount == "+" && /^\s*$/.test(literalArg)))
+            if (!complete && (args.arguments.length == 0 && (argCount == "1" || argCount == "+") ||
+                    // TODO: what is this for? -- djk
+                    literal && argCount == "+" && /^\s*$/.test(args.literalArg)))
             {
                 liberator.echoerr("E471: Argument required");
                 return null;
