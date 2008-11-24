@@ -54,19 +54,22 @@ const template = {
     },
 
     bookmarkDescription: function (item, text)
-    <>
-        <a href="#" class="hl-URL">{text}</a>&#160;
-        {
-            !(item.item.extra.length) ? "" :
-            <span class="extra-info">
-                ({
-                    template.map(item.item.extra, function (e)
-                    <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                    <>&#xa0;</>/* Non-breaking space */)
-                })
-            </span>
-        }
-    </>,
+    {
+        let extra = this.getKey(item, "extra");
+        return <>
+            <a href="#" class="hl-URL">{text}</a>&#160;
+            {
+                !(extra && extra.length) ? "" :
+                <span class="extra-info">
+                    ({
+                        template.map(extra, function (e)
+                        <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
+                        <>&#xa0;</>/* Non-breaking space */)
+                    })
+                </span>
+            }
+        </>
+    },
 
     icon: function (item, text)
     {
@@ -183,19 +186,20 @@ const template = {
 
     // every item must have a .xml property which defines how to draw itself
     // @param headers is an array of strings, the text for the header columns
-    genericTable: function genericTable(headers, items)
+    genericTable: function genericTable(items, format)
     {
+        // FIXME: Kludge.
+        let context = new CompletionContext("");
+        context.filterFunc = function (items) items;
+        if (format)
+            context.format = format;
         return this.generic(
-            <table>
-                <tr align="left" class="hl-Title">
+            <div class="hl-Completions">
+                { this.completionRow(context, context.title, "hl-CompTitle") }
                 {
-                    headers.reduce(function (prev, cur) prev + <th>{cur}</th>, <></>)
+                     this.map(items, function (item) template.completionRow(context, { text: context.getKey({item: item}, "text"), item: item }))
                 }
-                </tr>
-                {
-                     this.map(items, function (item) item.xml)
-                }
-            </table>);
+            </div>);
     },
 
     // returns a single row for a bookmark or history item

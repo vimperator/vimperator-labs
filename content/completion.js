@@ -152,13 +152,15 @@ CompletionContext.prototype = {
     set filter(val) this._filter = val,
 
     get format() ({
+        title: this.title,
         keys: this.keys,
         process: this.process
     }),
     set format(format)
     {
-        this.keys = format.keys;
-        this.process = format.process;
+        this.title = format.title || this.title;
+        this.keys = format.keys || this.keys;
+        this.process = format.process || this.process;
     },
 
     get items()
@@ -883,7 +885,7 @@ function Completion() //{{{
     return {
 
         // FIXME
-        get getKey() this._getKey || function (item, key) item[{ text: 0, description: 1, icon: 2}[key]],
+        get getKey() this._getKey || function (item, key) item[{ text: 0, description: 1, icon: 2 }[key]],
         set getKey(getKey) this._getKey = getKey,
 
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)

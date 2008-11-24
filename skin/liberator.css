@@ -72,7 +72,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
     vertical-align: middle;
 }
 .td-span {
-    height: 1.5em; line-height: 1.5em !important;
+    display: inline-block;
+    overflow: visible;
+    width: 0px;
+    height: 1.5em;
+    line-height: 1.5em !important;
 }
 .td-strut {
     display: inline-block;

@@ -350,7 +350,8 @@ function Bookmarks() //{{{
     return {
 
         get format() ({
-            keys: { text: "url", description: "title", icon: "icon" },
+            title: ["URL", "Info"],
+            keys: { text: "url", description: "title", icon: "icon", extra: "extra" },
             process: [template.icon, template.bookmarkDescription]
         }),
 
@@ -578,7 +579,7 @@ function Bookmarks() //{{{
             if (openItems)
                 return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.genericTable(["", "title", "URL"], items);
+            let list = template.genericTable(items, this.format);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -761,14 +762,14 @@ function History() //{{{
             // execute the query
             let root = historyService.executeQuery(query, options).root;
             root.containerOpen = true;
-            for (let i = 0; i < root.childCount; i++)
+            for (let i in util.range(0, root.childCount))
             {
                 let node = root.getChild(i);
-                if (node.type == node.RESULT_TYPE_URI) // just make sure it's a bookmark
-                items.push({ url: node.uri,
-                             title: node.title,
-                             icon: node.icon ? node.icon.spec : DEFAULT_FAVICON,
-                             get xml() template.bookmarkItem(this)});
+                if (node.type == node.RESULT_TYPE_URI)
+                    items.push({ url: node.uri,
+                                 title: node.title,
+                                 icon: node.icon ? node.icon.spec : DEFAULT_FAVICON
+                               })
             }
             root.containerOpen = false; // close a container after using it!
 
@@ -820,7 +821,7 @@ function History() //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.genericTable(["", "title", "URL"], items);
+            let list = template.genericTable(items, bookmarks.format);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
@@ -994,12 +995,9 @@ function QuickMarks() //{{{
                 }
             }
 
-            let items = ({ title: String(mark),
-                           url: qmarks.get(mark),
-                           get xml() <tr><td>&#xa0;&#xa0;{this.title}</td><td>{this.url}</td></tr>
-                         } for each (mark in marks));
+            let items = [[mark, qmarks.get(mark)] for ([k, mark] in Iterator(marks))];
 
-            let list = template.genericTable(["QuickMark", "URL"], items);
+            let list = template.genericTable(items, { title: ["QuickMark", "URL"] });
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };
