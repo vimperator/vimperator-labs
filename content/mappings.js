@@ -224,7 +224,7 @@ function Mappings() //{{{
             "Remove a mapping" + modeDescription,
             function (args)
             {
-                args = args.arguments[1];
+                args = args.arguments[0];
 
                 let found = false;
                 for (let [,mode] in Iterator(modes))
