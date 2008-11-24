@@ -1090,9 +1090,7 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(filter)
         {
-            let schemes = [];
             let rtp = options["runtimepath"].split(",");
-
             let schemes = rtp.map(function (path) // FIXME: Now! Very, very broken.
                 [[c[0].replace(/\.vimp$/, ""), ""]
                     for each (c in completion.file(path + "/colors/", true)[1])]);
