@@ -64,28 +64,31 @@ const template = {
                </ul>;
     },
 
+    filter: function (str) <span class="hl-Filter">{str}</span>,
+
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
-    highlight: function highlight(arg, processStrings)
+    highlight: function highlight(arg, processStrings, clip)
     {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
+        let str = clip ? util.clip(String(arg), clip) : String(arg);
         try
         {
             switch (arg == null ? "undefined" : typeof arg)
             {
                 case "number":
-                    return <span class="hl-Number">{arg}</span>;
+                    return <span class="hl-Number">{str}</span>;
                 case "string":
                     if (processStrings)
-                        arg = <>{util.escapeString(arg)}</>;
-                    return <span class="hl-String">{arg}</span>;
+                        str = <>{util.escapeString(str)}</>;
+                    return <span class="hl-String">{str}</span>;
                 case "boolean":
-                    return <span class="hl-Boolean">{arg}</span>;
+                    return <span class="hl-Boolean">{str}</span>;
                 case "function":
                     // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
                     // Using /foo*(:?)/ instead.
                     if (processStrings)
-                        return <span class="hl-Function">{String(arg).replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
+                        return <span class="hl-Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
                     return <>{arg}</>;
                 case "undefined":
                     return <span class="hl-Null">{arg}</span>;
@@ -95,8 +98,10 @@ const template = {
                     if (/^\[JavaPackage.*\]$/.test(arg))
                         return <>[JavaPackage]</>;
                     if (processStrings && false)
-                        arg = String(arg).replace("\n", "\\n", "g");
-                    return <span class="hl-Object">{arg}</span>;
+                        str = template.highlightFilter(str, "\n", function () <span class="hl-NonText">^J</span>);
+                    return <span class="hl-Object">{str}</span>;
+                case "xml":
+                    return arg;
                 default:
                     return <![CDATA[<unknown type>]]>;
             }
@@ -107,7 +112,7 @@ const template = {
         }
     },
 
-    highlightFilter: function highlightFilter(str, filter)
+    highlightFilter: function highlightFilter(str, filter, highlight)
     {
         if (typeof str == "xml")
             return str;
@@ -122,10 +127,10 @@ const template = {
                 yield [start, filter.length];
                 start += filter.length;
             }
-        })());
+        })(), highlight || template.filter);
     },
 
-    highlightRegexp: function highlightRegexp(str, re)
+    highlightRegexp: function highlightRegexp(str, re, highlight)
     {
         if (typeof str == "xml")
             return str;
@@ -134,10 +139,10 @@ const template = {
         {
             while (res = re.exec(str))
                 yield [res.index, res[0].length];
-        })());
+        })(), highlight || template.filter);
     },
 
-    highlightSubstrings: function highlightSubstrings(str, iter)
+    highlightSubstrings: function highlightSubstrings(str, iter, highlight)
     {
         if (typeof str == "xml")
             return str;
@@ -151,7 +156,7 @@ const template = {
         {
             XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
-            s += <span class="hl-Filter">{str.substr(i, length)}</span>;
+            s += highlight(str.substr(i, length));
             start = i + length;
         }
         return s + <>{str.substr(start)}</>;

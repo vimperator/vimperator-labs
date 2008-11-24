@@ -1095,7 +1095,7 @@ const liberator = (function () //{{{
                 Components.utils.reportError(error);
             let obj = {
                 toString: function () error.toString(),
-                stack: { toString: function () "\n" + error.stack.replace(/^/mg, "\t") }
+                stack: <>{error.stack.replace(/^/mg, "\t")}</>
             };
             for (let [k, v] in Iterator(error))
             {

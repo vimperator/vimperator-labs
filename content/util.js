@@ -305,6 +305,7 @@ const util = { //{{{
         {
             obj = "[Object]";
         }
+        obj = template.highlightFilter(util.clip(obj, 150), "\n", !color ? function () "^J" : function () <span class="hl-NonText">^J</span>);
         let string = <><span class="hl-Title hl-Object">{obj}</span>::<br/>&#xa;</>;
 
         let keys = [];
@@ -326,7 +327,7 @@ const util = { //{{{
                     else
                         var noVal = true;
                 }
-                value = template.highlight(value, true);
+                value = template.highlight(value, true, 150);
                 // FIXME: Inline style.
                 key = <span style="font-weight: bold;">{i}</span>;
                 if (!isNaN(i))
