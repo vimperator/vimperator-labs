@@ -422,6 +422,16 @@ function Commands() //{{{
                 options = [];
 
             if (literal)
+                /*
+                 TODO: This change doesn't seem right to me. It no longer
+                 supports "?" which is really the only non-integer argCount
+                 that makes much sense with a literal arg. Likewise, it no
+                 longer supports "*" which we can allow and treat as "?" - "+"
+                 as "1".  I also don't like having argCounts > 1 specified as
+                 integers and those below as strings, even if the former are
+                 currently only used with 'literal'. I might be missing
+                 something? -- djk
+                */
                 var literalIndex = argCount == "+" ? 0 : Math.max(argCount - 1, 0);
 
             if (!argCount)
