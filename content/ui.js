@@ -1289,6 +1289,8 @@ function ItemList(id) //{{{
     var startIndex = -1;  // The index of the first displayed item
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
+    var div = null;
+    var noCompletions = null;
     var completionBody = null;
     var minHeight = 0;
     var div = null;
@@ -1298,6 +1300,7 @@ function ItemList(id) //{{{
         if (container.collapsed)
             div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
         minHeight = Math.max(minHeight, completionBody.getBoundingClientRect().bottom);
+        minHeight = 400;
         container.height = minHeight;
         div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.
@@ -1305,6 +1308,30 @@ function ItemList(id) //{{{
     }
 
     function getCompletion(index) completionElements[index - startIndex];
+
+    function init()
+    {
+        function dom(xml) util.xmlToDom(xml, doc);
+        div = dom(
+            <div class="ex-command-output hl-Normal" style="white-space: nowrap">
+                <div class="hl-Completions"><span class="hl-Title">No Completions</span></div>
+                <div/>
+                <div class="hl-Completions">
+                {
+                    template.map(util.range(0, maxItems), function (i)
+                    <ul><li class="hl-CompTitle hl-NonText">~</li></ul>)
+                }
+                </div>
+            </div>);
+        noCompletions =  div.childNodes[0];
+        completionBody = div.childNodes[1];
+        items.contextList.forEach(function (context) {
+            if (!context.items.length)
+                return;
+            context.cache.dom = dom(<div class="hl-Completions">{context.createRow(context.title || [], "hl-CompTitle")}</div>);
+            completionBody.appendChild(context.cache.dom);
+        });
+    }
 
     /**
      * uses the entries in "items" to fill the listbox
@@ -1321,50 +1348,32 @@ function ItemList(id) //{{{
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
 
-        // do a full refill of the list:
         XML.ignoreWhitespace = true;
         let off = 0;
-        function getItems(context)
+        function getRows(context)
         {
             let len = context.items.length;
             let start = off;
             off += len;
-            return context.getItems(offset - start, endIndex - start);
+            return context.getRows(offset - start, endIndex - start, doc);
         }
 
-        let xml = <div class="ex-command-output hl-Normal" style="white-space: nowrap">
-                    <div class="hl-Completions">
-                    {
-                        items.allItems.items.length == 0 ?
-                            <span class="hl-Title">No Completions</span>
-                            : <></>
-                    }
-                    {
-                        template.map(items.contextList, function (context) context.items.length ?
-                        <>
-                        { context.createRow(context, context.title || [], "hl-CompTitle") }
-                        {
-                            template.map(getItems(context), function (item) context.createRow(context, item))
-                        }
-                        </>
-                        : undefined)
-                    }
-                    </div>
-                    <div class="hl-Completions">
-                    {
-                        // Hmm. The problem with not making this a CompItem is that
-                        // the height and padding aren't the same.
-                        template.map(util.range(0, maxItems), function (i)
-                        <ul><li class="hl-NonText">~</li></ul>)
-                    }
-                    </div>
-                  </div>;
+        items.contextList.forEach(function (context) {
+            let dom = context.cache.dom;
+            if (!dom)
+                return;
+            while (dom.childNodes[1])
+                dom.removeChild(dom.childNodes[1]);
+            for (let [,row] in Iterator(getRows(context)))
+                dom.appendChild(row);
+        });
 
-        div = util.xmlToDom(xml, doc);
-        completionBody = div.getElementsByClassName("hl-Completions")[0];
-        //completionElements = completionBody.childNodes; // Kris: This is broken for things like :dia pr<tab>
-        completionElements = div.getElementsByClassName("hl-CompItem");
-        doc.body.replaceChild(div, doc.body.firstChild);
+        noCompletions.style.display = off > 0 ? "none" : "block";
+
+        let dom = div.cloneNode(true);
+        completionElements = dom.getElementsByClassName("hl-CompItem");
+        doc.body.replaceChild(dom, doc.body.firstChild);
+
         autoSize();
     }
 
@@ -1395,6 +1404,7 @@ function ItemList(id) //{{{
         {
             startIndex = endIndex = selIndex = -1;
             items = newItems;
+            init();
             if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);

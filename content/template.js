@@ -32,7 +32,7 @@ const template = {
         return <>{xml}</>;
     },
 
-    completionRow: function completionRow(context, item, class)
+    completionRow: function completionRow(item, class)
     {
         if (typeof icon == "function")
             icon = icon();
@@ -43,8 +43,8 @@ const template = {
         }
         else
         {
-            var text = context.process[0].call(context, item, item.text || context.getKey(item, "text"));
-            var desc = context.process[1].call(context, item, context.getKey(item, "description"));
+            var text = this.process[0].call(this, item, item.text || this.getKey(item, "text"));
+            var desc = this.process[1].call(this, item, this.getKey(item, "description"));
         }
 
         return <ul class={class || "hl-CompItem"}>
@@ -195,9 +195,9 @@ const template = {
             context.format = format;
         return this.generic(
             <div class="hl-Completions">
-                { this.completionRow(context, context.title, "hl-CompTitle") }
+                { this.completionRow(context.title, "hl-CompTitle") }
                 {
-                     this.map(items, function (item) template.completionRow(context, { text: context.getKey({item: item}, "text"), item: item }))
+                     this.map(items, function (item) template.completionRow.call(context, { text: context.getKey({item: item}, "text"), item: item }))
                 }
             </div>);
     },

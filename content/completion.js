@@ -108,6 +108,7 @@ CompletionContext.prototype = {
     {
         delete this.cache.filtered;
         delete this.cache.filter;
+        this.cache.rows = [];
         this.hasItems = items.length > 0;
         this._completions = items;
         let self = this;
@@ -126,10 +127,14 @@ CompletionContext.prototype = {
 
     get generate() !this._generate ? null : function ()
     {
-        this._completions = this._generate.call(this);
+        let updateAsync = this.updateAsync; // XXX
+        this.updateAsync = false;
+        this.completions = this._generate.call(this);
+        this.updateAsync = updateAsync;
+
         this.cache.offset = this.offset;
         this.cache.key = this.key;
-        return this._completions;
+        return this.completions;
     },
     set generate(arg)
     {
@@ -217,13 +222,22 @@ CompletionContext.prototype = {
     {
         let self = this;
         let items = this.items;
-        if (!items)
-            return [];
-
         let reverse = start > end;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end ? end : items.length);
         return util.map(util.range(start, end, reverse), function (i) items[i]);
+    },
+
+    getRows: function (start, end, doc)
+    {
+        let self = this;
+        let items = this.items;
+        let cache = this.cache.rows;
+        let reverse = start > end;
+        start = Math.max(0, start || 0);
+        end = Math.min(items.length, end ? end : items.length);
+        return util.map(util.range(start, end, reverse),
+            function (i) cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc));
     },
 
     fork: function fork(name, offset, completer, self)
