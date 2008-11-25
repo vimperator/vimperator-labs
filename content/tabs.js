@@ -748,7 +748,7 @@ function Tabs() //{{{
 
         list: function (filter)
         {
-            template.listCompleter("buffer", filter);
+            completion.listCompleter("buffer", filter);
         },
 
         // wrap causes the movement to wrap around the start and end of the tab list

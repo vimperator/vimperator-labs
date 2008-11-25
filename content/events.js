@@ -719,21 +719,16 @@ function Events() //{{{
         },
         {
             bang: true,
-            completer: function (context) completion.macro(context.filter),
+            completer: function (context) completion.macro(context),
             literal: true
         });
 
     commands.add(["macros"],
         "List all macros",
-        function (args)
+        function (args) { completion.listCompleter("macro", args.arguments[0]) },
         {
-            XML.prettyPrinting = false;
-            var str = template.tabular(["Macro", "Keys"], [], events.getMacros(args.string));
-            liberator.echo(str, commandline.FORCE_MULTILINE);
-        },
-        {
-            completer: function (context) completion.macro(context.filter),
-            literal: true
+            argCount: "1",
+            completer: function (context) completion.macro(context),
         });
 
     commands.add(["pl[ay]"],
@@ -741,7 +736,7 @@ function Events() //{{{
         function (args) { events.playMacro(args.arguments[0]); },
         {
             argCount: "1",
-            completer: function (context) completion.macro(context.filter)
+            completer: function (context) completion.macro(context)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

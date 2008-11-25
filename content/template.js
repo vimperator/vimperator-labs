@@ -32,23 +32,6 @@ const template = {
         return <>{xml}</>;
     },
 
-    listCompleter: function (name, filter)
-    {
-        let context = new CompletionContext(filter || "");
-        context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
-        context = context.contexts["/list"];
-
-        while (context.incomplete)
-            liberator.threadYield(true, true);
-
-        let list = this.generic(
-            <div class="hl-Completions">
-                { this.completionRow(context.title, "hl-CompTitle") }
-                { template.map(context.items, function (item) context.createRow(item)) }
-            </div>);
-        commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-    },
-
     completionRow: function completionRow(item, class)
     {
         if (typeof icon == "function")

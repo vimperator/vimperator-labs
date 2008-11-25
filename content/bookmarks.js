@@ -233,11 +233,8 @@ function Bookmarks() //{{{
         "Set the default search engine",
         "string", "google",
         {
-            completer: function (filter) completion._url(filter, "s").items,
-            validator: function (value)
-            {
-                return completion._url("", "s").items.some(function (s) s.text == value);
-            }
+            completer: function (filter) completion.runCompleter("search", filter, true),
+            validator: function (value)  completion.runCompleter("search", "", true).some(function ([s]) s == value)
         });
 
     options.add(["preload"],
@@ -560,7 +557,7 @@ function Bookmarks() //{{{
         list: function (filter, tags, openItems)
         {
             if (!openItems)
-                return template.listCompleter("bookmark", filter, tags);
+                return completion.listCompleter("bookmark", filter, tags);
 
             let items = this.get(filter, tags, false);
             if (items.length)
@@ -802,7 +799,7 @@ function History() //{{{
         list: function (filter, openItems)
         {
             if (!openItems)
-                return template.listCompleter("history", filter);
+                return completion.listCompleter("history", filter);
 
             var items = this.get({ searchTerms: filter }, 1000);
             if (items.length)

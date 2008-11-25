@@ -34,6 +34,8 @@ modules._cleanEval = function _cleanEval(__liberator_eval_arg, __liberator_eval_
 
 function CompletionContext(editor, name, offset)
 {
+    if (!(this instanceof arguments.callee))
+        return new arguments.callee(editor, name, offset);
     if (!name)
         name = "";
 
@@ -949,10 +951,10 @@ function Completion() //{{{
 
         runCompleter: function (name, filter)
         {
-            let context = new CompletionContext(filter);
-            context.__defineGetter__("background", function () false);
-            context.__defineSetter__("background", function () false);
-            this[name](context);
+            let context = CompletionContext(filter);
+            this[name].apply(this, [context].concat(Array.slice(arguments, 1)));
+            while (context.incomplete)
+                liberator.threadYield(true, true);
             return context.items.map(function (i) i.item);
         },
 
@@ -1058,6 +1060,23 @@ function Completion() //{{{
             }
 
             return filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1);
+        },
+
+        listCompleter: function (name, filter)
+        {
+            let context = CompletionContext(filter || "");
+            context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
+            context = context.contexts["/list"];
+
+            while (context.incomplete)
+                liberator.threadYield(true, true);
+
+            let list = template.generic(
+                <div class="hl-Completions">
+                    { template.completionRow(context.title, "hl-CompTitle") }
+                    { template.map(context.items, function (item) context.createRow(item)) }
+                </div>);
+            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -1275,10 +1294,7 @@ function Completion() //{{{
 
         get javascriptCompleter() javascript,
 
-        javascript: function _javascript(context)
-        {
-            return javascript.complete(context);
-        },
+        javascript: function _javascript(context) javascript.complete(context),
 
         location: function (context)
         {
@@ -1309,11 +1325,10 @@ function Completion() //{{{
             });
         },
 
-        macro: function macro(filter)
+        macro: function macro(context)
         {
-            var macros = [item for (item in events.getMacros())];
-
-            return [0, this.filter(macros, filter)];
+            context.title = ["Macro", "Keys"];
+            context.completions = [item for (item in events.getMacros())];
         },
 
         menuItem: function menuItem(filter) commands.get("emenu").completer(filter), // XXX
@@ -1322,7 +1337,7 @@ function Completion() //{{{
 
         preference: function preference(filter) commands.get("set").completer(filter, true), // XXX
 
-        search: function search(context)
+        search: function search(context, noSuggest)
         {
             let [, keyword, space, args] = context.filter.match(/^\s*(\S*)(\s*)(.*)$/);
             let keywords = bookmarks.getKeywords();
@@ -1333,7 +1348,7 @@ function Completion() //{{{
             context.completions = keywords.concat(engines);
             context.anchored = true;
 
-            if (!space)
+            if (!space || noSuggest)
                 return;
 
             context.fork("suggest", keyword.length + space.length, this, "searchEngineSuggest",
@@ -1465,14 +1480,6 @@ function Completion() //{{{
         addUrlCompleter: function (opt)
         {
             this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
-        },
-
-        // FIXME: Temporary
-        _url: function _url(filter, complete)
-        {
-            let context = new CompletionContext(filter);
-            this.url(context, complete);
-            return context.allItems;
         },
 
         userCommand: function userCommand(filter)

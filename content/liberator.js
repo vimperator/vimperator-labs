@@ -208,30 +208,28 @@ const liberator = (function () //{{{
         // TODO: move this
         function getMenuItems()
         {
-            var menubar = document.getElementById(config.guioptions["m"]);
-            var items = [];
-
-            for (let i = 0; i < menubar.childNodes.length; i++)
+            function addChildren(node, parent)
             {
-                (function (item, path)
+                for (let [,item] in Iterator(node.childNodes))
                 {
                     if (item.childNodes.length == 0 && item.localName == "menuitem"
                         && !/rdf:http:/.test(item.label)) // FIXME
                     {
-                        item.fullMenuPath = path += item.label;
+                        item.fullMenuPath = parent + item.label;
                         items.push(item);
                     }
                     else
                     {
+                        path = parent;
                         if (item.localName == "menu")
                             path += item.label + ".";
-
-                        for (let j = 0; j < item.childNodes.length; j++)
-                            arguments.callee(item.childNodes[j], path);
+                        addChildren(item, path);
                     }
-                })(menubar.childNodes[i], "");
+                }
             }
 
+            let items = [];
+            addChildren(document.getElementById(config.guioptions["m"]), "");
             return items;
         }
 
@@ -259,8 +257,9 @@ const liberator = (function () //{{{
                 // TODO: add this as a standard menu completion function
                 completer: function (context)
                 {
-                    let completions = getMenuItems().map(function (item) [item.fullMenuPath, item.label]);
-                    return [0, completion.filter(completions, context.filter)];
+                    context.title = ["Menu Path", "Label"];
+                    context.keys = { text: "fullMenuPath", description: "label" };
+                    context.completions = getMenuItems();
                 },
                 literal: true
             });

@@ -143,12 +143,6 @@ function CommandLine() //{{{
             completionPostfix = command.substring(commandWidget.selectionStart);
             completions = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
 
-            // sort the completion list
-            // TODO: might not make sense anymore with our advanced completions, we should just sort when necessary
-            // FIXME: CompletionContext
-            //if (options.get("wildoptions").has("sort"))
-            //    completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
-
             completionList.setItems(completionContext);
         }
 
@@ -682,7 +676,7 @@ function CommandLine() //{{{
 
             commandWidget.focus();
 
-            completionContext = new CompletionContext(commandWidget.inputField.editor);
+            completionContext = CompletionContext(commandWidget.inputField.editor);
             completionContext.onUpdate = function ()
             {
                 commandline.setCompletions(this.allItems);
