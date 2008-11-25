@@ -236,7 +236,7 @@ function Bookmarks() //{{{
             completer: function (filter) completion._url(filter, "s").items,
             validator: function (value)
             {
-                return completion._url("", "s").items.some(function (s) s[0] == value);
+                return completion._url("", "s").items.some(function (s) s.text == value);
             }
         });
 
