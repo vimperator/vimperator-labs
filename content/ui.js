@@ -317,7 +317,7 @@ function CommandLine() //{{{
         "charlist", "sfl",
         {
             completer: function completer(filter) [k for each (k in completion.urlCompleters)],
-            validator: function validator(value) value in completion.urlCompleters
+            validator: function validator(value) Array.every(value, function (v) v in completion.urlCompleters)
         });
 
     options.add(["history", "hi"],
@@ -1300,7 +1300,6 @@ function ItemList(id) //{{{
         if (container.collapsed)
             div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
         minHeight = Math.max(minHeight, completionBody.getBoundingClientRect().bottom);
-        minHeight = 400;
         container.height = minHeight;
         div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.

@@ -1331,16 +1331,17 @@ function Completion() //{{{
                     context.title = [keyword + " Quick Search"];
                     context.background = true;
                     context.anchored = true;
-                    context.quote = decodeURIComponent;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
 
                         return history.get({ uri: window.makeURI(begin), uriIsPrefix: true }).map(function (item) {
                             let rest = item.url.length - end.length;
                             let query = item.url.substring(begin.length, rest);
-                            item.url = query;
                             if (item.url.substr(rest) == end && query.indexOf("&") == -1)
+                            {
+                                item.url = decodeURIComponent(query);
                                 return item;
+                            }
                         }).filter(function (k) k);
                     };
                 });
