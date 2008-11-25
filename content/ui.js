@@ -1282,6 +1282,9 @@ function ItemList(id) //{{{
         return;
     }
 
+    function dom(xml) util.xmlToDom(xml, doc);
+    function elemToString(elem) elem.nodeType == elem.TEXT_NODE ? elem.data :
+        "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for (a in util.Array.iterator(elem.attributes))]).join(" ") + ">";
     var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
@@ -1296,7 +1299,6 @@ function ItemList(id) //{{{
     var noCompletions = null;
     var completionBody = null;
     var minHeight = 0;
-    var div = null;
 
     function autoSize()
     {
@@ -1313,7 +1315,6 @@ function ItemList(id) //{{{
 
     function init()
     {
-        function dom(xml) util.xmlToDom(xml, doc);
         div = dom(
             <div class="ex-command-output hl-Normal" style="white-space: nowrap">
                 <div class="hl-Completions"><span class="hl-Title">No Completions</span></div>
@@ -1325,8 +1326,9 @@ function ItemList(id) //{{{
                 }
                 </div>
             </div>);
-        noCompletions =  div.childNodes[1];
-        completionBody = div.childNodes[3];
+
+        noCompletions =  div.getElementsByTagName("div")[0];
+        completionBody = div.getElementsByTagName("div")[1];
         items.contextList.forEach(function (context) {
             if (!context.items.length)
                 return;
@@ -1348,7 +1350,7 @@ function ItemList(id) //{{{
      */
     function fill(offset)
     {
-        function dom(xml) util.xmlToDom(xml, doc);
+        XML.ignoreWhiteSpace = false;
         let diff = offset - startIndex;
         if (items == null || offset == null || diff == 0 || offset < 0)
             return;
@@ -1358,7 +1360,6 @@ function ItemList(id) //{{{
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
 
-        XML.ignoreWhitespace = true;
         let off = 0;
         function getRows(context)
         {
@@ -1375,17 +1376,18 @@ function ItemList(id) //{{{
             let d = stuff.cloneNode(true);
             for (let [,row] in Iterator(getRows(context)))
                 d.appendChild(row);
-            dom.replaceChild(d, dom.childNodes[3]);
+
+            //liberator.dump(util.map(util.range(0, dom.childNodes.length), function (i) elemToString(dom.childNodes[i])));
+
+            dom.replaceChild(d, dom.childNodes[3] || dom.childNodes[1]);
         });
 
-        try {
         noCompletions.style.display = off > 0 ? "none" : "block";
-        } catch(e) {}
 
-        let dom = div.cloneNode(true);
-        completionElements = dom.getElementsByClassName("hl-CompItem");
-        completionBody = dom.childNodes[3];
-        doc.body.replaceChild(dom, doc.body.firstChild);
+        let node = div.cloneNode(true);
+        completionElements = node.getElementsByClassName("hl-CompItem");
+        completionBody = node.getElementsByTagName("div")[1];
+        doc.body.replaceChild(node, doc.body.firstChild);
 
         autoSize();
     }

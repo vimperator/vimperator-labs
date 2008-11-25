@@ -282,7 +282,7 @@ function Bookmarks() //{{{
 
     function tags(context, args)
     {
-        let filter = args.completeFilter;
+        let filter = context.filter;
         let have = filter.split(",");
         args.completeFilter = have.pop();
         let prefix = filter.substr(0, filter.length - args.completeFilter.length);
@@ -325,7 +325,7 @@ function Bookmarks() //{{{
         },
         {
             bang: true,
-            completer: function (context, args) completion.url(context, "b"),
+            completer: function (context, args) completion.bookmark(context, args["-tags"]),
             options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
         });
 
@@ -339,7 +339,7 @@ function Bookmarks() //{{{
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
         },
         {
-            completer: function (context) completion.bookmark(context.filter),
+            completer: function (context) completion.bookmark(context),
             literal: true
         });
 

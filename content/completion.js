@@ -989,9 +989,10 @@ function Completion() //{{{
             let filterTokens = filter.split(/\s+/);
             for (let [,elem] in Iterator(urls))
             {
-                var url   = elem.url || "";
-                var title = elem.title || "";
-                var tags  = elem.tags || [];
+                let item = elem.item || elem; // Kludge
+                var url   = item.url || "";
+                var title = item.title || "";
+                var tags  = item.tags || [];
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
@@ -1048,11 +1049,18 @@ function Completion() //{{{
 
         autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
 
-        bookmark: function bookmark(context)
+        bookmark: function bookmark(context, tags)
         {
             context.title = ["Bookmark", "Title"];
             context.format = bookmarks.format;
             context.completions = bookmarks.get(context.filter)
+            if (tags)
+            {
+                let filterFunc = context.filterFunc;
+                context.filterFunc = function (items, filter, anchored)
+                    filterFunc.call(this, items, filter, anchored)
+                              .filter(function ({item: item}) tags.every(function (tag) item.tags.indexOf(tag) > -1));
+            }
         },
 
         buffer: function buffer(filter)
@@ -1171,29 +1179,32 @@ function Completion() //{{{
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
             let compObject = { start: 0, items: [] };
-            if (command)
+            if (!command)
             {
-                [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
-                let cmdContext = context.fork(cmd, prefix.length);
-                let argContext = cmdContext.fork("args", args.completeStart);
-                args = command.parseArgs(cmdContext.filter, argContext);
-                if (args)
+                context.highlight(0, cmd.length, "SPELLCHECK");
+                return;
+            }
+
+            [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
+            let cmdContext = context.fork(cmd, prefix.length);
+            let argContext = cmdContext.fork("args", args.completeStart);
+            args = command.parseArgs(cmdContext.filter, argContext);
+            if (args)
+            {
+                if (!args.completeOpt && command.completer)
                 {
-                    if (!args.completeOpt && command.completer)
+                    cmdContext.advance(args.completeStart);
+                    compObject = command.completer.call(command, cmdContext, args, special, count);
+                    if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                        compObject = { start: compObject[0], items: compObject[1] };
+                    if (compObject != null)
                     {
-                        cmdContext.advance(args.completeStart);
-                        compObject = command.completer.call(command, cmdContext, args, special, count);
-                        if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
-                            compObject = { start: compObject[0], items: compObject[1] };
-                        if (compObject != null)
-                        {
-                            cmdContext.advance(compObject.start);
-                            cmdContext.filterFunc = null;
-                            cmdContext.completions = compObject.items;
-                        }
+                        cmdContext.advance(compObject.start);
+                        cmdContext.filterFunc = null;
+                        cmdContext.completions = compObject.items;
                     }
-                    context.updateAsync = true;
                 }
+                context.updateAsync = true;
             }
         },
 

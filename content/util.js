@@ -89,7 +89,6 @@ const util = { //{{{
             /* minInterval is the time between the completion of the command and the next firing. */
             this.doneAt = Date.now() + minInterval;
 
-            liberator.dump({notify: "notify"});
             try
             {
                 callback(this.arg);
