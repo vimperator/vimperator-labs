@@ -54,7 +54,7 @@ function CompletionContext(editor, name, offset)
         this.parent = parent;
         this.offset = parent.offset + (offset || 0);
         this.keys = util.cloneObject(this.parent.keys);
-        ["editor", "filterFunc", "keys", "title", "top"].forEach(function (key)
+        ["compare", "editor", "filterFunc", "keys", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
@@ -68,6 +68,7 @@ function CompletionContext(editor, name, offset)
             this._value = editor;
         else
             this.editor = editor;
+        this.compare = function (a, b) String.localeCompare(a.text, b.text);
         this.filterFunc = completion.filter;
         this.keys = { text: 0, description: 1, icon: "icon" };
         this.offset = offset || 0;
@@ -193,6 +194,8 @@ CompletionContext.prototype = {
         completion.getKey = this.getKey; // XXX
         this.cache.filtered = this.filterFunc(items.map(function (item) ({ text: text(item), item: item })),
                     this.filter, this.anchored);
+        if (options.get("wildoptions").has("sort"))
+            this.cache.filtered.sort(this.compare);
         completion.getKey = null;
 
         return this.cache.filtered;
