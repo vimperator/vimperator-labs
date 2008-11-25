@@ -89,6 +89,7 @@ const util = { //{{{
             /* minInterval is the time between the completion of the command and the next firing. */
             this.doneAt = Date.now() + minInterval;
 
+            liberator.dump({notify: "notify"});
             try
             {
                 callback(this.arg);
@@ -111,7 +112,7 @@ const util = { //{{{
             if (now > this.doneAt && this.doneAt > -1)
                 timeout = 0;
             else if (this.latest)
-                timeout = minInterval;
+                timeout = Math.min(timeout, this.latest - now);
             else
                 this.latest = now + maxInterval;
 

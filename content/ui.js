@@ -121,6 +121,110 @@ function CommandLine() //{{{
         commandline.setCompletions(completionContext.allItems);
     });
 
+    var tabTimer = new util.Timer(10, 10, function (event) {
+        let command = commandline.getCommand();
+
+        // always reset our completion history so up/down keys will start with new values
+        historyIndex = UNINITIALIZED;
+
+        // TODO: call just once, and not on each <Tab>
+        let wildmode = options["wildmode"].split(",");
+        let wildType = wildmode[Math.min(wildIndex++, wildmode.length - 1)];
+
+        let hasList = /^list(:|$)/.test(wildType);
+        let longest = /(^|:)longest$/.test(wildType);
+        let full = !longest && /(^|:)full/.test(wildType);
+
+        // we need to build our completion list first
+        if (completionIndex == UNINITIALIZED)
+        {
+            completionIndex = -1;
+            completionPrefix = command.substring(0, commandWidget.selectionStart);
+            completionPostfix = command.substring(commandWidget.selectionStart);
+            completions = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
+
+            // sort the completion list
+            // TODO: might not make sense anymore with our advanced completions, we should just sort when necessary
+            // FIXME: CompletionContext
+            //if (options.get("wildoptions").has("sort"))
+            //    completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
+
+            completionList.setItems(completionContext);
+        }
+
+        if (completions.items.length == 0)
+        {
+            // Wait for items to come available
+            // TODO: also use that code when we DO have completions but too few
+            let end = Date.now() + 5000;
+            while (completionContext.incomplete && completions.items.length == 0 && Date.now() < end)
+            {
+                liberator.threadYield();
+                completions = completionContext.allItems;
+            }
+
+            if (completions.items.length == 0) // still not more matches
+            {
+                liberator.beep();
+                return;
+            }
+        }
+
+        if (full)
+        {
+            if (event.shiftKey)
+            {
+                completionIndex--;
+                if (completionIndex < -1)
+                    completionIndex = completions.items.length - 1;
+            }
+            else
+            {
+                completionIndex++;
+                if (completionIndex > completions.items.length)
+                    completionIndex = 0;
+            }
+
+            statusTimer.tell();
+        }
+
+        // the following line is not inside if (hasList) for list:longest,full
+        completionList.selectItem(completionIndex);
+        if (hasList)
+            completionList.show();
+
+        if ((completionIndex == -1 || completionIndex >= completions.items.length) && !longest) // wrapped around matches, reset command line
+        {
+            if (full)
+                setCommand(completionPrefix + completionPostfix);
+        }
+        else
+        {
+            var compl = null;
+            if (longest && completions.items.length > 1)
+                compl = completion.longestSubstring;
+            else if (full)
+                compl = completions.items[completionIndex].text;
+            else if (completions.items.length == 1)
+                compl = completions.items[0].text;
+
+            if (compl)
+            {
+                setCommand(command.substring(0, completions.start) + compl + completionPostfix);
+                commandWidget.selectionStart = commandWidget.selectionEnd = completions.start + compl.length;
+                if (longest)
+                    liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
+
+                // Start a new completion in the next iteration. Useful for commands like :source
+                // RFC: perhaps the command can indicate whether the completion should be restarted
+                //      -> should be doable now, since the completion items are objects
+                // Needed for :source to grab another set of completions after a file/directory has been filled out
+                // if (completions.length == 1 && !full)
+                //     completionIndex = UNINITIALIZED;
+            }
+        }
+    });
+
     // the containing box for the promptWidget and commandWidget
     var commandlineWidget = document.getElementById("liberator-commandline");
     // the prompt for the current command, for example : or /. Can be blank
@@ -810,108 +914,7 @@ function CommandLine() //{{{
                 // user pressed TAB to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {
-                    // always reset our completion history so up/down keys will start with new values
-                    historyIndex = UNINITIALIZED;
-
-                    // TODO: call just once, and not on each <Tab>
-                    let wildmode = options["wildmode"].split(",");
-                    let wildType = wildmode[Math.min(wildIndex++, wildmode.length - 1)];
-
-                    let hasList = /^list(:|$)/.test(wildType);
-                    let longest = /(^|:)longest$/.test(wildType);
-                    let full = !longest && /(^|:)full/.test(wildType);
-
-                    // we need to build our completion list first
-                    if (completionIndex == UNINITIALIZED)
-                    {
-                        completionIndex = -1;
-                        completionPrefix = command.substring(0, commandWidget.selectionStart);
-                        completionPostfix = command.substring(commandWidget.selectionStart);
-                        completions = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
-
-                        // sort the completion list
-                        // TODO: might not make sense anymore with our advanced completions, we should just sort when necessary
-                        // FIXME: CompletionContext
-                        //if (options.get("wildoptions").has("sort"))
-                        //    completions.items.sort(function (a, b) String.localeCompare(a[0], b[0]));
-
-                        completionList.setItems(completionContext);
-                    }
-
-                    if (completions.items.length == 0)
-                    {
-                        // Wait for items to come available
-                        // TODO: also use that code when we DO have completions but too few
-                        let end = Date.now() + 5000;
-                        while (completionContext.incomplete && completions.items.length == 0 && Date.now() < end)
-                        {
-                            liberator.threadYield();
-                            completions = completionContext.allItems;
-                        }
-
-                        if (completions.items.length == 0) // still not more matches
-                        {
-                            liberator.beep();
-                            // prevent tab from moving to the next field:
-                            event.preventDefault();
-                            event.stopPropagation();
-                            return false;
-                        }
-                    }
-
-                    if (full)
-                    {
-                        if (event.shiftKey)
-                        {
-                            completionIndex--;
-                            if (completionIndex < -1)
-                                completionIndex = completions.items.length - 1;
-                        }
-                        else
-                        {
-                            completionIndex++;
-                            if (completionIndex > completions.items.length)
-                                completionIndex = 0;
-                        }
-
-                        statusTimer.tell();
-                    }
-
-                    // the following line is not inside if (hasList) for list:longest,full
-                    completionList.selectItem(completionIndex);
-                    if (hasList)
-                        completionList.show();
-
-                    if ((completionIndex == -1 || completionIndex >= completions.items.length) && !longest) // wrapped around matches, reset command line
-                    {
-                        if (full)
-                            setCommand(completionPrefix + completionPostfix);
-                    }
-                    else
-                    {
-                        var compl = null;
-                        if (longest && completions.items.length > 1)
-                            compl = completion.longestSubstring;
-                        else if (full)
-                            compl = completions.items[completionIndex].text;
-                        else if (completions.items.length == 1)
-                            compl = completions.items[0].text;
-
-                        if (compl)
-                        {
-                            setCommand(command.substring(0, completions.start) + compl + completionPostfix);
-                            commandWidget.selectionStart = commandWidget.selectionEnd = completions.start + compl.length;
-                            if (longest)
-                                liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
-
-                            // Start a new completion in the next iteration. Useful for commands like :source
-                            // RFC: perhaps the command can indicate whether the completion should be restarted
-                            //      -> should be doable now, since the completion items are objects
-                            // Needed for :source to grab another set of completions after a file/directory has been filled out
-                            // if (completions.length == 1 && !full)
-                            //     completionIndex = UNINITIALIZED;
-                        }
-                    }
+                    tabTimer.tell(event);
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
@@ -1322,12 +1325,17 @@ function ItemList(id) //{{{
                 }
                 </div>
             </div>);
-        noCompletions =  div.childNodes[0];
-        completionBody = div.childNodes[1];
+        noCompletions =  div.childNodes[1];
+        completionBody = div.childNodes[3];
         items.contextList.forEach(function (context) {
             if (!context.items.length)
                 return;
-            context.cache.dom = dom(<div class="hl-Completions">{context.createRow(context.title || [], "hl-CompTitle")}</div>);
+            context.cache.dom = dom(<div>
+                    <div class="hl-Completions">
+                        {context.createRow(context.title || [], "hl-CompTitle")}
+                    </div>
+                    <div/>
+                </div>);
             completionBody.appendChild(context.cache.dom);
         });
     }
@@ -1340,9 +1348,12 @@ function ItemList(id) //{{{
      */
     function fill(offset)
     {
+        function dom(xml) util.xmlToDom(xml, doc);
         let diff = offset - startIndex;
         if (items == null || offset == null || diff == 0 || offset < 0)
             return;
+
+        let stuff = dom(<div class="hl-Completions"/>);
 
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
@@ -1361,16 +1372,19 @@ function ItemList(id) //{{{
             let dom = context.cache.dom;
             if (!dom)
                 return;
-            while (dom.childNodes[1])
-                dom.removeChild(dom.childNodes[1]);
+            let d = stuff.cloneNode(true);
             for (let [,row] in Iterator(getRows(context)))
-                dom.appendChild(row);
+                d.appendChild(row);
+            dom.replaceChild(d, dom.childNodes[3]);
         });
 
+        try {
         noCompletions.style.display = off > 0 ? "none" : "block";
+        } catch(e) {}
 
         let dom = div.cloneNode(true);
         completionElements = dom.getElementsByClassName("hl-CompItem");
+        completionBody = dom.childNodes[3];
         doc.body.replaceChild(dom, doc.body.firstChild);
 
         autoSize();
