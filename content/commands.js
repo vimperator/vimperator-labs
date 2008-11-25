@@ -431,6 +431,16 @@ function Commands() //{{{
                  integers and those below as strings, even if the former are
                  currently only used with 'literal'. I might be missing
                  something? -- djk
+
+                 The reason I chose "+" was that some functions were already
+                 using it when they expected a literal arg. "?" probably makes
+                 more sense.  I changed it to integers only in the cases where
+                 literal is used, because then it has a different meaning, i.e.,
+                 if we have this many args, push the rest of the string into the
+                 last arg, bug don't worry whether we actually have that many
+                 args.  Using strings gave the wrong results, because "1" died
+                 if you didn't have 1 arg, but "2" didn't die if you didn't have
+                 2. Perhaps it should have a separate option. --Kris
                 */
                 var literalIndex = argCount == "+" ? 0 : Math.max(argCount - 1, 0);
 
