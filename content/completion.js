@@ -177,6 +177,7 @@ CompletionContext.prototype = {
             return [];
         if (this.cache.filtered && this.cache.filter == this.filter)
             return this.cache.filtered;
+        this.cache.rows = [];
         let items = this.completions;
         if (this.regenerate)
             items = this.generate();
@@ -1223,7 +1224,7 @@ function Completion() //{{{
                     return files.map(
                         function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
                                          file.isDirectory() ? "Directory" : "File",
-                                         "moz-icon:" + (file.leafName.match(/\.\w+$/) || "")]
+                                         "moz-icon://" + makeFileURI(file).path]
                     );
                 }
                 catch (e) {}
