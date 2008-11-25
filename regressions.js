@@ -47,7 +47,7 @@ let tests = [
     //   verify: function () Tests.getOutput() == "testerr" },
     { cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
       verify: function () this._initialPos.y != Tests.getBufferPosition().y,
-      init: function () this._initialPos = Tests.getBufferPosition() } 
+      init: function () this._initialPos = Tests.getBufferPosition() }
 ];
 
 // these functions highly depend on the liberator API, so use ex command tests whenever possible
@@ -96,21 +96,21 @@ commands.addUserCommand(["regr[essions]"],
         // TODO: bang support to either: a) run commands like deleting bookmarks which
         //       should only be done in a clean profile or b) run functions and not
         //       just ex command tests; Yet to be decided
-        
-        function run () 
+
+        function run ()
         {
-			let now = Date.now();
+            let now = Date.now();
             let totalTests = tests.length + functions.length;
-			let successfulTests = 0;
+            let successfulTests = 0;
             let currentTest = 0;
 
-			// TODO: might want to unify 'tests' and 'functions' handling
+            // TODO: might want to unify 'tests' and 'functions' handling
             // 1.) run commands and mappings tests
-			for (let [, test] in Iterator(tests))
-			{
-				currentTest++;
-				if (count >= 1 && currentTest != count)
-					continue;
+            for (let [, test] in Iterator(tests))
+            {
+                currentTest++;
+                if (count >= 1 && currentTest != count)
+                    continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription);
@@ -127,27 +127,27 @@ commands.addUserCommand(["regr[essions]"],
 
                 if (!test.verify())
                     liberator.echoerr("Test " + currentTest + " failed: " + testDescription);
-				else
-					successfulTests++;
+                else
+                    successfulTests++;
             }
 
             // 2.) Run function tests
-			for (let [, func] in Iterator(functions))
-			{
-				currentTest++;
-				if (count >= 1 && currentTest != count)
-					continue;
+            for (let [, func] in Iterator(functions))
+            {
+                currentTest++;
+                if (count >= 1 && currentTest != count)
+                    continue;
 
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
                 Tests.resetEnvironment();
 
                 if (!func())
                     liberator.echoerr("Test " + currentTest + " failed!");
-				else
-					successfulTests++;
+                else
+                    successfulTests++;
             }
 
-			liberator.echomsg(successfulTests + " of " + (count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
+            liberator.echomsg(successfulTests + " of " + (count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
             liberator.execute(":messages");
         }
 
@@ -158,8 +158,8 @@ commands.addUserCommand(["regr[essions]"],
     },
     {
         bang: true,
-		argCount: 0,
-		count: true
+        argCount: 0,
+        count: true
     });
 
 // vimperator: set et ts=4 sw=4 :
