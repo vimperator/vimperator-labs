@@ -1238,7 +1238,8 @@ function Completion() //{{{
                     return files.map(
                         function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
                                          file.isDirectory() ? "Directory" : "File",
-                                         "moz-icon://" + makeFileURI(file).path]
+                                         file.isDirectory() ? "resource://gre/res/html/folder.png"
+                                                            : "moz-icon://" + makeFileURI(file).path]
                     );
                 }
                 catch (e) {}
