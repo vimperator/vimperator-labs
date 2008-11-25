@@ -824,8 +824,8 @@ const liberator = (function () //{{{
         {
             let ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
                                .getService(Components.interfaces.nsIWindowWatcher);
-            if (window == ww.activeWindow && document.commandDispatcher.focusedElement && clearFocusedElement)
-                document.commandDispatcher.focusedElement.blur();
+            if (window != ww.activeWindow)
+                return;
 
             // TODO: make more generic
             try
@@ -847,6 +847,8 @@ const liberator = (function () //{{{
                 if (frame && frame.top == window.content)
                     elem = frame;
             }
+            if (clearFocusedElement && document.commandDispatcher.focusedElement)
+                document.commandDispatcher.focusedElement.blur();
             if (elem && (elem != document.commandDispatcher.focusedElement))
                 elem.focus();
         },
