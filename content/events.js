@@ -122,7 +122,7 @@ function AutoCommands() //{{{
         "Apply the autocommands matching the specified URL pattern to all buffers",
         function (args)
         {
-            commands.get("doautocmd").action.call(this, args.string);
+            commands.get("doautocmd").action.call(this, args);
         },
         {
             completer: function (context) completion.autocmdEvent(context.filter),
