@@ -316,18 +316,8 @@ function CommandLine() //{{{
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfl",
         {
-            completer: function completer(filter)
-            {
-                return [
-                    ["s", "Search engines and keyword URLs"],
-                    ["f", "Local files"],
-                    ["b", "Bookmarks"],
-                    ["h", "History"],
-                    ["l", "Firefox location bar entries (bookmarks and history sorted in an intelligent way)"],
-                    ["S", "Suggest engines"]
-                ];
-            },
-            validator: function validator(value) !/[^sfbhSl]/.test(value)
+            completer: function completer(filter) [k for each (k in completion.urlCompleters)],
+            validator: function validator(value) value in completion.urlCompleters
         });
 
     options.add(["history", "hi"],

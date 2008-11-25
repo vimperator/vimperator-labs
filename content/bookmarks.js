@@ -744,33 +744,34 @@ function History() //{{{
 
     return {
 
+        get format() bookmarks.format,
+
         get service() historyService,
 
         get: function (filter, maxItems)
         {
-            let items = [];
-
             // no query parameters will get all history
             let query = historyService.getNewQuery();
-            query.searchTerms = filter;
-
             let options = historyService.getNewQueryOptions();
+
+            for (let [k, v] in Iterator(filter))
+                query[k] = v;
             options.sortingMode = options.SORT_BY_DATE_DESCENDING;
+            options.resultType = options.RESULTS_AS_URI;
             if (maxItems > 0)
                 options.maxResults = maxItems;
 
             // execute the query
             let root = historyService.executeQuery(query, options).root;
             root.containerOpen = true;
-            for (let i in util.range(0, root.childCount))
-            {
+            let items = util.map(util.range(0, root.childCount), function (i) {
                 let node = root.getChild(i);
-                if (node.type == node.RESULT_TYPE_URI)
-                    items.push({ url: node.uri,
-                                 title: node.title,
-                                 icon: node.icon ? node.icon.spec : DEFAULT_FAVICON
-                               })
-            }
+                return {
+                    url: node.uri,
+                    title: node.title,
+                    icon: node.icon ? node.icon.spec : DEFAULT_FAVICON
+                }
+            });
             root.containerOpen = false; // close a container after using it!
 
             return items;
@@ -821,7 +822,7 @@ function History() //{{{
             if (openItems)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.genericTable(items, bookmarks.format);
+            let list = template.genericTable(items, this.format);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     };

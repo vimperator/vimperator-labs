@@ -69,12 +69,12 @@ function CompletionContext(editor, name, offset)
         else
             this.editor = editor;
         this.filterFunc = completion.filter;
-        this.title = ["Completions"];
         this.keys = { text: 0, description: 1, icon: "icon" };
-        this.top = this;
         this.offset = offset || 0;
-        this.tabPressed = false;
         this.onUpdate = function () true;
+        this.tabPressed = false;
+        this.title = ["Completions"];
+        this.top = this;
         this.contexts = { name: this };
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
         this.selectionTypes = {};
@@ -117,6 +117,9 @@ CompletionContext.prototype = {
 
     get createRow() this._createRow || template.completionRow, // XXX
     set createRow(createRow) this._createRow = createRow,
+
+    get filterFunc() this._filterFunc || function (items) items,
+    set filterFunc(val) this._filterFunc = val,
 
     get regenerate() this._generate && (!this.completions || this.cache.key != this.key || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.cache.offset },
@@ -882,7 +885,7 @@ function Completion() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    return {
+    let self = {
 
         // FIXME
         get getKey() this._getKey || function (item, key) item[{ text: 0, description: 1, icon: 2 }[key]],
@@ -1167,7 +1170,7 @@ function Completion() //{{{
                         if (compObject != null)
                         {
                             cmdContext.advance(compObject.start);
-                            cmdContext.filterFunc = function (k) k;
+                            cmdContext.filterFunc = null;
                             cmdContext.completions = compObject.items;
                         }
                     }
@@ -1232,11 +1235,49 @@ function Completion() //{{{
             }
         },
 
+        history: function (context)
+        {
+            context.format = history.format;
+            context.title = ["History"]
+            context.background = true;
+            context.regenerate = true;
+            context.generate = function () history.get({ searchTerms: context.filter });
+        },
+
         get javascriptCompleter() javascript,
 
         javascript: function _javascript(context)
         {
             return javascript.complete(context);
+        },
+
+        location: function (context)
+        {
+            if (!completionService)
+                return
+            context.title = ["Smart Completions"];
+            context.keys.icon = 2;
+            context.incomplete = true;
+            context.hasItems = context.completions.length > 0; // XXX
+            context.filterFunc = null;
+            let timer = new util.Timer(50, 100, function (result) {
+                context.completions = [
+                    [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
+                        for (i in util.range(0, result.matchCount))
+                ];
+                context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
+                let filter = context.filter;
+                context.completions.forEach(function ([item]) buildSubstrings(item, filter));
+            });
+            completionService.stopSearch();
+            completionService.startSearch(context.filter, "", context.result, {
+                onSearchResult: function onSearchResult(search, result) {
+                    context.result = result;
+                    timer.tell(result);
+                    if (result.searchResult <= result.RESULT_SUCCESS)
+                        timer.flush();
+                }
+            });
         },
 
         macro: function macro(filter)
@@ -1272,34 +1313,21 @@ function Completion() //{{{
             let item = keywords.filter(function (k) k.keyword == keyword)[0];
             if (item && item.url.indexOf("%s") > -1)
                 context.fork("keyword/" + keyword, keyword.length + space.length, function (context) {
+                    context.format = history.format;
                     context.title = [keyword + " Quick Search"];
                     context.background = true;
                     context.anchored = true;
+                    context.quote = decodeURIComponent;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
-                        let history = modules.history.service;
-                        let query = history.getNewQuery();
-                        let opts = history.getNewQueryOptions();
 
-                        query.uri = window.makeURI(begin);
-                        query.uriIsPrefix = true;
-                        opts.resultType = opts.RESULTS_AS_URI;
-                        opts.queryType = opts.QUERY_TYPE_HISTORY;
-
-                        let results = history.executeQuery(query, opts);
-                        let root = results.root;
-                        root.containerOpen = true;
-                        let result = util.map(util.range(0, root.childCount), function (i) {
-                            let child = root.getChild(i);
-                            let rest = child.uri.length - end.length;
-                            let query = child.uri.substring(begin.length, rest);
-                            if (child.uri.substr(rest) == end && query.indexOf("&") == -1)
-                                return [decodeURIComponent(query.replace("+", "%20")),
-                                        child.title,
-                                        child.icon];
+                        return history.get({ uri: window.makeURI(begin), uriIsPrefix: true }).map(function (item) {
+                            let rest = item.url.length - end.length;
+                            let query = item.url.substring(begin.length, rest);
+                            item.url = query;
+                            if (item.url.substr(rest) == end && query.indexOf("&") == -1)
+                                return item;
                         }).filter(function (k) k);
-                        root.containerOpen = false;
-                        return result;
                     };
                 });
         },
@@ -1397,43 +1425,16 @@ function Completion() //{{{
             if (skip)
                 context.advance(skip[0].length);
 
-            let opts = {
-                s: this.search,
-                f: this.file,
-                S: this.searchEngineSuggest,
-                b: this.bookmark,
-                l: function l(context)
-                {
-                    if (!completionService)
-                        return
-                    context.title = ["Smart Completions"];
-                    context.keys.icon = 2;
-                    context.incomplete = true;
-                    context.hasItems = context.completions.length > 0; // XXX
-                    context.filterFunc = function (items) items;
-                    let timer = new util.Timer(50, 100, function (result) {
-                        context.completions = [
-                            [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
-                                for (i in util.range(0, result.matchCount))
-                        ];
-                        context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
-                        let filter = context.filter;
-                        context.completions.forEach(function ([item]) buildSubstrings(item, filter));
-                    });
-                    completionService.stopSearch();
-                    completionService.startSearch(context.filter, "", context.result, {
-                        onSearchResult: function onSearchResult(search, result) {
-                            context.result = result;
-                            timer.tell(result);
-                            if (result.searchResult <= result.RESULT_SUCCESS)
-                                timer.flush();
-                        }
-                    });
-                }
-            };
             // Will, and should, throw an error if !(c in opts)
             Array.forEach(complete || options["complete"],
-                function (c) context.fork(c, 0, opts[c], completion));
+                function (c) context.fork(c, 0, completion.urlCompleters[c].completer, completion));
+        },
+
+        urlCompleters: {},
+
+        addUrlCompleter: function (opt)
+        {
+            this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
         },
 
         // FIXME: Temporary
@@ -1461,6 +1462,16 @@ function Completion() //{{{
         }
     // }}}
     };
+
+    const UrlCompleter = new Struct("name", "description", "completer");
+    self.addUrlCompleter("S", "Suggest engines", self.searchEngineSuggest);
+    self.addUrlCompleter("b", "Bookmarks", self.bookmark);
+    self.addUrlCompleter("h", "History", self.history);
+    self.addUrlCompleter("f", "Local files", self.file);
+    self.addUrlCompleter("l", "Firefox location bar entries (bookmarks and history sorted in an intelligent way)", self.location);
+    self.addUrlCompleter("s", "Search engines and keyword URLs", self.search);
+
+    return self;
     //}}}
 }; //}}}
 
