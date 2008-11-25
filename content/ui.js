@@ -107,13 +107,13 @@ function CommandLine() //{{{
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
 
-    var statusTimer = new util.Timer(5, 100, function () {
+    var statusTimer = new util.Timer(5, 100, function statusTell() {
         if (completionIndex >= completions.items.length)
             statusline.updateProgress("");
         else
             statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.items.length);
     });
-    var autocompleteTimer = new util.Timer(201, 300, function (tabPressed) {
+    var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
         if (events.feedingKeys)
             return;
         completionContext.reset();
@@ -121,7 +121,7 @@ function CommandLine() //{{{
         commandline.setCompletions(completionContext.allItems);
     });
 
-    var tabTimer = new util.Timer(10, 10, function (event) {
+    var tabTimer = new util.Timer(10, 10, function tabTell(event) {
         let command = commandline.getCommand();
 
         // always reset our completion history so up/down keys will start with new values
@@ -1329,7 +1329,12 @@ function ItemList(id) //{{{
 
         noCompletions =  div.getElementsByTagName("div")[0];
         completionBody = div.getElementsByTagName("div")[1];
-        items.contextList.forEach(function (context) {
+
+        // 1:
+        doc.body.replaceChild(div, doc.body.firstChild);
+        // 2:
+
+        items.contextList.forEach(function init_eachContext(context) {
             if (!context.items.length)
                 return;
             context.cache.dom = dom(<div>
@@ -1353,7 +1358,7 @@ function ItemList(id) //{{{
         XML.ignoreWhiteSpace = false;
         let diff = offset - startIndex;
         if (items == null || offset == null || diff == 0 || offset < 0)
-            return;
+            return false;
 
         let stuff = dom(<div class="hl-Completions"/>);
 
@@ -1369,27 +1374,30 @@ function ItemList(id) //{{{
             return context.getRows(offset - start, endIndex - start, doc);
         }
 
-        items.contextList.forEach(function (context) {
+        items.contextList.forEach(function fill_eachContext(context) {
             let dom = context.cache.dom;
             if (!dom)
                 return;
             let d = stuff.cloneNode(true);
             for (let [,row] in Iterator(getRows(context)))
                 d.appendChild(row);
-
-            //liberator.dump(util.map(util.range(0, dom.childNodes.length), function (i) elemToString(dom.childNodes[i])));
-
             dom.replaceChild(d, dom.childNodes[3] || dom.childNodes[1]);
         });
 
         noCompletions.style.display = off > 0 ? "none" : "block";
 
-        let node = div.cloneNode(true);
-        completionElements = node.getElementsByClassName("hl-CompItem");
-        completionBody = node.getElementsByTagName("div")[1];
-        doc.body.replaceChild(node, doc.body.firstChild);
+        // 1:
+        completionElements = div.getElementsByClassName("hl-CompItem");
+
+        // 2:
+        //let node = div.cloneNode(true);
+        //completionElements = node.getElementsByClassName("hl-CompItem");
+        //completionBody = node.getElementsByTagName("div")[1];
+        //doc.body.replaceChild(node, doc.body.firstChild);
+        //completionElements = node.getElementsByClassName("hl-CompItem");
 
         autoSize();
+        return true;
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1433,6 +1441,8 @@ function ItemList(id) //{{{
             //if (container.collapsed) // fixme
             //    return;
 
+            //let now = Date.now();
+
             let len = items.allItems.items.length;
             if (index == -1 || index == len) // wrapped around
             {
@@ -1457,11 +1467,14 @@ function ItemList(id) //{{{
             if (selIndex > -1)
                 getCompletion(selIndex).removeAttribute("selected");
 
-            fill(newOffset);
+            let res = fill(newOffset);
             selIndex = index;
             getCompletion(index).setAttribute("selected", "true");
 
-            return;
+            //if (index == 0)
+            //    this.start = now;
+            //if (index == Math.min(len - 1, 100))
+            //    liberator.dump({ time: Date.now() - this.start });
         },
 
         onEvent: function onEvent(event) false
