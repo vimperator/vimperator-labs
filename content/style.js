@@ -388,7 +388,7 @@ liberator.registerObserver("load_commands", function ()
         },
         {
             argCount: 1,
-            completer: function (context) completion.colorScheme(context.filter)
+            completer: function (context) completion.colorScheme(context)
         });
 
     commands.add(["sty[le]"],

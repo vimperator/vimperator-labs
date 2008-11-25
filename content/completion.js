@@ -54,7 +54,7 @@ function CompletionContext(editor, name, offset)
         this.parent = parent;
         this.offset = parent.offset + (offset || 0);
         this.keys = util.cloneObject(this.parent.keys);
-        ["compare", "editor", "filterFunc", "keys", "title", "top"].forEach(function (key)
+        ["compare", "editor", "filterFunc", "keys", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
@@ -187,18 +187,17 @@ CompletionContext.prototype = {
             return items;
 
         let self = this;
-        let text = function (item) item[self.keys["text"]];
-        if (self.quote)
-            text = function (item) self.quote(item[self.keys["text"]]);
 
         completion.getKey = this.getKey; // XXX
-        this.cache.filtered = this.filterFunc(items.map(function (item) ({ text: text(item), item: item })),
+        let filtered = this.filterFunc(items.map(function (item) ({ text: item[self.keys["text"]], item: item })),
                     this.filter, this.anchored);
-        if (options.get("wildoptions").has("sort"))
-            this.cache.filtered.sort(this.compare);
         completion.getKey = null;
 
-        return this.cache.filtered;
+        if (self.quote)
+            filtered.forEach(function (item) item.text = self.quote(item.text));
+        if (options.get("wildoptions").has("sort"))
+            filtered.sort(this.compare);
+        return this.cache.filtered = filtered;
     },
 
     get process() // FIXME
@@ -220,6 +219,9 @@ CompletionContext.prototype = {
     advance: function advance(count)
     {
         this.offset += count;
+        // XXX
+        if (this._filter)
+            this._filter = this._filter.substr(count);
     },
 
     getItems: function (start, end)
@@ -1112,14 +1114,16 @@ function Completion() //{{{
             });
         },
 
-        colorScheme: function colorScheme(filter)
+        colorScheme: function colorScheme(context)
         {
-            let rtp = options["runtimepath"].split(",");
-            let schemes = rtp.map(function (path) // FIXME: Now! Very, very broken.
-                [[c[0].replace(/\.vimp$/, ""), ""]
-                    for each (c in completion.file(path + "/colors/", true)[1])]);
-
-            return [0, completion.filter(util.Array.flatten(schemes), filter)];
+            options["runtimepath"].split(",").forEach(function (path) {
+                context.fork(path, 0, null, function (context) {
+                    context.filter = path + "/colors/" + context.filter;
+                    completion.file(context, true);
+                    context.title = [path + "/colors/"];
+                    context.quote = function (text) text.replace(/\.vimp$/, "");
+                });
+            });
         },
 
         command: function command(context)
@@ -1215,6 +1219,7 @@ function Completion() //{{{
             context.keys = { text: 0, description: 1, icon: 2 };
             context.anchored = true;
             context.key = dir;
+            context.quote = function (text) text.replace(" ", "\\ ", "g");
             context.generate = function generate()
             {
                 context.cache.dir = dir;
@@ -1230,7 +1235,7 @@ function Completion() //{{{
                     }
 
                     return files.map(
-                        function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
+                        function (file) [tail ? file.leafName : dir + file.leafName,
                                          file.isDirectory() ? "Directory" : "File",
                                          file.isDirectory() ? "resource://gre/res/html/folder.png"
                                                             : "moz-icon://" + file.leafName]
