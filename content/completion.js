@@ -397,8 +397,6 @@ function Completion() //{{{
             if (key in cache)
                 return cache[key];
 
-            // Can't use the cache. Build a member list.
-            let compl = [];
             // Things we can dereference
             if (["object", "string", "function"].indexOf(typeof obj) == -1)
                 return [];
@@ -414,12 +412,20 @@ function Completion() //{{{
                 obj = obj.wrappedJSObject;
             // v[0] in orig and orig[v[0]] catch different cases. XPCOM
             // objects are problematic, to say the least.
-            compl.push([v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)])
+            compl = [v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)];
             // And if wrappedJSObject happens to be available,
             // return that, too.
             if (orig.wrappedJSObject)
-                compl.push([["wrappedJSObject", obj]]);
-            compl = util.Array.flatten(compl);
+                compl.push(["wrappedJSObject", obj]);
+            // Parse keys for sorting
+            compl.forEach(function (item) {
+                key = item[0];
+                if (!isNaN(key))
+                    key = parseInt(key);
+                else if (/^[A-Z_]+$/.test(key))
+                    key = "";
+                item.key = key;
+            });
             return cache[key] = compl;
         }
 
@@ -428,7 +434,6 @@ function Completion() //{{{
             context.title = [name];
             context.anchored = anchored;
             context.filter = key;
-            context.process = [null, function highlight(item, v) template.highlight(v, true)];
 
             if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
                 key = util.escapeString(key.substr(offset), "");
@@ -606,6 +611,14 @@ function Completion() //{{{
         {
             this.context = context;
             let string = context.filter;
+
+            context.process = [null, function highlight(item, v) template.highlight(v, true)];
+            context.compare = function ({item: {key: a}}, {item: {key: b}})
+            {
+                if (!isNaN(a) && !isNaN(b))
+                    return a - b;
+                return String.localeCompare(a, b);
+            }
 
             let self = this;
             try

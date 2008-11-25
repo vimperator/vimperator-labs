@@ -56,7 +56,8 @@ const template = {
 
         if (class)
         {
-            var [text, desc] = item;
+            var text = item[0] || "";
+            var desc = item[1] || "";
         }
         else
         {
@@ -65,8 +66,8 @@ const template = {
         }
 
         return <ul class={class || "hl-CompItem"}>
-                   <li class="hl-CompResult">{text || ""}</li>
-                   <li class="hl-CompDesc">{desc || ""}</li>
+                   <li class="hl-CompResult">{text}</li>
+                   <li class="hl-CompDesc">{desc}</li>
                </ul>;
     },
 
