@@ -793,7 +793,7 @@ lookup:
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript(uri.spec, modules);
+                        loader.loadSubScript(uri.spec, plugins);
                     }
                     catch (e)
                     {

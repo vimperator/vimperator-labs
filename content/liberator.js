@@ -27,6 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 const plugins = {};
+plugins.__proto__ = modules;
 
 const liberator = (function () //{{{
 {
