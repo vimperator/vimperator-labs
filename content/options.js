@@ -965,13 +965,11 @@ function Options() //{{{
                         continue;
 
                     value = options.getPref(pref);
-                    if (typeof value == "string")
-                        value = value.substr(0, 100).replace(/\n/g, " ");
 
                     let option = {
                         isDefault: !userValue,
                         default:   loadPreference(pref, null, true),
-                        value:     <>={template.highlight(value)}</>,
+                        value:     <>={template.highlight(value, true, 100)}</>,
                         name:      pref,
                         pre:       "\u00a0\u00a0" /* Unicode nonbreaking space. */
                     };

@@ -354,7 +354,7 @@ function Tabs() //{{{
         {
             bang: true,
             count: true,
-            completer: function (context) completion.buffer(context.filter),
+            completer: function (context) completion.buffer(context),
             literal: true
         });
 
@@ -480,7 +480,7 @@ function Tabs() //{{{
             {
                 bang: true,
                 count: true,
-                completer: function (context) completion.buffer(context.filter),
+                completer: function (context) completion.buffer(context),
                 literal: true
             });
 
@@ -748,8 +748,7 @@ function Tabs() //{{{
 
         list: function (filter)
         {
-            let list = template.generic(completion.buffer(filter)[2]);
-            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+            template.listCompleter("buffer", filter);
         },
 
         // wrap causes the movement to wrap around the start and end of the tab list

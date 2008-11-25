@@ -394,10 +394,7 @@ const util = { //{{{
         {
             if (Date.now() > endTime)
             {
-                liberator.interrupted = false;
-                liberator.threadYield();
-                if (liberator.interrupted)
-                    throw new Error("Interrupted");
+                liberator.threadYield(false, true);
                 endTime = Date.now() + time;
             }
             yield start++;

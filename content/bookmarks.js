@@ -301,9 +301,7 @@ function Bookmarks() //{{{
 
             if (bookmarks.add(false, title, url, keyword, tags, special))
             {
-                var extra = "";
-                if (title != url)
-                    extra = " (" + title + ")";
+                let extra = (title == url) ? "" : " (" + title + ")";
                 liberator.echo("Added bookmark: " + url + extra, commandline.FORCE_SINGLELINE);
             }
             else
@@ -561,26 +559,21 @@ function Bookmarks() //{{{
         // if openItems is true, open the matching bookmarks items in tabs rather than display
         list: function (filter, tags, openItems)
         {
-            var items = this.get(filter, tags, false);
-            if (items.length == 0)
-            {
-                if (filter.length > 0 && tags.length > 0)
-                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
-                else if (filter.length > 0)
-                    liberator.echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
-                else if (tags.length > 0)
-                    liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
-                else
-                    liberator.echoerr("No bookmarks set");
+            if (!openItems)
+                return template.listCompleter("bookmark", filter, tags);
 
-                return;
-            }
+            let items = this.get(filter, tags, false);
+            if (items.length)
+                return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
 
-            if (openItems)
-                return liberator.open([i.url for each (i in items)], liberator.NEW_TAB);
-
-            let list = template.genericTable(items, this.format);
-            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+            if (filter.length > 0 && tags.length > 0)
+                liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
+            else if (filter.length > 0)
+                liberator.echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
+            else if (tags.length > 0)
+                liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
+            else
+                liberator.echoerr("No bookmarks set");
         }
     };
     //}}}
@@ -808,22 +801,17 @@ function History() //{{{
         // if openItems is true, open the matching history items in tabs rather than display
         list: function (filter, openItems)
         {
-            var items = this.get(filter, 1000);
-            if (items.length == 0)
-            {
-                if (filter.length > 0)
-                    liberator.echoerr("E283: No history matching \"" + filter + "\"");
-                else
-                    liberator.echoerr("No history set");
+            if (!openItems)
+                return template.listCompleter("history", filter);
 
-                return;
-            }
-
-            if (openItems)
+            var items = this.get({ searchTerms: filter }, 1000);
+            if (items.length)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
-            let list = template.genericTable(items, this.format);
-            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+            if (filter.length > 0)
+                liberator.echoerr("E283: No history matching \"" + filter + "\"");
+            else
+                liberator.echoerr("No history set");
         }
     };
     //}}}
@@ -942,6 +930,7 @@ function QuickMarks() //{{{
         add: function (qmark, location)
         {
             qmarks.set(qmark, location);
+            liberator.echo("Added Quick Mark '" + qmark + "': " + location);
         },
 
         remove: function (filter)
@@ -997,9 +986,7 @@ function QuickMarks() //{{{
             }
 
             let items = [[mark, qmarks.get(mark)] for ([k, mark] in Iterator(marks))];
-
-            let list = template.genericTable(items, { title: ["QuickMark", "URL"] });
-            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+            template.genericTable(items, { title: ["QuickMark", "URL"] });
         }
     };
     //}}}

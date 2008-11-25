@@ -117,7 +117,7 @@ function CommandLine() //{{{
         if (events.feedingKeys)
             return;
         completionContext.reset();
-        completionContext.fork("ex", 0, completion.ex, completion);
+        completionContext.fork("ex", 0, completion, "ex");
         commandline.setCompletions(completionContext.allItems);
     });
 
@@ -261,7 +261,7 @@ function CommandLine() //{{{
     liberator.registerCallback("complete", modes.EX, function (str) {
         completionContext.reset();
         completionContext.tabPressed = true;
-        completionContext.fork("ex", 0, completion.ex, completion);
+        completionContext.fork("ex", 0, completion, "ex");
         return completionContext.allItems;
     });
     liberator.registerCallback("change", modes.EX, function (command) {

@@ -149,7 +149,7 @@ CompletionContext.prototype = {
             this.incomplete = true;
             liberator.callFunctionInThread(null, function () {
                 let items = self.generate();
-                if (self.backgroundLock != lock)
+                if (self.cache.backgroundLock != lock)
                     return;
                 self.incomplete = false;
                 self.completions = items;
@@ -244,12 +244,14 @@ CompletionContext.prototype = {
             function (i) cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc));
     },
 
-    fork: function fork(name, offset, completer, self)
+    fork: function fork(name, offset, self, completer)
     {
+        if (typeof completer == "string")
+            completer = self[completer]
         let context = new CompletionContext(this, name, offset);
         this.contextList.push(context);
         if (completer)
-            return completer.apply(self, [context].concat(Array.slice(arguments, 4)));
+            return completer.apply(self || this, [context].concat(Array.slice(arguments, 4)));
         return context;
     },
 
@@ -683,13 +685,13 @@ function Completion() //{{{
                 for (let [,obj] in Iterator(objects))
                 {
                     obj[3] = compl || this.objectKeys(obj);
-                    this.context.fork(obj[1], top[OFFSET], this.filter, this,
+                    this.context.fork(obj[1], top[OFFSET], this, "filter",
                         obj[3], obj[1], true, key + (string || ""), last, key.length);
                 }
                 for (let [,obj] in Iterator(objects))
                 {
                     obj[1] += " (substrings)";
-                    this.context.fork(obj[1], top[OFFSET], this.filter, this,
+                    this.context.fork(obj[1], top[OFFSET], this, "filter",
                         obj[3], obj[1], false, key + (string || ""), last, key.length);
                 }
             }
@@ -1063,15 +1065,19 @@ function Completion() //{{{
             }
         },
 
-        buffer: function buffer(filter)
+        buffer: function buffer(context)
         {
-            // FIXME: liberator.has("tabs")
-            let items = [];
-            let xml = <table/>
-            filter = (filter || "").toLowerCase();
+            filter = context.filter.toLowerCase();
+            context.title = ["Buffer", "URL"];
+            context.keys = { text: "text", description: "url", icon: "icon" };
+            let process = context.process[0];
+            context.process = [function ({ text: text, item: item }) <>
+                        <span style="display: inline-block; text-align: right; width: 3ex">{item.i}</span>
+                        <span class="hl-Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.indicator}</span>
+                        { process.call(this, { item: item, text: text }) }
+                    </>];
 
-            for (let [i, browser] in tabs.browsers)
-            {
+            context.completions = util.map(tabs.browsers, function ([i, browser]) {
                 if (i == tabs.index())
                    indicator = "%"
                 else if (i == tabs.index(tabs.alternate))
@@ -1079,43 +1085,18 @@ function Completion() //{{{
                 else
                    indicator = " ";
 
+                let tab = tabs.getTab(i);
                 i = i + 1;
-                let title = "";
-                try
-                {
-                    title = browser.contentDocument.title;
-                }
-                catch (e) {}
-
                 let url = browser.contentDocument.location.href;
 
-                if (title.indexOf(filter) != -1 || url.indexOf(filter) != -1 ||
-                        String.indexOf(i, filter) != -1)
-                {
-                    if (title == "")
-                        title = "(Untitled)";
-
-                    items.push([[i + ": " + title, i + ": " + url], url]);
-
-                    let icon = "";
-                    if (liberator.has("bookmarks"))
-                        icon = bookmarks.getFavicon(url);
-
-                    xml.* +=
-                        <ul class="hl-CompItem">
-                            <li align="right">  {i}</li>
-                            <li><span class="hl-Indicator"> {indicator} </span></li>
-                            <li class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</li>
-                            <li class="hl-CompResult" style="width: 250px; max-width: 500px; overflow: hidden">{title}</li>
-                            <li class="hl-CompDesc"><a href="#" class="hl-URL buffer-list">{url}</a></li>
-                        </ul>;
-                }
-            }
-
-            if (!filter)
-                return [0, items.map(function ([a, b]) [a[0], b]), xml];
-
-            return [0, buildLongestCommonSubstring(items, filter), xml];
+                return {
+                    text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
+                    url:  url,
+                    indicator: indicator,
+                    i: i,
+                    icon: tab.image
+                };
+            });
         },
 
         colorScheme: function colorScheme(filter)
@@ -1174,7 +1155,7 @@ function Completion() //{{{
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length)
             if (!junk)
-                return context.fork("", 0, this.command);
+                return context.fork("", 0, this, "command");
 
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
@@ -1239,7 +1220,7 @@ function Completion() //{{{
                         function (file) [(tail ? file.leafName : dir + file.leafName).replace(" ", "\\ ", "g"),
                                          file.isDirectory() ? "Directory" : "File",
                                          file.isDirectory() ? "resource://gre/res/html/folder.png"
-                                                            : "moz-icon://" + makeFileURI(file).path]
+                                                            : "moz-icon://" + file.leafName]
                     );
                 }
                 catch (e) {}
@@ -1337,12 +1318,12 @@ function Completion() //{{{
             if (!space)
                 return;
 
-            context.fork("suggest", keyword.length + space.length, this.searchEngineSuggest, this,
+            context.fork("suggest", keyword.length + space.length, this, "searchEngineSuggest",
                     keyword, true);
 
             let item = keywords.filter(function (k) k.keyword == keyword)[0];
             if (item && item.url.indexOf("%s") > -1)
-                context.fork("keyword/" + keyword, keyword.length + space.length, function (context) {
+                context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
                     context.background = true;
@@ -1458,7 +1439,7 @@ function Completion() //{{{
 
             // Will, and should, throw an error if !(c in opts)
             Array.forEach(complete || options["complete"],
-                function (c) context.fork(c, 0, completion.urlCompleters[c].completer, completion));
+                function (c) context.fork(c, 0, completion, completion.urlCompleters[c].completer));
         },
 
         urlCompleters: {},

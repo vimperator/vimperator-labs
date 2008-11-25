@@ -32,6 +32,23 @@ const template = {
         return <>{xml}</>;
     },
 
+    listCompleter: function (name, filter)
+    {
+        let context = new CompletionContext(filter || "");
+        context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
+        context = context.contexts["/list"];
+
+        while (context.incomplete)
+            liberator.threadYield(true, true);
+
+        let list = this.generic(
+            <div class="hl-Completions">
+                { this.completionRow(context.title, "hl-CompTitle") }
+                { template.map(context.items, function (item) context.createRow(item)) }
+            </div>);
+        commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+    },
+
     completionRow: function completionRow(item, class)
     {
         if (typeof icon == "function")
@@ -93,7 +110,7 @@ const template = {
                     return <span class="hl-Number">{str}</span>;
                 case "string":
                     if (processStrings)
-                        str = <>{util.escapeString(str)}</>;
+                        str = str.quote();
                     return <span class="hl-String">{str}</span>;
                 case "boolean":
                     return <span class="hl-Boolean">{str}</span>;
@@ -188,18 +205,12 @@ const template = {
     // @param headers is an array of strings, the text for the header columns
     genericTable: function genericTable(items, format)
     {
-        // FIXME: Kludge.
-        let context = new CompletionContext("");
-        context.filterFunc = function (items) items;
-        if (format)
-            context.format = format;
-        return this.generic(
-            <div class="hl-Completions">
-                { this.completionRow(context.title, "hl-CompTitle") }
-                {
-                     this.map(items, function (item) template.completionRow.call(context, { text: context.getKey({item: item}, "text"), item: item }))
-                }
-            </div>);
+        this.listCompleter(function (context) {
+            context.filterFunc = null;
+            if (format)
+                context.format = format;
+            context.completions = items;
+        });
     },
 
     // returns a single row for a bookmark or history item

@@ -1249,12 +1249,12 @@ const liberator = (function () //{{{
             autocommands.trigger(config.name + "Leave", {});
         },
 
-        sleep: function (ms)
+        sleep: function (delay)
         {
-            var mainThread = threadManager.mainThread;
+            let mainThread = threadManager.mainThread;
 
-            var then = new Date().getTime(), now = then;
-            for (; now - then < ms; now = new Date().getTime())
+            let end = Date.now() + delay;
+            while (Date.now() < end)
                 mainThread.processNextEvent(true);
             return true;
         },
@@ -1268,11 +1268,16 @@ const liberator = (function () //{{{
                 callback();
         },
 
-        threadYield: function (flush)
+        threadYield: function (flush, interruptable)
         {
             let mainThread = threadManager.mainThread;
+            liberator.interrupted = false;
             do
+            {
                 mainThread.processNextEvent(true);
+                if (liberator.interrupted)
+                    throw new Error("Interrupted");
+            }
             while (flush && mainThread.hasPendingEvents());
         },
 

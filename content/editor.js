@@ -928,22 +928,12 @@ function Editor() //{{{
                 var searchFilter = (filter == "!") ? "!ci"
                                                    : filter + "!"; // ! -> list all, on c or i ! matches too)
 
-                let list =
-                    <table>
-                    {
-                        template.map(abbrevs(), function ([lhs, rhs])
-                        searchFilter.indexOf(rhs[0]) < 0 ? undefined :
-                        <tr>
-                            <td>{rhs[0]}</td>
-                            <td>{lhs}</td>
-                            <td>{rhs[1]}</td>
-                        </tr>)
-                    }
-                    </table>;
-                if (list.*.length())
-                    commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-                else
-                    liberator.echoerr("No abbreviations found");
+                let list = [[rhs[0], lhs, rhs[1]] for ([lhs, rhs] in abbrevs()) if (searchFilter.indexOf(rhs[0]) > -1)];
+
+                if (!list.length)
+                    return liberator.echoerr("No abbreviations found");
+                list = template.tabular(["", "LHS", "RHS"], [], list);
+                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
         },
 

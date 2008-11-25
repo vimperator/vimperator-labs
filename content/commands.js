@@ -818,7 +818,8 @@ function Commands() //{{{
                           cmd.argCount,
                           cmd.count ? "0c" : "",
                           completerToString(cmd.completer),
-                          cmd.replacementText || "function () { ... }"] for each (cmd in cmds)));
+                          cmd.replacementText || "function () { ... }"]
+                         for each (cmd in cmds)));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
