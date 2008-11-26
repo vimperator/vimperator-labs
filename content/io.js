@@ -299,7 +299,7 @@ function IO() //{{{
         "List all sourced script names",
         function ()
         {
-            var list = template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
+            let list = template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
                 ([i + 1, file] for ([i, file] in Iterator(scriptNames))));  // TODO: add colon?
 
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -549,11 +549,11 @@ function IO() //{{{
 
             if (file.isDirectory())
             {
-                var entries = file.directoryEntries;
-                var array = [];
+                let entries = file.directoryEntries;
+                let array = [];
                 while (entries.hasMoreElements())
                 {
-                    var entry = entries.getNext();
+                    let entry = entries.getNext();
                     entry.QueryInterface(Components.interfaces.nsIFile);
                     array.push(entry);
                 }
@@ -569,12 +569,12 @@ function IO() //{{{
         // reads a file in "text" mode and returns the string
         readFile: function (file)
         {
-            var ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
+            let ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
                                      .createInstance(Components.interfaces.nsIFileInputStream);
-            var icstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
+            let icstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
                                      .createInstance(Components.interfaces.nsIConverterInputStream);
 
-            var charset = "UTF-8";
+            let charset = "UTF-8";
             if (typeof file == "string")
                 file = ioManager.getFile(file);
             else if (!(file instanceof Components.interfaces.nsILocalFile))
@@ -584,8 +584,8 @@ function IO() //{{{
             const replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
             icstream.init(ifstream, charset, 4096, replacementChar); // 4096 bytes buffering
 
-            var buffer = "";
-            var str = {};
+            let buffer = "";
+            let str = {};
             while (icstream.readString(4096, str) != 0)
                 buffer += str.value;
 
@@ -600,12 +600,12 @@ function IO() //{{{
         // mode can be ">" or ">>" in addition to the normal MODE_* flags
         writeFile: function (file, buf, mode, perms)
         {
-            var ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+            let ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
                                      .createInstance(Components.interfaces.nsIFileOutputStream);
-            var ocstream = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
+            let ocstream = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
                                      .createInstance(Components.interfaces.nsIConverterOutputStream);
 
-            var charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
+            let charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
             if (typeof file == "string")
                 file = ioManager.getFile(file);
             else if (!(file instanceof Components.interfaces.nsILocalFile))
@@ -692,8 +692,8 @@ lookup:
         {
             liberator.echomsg("Calling shell to execute: " + command, 4);
 
-            var stdoutFile = ioManager.createTempFile();
-            var stderrFile = ioManager.createTempFile();
+            let stdoutFile = ioManager.createTempFile();
+            let stderrFile = ioManager.createTempFile();
 
             function escapeQuotes(str) str.replace('"', '\\"', "g");
 
@@ -707,7 +707,7 @@ lookup:
                 command = "cd " + escapeQuotes(cwd.path) + "; " + command + " > \"" + escapeQuotes(stdoutFile.path) + "\""
                             + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
 
-            var stdinFile = null;
+            let stdinFile = null;
 
             if (input)
             {
@@ -716,7 +716,7 @@ lookup:
                 command += " < \"" + escapeQuotes(stdinFile.path) + "\"";
             }
 
-            var res = ioManager.run(options["shell"], [options["shellcmdflag"], command], true);
+            let res = ioManager.run(options["shell"], [options["shellcmdflag"], command], true);
 
             if (res > 0)
                 var output = ioManager.readFile(stderrFile) + "\nshell returned " + res;
