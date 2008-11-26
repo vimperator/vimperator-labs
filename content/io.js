@@ -350,7 +350,7 @@ function IO() //{{{
     liberator.registerObserver("load_completion", function ()
     {
         completion.setFunctionCompleter([ioManager.getFile, ioManager.expandPath],
-            [function (obj, arg) completion.runCompleter("file", arg)]);
+            [function (obj, arg) completion.runCompleter("file", arg.replace(/[^\/]*$/, ""))]);
     });
 
     var ioManager = {

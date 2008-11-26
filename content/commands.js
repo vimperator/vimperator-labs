@@ -644,7 +644,7 @@ function Commands() //{{{
                     else
                         compl = opt[3] || [];
                     context.title = [opt[0][0]];
-                    context.quote = args.quote;
+                    context.quote = ["", args.quote, ""]; // FIXME
                     context.completions = compl;
                 }
                 complete.advance(args.completeStart);
@@ -871,7 +871,7 @@ function Commands() //{{{
                     options: util.Array.assocToObj(
                         util.map({argCount: "-nargs", bang: "-bang", count: "-count"},
                                 function ([k, v]) k in cmd && cmd[k] != "0" && [v, typeof cmd[k] == "boolean" ? null : cmd[k]])
-                            .filter(function (k) k)),
+                            .filter(util.identity)),
                     arguments: [cmd.name],
                     literalArg: cmd.replacementText
                 }

@@ -192,7 +192,7 @@ function Styles(name, store, serial)
 
         let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
         if (!sheet)
-            sheet = new Sheet(name, filter.split(",").filter(function (s) s), css, null);
+            sheet = new Sheet(name, filter.split(",").filter(util.identity), css, null);
 
         if (sheet.ref == null) // Not registered yet
         {

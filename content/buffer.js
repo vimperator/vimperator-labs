@@ -1269,8 +1269,7 @@ function Buffer() //{{{
                 let title = content.document.title || "[No Title]";
 
                 let info = template.map("gf", function (opt)
-                        template.map(pageInfo[opt][0](),
-                            function (val) val, ", "),
+                        template.map(pageInfo[opt][0](), util.identity, ", "),
                     ", ");
 
                 if (bookmarks.isBookmarked(this.URL))

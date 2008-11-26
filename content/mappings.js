@@ -402,7 +402,7 @@ function Mappings() //{{{
             }
 
             // anything found?
-            var flag = output.some(function (x) x);
+            var flag = output.some(util.identity);
             if (!flag)
             {
                 liberator.echo("No mappings found");

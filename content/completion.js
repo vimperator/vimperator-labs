@@ -49,13 +49,13 @@ function CompletionContext(editor, name, offset)
             self = this.contexts[name];
         else
             self.contexts[name] = this;
-        self.anchored = parent.anchored;
         self.filters = parent.filters.slice();
         self.incomplete = false;
         self.parent = parent;
         self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
-        ["compare", "editor", "filterFunc", "keys", "process", "quote", "title", "top"].forEach(function (key)
+        delete self._generate;
+        ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         if (self != this)
             return self;
@@ -80,8 +80,7 @@ function CompletionContext(editor, name, offset)
         }
         this.filters = [function (item) {
             let text = Array.concat(this.getKey(item, "text"));
-            let texts = this.ignoreCase ? text.map(String.toLowerCase) : text;
-            for (let [i, str] in Iterator(texts))
+            for (let [i, str] in Iterator(text))
             {
                 if (this.match(str))
                 {
@@ -162,7 +161,7 @@ CompletionContext.prototype = {
     get createRow() this._createRow || template.completionRow, // XXX
     set createRow(createRow) this._createRow = createRow,
 
-    get filterFunc() this._filterFunc || function (items) items,
+    get filterFunc() this._filterFunc || util.identity,
     set filterFunc(val) this._filterFunc = val,
 
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
@@ -197,7 +196,7 @@ CompletionContext.prototype = {
         }
     },
 
-    get filter() this._filter || this.value.substr(this.offset, this.caret),
+    get filter() this._filter != null ? this._filter : this.value.substr(this.offset, this.caret),
     set filter(val) this._filter = val,
 
     get format() ({
@@ -238,10 +237,14 @@ CompletionContext.prototype = {
         let self = this;
         delete this._substrings;
 
-        let filtered = this.filterFunc(items.map(function (item) ({ text: item[self.keys["text"]], item: item })));
+        let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({item: item}, "text"), item: item })));
 
-        if (self.quote)
-            filtered.forEach(function (item) item.text = self.quote(item.text));
+        let quote = this.quote;
+        if (quote)
+            filtered.forEach(function (item) {
+                item.unquoted = item.text;
+                item.text = quote[0] + quote[1](item.text) + quote[2];
+            })
         if (options.get("wildoptions").has("sort"))
             filtered.sort(this.compare);
         return this.cache.filtered = filtered;
@@ -271,8 +274,8 @@ CompletionContext.prototype = {
         if (this._substrings)
             return this._substrings;
 
-        let fixCase = this.ignoreCase ? String.toLowerCase : function (str) str;
-        let text = fixCase(items[0].text);
+        let fixCase = this.ignoreCase ? String.toLowerCase : util.identity;
+        let text = fixCase(items[0].unquoted || items[0].text);
         let filter = fixCase(this.filter);
         if (this.anchored)
         {
@@ -294,9 +297,12 @@ CompletionContext.prototype = {
                 start = idx + 1;
             }
         }
-        substrings = items.reduce(function (res, {text: text})
-                res.filter(function (str) compare(fixCase(text), str)),
+        substrings = items.reduce(function (res, item)
+                res.filter(function (str) compare(fixCase(item.unquoted || item.text), str)),
                 substrings);
+        let quote = this.quote;
+        if (quote)
+            substrings = substrings.map(function (str) quote[0] + quote[1](str));
         return this._substrings = substrings;
     },
 
@@ -339,6 +345,14 @@ CompletionContext.prototype = {
         if (completer)
             return completer.apply(self || this, [context].concat(Array.slice(arguments, 4)));
         return context;
+    },
+
+    getText: function (item)
+    {
+        let text = item[self.keys["text"]];
+        if (self.quote)
+            return self.quote(text);
+        return text;
     },
 
     highlight: function highlight(start, length, type)
@@ -775,16 +789,8 @@ function Completion() //{{{
                 else
                     context.generate = function () self.objectKeys(obj);
 
-                if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
-                    key = util.escapeString(key.substr(offset), "");
-
-                // FIXME
-                if (last != undefined) // Prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
-                    substrings = substrings.map(function (s) last + s);
-
-                let res;
-                if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
-                    context.quote = function (text) util.escapeString(text, last);
+                if (last != undefined)
+                    context.quote = [last, function (text) util.escapeString(text.substr(offset), ""), last];
                 else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
                     context.filters.push(function (item) /^[\w$][\w\d$]*$/.test(item.text));
                 if (!anchored)
@@ -948,7 +954,7 @@ function Completion() //{{{
         runCompleter: function (name, filter)
         {
             let context = CompletionContext(filter);
-            this[name].apply(this, [context].concat(Array.slice(arguments, 1)));
+            this[name].apply(this, [context].concat(Array.slice(arguments, 2)));
             while (context.incomplete)
                 liberator.threadYield(true, true);
             return context.items.map(function (i) i.item);
@@ -1350,7 +1356,7 @@ function Completion() //{{{
                                 item.url = decodeURIComponent(query);
                                 return item;
                             }
-                        }).filter(function (k) k);
+                        }).filter(util.identity);
                     };
                 });
         },

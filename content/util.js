@@ -289,6 +289,8 @@ const util = { //{{{
         }
     },
 
+    identity: function (k) k,
+
     map: function (obj, fn)
     {
         let ary = [];
