@@ -128,12 +128,12 @@ function CommandLine() //{{{
         historyIndex = UNINITIALIZED;
 
         // TODO: call just once, and not on each <Tab>
-        let wildmode = options["wildmode"].split(",");
-        let wildType = wildmode[Math.min(wildIndex++, wildmode.length - 1)];
+        let wildmode = options.get("wildmode");
+        let wildType = wildmode.values[Math.min(wildIndex++, wildmode.values.length - 1)];
 
-        let hasList = /^list(:|$)/.test(wildType);
-        let longest = /(^|:)longest$/.test(wildType);
-        let full = !longest && /(^|:)full/.test(wildType);
+        let hasList = wildmode.checkHas(wildType, "list");
+        let longest = wildmode.checkHas(wildType, "longest");
+        let full = !longest && wildmode.checkHas(wildType, "full");
 
         // we need to build our completion list first
         if (completionIndex == UNINITIALIZED)
@@ -196,7 +196,7 @@ function CommandLine() //{{{
         {
             var compl = null;
             if (longest && completions.items.length > 1)
-                compl = completion.longestSubstring;
+                compl = completions.longestSubstring;
             else if (full)
                 compl = completions.items[completionIndex].text;
             else if (completions.items.length == 1)
@@ -207,7 +207,7 @@ function CommandLine() //{{{
                 setCommand(command.substring(0, completions.start) + compl + completionPostfix);
                 commandWidget.selectionStart = commandWidget.selectionEnd = completions.start + compl.length;
                 if (longest)
-                    liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
+                    liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
 
                 // Start a new completion in the next iteration. Useful for commands like :source
                 // RFC: perhaps the command can indicate whether the completion should be restarted
@@ -497,9 +497,14 @@ function CommandLine() //{{{
             },
             validator: function validator(value)
             {
-                return value.split(",").every(
-                    function (item) /^(full|longest|list|list:full|list:longest|)$/.test(item)
-                );
+                let self = this;
+                return value.split(",").every(function (opt)
+                    self.completer().some(function ([key]) key == opt))
+            },
+            checkHas: function (value, val)
+            {
+                let [first, second] = value.split(":", 2);
+                return first == val || second == val;
             }
         });
 
@@ -1335,8 +1340,11 @@ function ItemList(id) //{{{
                     <div class="hl-Completions">
                         {context.createRow(context.title || [], "hl-CompTitle")}
                     </div>
+                    <span style="display: block; text-align: center; height: .5ex; line-height: .5ex;">&#x2303;</span>
                     <div/>
+                    <span style="display: block; text-align: center; height: .5ex; line-height: .5ex; padding-bottom: 1ex;">&#x2304;</span>
                 </div>);
+            context.cache.arrows = context.cache.dom.getElementsByTagName("span");
             completionBody.appendChild(context.cache.dom);
         });
     }
@@ -1362,20 +1370,24 @@ function ItemList(id) //{{{
         let off = 0;
         function getRows(context)
         {
+            function fix(n) Math.max(0, Math.min(len, n));
             let len = context.items.length;
             let start = off;
             off += len;
-            return context.getRows(offset - start, endIndex - start, doc);
+            return [fix(offset - start), fix(endIndex - start)];
         }
 
         items.contextList.forEach(function fill_eachContext(context) {
             let dom = context.cache.dom;
             if (!dom)
                 return;
+            let [start, end] = getRows(context);
+            context.cache.arrows[0].style.display = (start == 0) ? "none" : "block";
+            context.cache.arrows[1].style.display = (end == context.items.length) ? "none" : "block";
             let d = stuff.cloneNode(true);
-            for (let [,row] in Iterator(getRows(context)))
+            for (let [,row] in Iterator(context.getRows(start, end, doc)))
                 d.appendChild(row);
-            dom.replaceChild(d, dom.childNodes[3] || dom.childNodes[1]);
+            dom.replaceChild(d, dom.getElementsByTagName("div")[1]);
         });
 
         noCompletions.style.display = off > 0 ? "none" : "block";

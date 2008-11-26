@@ -91,18 +91,10 @@ function Mail() //{{{
 
     function getFolderCompletions(filter)
     {
-        var completions = [];
-        var folders = mail.getFolders(filter);
-
-        for (let folder = 0; folder < folders.length; folder++)
-        {
-            completions.push([folders[folder].server.prettyName + ": "
-                              + folders[folder].name,
-                             "Unread: " + folders[folder].getNumUnread(false)]);
-        }
-
-        //return [0, completion.filter(completions, filter)];
-        return [0, completions];
+        let folders = mail.getFolders(filter);
+        context.completions = folders.map(function (folder) 
+                [folder.server.prettyName + ": " + folder.name,
+                 "Unread: " + folder.getNumUnread(false)]);
     }
 
     function getCurrentFolderIndex()
@@ -684,7 +676,7 @@ function Mail() //{{{
                 SelectFolder(folder.URI);
         },
         {
-            completer: function (context) getFolderCompletions(context.filter),
+            completer: function (context) getFolderCompletions(context),
             count: true
         });
 
@@ -726,12 +718,12 @@ function Mail() //{{{
     commands.add(["copy[to]"],
         "Copy selected messages",
         function (args) { moveOrCopy(true, args.string); },
-        { completer: function (context) getFolderCompletions(context.filter) });
+        { completer: function (context) getFolderCompletions(context) });
 
     commands.add(["move[to]"],
         "Move selected messages",
         function (args) { moveOrCopy(false, args.string); },
-        { completer: function (context) getFolderCompletions(context.filter) });
+        { completer: function (context) getFolderCompletions(context) });
 
     commands.add(["empty[trash]"],
         "Empty trash of the current account",

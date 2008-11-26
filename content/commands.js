@@ -852,7 +852,7 @@ function Commands() //{{{
         {
             argCount: 2,
             bang: true,
-            completer: function (context) completion.userCommand(context.filter),
+            completer: function (context) completion.userCommand(context),
             options: [
                 [["-nargs"], commandManager.OPTION_STRING,
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
@@ -901,7 +901,7 @@ function Commands() //{{{
         },
         {
             argCount: "1",
-            completer: function (context) completion.userCommand(context.filter)
+            completer: function (context) completion.userCommand(context)
         });
 
     //}}}

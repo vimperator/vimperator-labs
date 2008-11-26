@@ -113,7 +113,7 @@ function AutoCommands() //{{{
         {
             argCount: 3,
             bang: true,
-            completer: function (context) completion.autocmdEvent(context.filter),
+            completer: function (context) completion.autocmdEvent(context),
             literal: true
         });
 
@@ -125,7 +125,7 @@ function AutoCommands() //{{{
             commands.get("doautocmd").action.call(this, args);
         },
         {
-            completer: function (context) completion.autocmdEvent(context.filter),
+            completer: function (context) completion.autocmdEvent(context),
             literal: true
         }
     );
@@ -163,7 +163,7 @@ function AutoCommands() //{{{
             }
         },
         {
-            completer: function (context) completion.autocmdEvent(context.filter),
+            completer: function (context) completion.autocmdEvent(context),
             literal: true
         }
     );

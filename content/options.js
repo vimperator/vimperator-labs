@@ -52,6 +52,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     this.getter = extraInfo.getter || null;
     this.completer = extraInfo.completer || null;
     this.validator = extraInfo.validator || null;
+    this.checkHas = extraInfo.checkHas || null;
 
     // this property is set to true whenever the option is first set
     // useful to see whether it was changed by some rc file
@@ -72,6 +73,18 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     this.__defineSetter__("globalvalue", function (val) { options.store.set(cannonName, val); });
     if (this.globalvalue == undefined)
         this.globalvalue = this.defaultValue;
+
+    this.__defineGetter__("values", function () this.getValues(this.scope));
+
+    this.getValues = function (scope)
+    {
+        let value = this.get(scope);
+        if (this.type == "stringlist")
+            return value.split(",");
+        if (this.type == "charlist")
+            return Array.slice(value);
+        return value;
+    };
 
     this.get = function (scope)
     {
@@ -124,17 +137,19 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
         this.hasChanged = true;
     };
 
-    this.has = function ()
-    {
-        let value = this.value;
-        if (this.type == "stringlist")
-            value = this.value.split(",");
-        /* Return whether some argument matches */
-        return Array.some(arguments, function (val) value.indexOf(val) >= 0);
-    };
-
     this.__defineGetter__("value", this.get);
     this.__defineSetter__("value", this.set);
+
+    this.has = function ()
+    {
+        let self = this;
+        let test = function (val) values.indexOf(val) >= 0;
+        if (this.checkHas)
+            test = function (val) values.some(function (value) self.checkHas(value, val));
+        let values = this.values;
+        /* Return whether some argument matches */
+        return Array.some(arguments, function (val) test(val))
+    };
 
     this.hasName = function (name)
     {
@@ -695,28 +710,18 @@ function Options() //{{{
 
                 if (special) // list completions for about:config entries
                 {
-                    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
-                    var prefArray = prefs.getChildList("", { value: 0 });
-                    prefArray.sort();
-
-                    if (filter.length > 0 && filter.lastIndexOf("=") == filter.length - 1)
+                    if (filter[filter.length - 1] == "=")
                     {
-                        for (let [,name] in Iterator(prefArray))
-                        {
-                            if (name.match("^" + filter.substr(0, filter.length - 1) + "$" ))
-                            {
-                                let value = options.getPref(name) + "";
-                                return [filter.length + 1, [[value, ""]]];
-                            }
-                        }
-                        return [0, []];
+                        context.advance(filter.length);
+                        context.completions = [options.getPref(filter.substr(0, filter.length - 1)), "Current Value"];
+                        return;
                     }
 
-                    optionCompletions = prefArray.map(function (pref)
-                        [pref, options.getPref(pref)]);
-
-                    return [0, completion.filter(optionCompletions, filter)];
+                    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                          .getService(Components.interfaces.nsIPrefBranch);
+                    context.keys = [function (pref) pref, function (pref) options.getPref(pref)];
+                    context.completions = prefs.getChildList("", { value: 0 });
+                    return;
                 }
 
                 let prefix = (filter.match(/^(no|inv)/) || [""])[0];
@@ -728,19 +733,13 @@ function Options() //{{{
                 let opts = (opt for (opt in options)
                                 if ((opt.scope & scope) && (!prefix || opt.type == "boolean" || prefix == "inv" && /list$/.test(opt.type))));
 
-                if (!filter)
+                if (filter.indexOf("=") == -1)
                 {
-                    return [0, [[prefix + option.name, option.description] for (option in opts)]];
-                }
-                else if (filter.indexOf("=") == -1)
-                {
-                    for (let option in opts)
-                        optionCompletions.push([[prefix + name, option.description]
-                            for each (name in option.names)
-                            if (name.indexOf(filter) == 0)]);
-                    optionCompletions = util.Array.flatten(optionCompletions);
-
-                    return [0, completion.filter(optionCompletions, prefix + filter, true)];
+                    context.title = ["Option"];
+                    context.quote = function (name) prefix + name;
+                    context.keys = { text: "names", description: "description" };
+                    context.completions = [opt for (opt in opts)];
+                    return;
                 }
                 else if (prefix == "no")
                     return;
@@ -754,7 +753,7 @@ function Options() //{{{
                     context.highlight(0, name.length, "SPELLCHECK");
 
                 if (opt.get || opt.reset || !option || prefix)
-                    return [0, []];
+                    return;
 
                 let completer = option.completer;
 
@@ -773,8 +772,8 @@ function Options() //{{{
                         break;
                 }
 
-                len = filter.length - len;
-                filter = filter.substr(len);
+                context.advance(filter.length - len);
+                filter = context.filter;
 
                 /* Not vim compatible, but is a significant enough improvement
                  * that it's worth breaking compatibility.
@@ -800,7 +799,9 @@ function Options() //{{{
                         }
                     }
                 }
-                return [len, completion.filter(completions, filter, true)];
+                context.compare = function (a, b) 0;
+                context.title = ["Option Value"];
+                context.completions = completions;
             },
             literal: true,
             serial: function () [

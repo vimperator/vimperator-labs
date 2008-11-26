@@ -513,7 +513,7 @@ function Buffer() //{{{
             stylesheetSwitchAll(window.content, args);
         },
         {
-            completer: function (context) completion.alternateStylesheet(context.filter),
+            completer: function (context) completion.alternateStylesheet(context),
             literal: true
         });
 
@@ -790,11 +790,9 @@ function Buffer() //{{{
         {
             var stylesheets = getAllStyleSheets(window.content);
 
-            stylesheets = stylesheets.filter(
+            return stylesheets.filter(
                 function (stylesheet) /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title)
             );
-
-            return stylesheets;
         },
 
         get pageInfo() pageInfo,

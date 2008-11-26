@@ -463,15 +463,9 @@ liberator.registerObserver("load_commands", function ()
         },
         {
             argCount: 2,
-            // FIXME: Ugly.
-            completer: function (context) [0, completion.filter(
-                    [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>]
-                        for ([i, s] in styles.userSheets)
-                    ]
-                    .concat([[s, ""] for each (s in styles.sites)])
-                    , context.filter)],
+            completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
             literal: true,
-            options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[k, v.name || v.sites.join(",") + " " + v.css] for ([k, v] in Iterator(styles.userNames))]],
+            options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]],
                       [["-name", "-n"],  commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]]]
         });
 

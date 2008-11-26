@@ -7,7 +7,7 @@
 
     var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                            .getService(Components.interfaces.mozIJSSubScriptLoader);
-    function load(script)
+    function load(script, i)
     {
         try
         {
@@ -18,6 +18,8 @@
             if (Components.utils.reportError)
                 Components.utils.reportError(e);
             dump("liberator: Loading script " + script + ": " + e + "\n");
+            if (!i || i < 3)
+                return load(script, i + 1); // Sometimes loading (seemingly randomly) fails
         }
     }
 

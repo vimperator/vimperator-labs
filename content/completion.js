@@ -46,23 +46,23 @@ function CompletionContext(editor, name, offset)
         name = parent.name + "/" + name;
         this.contexts = parent.contexts;
         if (name in this.contexts)
-        {
             self = this.contexts[name];
-            self.offset = parent.offset + (offset || 0);
-            return self;
-        }
-        this.contexts[name] = this;
-        this.anchored = parent.anchored;
-        this.parent = parent;
-        this.offset = parent.offset + (offset || 0);
-        this.keys = util.cloneObject(this.parent.keys);
+        else
+            self.contexts[name] = this;
+        self.anchored = parent.anchored;
+        self.filters = parent.filters.slice();
+        self.incomplete = false;
+        self.parent = parent;
+        self.offset = parent.offset + (offset || 0);
+        self.keys = util.cloneObject(parent.keys);
         ["compare", "editor", "filterFunc", "keys", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
-        this.incomplete = false;
+        if (self != this)
+            return self;
     }
     else
     {
@@ -71,7 +71,26 @@ function CompletionContext(editor, name, offset)
         else
             this.editor = editor;
         this.compare = function (a, b) String.localeCompare(a.text, b.text);
-        this.filterFunc = completion.filter;
+        this.filterFunc = function (items)
+        {
+            let self = this;
+            return this.filters.reduce(function (res, filter)
+                    res.filter(function (item) filter.call(self, item)),
+                    items);
+        }
+        this.filters = [function (item) {
+            let text = Array.concat(this.getKey(item, "text"));
+            let texts = this.ignoreCase ? text.map(String.toLowerCase) : text;
+            for (let [i, str] in Iterator(texts))
+            {
+                if (this.match(str))
+                {
+                    item.text = text[i];
+                    return true;
+                }
+            }
+            return false;
+        }];
         this.keys = { text: 0, description: 1, icon: "icon" };
         this.offset = offset || 0;
         this.onUpdate = function () true;
@@ -85,9 +104,11 @@ function CompletionContext(editor, name, offset)
     }
     this.name = name || "";
     this.cache = {};
+    this.key = "";
+    this.itemCache = {};
     this.process = [];
     this._completions = []; // FIXME
-    this.getKey = function (item, key) item.item[self.keys[key]];
+    this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) : item.item[self.keys[key]];
 }
 CompletionContext.prototype = {
     // Temporary
@@ -101,7 +122,30 @@ CompletionContext.prototype = {
             let prefix = self.value.substring(minStart, context.offset);
             return [{ text: prefix + item.text, item: item.item } for ([i, item] in Iterator(context.items))];
         });
-        return { start: minStart, items: util.Array.flatten(items) }
+        return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
+    },
+    get allSubstrings()
+    {
+        let self = this;
+        let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
+        let items = this.contextList.map(function (context) {
+            if (!context.hasItems)
+                return [];
+            let prefix = self.value.substring(minStart, context.offset);
+            return context.substrings.map(function (str) prefix + str);
+        });
+        return util.Array.uniq(util.Array.flatten(items), true);
+    },
+    get longestAllSubstring()
+    {
+        let substrings = this.allSubstrings;
+        return substrings.reduce(function (res, str)
+                res.filter(function (s) {
+                    let len = Math.min(s.length, str.length);
+                    return str.substr(0, len) == s.substr(0, len)
+                }),
+                substrings)
+            .reduce(function (a, b) a.length > b.length ? a : b, "");
     },
 
     get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
@@ -125,19 +169,17 @@ CompletionContext.prototype = {
     get filterFunc() this._filterFunc || function (items) items,
     set filterFunc(val) this._filterFunc = val,
 
-    get regenerate() this._generate && (!this.completions || this.cache.key != this.key || this.cache.offset != this.offset),
-    set regenerate(val) { if (val) delete this.cache.offset },
+    get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
+    set regenerate(val) { if (val) delete this.itemCache[this.key] },
 
     get generate() !this._generate ? null : function ()
     {
-        let updateAsync = this.updateAsync; // XXX
-        this.updateAsync = false;
-        this.completions = this._generate.call(this);
-        this.updateAsync = updateAsync;
-
+        if (this.offset != this.cache.offset)
+            this.itemCache = {};
         this.cache.offset = this.offset;
-        this.cache.key = this.key;
-        return this.completions;
+        if (!this.itemCache[this.key])
+            this.itemCache[this.key] = this._generate.call(this);
+        return this.itemCache[this.key];
     },
     set generate(arg)
     {
@@ -174,6 +216,9 @@ CompletionContext.prototype = {
         this.process = format.process || this.process;
     },
 
+    // XXX
+    get ignoreCase() this.filter == this.filter.toLowerCase(),
+
     get items()
     {
         if (!this.hasItems)
@@ -182,18 +227,22 @@ CompletionContext.prototype = {
             return this.cache.filtered;
         this.cache.rows = [];
         let items = this.completions;
-        if (this.regenerate)
-            items = this.generate();
+        if (this.generate)
+        {
+            // XXX
+            let updateAsync = this.updateAsync;
+            this.updateAsync = false;
+            this.completions = items = this.generate();
+            this.updateAsync = updateAsync;
+        }
         this.cache.filter = this.filter;
         if (items == null)
             return items;
 
         let self = this;
+        delete this._substrings;
 
-        completion.getKey = this.getKey; // XXX
-        let filtered = this.filterFunc(items.map(function (item) ({ text: item[self.keys["text"]], item: item })),
-                    this.filter, this.anchored);
-        completion.getKey = null;
+        let filtered = this.filterFunc(items.map(function (item) ({ text: item[self.keys["text"]], item: item })));
 
         if (self.quote)
             filtered.forEach(function (item) item.text = self.quote(item.text));
@@ -216,6 +265,43 @@ CompletionContext.prototype = {
     set process(process)
     {
         this._process = process;
+    },
+
+    get substrings()
+    {
+        let items = this.items;
+        if (items.length == 0)
+            return [];
+        if (this._substrings)
+            return this._substrings;
+
+        let fixCase = this.ignoreCase ? String.toLowerCase : function (str) str;
+        let text = fixCase(items[0].text);
+        let filter = fixCase(this.filter);
+        if (this.anchored)
+        {
+            function compare (text, s) text.substr(0, s.length) == s;
+            substrings = util.map(util.range(filter.length, text.length),
+                function (end) text.substring(0, end));
+        }
+        else
+        {
+            function compare (text, s) text.indexOf(s) >= 0;
+            substrings = [];
+            let start = 0;
+            let idx;
+            let length = filter.length;
+            while ((idx = text.indexOf(filter, start)) > -1 && idx < length)
+            {
+                for (let end in util.range(idx + length, text.length + 1))
+                    substrings.push(text.substring(idx, end));
+                start = idx + 1;
+            }
+        }
+        substrings = items.reduce(function (res, {text: text})
+                res.filter(function (str) compare(fixCase(text), str)),
+                substrings);
+        return this._substrings = substrings;
     },
 
     advance: function advance(count)
@@ -243,7 +329,7 @@ CompletionContext.prototype = {
         let cache = this.cache.rows;
         let reverse = start > end;
         start = Math.max(0, start || 0);
-        end = Math.min(items.length, end ? end : items.length);
+        end = Math.min(items.length, end != null ? end : items.length);
         return util.map(util.range(start, end, reverse),
             function (i) cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc));
     },
@@ -279,6 +365,19 @@ CompletionContext.prototype = {
             editor.selectionController.repaintSelection(selType);
         }
         catch (e) {}
+    },
+
+    match: function (str)
+    {
+        let filter = this.filter;
+        if (this.ignoreCase)
+        {
+            filter = filter.toLowerCase();
+            str = str.toLowerCase();
+        }
+        if (this.anchored)
+            return str.substr(0, filter.length) == filter;
+        return str.indexOf(filter) > -1;
     },
 
     reset: function reset()
@@ -390,17 +489,8 @@ function Completion() //{{{
          * wrapped in @last after @offset characters are sliced
          * off of it and it's quoted.
          */
-        this.objectKeys = function objectKeys(objects)
+        this.objectKeys = function objectKeys(obj)
         {
-            if (!(objects instanceof Array))
-                objects = [objects];
-
-            let [obj, key] = objects;
-            let cache = this.context.cache.objects || {};
-            this.context.cache.objects = cache;
-            if (key in cache)
-                return cache[key];
-
             // Things we can dereference
             if (["object", "string", "function"].indexOf(typeof obj) == -1)
                 return [];
@@ -430,29 +520,7 @@ function Completion() //{{{
                     key = "";
                 item.key = key;
             });
-            return cache[key] = compl;
-        }
-
-        this.filter = function filter(context, compl, name, anchored, key, last, offset)
-        {
-            context.title = [name];
-            context.anchored = anchored;
-            context.filter = key;
-
-            if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
-                key = util.escapeString(key.substr(offset), "");
-
-            if (last != undefined) // Prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
-                substrings = substrings.map(function (s) last + s);
-
-            let res;
-            if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
-                res = compl.map(function (a) [util.escapeString(a[0].substr(offset), last), a[1]]);
-            else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
-                res = compl.filter(function isIdent(a) /^[\w$][\w\d$]*$/.test(a[0]));
-            if (!anchored)
-                res = res.filter(function ([k]) util.compareIgnoreCase(k.substr(0, key.length), key));
-            context.completions = res;
+            return compl;
         }
 
         this.eval = function eval(arg, key, tmp)
@@ -697,19 +765,46 @@ function Completion() //{{{
                 return [dot + 1 + space.length, obj, key];
             }
 
+            function fill(context, obj, name, compl, anchored, key, last, offset)
+            {
+                context.title = [name];
+                context.key = name;
+                context.anchored = anchored;
+                context.filter = key;
+                context.itemCache = context.parent.itemCache;
+                if (compl)
+                    context.completions = compl;
+                else
+                    context.generate = function () self.objectKeys(obj);
+
+                if (last != undefined) // Escaping the key (without adding quotes), so it matches the escaped completions.
+                    key = util.escapeString(key.substr(offset), "");
+
+                // FIXME
+                if (last != undefined) // Prepend the quote delimiter to the substrings list, so it's not stripped on <Tab>
+                    substrings = substrings.map(function (s) last + s);
+
+                let res;
+                if (last != undefined) // We're looking for a quoted string, so, strip whatever prefix we have and quote the rest
+                    context.quote = function (text) util.escapeString(text, last);
+                else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
+                    context.filters.push(function (item) /^[\w$][\w\d$]*$/.test(item.text));
+                if (!anchored)
+                    context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
+            }
+
             function complete(objects, key, compl, string, last)
             {
                 for (let [,obj] in Iterator(objects))
                 {
-                    obj[3] = compl || this.objectKeys(obj);
-                    this.context.fork(obj[1], top[OFFSET], this, "filter",
-                        obj[3], obj[1], true, key + (string || ""), last, key.length);
+                    this.context.fork(obj[1], top[OFFSET], this, fill, obj[0], obj[1], compl,
+                        true, key + (string || ""), last, key.length);
                 }
                 for (let [,obj] in Iterator(objects))
                 {
                     obj[1] += " (substrings)";
-                    this.context.fork(obj[1], top[OFFSET], this, "filter",
-                        obj[3], obj[1], false, key + (string || ""), last, key.length);
+                    this.context.fork(obj[1], top[OFFSET], this, fill, obj[0], obj[1], compl,
+                        false, key + (string || ""), last, key.length);
                 }
             }
 
@@ -822,102 +917,6 @@ function Completion() //{{{
     };
     let javascript = new Javascript();
 
-    function buildSubstrings(str, filter)
-    {
-        if (substrings.length)
-        {
-            substrings = substrings.filter(function strIndex(s) str.indexOf(s) >= 0);
-            return;
-        }
-        if (filter == "")
-            return;
-        let length = filter.length;
-        let start = 0;
-        let idx;
-        while ((idx = str.indexOf(filter, start)) > -1)
-        {
-            for (let end in util.range(idx + length, str.length + 1))
-                substrings.push(str.substring(idx, end));
-            start = idx + 1;
-        }
-    }
-
-    // function uses smartcase
-    // list = [ [['com1', 'com2'], 'text'], [['com3', 'com4'], 'text'] ]
-    function buildLongestCommonSubstring(list, filter, favicon)
-    {
-        var filtered = [];
-
-        var ignorecase = false;
-        if (filter == filter.toLowerCase())
-            ignorecase = true;
-
-        var longest = false;
-        if (options["wildmode"].indexOf("longest") >= 0)
-            longest = true;
-
-        for (let [,item] in Iterator(list))
-        {
-            let text = completion.getKey(item, "text");
-            var complist = text instanceof Array ? text : [text];
-            for (let [,compitem] in Iterator(complist))
-            {
-                let str = !ignorecase ? compitem : String(compitem).toLowerCase();
-
-                if (str.indexOf(filter) == -1)
-                    continue;
-
-                item.text = compitem;
-                filtered.push(item);
-
-                if (longest)
-                    buildSubstrings(str, filter);
-                break;
-            }
-        }
-        return filtered;
-    }
-
-    // this function is case sensitive
-    function buildLongestStartingSubstring(list, filter, favicon)
-    {
-        var filtered = [];
-
-        var longest = false;
-        if (options["wildmode"].indexOf("longest") >= 0)
-            longest = true;
-
-        for (let [,item] in Iterator(list))
-        {
-            let text = completion.getKey(item, "text");
-            var complist = text instanceof Array ?  text : [text];
-            for (let [,compitem] in Iterator(complist))
-            {
-                if (compitem.substr(0, filter.length) != filter)
-                    continue;
-
-                item.text = compitem;
-                filtered.push(item);
-
-                if (longest)
-                {
-                    if (substrings.length == 0)
-                    {
-                        var length = compitem.length;
-                        for (let k = filter.length; k <= length; k++)
-                            substrings.push(compitem.substring(0, k));
-                    }
-                    else
-                    {
-                        substrings = substrings.filter(function strIndex(s) compitem.indexOf(s) == 0);
-                    }
-                }
-                break;
-            }
-        }
-        return filtered;
-    }
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -930,8 +929,7 @@ function Completion() //{{{
 
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
-            if (!(funcs instanceof Array))
-                funcs = [funcs];
+            funcs = Array.concat(funcs);
             for (let [,func] in Iterator(funcs))
             {
                 func.liberatorCompleter = function liberatorCompleter(func, obj, string, args) {
@@ -956,15 +954,6 @@ function Completion() //{{{
             while (context.incomplete)
                 liberator.threadYield(true, true);
             return context.items.map(function (i) i.item);
-        },
-
-        // generic filter function, also builds substrings needed
-        // for :set wildmode=list:longest, if necessary
-        filter: function filter(array, filter, matchFromBeginning)
-        {
-            if (matchFromBeginning)
-                return buildLongestStartingSubstring(array, filter);
-            return buildLongestCommonSubstring(array, filter);
         },
 
         // cancel any ongoing search
@@ -1009,9 +998,9 @@ function Completion() //{{{
             for (let [,elem] in Iterator(urls))
             {
                 let item = elem.item || elem; // Kludge
-                var url   = item.url || "";
-                var title = item.title || "";
-                var tags  = item.tags || [];
+                let url   = item.url || "";
+                let title = item.title || "";
+                let tags  = item.tags || [];
                 if (ignorecase)
                 {
                     url = url.toLowerCase();
@@ -1031,13 +1020,6 @@ function Completion() //{{{
                         additionalCompletions.push(elem);
                     continue;
                 }
-
-                // TODO: refactor out? And just build if wildmode contains longest?
-                //   Of course --Kris
-                if (substrings.length == 0)   // Build the substrings
-                    buildSubstrings(url, filter);
-                else
-                    substrings = substrings.filter(function strIndex(s) url.indexOf(s) >= 0);
 
                 filtered.push(elem);
             }
@@ -1083,20 +1065,19 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        autocmdEvent: function autocmdEvent(filter) [0, this.filter(config.autocommands, filter)],
+        autocmdEvent: function autocmdEvent(context)
+        {
+            context.completions = config.autocommands;
+        },
 
         bookmark: function bookmark(context, tags)
         {
             context.title = ["Bookmark", "Title"];
             context.format = bookmarks.format;
             context.completions = bookmarks.get(context.filter)
+            context.filters = [];
             if (tags)
-            {
-                let filterFunc = context.filterFunc;
-                context.filterFunc = function (items, filter, anchored)
-                    filterFunc.call(this, items, filter, anchored)
-                              .filter(function ({item: item}) tags.every(function (tag) item.tags.indexOf(tag) > -1));
-            }
+                context.filters.push(function ({item: item}) tags.every(function (tag) item.tags.indexOf(tag) > -1));
         },
 
         buffer: function buffer(context)
@@ -1153,24 +1134,26 @@ function Completion() //{{{
             context.completions = [k for (k in commands)];
         },
 
-        dialog: function dialog(filter) [0, this.filter(config.dialogs, filter)],
+        dialog: function dialog(context)
+        {
+            context.title = ["Dialog"];
+            context.completions = config.dialogs;
+        },
 
         directory: function directory(context, tail)
         {
             this.file(context, tail);
-            context.completions = context.completions.filter(function (i) i[1] == "Directory");
+            context.filters.push(function (item) this.getKey(item, "description") == "Directory");
         },
 
-        environment: function environment(filter)
+        environment: function environment(context)
         {
             let command = liberator.has("Win32") ? "set" : "env";
             let lines = io.system(command).split("\n");
-
             lines.pop();
 
-            let vars = lines.map(function (line) (line.match(/([^=]+)=(.+)/) || []).slice(1));
-
-            return [0, this.filter(vars, filter)];
+            context.title = ["Environment Variable", "Value"];
+            context.generate = function () lines.map(function (line) (line.match(/([^=]+)=(.+)/) || []).slice(1));
         },
 
         // provides completions for ex commands, including their arguments
@@ -1238,7 +1221,6 @@ function Completion() //{{{
             context.keys = { text: 0, description: 1, icon: 2 };
             context.anchored = true;
             context.key = dir;
-            context.quote = function (text) text.replace(" ", "\\ ", "g");
             context.generate = function generate()
             {
                 context.cache.dir = dir;
@@ -1312,7 +1294,6 @@ function Completion() //{{{
                 ];
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 let filter = context.filter;
-                context.completions.forEach(function ([item]) buildSubstrings(item, filter));
             });
             completionService.stopSearch();
             completionService.startSearch(context.filter, "", context.result, {
@@ -1428,33 +1409,31 @@ function Completion() //{{{
             }
         },
 
-        sidebar: function sidebar(filter)
+        sidebar: function sidebar(context)
         {
             let menu = document.getElementById("viewSidebarMenu");
-            let panels = Array.map(menu.childNodes, function (n) [n.label, ""]);
-
-            return [0, this.filter(panels, filter)];
+            context.title = ["Sidebar Panel"];
+            context.completions = Array.map(menu.childNodes, function (n) [n.label, ""]);
         },
 
-        alternateStylesheet: function alternateStylesheet(filter)
+        alternateStylesheet: function alternateStylesheet(context)
         {
-            let completions = buffer.alternateStyleSheets.map(
-                function (stylesheet) [stylesheet.title, stylesheet.href || "inline"]
-            );
+            context.title = ["Stylesheet", "Location"];
+            context.keys = { text: "title", description: function (item) item.href };
 
             // unify split style sheets
+            let completions = buffer.alternateStyleSheets;
             completions.forEach(function (stylesheet) {
-                completions = completions.filter(function (completion) {
-                    if (stylesheet[0] == completion[0] && stylesheet[1] != completion[1])
+                stylesheet.href = stylesheet.href || "inline";
+                completions = completions.filter(function (sheet) {
+                    if (stylesheet.title == sheet.title && stylesheet != sheet)
                     {
-                        stylesheet[1] += ", " + completion[1];
+                        stylesheet.href += ", " + sheet.href;
                         return false;
                     }
                     return true;
                 });
             });
-
-            return [0, this.filter(completions, filter)];
         },
 
         // filter a list of urls
@@ -1482,11 +1461,11 @@ function Completion() //{{{
             this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
         },
 
-        userCommand: function userCommand(filter)
+        userCommand: function userCommand(context)
         {
-            let cmds = commands.getUserCommands();
-            cmds = cmds.map(function (cmd) [cmd.name, ""]);
-            return [0, this.filter(cmds, filter)];
+            context.title = ["User Command", "Definition"];
+            context.keys = { text: "name", description: "replacementText" };
+            context.completions = commands.getUserCommands();
         },
 
         userMapping: function userMapping(context, args, modes)
@@ -1494,7 +1473,7 @@ function Completion() //{{{
             if (args.completeArg == 0)
             {
                 let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
-                context.completions = this.filter(maps, args.arguments[0]);
+                context.completions = maps;
             }
         }
     // }}}

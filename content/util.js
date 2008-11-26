@@ -38,13 +38,8 @@ const util = { //{{{
             return obj;
         },
 
-        // flatten an array: [["foo", "bar"], ["baz"]] -> ["foo", "bar", "baz"]
-        flatten: function (ary)
-        {
-            if (ary.length == 0)
-                return [];
-            return Array.concat.apply(Array, ary);
-        },
+        // flatten an array: [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+        flatten: function (ary) Array.concat.apply([], ary),
 
         iterator: function (ary)
         {

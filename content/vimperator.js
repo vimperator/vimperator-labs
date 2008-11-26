@@ -343,7 +343,7 @@ const config = { //{{{
             },
             {
                 argCount: "+",
-                completer: function (context) completion.sidebar(context.filter),
+                completer: function (context) completion.sidebar(context),
                 literal: true
             });
 
