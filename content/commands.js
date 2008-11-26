@@ -609,6 +609,7 @@ function Commands() //{{{
                 {
                     args.literalArg = sub;
                     args.push(sub);
+                    args.quote = null;
                     if (complete)
                         args.completeArg = args.length - 1;
                     break;

@@ -39,7 +39,7 @@ function Highlights(name, store, serial)
         CompDesc           color: gray; width: 50%;
         CompLess           text-align: center; height: .5ex; line-height: .5ex;
         CompLess:after     content: "\2303" /* Unicode up arrowhead */
-        CompMore           text-align: center; height: .5ex; line-height: .5ex; padding-bottom: 1ex;
+        CompMore           text-align: center; height: .5ex; line-height: .5ex;
         CompMore:after     content: "\2304" /* Unicode down arrowhead */
 
         Indicator   color: blue;

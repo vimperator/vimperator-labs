@@ -1382,11 +1382,11 @@ function ItemList(id) //{{{
                 d.appendChild(row);
             dom.replaceChild(d, nodes.items);
             nodes.items = d;
-            nodes.up.style.display = (start == 0) && "none";
-            nodes.down.style.display = (end == context.items.length) && "none";
+            nodes.up.style.display = (start == 0) ? "none" : "block";
+            nodes.down.style.display = (end == context.items.length) ? "none" : "block";
         });
 
-        divNodes.noCompletions.style.display = (off > 0) && "none";
+        divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
         completionElements = div.getElementsByClassName("hl-CompItem");
 
