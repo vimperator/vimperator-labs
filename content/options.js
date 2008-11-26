@@ -36,8 +36,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     if (!extraInfo)
         extraInfo = {};
 
-    let cannonName = names[0];
-    this.name = cannonName;
+    this.name = names[0];
     this.names = names;
     this.type = type;
     this.scope = (extraInfo.scope & options.OPTION_SCOPE_BOTH) ||
@@ -62,31 +61,49 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     if (this.type == "boolean")
     {
         this.names = []; // reset since order is important
-        for (let i = 0; i < names.length; i++)
+        for (let [,name] in Iterator(names))
         {
-            this.names.push(names[i]);
-            this.names.push("no" + names[i]);
+            this.names.push(name);
+            this.names.push("no" + name);
         }
     }
 
-    this.__defineGetter__("globalvalue", function () options.store.get(cannonName));
-    this.__defineSetter__("globalvalue", function (val) { options.store.set(cannonName, val); });
     if (this.globalvalue == undefined)
         this.globalvalue = this.defaultValue;
+}
+Option.prototype = {
+    get globalvalue() options.store.get(this.name),
+    set globalvalue(val) { options.store.set(this.name, val) },
 
-    this.__defineGetter__("values", function () this.getValues(this.scope));
-
-    this.getValues = function (scope)
+    parseValues: function (value)
     {
-        let value = this.get(scope);
         if (this.type == "stringlist")
             return value.split(",");
         if (this.type == "charlist")
             return Array.slice(value);
         return value;
-    };
+    },
+    
+    joinValues: function (values)
+    {
+        if (this.type == "stringlist")
+            return values.join(",");
+        if (this.type == "charlist")
+            return values.join("");
+        return values;
+    },
 
-    this.get = function (scope)
+    get values() this.parseValues(this.value),
+    set values(values) this.setValues(this.scope, values),
+
+    getValues: function (scope) this.parseValues(this.get(scope)),
+
+    setValues: function (values, scope)
+    {
+        this.set(this.joinValues(values), scope || this.scope);
+    },
+
+    get: function (scope)
     {
         if (scope)
         {
@@ -109,9 +126,9 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
             this.getter.call(this, aValue);
 
         return aValue;
-    };
+    },
 
-    this.set = function (newValue, scope)
+    set: function (newValue, scope)
     {
         scope = scope || this.scope;
         if ((scope & this.scope) == 0) // option doesn't exist in this scope
@@ -135,12 +152,12 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
             this.globalvalue = newValue;
 
         this.hasChanged = true;
-    };
+    },
 
-    this.__defineGetter__("value", this.get);
-    this.__defineSetter__("value", this.set);
+    get value() this.get(),
+    set value(val) this.set(val),
 
-    this.has = function ()
+    has: function ()
     {
         let self = this;
         let test = function (val) values.indexOf(val) >= 0;
@@ -149,25 +166,22 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
         let values = this.values;
         /* Return whether some argument matches */
         return Array.some(arguments, function (val) test(val))
-    };
+    },
 
-    this.hasName = function (name)
-    {
-        return this.names.indexOf(name) >= 0;
-    };
+    hasName: function (name) this.names.indexOf(name) >= 0,
 
-    this.isValidValue = function (value)
+    isValidValue: function (value)
     {
         if (this.validator)
             return this.validator(value);
         else
             return true;
-    };
+    },
 
-    this.reset = function ()
+    reset: function ()
     {
         this.value = this.defaultValue;
-    };
+    },
 
 }; //}}}
 
@@ -607,12 +621,6 @@ function Options() //{{{
                                 break;
                         }
 
-                        // NOTE: empty elements are significant in stringlist options like 'cdpath'
-                        if (option.type == "stringlist")
-                            newValue = newValue.join(",");
-                        else
-                            newValue = newValue.filter(function (x) x != "").join("");
-
                         break;
 
                     case "string":
@@ -638,10 +646,9 @@ function Options() //{{{
                         liberator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
                 }
 
+                newValue = option.joinValues(newValue);
                 if (option.isValidValue(newValue))
-                {
                     option.set(newValue, opt.scope);
-                }
                 else
                     // FIXME: need to be able to specify more specific errors
                     liberator.echoerr("E474: Invalid argument: " + args);
@@ -731,7 +738,7 @@ function Options() //{{{
                 if (completer)
                 {
                     completions = completions.concat(completer(filter));
-                    if (opt.optionValues)
+                    if (/list$/.test(option.type))
                     {
                         completions = completions.filter(function (val) opt.values.indexOf(val[0]) == -1);
                         switch (opt.operator)
@@ -968,15 +975,7 @@ function Options() //{{{
             ret.optionValue = ret.option.get(ret.scope);
             ret.optionValues = ret.option.getValues(ret.scope);
 
-            switch (ret.option.type)
-            {
-                case "stringlist":
-                    ret.values = ret.value.split(",");
-                    break;
-                case "charlist":
-                    ret.values = Array.slice(ret.value);
-                    break;
-            }
+            ret.values = ret.option.parseValues(ret.value);
 
             return ret;
         },
