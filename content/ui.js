@@ -1324,16 +1324,13 @@ function ItemList(id) //{{{
                 }
                 </div>
             </div>, divNodes);
-
-        // 1:
         doc.body.replaceChild(div, doc.body.firstChild);
-        // 2:
 
         items.contextList.forEach(function init_eachContext(context) {
             if (!context.items.length)
                 return;
             context.cache.nodes = {};
-            context.cache.dom = dom(<div>
+            dom(<div key="root">
                     <div class="hl-Completions">
                         {context.createRow(context.title || [], "hl-CompTitle")}
                     </div>
@@ -1341,7 +1338,7 @@ function ItemList(id) //{{{
                     <div key="items"/>
                     <div key="down" class="hl-CompMore"/>
                 </div>, context.cache.nodes);
-            divNodes.completions.appendChild(context.cache.dom);
+            divNodes.completions.appendChild(context.cache.nodes.root);
         });
     }
 
@@ -1374,31 +1371,23 @@ function ItemList(id) //{{{
         }
 
         items.contextList.forEach(function fill_eachContext(context) {
-            let cache = context.cache;
-            let dom = cache.dom;
-            if (!dom)
+            let nodes = context.cache.nodes;
+            if (!nodes)
                 return;
+            let dom = nodes.root
             let [start, end] = getRows(context);
             let d = stuff.cloneNode(true);
             for (let [,row] in Iterator(context.getRows(start, end, doc)))
                 d.appendChild(row);
-            dom.replaceChild(d, cache.nodes.items);
-            cache.nodes.items = d;
-            cache.nodes.up.style.display = (start == 0) ? "none" : "block";
-            cache.nodes.down.style.display = (end == context.items.length) ? "none" : "block";
+            dom.replaceChild(d, nodes.items);
+            nodes.items = d;
+            nodes.up.style.display = (start == 0) ? "none" : "block";
+            nodes.down.style.display = (end == context.items.length) ? "none" : "block";
         });
 
-        divNodes.noCompletions.style.display = off > 0 ? "none" : "block";
+        divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
-        // 1:
         completionElements = div.getElementsByClassName("hl-CompItem");
-
-        // 2:
-        //let node = div.cloneNode(true);
-        //completionElements = node.getElementsByClassName("hl-CompItem");
-        //completionBody = node.getElementsByTagName("div")[1];
-        //doc.body.replaceChild(node, doc.body.firstChild);
-        //completionElements = node.getElementsByClassName("hl-CompItem");
 
         autoSize();
         return true;

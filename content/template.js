@@ -49,6 +49,10 @@ const template = {
         }
 
         return <div class={class || "hl-CompItem"}>
+                   <!-- The non-breaking spaces prevent empty elements
+                      - from pushing the baseline down and enlarging
+                      - the row.
+                      -->
                    <li class="hl-CompResult">{text}&#160;</li>
                    <li class="hl-CompDesc">{desc}&#160;</li>
                </div>;
