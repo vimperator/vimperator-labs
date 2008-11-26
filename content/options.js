@@ -183,6 +183,104 @@ Option.prototype = {
         this.value = this.defaultValue;
     },
 
+    op: function (operator, values, scope, invert)
+    {
+        let newValue = null;
+
+        switch (this.type)
+        {
+            case "boolean":
+                if (operator != "=")
+                    break;
+
+                if (invert)
+                    newValue = !this.value;
+                else
+                    newValue = values;
+                break;
+
+            case "number":
+                let value = parseInt(values); // deduce radix
+
+                if (isNaN(value))
+                    return "E521: Number required";
+
+                switch (operator)
+                {
+                    case "+":
+                        newValue = currentValue + value;
+                        break;
+                    case "-":
+                        newValue = currentValue - value;
+                        break;
+                    case "^":
+                        newValue = currentValue * value;
+                        break;
+                    case "=":
+                        newValue = value;
+                        break;
+                }
+
+                break;
+
+            case "charlist":
+            case "stringlist":
+                values = Array.concat(values);
+                switch (operator)
+                {
+                    case "+":
+                        newValue = util.Array.uniq(Array.concat(this.values, values), true);
+                        break;
+                    case "^":
+                        // NOTE: Vim doesn't prepend if there's a match in the current value
+                        newValue = util.Array.uniq(Array.concat(values, this.values), true);
+                        break;
+                    case "-":
+                        newValue = this.values.filter(function (item) values.indexOf(item) == -1);
+                        break;
+                    case "=":
+                        newValue = values;
+                        if (invert)
+                        {
+                            let keepValues = this.values.filter(function (item) values.indexOf(item) == -1);
+                            let addValues  = values.filter(function (item) this.values.indexOf(item) == -1);
+                            newValue = addValues.concat(keepValues);
+                        }
+                        break;
+                }
+
+                break;
+
+            case "string":
+                switch (operator)
+                {
+                    case "+":
+                        newValue = currentValue + values;
+                        break;
+                    case "-":
+                        newValue = currentValue.replace(values, "");
+                        break;
+                    case "^":
+                        newValue = values + currentValue;
+                        break;
+                    case "=":
+                        newValue = values;
+                        break;
+                }
+
+                break;
+
+            default:
+                return "E685: Internal error: option type `" + option.type + "' not supported";
+        }
+
+        if (newValue == null)
+            return "Operator " + operator + " not supported for option type " + this.type;
+        newValue = this.joinValues(newValue);
+        if (!this.isValidValue(newValue))
+            return "E474: Invalid argument: " + values;
+        this.set(newValue, scope);
+    }
 }; //}}}
 
 function Options() //{{{
@@ -550,108 +648,18 @@ function Options() //{{{
             // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
-                let currentValue = opt.optionValue;
-                let newValue;
-
-                switch (option.type)
+                if (opt.option.type == "boolean")
                 {
-                    case "boolean":
-                        if (opt.valueGiven)
-                        {
-                            liberator.echoerr("E474: Invalid argument: " + args);
-                            return;
-                        }
-
-                        if (opt.invert)
-                            newValue = !currentValue;
-                        else
-                            newValue = !opt.unsetBoolean;
-
-                        break;
-
-                    case "number":
-                        let value = parseInt(opt.value); // deduce radix
-
-                        if (isNaN(value))
-                        {
-                            liberator.echoerr("E521: Number required after =: " + args);
-                            return;
-                        }
-
-                        switch (opt.operator)
-                        {
-                            case "+":
-                                newValue = currentValue + value;
-                                break;
-                            case "-":
-                                newValue = currentValue - value;
-                                break;
-                            case "^":
-                                newValue = currentValue * value;
-                                break;
-                            default:
-                                newValue = value;
-                                break;
-                        }
-
-                        break;
-
-                    case "charlist":
-                    case "stringlist":
-                        switch (opt.operator)
-                        {
-                            case "+":
-                                newValue = util.Array.uniq(Array.concat(opt.optionValues, opt.values), true);
-                                break;
-                            case "^":
-                                // NOTE: Vim doesn't prepend if there's a match in the current value
-                                newValue = util.Array.uniq(Array.concat(opt.values, opt.optionValues), true);
-                                break;
-                            case "-":
-                                newValue = opt.optionValues.filter(function (item) opt.values.indexOf(item) == -1);
-                                break;
-                            default:
-                                newValue = opt.values;
-                                if (opt.invert)
-                                {
-                                    let keepValues = opt.optionValues.filter(function (item) opt.values.indexOf(item) == -1);
-                                    let addValues  = opt.values .filter(function (item) opt.optionValues.indexOf(item) == -1);
-                                    newValue = addValues.concat(keepValues);
-                                }
-                                break;
-                        }
-
-                        break;
-
-                    case "string":
-                        switch (opt.operator)
-                        {
-                            case "+":
-                                newValue = currentValue + opt.value;
-                                break;
-                            case "-":
-                                newValue = currentValue.replace(opt.value, "");
-                                break;
-                            case "^":
-                                newValue = opt.value + currentValue;
-                                break;
-                            default:
-                                newValue = opt.value;
-                                break;
-                        }
-
-                        break;
-
-                    default:
-                        liberator.echoerr("E685: Internal error: option type `" + option.type + "' not supported");
+                    if (opt.valueGiven)
+                    {
+                        liberator.echoerr("E474: Invalid argument: " + args);
+                        return;
+                    }
+                    opt.values = !opt.unsetBoolean;
                 }
-
-                newValue = option.joinValues(newValue);
-                if (option.isValidValue(newValue))
-                    option.set(newValue, opt.scope);
-                else
-                    // FIXME: need to be able to specify more specific errors
-                    liberator.echoerr("E474: Invalid argument: " + args);
+                let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
+                if (res)
+                    liberator.echoerr(res);
             }
         },
         {
