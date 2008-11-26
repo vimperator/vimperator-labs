@@ -55,6 +55,7 @@ function CompletionContext(editor, name, offset)
         self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
         delete self._generate;
+        delete self._filter; // FIXME?
         ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         if (self != this)
@@ -243,7 +244,9 @@ CompletionContext.prototype = {
         if (quote)
             filtered.forEach(function (item) {
                 item.unquoted = item.text;
+                try {
                 item.text = quote[0] + quote[1](item.text) + quote[2];
+                } catch(e) { liberator.dump(quote.map(function (x) <>{util.objectToString(x)}</>)) }
             })
         if (options.get("wildoptions").has("sort"))
             filtered.sort(this.compare);
@@ -309,6 +312,11 @@ CompletionContext.prototype = {
     advance: function advance(count)
     {
         this.offset += count;
+        if (this.quote)
+        {
+            this.quote[0] = "";
+            this.quote[2] = "";
+        }
         // XXX
         if (this._filter)
             this._filter = this._filter.substr(count);
@@ -1197,6 +1205,8 @@ function Completion() //{{{
                 if (!args.completeOpt && command.completer)
                 {
                     cmdContext.advance(args.completeStart);
+                    cmdContext.quote = args.quote;
+                    cmdContext.filter = args.completeFilter;
                     compObject = command.completer.call(command, cmdContext, args, special, count);
                     if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                         compObject = { start: compObject[0], items: compObject[1] };

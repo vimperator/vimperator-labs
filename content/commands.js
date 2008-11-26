@@ -186,6 +186,11 @@ function Commands() //{{{
         let re = RegExp("[" + list + "]", "g");
         return function (str) q + String.replace(str, re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
     }
+    const _quoteArg = { // FIXME
+        '"': ['"', quote("", '\n\t"\\\\'), '"'],
+        "'": ["'", quote("", "\\\\'"), "'"],
+        "":  ["", quote("",  "\\\\ "), ""]
+    };
     const quoteArg = {
         '"': quote('"', '\n\t"\\\\'),
         "'": quote("'", "\\\\'"),
@@ -474,7 +479,7 @@ function Commands() //{{{
                 args.completeOpt = null;
                 args.completeFilter = null;
                 args.completeStart = i;
-                args.quote = quoteArg[""];
+                args.quote = _quoteArg[""];
             }
             if (complete)
             {
@@ -549,7 +554,7 @@ function Commands() //{{{
                                         args.completeStart += optname.length + 1;
                                         args.completeOpt = opt;
                                         args.completeFilter = arg;
-                                        args.quote = quoteArg[quote] || quoteArg[""];
+                                        args.quote = _quoteArg[quote] || _quoteArg[""];
                                     }
                                     let type = argTypes[opt[1]];
                                     if (type)
@@ -610,7 +615,10 @@ function Commands() //{{{
                 // if not an option, treat this token as an argument
                 var [count, arg, quote] = getNextArg(sub);
                 if (complete)
-                    args.quote = quoteArg[quote] || quoteArg[""];
+                {
+                    args.quote = _quoteArg[quote] || _quoteArg[""];
+                    args.completeFilter = arg || "";
+                }
                 else if (count == -1)
                 {
                     liberator.echoerr("Error parsing arguments: " + arg);
@@ -644,14 +652,13 @@ function Commands() //{{{
                     else
                         compl = opt[3] || [];
                     context.title = [opt[0][0]];
-                    context.quote = ["", args.quote, ""]; // FIXME
+                    context.quote = args.quote;
                     context.completions = compl;
                 }
                 complete.advance(args.completeStart);
                 complete.title = ["Options"];
                 if (completeOpts)
                     complete.completions = completeOpts;
-
             }
 
             // check for correct number of arguments
