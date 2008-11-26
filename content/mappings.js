@@ -151,14 +151,14 @@ function Mappings() //{{{
         // 2 args -> map arg1 to arg*
         function map(args, mode, noremap)
         {
-            if (!args.arguments.length)
+            if (!args.length)
             {
                 mappings.list(mode);
                 return;
             }
 
             // ?:\s+ <- don't remember; (...)? optional = rhs
-            let [lhs, rhs] = args.arguments;
+            let [lhs, rhs] = args;
 
             if (!rhs) // list the mapping
             {
@@ -224,7 +224,7 @@ function Mappings() //{{{
             "Remove a mapping" + modeDescription,
             function (args)
             {
-                args = args.arguments[0];
+                args = args[0];
 
                 let found = false;
                 for (let [,mode] in Iterator(modes))

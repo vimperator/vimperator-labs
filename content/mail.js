@@ -685,14 +685,14 @@ function Mail() //{{{
         function (args)
         {
             var mailargs = {};
-            mailargs.to =          args.arguments.join(", ");
+            mailargs.to =          args.join(", ");
             mailargs.subject =     args["-subject"];
             mailargs.bcc =         args["-bcc"];
             mailargs.cc =          args["-cc"];
             mailargs.body =        args["-text"];
             mailargs.attachments = args["-attachment"] || [];
 
-            var addresses = args.arguments;
+            var addresses = args;
             if (mailargs.bcc)
                 addresses = addresses.concat(mailargs.bcc);
             if (mailargs.cc)

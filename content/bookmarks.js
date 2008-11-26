@@ -291,8 +291,8 @@ function Bookmarks() //{{{
         "Add a bookmark",
         function (args, special)
         {
-            var url = args.arguments.length == 0 ? buffer.URL : args.arguments[0];
-            var title = args["-title"] || (args.arguments.length == 0 ? buffer.title : null);
+            var url = args.length == 0 ? buffer.URL : args[0];
+            var title = args["-title"] || (args.length == 0 ? buffer.title : null);
             var keyword = args["-keyword"] || null;
             var tags =    args["-tags"] || [];
 
@@ -316,7 +316,7 @@ function Bookmarks() //{{{
         "List or open multiple bookmarks",
         function (args, special)
         {
-            bookmarks.list(args.arguments.join(" "), args["-tags"] || [], special);
+            bookmarks.list(args.join(" "), args["-tags"] || [], special);
         },
         {
             bang: true,

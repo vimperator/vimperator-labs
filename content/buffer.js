@@ -532,7 +532,7 @@ function Buffer() //{{{
         {
             let doc = window.content.document;
             let chosenData = null;
-            let filename = args.arguments[0];
+            let filename = args[0];
 
             if (filename)
             {
@@ -577,7 +577,7 @@ function Buffer() //{{{
 
     commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { buffer.viewSource(args.arguments[0], special); },
+        function (args, special) { buffer.viewSource(args[0], special); },
         {
             argCount: "?",
             bang: true,
@@ -1523,7 +1523,7 @@ function Marks() //{{{
         "Mark current location within the web page",
         function (args)
         {
-            var mark = args.arguments[0];
+            var mark = args[0];
             if (mark.length > 1)
             {
                 liberator.echoerr("E488: Trailing characters");

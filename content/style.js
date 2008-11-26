@@ -385,7 +385,7 @@ liberator.registerObserver("load_commands", function ()
         "Load a color scheme",
         function (args)
         {
-            let scheme = args.arguments[0];
+            let scheme = args[0];
 
             if (io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
                 autocommands.trigger("ColorScheme", { name: scheme });
@@ -401,7 +401,7 @@ liberator.registerObserver("load_commands", function ()
         "Add or list user styles",
         function (args, special)
         {
-            let [filter, css] = args.arguments;
+            let [filter, css] = args;
             let name = args["-name"];
 
             if (!css)
@@ -471,7 +471,7 @@ liberator.registerObserver("load_commands", function ()
     commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
         function (args) {
-            styles.removeSheet(args["-name"], args.arguments[0], args.literalArg, args["-index"], false);
+            styles.removeSheet(args["-name"], args[0], args.literalArg, args["-index"], false);
         },
         {
             argCount: 2,
@@ -494,7 +494,7 @@ liberator.registerObserver("load_commands", function ()
                 height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 overflow: hidden !important;
             ]]>;
-            let [key, css] = args.arguments;
+            let [key, css] = args;
             if (!css && !(key && special))
             {
                 let str = template.tabular(["Key", "Sample", "CSS"],
@@ -521,7 +521,7 @@ liberator.registerObserver("load_commands", function ()
                     context.completions = [[v.class, ""] for (v in highlight)];
                 else if (args.completeArg == 1)
                 {
-                    let hl = highlight.get(args.arguments[0]);
+                    let hl = highlight.get(args[0]);
                     if (hl)
                         context.completions = [[hl.value, "Current Value"], [hl.default || "", "Default Value"]];
                 }

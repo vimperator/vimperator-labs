@@ -244,7 +244,7 @@ function IO() //{{{
         function (args, special)
         {
             // TODO: "E172: Only one file name allowed"
-            let filename = args.arguments[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
+            let filename = args[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
             let file = io.getFile(filename);
 
             if (file.exists() && !special)
@@ -288,7 +288,7 @@ function IO() //{{{
 
     commands.add(["runt[ime]"],
         "Source the specified file from each directory in 'runtimepath'",
-        function (args, special) { io.sourceFromRuntimePath(args.arguments, special); },
+        function (args, special) { io.sourceFromRuntimePath(args, special); },
         {
             argCount: "+",
             bang: true
@@ -311,7 +311,7 @@ function IO() //{{{
         function (args, special)
         {
             // FIXME: "E172: Only one file name allowed"
-            io.source(args.arguments[0], special);
+            io.source(args[0], special);
         },
         {
             argCount: "1",

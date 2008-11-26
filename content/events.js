@@ -72,7 +72,7 @@ function AutoCommands() //{{{
         "Execute commands automatically on events",
         function (args, special)
         {
-            let [event, regex, cmd] = args.arguments;
+            let [event, regex, cmd] = args;
             let events = null;
             if (event)
             {
@@ -101,7 +101,7 @@ function AutoCommands() //{{{
                 if (special)
                 {
                     // TODO: "*" only appears to work in Vim when there is a {group} specified
-                    if (args.arguments[0] != "*" || regex)
+                    if (args[0] != "*" || regex)
                         autocommands.remove(event, regex); // remove all
                 }
                 else
@@ -725,7 +725,7 @@ function Events() //{{{
 
     commands.add(["macros"],
         "List all macros",
-        function (args) { completion.listCompleter("macro", args.arguments[0]) },
+        function (args) { completion.listCompleter("macro", args[0]) },
         {
             argCount: "1",
             completer: function (context) completion.macro(context),
@@ -733,7 +733,7 @@ function Events() //{{{
 
     commands.add(["pl[ay]"],
         "Replay a recorded macro",
-        function (args) { events.playMacro(args.arguments[0]); },
+        function (args) { events.playMacro(args[0]); },
         {
             argCount: "1",
             completer: function (context) completion.macro(context)

@@ -186,7 +186,7 @@ function Commands() //{{{
         let re = RegExp("[" + list + "]", "g");
         return function (str) q + String.replace(str, re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
     }
-    const _quoteArg = { // FIXME
+    const complQuote = { // FIXME
         '"': ['"', quote("", '\n\t"\\\\'), '"'],
         "'": ["'", quote("", "\\\\'"), "'"],
         "":  ["", quote("",  "\\\\ "), ""]
@@ -286,7 +286,7 @@ function Commands() //{{{
                 if (val != null)
                     res.push(quote(val));
             }
-            for (let [,arg] in Iterator(args.arguments || []))
+            for (let [,arg] in Iterator(args || []))
                 res.push(quote(arg));
 
             let str = args.literalArg;
@@ -452,8 +452,7 @@ function Commands() //{{{
             if (!argCount)
                 argCount = "*";
 
-            var args = {};       // parsed options
-            args.arguments = []; // remaining arguments
+            var args = [];       // parsed options
             args.string = str;   // for access to the unparsed string
             args.literalArg = "";
 
@@ -479,7 +478,7 @@ function Commands() //{{{
                 args.completeOpt = null;
                 args.completeFilter = null;
                 args.completeStart = i;
-                args.quote = _quoteArg[""];
+                args.quote = complQuote[""];
             }
             if (complete)
             {
@@ -554,7 +553,7 @@ function Commands() //{{{
                                         args.completeStart += optname.length + 1;
                                         args.completeOpt = opt;
                                         args.completeFilter = arg;
-                                        args.quote = _quoteArg[quote] || _quoteArg[""];
+                                        args.quote = complQuote[quote] || complQuote[""];
                                     }
                                     let type = argTypes[opt[1]];
                                     if (type)
@@ -599,16 +598,16 @@ function Commands() //{{{
 
                 if (complete)
                 {
-                    if (argCount == "0" || args.arguments.length > 0  && (argCount == "1" || argCount == "?"))
+                    if (argCount == "0" || args.length > 0  && (argCount == "1" || argCount == "?"))
                         complete.highlight(i, sub.length, "SPELLCHECK")
                 }
 
-                if (literal && args.arguments.length == literalIndex)
+                if (literal && args.length == literalIndex)
                 {
                     args.literalArg = sub;
-                    args.arguments.push(sub);
+                    args.push(sub);
                     if (complete)
-                        args.completeArg = args.arguments.length - 1;
+                        args.completeArg = args.length - 1;
                     break;
                 }
 
@@ -616,7 +615,7 @@ function Commands() //{{{
                 var [count, arg, quote] = getNextArg(sub);
                 if (complete)
                 {
-                    args.quote = _quoteArg[quote] || _quoteArg[""];
+                    args.quote = complQuote[quote] || complQuote[""];
                     args.completeFilter = arg || "";
                 }
                 else if (count == -1)
@@ -631,9 +630,9 @@ function Commands() //{{{
                 }
 
                 if (arg != null)
-                    args.arguments.push(arg);
+                    args.push(arg);
                 if (complete)
-                    args.completeArg = args.arguments.length - 1;
+                    args.completeArg = args.length - 1;
 
                 if (count <= 0)
                     break;
@@ -662,15 +661,15 @@ function Commands() //{{{
             }
 
             // check for correct number of arguments
-            if (!complete && (args.arguments.length == 0 && /^[1+]$/.test(argCount) ||
+            if (!complete && (args.length == 0 && /^[1+]$/.test(argCount) ||
                     // TODO: what is this for? -- djk
                     literal && argCount == "+" && /^\s*$/.test(args.literalArg)))
             {
                 liberator.echoerr("E471: Argument required");
                 return null;
             }
-            else if (args.arguments.length == 1 && (argCount == "0") ||
-                     args.arguments.length > 1  && /^[01?]$/.test(argCount))
+            else if (args.length == 1 && (argCount == "0") ||
+                     args.length > 1  && /^[01?]$/.test(argCount))
             {
                 if (!complete)
                     liberator.echoerr("E488: Trailing characters");
@@ -776,7 +775,7 @@ function Commands() //{{{
         "List and define commands",
         function (args, special)
         {
-            let cmd = args.arguments[0];
+            let cmd = args[0];
 
             if (cmd != null && /\W/.test(cmd))
             {
@@ -899,7 +898,7 @@ function Commands() //{{{
         "Delete the specified user-defined command",
         function (args)
         {
-            let name = args.arguments[0];
+            let name = args[0];
 
             if (commands.get(name))
                 commands.removeUserCommand(name);

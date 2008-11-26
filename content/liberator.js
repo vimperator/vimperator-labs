@@ -183,7 +183,7 @@ const liberator = (function () //{{{
             "Open a " + config.name + " dialog",
             function (args)
             {
-                args = args.arguments[0];
+                args = args[0];
 
                 try
                 {

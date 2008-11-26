@@ -115,7 +115,7 @@ function Addressbook() //{{{
         "Add an address book entry",
         function (args)
         {
-            var mailAddr =    args.arguments[0]; // TODO: support more than one email address
+            var mailAddr =    args[0]; // TODO: support more than one email address
             var firstName =   args["-firstname"] || null;
             var lastName =    args["-lastname"] || null;
             var displayName = args["-name"] || null;
