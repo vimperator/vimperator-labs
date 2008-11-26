@@ -209,13 +209,13 @@ Option.prototype = {
                 switch (operator)
                 {
                     case "+":
-                        newValue = currentValue + value;
+                        newValue = this.value + value;
                         break;
                     case "-":
-                        newValue = currentValue - value;
+                        newValue = this.value - value;
                         break;
                     case "^":
-                        newValue = currentValue * value;
+                        newValue = this.value * value;
                         break;
                     case "=":
                         newValue = value;
@@ -256,13 +256,13 @@ Option.prototype = {
                 switch (operator)
                 {
                     case "+":
-                        newValue = currentValue + values;
+                        newValue = this.value + values;
                         break;
                     case "-":
-                        newValue = currentValue.replace(values, "");
+                        newValue = this.value.replace(values, "");
                         break;
                     case "^":
-                        newValue = values + currentValue;
+                        newValue = values + this.value;
                         break;
                     case "=":
                         newValue = values;
