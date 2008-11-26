@@ -665,7 +665,7 @@ function Options() //{{{
         },
         {
             bang: true,
-            completer: function (context, args)
+            completer: function (context, args, modifiers)
             {
                 let filter = context.filter;
                 var optionCompletions = [];
@@ -688,7 +688,7 @@ function Options() //{{{
 
                 let prefix = (filter.match(/^(no|inv)/) || [""])[0];
                 if (prefix)
-                    filter = filter.substr(prefix.length);
+                    context.filter = filter = filter.substr(prefix.length);
 
                 let scope = modifiers && modifiers.scope || options.OPTION_SCOPE_BOTH;
 
@@ -698,7 +698,7 @@ function Options() //{{{
                 if (filter.indexOf("=") == -1)
                 {
                     context.title = ["Option"];
-                    context.quote = function (name) prefix + name;
+                    context.quote = [prefix, util.identity, ""];
                     context.keys = { text: "names", description: "description" };
                     context.completions = [opt for (opt in opts)];
                     return;
