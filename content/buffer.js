@@ -955,12 +955,12 @@ function Buffer() //{{{
                 switch (relationship)
                 {
                     case "next":
-                        regexps = options["nextpattern"].split(",");
+                        regexps = options.get("nextpattern").values;
                         revString = "previous";
                         break;
                     case "previous":
                         // TODO: accept prev\%[ious]
-                        regexps = options["previouspattern"].split(",");
+                        regexps = options.get("previouspattern").values;
                         revString = "next";
                         break;
                     default:

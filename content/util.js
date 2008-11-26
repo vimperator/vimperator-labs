@@ -214,8 +214,7 @@ const util = { //{{{
         }
 
         for (let u = strNum[0].length - 3; u > 0; u -= 3) // make a 10000 a 10,000
-            strNum[0] = strNum[0].substring(0, u)
-                + "," + strNum[0].substring(u, strNum[0].length);
+            strNum[0] = strNum[0].substr(0, u) + "," + strNum[0].substr(u);
 
         if (unitIndex) // decimalPlaces only when > Bytes
             strNum[0] += "." + strNum[1];

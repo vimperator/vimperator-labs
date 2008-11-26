@@ -201,34 +201,6 @@ const template = {
         });
     },
 
-    // returns a single row for a bookmark or history item
-    bookmarkItem: function bookmarkItem(item)
-    {
-        var extra = [];
-        if (item.keyword)
-            extra.push(['keyword', item.keyword, "hl-Keyword"]);
-        if (item.tags && item.tags.length > 0)
-            extra.push(["tags", item.tags.join(","), "hl-Tag"]); // no space, otherwise it looks strange, since we just have spaces to seperate tags from keywords
-
-        return <ul class="hl-CompItem">
-            <li class="hl-CompIcon"><img src={item.icon || ""}/></li>
-            <li class="hl-CompResult">{util.clip(item.title || "", 50)}</li>
-            <li style="width: 100%">
-                <a href="#" class="hl-URL">{item.url}</a>&#160;
-                {
-                    !(extra.length) ? "" :
-                    <span class="extra-info">
-                        ({
-                            template.map(extra, function (e)
-                            <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
-                            <>&#xa0;</>/* Non-breaking space */)
-                        })
-                    </span>
-                }
-            </li>
-        </ul>
-    },
-
     jumps: function jumps(index, elems)
     {
         return this.generic(

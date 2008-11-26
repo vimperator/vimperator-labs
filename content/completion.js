@@ -55,7 +55,7 @@ function CompletionContext(editor, name, offset)
         self.parent = parent;
         self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
-        ["compare", "editor", "filterFunc", "keys", "quote", "title", "top"].forEach(function (key)
+        ["compare", "editor", "filterFunc", "keys", "process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
@@ -91,13 +91,14 @@ function CompletionContext(editor, name, offset)
             }
             return false;
         }];
+        this.contexts = { name: this };
         this.keys = { text: 0, description: 1, icon: "icon" };
         this.offset = offset || 0;
         this.onUpdate = function () true;
+        this.process = [];
         this.tabPressed = false;
         this.title = ["Completions"];
         this.top = this;
-        this.contexts = { name: this };
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
         this.selectionTypes = {};
         this.reset();
@@ -106,7 +107,6 @@ function CompletionContext(editor, name, offset)
     this.cache = {};
     this.key = "";
     this.itemCache = {};
-    this.process = [];
     this._completions = []; // FIXME
     this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) : item.item[self.keys[key]];
 }
@@ -1087,7 +1087,6 @@ function Completion() //{{{
             context.keys = { text: "text", description: "url", icon: "icon" };
             let process = context.process[0];
             context.process = [function ({ text: text, item: item }) <>
-                        <span style="display: inline-block; text-align: right; width: 3ex">{item.i}</span>
                         <span class="hl-Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.indicator}</span>
                         { process.call(this, { item: item, text: text }) }
                     </>];
@@ -1116,7 +1115,7 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(context)
         {
-            options["runtimepath"].split(",").forEach(function (path) {
+            options.get("runtimepath").values.forEach(function (path) {
                 context.fork(path, 0, null, function (context) {
                     context.filter = path + "/colors/" + context.filter;
                     completion.file(context, true);
