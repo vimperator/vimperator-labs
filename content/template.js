@@ -48,10 +48,10 @@ const template = {
             var desc = this.process[1].call(this, item, this.getKey(item, "description"));
         }
 
-        return <ul class={class || "hl-CompItem"}>
-                   <li class="hl-CompResult">{text}</li>
-                   <li class="hl-CompDesc">{desc}</li>
-               </ul>;
+        return <div class={class || "hl-CompItem"}>
+                   <li class="hl-CompResult">{text}&#160;</li>
+                   <li class="hl-CompDesc">{desc}&#160;</li>
+               </div>;
     },
 
     bookmarkDescription: function (item, text)
@@ -147,7 +147,7 @@ const template = {
     {
         return this.highlightSubstrings(str, (function ()
         {
-            while (res = re.exec(str) && res[0].length)
+            while ((res = re.exec(str)) && res[0].length)
                 yield [res.index, res[0].length];
         })(), highlight || template.filter);
     },

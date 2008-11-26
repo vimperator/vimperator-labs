@@ -488,7 +488,7 @@ const util = { //{{{
         return urls;
     },
 
-    xmlToDom: function (node, doc)
+    xmlToDom: function (node, doc, nodes)
     {
         XML.prettyPrinting = false;
         switch (node.nodeKind())
@@ -501,7 +501,9 @@ const util = { //{{{
                 for each (let attr in node.@*)
                     domnode.setAttribute(attr.name(), String(attr));
                 for each (let child in node.*)
-                    domnode.appendChild(arguments.callee(child, doc));
+                    domnode.appendChild(arguments.callee(child, doc, nodes));
+                if (nodes && node.@key)
+                    nodes[node.@key] = domnode;
                 return domnode;
         }
     }

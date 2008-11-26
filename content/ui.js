@@ -1281,7 +1281,7 @@ function ItemList(id) //{{{
         return;
     }
 
-    function dom(xml) util.xmlToDom(xml, doc);
+    function dom(xml, map) util.xmlToDom(xml, doc, map);
     function elemToString(elem) elem.nodeType == elem.TEXT_NODE ? elem.data :
         "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for (a in util.Array.iterator(elem.attributes))]).join(" ") + ">";
     var doc = iframe.contentDocument;
@@ -1295,15 +1295,14 @@ function ItemList(id) //{{{
     var endIndex = -1;    // The index one *after* the last displayed item
     var selIndex = -1;    // The index of the currently selected element
     var div = null;
-    var noCompletions = null;
-    var completionBody = null;
+    var divNodes = {};
     var minHeight = 0;
 
     function autoSize()
     {
         if (container.collapsed)
             div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
-        minHeight = Math.max(minHeight, completionBody.getBoundingClientRect().bottom);
+        minHeight = Math.max(minHeight, divNodes.completions.getBoundingClientRect().bottom);
         container.height = minHeight;
         div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.
@@ -1316,18 +1315,15 @@ function ItemList(id) //{{{
     {
         div = dom(
             <div class="ex-command-output hl-Normal" style="white-space: nowrap">
-                <div class="hl-Completions"><span class="hl-Title">No Completions</span></div>
-                <div/>
+                <div class="hl-Completions" key="noCompletions"><span class="hl-Title">No Completions</span></div>
+                <div key="completions"/>
                 <div class="hl-Completions">
                 {
                     template.map(util.range(0, maxItems), function (i)
                     <ul><li class="hl-CompTitle hl-NonText">~</li></ul>)
                 }
                 </div>
-            </div>);
-
-        noCompletions =  div.getElementsByTagName("div")[0];
-        completionBody = div.getElementsByTagName("div")[1];
+            </div>, divNodes);
 
         // 1:
         doc.body.replaceChild(div, doc.body.firstChild);
@@ -1336,16 +1332,16 @@ function ItemList(id) //{{{
         items.contextList.forEach(function init_eachContext(context) {
             if (!context.items.length)
                 return;
+            context.cache.nodes = {};
             context.cache.dom = dom(<div>
                     <div class="hl-Completions">
                         {context.createRow(context.title || [], "hl-CompTitle")}
                     </div>
-                    <span style="display: block; text-align: center; height: .5ex; line-height: .5ex;">&#x2303;</span>
-                    <div/>
-                    <span style="display: block; text-align: center; height: .5ex; line-height: .5ex; padding-bottom: 1ex;">&#x2304;</span>
-                </div>);
-            context.cache.arrows = context.cache.dom.getElementsByTagName("span");
-            completionBody.appendChild(context.cache.dom);
+                    <div key="up" class="hl-CompLess"/>
+                    <div key="items"/>
+                    <div key="down" class="hl-CompMore"/>
+                </div>, context.cache.nodes);
+            divNodes.completions.appendChild(context.cache.dom);
         });
     }
 
@@ -1378,19 +1374,21 @@ function ItemList(id) //{{{
         }
 
         items.contextList.forEach(function fill_eachContext(context) {
-            let dom = context.cache.dom;
+            let cache = context.cache;
+            let dom = cache.dom;
             if (!dom)
                 return;
             let [start, end] = getRows(context);
-            context.cache.arrows[0].style.display = (start == 0) ? "none" : "block";
-            context.cache.arrows[1].style.display = (end == context.items.length) ? "none" : "block";
             let d = stuff.cloneNode(true);
             for (let [,row] in Iterator(context.getRows(start, end, doc)))
                 d.appendChild(row);
-            dom.replaceChild(d, dom.getElementsByTagName("div")[1]);
+            dom.replaceChild(d, cache.nodes.items);
+            cache.nodes.items = d;
+            cache.nodes.up.style.display = (start == 0) ? "none" : "block";
+            cache.nodes.down.style.display = (end == context.items.length) ? "none" : "block";
         });
 
-        noCompletions.style.display = off > 0 ? "none" : "block";
+        divNodes.noCompletions.style.display = off > 0 ? "none" : "block";
 
         // 1:
         completionElements = div.getElementsByClassName("hl-CompItem");

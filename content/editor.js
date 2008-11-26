@@ -1087,6 +1087,8 @@ function Editor() //{{{
         expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
         {
             var textbox   = getEditor();
+            if (!textbox)
+                return;
             var text      = textbox.value;
             var currStart = textbox.selectionStart;
             var currEnd   = textbox.selectionEnd;

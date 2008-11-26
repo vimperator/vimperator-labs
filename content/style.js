@@ -29,6 +29,7 @@ function Highlights(name, store, serial)
 
 
         CompTitle          color: magenta; background: white; font-weight: bold;
+        CompTitle>*        border-bottom: 1px dashed magenta;
         CompItem
         CompItem[selected] background: yellow;
         CompItem>*         padding: 0 .5ex;
@@ -36,6 +37,10 @@ function Highlights(name, store, serial)
         CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
         CompResult         width: 45%; overflow: hidden;
         CompDesc           color: gray; width: 50%;
+        CompLess           text-align: center; height: .5ex; line-height: .5ex;
+        CompLess:after     content: "\2303"
+        CompMore           text-align: center; height: .5ex; line-height: .5ex; padding-bottom: 1ex;
+        CompMore:after     content: "\2304"
 
         Indicator   color: blue;
         Filter      font-weight: bold;
@@ -129,9 +134,10 @@ function Highlights(name, store, serial)
         css = style.selector + " { " + css + " }";
 
         let error = styles.addSheet(style.selector, style.filter, css, true, force);
-        if (!error)
-            style.value = newStyle;
-        return error;
+        if (error)
+            return error;
+        style.value = newStyle;
+        highlight[style.class] = style;
     }
 
     highlightCSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
@@ -440,6 +446,12 @@ liberator.registerObserver("load_commands", function ()
                     catch (e) {}
                     context.completions = compl.concat([[s, ""] for each (s in styles.sites)])
                 }
+                else if (args.completeArg == 1)
+                {
+                    let sheet = styles.findSheets(args["-name"], null, null, null, false)[0];
+                    if (sheet)
+                        context.completions = [[sheet.css, "Current Value"]];
+                }
             },
             hereDoc: true,
             literal: true,
@@ -507,6 +519,12 @@ liberator.registerObserver("load_commands", function ()
             {
                 if (args.completeArg == 0)
                     context.completions = [[v.class, ""] for (v in highlight)];
+                else if (args.completeArg == 1)
+                {
+                    let hl = highlight.get(args.arguments[0]);
+                    if (hl)
+                        context.completions = [[hl.value, "Current Value"], [hl.default || "", "Default Value"]];
+                }
             },
             hereDoc: true,
             literal: true,
