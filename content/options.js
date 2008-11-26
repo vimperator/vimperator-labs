@@ -186,6 +186,7 @@ Option.prototype = {
     op: function (operator, values, scope, invert)
     {
         let newValue = null;
+        let self = this;
 
         switch (this.type)
         {

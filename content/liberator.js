@@ -1095,17 +1095,21 @@ const liberator = (function () //{{{
         {
             if (Components.utils.reportError)
                 Components.utils.reportError(error);
-            let obj = {
-                toString: function () error.toString(),
-                stack: <>{error.stack.replace(/^/mg, "\t")}</>
-            };
-            for (let [k, v] in Iterator(error))
+            try
             {
-                if (!(k in obj))
-                    obj[k] = v;
+                let obj = {
+                    toString: function () error.toString(),
+                    stack: <>{error.stack.replace(/^/mg, "\t")}</>
+                };
+                for (let [k, v] in Iterator(error))
+                {
+                    if (!(k in obj))
+                        obj[k] = v;
+                }
+                liberator.dump(obj);
+                liberator.dump("");
             }
-            liberator.dump(obj);
-            liberator.dump("");
+            catch (e) {}
         },
 
         restart: function ()

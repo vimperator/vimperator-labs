@@ -57,12 +57,12 @@ function CompletionContext(editor, name, offset)
         self.keys = util.cloneObject(parent.keys);
         ["compare", "editor", "filterFunc", "keys", "process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
+        if (self != this)
+            return self;
         ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
-        if (self != this)
-            return self;
     }
     else
     {
@@ -95,12 +95,8 @@ function CompletionContext(editor, name, offset)
         this.keys = { text: 0, description: 1, icon: "icon" };
         this.offset = offset || 0;
         this.onUpdate = function () true;
-        this.process = [];
-        this.tabPressed = false;
-        this.title = ["Completions"];
         this.top = this;
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
-        this.selectionTypes = {};
         this.reset();
     }
     this.name = name || "";
@@ -390,8 +386,10 @@ CompletionContext.prototype = {
             this.highlight(0, 0, type);
         this.contextList = [];
         this.offset = 0;
+        this.process = [];
         this.selectionTypes = {};
         this.tabPressed = false;
+        this.title = ["Completions"];
         this.updateAsync = false;
         this.value = this.editor ? this.editor.rootElement.textContent : this._value;
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
