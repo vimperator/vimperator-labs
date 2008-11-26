@@ -70,7 +70,7 @@ function AutoCommands() //{{{
 
     commands.add(["au[tocmd]"],
         "Execute commands automatically on events",
-        function (args, special)
+        function (args)
         {
             let [event, regex, cmd] = args;
             let events = null;
@@ -90,7 +90,7 @@ function AutoCommands() //{{{
 
             if (cmd) // add new command, possibly removing all others with the same event/pattern
             {
-                if (special)
+                if (args.bang)
                     autocommands.remove(event, regex);
                 autocommands.add(events, regex, cmd);
             }
@@ -98,7 +98,7 @@ function AutoCommands() //{{{
             {
                 if (event == "*")
                     event = null;
-                if (special)
+                if (args.bang)
                 {
                     // TODO: "*" only appears to work in Vim when there is a {group} specified
                     if (args[0] != "*" || regex)
@@ -708,14 +708,12 @@ function Events() //{{{
 
     commands.add(["delmac[ros]"],
         "Delete macros",
-        function (args, special)
+        function (args)
         {
-            args = args.string;
+            if (args.bang)
+                args.string = ".*"; // XXX
 
-            if (special)
-                args = ".*"; // XXX
-
-            events.deleteMacros(args);
+            events.deleteMacros(args.string);
         },
         {
             bang: true,

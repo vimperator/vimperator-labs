@@ -399,7 +399,7 @@ liberator.registerObserver("load_commands", function ()
 
     commands.add(["sty[le]"],
         "Add or list user styles",
-        function (args, special)
+        function (args)
         {
             let [filter, css] = args;
             let name = args["-name"];
@@ -426,7 +426,7 @@ liberator.registerObserver("load_commands", function ()
                         css = sheet.css.replace(/;?\s*$/, "; " + css);
                     }
                 }
-                let err = styles.addSheet(name, filter, css, false, special);
+                let err = styles.addSheet(name, filter, css, false, args.bang);
                 if (err)
                     liberator.echoerr(err);
             }
@@ -434,7 +434,7 @@ liberator.registerObserver("load_commands", function ()
         {
             argCount: 2,
             bang: true,
-            completer: function (context, args, bang) {
+            completer: function (context, args) {
                 let compl = [];
                 if (args.completeArg == 0)
                 {
@@ -483,7 +483,7 @@ liberator.registerObserver("load_commands", function ()
 
     commands.add(["hi[ghlight]"],
         "Set the style of certain display elements",
-        function (args, special)
+        function (args)
         {
             let style = <![CDATA[
                 ;
@@ -495,7 +495,7 @@ liberator.registerObserver("load_commands", function ()
                 overflow: hidden !important;
             ]]>;
             let [key, css] = args;
-            if (!css && !(key && special))
+            if (!css && !(key && args.bang))
             {
                 let str = template.tabular(["Key", "Sample", "CSS"],
                     ["padding: 0 1em 0 0; vertical-align: top", "text-align: center"],
@@ -507,7 +507,7 @@ liberator.registerObserver("load_commands", function ()
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }
-            let error = highlight.set(key, css, special, "-append" in args);
+            let error = highlight.set(key, css, args.bang, "-append" in args);
             if (error)
                 liberator.echoerr(error);
         },

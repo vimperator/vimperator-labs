@@ -275,15 +275,13 @@ const config = { //{{{
 
         commands.add(["o[pen]", "e[dit]"],
             "Open one or more URLs in the current tab",
-            function (args, special)
+            function (args)
             {
-                args = args.string;
-
-                if (args)
+                if (args.string)
                 {
-                    liberator.open(args);
+                    liberator.open(args.string);
                 }
-                else if (special)
+                else if (args.bang)
                     BrowserReloadSkipCache();
                 else
                     BrowserReload();

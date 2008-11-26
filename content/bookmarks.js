@@ -289,14 +289,14 @@ function Bookmarks() //{{{
 
     commands.add(["bma[rk]"],
         "Add a bookmark",
-        function (args, special)
+        function (args)
         {
             var url = args.length == 0 ? buffer.URL : args[0];
             var title = args["-title"] || (args.length == 0 ? buffer.title : null);
             var keyword = args["-keyword"] || null;
             var tags =    args["-tags"] || [];
 
-            if (bookmarks.add(false, title, url, keyword, tags, special))
+            if (bookmarks.add(false, title, url, keyword, tags, args.bang))
             {
                 let extra = (title == url) ? "" : " (" + title + ")";
                 liberator.echo("Added bookmark: " + url + extra, commandline.FORCE_SINGLELINE);
@@ -314,9 +314,9 @@ function Bookmarks() //{{{
 
     commands.add(["bmarks"],
         "List or open multiple bookmarks",
-        function (args, special)
+        function (args)
         {
-            bookmarks.list(args.join(" "), args["-tags"] || [], special);
+            bookmarks.list(args.join(" "), args["-tags"] || [], args.bang);
         },
         {
             bang: true,
@@ -616,11 +616,11 @@ function History() //{{{
 
     commands.add(["ba[ck]"],
         "Go back in the browser history",
-        function (args, special, count)
+        function (args)
         {
             args = args.string;
 
-            if (special)
+            if (args.bang)
             {
                 history.goToStart();
             }
@@ -641,7 +641,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(count > 0 ? -1 * count : -1);
+                    history.stepTo(args.count > 0 ? -1 * args.count : -1);
                 }
             }
         },
@@ -668,11 +668,11 @@ function History() //{{{
 
     commands.add(["fo[rward]", "fw"],
         "Go forward in the browser history",
-        function (args, special, count)
+        function (args)
         {
             args = args.string;
 
-            if (special)
+            if (args.bang)
             {
                 history.goToEnd();
             }
@@ -693,7 +693,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(count > 0 ? count : 1);
+                    history.stepTo(args.count > 0 ? args.count : 1);
                 }
             }
         },
@@ -720,7 +720,7 @@ function History() //{{{
 
     commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args, special) { history.list(args.string, special); },
+        function (args) { history.list(args.string, args.bang); },
         {
             bang: true,
             // completer: function (filter) completion.history(filter)
@@ -861,24 +861,22 @@ function QuickMarks() //{{{
 
     commands.add(["delqm[arks]"],
         "Delete the specified QuickMarks",
-        function (args, special)
+        function (args)
         {
-            args = args.string;
-
             // TODO: finish arg parsing - we really need a proper way to do this. :)
-            if (!special && !args)
+            if (!args.bang && !args.string)
             {
                 liberator.echoerr("E471: Argument required");
                 return;
             }
 
-            if (special && args)
+            if (args.bang && args.string)
             {
                 liberator.echoerr("E474: Invalid argument");
                 return;
             }
 
-            if (special)
+            if (args.bang)
                 quickmarks.removeAll();
             else
                 quickmarks.remove(args);

@@ -241,13 +241,13 @@ function IO() //{{{
     // "mkv[imperatorrc]" or "mkm[uttatorrc]"
     commands.add([EXTENSION_NAME.replace(/(.)(.*)/, "mk$1[$2rc]")],
         "Write current key mappings and changed options to the config file",
-        function (args, special)
+        function (args)
         {
             // TODO: "E172: Only one file name allowed"
             let filename = args[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
             let file = io.getFile(filename);
 
-            if (file.exists() && !special)
+            if (file.exists() && !args.bang)
             {
                 liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
@@ -288,7 +288,7 @@ function IO() //{{{
 
     commands.add(["runt[ime]"],
         "Source the specified file from each directory in 'runtimepath'",
-        function (args, special) { io.sourceFromRuntimePath(args, special); },
+        function (args) { io.sourceFromRuntimePath(args, args.bang); },
         {
             argCount: "+",
             bang: true
@@ -308,10 +308,10 @@ function IO() //{{{
 
     commands.add(["so[urce]"],
         "Read Ex commands from a file",
-        function (args, special)
+        function (args)
         {
             // FIXME: "E172: Only one file name allowed"
-            io.source(args[0], special);
+            io.source(args[0], args.bang);
         },
         {
             argCount: "1",
@@ -321,8 +321,9 @@ function IO() //{{{
 
     commands.add(["!", "run"],
         "Run a command",
-        function (args, special)
+        function (args)
         {
+            let special = args.bang;
             args = args.string;
 
             // :!! needs to be treated specially as the command parser sets the

@@ -310,8 +310,9 @@ function Tabs() //{{{
 
     commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
         "Delete current buffer",
-        function (args, special, count)
+        function (args)
         {
+            let special = args.bang;
             args = args.string;
 
             if (args)
@@ -381,8 +382,9 @@ function Tabs() //{{{
     // TODO: "Zero count" if 0 specified as arg
     commands.add(["tabp[revious]", "tp[revious]", "tabN[ext]", "tN[ext]", "bp[revious]", "bN[ext]"],
         "Switch to the previous tab or go [count] tabs back",
-        function (args, special, count)
+        function (args)
         {
+            let count = args.count;
             args = args.string;
 
             // count is ignored if an arg is specified, as per Vim
@@ -407,8 +409,9 @@ function Tabs() //{{{
     // TODO: "Zero count" if 0 specified as arg
     commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
         "Switch to the next or [count]th tab",
-        function (args, special, count)
+        function (args)
         {
+            let count = args.count;
             args = args.string;
 
             if (args || count > 0)
@@ -455,8 +458,10 @@ function Tabs() //{{{
         // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
         commands.add(["b[uffer]"],
             "Switch to a buffer",
-            function (args, special, count)
+            function (args)
             {
+                let count = args.count;
+                let special = args.special;
                 args = args.string;
 
                 // if a numeric arg is specified any count is ignored; if a
@@ -494,7 +499,7 @@ function Tabs() //{{{
 
         commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + config.name,
-            function (args, special) { liberator.quit(false, special); },
+            function (args) { liberator.quit(false, args.bang); },
             {
                 argCount: "0",
                 bang: true
@@ -502,7 +507,7 @@ function Tabs() //{{{
 
         commands.add(["reloada[ll]"],
             "Reload all tab pages",
-            function (args, special) { tabs.reloadAll(special); },
+            function (args) { tabs.reloadAll(args.bang); },
             {
                 argCount: "0",
                 bang: true
@@ -511,8 +516,9 @@ function Tabs() //{{{
         // TODO: add count support
         commands.add(["tabm[ove]"],
             "Move the current tab after tab N",
-            function (args, special)
+            function (args)
             {
+                let special = args.bang;
                 args = args.string;
 
                 // FIXME: tabmove! N should probably produce an error
@@ -536,8 +542,9 @@ function Tabs() //{{{
 
         commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
             "Open one or more URLs in a new tab",
-            function (args, special)
+            function (args)
             {
+                let special = args.bang;
                 args = args.string;
 
                 var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
@@ -562,18 +569,15 @@ function Tabs() //{{{
 
         commands.add(["tabd[uplicate]"],
             "Duplicate current tab",
-            function (args, special, count)
+            function (args)
             {
                 var tab = tabs.getTab();
 
-                var activate = special ? true : false;
+                var activate = args.bang ? true : false;
                 if (/\btabopen\b/.test(options["activate"]))
                     activate = !activate;
 
-                if (count < 1)
-                    count = 1;
-
-                for (let i = 0; i < count; i++)
+                for (let i in range(0, Math.max(1, args.count)))
                     tabs.cloneTab(tab, activate);
             },
             {
@@ -588,8 +592,9 @@ function Tabs() //{{{
         // TODO: extract common functionality of "undoall"
         commands.add(["u[ndo]"],
             "Undo closing of a tab",
-            function (args, special, count)
+            function (args)
             {
+                let count = args.count;
                 args = args.string;
 
                 if (count < 1)

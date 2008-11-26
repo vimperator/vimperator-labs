@@ -1181,7 +1181,7 @@ function Completion() //{{{
 
             // if there is no space between the command name and the cursor
             // then get completions of the command name
-            let [count, cmd, special, args] = commands.parseCommand(context.filter);
+            let [count, cmd, bang, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length)
             if (!junk)
@@ -1202,12 +1202,15 @@ function Completion() //{{{
             args = command.parseArgs(cmdContext.filter, argContext);
             if (args)
             {
+                // FIXME: Move to parseCommand
+                args.count = count;
+                args.bang = bang;
                 if (!args.completeOpt && command.completer)
                 {
                     cmdContext.advance(args.completeStart);
                     cmdContext.quote = args.quote;
                     cmdContext.filter = args.completeFilter;
-                    compObject = command.completer.call(command, cmdContext, args, special, count);
+                    compObject = command.completer.call(command, cmdContext, args);
                     if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                         compObject = { start: compObject[0], items: compObject[1] };
                     if (compObject != null)

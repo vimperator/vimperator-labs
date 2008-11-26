@@ -662,8 +662,9 @@ function Mail() //{{{
 
     commands.add(["go[to]"],
         "Select a folder",
-        function (args, special, count)
+        function (args)
         {
+            let count = args.count;
             args = args.string || "Inbox";
             count = count > 0 ? (count - 1) : 0;
 
@@ -732,7 +733,7 @@ function Mail() //{{{
 
     commands.add(["get[messages]"],
         "Check for new messages",
-        function (args, special) mail.getNewMessages(!special),
+        function (args) mail.getNewMessages(!args.bang),
         {
             argCount: "0",
             bang: true,

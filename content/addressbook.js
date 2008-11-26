@@ -137,7 +137,7 @@ function Addressbook() //{{{
 
     commands.add(["contacts", "addr[essbook]"],
         "List or open multiple addresses",
-        function (args, special) { addressbook.list(args.string, special); },
+        function (args) { addressbook.list(args.string, args.bang); },
         { bang: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}

@@ -95,14 +95,24 @@ function Command(specs, description, action, extraInfo) //{{{
 
 Command.prototype = {
 
-    execute: function (args, special, count, modifiers)
+    execute: function (args, bang, count, modifiers)
     {
         // XXX
-        special = !!special;
+        bang = !!bang;
         count = (count === undefined) ? -1 : count;
         modifiers = modifiers || {};
 
         let self = this;
+        function exec(args)
+        {
+            // FIXME: Move to parseCommand?
+            args = self.parseArgs(args);
+            if (!args)
+                return;
+            args.count = count;
+            args.bang = bang;
+            self.action.call(self, args, bang, count, modifiers);
+        }
 
         if (this.hereDoc)
         {
@@ -110,19 +120,12 @@ Command.prototype = {
             if (matches && matches[2])
             {
                 commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                    function (args)
-                    {
-                        args = self.parseArgs(matches[1] + "\n" + args);
-                        if (args)
-                            self.action.call(self, args, special, count, modifiers);
-                    });
+                    function (args) { exec(matches[1] + "\n" + args) });
                 return;
             }
         }
 
-        args = this.parseArgs(args);
-        if (args)
-            this.action.call(this, args, special, count, modifiers);
+        exec(args);
     },
 
     // return true if the candidate name matches one of the command's aliases
@@ -745,12 +748,12 @@ function Commands() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    function userCommand(args, special, count, modifiers)
+    function userCommand(args, modifiers)
     {
         let tokens = {
             args:  this.argCount && args.string,
-            bang:  this.bang && special ? "!" : "",
-            count: this.count && count
+            bang:  this.bang && args.bang ? "!" : "",
+            count: this.count && args.count
         };
 
         liberator.execute(commands.replaceTokens(this.replacementText, tokens));
@@ -773,7 +776,7 @@ function Commands() //{{{
     // specified - useful?
     commandManager.add(["com[mand]"],
         "List and define commands",
-        function (args, special)
+        function (args)
         {
             let cmd = args[0];
 
@@ -815,7 +818,7 @@ function Commands() //{{{
                             completer: completeFunc,
                             replacementText: args.literalArg
                         },
-                        special)
+                        args.bang)
                     )
                 {
                     liberator.echoerr("E174: Command already exists: add ! to replace it");

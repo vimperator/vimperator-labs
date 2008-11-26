@@ -468,14 +468,14 @@ function Buffer() //{{{
 
     commands.add(["ha[rdcopy]"],
         "Print current document",
-        function (args, special)
+        function (args)
         {
             var aps = options.getPref("print.always_print_silent");
             var spp = options.getPref("print.show_print_progress");
 
             liberator.echo("Sending to printer...");
-            options.setPref("print.always_print_silent", special);
-            options.setPref("print.show_print_progress", !special);
+            options.setPref("print.always_print_silent", args.bang);
+            options.setPref("print.show_print_progress", !args.bang);
 
             getBrowser().contentWindow.print();
 
@@ -519,7 +519,7 @@ function Buffer() //{{{
 
     commands.add(["re[load]"],
         "Reload current page",
-        function (args, special) { tabs.reload(getBrowser().mCurrentTab, special); },
+        function (args) { tabs.reload(getBrowser().mCurrentTab, args.bang); },
         {
             bang: true,
             argCount: "0"
@@ -528,7 +528,7 @@ function Buffer() //{{{
     // TODO: we're prompted if download.useDownloadDir isn't set and no arg specified - intentional?
     commands.add(["sav[eas]", "w[rite]"],
         "Save current document to disk",
-        function (args, special)
+        function (args)
         {
             let doc = window.content.document;
             let chosenData = null;
@@ -538,7 +538,7 @@ function Buffer() //{{{
             {
                 let file = io.getFile(filename);
 
-                if (file.exists() && !special)
+                if (file.exists() && !args.bang)
                 {
                     liberator.echoerr("E13: File exists (add ! to override)");
                     return;
@@ -577,7 +577,7 @@ function Buffer() //{{{
 
     commands.add(["vie[wsource]"],
         "View source code of current document",
-        function (args, special) { buffer.viewSource(args[0], special); },
+        function (args) { buffer.viewSource(args[0], args.bang); },
         {
             argCount: "?",
             bang: true,
@@ -586,26 +586,24 @@ function Buffer() //{{{
 
     commands.add(["zo[om]"],
         "Set zoom value of current web page",
-        function (args, special)
+        function (args)
         {
-            args = args.string;
-
             let level;
 
-            if (!args)
+            if (!args.string)
             {
                 level = 100;
             }
-            else if (/^\d+$/.test(args))
+            else if (/^\d+$/.test(args.string))
             {
-                level = parseInt(args, 10);
+                level = parseInt(args.string, 10);
             }
-            else if (/^[+-]\d+$/.test(args))
+            else if (/^[+-]\d+$/.test(args.string))
             {
-                if (special)
-                    level = buffer.fullZoom + parseInt(args, 10);
+                if (args.bang)
+                    level = buffer.fullZoom + parseInt(args.string, 10);
                 else
-                    level = buffer.textZoom + parseInt(args, 10);
+                    level = buffer.textZoom + parseInt(args.string, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < ZOOM_MIN)
@@ -619,7 +617,7 @@ function Buffer() //{{{
                 return;
             }
 
-            if (special)
+            if (args.bang)
                 buffer.fullZoom = level;
             else
                 buffer.textZoom = level;
@@ -1474,9 +1472,10 @@ function Marks() //{{{
 
     commands.add(["delm[arks]"],
         "Delete the specified marks",
-        function (args, special)
+        function (args)
         {
-            args = args.string;
+            let special = args.bang;
+            let args = args.string;
 
             if (!special && !args)
             {

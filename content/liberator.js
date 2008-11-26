@@ -288,7 +288,7 @@ const liberator = (function () //{{{
 
         commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
-            function (args, special) { showHelpIndex("ex-cmd-index", commands, special); },
+            function (args) { showHelpIndex("ex-cmd-index", commands, args.bang); },
             {
                 argCount: "0",
                 bang: true
@@ -296,9 +296,9 @@ const liberator = (function () //{{{
 
         commands.add(["h[elp]"],
             "Display help",
-            function (args, special)
+            function (args)
             {
-                if (special)
+                if (args.bang)
                 {
                     liberator.echoerr("E478: Don't panic!");
                     return;
@@ -314,9 +314,9 @@ const liberator = (function () //{{{
 
         commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
-            function (args, special)
+            function (args)
             {
-                if (special) // open javascript console
+                if (args.bang) // open javascript console
                 {
                     liberator.open("chrome://global/content/console.xul",
                         (options["newtab"] && options.get("newtab").has("all", "javascript"))
@@ -347,7 +347,7 @@ const liberator = (function () //{{{
 
         commands.add(["norm[al]"],
             "Execute Normal mode commands",
-            function (args, special) { events.feedkeys(args.string, special); },
+            function (args) { events.feedkeys(args.string, args.bang); },
             {
                 argCount: "+",
                 bang: true
@@ -355,7 +355,7 @@ const liberator = (function () //{{{
 
         commands.add(["optionu[sage]"],
             "List all options with a short description",
-            function (args, special) { showHelpIndex("option-index", options, special); },
+            function (args) { showHelpIndex("option-index", options, args.bang); },
             {
                 argCount: "0",
                 bang: true
@@ -363,12 +363,12 @@ const liberator = (function () //{{{
 
         commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
-            function (args, special)
+            function (args)
             {
                 if (liberator.has("tabs"))
                     tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
-                    liberator.quit(false, special);
+                    liberator.quit(false, args.bang);
             },
             {
                 argCount: "0",
@@ -382,8 +382,10 @@ const liberator = (function () //{{{
 
         commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
-            function (args, special, count)
+            function (args)
             {
+                let count = args.count;
+                let special = args.bang;
                 args = args.string;
 
                 if (args[0] == ":")
@@ -477,9 +479,9 @@ const liberator = (function () //{{{
 
         commands.add(["ve[rsion]"],
             "Show version information",
-            function (args, special)
+            function (args)
             {
-                if (special)
+                if (args.bang)
                     liberator.open("about:");
                 else
                     liberator.echo(":" + util.escapeHTML(commandline.getCommand()) + "\n" +
@@ -493,7 +495,7 @@ const liberator = (function () //{{{
 
         commands.add(["viu[sage]"],
             "List all mappings with a short description",
-            function (args, special) { showHelpIndex("normal-index", mappings, special); },
+            function (args) { showHelpIndex("normal-index", mappings, args.bang); },
             {
                 argCount: "0",
                 bang: true

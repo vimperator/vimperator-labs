@@ -495,9 +495,9 @@ function Options() //{{{
 
     commands.add(["pref[erences]", "prefs"],
         "Show " + config.hostApplication + " preferences",
-        function (args, special)
+        function (args)
         {
-            if (special) // open Firefox settings GUI dialog
+            if (args.bang) // open Firefox settings GUI dialog
             {
                 liberator.open("about:config",
                     (options["newtab"] && options.get("newtab").has("all", "prefs"))
@@ -515,16 +515,16 @@ function Options() //{{{
 
     commands.add(["setl[ocal]"],
         "Set local option",
-        function (args, special, count)
+        function (args)
         {
-            commands.get("set").execute(args.string, special, count, { scope: options.OPTION_SCOPE_LOCAL });
+            commands.get("set").execute(args.string, args.bang, args.count, { scope: options.OPTION_SCOPE_LOCAL });
         },
         {
             bang: true,
             count: true,
-            completer: function (context, args, special, count)
+            completer: function (context, args)
             {
-                return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_LOCAL });
+                return commands.get("set").completer(context.filter, args.bang, args.count, { scope: options.OPTION_SCOPE_LOCAL });
             },
             literal: true
         }
@@ -532,16 +532,16 @@ function Options() //{{{
 
     commands.add(["setg[lobal]"],
         "Set global option",
-        function (args, special, count)
+        function (args)
         {
-            commands.get("set").execute(args.string, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
+            commands.get("set").execute(args.string, args.bang, args.count, { scope: options.OPTION_SCOPE_GLOBAL });
         },
         {
             bang: true,
             count: true,
-            completer: function (context, args, special, count)
+            completer: function (context, args)
             {
-                return commands.get("set").completer(context.filter, special, count, { scope: options.OPTION_SCOPE_GLOBAL });
+                return commands.get("set").completer(context.filter, args.bang, args.count, { scope: options.OPTION_SCOPE_GLOBAL });
             },
             literal: true
         }
@@ -550,11 +550,11 @@ function Options() //{{{
     // TODO: support setting multiple options at once
     commands.add(["se[t]"],
         "Set an option",
-        function (args, special, count, modifiers)
+        function (args, modifiers)
         {
+            let bang = args.bang;
             args = args.string;
-
-            if (special)
+            if (bang)
             {
                 var onlyNonDefault = false;
                 if (!args)
@@ -665,12 +665,12 @@ function Options() //{{{
         },
         {
             bang: true,
-            completer: function (context, args, special, count, modifiers)
+            completer: function (context, args)
             {
                 let filter = context.filter;
                 var optionCompletions = [];
 
-                if (special) // list completions for about:config entries
+                if (args.bang) // list completions for about:config entries
                 {
                     if (filter[filter.length - 1] == "=")
                     {
@@ -779,20 +779,20 @@ function Options() //{{{
 
     commands.add(["unl[et]"],
         "Delete a variable",
-        function (args, special)
+        function (args)
         {
             //var names = args.split(/ /);
             //if (typeof names == "string") names = [names];
 
             //var length = names.length;
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
-            for (let i = 0; i < args.length; i++)
+            for (let [,name] in Iterator(args))
             {
                 var name = args[i];
                 var reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
-                    if (!special)
+                    if (!args.bang)
                         liberator.echoerr("E108: No such variable: " + name);
                     return;
                 }
