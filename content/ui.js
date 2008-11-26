@@ -1289,6 +1289,7 @@ function ItemList(id) //{{{
 
     doc.body.id = id + "-content";
     doc.body.appendChild(doc.createTextNode(""));
+    doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where completions/MOW are shown at once. Should use :highlight.
 
     var items = null;
     var startIndex = -1;  // The index of the first displayed item
@@ -1381,11 +1382,11 @@ function ItemList(id) //{{{
                 d.appendChild(row);
             dom.replaceChild(d, nodes.items);
             nodes.items = d;
-            nodes.up.style.display = (start == 0) ? "none" : "block";
-            nodes.down.style.display = (end == context.items.length) ? "none" : "block";
+            nodes.up.style.display = (start == 0) && "none";
+            nodes.down.style.display = (end == context.items.length) && "none";
         });
 
-        divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
+        divNodes.noCompletions.style.display = (off > 0) && "none";
 
         completionElements = div.getElementsByClassName("hl-CompItem");
 

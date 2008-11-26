@@ -434,60 +434,6 @@ function Options() //{{{
         }
     );
 
-    // FIXME: Integrate with setter
-    function parseOpt(args, modifiers)
-    {
-        let ret = {};
-        let matches, prefix, postfix, valueGiven;
-
-        [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
-        args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
-
-        ret.args = args;
-        ret.onlyNonDefault = false; // used for :set to print non-default options
-        if (!args)
-        {
-            ret.name = "all";
-            ret.onlyNonDefault = true;
-        }
-
-        if (matches)
-            ret.option = options.get(ret.name, ret.scope);
-
-        ret.prefix = prefix;
-        ret.postfix = postfix;
-
-        ret.all = (ret.name == "all");
-        ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven));
-        ret.invert = (prefix == "inv" || postfix == "!");
-        ret.reset = (postfix == "&");
-        ret.unsetBoolean = (prefix == "no");
-
-        ret.scope = modifiers && modifiers.scope;
-
-        if (!ret.option)
-            return ret;
-
-        if (ret.value === undefined)
-            ret.value = "";
-
-        ret.optionValue = ret.option.get(ret.scope);
-
-        switch (ret.option.type)
-        {
-            case "stringlist":
-                ret.optionHas = ret.optionValue.split(",");
-                ret.valueHas = ret.value.split(",");
-                break;
-            case "charlist":
-                ret.optionHas = Array.slice(ret.optionValue);
-                ret.valueHas = Array.slice(ret.value);
-                break;
-        }
-
-        return ret;
-    }
-
     // TODO: support setting multiple options at once
     commands.add(["se[t]"],
         "Set an option",
@@ -543,7 +489,7 @@ function Options() //{{{
                 return;
             }
 
-            let opt = parseOpt(args, modifiers);
+            let opt = options.parseOpt(args, modifiers);
             if (!opt)
             {
                 liberator.echoerr("Error parsing :set command: " + args);
@@ -641,21 +587,21 @@ function Options() //{{{
                         switch (opt.operator)
                         {
                             case "+":
-                                newValue = util.Array.uniq(Array.concat(opt.optionHas, opt.valueHas), true);
+                                newValue = util.Array.uniq(Array.concat(opt.optionValues, opt.values), true);
                                 break;
                             case "^":
                                 // NOTE: Vim doesn't prepend if there's a match in the current value
-                                newValue = util.Array.uniq(Array.concat(opt.valueHas, opt.optionHas), true);
+                                newValue = util.Array.uniq(Array.concat(opt.values, opt.optionValues), true);
                                 break;
                             case "-":
-                                newValue = opt.optionHas.filter(function (item) opt.valueHas.indexOf(item) == -1);
+                                newValue = opt.optionValues.filter(function (item) opt.values.indexOf(item) == -1);
                                 break;
                             default:
-                                newValue = opt.valueHas;
+                                newValue = opt.values;
                                 if (opt.invert)
                                 {
-                                    let keepValues = opt.optionHas.filter(function (item) opt.valueHas.indexOf(item) == -1);
-                                    let addValues  = opt.valueHas .filter(function (item) opt.optionHas.indexOf(item) == -1);
+                                    let keepValues = opt.optionValues.filter(function (item) opt.values.indexOf(item) == -1);
+                                    let addValues  = opt.values .filter(function (item) opt.optionValues.indexOf(item) == -1);
                                     newValue = addValues.concat(keepValues);
                                 }
                                 break;
@@ -746,7 +692,7 @@ function Options() //{{{
 
                 let [name, value] = filter.split("=", 2);
                 let offset = name.length + 1;
-                let opt = parseOpt(filter, modifiers);
+                let opt = options.parseOpt(filter, modifiers);
                 let option = opt.option;
 
                 if (!option)
@@ -765,7 +711,7 @@ function Options() //{{{
                         completer = function () [["true", ""], ["false", ""]];
                         break;
                     case "stringlist":
-                        len = opt.valueHas.pop().length;
+                        len = opt.values.pop().length;
                         break;
                     case "charlist":
                         len = 0;
@@ -785,16 +731,16 @@ function Options() //{{{
                 if (completer)
                 {
                     completions = completions.concat(completer(filter));
-                    if (opt.optionHas)
+                    if (opt.optionValues)
                     {
-                        completions = completions.filter(function (val) opt.valueHas.indexOf(val[0]) == -1);
+                        completions = completions.filter(function (val) opt.values.indexOf(val[0]) == -1);
                         switch (opt.operator)
                         {
                             case "+":
-                                completions = completions.filter(function (val) opt.optionHas.indexOf(val[0]) == -1);
+                                completions = completions.filter(function (val) opt.optionValues.indexOf(val[0]) == -1);
                                 break;
                             case "-":
-                                completions = completions.filter(function (val) opt.optionHas.indexOf(val[0]) > -1);
+                                completions = completions.filter(function (val) opt.optionValues.indexOf(val[0]) > -1);
                                 break;
                         }
                     }
@@ -981,6 +927,58 @@ function Options() //{{{
 
             let list = template.options(config.hostApplication + " Options", prefs());
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+        },
+
+        parseOpt: function parseOpt(args, modifiers)
+        {
+            let ret = {};
+            let matches, prefix, postfix, valueGiven;
+
+            [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
+            args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
+
+            ret.args = args;
+            ret.onlyNonDefault = false; // used for :set to print non-default options
+            if (!args)
+            {
+                ret.name = "all";
+                ret.onlyNonDefault = true;
+            }
+
+            if (matches)
+                ret.option = options.get(ret.name, ret.scope);
+
+            ret.prefix = prefix;
+            ret.postfix = postfix;
+
+            ret.all = (ret.name == "all");
+            ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven));
+            ret.invert = (prefix == "inv" || postfix == "!");
+            ret.reset = (postfix == "&");
+            ret.unsetBoolean = (prefix == "no");
+
+            ret.scope = modifiers && modifiers.scope;
+
+            if (!ret.option)
+                return ret;
+
+            if (ret.value === undefined)
+                ret.value = "";
+
+            ret.optionValue = ret.option.get(ret.scope);
+            ret.optionValues = ret.option.getValues(ret.scope);
+
+            switch (ret.option.type)
+            {
+                case "stringlist":
+                    ret.values = ret.value.split(",");
+                    break;
+                case "charlist":
+                    ret.values = Array.slice(ret.value);
+                    break;
+            }
+
+            return ret;
         },
 
         get store() storage.options,
