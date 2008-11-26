@@ -244,7 +244,7 @@ Option.prototype = {
                         if (invert)
                         {
                             let keepValues = this.values.filter(function (item) values.indexOf(item) == -1);
-                            let addValues  = values.filter(function (item) this.values.indexOf(item) == -1);
+                            let addValues  = values.filter(function (item) self.values.indexOf(item) == -1);
                             newValue = addValues.concat(keepValues);
                         }
                         break;
@@ -681,7 +681,7 @@ function Options() //{{{
 
                     let prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                           .getService(Components.interfaces.nsIPrefBranch);
-                    context.keys = [function (pref) pref, function (pref) options.getPref(pref)];
+                    context.keys = { text: function (pref) pref.item, description: function (pref) options.getPref(pref.item) };
                     context.completions = prefs.getChildList("", { value: 0 });
                     return;
                 }
