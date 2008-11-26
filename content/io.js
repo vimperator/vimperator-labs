@@ -96,6 +96,21 @@ function IO() //{{{
         return path;
     }
 
+    function isAbsolutePath(path)
+    {
+        try
+        {
+            Components.classes["@mozilla.org/file/local;1"]
+                      .createInstance(Components.interfaces.nsILocalFile)
+                      .initWithPath(path);
+            return true;
+        }
+        catch (e)
+        {
+            return false;
+        }
+    }
+
     var downloadListener = {
         onDownloadStateChange: function (state, download)
         {
@@ -174,9 +189,9 @@ function IO() //{{{
 
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
-            if (/^(~|\/|[a-z]:|\.\/|\.\.\/)/i.test(args))
+            // TODO: handle ../ and ./ paths
+            if (isAbsolutePath(args))
             {
-                // TODO: apparently we don't handle ../ or ./ paths yet
                 if (io.setCurrentDirectory(args))
                     liberator.echo(io.getCurrentDirectory().path);
             }
@@ -207,7 +222,7 @@ function IO() //{{{
             }
         },
         {
-            argCount: "?",
+            argCount: "+", // FIXME: "?"
             completer: function (context) completion.file(context, true),
             literal: true
         });
@@ -483,7 +498,7 @@ function IO() //{{{
             {
                 let expandedPath = ioManager.expandPath(path);
 
-                if (!/^([a-zA-Z]:|\/)/.test(expandedPath) && !noCheckPWD) // doesn't start with /, C:
+                if (!isAbsolutePath(expandedPath) && !noCheckPWD)
                     file = joinPaths(ioManager.getCurrentDirectory().path, expandedPath);
                 else
                     file.initWithPath(expandedPath);
@@ -614,19 +629,22 @@ function IO() //{{{
 
         run: function (program, args, blocking)
         {
-            if (!args)
-                args = [];
+            args = args || [];
+            blocking = !!blocking;
 
-            if (typeof blocking != "boolean")
-                blocking = false;
+            let file;
 
-            try
+            if (isAbsolutePath(program))
             {
-                var file = ioManager.getFile(program, !WINDOWS);
+                file = ioManager.getFile(program, true);
             }
-            catch (e)
+            else
             {
-                var dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+                let dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+                // Windows tries the cwd first TODO: desirable?
+                if (WINDOWS)
+                    dirs = [io.getCurrentDirectory().path].concat(dirs);
+
 lookup:
                 for (let [,dir] in Iterator(dirs))
                 {
@@ -641,7 +659,7 @@ lookup:
                         if (WINDOWS)
                         {
                             let extensions = environmentService.get("PATHEXT").split(";");
-                            for (let [,extension] in Iterator(extension))
+                            for (let [,extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
                                 if (file.exists())
@@ -653,13 +671,13 @@ lookup:
                 }
             }
 
-            if (!file.exists())
+            if (!file || !file.exists())
             {
                 liberator.echoerr("Command not found: " + program);
                 return -1;
             }
 
-            var process = Components.classes["@mozilla.org/process/util;1"]
+            let process = Components.classes["@mozilla.org/process/util;1"]
                                     .createInstance(Components.interfaces.nsIProcess);
 
             process.init(file);
