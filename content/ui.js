@@ -65,6 +65,7 @@ function CommandLine() //{{{
 
     var historyIndex = UNINITIALIZED;
     var historyStart = "";
+    var removeSuffix = "";
 
     var messageHistory = {
         _messages: [],
@@ -122,6 +123,7 @@ function CommandLine() //{{{
     });
 
     var tabTimer = new util.Timer(10, 10, function tabTell(event) {
+
         let command = commandline.getCommand();
 
         // always reset our completion history so up/down keys will start with new values
@@ -797,7 +799,7 @@ function CommandLine() //{{{
             try
             {
                 let node = editor.rootElement;
-                node.removeChild(node.firstChild.nextSibling);
+                editor.deleteNode(node.firstChild.nextSibling);
             }
             catch (e) {}
 
@@ -832,6 +834,7 @@ function CommandLine() //{{{
                 {
                     let start = commandWidget.selectionStart;
                     let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
+                    removeSuffix = substring;
                     editor.insertNode(util.xmlToDom(<span style="color: gray">{substring}</span>, document), editor.rootElement, 1);
                     commandWidget.selectionStart = commandWidget.selectionEnd = start;
                 }
@@ -1256,7 +1259,10 @@ function CommandLine() //{{{
             // why do we have to set that here? Without that, we lose the
             // prefix when wrapping around searches
             // with that, we SOMETIMES have problems with <tab> followed by <s-tab> in :open completions
-            var command = this.getCommand();
+
+            let command = this.getCommand();
+            if (command.substr(command.length - removeSuffix.length) == removeSuffix)
+                command = command.substr(0, command.length - removeSuffix.length)
             completionPrefix = command.substring(0, commandWidget.selectionStart);
             completionPostfix = command.substring(commandWidget.selectionStart);
         },
@@ -1269,6 +1275,7 @@ function CommandLine() //{{{
             completions = { start: completions.start, items: [] };
             completionIndex = historyIndex = UNINITIALIZED;
             wildIndex = 0;
+            removeSuffix = "";
         }
     };
     //}}}
