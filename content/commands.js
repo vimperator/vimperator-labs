@@ -289,7 +289,7 @@ function Commands() //{{{
                 if (val != null)
                     res.push(quote(val));
             }
-            for (let [,arg] in Iterator(args || []))
+            for (let [,arg] in Iterator(args.arguments || []))
                 res.push(quote(arg));
 
             let str = args.literalArg;
