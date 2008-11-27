@@ -792,7 +792,14 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            var command = this.getCommand();
+            let command = this.getCommand();
+            let editor = commandWidget.inputField.editor;
+            try
+            {
+                let node = editor.rootElement;
+                node.removeChild(node.firstChild.nextSibling);
+            }
+            catch (e) {}
 
             if (event.type == "blur")
             {
@@ -818,6 +825,16 @@ function CommandLine() //{{{
             else if (event.type == "input")
             {
                 liberator.triggerCallback("change", currentExtendedMode, command);
+                // Kludge. Major kludge.
+                let wildmode = options.get("wildmode");
+                let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
+                if (wildmode.checkHas(wildType, "longest"))
+                {
+                    let start = commandWidget.selectionStart;
+                    let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
+                    editor.insertNode(util.xmlToDom(<span style="color: gray">{substring}</span>, document), editor.rootElement, 1);
+                    commandWidget.selectionStart = commandWidget.selectionEnd = start;
+                }
             }
             else if (event.type == "keypress")
             {

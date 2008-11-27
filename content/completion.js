@@ -1183,7 +1183,6 @@ function Completion() //{{{
 
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
-            let compObject = { start: 0, items: [] };
             if (!command)
             {
                 context.highlight(0, cmd.length, "SPELLCHECK");
@@ -1204,7 +1203,7 @@ function Completion() //{{{
                     cmdContext.advance(args.completeStart);
                     cmdContext.quote = args.quote;
                     cmdContext.filter = args.completeFilter;
-                    compObject = command.completer.call(command, cmdContext, args);
+                    let compObject = command.completer.call(command, cmdContext, args);
                     if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
                         compObject = { start: compObject[0], items: compObject[1] };
                     if (compObject != null)
