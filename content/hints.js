@@ -715,6 +715,18 @@ function Hints() //{{{
                 default:
                     if (/^\d$/.test(key))
                     {
+                        // FIXME: Kludge.
+                        if (escapeNumbers)
+                        {
+                            let cmdline = document.getElementById("liberator-commandline-command");
+                            let start = cmdline.selectionStart;
+                            let end = cmdline.selectionEnd;
+                            cmdline.value = cmdline.value.substr(0, pre) + key + cmdline.value.substr(pre);
+                            cmdline.selectionStart = start + 1;
+                            cmdline.selectionEnd = end + 1;
+                            return;
+                        }
+
                         prevInput = "number";
 
                         var oldHintNumber = hintNumber;
