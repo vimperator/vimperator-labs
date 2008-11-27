@@ -287,7 +287,7 @@ CompletionContext.prototype = {
         if (this.anchored)
         {
             function compare (text, s) text.substr(0, s.length) == s;
-            substrings = util.map(util.range(filter.length, text.length),
+            substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
         else
@@ -442,7 +442,7 @@ function Completion() //{{{
     catch (e) {}
 
     const EVAL_TMP = "__liberator_eval_tmp";
-    const cleanEval = _cleanEval;
+    Javascript.cleanEval = _cleanEval;
     delete modules._cleanEval;
 
     function Javascript()
@@ -554,7 +554,7 @@ function Completion() //{{{
 
             try
             {
-                return cache[key] = cleanEval(arg, tmp);
+                return cache[key] = Javascript.cleanEval(arg, tmp);
             }
             catch (e)
             {
@@ -951,13 +951,21 @@ function Completion() //{{{
             }
         },
 
-        runCompleter: function (name, filter)
+        // FIXME
+        _runCompleter: function (name, filter)
         {
             let context = CompletionContext(filter);
-            this[name].apply(this, [context].concat(Array.slice(arguments, 2)));
+            if (typeof name == "string")
+                name = this[name];
+            name.apply(this, [context].concat(Array.slice(arguments, 2)));
             while (context.incomplete)
                 liberator.threadYield(true, true);
-            return context.items.map(function (i) i.item);
+            return context.allItems;
+        },
+
+        runCompleter: function (name, filter)
+        {
+            return _runCompleter.items.map(function (i) i.item);
         },
 
         // cancel any ongoing search
