@@ -950,11 +950,8 @@ function Options() //{{{
             let ret = {};
             let matches, prefix, postfix, valueGiven;
 
-            let [matches, prefix, name, postfix, valueGiven, operator, value] =
+            [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
             args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
-            ret.name = name;
-            ret.operator = operator;
-            ret.value = value;
 
             ret.args = args;
             ret.onlyNonDefault = false; // used for :set to print non-default options
