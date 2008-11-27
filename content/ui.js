@@ -1359,8 +1359,10 @@ function ItemList(id) //{{{
                 <div key="completions"/>
                 <div highlight="Completions">
                 {
-                    template.map(util.range(0, maxItems), function (i)
-                    <ul><li highlight="CompTitle NonText">~</li></ul>)
+                    template.map(util.range(0, maxItems * 2), function (i)
+                    <span highlight="CompItem">
+                        <li highlight="NonText">~</li>
+                    </span>)
                 }
                 </div>
             </div>, divNodes);
@@ -1429,7 +1431,7 @@ function ItemList(id) //{{{
                     items.insertBefore(row, next);
                 }
                 if (display)
-                    delete row.style.display;
+                    row.style.display = "table-row";
                 else
                     row.style.display = "none";
             }
@@ -1439,7 +1441,7 @@ function ItemList(id) //{{{
 
         divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
-        completionElements = buffer.evaluateXPath("//*[@liberator:highlight='CompItem' and not(contains(@style, 'none'))]", doc);
+        completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem' and not(contains(@style, 'none'))]", doc);
 
         autoSize();
         return true;
