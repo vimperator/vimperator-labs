@@ -241,7 +241,7 @@ function Hints() //{{{
 
                 span.setAttribute("number", hintnum++);
                 if (imgspan)
-                    imgspan.setAttribute("number", hintnum++);
+                    imgspan.setAttribute("number", hintnum);
                 else
                     setClass(elem, activeHint == hintnum);
                 validHints.push(elem);
@@ -721,7 +721,7 @@ function Hints() //{{{
                             let cmdline = document.getElementById("liberator-commandline-command");
                             let start = cmdline.selectionStart;
                             let end = cmdline.selectionEnd;
-                            cmdline.value = cmdline.value.substr(0, pre) + key + cmdline.value.substr(pre);
+                            cmdline.value = cmdline.value.substr(0, start) + key + cmdline.value.substr(start);
                             cmdline.selectionStart = start + 1;
                             cmdline.selectionEnd = end + 1;
                             return;
