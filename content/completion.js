@@ -194,7 +194,6 @@ CompletionContext.prototype = {
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
-            liberator.dump({name: this.name, length: this.items.length});
             let now = Date.now();
             liberator.callAsync(this, function () {
                 let items = this.generate();
@@ -253,9 +252,7 @@ CompletionContext.prototype = {
         if (quote)
             filtered.forEach(function (item) {
                 item.unquoted = item.text;
-                try {
                 item.text = quote[0] + quote[1](item.text) + quote[2];
-                } catch(e) { liberator.dump(quote.map(function (x) <>{util.objectToString(x)}</>)) }
             })
         if (options.get("wildoptions").has("sort"))
             filtered.sort(this.compare);

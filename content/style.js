@@ -24,7 +24,7 @@ function Highlights(name, store, serial)
         WarningMsg  color: red; background: white;
         Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
         NonText     color: blue; min-height: 16px; padding-left: 2px;
-
+        Preview     color: gray;
 
         CompTitle          color: magenta; background: white; font-weight: bold;
         CompTitle>*        border-bottom: 1px dashed magenta;

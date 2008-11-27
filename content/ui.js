@@ -65,7 +65,6 @@ function CommandLine() //{{{
 
     var historyIndex = UNINITIALIZED;
     var historyStart = "";
-    var removeSuffix = "";
 
     var messageHistory = {
         _messages: [],
@@ -322,10 +321,11 @@ function CommandLine() //{{{
         let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
         if (wildmode.checkHas(wildType, "longest"))
         {
+            // highlight= won't work here.
             let start = commandWidget.selectionStart;
             let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
-            removeSuffix = substring;
-            editor.insertNode(util.xmlToDom(<span style="color: gray">{substring}</span>, document), editor.rootElement, 1);
+            let node = <span style={highlight.get("Preview").value}>{substring}</span>
+            editor.insertNode(util.xmlToDom(node, document), editor.rootElement, 1);
             commandWidget.selectionStart = commandWidget.selectionEnd = start;
         }
     }
@@ -686,7 +686,7 @@ function CommandLine() //{{{
 
         getCommand: function getCommand()
         {
-            return commandWidget.value;
+            return commandWidget.inputField.editor.rootElement.firstChild.textContent;
         },
 
         open: function open(prompt, cmd, extendedMode)
@@ -1276,8 +1276,6 @@ function CommandLine() //{{{
 
             previewSubstring();
             let command = this.getCommand();
-            if (command.substr(command.length - removeSuffix.length) == removeSuffix)
-                command = command.substr(0, command.length - removeSuffix.length)
             completionPrefix = command.substring(0, commandWidget.selectionStart);
             completionPostfix = command.substring(commandWidget.selectionStart);
         },
