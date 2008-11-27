@@ -1273,7 +1273,7 @@ function Completion() //{{{
             }
         },
 
-        history: function history(context)
+        history: function _history(context)
         {
             context.format = history.format;
             context.title = ["History"]
