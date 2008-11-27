@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const plugins = {};
 plugins.__proto__ = modules;
 
@@ -37,6 +39,16 @@ const liberator = (function () //{{{
 
     const threadManager = Components.classes["@mozilla.org/thread-manager;1"]
                                     .getService(Components.interfaces.nsIThreadManager);
+    function Runnable(self, func, args)
+    {
+        this.self = self;
+        this.func = func;
+        this.args = args;
+    }
+    Runnable.prototype = {
+        QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIRunnable]),
+        run: function () { this.func.apply(this.self, this.args); }
+    };
 
     var callbacks = [];
     var observers = [];
@@ -628,32 +640,20 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
+        callAsync: function (self, func)
+        {
+            let thread = threadManager.newThread(0);
+            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
+        },
+
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
         callFunctionInThread: function (thread, func)
         {
-            function CallbackEvent(func, args)
-            {
-                return {
-                    QueryInterface: function (iid)
-                    {
-                        if (iid.equals(Components.interfaces.nsIRunnable) ||
-                            iid.equals(Components.interfaces.nsISupports))
-                            return this;
-                        throw Components.results.NS_ERROR_NO_INTERFACE;
-                    },
-
-                    run: function ()
-                    {
-                        func.apply(window, args);
-                    }
-                };
-            }
-
             if (!thread)
                 thread = threadManager.newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
-            thread.dispatch(new CallbackEvent(func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
+            thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
         },
 
         // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
@@ -663,7 +663,7 @@ const liberator = (function () //{{{
                 message = util.objectToString(message);
             else
                 message += "\n";
-            dump(("config" in modules && config.name.toLowerCase()) + ": " + message);
+            window.dump(("config" in modules && config.name.toLowerCase()) + ": " + message);
         },
 
         dumpStack: function (msg)

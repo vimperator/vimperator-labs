@@ -187,7 +187,6 @@ CompletionContext.prototype = {
     },
     set generate(arg)
     {
-        let self = this;
         this.hasItems = true;
         this._generate = arg;
         if (this.background && this.regenerate)
@@ -195,12 +194,14 @@ CompletionContext.prototype = {
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
-            liberator.callFunctionInThread(null, function () {
-                let items = self.generate();
-                if (self.cache.backgroundLock != lock)
+            liberator.dump({name: this.name, length: this.items.length});
+            let now = Date.now();
+            liberator.callAsync(this, function () {
+                let items = this.generate();
+                if (this.cache.backgroundLock != lock)
                     return;
-                self.incomplete = false;
-                self.completions = items;
+                this.incomplete = false;
+                this.completions = items;
             });
         }
     },
@@ -231,7 +232,7 @@ CompletionContext.prototype = {
             return this.cache.filtered;
         this.cache.rows = [];
         let items = this.completions;
-        if (this.generate)
+        if (this.generate && !this.background)
         {
             // XXX
             let updateAsync = this.updateAsync;
@@ -1230,6 +1231,7 @@ function Completion() //{{{
                 context.advance(dir.length);
             context.keys = { text: 0, description: 1, icon: 2 };
             context.anchored = true;
+            context.background = true;
             context.key = dir;
             context.generate = function generate_file()
             {

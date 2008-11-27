@@ -6,8 +6,6 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-
 function Highlights(name, store, serial)
 {
     const highlightCSS = <![CDATA[
