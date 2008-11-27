@@ -75,8 +75,8 @@ function CompletionContext(editor, name, offset)
         this.filterFunc = function (items)
         {
             let self = this;
-            return this.filters.reduce(function (res, filter)
-                    res.filter(function (item) filter.call(self, item)),
+            return this.filters.reduce(
+                    function (res, filter) res.filter(function (item) filter.call(self, item)),
                     items);
         }
         this.filters = [function (item) {
@@ -120,6 +120,7 @@ CompletionContext.prototype = {
         });
         return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
     },
+    // Temporary
     get allSubstrings()
     {
         let self = this;
@@ -132,16 +133,19 @@ CompletionContext.prototype = {
         });
         return util.Array.uniq(util.Array.flatten(items), true);
     },
+    // Temporary
     get longestAllSubstring()
     {
         let substrings = this.allSubstrings;
-        return substrings.reduce(function (res, str)
-                res.filter(function (s) {
+        // Filter out any matches that don't match for all contexts
+        substrings = substrings.reduce(
+                function (res, str) res.filter(function (s) {
                     let len = Math.min(s.length, str.length);
                     return str.substr(0, len) == s.substr(0, len)
                 }),
-                substrings)
-            .reduce(function (a, b) a.length > b.length ? a : b, "");
+                substrings);
+        // Find the longest match
+        return substrings.reduce(function (a, b) a.length > b.length ? a : b, "");
     },
 
     get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
@@ -300,8 +304,8 @@ CompletionContext.prototype = {
                 start = idx + 1;
             }
         }
-        substrings = items.reduce(function (res, item)
-                res.filter(function (str) compare(fixCase(item.unquoted || item.text), str)),
+        substrings = items.reduce(
+                function (res, item) res.filter(function (str) compare(fixCase(item.unquoted || item.text), str)),
                 substrings);
         let quote = this.quote;
         if (quote)
@@ -340,8 +344,8 @@ CompletionContext.prototype = {
         let reverse = start > end;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end != null ? end : items.length);
-        return util.map(util.range(start, end, reverse),
-            function (i) cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc));
+        for (let i in util.range(start, end, reverse))
+            yield [i, cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc)];
     },
 
     fork: function fork(name, offset, self, completer)
@@ -440,12 +444,6 @@ function Completion() //{{{
     const EVAL_TMP = "__liberator_eval_tmp";
     const cleanEval = _cleanEval;
     delete modules._cleanEval;
-
-    // the completion substrings, used for showing the longest common match
-    var cacheFilter = {}
-    var cacheResults = {}
-    var substrings = [];
-    var historyCache = [];
 
     function Javascript()
     {
@@ -953,12 +951,6 @@ function Completion() //{{{
             }
         },
 
-        // returns the longest common substring
-        // used for the 'longest' setting for wildmode
-        get longestSubstring() substrings.reduce(function (a, b) a.length > b.length ? a : b, ""),
-
-        get substrings() substrings.slice(),
-
         runCompleter: function (name, filter)
         {
             let context = CompletionContext(filter);
@@ -1170,15 +1162,6 @@ function Completion() //{{{
         // provides completions for ex commands, including their arguments
         ex: function ex(context)
         {
-            this.filterMap = null;
-            substrings = [];
-            if (context.filter.indexOf(cacheFilter["ex"]) != 0)
-            {
-                cacheFilter = {};
-                cacheResults = {};
-            }
-            cacheFilter["ex"] = context.filter;
-
             // if there is no space between the command name and the cursor
             // then get completions of the command name
             let [count, cmd, bang, args] = commands.parseCommand(context.filter);

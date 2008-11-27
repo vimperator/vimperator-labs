@@ -48,6 +48,13 @@ const util = { //{{{
                 yield ary[i];
         },
 
+        iterator2: function (ary)
+        {
+            let length = ary.length;
+            for (let i = 0; i < length; i++)
+                yield [i, ary[i]];
+        },
+
         uniq: function (ary, unsorted)
         {
             let ret = [];

@@ -1310,7 +1310,7 @@ function ItemList(id) //{{{
         commandline.updateOutputHeight(false);
     }
 
-    function getCompletion(index) completionElements[index - startIndex];
+    function getCompletion(index) completionElements.snapshotItem(index - startIndex);
 
     function init()
     {
@@ -1328,15 +1328,16 @@ function ItemList(id) //{{{
         doc.body.replaceChild(div, doc.body.firstChild);
 
         items.contextList.forEach(function init_eachContext(context) {
+            delete context.cache.nodes;
             if (!context.items.length)
                 return;
-            context.cache.nodes = {};
+            context.cache.nodes = [];
             dom(<div key="root">
                     <div class="hl-Completions">
                         {context.createRow(context.title || [], "hl-CompTitle")}
                     </div>
                     <div key="up" class="hl-CompLess"/>
-                    <div key="items"/>
+                    <div key="items" class="hl-Completions"/>
                     <div key="down" class="hl-CompMore"/>
                 </div>, context.cache.nodes);
             divNodes.completions.appendChild(context.cache.nodes.root);
@@ -1356,8 +1357,6 @@ function ItemList(id) //{{{
         if (items == null || offset == null || diff == 0 || offset < 0)
             return false;
 
-        let stuff = dom(<div class="hl-Completions"/>);
-
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
 
@@ -1375,20 +1374,33 @@ function ItemList(id) //{{{
             let nodes = context.cache.nodes;
             if (!nodes)
                 return;
-            let dom = nodes.root
+            let root = nodes.root
+            let items = nodes.items;
             let [start, end] = getRows(context);
-            let d = stuff.cloneNode(true);
-            for (let [,row] in Iterator(context.getRows(start, end, doc)))
-                d.appendChild(row);
-            dom.replaceChild(d, nodes.items);
-            nodes.items = d;
+            for (let [i, row] in Iterator(context.getRows(start, end, doc)))
+                nodes[i] = row;
+            for (let [i, row] in util.Array.iterator2(nodes))
+            {
+                let display = i >= start && i < end;
+                if (row.parentNode != items)
+                {
+                    do
+                        var next = nodes[++i];
+                    while ((!next || next.parentNode != root) && i < nodes.length);
+                    items.insertBefore(row, next);
+                }
+                if (display)
+                    delete row.style.display;
+                else
+                    row.style.display = "none";
+            }
             nodes.up.style.display = (start == 0) ? "none" : "block";
             nodes.down.style.display = (end == context.items.length) ? "none" : "block";
         });
 
         divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
-        completionElements = div.getElementsByClassName("hl-CompItem");
+        completionElements = buffer.evaluateXPath("//*[@class='hl-CompItem' and not(contains(@style, 'none'))]", doc);
 
         autoSize();
         return true;

@@ -786,7 +786,7 @@ function Options() //{{{
 
             //var length = names.length;
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
-            for (let [,name] in Iterator(args))
+            for (let [,name] in args)
             {
                 var name = args[i];
                 var reference = liberator.variableReference(name);
