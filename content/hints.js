@@ -173,7 +173,7 @@ function Hints() //{{{
     {
         var oldElem = validHints[oldID - 1];
         if (oldElem)
-            setClass(newElem, false);
+            setClass(oldElem, false);
 
         var newElem = validHints[newID - 1];
         if (newElem)

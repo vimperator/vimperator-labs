@@ -92,8 +92,8 @@ function Highlights(name, store, serial)
             padding: 0px 1px 0px 1px;
         }
         Hint::after,,*  content: attr(number);
-        HintElem,,*     background: yellow;  color: black;
-        HintActive,,*   background: #88FF00; color: black;
+        HintElem,,*     background-color: yellow;  color: black;
+        HintActive,,*   background-color: #88FF00; color: black;
         HintImage,,*    opacity: .5;
 
         Search,,* {
