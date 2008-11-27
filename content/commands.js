@@ -606,7 +606,6 @@ function Commands() //{{{
                         complete.highlight(i, sub.length, "SPELLCHECK")
                 }
 
-                liberator.dump({literal: literal, index: literalIndex, length: length, argCount: argCount});
                 if (literal && args.length == literalIndex)
                 {
                     if (complete)
