@@ -533,7 +533,7 @@ function Completion() //{{{
                 compl.push(["wrappedJSObject", obj]);
             // Parse keys for sorting
             compl.forEach(function (item) {
-                key = item[0];
+                let key = item[0];
                 if (!isNaN(key))
                     key = parseInt(key);
                 else if (/^[A-Z_]+$/.test(key))
