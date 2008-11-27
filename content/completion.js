@@ -965,7 +965,7 @@ function Completion() //{{{
 
         runCompleter: function (name, filter)
         {
-            return _runCompleter.items.map(function (i) i.item);
+            return this._runCompleter(name, filter).items.map(function (i) i.item);
         },
 
         // cancel any ongoing search
