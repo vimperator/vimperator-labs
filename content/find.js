@@ -223,7 +223,7 @@ function Search() //{{{
             return aNode;
         },
 
-        getSpans: function (doc) buffer.evaluateXPath("//*[liberator:highlight='Search']", doc)
+        getSpans: function (doc) buffer.evaluateXPath("//*[@liberator:highlight='Search']", doc)
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
