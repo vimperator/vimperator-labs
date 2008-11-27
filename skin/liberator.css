@@ -26,27 +26,19 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+@namespace liberator url("http://vimperator.org/namespaces/liberator");
+
 /* Applied to all content */
-.liberator-frame-indicator {
-    -moz-binding: url(chrome://vimperator/content/bindings.xml#frame);
+[liberator|activeframe] {
+    -moz-binding: url(chrome://liberator/content/bindings.xml#frame);
 }
 
-#liberator-frame-indicator {
-    background-color: red;
-    opacity: 0.5;
-    z-index: 999;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
-.liberator-hint {
+[liberator|highlight~=HintImage],
+[liberator|highlight~=Hint] {
     z-index: 5000;
     position: absolute;
 }
-.liberator-search {
+[liberator|highlight~=Search] {
     display: inline;
 }
 
@@ -56,17 +48,19 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 *:-moz-loading, *:-moz-broken { display: none !important; }
 
-.hl-Completions {
+[liberator|highlight~=Completions] {
     width: 100%;
     display: table;
 }
-.hl-CompItem, .hl-CompTitle {
+[liberator|highlight~=CompItem],
+[liberator|highlight~=CompTitle] {
     display: table-row;
 }
-.hl-Completions > ul {
+[liberator|highlight~=Completions] > ul {
     display: table-row;
 }
-.hl-CompItem > *, .hl-CompTitle > * {
+[liberator|highlight~=CompItem] > *,
+[liberator|highlight~=CompTitle] > * {
     -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
     display: table-cell;
     vertical-align: middle;
