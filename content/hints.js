@@ -156,8 +156,11 @@ function Hints() //{{{
             pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
         }
 
-        doc.body.appendChild(fragment);
-        docs.push({ doc: doc, start: start, end: pageHints.length - 1 });
+        if (doc.body)
+        {
+            doc.body.appendChild(fragment);
+            docs.push({ doc: doc, start: start, end: pageHints.length - 1 });
+        }
 
         // also generate hints for frames
         Array.forEach(win.frames, function (frame) { generate(frame); });
