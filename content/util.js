@@ -35,7 +35,7 @@ const util = { //{{{
     Array: {
         // [["a", "b"], ["c", "d"]] -> {a: "b", c: "d"}
         // From Common Lisp, more or less
-        assocToObj: function (assoc)
+        assocToObj: function assocToObj(assoc)
         {
             let obj = {};
             assoc.forEach(function ([k, v]) { obj[k] = v });
@@ -43,9 +43,9 @@ const util = { //{{{
         },
 
         // flatten an array: [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
-        flatten: function (ary) Array.concat.apply([], ary),
+        flatten: function flatten(ary) Array.concat.apply([], ary),
 
-        iterator: function (ary)
+        iterator: function iterator(ary)
         {
             let length = ary.length;
             for (let i = 0; i < length; i++)
@@ -59,7 +59,7 @@ const util = { //{{{
                 yield [i, ary[i]];
         },
 
-        uniq: function (ary, unsorted)
+        uniq: function uniq(ary, unsorted)
         {
             let ret = [];
             if (unsorted)
@@ -136,7 +136,7 @@ const util = { //{{{
         };
     },
 
-    cloneObject: function (obj)
+    cloneObject: function cloneObject(obj)
     {
         let newObj = {};
         for (let [k, v] in Iterator(obj))
@@ -144,21 +144,21 @@ const util = { //{{{
         return newObj;
     },
 
-    clip: function (str, length)
+    clip: function clip(str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
 
-    compareIgnoreCase: function (a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
+    compareIgnoreCase: function compareIgnoreCase(a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
 
-    computedStyle: function (node)
+    computedStyle: function computedStyle(node)
     {
         while (node instanceof Text && node.parentNode)
             node = node.parentNode;
         return node.ownerDocument.defaultView.getComputedStyle(node, null);
     },
 
-    copyToClipboard: function (str, verbose)
+    copyToClipboard: function copyToClipboard(str, verbose)
     {
         const clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
                                           .getService(Components.interfaces.nsIClipboardHelper);
@@ -168,14 +168,14 @@ const util = { //{{{
             liberator.echo("Yanked " + str, commandline.FORCE_SINGLELINE);
     },
 
-    createURI: function (str)
+    createURI: function createURI(str)
     {
         const fixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
                                 .getService(Components.interfaces.nsIURIFixup);
         return fixup.createFixupURI(str, fixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
     },
 
-    escapeHTML: function (str)
+    escapeHTML: function escapeHTML(str)
     {
         // XXX: the following code is _much_ slower than a simple .replace()
         // :history display went down from 2 to 1 second after changing
@@ -186,19 +186,19 @@ const util = { //{{{
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
-    escapeRegex: function (str)
+    escapeRegex: function escapeRegex(str)
     {
         return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
     },
 
-    escapeString: function (str, delimiter)
+    escapeString: function escapeString(str, delimiter)
     {
         if (delimiter == undefined)
             delimiter = '"';
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
-    formatBytes: function (num, decimalPlaces, humanReadable)
+    formatBytes: function formatBytes(num, decimalPlaces, humanReadable)
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
         let unitIndex = 0;
@@ -234,7 +234,7 @@ const util = { //{{{
     },
 
     // generates an Asciidoc help entry, "command" can also be a mapping
-    generateHelp: function (command, extraHelp)
+    generateHelp: function generateHelp(command, extraHelp)
     {
         let start = "", end = "";
         if (command instanceof liberator.Command)
@@ -285,7 +285,7 @@ const util = { //{{{
         return ret;
     },
 
-    httpGet: function (url)
+    httpGet: function httpGet(url)
     {
         try
         {
@@ -300,9 +300,9 @@ const util = { //{{{
         }
     },
 
-    identity: function (k) k,
+    identity: function identity(k) k,
 
-    map: function (obj, fn)
+    map: function map(obj, fn)
     {
         let ary = [];
         for (let i in Iterator(obj))
@@ -311,7 +311,7 @@ const util = { //{{{
     },
 
     // if color = true it uses HTML markup to color certain items
-    objectToString: function (object, color)
+    objectToString: function objectToString(object, color)
     {
         /* Use E4X literals so html is automatically quoted
          * only when it's asked for. Noone wants to see &lt;
@@ -380,7 +380,7 @@ const util = { //{{{
         return color ? string : [s for each (s in string)].join("");
     },
 
-    range: function (start, end, reverse)
+    range: function range(start, end, reverse)
     {
         if (!reverse)
         {
@@ -394,7 +394,7 @@ const util = { //{{{
         }
     },
 
-    interruptableRange: function (start, end, time)
+    interruptableRange: function interruptableRange(start, end, time)
     {
         let endTime = Date.now() + time;
         while (start < end)
@@ -409,7 +409,7 @@ const util = { //{{{
     },
 
     // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
-    readFromClipboard: function ()
+    readFromClipboard: function readFromClipboard()
     {
         let url;
 
@@ -445,7 +445,7 @@ const util = { //{{{
 
     // takes a string like 'google bla, www.osnews.com'
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
-    stringToURLArray: function (str)
+    stringToURLArray: function stringToURLArray(str)
     {
         let urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
 
@@ -500,7 +500,7 @@ const util = { //{{{
         return urls;
     },
 
-    xmlToDom: function (node, doc, nodes)
+    xmlToDom: function xmlToDom(node, doc, nodes)
     {
         XML.prettyPrinting = false;
         switch (node.nodeKind())
@@ -565,7 +565,7 @@ function Struct()
 }
 
 Struct.prototype = {
-    clone: function ()
+    clone: function clone()
     {
         return this.constructor.apply(null, this.slice());
     },

@@ -116,7 +116,8 @@ CompletionContext.prototype = {
             if (!context.hasItems)
                 return [];
             let prefix = self.value.substring(minStart, context.offset);
-            return [{ text: prefix + item.text, item: item.item } for ([i, item] in Iterator(context.items))];
+            return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
+            //return [{ text: prefix + item.text, item: item.item } for ([i, item] in Iterator(context.items))];
         });
         return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
     },
@@ -329,7 +330,7 @@ CompletionContext.prototype = {
             this._filter = this._filter.substr(count);
     },
 
-    getItems: function (start, end)
+    getItems: function getItems(start, end)
     {
         let self = this;
         let items = this.items;
@@ -339,7 +340,7 @@ CompletionContext.prototype = {
         return util.map(util.range(start, end, reverse), function (i) items[i]);
     },
 
-    getRows: function (start, end, doc)
+    getRows: function getRows(start, end, doc)
     {
         let self = this;
         let items = this.items;
@@ -362,7 +363,7 @@ CompletionContext.prototype = {
         return context;
     },
 
-    getText: function (item)
+    getText: function getText(item)
     {
         let text = item[self.keys["text"]];
         if (self.quote)
@@ -392,7 +393,7 @@ CompletionContext.prototype = {
         catch (e) {}
     },
 
-    match: function (str)
+    match: function match(str)
     {
         let filter = this.filter;
         if (this.ignoreCase)
@@ -955,7 +956,7 @@ function Completion() //{{{
         },
 
         // FIXME
-        _runCompleter: function (name, filter)
+        _runCompleter: function _runCompleter(name, filter)
         {
             let context = CompletionContext(filter);
             if (typeof name == "string")
@@ -966,7 +967,7 @@ function Completion() //{{{
             return context.allItems;
         },
 
-        runCompleter: function (name, filter)
+        runCompleter: function runCompleter(name, filter)
         {
             return this._runCompleter(name, filter).items.map(function (i) i.item);
         },
@@ -1059,7 +1060,7 @@ function Completion() //{{{
             return filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1);
         },
 
-        listCompleter: function (name, filter)
+        listCompleter: function listCompleter(name, filter)
         {
             let context = CompletionContext(filter || "");
             context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
@@ -1230,13 +1231,13 @@ function Completion() //{{{
             context.keys = { text: 0, description: 1, icon: 2 };
             context.anchored = true;
             context.key = dir;
-            context.generate = function generate()
+            context.generate = function generate_file()
             {
                 context.cache.dir = dir;
 
                 try
                 {
-                    let files = io.readDirectory(dir, true);
+                    let files = io.readDirectory(dir);
 
                     if (options["wildignore"])
                     {
@@ -1273,7 +1274,7 @@ function Completion() //{{{
             }
         },
 
-        history: function (context)
+        history: function history(context)
         {
             context.format = history.format;
             context.title = ["History"]
@@ -1287,7 +1288,7 @@ function Completion() //{{{
 
         javascript: function _javascript(context) javascript.complete(context),
 
-        location: function (context)
+        location: function location(context)
         {
             if (!completionService)
                 return
@@ -1303,7 +1304,6 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
-                let filter = context.filter;
             });
             completionService.stopSearch();
             completionService.startSearch(context.filter, "", context.result, {
@@ -1468,7 +1468,7 @@ function Completion() //{{{
 
         urlCompleters: {},
 
-        addUrlCompleter: function (opt)
+        addUrlCompleter: function addUrlCompleter(opt)
         {
             this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
         },

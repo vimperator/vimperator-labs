@@ -143,11 +143,11 @@ function Bookmarks() //{{{
         };
 
         var observer = {
-            onBeginUpdateBatch: function () {},
-            onEndUpdateBatch:   function () {},
-            onItemVisited:      function () {},
-            onItemMoved:        function () {},
-            onItemAdded: function (itemId, folder, index)
+            onBeginUpdateBatch: function onBeginUpdateBatch() {},
+            onEndUpdateBatch:   function onEndUpdateBatch() {},
+            onItemVisited:      function onItemVisited() {},
+            onItemMoved:        function onItemMoved() {},
+            onItemAdded: function onItemAdded(itemId, folder, index)
             {
                 // liberator.dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK)
@@ -159,13 +159,13 @@ function Bookmarks() //{{{
                     }
                 }
             },
-            onItemRemoved: function (itemId, folder, index)
+            onItemRemoved: function onItemRemoved(itemId, folder, index)
             {
                 // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (deleteBookmark(itemId))
                     storage.fireEvent(name, "remove", itemId);
             },
-            onItemChanged: function (itemId, property, isAnnotation, value)
+            onItemChanged: function onItemChanged(itemId, property, isAnnotation, value)
             {
                 if (isAnnotation)
                     return;
@@ -180,7 +180,7 @@ function Bookmarks() //{{{
                     storage.fireEvent(name, "change", itemId);
                 }
             },
-            QueryInterface: function (iid)
+            QueryInterface: function QueryInterface(iid)
             {
                 if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
                     return this;
@@ -233,8 +233,8 @@ function Bookmarks() //{{{
         "Set the default search engine",
         "string", "google",
         {
-            completer: function (filter) completion.runCompleter("search", filter, true),
-            validator: function (value)  completion.runCompleter("search", "", true).some(function ([s]) s == value)
+            completer: function completer(filter) completion.runCompleter("search", filter, true),
+            validator: function validator(value)  completion.runCompleter("search", "", true).some(function ([s]) s == value)
         });
 
     options.add(["preload"],
@@ -320,7 +320,7 @@ function Bookmarks() //{{{
         },
         {
             bang: true,
-            completer: function (context, args) completion.bookmark(context, args["-tags"]),
+            completer: function completer(context, args) completion.bookmark(context, args["-tags"]),
             options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
         });
 
@@ -334,7 +334,7 @@ function Bookmarks() //{{{
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
         },
         {
-            completer: function (context) completion.bookmark(context),
+            completer: function completer(context) completion.bookmark(context),
             literal: true
         });
 
@@ -353,7 +353,7 @@ function Bookmarks() //{{{
         // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
-        get: function (filter, tags, bypassCache)
+        get: function get(filter, tags, bypassCache)
         {
             if (bypassCache) // Is this really necessary anymore?
                 cache.load();
@@ -361,7 +361,7 @@ function Bookmarks() //{{{
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
-        add: function (starOnly, title, url, keyword, tags, force)
+        add: function add(starOnly, title, url, keyword, tags, force)
         {
             try
             {
@@ -400,7 +400,7 @@ function Bookmarks() //{{{
             return true;
         },
 
-        toggle: function (url)
+        toggle: function toggle(url)
         {
             if (!url)
                 return;
@@ -421,7 +421,7 @@ function Bookmarks() //{{{
             }
         },
 
-        isBookmarked: function (url)
+        isBookmarked: function isBookmarked(url)
         {
             try
             {
@@ -435,7 +435,7 @@ function Bookmarks() //{{{
         },
 
         // returns number of deleted bookmarks
-        remove: function (url)
+        remove: function remove(url)
         {
             if (!url)
                 return 0;
@@ -462,11 +462,11 @@ function Bookmarks() //{{{
             return count.value;
         },
 
-        getFavicon: function (url) { return getFavicon(url); },
+        getFavicon: function getFavicon(url) { return getFavicon(url); },
 
         // TODO: add filtering
         // also ensures that each search engine has a Vimperator-friendly alias
-        getSearchEngines: function ()
+        getSearchEngines: function getSearchEngines()
         {
             var searchEngines = [];
             var firefoxEngines = searchService.getVisibleEngines({});
@@ -497,7 +497,7 @@ function Bookmarks() //{{{
             return searchEngines;
         },
 
-        getSuggestions: function (engine, query)
+        getSuggestions: function getSuggestions(engine, query)
         {
             let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                .getService(Components.interfaces.nsIBrowserSearchService);
@@ -524,7 +524,7 @@ function Bookmarks() //{{{
         // TODO: add filtering
         // format of returned array:
         // [keyword, helptext, url]
-        getKeywords: function ()
+        getKeywords: function getKeywords()
         {
             return cache.keywords;
         },
@@ -533,7 +533,7 @@ function Bookmarks() //{{{
         // if @param useDefSearch is true, it uses the default search engine
         // @returns the url for the search string
         //          if the search also requires a postData, [url, postData] is returned
-        getSearchURL: function (text, useDefsearch)
+        getSearchURL: function getSearchURL(text, useDefsearch)
         {
             var url = null;
             var aPostDataRef = {};
@@ -554,7 +554,7 @@ function Bookmarks() //{{{
         },
 
         // if openItems is true, open the matching bookmarks items in tabs rather than display
-        list: function (filter, tags, openItems)
+        list: function list(filter, tags, openItems)
         {
             if (!openItems)
                 return completion.listCompleter("bookmark", filter, tags);
@@ -647,7 +647,7 @@ function History() //{{{
         },
         {
             bang: true,
-            completer: function (context)
+            completer: function completer(context)
             {
                 let filter = context.filter;
                 var sh = getWebNavigation().sessionHistory;
@@ -699,7 +699,7 @@ function History() //{{{
         },
         {
             bang: true,
-            completer: function (context)
+            completer: function completer(context)
             {
                 let filter = context.filter;
                 var sh = getWebNavigation().sessionHistory;
@@ -736,7 +736,7 @@ function History() //{{{
 
         get service() historyService,
 
-        get: function (filter, maxItems)
+        get: function get(filter, maxItems)
         {
             // no query parameters will get all history
             let query = historyService.getNewQuery();
@@ -768,7 +768,7 @@ function History() //{{{
         },
 
         // TODO: better names and move to buffer.?
-        stepTo: function (steps)
+        stepTo: function stepTo(steps)
         {
             let index = getWebNavigation().sessionHistory.index + steps;
             if (index >= 0 && index < getWebNavigation().sessionHistory.count)
@@ -777,7 +777,7 @@ function History() //{{{
                 liberator.beep();
         },
 
-        goToStart: function ()
+        goToStart: function goToStart()
         {
             let index = getWebNavigation().sessionHistory.index;
             if (index == 0)
@@ -786,7 +786,7 @@ function History() //{{{
             getWebNavigation().gotoIndex(0);
         },
 
-        goToEnd: function ()
+        goToEnd: function goToEnd()
         {
             let index = getWebNavigation().sessionHistory.index;
             if (index == getWebNavigation().sessionHistory.count - 1)
@@ -796,7 +796,7 @@ function History() //{{{
         },
 
         // if openItems is true, open the matching history items in tabs rather than display
-        list: function (filter, openItems)
+        list: function list(filter, openItems)
         {
             if (!openItems)
                 return completion.listCompleter("history", filter);
@@ -922,13 +922,13 @@ function QuickMarks() //{{{
 
     return {
 
-        add: function (qmark, location)
+        add: function add(qmark, location)
         {
             qmarks.set(qmark, location);
             liberator.echo("Added Quick Mark '" + qmark + "': " + location);
         },
 
-        remove: function (filter)
+        remove: function remove(filter)
         {
             var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
@@ -939,12 +939,12 @@ function QuickMarks() //{{{
             }
         },
 
-        removeAll: function ()
+        removeAll: function removeAll()
         {
             qmarks.clear();
         },
 
-        jumpTo: function (qmark, where)
+        jumpTo: function jumpTo(qmark, where)
         {
             var url = qmarks.get(qmark);
 
@@ -954,7 +954,7 @@ function QuickMarks() //{{{
                 liberator.echoerr("E20: QuickMark not set");
         },
 
-        list: function (filter)
+        list: function list(filter)
         {
             var marks = [key for ([key, val] in qmarks)];
             // This was a lot nicer without the lambda...
