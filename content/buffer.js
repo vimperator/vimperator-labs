@@ -871,6 +871,8 @@ function Buffer() //{{{
                   {
                     case "xhtml":
                       return "http://www.w3.org/1999/xhtml";
+                    case "liberator":
+                      return NS.uri;
                     default:
                       return null;
                   }
@@ -1243,12 +1245,15 @@ function Buffer() //{{{
                 frames[next].frameElement.scrollIntoView(false);
 
             // add the frame indicator
-            var doc = frames[next].document;
-            var indicator = util.xmlToDom(<div id="liberator-frame-indicator"/>, doc);
+            let doc = frames[next].document;
+            var indicator = util.xmlToDom(<div highlight="FrameIndicator"/>, doc);
             doc.body.appendChild(indicator);
 
-            // remove the frame indicator
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
+
+            // Doesn't unattach
+            //doc.body.setAttributeNS(NS.uri, "activeframe", "true");
+            //setTimeout(function () { doc.body.removeAttributeNS(NS.uri, "activeframe"); }, 500);
         },
 
         // similar to pageInfo

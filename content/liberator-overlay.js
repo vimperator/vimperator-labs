@@ -26,9 +26,9 @@
     Components.utils.import("resource://liberator/storage.jsm", modules);
 
     ["liberator.js",
+     "config.js",
      "util.js",
      "style.js",
-     "config.js",
      "buffer.js",
      "commands.js",
      "completion.js",

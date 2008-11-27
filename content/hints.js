@@ -32,7 +32,7 @@ function Hints() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const ELEM = 0, TEXT = 1, SPAN = 2, IMGSPAN = 3, BGCOLOR = 4, COLOR = 5;
+    const ELEM = 0, TEXT = 1, SPAN = 2, IMGSPAN = 3;
 
     var myModes = config.browserModes;
 
@@ -112,13 +112,12 @@ function Hints() //{{{
         var scrollX = doc.defaultView.scrollX;
         var scrollY = doc.defaultView.scrollY;
 
-        var baseNodeAbsolute = util.xmlToDom(
-            <span class="liberator-hint"/>, doc);
+        var baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
         var elem, tagname, text, span, rect;
         var res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
-        var fragment = doc.createDocumentFragment();
+        var fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         var start = pageHints.length;
         for (let elem in res)
         {
@@ -171,19 +170,24 @@ function Hints() //{{{
     {
         var oldElem = validHints[oldID - 1];
         if (oldElem)
-            oldElem.style.backgroundColor = options["linkbgcolor"];
+            setClass(newElem, false);
 
         var newElem = validHints[newID - 1];
         if (newElem)
-            newElem.style.backgroundColor = options["activelinkbgcolor"];
+            setClass(newElem, true);
+    }
+
+    function setClass(elem, active)
+    {
+        let prefix = (elem.getAttributeNS(NS.uri, "class") || "") + " ";
+        if (active)
+            elem.setAttributeNS(NS.uri, "highlight", prefix + "HintActive");
+        else
+            elem.setAttributeNS(NS.uri, "highlight", prefix + "HintElem");
     }
 
     function showHints()
     {
-        var linkfgcolor       = options["linkfgcolor"];
-        var linkbgcolor       = options["linkbgcolor"];
-        var activelinkfgcolor = options["activelinkfgcolor"];
-        var activelinkbgcolor = options["activelinkbgcolor"];
 
         let elem, tagname, text, rect, span, imgspan;
         let hintnum = 1;
@@ -208,9 +212,7 @@ function Hints() //{{{
                     if (imgspan)
                         imgspan.style.display = "none";
 
-                    // reset background color
-                    elem.style.backgroundColor = hint[BGCOLOR];
-                    elem.style.color = hint[COLOR];
+                    elem.removeAttributeNS(NS.uri, "highlight");
                     continue inner;
                 }
 
@@ -222,29 +224,40 @@ function Hints() //{{{
                         if (!rect)
                             continue;
 
-                        imgspan = doc.createElementNS("http://www.w3.org/1999/xhtml", "span");
-                        imgspan.style.position = "absolute";
-                        imgspan.style.opacity = 0.5;
-                        imgspan.style.zIndex = "10000000";
+                        imgspan = util.xmlToDom(<span highlight="Hint"/>, doc);
+                        imgspan.setAttributeNS(NS.uri, "class", "HintImage");
                         imgspan.style.left = (rect.left + scrollX) + "px";
                         imgspan.style.top = (rect.top + scrollY) + "px";
                         imgspan.style.width = (rect.right - rect.left) + "px";
                         imgspan.style.height = (rect.bottom - rect.top) + "px";
-                        imgspan.className = "liberator-hint";
                         hint[IMGSPAN] = imgspan;
-                        doc.body.appendChild(imgspan);
+                        span.parentNode.appendChild(imgspan);
                     }
-                    imgspan.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
-                    imgspan.style.display = "inline";
+                    setClass(imgspan, activeHint == hintnum)
                 }
 
-                if (!imgspan)
-                    elem.style.backgroundColor = (activeHint == hintnum) ? activelinkbgcolor : linkbgcolor;
-                elem.style.color = (activeHint == hintnum) ? activelinkfgcolor : linkfgcolor;
-                span.textContent = String(hintnum++);
-                span.style.display = "inline";
+                span.setAttribute("number", hintnum++);
+                if (imgspan)
+                    imgspan.setAttribute("number", hintnum++);
+                else
+                    setClass(elem, activeHint == hintnum);
                 validHints.push(elem);
             }
+        }
+
+        if (options.usermode)
+        {
+            let css = [];
+            // FIXME: Broken for imgspans.
+            for (let [,{ doc: doc }] in Iterator(docs))
+            {
+                for (let elem in buffer.evaluateXPath("//*[@liberator:highlight and @number]", doc))
+                {
+                    let group = elem.getAttributeNS(NS.uri, "highlight");
+                    css.push(highlight.selector(group) + "[number='" + elem.getAttribute("number") + "'] { " + elem.style.cssText + " }");
+                }
+            }
+            styles.addSheet("hint-positions", "*", css.join("\n"), true, true);
         }
 
         return true;
@@ -253,30 +266,16 @@ function Hints() //{{{
     function removeHints(timeout)
     {
         var firstElem = validHints[0] || null;
-        var firstElemBgColor = "";
-        var firstElemColor = "";
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
+            for (let elem in buffer.evaluateXPath("//*[@liberator:highlight='hints']", doc))
+                elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1))
             {
                 let hint = pageHints[i];
-                // remove the span for the numeric display part
-                doc.body.removeChild(hint[SPAN]);
-                if (hint[IMGSPAN]) // a transparent span for images
-                    doc.body.removeChild(hint[IMGSPAN]);
-
-                if (timeout && firstElem == hint[ELEM])
-                {
-                    firstElemBgColor = hint[BGCOLOR];
-                    firstElemColor = hint[COLOR];
-                }
-                else
-                {
-                    // restore colors
-                    var elem = hint[ELEM];
-                    elem.style.backgroundColor = hint[BGCOLOR];
-                    elem.style.color = hint[COLOR]; }
+                if (!timeout || hint[ELEM] != firstHint)
+                    hint[ELEM].removeAttributeNS(NS.uri, "highlight");
             }
 
             // animate the disappearance of the first hint
@@ -305,12 +304,10 @@ function Hints() //{{{
                 //                        clearTimeout(id);
                 //                    }
                 //                }, 100);
-                setTimeout(function () {
-                    firstElem.style.backgroundColor = firstElemBgColor;
-                    firstElem.style.color = firstElemColor;
-                }, timeout);
+                setTimeout(function () { firstElem.removeAttributeNS(NS.uri, "highlight") }, timeout);
             }
         }
+        styles.removeSheet("hint-positions", null, null, null, true);
 
         reset();
     }
@@ -559,22 +556,6 @@ function Hints() //{{{
         "Change the way when to automatically follow hints",
         "number", 0,
         { validator: function (value) value >= 0 && value < 3 });
-
-    options.add(["linkfgcolor", "lfc"],
-        "Foreground color of a link during hint mode",
-        "string", "black");
-
-    options.add(["linkbgcolor", "lbc"],
-        "Background color of a link during hint mode",
-        "string", "yellow");
-
-    options.add(["activelinkfgcolor", "alfc"],
-        "Foreground color of the current active link during hint mode",
-        "string", "black");
-
-    options.add(["activelinkbgcolor", "albc"],
-        "Background color of the current active link during hint mode",
-        "string", "#88FF00");
 
     options.add(["hintmatching", "hm"],
         "How links are matched",

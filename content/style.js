@@ -38,9 +38,9 @@ function Highlights(name, store, serial)
         CompResult         width: 45%; overflow: hidden;
         CompDesc           color: gray; width: 50%;
         CompLess           text-align: center; height: .5ex; line-height: .5ex; padding-top: 1ex;
-        CompLess:after     content: "\2303" /* Unicode up arrowhead */
+        CompLess::after    content: "\2303" /* Unicode up arrowhead */
         CompMore           text-align: center; height: .5ex; line-height: .5ex;
-        CompMore:after     content: "\2304" /* Unicode down arrowhead */
+        CompMore::after    content: "\2304" /* Unicode down arrowhead */
 
         Indicator   color: blue;
         Filter      font-weight: bold;
@@ -70,8 +70,19 @@ function Highlights(name, store, serial)
         URL         text-decoration: none; color: green; background: inherit;
         URL:hover   text-decoration: underline; cursor: pointer;
 
-        Bell,#liberator-visualbell border: none; background-color: black;
-        Hint,.liberator-hint,* {
+        FrameIndicator,,* {
+            background-color: red;
+            opacity: 0.5;
+            z-index: 999;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        Bell         border: none; background-color: black;
+        Hint,,* {
             font-family: monospace;
             font-size: 10px;
             font-weight: bold;
@@ -82,7 +93,12 @@ function Highlights(name, store, serial)
             border-style: solid;
             padding: 0px 1px 0px 1px;
         }
-        Search,.liberator-search,* {
+        Hint::after,,*  content: attr(number);
+        HintElem,,*     background: yellow;  color: black;
+        HintActive,,*   background: #88FF00; color: black;
+        HintImage,,*    opacity: .5;
+
+        Search,,* {
             font-size: inherit;
             padding: 0;
             color: black;
@@ -96,7 +112,7 @@ function Highlights(name, store, serial)
 
     const Highlight = Struct("class", "selector", "filter", "default", "value");
     Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
-    Highlight.defaultValue("selector", function () ".hl-" + this.class);
+    Highlight.defaultValue("selector", function () self.selector(this.class));
     Highlight.defaultValue("value", function () this.default);
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
@@ -140,11 +156,17 @@ function Highlights(name, store, serial)
         highlight[style.class] = style;
     }
 
+    this.selector = function (class)
+    {
+        let [, hl, rest] = class.match(/^(\w*)(.*)/);
+        return "[liberator|highlight~=" + hl + "]" + rest
+    };
+
     highlightCSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
                 .split("\n").filter(function (s) /\S/.test(s))
                 .forEach(function (style)
     {
-        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+))?(?:,([^,\s]+))?\s*(.*)$/), 1));
+        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
         highlight[style.class] = style;
         self.set(style.class);
     });
@@ -165,9 +187,9 @@ function Styles(name, store, serial)
                           .getService(Components.interfaces.nsIIOService);
     const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
                           .getService(Components.interfaces.nsIStyleSheetService);
-    const XHTML = "http://www.w3.org/1999/xhtml";
-    const namespace = "@namespace html url(" + XHTML + ");\n" +
-                      "@namespace xul url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);\n";
+    const namespace = '@namespace html "' + XHTML + '";\n' +
+                      '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +
+                      '@namespace liberator "' + NS.uri + '";\n';
     const Sheet = new Struct("name", "sites", "css", "ref");
 
     let cssUri = function (css) "chrome-data:text/css," + encodeURI(css);
@@ -373,13 +395,13 @@ let (array = util.Array)
     };
 }
 
-
 const styles = storage.newObject("styles", Styles, false);
+try {
+const highlight = storage.newObject("highlight", Highlights, false);
+} catch(e) { liberator.reportError(e) }
 
 liberator.registerObserver("load_commands", function ()
 {
-    const highlight = storage.newObject("highlight", Highlights, false);
-
     // TODO: :colo default needs :hi clear
     commands.add(["colo[rscheme]"],
         "Load a color scheme",

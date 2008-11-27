@@ -48,13 +48,13 @@ const template = {
             var desc = this.process[1].call(this, item, this.getKey(item, "description"));
         }
 
-        return <div class={class || "hl-CompItem"}>
+        return <div highlight={class || "CompItem"}>
                    <!-- The non-breaking spaces prevent empty elements
                       - from pushing the baseline down and enlarging
                       - the row.
                       -->
-                   <li class="hl-CompResult">{text}&#160;</li>
-                   <li class="hl-CompDesc">{desc}&#160;</li>
+                   <li highlight="CompResult">{text}&#160;</li>
+                   <li highlight="CompDesc">{desc}&#160;</li>
                </div>;
     },
 
@@ -62,7 +62,7 @@ const template = {
     {
         let extra = this.getKey(item, "extra");
         return <>
-            <a href="#" class="hl-URL">{text}</a>&#160;
+            <a href="#" highlight="URL">{text}</a>&#160;
             {
                 !(extra && extra.length) ? "" :
                 <span class="extra-info">
@@ -79,10 +79,10 @@ const template = {
     icon: function (item, text)
     {
         let icon = this.getKey(item, "icon");
-        return <><span class="hl-CompIcon">{icon ? <img src={icon}/> : <></>}</span>{text}</>
+        return <><span highlight="CompIcon">{icon ? <img src={icon}/> : <></>}</span>{text}</>
     },
 
-    filter: function (str) <span class="hl-Filter">{str}</span>,
+    filter: function (str) <span highlight="Filter">{str}</span>,
 
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
@@ -95,29 +95,29 @@ const template = {
             switch (arg == null ? "undefined" : typeof arg)
             {
                 case "number":
-                    return <span class="hl-Number">{str}</span>;
+                    return <span highlight="Number">{str}</span>;
                 case "string":
                     if (processStrings)
                         str = str.quote();
-                    return <span class="hl-String">{str}</span>;
+                    return <span highlight="String">{str}</span>;
                 case "boolean":
-                    return <span class="hl-Boolean">{str}</span>;
+                    return <span highlight="Boolean">{str}</span>;
                 case "function":
                     // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
                     // Using /foo*(:?)/ instead.
                     if (processStrings)
-                        return <span class="hl-Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
+                        return <span highlight="Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
                     return <>{arg}</>;
                 case "undefined":
-                    return <span class="hl-Null">{arg}</span>;
+                    return <span highlight="Null">{arg}</span>;
                 case "object":
                     // for java packages value.toString() would crash so badly
                     // that we cannot even try/catch it
                     if (/^\[JavaPackage.*\]$/.test(arg))
                         return <>[JavaPackage]</>;
                     if (processStrings && false)
-                        str = template.highlightFilter(str, "\n", function () <span class="hl-NonText">^J</span>);
-                    return <span class="hl-Object">{str}</span>;
+                        str = template.highlightFilter(str, "\n", function () <span highlight="NonText">^J</span>);
+                    return <span highlight="Object">{str}</span>;
                 case "xml":
                     return arg;
                 default:
@@ -179,7 +179,7 @@ const template = {
     highlightURL: function highlightURL(str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return <a class="hl-URL" href="#">{str}</a>;
+            return <a highlight="URL" href="#">{str}</a>;
         else
             return str;
     },
@@ -205,7 +205,7 @@ const template = {
     {
         return this.generic(
             <table>
-                <tr style="text-align: left;" class="hl-Title">
+                <tr style="text-align: left;" highlight="Title">
                     <th colspan="2">jump</th><th>title</th><th>URI</th>
                 </tr>
                 {
@@ -214,7 +214,7 @@ const template = {
                         <td class="indicator">{idx == index ? ">" : ""}</td>
                         <td>{Math.abs(idx - index)}</td>
                         <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
-                        <td><a href="#" class="hl-URL jump-list">{val.URI.spec}</a></td>
+                        <td><a href="#" highlight="URL jump-list">{val.URI.spec}</a></td>
                     </tr>)
                 }
             </table>);
@@ -224,7 +224,7 @@ const template = {
     {
         return this.generic(
             <table>
-                <tr class="hl-Title" align="left">
+                <tr highlight="Title" align="left">
                     <th>--- {title} ---</th>
                 </tr>
                 {
@@ -243,7 +243,7 @@ const template = {
     {
         let table =
             <table>
-                <tr class="hl-Title" align="left">
+                <tr highlight="Title" align="left">
                     <th colspan="2">{title}</th>
                 </tr>
                 {
@@ -263,7 +263,7 @@ const template = {
         /* This might be mind-bogglingly slow. We'll see. */
         return this.generic(
             <table>
-                <tr class="hl-Title" align="left">
+                <tr highlight="Title" align="left">
                 {
                     this.map(headings, function (h)
                     <th>{h}</th>)
@@ -288,7 +288,7 @@ const template = {
             {
                 this.map(iter, function (item)
                 <tr>
-                    <td class="hl-Title" style="padding-right: 20px">{item.name || item.names[0]}</td>
+                    <td highlight="Title" style="padding-right: 20px">{item.name || item.names[0]}</td>
                     <td>{item.description}</td>
                 </tr>)
             }

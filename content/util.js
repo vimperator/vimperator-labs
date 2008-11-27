@@ -26,6 +26,10 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+const XHTML = "http://www.w3.org/1999/xhtml";
+const NS = Namespace("liberator", "http://vimperator.org/namespaces/liberator");
+default xml namespace = XHTML;
+
 const util = { //{{{
 
     Array: {
@@ -331,8 +335,8 @@ const util = { //{{{
         {
             obj = "[Object]";
         }
-        obj = template.highlightFilter(util.clip(obj, 150), "\n", !color ? function () "^J" : function () <span class="hl-NonText">^J</span>);
-        let string = <><span class="hl-Title hl-Object">{obj}</span>::<br/>&#xa;</>;
+        obj = template.highlightFilter(util.clip(obj, 150), "\n", !color ? function () "^J" : function () <span highlight="NonText">^J</span>);
+        let string = <><span highlight="Title Object">{obj}</span>::<br/>&#xa;</>;
 
         let keys = [];
         try // window.content often does not want to be queried with "var i in object"
@@ -504,10 +508,9 @@ const util = { //{{{
             case "text":
                 return doc.createTextNode(node);
             case "element":
-                // Should use the node's namespace, in the future.
-                let domnode = doc.createElementNS("http://www.w3.org/1999/xhtml", node.localName());
+                let domnode = doc.createElementNS(node.namespace(), node.localName());
                 for each (let attr in node.@*)
-                    domnode.setAttribute(attr.name(), String(attr));
+                    domnode.setAttributeNS(attr.name() == "highlight" ? NS.uri : attr.namespace(), attr.name(), String(attr));
                 for each (let child in node.*)
                     domnode.appendChild(arguments.callee(child, doc, nodes));
                 if (nodes && node.@key)

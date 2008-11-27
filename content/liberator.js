@@ -74,8 +74,8 @@ const liberator = (function () //{{{
             "boolean", false);
 
         const tabopts = [
-            ["n", "Tab number", null, ".hl-TabNumber"],
-            ["N", "Tab number over icon", null, ".hl-TabIconNumber"]
+            ["n", "Tab number", null, highlight.selector("TabNumber")],
+            ["N", "Tab number over icon", null, highlight.selector("TabIconNumber")]
         ];
         options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
@@ -433,7 +433,7 @@ const liberator = (function () //{{{
 
                         var str = template.generic(
                                 <table>
-                                    <tr class="hl-Title" align="left">
+                                    <tr highlight="Title" align="left">
                                         <th colspan="3">Code execution summary</th>
                                     </tr>
                                     <tr><td>&#xa0;&#xa0;Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>

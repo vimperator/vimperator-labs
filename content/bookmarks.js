@@ -50,8 +50,8 @@ function Bookmarks() //{{{
     const Keyword = new Struct("keyword", "title", "icon", "url");
     Bookmark.defaultValue("icon", function () getFavicon(this.url));
     Bookmark.prototype.__defineGetter__("extra", function () [
-                            ['keyword', this.keyword,         "hl-Keyword"],
-                            ['tags',    this.tags.join(', '), "hl-Tag"]
+                            ['keyword', this.keyword,         "Keyword"],
+                            ['tags',    this.tags.join(', '), "Tag"]
                         ].filter(function (item) item[1]));
 
     const storage = modules.storage;
@@ -742,6 +742,8 @@ function History() //{{{
             let query = historyService.getNewQuery();
             let options = historyService.getNewQueryOptions();
 
+            if (typeof filter == "string")
+                filter = { searchTerms: filter };
             for (let [k, v] in Iterator(filter))
                 query[k] = v;
             options.sortingMode = options.SORT_BY_DATE_DESCENDING;

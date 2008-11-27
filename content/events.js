@@ -218,12 +218,12 @@ function AutoCommands() //{{{
 
             var list = template.generic(
                 <table>
-                    <tr class="hl-Title">
+                    <tr highlight="Title">
                         <td colspan="2">----- Auto Commands -----</td>
                     </tr>
                     {
                         template.map(cmds, function ([event, items])
-                        <tr class="hl-Title">
+                        <tr highlight="Title">
                             <td colspan="2">{event}</td>
                         </tr>
                         +

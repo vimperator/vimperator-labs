@@ -157,10 +157,10 @@ function Search() //{{{
 
             if (!aWord)
             {
-                let elems = doc.getElementsByClassName("liberator-search");
-                for (let i = elems.length; --i >= 0;)
+                let elems = highlightObj.getSpans(doc);
+                for (let i = elems.snapshotLength; --i >= 0;)
                 {
-                    let elem = elems[i];
+                    let elem = elems.snapshotItem(i);
                     let docfrag = doc.createDocumentFragment();
                     let next = elem.nextSibling;
                     let parent = elem.parentNode;
@@ -176,7 +176,7 @@ function Search() //{{{
                 return;
             }
 
-            var baseNode = <span class="liberator-search"/>
+            var baseNode = <span highlight="Search"/>
             baseNode = util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
@@ -221,7 +221,9 @@ function Search() //{{{
             aNode.appendChild(docfrag);
             parent.insertBefore(aNode, before);
             return aNode;
-        }
+        },
+
+        getSpans: function (doc) buffer.evaluateXPath("//*[liberator:highlight='Search']", doc)
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -442,7 +444,7 @@ function Search() //{{{
                 return;
 
             // already highlighted?
-            if (window.content.document.getElementsByClassName("liberator-search").length > 0)
+            if (highlightObj.getSpans(content.document).snapshotLength > 0)
                 return;
 
             if (!text)

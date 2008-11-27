@@ -284,7 +284,7 @@ function CommandLine() //{{{
 
     function setHighlightGroup(group)
     {
-        commandlineWidget.setAttribute("class", group);
+        commandlineWidget.setAttributeNS(NS.uri, "highlight", group);
     }
 
     // sets the prompt - for example, : or /
@@ -301,7 +301,7 @@ function CommandLine() //{{{
         {
             promptWidget.collapsed = true;
         }
-        promptWidget.setAttribute("class", highlightGroup || commandline.HL_NORMAL);
+        promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
@@ -320,7 +320,7 @@ function CommandLine() //{{{
                          .scrollWidth > commandWidget.inputField.scrollWidth)
         {
             setCommand("");
-            setMultiline(<span class="hl-Message">{str}</span>, highlightGroup);
+            setMultiline(<span highlight="Message">{str}</span>, highlightGroup);
         }
     }
 
@@ -616,7 +616,7 @@ function CommandLine() //{{{
                 let list = <></>;
 
                 for (let [,message] in Iterator(messageHistory.messages))
-                    list += <div class={message.highlight + " hl-Message"}>{message.str}</div>;
+                    list += <div highlight={message.highlight + " Message"}>{message.str}</div>;
 
                 liberator.echo(list, commandline.FORCE_MULTILINE);
             }
@@ -629,14 +629,14 @@ function CommandLine() //{{{
 
     return {
 
-        HL_NORMAL     : "hl-Normal",
-        HL_ERRORMSG   : "hl-ErrorMsg",
-        HL_MODEMSG    : "hl-ModeMsg",
-        HL_MOREMSG    : "hl-MoreMsg",
-        HL_QUESTION   : "hl-Question",
-        HL_INFOMSG    : "hl-InfoMsg",
-        HL_WARNINGMSG : "hl-WarningMsg",
-        HL_LINENR     : "hl-LineNr",
+        HL_NORMAL     : "Normal",
+        HL_ERRORMSG   : "ErrorMsg",
+        HL_MODEMSG    : "ModeMsg",
+        HL_MOREMSG    : "MoreMsg",
+        HL_QUESTION   : "Question",
+        HL_INFOMSG    : "InfoMsg",
+        HL_WARNINGMSG : "WarningMsg",
+        HL_LINENR     : "LineNr",
 
         FORCE_MULTILINE    : 1 << 0,
         FORCE_SINGLELINE   : 1 << 1,
@@ -1047,7 +1047,7 @@ function CommandLine() //{{{
 
                 // TODO: <LeftMouse> on the prompt line should scroll one page
                 case "<LeftMouse>":
-                    if (event.originalTarget.className == "hl-URL buffer-list")
+                    if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list")
                     {
                         tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
                         closeWindow = true;
@@ -1315,13 +1315,13 @@ function ItemList(id) //{{{
     function init()
     {
         div = dom(
-            <div class="ex-command-output hl-Normal" style="white-space: nowrap">
-                <div class="hl-Completions" key="noCompletions"><span class="hl-Title">No Completions</span></div>
+            <div class="ex-command-output" highlight="Normal" style="white-space: nowrap">
+                <div highlight="Completions" key="noCompletions"><span highlight="Title">No Completions</span></div>
                 <div key="completions"/>
-                <div class="hl-Completions">
+                <div highlight="Completions">
                 {
                     template.map(util.range(0, maxItems), function (i)
-                    <ul><li class="hl-CompTitle hl-NonText">~</li></ul>)
+                    <ul><li highlight="CompTitle NonText">~</li></ul>)
                 }
                 </div>
             </div>, divNodes);
@@ -1333,12 +1333,12 @@ function ItemList(id) //{{{
                 return;
             context.cache.nodes = [];
             dom(<div key="root">
-                    <div class="hl-Completions">
-                        {context.createRow(context.title || [], "hl-CompTitle")}
+                    <div highlight="Completions">
+                        {context.createRow(context.title || [], "CompTitle")}
                     </div>
-                    <div key="up" class="hl-CompLess"/>
-                    <div key="items" class="hl-Completions"/>
-                    <div key="down" class="hl-CompMore"/>
+                    <div key="up" highlight="CompLess"/>
+                    <div key="items" highlight="Completions"/>
+                    <div key="down" highlight="CompMore"/>
                 </div>, context.cache.nodes);
             divNodes.completions.appendChild(context.cache.nodes.root);
         });
@@ -1400,7 +1400,7 @@ function ItemList(id) //{{{
 
         divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
-        completionElements = buffer.evaluateXPath("//*[@class='hl-CompItem' and not(contains(@style, 'none'))]", doc);
+        completionElements = buffer.evaluateXPath("//*[@liberator:highlight='CompItem' and not(contains(@style, 'none'))]", doc);
 
         autoSize();
         return true;
@@ -1549,7 +1549,7 @@ function StatusLine() //{{{
                 insecure: "StatusLine"
             };
 
-            statusBar.setAttribute("class", "chromeclass-status hl-" + highlightGroup[type]);
+            statusBar.setAttributeNS(NS.uri, "highlight", highlightGroup[type]);
         },
 
         // update all fields of the statusline

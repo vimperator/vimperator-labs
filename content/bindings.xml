@@ -6,13 +6,14 @@
 ]>
 
 <bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:liberator="http://vimperator.org/namespaces/liberator"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	  xmlns:xbl="http://www.mozilla.org/xbl"
 	  xmlns:html="http://www.w3.org/1999/xhtml">
 
     <binding id="frame">
         <content>
-            <div id="liberator-frame-indicator" style="width: 40px; height: 40px"/>
+            <html:div liberator:highlight="FrameIndicator"/>
             <children/>
         </content>
     </binding>

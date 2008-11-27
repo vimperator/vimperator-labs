@@ -150,6 +150,9 @@ CompletionContext.prototype = {
 
     get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
 
+    get compare() this._compare || function () 0,
+    set compare(val) this._compare = val,
+
     get completions() this._completions || [],
     set completions(items)
     {
@@ -1066,8 +1069,8 @@ function Completion() //{{{
                 liberator.threadYield(true, true);
 
             let list = template.generic(
-                <div class="hl-Completions">
-                    { template.completionRow(context.title, "hl-CompTitle") }
+                <div highlight="Completions">
+                    { template.completionRow(context.title, "CompTitle") }
                     { template.map(context.items, function (item) context.createRow(item)) }
                 </div>);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -1099,7 +1102,7 @@ function Completion() //{{{
             context.keys = { text: "text", description: "url", icon: "icon" };
             let process = context.process[0];
             context.process = [function ({ text: text, item: item }) <>
-                        <span class="hl-Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.indicator}</span>
+                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.indicator}</span>
                         { process.call(this, { item: item, text: text }) }
                     </>];
 
@@ -1275,9 +1278,10 @@ function Completion() //{{{
         {
             context.format = history.format;
             context.title = ["History"]
+            context.compare = null;
             context.background = true;
             context.regenerate = true;
-            context.generate = function () history.get({ searchTerms: context.filter });
+            context.generate = function () history.get(context.filter);
         },
 
         get javascriptCompleter() javascript,
@@ -1293,6 +1297,7 @@ function Completion() //{{{
             context.incomplete = true;
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
+            context.compare = null;
             let timer = new util.Timer(50, 100, function (result) {
                 context.completions = [
                     [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
@@ -1331,9 +1336,9 @@ function Completion() //{{{
             let engines = bookmarks.getSearchEngines();
 
             context.title = ["Search Keywords"];
-            context.keys = { text: 0, description: 1, icon: 2 };
-            context.completions = keywords.concat(engines);
             context.anchored = true;
+            context.completions = keywords.concat(engines);
+            context.keys = { text: 0, description: 1, icon: 2 };
 
             if (!space || noSuggest)
                 return;
@@ -1346,8 +1351,9 @@ function Completion() //{{{
                 context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
-                    context.background = true;
                     context.anchored = true;
+                    context.background = true;
+                    context.compare = null;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
 
@@ -1384,8 +1390,9 @@ function Completion() //{{{
                 let ctxt = context.fork(name, 0);
 
                 ctxt.title = [engine.description + " Suggestions"];
-                ctxt.regenerate = true;
                 ctxt.background = true;
+                ctxt.compare = null;
+                ctxt.regenerate = true;
                 ctxt.generate = function () bookmarks.getSuggestions(name, this.filter);
             });
         },
