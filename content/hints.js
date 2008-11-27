@@ -277,7 +277,7 @@ function Hints() //{{{
             for (let i in util.range(start, end + 1))
             {
                 let hint = pageHints[i];
-                if (!timeout || hint[ELEM] != firstHint)
+                if (!timeout || hint[ELEM] != firstElem)
                     hint[ELEM].removeAttributeNS(NS.uri, "highlight");
             }
 
