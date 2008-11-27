@@ -187,7 +187,7 @@ function Commands() //{{{
     function quote(q, list)
     {
         let re = RegExp("[" + list + "]", "g");
-        return function (str) q + String.replace(str, re, function ($0, $1) $1 in quoteMap ? quoteMap[$1] : "\\" + $1) + q;
+        return function (str) q + String.replace(str, re, function ($0) $0 in quoteMap ? quoteMap[$0] : ("\\" + $0)) + q;
     }
     const complQuote = { // FIXME
         '"': ['"', quote("", '\n\t"\\\\'), '"'],
@@ -492,7 +492,7 @@ function Commands() //{{{
             }
 
             outer:
-            while (i < str.length)
+            while (i < str.length || complete)
             {
                 // skip whitespace
                 while (/\s/.test(str[i]) && i < str.length)
@@ -606,13 +606,14 @@ function Commands() //{{{
                         complete.highlight(i, sub.length, "SPELLCHECK")
                 }
 
+                liberator.dump({literal: literal, index: literalIndex, length: length, argCount: argCount});
                 if (literal && args.length == literalIndex)
                 {
+                    if (complete)
+                        args.completeArg = args.length;
                     args.literalArg = sub;
                     args.push(sub);
                     args.quote = null;
-                    if (complete)
-                        args.completeArg = args.length - 1;
                     break;
                 }
 
