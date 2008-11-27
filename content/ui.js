@@ -306,6 +306,30 @@ function CommandLine() //{{{
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
     }
 
+    function previewSubstring()
+    {
+        if (!options.get("wildoptions").has("auto"))
+            return;
+        // Kludge. Major kludge.
+        let editor = commandWidget.inputField.editor;
+        try
+        {
+            let node = editor.rootElement;
+            editor.deleteNode(node.firstChild.nextSibling);
+        }
+        catch (e) {}
+        let wildmode = options.get("wildmode");
+        let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
+        if (wildmode.checkHas(wildType, "longest"))
+        {
+            let start = commandWidget.selectionStart;
+            let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
+            removeSuffix = substring;
+            editor.insertNode(util.xmlToDom(<span style="color: gray">{substring}</span>, document), editor.rootElement, 1);
+            commandWidget.selectionStart = commandWidget.selectionEnd = start;
+        }
+    }
+
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
     function setCommand(cmd)
     {
@@ -827,17 +851,7 @@ function CommandLine() //{{{
             else if (event.type == "input")
             {
                 liberator.triggerCallback("change", currentExtendedMode, command);
-                // Kludge. Major kludge.
-                let wildmode = options.get("wildmode");
-                let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
-                if (wildmode.checkHas(wildType, "longest"))
-                {
-                    let start = commandWidget.selectionStart;
-                    let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
-                    removeSuffix = substring;
-                    editor.insertNode(util.xmlToDom(<span style="color: gray">{substring}</span>, document), editor.rootElement, 1);
-                    commandWidget.selectionStart = commandWidget.selectionEnd = start;
-                }
+                previewSubstring();
             }
             else if (event.type == "keypress")
             {
@@ -1260,6 +1274,7 @@ function CommandLine() //{{{
             // prefix when wrapping around searches
             // with that, we SOMETIMES have problems with <tab> followed by <s-tab> in :open completions
 
+            previewSubstring();
             let command = this.getCommand();
             if (command.substr(command.length - removeSuffix.length) == removeSuffix)
                 command = command.substr(0, command.length - removeSuffix.length)

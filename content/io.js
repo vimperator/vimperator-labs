@@ -776,7 +776,7 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
-            var wasSourcing = ioManager.sourcing;
+            let wasSourcing = ioManager.sourcing;
             try
             {
                 var file = ioManager.getFile(filename);
@@ -808,7 +808,7 @@ lookup:
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
