@@ -151,6 +151,7 @@ const template = {
     {
         return this.highlightSubstrings(str, (function ()
         {
+            let res;
             while ((res = re.exec(str)) && res[0].length)
                 yield [res.index, res[0].length];
         })(), highlight || template.filter);
