@@ -308,7 +308,7 @@ function CommandLine() //{{{
 
     function previewSubstring()
     {
-        if (!options.get("wildoptions").has("auto"))
+        if (!options.get("wildoptions").has("auto") || !completionContext)
             return;
         // Kludge. Major kludge.
         let editor = commandWidget.inputField.editor;
@@ -818,7 +818,6 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            let command = this.getCommand();
             let editor = commandWidget.inputField.editor;
             try
             {
@@ -826,6 +825,7 @@ function CommandLine() //{{{
                 editor.deleteNode(node.firstChild.nextSibling);
             }
             catch (e) {}
+            let command = this.getCommand();
 
             if (event.type == "blur")
             {
