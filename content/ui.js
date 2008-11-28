@@ -137,7 +137,7 @@ function CommandLine() //{{{
         let full = !longest && wildmode.checkHas(wildType, "full");
 
         // we need to build our completion list first
-        if (completionIndex == UNINITIALIZED)
+        if (completionIndex == UNINITIALIZED || completionContext.waitingForTab)
         {
             completionIndex = -1;
             completionPrefix = command.substring(0, commandWidget.selectionStart);
@@ -1365,13 +1365,14 @@ function ItemList(id) //{{{
 
         items.contextList.forEach(function init_eachContext(context) {
             delete context.cache.nodes;
-            if (!context.items.length)
+            if (!context.items.length && !context.message)
                 return;
             context.cache.nodes = [];
             dom(<div key="root">
                     <div highlight="Completions">
                         {context.createRow(context.title || [], "CompTitle")}
                     </div>
+                    <div key="message" highlight="CompMsg" style="display: none"/>
                     <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
                     <div key="down" highlight="CompMore"/>
@@ -1396,6 +1397,7 @@ function ItemList(id) //{{{
         startIndex = offset;
         endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
 
+        let haveCompletions = false;
         let off = 0;
         function getRows(context)
         {
@@ -1410,9 +1412,20 @@ function ItemList(id) //{{{
             let nodes = context.cache.nodes;
             if (!nodes)
                 return;
+            haveCompletions = true;
+
+            nodes.message.style.display = "none";
+            if (context.message)
+            {
+                nodes.message.textContent = context.message;
+                nodes.message.style.display = "block";
+            }
             let root = nodes.root
             let items = nodes.items;
             let [start, end] = getRows(context);
+            if (start == end)
+                return;
+
             for (let [i, row] in Iterator(context.getRows(start, end, doc)))
                 nodes[i] = row;
             for (let [i, row] in util.Array.iterator2(nodes))
@@ -1434,7 +1447,7 @@ function ItemList(id) //{{{
             nodes.down.style.display = (end == context.items.length) ? "none" : "block";
         });
 
-        divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
+        divNodes.noCompletions.style.display = haveCompletions ? "none" : "block";
 
         completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem']", doc);
 

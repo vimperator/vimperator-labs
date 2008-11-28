@@ -28,6 +28,7 @@ function Highlights(name, store, serial)
 
         CompTitle          color: magenta; background: white; font-weight: bold;
         CompTitle>*        border-bottom: 1px dashed magenta;
+        CompMsg            font-style: italic; margin-left: 16px;
         CompItem
         CompItem[selected] background: yellow;
         CompItem>*         padding: 0 .5ex;

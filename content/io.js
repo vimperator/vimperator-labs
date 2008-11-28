@@ -27,6 +27,16 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+plugins.contexts = {};
+function Script(name)
+{
+    if (plugins.contexts[name])
+        return plugins.contexts[name];
+    plugins.contexts[name] = this;
+    this.NAME = name;
+}
+Script.prototype = plugins;
+
 // TODO: why are we passing around strings rather than file objects?
 function IO() //{{{
 {
@@ -815,7 +825,7 @@ lookup:
                                            .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript(uri.spec, {__proto__: plugins});
+                        loader.loadSubScript(uri.spec, new Script(file.path));
                     }
                     catch (e)
                     {

@@ -54,14 +54,14 @@ function CompletionContext(editor, name, offset)
         self.parent = parent;
         self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
-        delete self._generate;
         delete self._filter; // FIXME?
+        delete self._generate;
         delete self._ignoreCase;
         ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         if (self != this)
             return self;
-        ["_caret", "contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
+        ["_caret", "contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value", "waitingForTab"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
@@ -84,9 +84,9 @@ function CompletionContext(editor, name, offset)
             let text = Array.concat(this.getKey(item, "text"));
             for (let [i, str] in Iterator(text))
             {
-                if (this.match(str))
+                if (this.match(String(str)))
                 {
-                    item.text = text[i];
+                    item.text = String(text[i]);
                     return true;
                 }
             }
@@ -100,10 +100,11 @@ function CompletionContext(editor, name, offset)
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
         this.reset();
     }
-    this.name = name || "";
     this.cache = {};
-    this.key = "";
     this.itemCache = {};
+    this.key = "";
+    this.message = null;
+    this.name = name || "";
     this._completions = []; // FIXME
     this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) : item.item[self.keys[key]];
 }
@@ -111,15 +112,23 @@ CompletionContext.prototype = {
     // Temporary
     get allItems()
     {
-        let self = this;
-        let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
-        let items = this.contextList.map(function (context) {
-            if (!context.hasItems)
-                return [];
-            let prefix = self.value.substring(minStart, context.offset);
-            return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
-        });
-        return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
+        try
+        {
+            let self = this;
+            let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
+            let items = this.contextList.map(function (context) {
+                if (!context.hasItems)
+                    return [];
+                let prefix = self.value.substring(minStart, context.offset);
+                return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
+            });
+            return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
+        }
+        catch (e)
+        {
+            liberator.reportError(e);
+            return { start: 0, items: [], longestAllSubstring: "" }
+        }
     },
     // Temporary
     get allSubstrings()
@@ -135,6 +144,8 @@ CompletionContext.prototype = {
                 function (res, list) res.filter(
                     function (str) list.some(function (s) s.substr(0, str.length) == str)),
                 lists.pop());
+        if (!substrings) // FIXME: How is this undefined?
+            return [];
         return util.Array.uniq(substrings);
     },
     // Temporary
@@ -429,6 +440,7 @@ CompletionContext.prototype = {
         this.selectionTypes = {};
         this.tabPressed = false;
         this.title = ["Completions"];
+        this.waitingForTab = false;
         this.updateAsync = false;
         if (this.editor)
         {
@@ -473,6 +485,7 @@ function Completion() //{{{
                              .createInstance(Components.interfaces.nsIJSON);
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, FUNCTIONS = 5;
         let stack = [];
+        let functions = [];
         let top = [];  /* The element on the top of the stack. */
         let last = ""; /* The last opening char pushed onto the stack. */
         let lastNonwhite = ""; /* Last non-whitespace character we saw. */
@@ -564,8 +577,6 @@ function Completion() //{{{
 
         this.eval = function eval(arg, key, tmp)
         {
-            if (!this.context.cache.eval)
-                this.context.cache.eval = {};
             let cache = this.context.cache.eval;
             if (!key)
                 key = arg;
@@ -629,6 +640,7 @@ function Completion() //{{{
             let i = 0, c = "";     /* Current index and character, respectively. */
 
             stack = [];
+            functions = [];
             push("#root");
 
             /* Build a parse stack, discarding entries as opening characters
@@ -669,6 +681,7 @@ function Completion() //{{{
                             /* Function call, or if/while/for/... */
                             if (/[\w\d$]/.test(lastNonwhite))
                             {
+                                functions.push(i);
                                 top[FUNCTIONS].push(i);
                                 top[STATEMENTS].pop();
                             }
@@ -723,6 +736,9 @@ function Completion() //{{{
                 return;
             }
 
+            if (!this.context.cache.eval)
+                this.context.cache.eval = {};
+
             /* Okay, have parse stack. Figure out what we're completing. */
 
             if (/[\])}"';]/.test(str[lastIdx - 1]) && last != '"' && last != '"')
@@ -733,8 +749,21 @@ function Completion() //{{{
             let prev = 0;
             for (let [,v] in Iterator(get(0)[FULL_STATEMENTS]))
             {
-                    this.eval(str.substring(prev, v + 1));
-                    prev = v + 1;
+                let key = str.substring(prev, v + 1);
+                if (checkFunction(prev, v, key))
+                    return;
+                this.eval(key);
+                prev = v + 1;
+            }
+
+            function checkFunction(start, end, key)
+            {
+                let res = functions.some(function (idx) idx >= start && idx < end);
+                if (!res || self.context.tabPressed || key in self.context.cache.eval)
+                    return false;
+                self.context.waitingForTab = true;
+                self.context.message = "Waiting for <Tab>";
+                return true;
             }
 
             // For each DOT in a statement, prefix it with TMP, eval it,
@@ -757,10 +786,15 @@ function Completion() //{{{
                     if (dot > stop)
                         break;
                     let s = str.substring(prev, dot);
+
                     if (prev != statement)
                         s = EVAL_TMP + "." + s;
-                    prev = dot + 1;
                     cacheKey = str.substring(statement, dot);
+
+                    if (checkFunction(prev, dot, cacheKey))
+                        return [];
+
+                    prev = dot + 1;
                     obj = self.eval(s, cacheKey, obj);
                 }
                 return [[obj, cacheKey]]
@@ -889,6 +923,8 @@ function Completion() //{{{
 
                     let [offset, obj, func] = getObjKey(-3);
                     let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
+                    if (!obj.length)
+                        return;
 
                     try
                     {
