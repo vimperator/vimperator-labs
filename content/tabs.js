@@ -303,6 +303,7 @@ function Tabs() //{{{
         function (args)
         {
             let special = args.bang;
+            let count = args.count;
             args = args.string;
 
             if (args)
