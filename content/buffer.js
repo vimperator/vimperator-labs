@@ -490,8 +490,15 @@ function Buffer() //{{{
 
     commands.add(["pa[geinfo]"],
         "Show various page information",
-        function () { buffer.showPageInfo(true); },
-        { argCount: "0" });
+        function (args) { buffer.showPageInfo(true, args[0]); },
+        {
+            argCount: "?",
+            completer: function (context)
+            {
+                context.title = ["Page Info"];
+                completion.optionValue(context, "pageinfo", "+", "");
+            }
+        });
 
     commands.add(["pagest[yle]"],
         "Select the author style sheet to apply",
@@ -1263,7 +1270,7 @@ function Buffer() //{{{
             liberator.echo(<>Element:<br/>{util.objectToString(elem, true)}</>, commandline.FORCE_MULTILINE);
         },
 
-        showPageInfo: function (verbose)
+        showPageInfo: function (verbose, sections)
         {
             // Ctrl-g single line output
             if (!verbose)
@@ -1283,7 +1290,7 @@ function Buffer() //{{{
                 return;
             }
 
-            let option = options["pageinfo"];
+            let option = sections || options["pageinfo"];
             let list = template.map(option, function (option) {
                 let opt = pageInfo[option];
                 if (opt)

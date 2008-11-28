@@ -48,7 +48,7 @@ const template = {
             var desc = this.process[1].call(this, item, this.getKey(item, "description"));
         }
 
-        return <div highlight={class || "CompItem"}>
+        return <div highlight={class || "CompItem"} style="white-space: nowrap">
                    <!-- The non-breaking spaces prevent empty elements
                       - from pushing the baseline down and enlarging
                       - the row.

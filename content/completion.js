@@ -1340,6 +1340,53 @@ function Completion() //{{{
 
         option: function option(filter) commands.get("set").completer(filter), // XXX
 
+        optionValue: function (context, name, op, curValue)
+        {
+            let opt = options.get(name);
+            let completer = opt.completer;
+
+            let curValues = curValue != null ? opt.parseValues(curValue) : opt.values;
+            let newValues = opt.parseValues(context.filter);
+
+            let len = context.filter.length;
+            switch (opt.type)
+            {
+                case "boolean":
+                    if (!completer)
+                        completer = function () [["true", ""], ["false", ""]];
+                    break;
+                case "stringlist":
+                    len = newValues.pop().length;
+                    break;
+                case "charlist":
+                    len = 0;
+                    break;
+            }
+            // TODO: Highlight when invalid
+            context.advance(context.filter.length - len);
+
+            /* Not vim compatible, but is a significant enough improvement
+             * that it's worth breaking compatibility.
+             */
+            let completions = completer(context);
+            if (!completions)
+                return;
+            if (newValues instanceof Array)
+            {
+                completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);
+                switch (op)
+                {
+                    case "+":
+                        completions = completions.filter(function (val) curValues.indexOf(val[0]) == -1);
+                        break;
+                    case "-":
+                        completions = completions.filter(function (val) curValues.indexOf(val[0]) > -1);
+                        break;
+                }
+            }
+            context.completions = completions;
+        },
+
         preference: function preference(filter) commands.get("set").completer(filter, true), // XXX
 
         search: function search(context, noSuggest)

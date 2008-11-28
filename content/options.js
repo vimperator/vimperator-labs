@@ -708,9 +708,9 @@ function Options() //{{{
                     return;
 
                 let [name, value] = filter.split("=", 2);
-                let offset = name.length + 1;
                 let opt = options.parseOpt(filter, modifiers);
                 let option = opt.option;
+                context.advance(name.length + 1);
 
                 if (!option)
                     context.highlight(0, name.length, "SPELLCHECK");
@@ -718,56 +718,16 @@ function Options() //{{{
                 if (opt.get || opt.reset || !option || prefix)
                     return;
 
-                let completer = option.completer;
-
-                let len = opt.value.length;
-
-                switch (option.type)
-                {
-                    case "boolean":
-                        completer = function () [["true", ""], ["false", ""]];
-                        break;
-                    case "stringlist":
-                        len = opt.values.pop().length;
-                        break;
-                    case "charlist":
-                        len = 0;
-                        break;
-                }
-
-                context.advance(filter.length - len);
-                filter = context.filter;
-
-                /* Not vim compatible, but is a significant enough improvement
-                 * that it's worth breaking compatibility.
-                 */
-                let completions = [];
                 if (!opt.value)
-                    completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0]);
+                {
+                    context.fork("default", 0, this, function (context) {
+                        context.title = ["Extra Completions"];
+                        context.completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0])
+                    });
+                }
 
                 context.title = ["Option Value"];
-                if (completer)
-                {
-                    let res = completer(context);
-                    if (!res)
-                        return;
-                    completions = completions.concat(res);
-                    if (option.values instanceof Array)
-                    {
-                        completions = completions.filter(function (val) opt.values.indexOf(val[0]) == -1);
-                        switch (opt.operator)
-                        {
-                            case "+":
-                                completions = completions.filter(function (val) opt.optionValues.indexOf(val[0]) == -1);
-                                break;
-                            case "-":
-                                completions = completions.filter(function (val) opt.optionValues.indexOf(val[0]) > -1);
-                                break;
-                        }
-                    }
-                }
-                context.compare = function (a, b) 0;
-                context.completions = completions;
+                completion.optionValue(context, opt.name, opt.operator);
             },
             literal: true,
             serial: function () [
