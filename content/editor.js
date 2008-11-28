@@ -295,7 +295,7 @@ function Editor() //{{{
 
     mappings.add([modes.INSERT, modes.TEXTAREA, modes.COMPOSE],
         ["<C-i>"], "Edit text field with an external editor",
-        function () { editor.editWithExternalEditor(); });
+        function () { editor.editFieldExternally(); });
 
     // FIXME: <esc> does not work correctly
     mappings.add([modes.INSERT],
@@ -794,28 +794,38 @@ function Editor() //{{{
             return -1;
         },
 
-        // TODO: clean up with 2 functions for textboxes and currentEditor?
-        editWithExternalEditor: function ()
+        editFileExternally: function (path)
         {
+            // TODO: save return value in v:shell_error
+            let args = commands.parseArgs(options["editor"], [], "*", true);
+
+            if (args.length < 1)
+            {
+                liberator.echoerr("No editor specified");
+                return;
+            }
+
+            args.push(path);
+            liberator.callFunctionInThread(null, io.run, args.shift(), args, true);
+        },
+
+        // TODO: clean up with 2 functions for textboxes and currentEditor?
+        editFieldExternally: function ()
+        {
+            if (!options["editor"])
+                return false;
+
             var textBox = null;
             if (!(config.isComposeWindow))
                 textBox = document.commandDispatcher.focusedElement;
 
-            var text = "";
+            var text = ""; // XXX
             if (textBox)
                 text = textBox.value;
             else if (typeof GetCurrentEditor == "function") // Thunderbird composer
                 text = GetCurrentEditor().outputToString("text/plain", 2);
             else
                 return false;
-
-            var editor = options["editor"];
-            var args = commands.parseArgs(editor, [], "*", true);
-            if (args.length < 1)
-            {
-                liberator.echoerr("No editor specified");
-                return false;
-            }
 
             try
             {
@@ -836,9 +846,6 @@ function Editor() //{{{
                 return false;
             }
 
-            var prog = args.shift();
-            args.push(tmpfile.path);
-
             if (textBox)
             {
                 textBox.setAttribute("readonly", "true");
@@ -847,8 +854,7 @@ function Editor() //{{{
                 textBox.style.backgroundColor = "#bbbbbb";
             }
 
-            // TODO: save return value in v:shell_error
-            liberator.callFunctionInThread(null, io.run, prog, args, true);
+            this.editFileExternally(tmpfile.path);
 
             if (textBox)
                 textBox.removeAttribute("readonly");

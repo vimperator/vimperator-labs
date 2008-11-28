@@ -131,7 +131,7 @@ const config = { //{{{
             // TODO: move mappings elsewhere, probably compose.js
             mappings.add([modes.COMPOSE],
                 ["e"], "Edit message",
-                function () { editor.editWithExternalEditor(); });
+                function () { editor.editFieldExternally(); });
 
             mappings.add([modes.COMPOSE],
                 ["y"], "Send message now",
@@ -178,7 +178,7 @@ const config = { //{{{
                     if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
                     {
                         window.messageWasEditedExternally = true;
-                        editor.editWithExternalEditor();
+                        editor.editFieldExternally();
                     }
 
                 },

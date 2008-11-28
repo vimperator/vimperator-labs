@@ -1312,31 +1312,14 @@ function Buffer() //{{{
                     docUrl, docCharset, reference, "selection");
         },
 
-        // url is optional
         viewSource: function (url, useExternalEditor)
         {
             url = url || buffer.URL;
 
             if (useExternalEditor)
-            {
-                // TODO: make that a helper function
-                // TODO: save return value in v:shell_error
-                var editor = options["editor"];
-                var args = commands.parseArgs(editor, [], "*", true);
-                if (args.length < 1)
-                {
-                    liberator.echoerr("No editor specified");
-                    return;
-                }
-
-                var prog = args.shift();
-                args.push(url);
-                liberator.callFunctionInThread(null, io.run, prog, args, true);
-            }
+                editor.editFileExternally(url);
             else
-            {
                 liberator.open("view-source:" + url);
-            }
         },
 
         zoomIn: function (steps, fullZoom)
