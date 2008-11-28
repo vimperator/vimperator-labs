@@ -725,11 +725,11 @@ function History() //{{{
 
     commands.add(["hist[ory]", "hs"],
         "Show recently visited URLs",
-        function (args) { history.list(args.string, args.bang); },
+        function (args) { history.list(args.join(" "), args.bang, args["-max"] || 1000); },
         {
             bang: true,
-            literal: 0,
-            completer: function (context) completion.history(context)
+            completer: function (context) { context.quote = null, completion.history(context) },
+            options: [[["-max", "-m"], options.OPTION_INT]]
             // completer: function (filter) completion.history(filter)
         });
 
@@ -803,12 +803,12 @@ function History() //{{{
         },
 
         // if openItems is true, open the matching history items in tabs rather than display
-        list: function list(filter, openItems)
+        list: function list(filter, openItems, maxItems)
         {
             if (!openItems)
-                return completion.listCompleter("history", filter);
+                return completion.listCompleter("history", filter, maxItems);
 
-            var items = this.get({ searchTerms: filter }, 1000);
+            var items = this.get({ searchTerms: filter }, maxItems);
             if (items.length)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 

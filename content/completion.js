@@ -62,7 +62,7 @@ function CompletionContext(editor, name, offset)
             self[key] = parent[key]);
         if (self != this)
             return self;
-        ["_caret", "contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value", "waitingForTab"].forEach(function (key) {
+        ["_caret", "contextList", "maxItems", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value", "waitingForTab"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
@@ -271,6 +271,8 @@ CompletionContext.prototype = {
         delete this._substrings;
 
         let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({ item: item }, "text"), item: item })));
+        if (this.maxItems)
+            filtered = filtered.slice(0, this.maxItems);
 
         let quote = this.quote;
         if (quote)
@@ -1117,14 +1119,13 @@ function Completion() //{{{
             return filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1);
         },
 
-        listCompleter: function listCompleter(name, filter)
+        listCompleter: function listCompleter(name, filter, maxItems)
         {
             let context = CompletionContext(filter || "");
             context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
             context = context.contexts["/list"];
-
-            while (context.incomplete)
-                liberator.threadYield(true, true);
+            context.maxItems = maxItems;
+            context.wait();
 
             let list = template.generic(
                 <div highlight="Completions">
@@ -1339,7 +1340,7 @@ function Completion() //{{{
             context.compare = null;
             //context.background = true;
             context.regenerate = true;
-            context.generate = function () history.get(context.filter);
+            context.generate = function () history.get(context.filter, this.maxItems);
         },
 
         get javascriptCompleter() javascript,
