@@ -685,30 +685,21 @@ function Options() //{{{
                     return;
                 }
 
-                let prefix = (filter.match(/^(no|inv)/) || [""])[0];
+                let opt = options.parseOpt(filter, modifiers);
+                let prefix = opt.prefix;
                 if (prefix)
-                    context.filter = filter = filter.substr(prefix.length);
+                    context.advance(prefix.length);
 
-                let scope = modifiers && modifiers.scope || options.OPTION_SCOPE_BOTH;
-
-                let opts = (opt for (opt in options)
-                                if ((opt.scope & scope) &&
-                                    (!prefix || opt.type == "boolean" ||
-                                        prefix == "inv" && opt.value instanceof Array)));
-
-                if (filter.indexOf("=") == -1)
+                if (context.filter.indexOf("=") == -1)
                 {
-                    context.title = ["Option"];
-                    context.quote = [prefix, util.identity, ""];
-                    context.keys = { text: "names", description: "description" };
-                    context.completions = opts;
-                    return;
+                    if (prefix)
+                        context.filters.push(function ({item: opt}) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
+                    return completion.option(context, opt.scope);
                 }
                 else if (prefix == "no")
                     return;
 
-                let [name, value] = filter.split("=", 2);
-                let opt = options.parseOpt(filter, modifiers);
+                let [name, value] = context.filter.split("=", 2);
                 let option = opt.option;
                 context.advance(name.length + 1);
 
@@ -915,7 +906,7 @@ function Options() //{{{
             let matches, prefix, postfix, valueGiven;
 
             [matches, prefix, ret.name, postfix, valueGiven, ret.operator, ret.value] =
-            args.match(/^\s*(no|inv)?([a-z_]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
+            args.match(/^\s*(no|inv)?([a-z_]*)([?&!])?\s*(([-+^]?)=(.*))?\s*$/) || [];
 
             ret.args = args;
             ret.onlyNonDefault = false; // used for :set to print non-default options

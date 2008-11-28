@@ -1338,7 +1338,14 @@ function Completion() //{{{
 
         menuItem: function menuItem(filter) commands.get("emenu").completer(filter), // XXX
 
-        option: function option(filter) commands.get("set").completer(filter), // XXX
+        option: function option(context, scope)
+        {
+            context.title = ["Option"];
+            context.keys = { text: "names", description: "description" };
+            context.completions = options;
+            if (scope)
+                context.filters.push(function ({item: opt}) opt.scope & scope);
+        },
 
         optionValue: function (context, name, op, curValue)
         {
