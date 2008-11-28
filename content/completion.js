@@ -124,28 +124,23 @@ CompletionContext.prototype = {
     // Temporary
     get allSubstrings()
     {
-        let lists = [c.substrings for ([i, c] in Iterator(this.contextList)) if (c.hasItems && c.items.length)];
-        let minStart = Math.min.apply(Math, [c.offset for ([k, c] in Iterator(this.contextList)) if (c.hasItems && c.items.length)]);
-        let self = this;
-        let items = this.contextList.map(function (context) {
-            if (!context.hasItems)
-                return [];
-            let prefix = self.value.substring(minStart, context.offset);
-            return context.substrings.map(function (str) prefix + str);
+        let contexts = this.contextList.filter(function (c) c.hasItems && c.items.length);
+        let minStart = Math.min.apply(Math, contexts.map(function (c) c.offset));
+        let lists = contexts.map(function (context) {
+            let prefix = context.value.substring(minStart, context.offset);
+            return context.substrings.map(function (s) prefix + s);
         });
-        return util.Array.uniq(util.Array.flatten(items), true);
+
+        let substrings = lists.reduce(
+                function (res, str) res.filter(
+                    function (s) s.substr(0, Math.min(s.length, str.length))),
+                lists.pop());
+        return util.Array.uniq(substrings);
     },
     // Temporary
     get longestAllSubstring()
     {
         let substrings = this.allSubstrings;
-        // Filter out any matches that don't match for all contexts
-        substrings = substrings.reduce(
-                function (res, str) res.filter(function (s) {
-                    let len = Math.min(s.length, str.length);
-                    return str.substr(0, len) == s.substr(0, len)
-                }),
-                substrings);
         // Find the longest match
         return substrings.reduce(function (a, b) a.length > b.length ? a : b, "");
     },
