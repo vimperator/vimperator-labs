@@ -70,7 +70,7 @@ const template = {
                 <span class="extra-info">
                     ({
                         template.map(extra, function (e)
-                        <>{e[0]}: <span class={e[2]}>{e[1]}</span></>,
+                        <>{e[0]}: <span highlight={e[2]}>{e[1]}</span></>,
                         <>&#xa0;</>/* Non-breaking space */)
                     })
                 </span>

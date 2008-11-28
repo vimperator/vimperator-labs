@@ -1019,19 +1019,21 @@ function Completion() //{{{
         },
 
         // FIXME
-        _runCompleter: function _runCompleter(name, filter)
+        _runCompleter: function _runCompleter(name, filter, maxItems)
         {
             let context = CompletionContext(filter);
-            let res = context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 2)));
+            context.maxItems = maxItems;
+            let res = context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 3)));
             if (res) // FIXME
                 return { items: res.map(function (i) ({ item: i })) };
             context.wait(true);
             return context.allItems;
         },
 
-        runCompleter: function runCompleter(name, filter)
+        runCompleter: function runCompleter(name, filter, maxItems)
         {
-            return this._runCompleter(name, filter).items.map(function (i) i.item);
+            return this._runCompleter.apply(this, Array.slice(arguments))
+                       .items.map(function (i) i.item);
         },
 
         // cancel any ongoing search
@@ -1122,16 +1124,17 @@ function Completion() //{{{
         listCompleter: function listCompleter(name, filter, maxItems)
         {
             let context = CompletionContext(filter || "");
-            context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 2)));
-            context = context.contexts["/list"];
             context.maxItems = maxItems;
+            context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 3)));
+            context = context.contexts["/list"];
             context.wait();
 
             let list = template.generic(
                 <div highlight="Completions">
                     { template.completionRow(context.title, "CompTitle") }
-                    { template.map(context.items, function (item) context.createRow(item), null, 50) }
+                    { template.map(context.items, function (item) context.createRow(item), null, 100) }
                 </div>);
+            commandline.clear();
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
@@ -1150,6 +1153,7 @@ function Completion() //{{{
             context.format = bookmarks.format;
             context.completions = bookmarks.get(context.filter)
             context.filters = [];
+            liberator.dump(tags);
             if (tags)
                 context.filters.push(function ({ item: item }) tags.every(function (tag) item.tags.indexOf(tag) > -1));
         },

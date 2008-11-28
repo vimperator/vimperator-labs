@@ -196,7 +196,7 @@ function CommandLine() //{{{
         }
         else
         {
-            var compl = null;
+            let compl = null;
             if (longest && completions.items.length > 1)
                 compl = completions.longestSubstring;
             else if (full)
@@ -369,7 +369,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str == "xml";
-        var output = util.xmlToDom(<div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>, doc);
+        let output = util.xmlToDom(<div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
@@ -386,7 +386,7 @@ function CommandLine() //{{{
         if (options["more"] && win.scrollMaxY > 0)
         {
             // start the last executed command's output at the top of the screen
-            var elements = doc.getElementsByClassName("ex-command-output");
+            let elements = doc.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
         }
         else
@@ -721,7 +721,7 @@ function CommandLine() //{{{
         // normally used when pressing esc, does not execute a command
         close: function close()
         {
-            var res = liberator.triggerCallback("cancel", currentExtendedMode);
+            let res = liberator.triggerCallback("cancel", currentExtendedMode);
             inputHistory.add(this.getCommand());
             statusline.updateProgress(""); // we may have a "match x of y" visible
             this.clear();
@@ -740,7 +740,7 @@ function CommandLine() //{{{
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function echo(str, highlightGroup, flags)
         {
-            var focused = document.commandDispatcher.focusedElement;
+            let focused = document.commandDispatcher.focusedElement;
             if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
                 return false;
             if (silent)
@@ -751,32 +751,27 @@ function CommandLine() //{{{
             if (flags & this.APPEND_TO_MESSAGES)
                 messageHistory.add({ str: str, highlight: highlightGroup });
 
-            // if we are modifing the GUI while we are not in the main thread
-            // Firefox will hang up
-            var threadManager = Components.classes["@mozilla.org/thread-manager;1"]
-                                          .getService(Components.interfaces.nsIThreadManager);
-            if (!threadManager.isMainThread)
-                return false;
-
-            var where = setLine;
-            if (flags & this.FORCE_MULTILINE)
-                where = setMultiline;
-            else if (flags & this.FORCE_SINGLELINE)
-                where = function () setLine(str, highlightGroup, true);
-            else if (flags & this.DISALLOW_MULTILINE)
-            {
-                if (!outputContainer.collapsed)
-                    where = null;
-                else
+            liberator.callInMainThread(function () {
+                let where = setLine;
+                if (flags & this.FORCE_MULTILINE)
+                    where = setMultiline;
+                else if (flags & this.FORCE_SINGLELINE)
                     where = function () setLine(str, highlightGroup, true);
-            }
-            else if (/\n|<br\/?>/.test(str))
-                where = setMultiline;
+                else if (flags & this.DISALLOW_MULTILINE)
+                {
+                    if (!outputContainer.collapsed)
+                        where = null;
+                    else
+                        where = function () setLine(str, highlightGroup, true);
+                }
+                else if (/\n|<br\/?>/.test(str))
+                    where = setMultiline;
 
-            if (where)
-                where(str, highlightGroup);
+                if (where)
+                    where(str, highlightGroup);
 
-            currentExtendedMode = null;
+                currentExtendedMode = null;
+            });
 
             return true;
         },
@@ -857,7 +852,7 @@ function CommandLine() //{{{
                 if (!currentExtendedMode)
                     return true;
 
-                var key = events.toString(event);
+                let key = events.toString(event);
                 //liberator.log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
@@ -976,10 +971,10 @@ function CommandLine() //{{{
         {
             if (event.type == "keypress")
             {
-                var key = events.toString(event);
+                let key = events.toString(event);
                 if (events.isAcceptKey(key))
                 {
-                    var text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
+                    let text = multilineInputWidget.value.substr(0, multilineInputWidget.selectionStart);
                     if (text.match(multilineRegexp))
                     {
                         text = text.replace(multilineRegexp, "");
@@ -1010,17 +1005,17 @@ function CommandLine() //{{{
         // allow a down motion after an up rather than closing
         onMultilineOutputEvent: function onMultilineOutputEvent(event)
         {
-            var win = multilineOutputWidget.contentWindow;
+            let win = multilineOutputWidget.contentWindow;
 
-            var showMoreHelpPrompt = false;
-            var showMorePrompt = false;
-            var closeWindow = false;
-            var passEvent = false;
+            let showMoreHelpPrompt = false;
+            let showMorePrompt = false;
+            let closeWindow = false;
+            let passEvent = false;
 
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
-            var key = events.toString(event);
+            let key = events.toString(event);
 
             if (startHints)
             {
@@ -1095,7 +1090,7 @@ function CommandLine() //{{{
                 case "<MiddleMouse>":
                     if (event.originalTarget.localName.toLowerCase() == "a")
                     {
-                        var where = /\btabopen\b/.test(options["activate"]) ?
+                        let where = /\btabopen\b/.test(options["activate"]) ?
                                     liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
                         liberator.open(event.originalTarget.textContent, where);
                     }
@@ -1631,8 +1626,7 @@ function StatusLine() //{{{
             // make it even more vim-like
             if (url == "about:blank")
             {
-                var title = buffer.title;
-                if (!title)
+                if (!buffer.title)
                     url = "[No Name]";
             }
             else
@@ -1643,8 +1637,8 @@ function StatusLine() //{{{
             // when session information is available, add [+] when we can go backwards
             if (config.name == "Vimperator")
             {
-                var sh = getWebNavigation().sessionHistory;
-                var modified = "";
+                let sh = getWebNavigation().sessionHistory;
+                let modified = "";
                 if (sh.index > 0)
                     modified += "+";
                 if (sh.index < sh.count -1)
@@ -1679,7 +1673,7 @@ function StatusLine() //{{{
             }
             else if (typeof progress == "number")
             {
-                var progressStr = "";
+                let progressStr = "";
                 if (progress <= 0)
                     progressStr = "[ Loading...         ]";
                 else if (progress < 1)
@@ -1726,13 +1720,13 @@ function StatusLine() //{{{
         {
             if (!percent || typeof percent != "number")
             {
-                var win = document.commandDispatcher.focusedWindow;
+                let win = document.commandDispatcher.focusedWindow;
                 if (!win)
                     return;
                 percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
             }
 
-            var bufferPositionStr = "";
+            let bufferPositionStr = "";
             percent = Math.round(percent * 100);
             if (percent < 0)
                 bufferPositionStr = "All";

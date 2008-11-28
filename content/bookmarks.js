@@ -317,7 +317,7 @@ function Bookmarks() //{{{
         "List or open multiple bookmarks",
         function (args)
         {
-            bookmarks.list(args.join(" "), args["-tags"] || [], args.bang);
+            bookmarks.list(args.join(" "), args["-tags"] || [], args.bang, args["-max"]);
         },
         {
             bang: true,
@@ -326,7 +326,8 @@ function Bookmarks() //{{{
                 context.quote = null;
                 completion.bookmark(context, args["-tags"]);
             },
-            options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
+            options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags],
+                      [["-max", "-m"], commands.OPTION_INT]]
         });
 
     commands.add(["delbm[arks]"],
@@ -559,12 +560,12 @@ function Bookmarks() //{{{
         },
 
         // if openItems is true, open the matching bookmarks items in tabs rather than display
-        list: function list(filter, tags, openItems)
+        list: function list(filter, tags, openItems, maxItems)
         {
             if (!openItems)
-                return completion.listCompleter("bookmark", filter, tags);
+                return completion.listCompleter("bookmark", filter, maxItems, tags);
+            let items = completion.runCompleter("bookmark", filter, maxItems, tags);
 
-            let items = this.get(filter, tags, false);
             if (items.length)
                 return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
 
@@ -807,8 +808,8 @@ function History() //{{{
         {
             if (!openItems)
                 return completion.listCompleter("history", filter, maxItems);
+            let items = completion.runCompleter("history", filter, maxItems);
 
-            var items = this.get({ searchTerms: filter }, maxItems);
             if (items.length)
                 return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
 
