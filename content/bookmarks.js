@@ -468,7 +468,7 @@ function Bookmarks() //{{{
             return count.value;
         },
 
-        getFavicon: function getFavicon(url) { return getFavicon(url); },
+        getFavicon: function (url) getFavicon(url),
 
         // TODO: add filtering
         // also ensures that each search engine has a Vimperator-friendly alias
