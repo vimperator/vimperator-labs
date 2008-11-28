@@ -1369,7 +1369,7 @@ function ItemList(id) //{{{
 
         items.contextList.forEach(function init_eachContext(context) {
             delete context.cache.nodes;
-            if (!context.items.length && !context.message)
+            if (!context.items.length && !context.message && !context.incomplete)
                 return;
             context.cache.nodes = [];
             dom(<div key="root">
@@ -1379,6 +1379,7 @@ function ItemList(id) //{{{
                     <div key="message" highlight="CompMsg" style="display: none"/>
                     <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
+                    <div key="waiting" highlight="CompMsg">Waiting...</div>
                     <div key="down" highlight="CompMore"/>
                 </div>, context.cache.nodes);
             divNodes.completions.appendChild(context.cache.nodes.root);
@@ -1418,14 +1419,13 @@ function ItemList(id) //{{{
                 return;
             haveCompletions = true;
 
-            nodes.message.style.display = "none";
             if (context.message)
-            {
-                nodes.up.style.display = "none";
-                nodes.down.style.display = "none";
                 nodes.message.textContent = context.message;
-                nodes.message.style.display = "block";
-            }
+            nodes.message.style.display = context.message ? "block" : "none";
+            nodes.waiting.style.display = context.incomplete ? "block" : "none";
+            nodes.up.style.display = "none";
+            nodes.down.style.display = "none";
+
             let root = nodes.root
             let items = nodes.items;
             let [start, end] = getRows(context);

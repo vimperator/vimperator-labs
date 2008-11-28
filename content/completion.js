@@ -201,8 +201,8 @@ CompletionContext.prototype = {
         this.process = format.process || this.process;
     },
 
-    get message() this._message || (this.incomplete ? "Waiting..." : null),
-    set message(val) this._message = val,
+    //get message() this._message || (this.incomplete ? "Waiting..." : null),
+    //set message(val) this._message = val,
 
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },

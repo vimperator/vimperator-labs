@@ -568,7 +568,7 @@ function Tabs() //{{{
                 if (/\btabopen\b/.test(options["activate"]))
                     activate = !activate;
 
-                for (let i in range(0, Math.max(1, args.count)))
+                for (let i in util.range(0, Math.max(1, args.count)))
                     tabs.cloneTab(tab, activate);
             },
             {
