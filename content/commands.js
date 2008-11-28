@@ -850,7 +850,7 @@ function Commands() //{{{
                     // Yeah, this is a bit scary. Perhaps I'll fix it when I'm
                     // awake.
                     options: util.Array.assocToObj(
-                        util.map({argCount: "-nargs", bang: "-bang", count: "-count"},
+                        util.map({ argCount: "-nargs", bang: "-bang", count: "-count" },
                                 function ([k, v]) k in cmd && cmd[k] != "0" && [v, typeof cmd[k] == "boolean" ? null : cmd[k]])
                             .filter(util.identity)),
                     arguments: [cmd.name],

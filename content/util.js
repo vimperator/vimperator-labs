@@ -33,7 +33,7 @@ default xml namespace = XHTML;
 const util = { //{{{
 
     Array: {
-        // [["a", "b"], ["c", "d"]] -> {a: "b", c: "d"}
+        // [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
         // From Common Lisp, more or less
         assocToObj: function assocToObj(assoc)
         {
@@ -64,7 +64,7 @@ const util = { //{{{
             let ret = [];
             if (unsorted)
             {
-                for (let [, item] in Iterator(ary))
+                for (let [,item] in Iterator(ary))
                     if (ret.indexOf(item) == -1)
                         ret.push(item);
             }
@@ -352,7 +352,7 @@ const util = { //{{{
                 catch (e) {}
                 if (!hasValue)
                 {
-                    if(i instanceof Array && i.length == 2)
+                    if (i instanceof Array && i.length == 2)
                         [i, value] = i;
                     else
                         var noVal = true;

@@ -333,7 +333,7 @@ function Hints() //{{{
             if ((options["followhints"] == 2) && validHints.length > 1 && !hintNumber)
                 return liberator.beep();
         }
-    
+
         if (!followFirst)
         {
             var firstHref = validHints[0].getAttribute("href") || null;

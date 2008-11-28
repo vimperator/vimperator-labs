@@ -83,7 +83,7 @@ Option.prototype = {
             return Array.slice(value);
         return value;
     },
-    
+
     joinValues: function (values)
     {
         if (this.type == "stringlist")
@@ -689,7 +689,7 @@ function Options() //{{{
                 if (context.filter.indexOf("=") == -1)
                 {
                     if (prefix)
-                        context.filters.push(function ({item: opt}) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
+                        context.filters.push(function ({ item: opt }) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
                     return completion.option(context, opt.scope);
                 }
                 else if (prefix == "no")

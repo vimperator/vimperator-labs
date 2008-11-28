@@ -123,7 +123,7 @@ const modes = (function () //{{{
                 let focus = document.commandDispatcher.focusedElement;
                 if (focus != document.getElementById("urlbar").inputField)
                     liberator.focusContent(false);
-            }, 100); 
+            }, 100);
         }
     }
 

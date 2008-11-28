@@ -195,7 +195,7 @@ function Mappings() //{{{
                     return [
                         {
                             command: this.name,
-                            options: map.silent ? {"<silent>": null} : {},
+                            options: map.silent ? { "<silent>": null } : {},
                             arguments: [map.names[0]],
                             literalArg: map.rhs
                         }

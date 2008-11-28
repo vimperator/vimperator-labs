@@ -222,7 +222,7 @@ function Bookmarks() //{{{
         {
             // Forces a load, if not already loaded but wait 10sec
             // so most tabs should be restored and the CPU should be idle again usually
-            setTimeout(function() { liberator.callFunctionInThread(null, function () cache.load()); }, 10000);
+            setTimeout(function () { liberator.callFunctionInThread(null, function () cache.load()); }, 10000);
         }
     });
 

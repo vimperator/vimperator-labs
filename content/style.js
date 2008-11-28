@@ -395,9 +395,11 @@ let (array = util.Array)
 }
 
 const styles = storage.newObject("styles", Styles, false);
-try {
-const highlight = storage.newObject("highlight", Highlights, false);
-} catch(e) { liberator.reportError(e) }
+try
+{
+    const highlight = storage.newObject("highlight", Highlights, false);
+}
+catch (e) { liberator.reportError(e) }
 
 liberator.registerObserver("load_commands", function ()
 {
@@ -481,7 +483,7 @@ liberator.registerObserver("load_commands", function ()
                 {
                     command: this.name,
                     bang: true,
-                    options: sty.name ? {"-name": sty.name} : {},
+                    options: sty.name ? { "-name": sty.name } : {},
                     arguments: [sty.sites.join(",")],
                     literalArg: sty.css
                 } for ([k, sty] in styles.userSheets)

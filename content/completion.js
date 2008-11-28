@@ -183,7 +183,7 @@ CompletionContext.prototype = {
     set filterFunc(val) this._filterFunc = val,
 
     get filter() this._filter != null ? this._filter : this.value.substr(this.offset, this.caret),
-    set filter(val) 
+    set filter(val)
     {
         delete this._ignoreCase;
         return this._filter = val
@@ -270,7 +270,7 @@ CompletionContext.prototype = {
         let self = this;
         delete this._substrings;
 
-        let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({item: item}, "text"), item: item })));
+        let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({ item: item }, "text"), item: item })));
 
         let quote = this.quote;
         if (quote)
@@ -846,7 +846,7 @@ function Completion() //{{{
                         context.process = [null, function highlight(item, v) template.highlight(v, true)];
                         if (!context.anchored)
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
-                        context.compare = function ({item: {key: a}}, {item: {key: b}})
+                        context.compare = function ({ item: { key: a } }, { item: { key: b } })
                         {
                             if (!isNaN(a) && !isNaN(b))
                                 return a - b;
@@ -857,10 +857,12 @@ function Completion() //{{{
                 let filter = key + (string || "");
                 for (let [,obj] in Iterator(objects))
                 {
-                    try {
-                    this.context.fork(obj[1], top[OFFSET], this, fill,
-                        obj[0], obj[1], compl, compl != orig, filter, last, key.length);
-                    } catch(e) { liberator.reportError(e) }
+                    try
+                    {
+                        this.context.fork(obj[1], top[OFFSET], this, fill,
+                            obj[0], obj[1], compl, compl != orig, filter, last, key.length);
+                    }
+                    catch (e) { liberator.reportError(e) }
                 }
                 if (orig)
                     return;
@@ -1031,7 +1033,7 @@ function Completion() //{{{
         },
 
         // discard all entries in the 'urls' array, which don't match 'filter
-        // urls must be of type [{url: "..", title: "..", tags: [...], keyword: ".."}, ...]
+        // urls must be of type [{ url: "..", title: "..", tags: [...], keyword: ".." }, ...]
         filterURLArray: function filterURLArray(urls, filter, filterTags)
         {
             var filtered = [];
@@ -1141,7 +1143,7 @@ function Completion() //{{{
             context.completions = bookmarks.get(context.filter)
             context.filters = [];
             if (tags)
-                context.filters.push(function ({item: item}) tags.every(function (tag) item.tags.indexOf(tag) > -1));
+                context.filters.push(function ({ item: item }) tags.every(function (tag) item.tags.indexOf(tag) > -1));
         },
 
         buffer: function buffer(context)
@@ -1379,7 +1381,7 @@ function Completion() //{{{
             context.keys = { text: "names", description: "description" };
             context.completions = options;
             if (scope)
-                context.filters.push(function ({item: opt}) opt.scope & scope);
+                context.filters.push(function ({ item: opt }) opt.scope & scope);
         },
 
         optionValue: function (context, name, op, curValue)
@@ -1494,7 +1496,7 @@ function Completion() //{{{
                 let engine = ss.getEngineByAlias(name);
                 if (!engine)
                     return;
-                let [, word] = /^\s*(\S+)/.exec(context.filter) || [];
+                let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
                 if (!kludge && word == name) // FIXME: Check for matching keywords
                     return;
                 let ctxt = context.fork(name, 0);
