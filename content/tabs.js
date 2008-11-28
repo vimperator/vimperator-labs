@@ -347,7 +347,7 @@ function Tabs() //{{{
             bang: true,
             count: true,
             completer: function (context) completion.buffer(context),
-            literal: true
+            literal: 0
         });
 
     // TODO: this should open in a new tab positioned directly after the current one, not at the end
@@ -362,7 +362,7 @@ function Tabs() //{{{
         {
             argCount: "+",
             completer: function (context) completion.ex(context.filter),
-            literal: true
+            literal: 0
         });
 
     commands.add(["tabl[ast]", "bl[ast]"],
@@ -477,7 +477,7 @@ function Tabs() //{{{
                 bang: true,
                 count: true,
                 completer: function (context) completion.buffer(context),
-                literal: true
+                literal: 0
             });
 
         commands.add(["buffers", "files", "ls", "tabs"],
@@ -485,7 +485,7 @@ function Tabs() //{{{
             function (args) { tabs.list(args.literalArg); },
             {
                 argCount: "?",
-                literal: true
+                literal: 0
             });
 
         commands.add(["quita[ll]", "qa[ll]"],
@@ -550,7 +550,7 @@ function Tabs() //{{{
             {
                 bang: true,
                 completer: function (context) completion.url(context),
-                literal: true
+                literal: 0
             });
 
         commands.add(["tabde[tach]"],
@@ -635,7 +635,7 @@ function Tabs() //{{{
                     return [0, completions];
                 },
                 count: true,
-                literal: true
+                literal: 0
             });
 
         commands.add(["undoa[ll]"],

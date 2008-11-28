@@ -234,7 +234,7 @@ function IO() //{{{
         {
             argCount: "+", // FIXME: "?"
             completer: function (context) completion.file(context, true),
-            literal: true
+            literal: 0
         });
 
     // NOTE: this command is only used in :source
@@ -366,7 +366,7 @@ function IO() //{{{
         {
             bang: true,
             completer: function (context) completion.shellCommand(context),
-            literal: true
+            literal: 0
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

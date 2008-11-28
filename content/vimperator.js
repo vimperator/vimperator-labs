@@ -289,7 +289,7 @@ const config = { //{{{
             {
                 bang: true,
                 completer: function (context) completion.url(context),
-                literal: true
+                literal: 0
             });
 
         commands.add(["redr[aw]"],
@@ -342,7 +342,7 @@ const config = { //{{{
             {
                 argCount: "+",
                 completer: function (context) completion.sidebar(context),
-                literal: true
+                literal: 0
             });
 
         commands.add(["winc[lose]", "wc[lose]"],
@@ -363,7 +363,7 @@ const config = { //{{{
             },
             {
                 completer: function (context) completion.url(context),
-                literal: true
+                literal: 0
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}

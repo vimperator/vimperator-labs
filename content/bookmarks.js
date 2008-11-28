@@ -27,6 +27,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // TODO: with the new subscript loader, is there really no way to keep variable in per-file scope?
+//   Not really. --Kris
 const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // also includes methods for dealing with keywords and search engines
@@ -339,7 +340,7 @@ function Bookmarks() //{{{
         },
         {
             completer: function completer(context) completion.bookmark(context),
-            literal: true
+            literal: 0
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -667,7 +668,7 @@ function History() //{{{
                 return [0, completions];
             },
             count: true,
-            literal: true
+            literal: 0
         });
 
     commands.add(["fo[rward]", "fw"],
@@ -719,7 +720,7 @@ function History() //{{{
                 return [0, completions];
             },
             count: true,
-            literal: true
+            literal: 0
         });
 
     commands.add(["hist[ory]", "hs"],
@@ -727,7 +728,7 @@ function History() //{{{
         function (args) { history.list(args.string, args.bang); },
         {
             bang: true,
-            literal: true,
+            literal: 0,
             completer: function (context) completion.history(context)
             // completer: function (filter) completion.history(filter)
         });

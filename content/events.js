@@ -103,10 +103,9 @@ function AutoCommands() //{{{
             }
         },
         {
-            argCount: 3,
             bang: true,
             completer: function (context) completion.autocmdEvent(context),
-            literal: true
+            literal: 2
         });
 
     // TODO: expand target to all buffers
@@ -118,7 +117,7 @@ function AutoCommands() //{{{
         },
         {
             completer: function (context) completion.autocmdEvent(context),
-            literal: true
+            literal: 0
         }
     );
 
@@ -156,7 +155,7 @@ function AutoCommands() //{{{
         },
         {
             completer: function (context) completion.autocmdEvent(context),
-            literal: true
+            literal: 0
         }
     );
 
@@ -710,7 +709,7 @@ function Events() //{{{
         {
             bang: true,
             completer: function (context) completion.macro(context),
-            literal: true
+            literal: 0
         });
 
     commands.add(["macros"],

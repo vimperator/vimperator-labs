@@ -86,7 +86,7 @@ function Command(specs, description, action, extraInfo) //{{{
     this.options     = extraInfo.options || [];
     this.bang        = extraInfo.bang || false;
     this.count       = extraInfo.count || false;
-    this.literal     = extraInfo.literal || false;
+    this.literal     = extraInfo.literal == null ? null : extraInfo.literal;
     this.serial      = extraInfo.serial;
 
     this.isUserCommand   = extraInfo.isUserCommand || false;
@@ -413,29 +413,6 @@ function Commands() //{{{
             if (!options)
                 options = [];
 
-            if (literal)
-                /*
-                 TODO: This change doesn't seem right to me. It no longer
-                 supports "?" which is really the only non-integer argCount
-                 that makes much sense with a literal arg. Likewise, it no
-                 longer supports "*" which we can allow and treat as "?" - "+"
-                 as "1".  I also don't like having argCounts > 1 specified as
-                 integers and those below as strings, even if the former are
-                 currently only used with 'literal'. I might be missing
-                 something? -- djk
-
-                 The reason I chose "+" was that some functions were already
-                 using it when they expected a literal arg. "?" probably makes
-                 more sense.  I changed it to integers only in the cases where
-                 literal is used, because then it has a different meaning, i.e.,
-                 if we have this many args, push the rest of the string into the
-                 last arg, bug don't worry whether we actually have that many
-                 args.  Using strings gave the wrong results, because "1" died
-                 if you didn't have 1 arg, but "2" didn't die if you didn't have
-                 2. Perhaps it should have a separate option. --Kris
-                */
-                var literalIndex = argCount == "+" ? 0 : Math.max(argCount - 1, 0);
-
             if (!argCount)
                 argCount = "*";
 
@@ -599,7 +576,7 @@ function Commands() //{{{
                         complete.highlight(i, sub.length, "SPELLCHECK")
                 }
 
-                if (literal && args.length == literalIndex)
+                if (args.length == literal)
                 {
                     if (complete)
                         args.completeArg = args.length;
@@ -660,7 +637,7 @@ function Commands() //{{{
 
             // check for correct number of arguments
             if (args.length == 0 && /^[1+]$/.test(argCount) ||
-                    literal && argCount == "+" && /^\s*$/.test(args.literalArg))
+                    literal != null && /[+?]/.test(argCount) && !/\S/.test(args.literalArg || ""))
             {
                 if (!complete)
                 {
@@ -855,7 +832,6 @@ function Commands() //{{{
             }
         },
         {
-            argCount: 2,
             bang: true,
             completer: function (context) completion.userCommand(context),
             options: [
@@ -866,7 +842,7 @@ function Commands() //{{{
                 [["-complete"], commandManager.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg)]
             ],
-            literal: true,
+            literal: 1,
             serial: function () [
                 {
                     command: this.name,

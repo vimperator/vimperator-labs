@@ -521,7 +521,7 @@ function Buffer() //{{{
         },
         {
             completer: function (context) completion.alternateStylesheet(context),
-            literal: true
+            literal: 0
         });
 
     commands.add(["re[load]"],

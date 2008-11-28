@@ -173,8 +173,7 @@ function Editor() //{{{
                     editor.listAbbreviations(mode, lhs || "");
             },
             {
-                argCount: 2,
-                literal: true,
+                literal: 1,
                 serial: function () [
                     {
                         command: this.name,

@@ -274,7 +274,7 @@ const liberator = (function () //{{{
                     context.keys = { text: "fullMenuPath", description: "label" };
                     context.completions = getMenuItems();
                 },
-                literal: true
+                literal: 0
             });
 
         commands.add(["exe[cute]"],
@@ -321,7 +321,7 @@ const liberator = (function () //{{{
             {
                 bang: true,
                 completer: function (context) completion.help(context),
-                literal: true
+                literal: 0
             });
 
         commands.add(["javas[cript]", "js"],
@@ -350,7 +350,7 @@ const liberator = (function () //{{{
                 bang: true,
                 completer: function (context) completion.javascript(context),
                 hereDoc: true,
-                literal: true
+                literal: 0
             });
 
         commands.add(["loadplugins", "lpl"],
@@ -487,7 +487,7 @@ const liberator = (function () //{{{
                         return completion.javascript(context);
                 },
                 count: true,
-                literal: true
+                literal: 0
             });
 
         commands.add(["ve[rsion]"],

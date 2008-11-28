@@ -616,7 +616,7 @@ function CommandLine() //{{{
             },
             {
                 completer: function (context) completion.javascript(context),
-                literal: true
+                literal: 0
             });
     });
 
@@ -1439,7 +1439,7 @@ function ItemList(id) //{{{
                 {
                     do
                         var next = nodes[++i];
-                    while ((!next || next.parentNode != items) && i < nodes.length);
+                    while ((!next || next.parentNode != items) && i < end)
                     items.insertBefore(row, next);
                 }
                 else if (!display && row.parentNode == items)

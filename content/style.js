@@ -414,7 +414,7 @@ liberator.registerObserver("load_commands", function ()
                 liberator.echoerr("E185: Cannot find color scheme " + scheme);
         },
         {
-            argCount: 1,
+            argCount: "1",
             completer: function (context) completion.colorScheme(context)
         });
 
@@ -453,7 +453,6 @@ liberator.registerObserver("load_commands", function ()
             }
         },
         {
-            argCount: 2,
             bang: true,
             completer: function (context, args) {
                 let compl = [];
@@ -475,7 +474,7 @@ liberator.registerObserver("load_commands", function ()
                 }
             },
             hereDoc: true,
-            literal: true,
+            literal: 1,
             options: [[["-name", "-n"], commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]],
                       [["-append", "-a"], commands.OPTION_NOARG]],
             serial: function () [
@@ -495,9 +494,8 @@ liberator.registerObserver("load_commands", function ()
             styles.removeSheet(args["-name"], args[0], args.literalArg, args["-index"], false);
         },
         {
-            argCount: 2,
             completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
-            literal: true,
+            literal: 1,
             options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]],
                       [["-name", "-n"],  commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]]]
         });
@@ -533,7 +531,6 @@ liberator.registerObserver("load_commands", function ()
                 liberator.echoerr(error);
         },
         {
-            argCount: 2,
             bang: true,
             // TODO: add this as a standard highlight completion function?
             completer: function (context, args)
@@ -548,7 +545,7 @@ liberator.registerObserver("load_commands", function ()
                 }
             },
             hereDoc: true,
-            literal: true,
+            literal: 1,
             options: [[["-append", "-a"], commands.OPTION_NOARG]],
             serial: function () [
                 {

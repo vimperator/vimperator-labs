@@ -1150,9 +1150,10 @@ function Completion() //{{{
             context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
             let process = context.process[0];
-            context.process = [function ({ text: text, item: item }) <>
-                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.indicator}</span>
-                        { process.call(this, { item: item, text: text }) }
+            context.process = [function (item)
+                    <>
+                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
+                        { process.call(this, item) }
                     </>];
 
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
@@ -1171,7 +1172,7 @@ function Completion() //{{{
                     text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
                     url:  url,
                     indicator: indicator,
-                    icon: tab.image
+                    icon: tab.image || DEFAULT_FAVICON
                 };
             });
         },
