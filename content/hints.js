@@ -556,7 +556,9 @@ function Hints() //{{{
         { validator: function (value) value >= 0 });
 
     options.add(["followhints", "fh"],
-        "Change the way when to automatically follow hints",
+        // FIXME: this description isn't very clear but I can't think of a
+        // better one right now.
+        "Change the behaviour of <Return> in hint mode",
         "number", 0,
         { validator: function (value) value >= 0 && value < 3 });
 

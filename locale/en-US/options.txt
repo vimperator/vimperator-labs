@@ -347,7 +347,7 @@ ____
 ||'followhints' 'fh'|| number (default: 0)
 ____
 
-Change the function of hitting [m]<Return>[m] in hint mode. Possible values:
+Change the behaviour of [m]<Return>[m] in hint mode. Possible values:
 
 `---------`----------------------------------------------------------------------------------------------------------------------------------------------------------
 *0*       Default behavior. Link is followed as soon as text uniquely identifies it. Pressing [m]<Return>[m] follows the tab selected hint (if any) or the first link.

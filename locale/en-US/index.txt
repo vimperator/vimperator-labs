@@ -255,8 +255,6 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
-||'activelinkbgcolor'|| Background color of the current active link during hint mode +
-||'activelinkfgcolor'|| Foreground color of the current active link during hint mode +
 ||'autodetector'|| set auto detect character encoding +
 ||'cdpath'|| List of directories searched when executing :cd +
 ||'complete'|| Items which are completed at the :[tab]open prompt +
@@ -269,11 +267,12 @@ section:Options[option-index]
 ||'extendedhinttags'|| XPath string of hintable elements activated by ';' +
 ||'fileencoding'|| set the charactor encoding for the current page +
 ||'focuscontent'|| Try to stay in normal mode after loading a web page +
+||'followhints'|| Change the behaviour of [m]<Return>[m] in hint mode +
 ||'fullscreen'|| Show the current window fullscreen +
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
 ||'helpfile'|| Name of the main help file +
 ||'hintmatching'|| How links are matched +
-||'hinttags'|| XPath string of hintable elements activated by 'f' and 'F' +
+||'hinttags'|| XPath string of hintable elements activated by [m]f[m] and [m]F[m] +
 ||'hinttimeout'|| Automatically follow non unique numerical hint +
 ||'history'|| Number of Ex commands and search patterns to store in the command-line history +
 ||'hlsearch'|| Highlight previous search pattern matches +
@@ -281,19 +280,17 @@ section:Options[option-index]
 ||'incsearch'|| Show where the search pattern matches as it is typed +
 ||'insertmode'|| Use Insert mode as the default for text areas +
 ||'laststatus'|| Show the status line +
-||'linkbgcolor'|| Background color of a link during hint mode +
-||'linkfgcolor'|| Foreground color of a link during hint mode +
 ||'linksearch'|| Limit the search to hyperlink text +
 ||'loadplugins'|| Load plugin scripts when starting up +
 ||'messages'|| Number of messages to store in the message history +
 ||'more'|| Pause the message list window when more than one screen of listings is displayed +
 ||'newtab'|| Define which commands should output in a new tab by default +
-||'nextpattern'|| Patterns to use when guessing the 'next' page in a document sequence +
+||'nextpattern'|| Patterns to use when guessing the \'next' page in a document sequence +
 ||'online'|| Set the \'work offline' option +
 ||'pageinfo'|| Desired info on :pa[geinfo] +
 ||'popups'|| Where to show requested popup windows +
 ||'preload'|| Speed up first time history/bookmark completion +
-||'previouspattern'|| Patterns to use when guessing the 'previous' page in a document sequence +
+||'previouspattern'|| Patterns to use when guessing the \'previous' page in a document sequence +
 ||'runtimepath'|| List of directories searched for runtime files +
 ||'scroll'|| Number of lines to scroll with and commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
