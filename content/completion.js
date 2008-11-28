@@ -132,17 +132,15 @@ CompletionContext.prototype = {
         });
 
         let substrings = lists.reduce(
-                function (res, str) res.filter(
-                    function (s) s.substr(0, Math.min(s.length, str.length))),
+                function (res, list) res.filter(
+                    function (str) list.some(function (s) s.substr(0, str.length) == str)),
                 lists.pop());
         return util.Array.uniq(substrings);
     },
     // Temporary
     get longestAllSubstring()
     {
-        let substrings = this.allSubstrings;
-        // Find the longest match
-        return substrings.reduce(function (a, b) a.length > b.length ? a : b, "");
+        return this.allSubstrings.reduce(function (a, b) a.length > b.length ? a : b, "");
     },
 
     get caret() this._caret - this.offset,
