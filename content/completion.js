@@ -1130,7 +1130,7 @@ function Completion() //{{{
             let list = template.generic(
                 <div highlight="Completions">
                     { template.completionRow(context.title, "CompTitle") }
-                    { template.map(context.items, function (item) context.createRow(item)) }
+                    { template.map(context.items, function (item) context.createRow(item), null, 50) }
                 </div>);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },

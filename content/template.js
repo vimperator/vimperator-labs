@@ -2,7 +2,7 @@ const template = {
     add: function add(a, b) a + b,
     join: function join(c) function (a, b) a + c + b,
 
-    map: function map(iter, fn, sep)
+    map: function map(iter, fn, sep, interruptable)
     {
         if (iter.length) /* Kludge? */
             iter = util.Array.iterator(iter);
@@ -15,6 +15,8 @@ const template = {
                 continue;
             if (sep && n++)
                 ret += sep;
+            if (interruptable && n % interruptable == 0)
+                liberator.threadYield(true, true);
             ret += val;
         }
         return ret;
