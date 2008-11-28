@@ -30,15 +30,29 @@ Valid groups are:
 `------------------`-----------------------------------
 *Bell*             Vimperator's visual bell
 *Boolean*          A JavaScript Boolean object
+*CompDesc*	   The description column of the completion list
+*CompIcon*	   The favicon of a completion row
+*CompItem*	   A completion row
+*CompLess*	   The indicator shown when completions may be scrolled up
+*CompMore*	   The indicator shown when completions may be scrolled down
+*CompResult*       The result column of the completion list
+*CompTitle*	   Completion row titles
 *ErrorMsg*         Error messages
 *Filter*           The matching text in a completion list
+*FrameIndicator*   The indicator shown when a new frame is selected
 *Function*         A JavaScript Function object
 *Hint*             A hint indicator. See [c]:help hints[c].
+*HintActive*	   The hint element which will be selected on <Enter>
+*HintElem*	   The element which a hint refers to.
+*HintImage*	   The indicator which floats above hinted images.
+*Indicator*
 *InfoMsg*          Information messages
 *Keyword*          A bookmark keyword for a URL
 *LineNr*           The line number of an error
+*Message*
 *ModeMsg*          The mode indicator in the command line
 *MoreMsg*          The indicator that there is more text to view
+*NonText*
 *Normal*           Normal text in the command line
 *Null*             A JavaScript Null object
 *Number*           A JavaScript Number object

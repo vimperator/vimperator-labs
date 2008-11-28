@@ -743,6 +743,19 @@ this option.
 ____
 
 
+|\'wildcase'| |\'wic'|
+||'wildcase' 'wic'|| string (default: "smart")
+____
+Defines how completions are matched with regard to character case.
+
+`---------------`------------------------
+"smart"		Case is significant when capital letters are typed
+"match"		Case is always significant
+"ignore"	Case is never significant
+-----------------------------------------
+____
+
+
 |\'wildignore'| |\'wig'|
 ||'wildignore' 'wig'|| stringlist (default: "")
 ____

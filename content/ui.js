@@ -435,15 +435,6 @@ function CommandLine() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: doesn't belong in ui.js
-    options.add(["complete", "cpt"],
-        "Items which are completed at the :[tab]open prompt",
-        "charlist", "sfl",
-        {
-            completer: function completer(filter) [k for each (k in completion.urlCompleters)],
-            validator: options.validateCompleter
-        });
-
     options.add(["history", "hi"],
         "Number of Ex commands and search patterns to store in the command-line history",
         "number", 500,
@@ -477,6 +468,27 @@ function CommandLine() //{{{
              },
              validator: options.validateCompleter
          });
+
+    // TODO: these belong in ui.js
+    options.add(["complete", "cpt"],
+        "Items which are completed at the :[tab]open prompt",
+        "charlist", "sfl",
+        {
+            completer: function completer(filter) [k for each (k in completion.urlCompleters)],
+            validator: options.validateCompleter
+        });
+
+    options.add(["wildcase", "wic"],
+        "Completion case matching mode",
+        "string", "smart",
+        {
+            completer: function () [
+                ["smart", "Case is significant when capital letters are typed"],
+                ["match", "Case is always significant"],
+                ["ignore", "Case is never significant"]
+            ],
+            validator: options.validateCompleter
+        });
 
     options.add(["wildignore", "wig"],
         "List of file patterns to ignore when completing files",

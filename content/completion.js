@@ -56,6 +56,7 @@ function CompletionContext(editor, name, offset)
         self.keys = util.cloneObject(parent.keys);
         delete self._generate;
         delete self._filter; // FIXME?
+        delete self._ignoreCase;
         ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "quote", "title", "top"].forEach(function (key)
             self[key] = parent[key]);
         if (self != this)
@@ -208,7 +209,11 @@ CompletionContext.prototype = {
     },
 
     get filter() this._filter != null ? this._filter : this.value.substr(this.offset, this.caret),
-    set filter(val) this._filter = val,
+    set filter(val) 
+    {
+        delete this._ignoreCase;
+        return this._filter = val
+    },
 
     get format() ({
         title: this.title,
@@ -222,8 +227,18 @@ CompletionContext.prototype = {
         this.process = format.process || this.process;
     },
 
-    // XXX
-    get ignoreCase() this.filter == this.filter.toLowerCase(),
+    get ignoreCase()
+    {
+        if ("_ignoreCase" in this)
+            return this._ignoreCase;
+        let mode = options["wildcase"];
+        if (mode == "match")
+            return this._ignoreCase = false;
+        if (mode == "ignore")
+            return this._ignoreCase = true;
+        return this._ignoreCase = !/[A-Z]/.test(this.filter);
+    },
+    set ignoreCase(val) this._ignoreCase = val,
 
     get items()
     {
@@ -318,6 +333,7 @@ CompletionContext.prototype = {
 
     advance: function advance(count)
     {
+        delete this._ignoreCase;
         this.offset += count;
         if (this.quote)
         {

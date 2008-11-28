@@ -16,6 +16,9 @@
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
 
+    * add 'wildcase' option
+    * 'linkbgcolor', 'linkfgcolor', ... have been replaced with highlight
+      groups, HintElem and HintActive
     * new 'followhints' option
     * :buffers supports a filter now to only list buffers matching filter (vim
       incompatible, but consistent with other commands)

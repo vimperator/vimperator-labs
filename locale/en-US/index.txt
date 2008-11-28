@@ -308,6 +308,7 @@ section:Options[option-index]
 ||'usermode'|| Show current website with a minimal style sheet to make it easily accessible +
 ||'verbose'|| Define which info messages are displayed +
 ||'visualbell'|| Use visual bell instead of beeping on errors +
+||'wildcase'|| Completion case matching mode +
 ||'wildignore'|| List of file patterns to ignore when completing files +
 ||'wildmode'|| Define how command-line completion works +
 ||'wildoptions'|| Change how command-line completion is done +
