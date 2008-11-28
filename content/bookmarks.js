@@ -320,7 +320,11 @@ function Bookmarks() //{{{
         },
         {
             bang: true,
-            completer: function completer(context, args) completion.bookmark(context, args["-tags"]),
+            completer: function completer(context, args)
+            {
+                context.quote = null;
+                completion.bookmark(context, args["-tags"]);
+            },
             options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags]]
         });
 

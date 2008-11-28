@@ -1231,6 +1231,7 @@ function CommandLine() //{{{
             catch (e) {}
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
             outputContainer.height = Math.min(doc.height, availableHeight) + "px";
+            doc.body.style.minWidth = undefined;
             outputContainer.collapsed = false;
         },
 
@@ -1321,7 +1322,7 @@ function ItemList(id) //{{{
 
     doc.body.id = id + "-content";
     doc.body.appendChild(doc.createTextNode(""));
-    doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where completions/MOW are shown at once. Should use :highlight.
+    doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where completions/MOW are shown at once, or ls=0. Should use :highlight.
 
     var items = null;
     var startIndex = -1;  // The index of the first displayed item
@@ -1337,7 +1338,8 @@ function ItemList(id) //{{{
             div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
         minHeight = Math.max(minHeight, divNodes.completions.getBoundingClientRect().bottom);
         container.height = minHeight;
-        div.style.minWidth = undefined;
+        if (container.collapsed)
+            div.style.minWidth = undefined;
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
     }
@@ -1415,18 +1417,16 @@ function ItemList(id) //{{{
                 nodes[i] = row;
             for (let [i, row] in util.Array.iterator2(nodes))
             {
-                let display = i >= start && i < end;
-                if (row.parentNode != items)
+                let display = (i >= start && i < end);
+                if (display && row.parentNode != items)
                 {
                     do
                         var next = nodes[++i];
                     while ((!next || next.parentNode != root) && i < nodes.length);
                     items.insertBefore(row, next);
                 }
-                if (display)
-                    row.style.display = "table-row";
-                else
-                    row.style.display = "none";
+                else if (!display && row.parentNode == items)
+                    items.removeChild(row);
             }
             nodes.up.style.display = (start == 0) ? "none" : "block";
             nodes.down.style.display = (end == context.items.length) ? "none" : "block";
@@ -1434,7 +1434,7 @@ function ItemList(id) //{{{
 
         divNodes.noCompletions.style.display = (off > 0) ? "none" : "block";
 
-        completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem' and not(contains(@style, 'none'))]", doc);
+        completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem']", doc);
 
         autoSize();
         return true;

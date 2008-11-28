@@ -61,7 +61,7 @@ function CompletionContext(editor, name, offset)
             self[key] = parent[key]);
         if (self != this)
             return self;
-        ["contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
+        ["_caret", "contextList", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
@@ -149,7 +149,7 @@ CompletionContext.prototype = {
         return substrings.reduce(function (a, b) a.length > b.length ? a : b, "");
     },
 
-    get caret() (this.editor ? this.editor.selection.getRangeAt(0).startOffset : this.value.length) - this.offset,
+    get caret() this._caret - this.offset,
 
     get compare() this._compare || function () 0,
     set compare(val) this._compare = val,
@@ -176,6 +176,25 @@ CompletionContext.prototype = {
     get filterFunc() this._filterFunc || util.identity,
     set filterFunc(val) this._filterFunc = val,
 
+    get filter() this._filter != null ? this._filter : this.value.substr(this.offset, this.caret),
+    set filter(val) 
+    {
+        delete this._ignoreCase;
+        return this._filter = val
+    },
+
+    get format() ({
+        title: this.title,
+        keys: this.keys,
+        process: this.process
+    }),
+    set format(format)
+    {
+        this.title = format.title || this.title;
+        this.keys = format.keys || this.keys;
+        this.process = format.process || this.process;
+    },
+
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },
 
@@ -197,7 +216,6 @@ CompletionContext.prototype = {
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
-            let now = Date.now();
             liberator.callAsync(this, function () {
                 let items = this.generate();
                 if (this.cache.backgroundLock != lock)
@@ -206,25 +224,6 @@ CompletionContext.prototype = {
                 this.completions = items;
             });
         }
-    },
-
-    get filter() this._filter != null ? this._filter : this.value.substr(this.offset, this.caret),
-    set filter(val) 
-    {
-        delete this._ignoreCase;
-        return this._filter = val
-    },
-
-    get format() ({
-        title: this.title,
-        keys: this.keys,
-        process: this.process
-    }),
-    set format(format)
-    {
-        this.title = format.title || this.title;
-        this.keys = format.keys || this.keys;
-        this.process = format.process || this.process;
     },
 
     get ignoreCase()
@@ -242,7 +241,7 @@ CompletionContext.prototype = {
 
     get items()
     {
-        if (!this.hasItems)
+        if (!this.hasItems || this.backgroundLock)
             return [];
         if (this.cache.filtered && this.cache.filter == this.filter)
             return this.cache.filtered;
@@ -437,7 +436,16 @@ CompletionContext.prototype = {
         this.tabPressed = false;
         this.title = ["Completions"];
         this.updateAsync = false;
-        this.value = this.editor ? this.editor.rootElement.textContent : this._value;
+        if (this.editor)
+        {
+            this.value = this.editor.rootElement.textContent;
+            this._caret = this.editor.selection.getRangeAt(0).startOffset;
+        }
+        else
+        {
+            this.value = this._value;
+            this._caret = this.value.length;
+        }
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
         //    delete this.contexts[key];
         for each (let context in this.contexts)
@@ -1001,9 +1009,6 @@ function Completion() //{{{
                 return [];
 
             var hasTags = urls[0].tags !== undefined;
-            // TODO: create a copy of urls?
-            if (!filter && (!hasTags || !filterTags))
-                return urls;
 
             filterTags = filterTags || [];
 
