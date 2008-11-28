@@ -1422,7 +1422,7 @@ function ItemList(id) //{{{
                 {
                     do
                         var next = nodes[++i];
-                    while ((!next || next.parentNode != root) && i < nodes.length);
+                    while ((!next || next.parentNode != items) && i < nodes.length);
                     items.insertBefore(row, next);
                 }
                 else if (!display && row.parentNode == items)
