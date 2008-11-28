@@ -552,12 +552,15 @@ function Commands() //{{{
                                         args.quote = complQuote[quote] || complQuote[""];
                                     }
                                     let type = argTypes[opt[1]];
-                                    if (type)
+                                    if (type && (!complete || arg != null))
                                     {
+                                        liberator.dump("arg: " + arg);
                                         arg = type.parse(arg);
-                                        if (arg == null || arg == NaN)
+                                        liberator.dump("arg: " + arg);
+                                        if (arg == null || (typeof arg == "number" && isNaN(arg)))
                                         {
-                                            echoerr("Invalid argument for " + type.description + "option: " + optname);
+                                        liberator.dump("arg: " + arg);
+                                            echoerr("Invalid argument for " + type.description + " option: " + optname);
                                             if (complete)
                                                 complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
                                             else
@@ -580,6 +583,8 @@ function Commands() //{{{
 
                                     args[opt[0][0]] = arg; // always use the first name of the option
                                     i += optname.length + count;
+                                    if (i == str.length)
+                                        break outer;
                                     continue outer;
                                 }
                                 // if it is invalid, just fall through and try the next argument

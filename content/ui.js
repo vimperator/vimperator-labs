@@ -1417,6 +1417,8 @@ function ItemList(id) //{{{
             nodes.message.style.display = "none";
             if (context.message)
             {
+                nodes.up.style.display = "none";
+                nodes.down.style.display = "none";
                 nodes.message.textContent = context.message;
                 nodes.message.style.display = "block";
             }

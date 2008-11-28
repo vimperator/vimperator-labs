@@ -356,7 +356,7 @@ const liberator = (function () //{{{
         commands.add(["loadplugins", "lpl"],
             "Load all plugins immediately",
             function () { liberator.loadPlugins(); },
-            { argCount: "0" );
+            { argCount: "0" });
 
         commands.add(["norm[al]"],
             "Execute Normal mode commands",

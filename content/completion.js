@@ -51,6 +51,7 @@ function CompletionContext(editor, name, offset)
             self.contexts[name] = this;
         self.filters = parent.filters.slice();
         self.incomplete = false;
+        self.message = null;
         self.parent = parent;
         self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
@@ -199,6 +200,9 @@ CompletionContext.prototype = {
         this.keys = format.keys || this.keys;
         this.process = format.process || this.process;
     },
+
+    get message() this._message || (this.incomplete ? "Waiting..." : null),
+    set message(val) this._message = val,
 
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },
@@ -1343,11 +1347,11 @@ function Completion() //{{{
             context.filterFunc = null;
             context.compare = null;
             let timer = new util.Timer(50, 100, function (result) {
+                context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
                     [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
                         for (i in util.range(0, result.matchCount))
                 ];
-                context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
             });
             completionService.stopSearch();
             completionService.startSearch(context.filter, "", context.result, {

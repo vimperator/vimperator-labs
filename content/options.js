@@ -699,7 +699,10 @@ function Options() //{{{
                 context.advance(context.filter.indexOf("=") + 1);
 
                 if (!option)
+                {
+                    context.message = "No such option: " + opt.name;
                     context.highlight(0, name.length, "SPELLCHECK");
+                }
 
                 if (opt.get || opt.reset || !option || prefix)
                     return;
