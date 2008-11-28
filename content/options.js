@@ -678,11 +678,7 @@ function Options() //{{{
                         return;
                     }
 
-                    let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefBranch);
-                    context.keys = { text: function (pref) pref.item, description: function (pref) options.getPref(pref.item) };
-                    context.completions = prefs.getChildList("", { value: 0 });
-                    return;
+                    return completion.preference(context);
                 }
 
                 let opt = options.parseOpt(filter, modifiers);

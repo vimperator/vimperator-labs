@@ -1394,7 +1394,14 @@ function Completion() //{{{
             context.completions = completions;
         },
 
-        preference: function preference(filter) commands.get("set").completer(filter, true), // XXX
+        preference: function preference(context)
+        {
+            let prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                  .getService(Components.interfaces.nsIPrefBranch);
+            context.title = ["Firefox Preference", "Value"];
+            context.keys = { text: function (item) item.item, description: function (item) options.getPref(item.item) };
+            context.completions = prefs.getChildList("", { value: 0 });
+        },
 
         search: function search(context, noSuggest)
         {
