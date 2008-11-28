@@ -1322,7 +1322,7 @@ function Buffer() //{{{
                 // TODO: make that a helper function
                 // TODO: save return value in v:shell_error
                 var editor = options["editor"];
-                var args = commands.parseArgs(editor, [], "*", true).arguments;
+                var args = commands.parseArgs(editor, [], "*", true);
                 if (args.length < 1)
                 {
                     liberator.echoerr("No editor specified");
