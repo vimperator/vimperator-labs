@@ -136,6 +136,7 @@ function Mappings() //{{{
 
     function expandLeader(keyString) keyString.replace(/<Leader>/i, mappings.getMapLeader())
 
+    // Return all mappings present in all @modes
     function mappingsIterator(modes, stack)
     {
         modes = modes.slice();
@@ -302,10 +303,10 @@ function Mappings() //{{{
             var map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
-            for (let i = 0; i < map.names.length; i++)
+            for (let [,name] in Iterator(map.names))
             {
-                for (let j = 0; j < map.modes.length; j++)
-                    removeMap(map.modes[j], map.names[i]);
+                for (let [,mode] in Iterator(map.modes))
+                    removeMap(mode, map.name);
             }
 
             addMap(map, true);
@@ -369,47 +370,7 @@ function Mappings() //{{{
 
         list: function (modes, filter)
         {
-            // modes means, a map must exist in both modes in order to get listed
-            var maps = user[modes[0]]; // duplicate (reference) (first mode where it must match)
-            var output = [];
-
-            if (!maps || maps.length == 0)
-            {
-                liberator.echo("No mappings found");
-                return;
-            }
-
-            for (let [i, map] in Iterator(maps)) // check on maps items (first mode)
-            {
-                output[i] = !filter || map.names[0] == filter;
-                if (!output[i]) // does it match the filter first of all?
-                    continue;
-                for (let [, mode] in Iterator(modes))
-                {
-                    output[i] = false; // toggle false, only true whan also found in this mode
-                    for (let [, usermode] in Iterator(user[mode]))
-                    {
-                        // NOTE: when other than user maps, there might be more than only one names[x].
-                        //       since only user mappings gets queried here, only names[0] gets checked for equality.
-                        if (map.rhs == usermode.rhs && map.names[0] == usermode.names[0])
-                        {
-                            output[i] = true;
-                            break; // found on this mode - ok, check next mode...
-                        }
-                    }
-                    break; // not found in this mode -> map wont' match all modes...
-                }
-            }
-
-            // anything found?
-            var flag = output.some(util.identity);
-            if (!flag)
-            {
-                liberator.echo("No mappings found");
-                return;
-            }
-
-            var modeSign = "";
+            let modeSign = "";
             modes.forEach(function (mode)
             {
                 if (mode == modes.NORMAL)
@@ -422,11 +383,13 @@ function Mappings() //{{{
                     modeSign += "m";
             });
 
-            let _maps = (map for ([i, map] in Iterator(maps))
-                             if (output[i]));
+            let maps = mappingsIterator(modes, user);
+            if (filter)
+                maps = (map for (map in maps) if (map.names[0] == filter));
+
             let list = <table>
                     {
-                        template.map(_maps, function (map)
+                        template.map(maps, function (map)
                             template.map(map.names, function (name)
                             <tr>
                                 <td>{modeSign} {name}</td>
@@ -435,6 +398,13 @@ function Mappings() //{{{
                             </tr>))
                     }
                     </table>;
+
+            // TODO: Move this to an ItemList to show this automatically
+            if (list.*.length() == list.text().length())
+            {
+                liberator.echo(<div highlight="Title">No mappings found</div>, commandline.FORCE_MULTILINE);
+                return;
+            }
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
 

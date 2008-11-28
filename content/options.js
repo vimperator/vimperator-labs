@@ -692,7 +692,9 @@ function Options() //{{{
                 let scope = modifiers && modifiers.scope || options.OPTION_SCOPE_BOTH;
 
                 let opts = (opt for (opt in options)
-                                if ((opt.scope & scope) && (!prefix || opt.type == "boolean" || prefix == "inv" && /list$/.test(opt.type))));
+                                if ((opt.scope & scope) &&
+                                    (!prefix || opt.type == "boolean" ||
+                                        prefix == "inv" && opt.value instanceof Array)));
 
                 if (filter.indexOf("=") == -1)
                 {
@@ -750,7 +752,7 @@ function Options() //{{{
                     if (!res)
                         return;
                     completions = completions.concat(res);
-                    if (/list$/.test(option.type))
+                    if (option.values instanceof Array)
                     {
                         completions = completions.filter(function (val) opt.values.indexOf(val[0]) == -1);
                         switch (opt.operator)
