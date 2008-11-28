@@ -1337,7 +1337,7 @@ function Completion() //{{{
             context.format = history.format;
             context.title = ["History"]
             context.compare = null;
-            context.background = true;
+            //context.background = true;
             context.regenerate = true;
             context.generate = function () history.get(context.filter);
         },
