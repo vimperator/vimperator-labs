@@ -491,6 +491,14 @@ function Commands() //{{{
                 args.completeArg = 0;
             }
 
+            function echoerr(error)
+            {
+                if (complete)
+                    complete.message = error;
+                else
+                    liberator.echoerr(error);
+            }
+
             outer:
             while (i < str.length || complete)
             {
@@ -565,13 +573,11 @@ function Commands() //{{{
                                         arg = type.parse(arg);
                                         if (arg == null || arg == NaN)
                                         {
+                                            echoerr("Invalid argument for " + type.description + "option: " + optname);
                                             if (complete)
                                                 complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
                                             else
-                                            {
-                                                liberator.echoerr("Invalid argument for " + type.description + "option: " + optname);
                                                 return null;
-                                            }
                                         }
                                     }
 
@@ -580,13 +586,11 @@ function Commands() //{{{
                                     {
                                         if (opt[2].call(this, arg) == false)
                                         {
+                                            echoerr("Invalid argument for option: " + optname);
                                             if (complete)
                                                 complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
                                             else
-                                            {
-                                                liberator.echoerr("Invalid argument for option: " + optname);
                                                 return null;
-                                            }
                                         }
                                     }
 
@@ -678,8 +682,7 @@ function Commands() //{{{
             else if (args.length == 1 && (argCount == "0") ||
                      args.length > 1  && /^[01?]$/.test(argCount))
             {
-                if (!complete)
-                    liberator.echoerr("E488: Trailing characters");
+                echoerr("E488: Trailing characters");
                 return null;
             }
 
