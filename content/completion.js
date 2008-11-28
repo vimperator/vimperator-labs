@@ -117,7 +117,6 @@ CompletionContext.prototype = {
                 return [];
             let prefix = self.value.substring(minStart, context.offset);
             return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
-            //return [{ text: prefix + item.text, item: item.item } for ([i, item] in Iterator(context.items))];
         });
         return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
     },
@@ -157,13 +156,16 @@ CompletionContext.prototype = {
     get completions() this._completions || [],
     set completions(items)
     {
+        // Accept a generator
+        if (!(items instanceof Array))
+            items = [x for (x in items)];
         delete this.cache.filtered;
         delete this.cache.filter;
         this.cache.rows = [];
         this.hasItems = items.length > 0;
         this._completions = items;
         let self = this;
-        if (this.updateAsync)
+        if (this.updateAsync && !this.noUpdate)
             liberator.callInMainThread(function () { self.onUpdate.call(self) });
     },
 
@@ -234,10 +236,9 @@ CompletionContext.prototype = {
         if (this.generate && !this.background)
         {
             // XXX
-            let updateAsync = this.updateAsync;
-            this.updateAsync = false;
+            this.noUpdate = true;
             this.completions = items = this.generate();
-            this.updateAsync = updateAsync;
+            this.noUpdate = false;
         }
         this.cache.filter = this.filter;
         if (items == null)
@@ -320,6 +321,7 @@ CompletionContext.prototype = {
         this.offset += count;
         if (this.quote)
         {
+            this.offset += this.quote[0].length;
             this.quote[0] = "";
             this.quote[2] = "";
         }
@@ -461,7 +463,6 @@ function Completion() //{{{
         let str = "";
 
         let lastIdx = 0;
-        let continuing = false;
 
         let cacheKey = null;
 
@@ -545,12 +546,11 @@ function Completion() //{{{
 
         this.eval = function eval(arg, key, tmp)
         {
-            if (!("eval" in this.context.cache))
+            if (!this.context.cache.eval)
                 this.context.cache.eval = {};
             let cache = this.context.cache.eval;
             if (!key)
                 key = arg;
-
             if (key in cache)
                 return cache[key];
 
@@ -608,23 +608,10 @@ function Completion() //{{{
                 return ret;
             }
 
-            let i = start, c = "";     /* Current index and character, respectively. */
+            let i = 0, c = "";     /* Current index and character, respectively. */
 
-            // We're starting afresh.
-            if (start == 0)
-            {
-                stack = [];
-                push("#root");
-            }
-            else
-            {
-                // A new statement may have been pushed onto the stack just after
-                // the end of the last string. We'll throw it away for now, and
-                // add it again later if it turns out to be valid.
-                let s = top[STATEMENTS];
-                if (s[s.length - 1] == start)
-                    s.pop();
-            }
+            stack = [];
+            push("#root");
 
             /* Build a parse stack, discarding entries as opening characters
              * match closing characters. The stack is walked from the top entry
@@ -704,20 +691,11 @@ function Completion() //{{{
             this.context = context;
             let string = context.filter;
 
-            context.process = [null, function highlight(item, v) template.highlight(v, true)];
-            context.compare = function ({item: {key: a}}, {item: {key: b}})
-            {
-                if (!isNaN(a) && !isNaN(b))
-                    return a - b;
-                return String.localeCompare(a, b);
-            }
-
             let self = this;
             try
             {
-                continuing = lastIdx && string.indexOf(str) == 0;
                 str = string;
-                buildStack.call(this, continuing ? lastIdx : 0);
+                buildStack.call(this);
             }
             catch (e)
             {
@@ -728,6 +706,9 @@ function Completion() //{{{
             }
 
             /* Okay, have parse stack. Figure out what we're completing. */
+
+            if (/[\])}"';]/.test(str[lastIdx - 1]) && last != '"' && last != '"')
+                return;
 
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
@@ -788,35 +769,50 @@ function Completion() //{{{
             function fill(context, obj, name, compl, anchored, key, last, offset)
             {
                 context.title = [name];
-                context.key = name;
                 context.anchored = anchored;
                 context.filter = key;
                 context.itemCache = context.parent.itemCache;
-                if (compl)
-                    context.completions = compl;
-                else
-                    context.generate = function () self.objectKeys(obj);
+                context.key = name;
 
                 if (last != undefined)
                     context.quote = [last, function (text) util.escapeString(text.substr(offset), ""), last];
                 else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
                     context.filters.push(function (item) /^[\w$][\w\d$]*$/.test(item.text));
-                if (!anchored)
-                    context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
+
+                compl.call(self, context, obj);
             }
 
             function complete(objects, key, compl, string, last)
             {
+                let orig = compl;
+                if (!compl)
+                    compl = function (context, obj) {
+                        context.process = [null, function highlight(item, v) template.highlight(v, true)];
+                        if (!context.anchored)
+                            context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
+                        context.compare = function ({item: {key: a}}, {item: {key: b}})
+                        {
+                            if (!isNaN(a) && !isNaN(b))
+                                return a - b;
+                            return String.localeCompare(a, b);
+                        }
+                        context.generate = function () self.objectKeys(obj);
+                    }
+                let filter = key + (string || "");
                 for (let [,obj] in Iterator(objects))
                 {
-                    this.context.fork(obj[1], top[OFFSET], this, fill, obj[0], obj[1], compl,
-                        true, key + (string || ""), last, key.length);
+                    try {
+                    this.context.fork(obj[1], top[OFFSET], this, fill,
+                        obj[0], obj[1], compl, compl != orig, filter, last, key.length);
+                    } catch(e) { liberator.reportError(e) }
                 }
+                if (orig)
+                    return;
                 for (let [,obj] in Iterator(objects))
                 {
                     obj[1] += " (substrings)";
-                    this.context.fork(obj[1], top[OFFSET], this, fill, obj[0], obj[1], compl,
-                        false, key + (string || ""), last, key.length);
+                    this.context.fork(obj[1], top[OFFSET], this, fill,
+                        obj[0], obj[1], compl, false, filter, last, key.length);
                 }
             }
 
@@ -888,19 +884,22 @@ function Completion() //{{{
 
                     // Split up the arguments
                     let prev = get(-2)[OFFSET];
-                    let args = get(-2)[FULL_STATEMENTS].map(function splitArgs(s)
+                    let args = [];
+                    for (let [i, idx] in Iterator(get(-2)[FULL_STATEMENTS]))
                     {
-                        let ret = str.substring(prev + 1, s);
-                        prev = s;
-                        return ret;
-                    });
-                    args.push(key);
-
-                    let compl = completer.call(this, func, obj[0][0], string, args);
-                    if (!(compl instanceof Array))
-                        compl = [v for (v in compl)];
+                        let arg = str.substring(prev + 1, idx);
+                        prev = idx;
+                        args.__defineGetter__(i, function () self.eval(ret));
+                    }
                     key = this.eval(key);
-                    obj[0][1] += "." + func + "(...";
+                    args.push(key + string);
+
+                    compl = function (context, obj) {
+                        let res = completer.call(self, context, func, obj, args);
+                        if (res)
+                            context.completions = res;
+                    }
+                    obj[0][1] += "." + func + "(... [" + args.length + "]";
                     return complete.call(this, obj, key, compl, string, last);
                 }
 
@@ -935,20 +934,16 @@ function Completion() //{{{
 
     let self = {
 
-        // FIXME
-        get getKey() this._getKey || function (item, key) item[{ text: 0, description: 1, icon: 2 }[key]],
-        set getKey(getKey) this._getKey = getKey,
-
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
             funcs = Array.concat(funcs);
             for (let [,func] in Iterator(funcs))
             {
-                func.liberatorCompleter = function liberatorCompleter(func, obj, string, args) {
+                func.liberatorCompleter = function liberatorCompleter(context, func, obj, args) {
                     let completer = completers[args.length - 1];
                     if (!completer)
                         return [];
-                    return completer.call(this, this.eval(obj), this.eval(args.pop()) + string, args);
+                    return completer.call(this, context, obj, args);
                 };
             }
         },
@@ -957,9 +952,7 @@ function Completion() //{{{
         _runCompleter: function _runCompleter(name, filter)
         {
             let context = CompletionContext(filter);
-            if (typeof name == "string")
-                name = this[name];
-            name.apply(this, [context].concat(Array.slice(arguments, 2)));
+            context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 2)));
             while (context.incomplete)
                 liberator.threadYield(true, true);
             return context.allItems;
@@ -1121,7 +1114,6 @@ function Completion() //{{{
                     text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
                     url:  url,
                     indicator: indicator,
-                    i: i,
                     icon: tab.image
                 };
             });

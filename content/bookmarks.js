@@ -723,6 +723,8 @@ function History() //{{{
         function (args) { history.list(args.string, args.bang); },
         {
             bang: true,
+            literal: true,
+            completer: function (context) completion.history(context)
             // completer: function (filter) completion.history(filter)
         });
 

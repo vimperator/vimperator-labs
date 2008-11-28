@@ -263,9 +263,9 @@ function Mappings() //{{{
         completion.setFunctionCompleter(mappings.get,
         [
             null,
-            function (obj, filter, args)
+            function (context, obj, args)
             {
-                let mode = this.eval(args[0]);
+                let mode = args[0]
                 return util.Array.flatten(
                 [
                     [[name, map.description] for ([i, name] in Iterator(map.names))]

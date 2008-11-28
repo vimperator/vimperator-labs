@@ -700,7 +700,7 @@ function Options() //{{{
                     context.title = ["Option"];
                     context.quote = [prefix, util.identity, ""];
                     context.keys = { text: "names", description: "description" };
-                    context.completions = [opt for (opt in opts)];
+                    context.completions = opts;
                     return;
                 }
                 else if (prefix == "no")

@@ -602,7 +602,7 @@ function Commands() //{{{
 
                 if (complete)
                 {
-                    if (argCount == "0" || args.length > 0  && (argCount == "1" || argCount == "?"))
+                    if (argCount == "0" || args.length > 0  && (/[1?]/.test(argCount)))
                         complete.highlight(i, sub.length, "SPELLCHECK")
                 }
 
@@ -639,9 +639,9 @@ function Commands() //{{{
                 if (complete)
                     args.completeArg = args.length - 1;
 
-                if (count <= 0)
-                    break;
                 i += count;
+                if (count <= 0 || i == str.length)
+                    break;
             }
 
             if (complete)
@@ -666,12 +666,14 @@ function Commands() //{{{
             }
 
             // check for correct number of arguments
-            if (!complete && (args.length == 0 && /^[1+]$/.test(argCount) ||
-                    // TODO: what is this for? -- djk
-                    literal && argCount == "+" && /^\s*$/.test(args.literalArg)))
+            if (args.length == 0 && /^[1+]$/.test(argCount) ||
+                    literal && argCount == "+" && /^\s*$/.test(args.literalArg))
             {
-                liberator.echoerr("E471: Argument required");
-                return null;
+                if (!complete)
+                {
+                    liberator.echoerr("E471: Argument required");
+                    return null;
+                }
             }
             else if (args.length == 1 && (argCount == "0") ||
                      args.length > 1  && /^[01?]$/.test(argCount))

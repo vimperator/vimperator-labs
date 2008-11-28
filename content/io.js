@@ -366,7 +366,10 @@ function IO() //{{{
     liberator.registerObserver("load_completion", function ()
     {
         completion.setFunctionCompleter([ioManager.getFile, ioManager.expandPath],
-            [function (obj, arg) completion.runCompleter("file", arg.replace(/[^\/]*$/, ""))]);
+            [function (context, obj, args) {
+                context.quote[2] = "";
+                completion.file(context, true);
+            }]);
     });
 
     var ioManager = {

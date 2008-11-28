@@ -215,7 +215,7 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (context) completion.dialog(context)
+                completer: function (context, args) completion.dialog(context)
             });
 
         // TODO: move this
