@@ -162,7 +162,7 @@ function Buffer() //{{{
                 ["1", "Show the link in the status line"],
                 ["2", "Show the link in the command line"]
             ],
-            validator: function (value) value >= 0 && value <= 2
+            validator: options.validateCompleter
         });
 
     options.add(["usermode", "um"],

@@ -233,8 +233,8 @@ function Bookmarks() //{{{
         "Set the default search engine",
         "string", "google",
         {
-            completer: function completer(filter) completion.runCompleter("search", filter, true),
-            validator: function validator(value)  completion.runCompleter("search", "", true).some(function ([s]) s == value)
+            completer: function completer(context) completion.search(context, true),
+            validator: function validator(value)   completion.runCompleter("search", "", true).some(function ([s]) s == value)
         });
 
     options.add(["preload"],

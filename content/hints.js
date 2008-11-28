@@ -568,7 +568,7 @@ function Hints() //{{{
             {
                 return [[m, ""] for each (m in ["contains", "wordstartswith", "firstletters", "custom"])];
             },
-            validator: function (value) /^(contains|wordstartswith|firstletters|custom)$/.test(value)
+            validator: options.validateCompleter
         });
 
     options.add(["wordseparators", "wsp"],

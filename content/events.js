@@ -48,16 +48,8 @@ function AutoCommands() //{{{
         "List of autocommand event names which should be ignored",
         "stringlist", "",
         {
-            completer: function (value) config.autocommands.concat([["all", "All events"]]),
-            validator: function (value)
-            {
-                let values = value.split(",");
-                let events = config.autocommands.map(function (event) event[0]);
-
-                events.push("all");
-
-                return values.every(function (event) events.indexOf(event) >= 0);
-            }
+            completer: function () config.autocommands.concat([["all", "All events"]]),
+            validator: options.validateCompleter
         });
 
     options.add(["focuscontent", "fc"],

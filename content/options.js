@@ -170,10 +170,10 @@ Option.prototype = {
 
     hasName: function (name) this.names.indexOf(name) >= 0,
 
-    isValidValue: function (value)
+    isValidValue: function (values)
     {
         if (this.validator)
-            return this.validator(value);
+            return this.validator(values);
         else
             return true;
     },
@@ -277,10 +277,9 @@ Option.prototype = {
 
         if (newValue == null)
             return "Operator " + operator + " not supported for option type " + this.type;
-        newValue = this.joinValues(newValue);
         if (!this.isValidValue(newValue))
             return "E474: Invalid argument: " + values;
-        this.set(newValue, scope);
+        this.setValues(newValue, scope);
     }
 }; //}}}
 
@@ -744,9 +743,13 @@ function Options() //{{{
                 if (!opt.value)
                     completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0]);
 
+                context.title = ["Option Value"];
                 if (completer)
                 {
-                    completions = completions.concat(completer(filter));
+                    let res = completer(context);
+                    if (!res)
+                        return;
+                    completions = completions.concat(res);
                     if (/list$/.test(option.type))
                     {
                         completions = completions.filter(function (val) opt.values.indexOf(val[0]) == -1);
@@ -762,7 +765,6 @@ function Options() //{{{
                     }
                 }
                 context.compare = function (a, b) 0;
-                context.title = ["Option Value"];
                 context.completions = completions;
             },
             literal: true,
@@ -987,6 +989,15 @@ function Options() //{{{
             ret.values = ret.option.parseValues(ret.value);
 
             return ret;
+        },
+
+        // TODO: Run this by default?
+        validateCompleter: function (values)
+        {
+            let self = this;
+            let completions = completion.runCompleter(function (context) self.completer(context), "");
+            return Array.concat(values).every(
+                function (value) completions.some(function (item) item[0] == value));
         },
 
         get store() storage.options,

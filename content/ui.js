@@ -441,7 +441,7 @@ function CommandLine() //{{{
         "charlist", "sfl",
         {
             completer: function completer(filter) [k for each (k in completion.urlCompleters)],
-            validator: function validator(value) Array.every(value, function (v) v in completion.urlCompleters)
+            validator: options.validateCompleter
         });
 
     options.add(["history", "hi"],
@@ -475,28 +475,19 @@ function CommandLine() //{{{
 
                  return engines.map(function (engine) [engine.alias, engine.description]);
              },
-             validator: function validator(value)
-             {
-                 let ss = Components.classes["@mozilla.org/browser/search-service;1"]
-                                    .getService(Components.interfaces.nsIBrowserSearchService);
-
-                 return value.split(",").every(function (alias) {
-                     let engine = ss.getEngineByAlias(alias);
-                     return engine && engine.supportsResponseType("application/x-suggestions+json");
-                 });
-             }
+             validator: options.validateCompleter
          });
 
     options.add(["wildignore", "wig"],
         "List of file patterns to ignore when completing files",
         "stringlist", "",
         {
-            validator: function validator(value)
+            validator: function validator(values)
             {
                 // TODO: allow for escaping the ","
                 try
                 {
-                    new RegExp("^(" + value.replace(",", "|", "g") + ")$");
+                    new RegExp("^(" + value.join("|") + ")$");
                     return true;
                 }
                 catch (e)
@@ -521,12 +512,7 @@ function CommandLine() //{{{
                     ["list:longest",  "List all and complete common string"]
                 ];
             },
-            validator: function validator(value)
-            {
-                let self = this;
-                return value.split(",").every(function (opt)
-                    self.completer().some(function ([key]) key == opt))
-            },
+            validator: options.validateCompleter,
             checkHas: function (value, val)
             {
                 let [first, second] = value.split(":", 2);
@@ -545,10 +531,7 @@ function CommandLine() //{{{
                     ["sort", "Always sort the completion list"]
                 ];
             },
-            validator: function validator(value)
-            {
-                return value.split(",").every(function (item) /^(sort|auto|)$/.test(item));
-            }
+            validator: options.validateCompleter
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1571,7 +1554,7 @@ function StatusLine() //{{{
                     ["2", "Always display status line"]
                 ];
             },
-            validator: function validator(value) value >= 0 && value <= 2
+            validator: options.validateCompleter
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

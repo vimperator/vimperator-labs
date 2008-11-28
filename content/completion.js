@@ -952,7 +952,9 @@ function Completion() //{{{
         _runCompleter: function _runCompleter(name, filter)
         {
             let context = CompletionContext(filter);
-            context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 2)));
+            let res = context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 2)));
+            if (res) // FIXME
+                return { items: res.map(function (i) ({ item: i })) };
             while (context.incomplete)
                 liberator.threadYield(true, true);
             return context.allItems;

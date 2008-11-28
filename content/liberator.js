@@ -128,7 +128,7 @@ const liberator = (function () //{{{
                         ["b", "Bookmark bar"]
                     ].concat(!liberator.has("tabs") ? [] : tabopts);
                 },
-                validator: function (value) Array.every(value, function (c) c in config.guioptions || tabopts.some(function (a) a[0] == c))
+                validator: options.validateCompleter
             });
 
         options.add(["helpfile", "hf"],

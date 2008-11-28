@@ -151,7 +151,7 @@ function Tabs() //{{{
                     ["2", "Always show tab bar"]
                 ];
             },
-            validator: function (value) value >= 0 && value <= 2
+            validator: options.validateCompleter
         });
 
     if (config.name == "Vimperator")
@@ -169,12 +169,7 @@ function Tabs() //{{{
                         ["paste", "P and gP mappings"]
                     ];
                 },
-                validator: function (value)
-                {
-                    return value.split(",").every(
-                        function (item) /^(homepage|quickmark|tabopen|paste|)$/.test(item)
-                    );
-                }
+                validator: options.validateCompleter
             });
 
         options.add(["newtab"],
@@ -192,12 +187,7 @@ function Tabs() //{{{
                         ["prefs", ":pref[erences]! or :prefs! command"]
                     ];
                 },
-                validator: function (value)
-                {
-                    return value == "all" || value.split(",").every(
-                        function (item) /^(addons|downloads|help|javascript|prefs|)$/.test(item)
-                    );
-                }
+                validator: options.validateCompleter
             });
 
         options.add(["popups", "pps"],
@@ -227,7 +217,7 @@ function Tabs() //{{{
                         ["4", "Open in the same tab unless it has a specific requested size"]
                     ];
                 },
-                validator: function (value) value >= 0 && value <= 4
+                validator: options.validateCompleter
             });
         // TODO: Add option, or only apply when go~=[nN]
         styles.addSheet("tab-binding", "chrome://*",

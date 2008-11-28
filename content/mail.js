@@ -218,7 +218,7 @@ function Mail() //{{{
 
                 return value;
             },
-            validator: function (value) /^(classic|wide|vertical|inherit)$/.test(value)
+            validator: options.validateCompleter
         });
 
     /*options.add(["threads"],
