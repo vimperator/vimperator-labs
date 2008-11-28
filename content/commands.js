@@ -473,7 +473,6 @@ function Commands() //{{{
                     resetCompletions();
 
                 var sub = str.substr(i);
-                //liberator.dump(i + ": " + sub + " - " + onlyArgumentsRemaining + "\n");
                 if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub))
                 {
                     onlyArgumentsRemaining = true;
@@ -531,12 +530,9 @@ function Commands() //{{{
                                     let type = argTypes[opt[1]];
                                     if (type && (!complete || arg != null))
                                     {
-                                        liberator.dump("arg: " + arg);
                                         arg = type.parse(arg);
-                                        liberator.dump("arg: " + arg);
                                         if (arg == null || (typeof arg == "number" && isNaN(arg)))
                                         {
-                                        liberator.dump("arg: " + arg);
                                             echoerr("Invalid argument for " + type.description + " option: " + optname);
                                             if (complete)
                                                 complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
