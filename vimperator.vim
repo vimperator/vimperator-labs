@@ -45,11 +45,11 @@ syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperator
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
     \ end="$" keepend oneline contains=vimperatorOption,vimperatorComment,vimperatorString
 
-syn keyword vimperatorOption activate act activelinkfgcolor alfc activelinkbgcolor albc cdpath cd complete cpt defsearch ds editor
-    \ extendedhinttags eht eventignore ei guioptions go helpfile hf hintmatching hm hs hinttags ht hinttimeout hto history hi
-    \ laststatus ls linkbgcolor lbc linkfgcolor lfc messages msgs newtab nextpattern pageinfo pa popups pps previewheight pvh
-    \ previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal suggestengines
-    \ titlestring urlseparator verbose vbs t_vb wildignore wig wildmode wim wildoptions wop wordseparators wsp
+syn keyword vimperatorOption activate act alfc albc cdpath cd complete cpt defsearch ds editor extendedhinttags eht eventignore ei
+    \ guioptions go helpfile hf hintmatching hm hs hinttags ht hinttimeout hto history hi laststatus ls lbc lfc messages msgs
+    \ newtab nextpattern pageinfo pa popups pps previewheight pvh previouspattern runtimepath rtp scroll scr shell sh shellcmdflag
+    \ shcf showstatuslinks ssli showtabline stal suggestengines titlestring urlseparator verbose vbs t_vb wildignore wig wildmode
+    \ wim wildoptions wop wordseparators wsp
     \ contained nextgroup=vimperatorSetMod
 
 " toggle options

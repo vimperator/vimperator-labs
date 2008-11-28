@@ -194,20 +194,6 @@ Define when tabs are automatically activated. Available items:
 ____
 
 
-|\'albc'| |\'activelinkbgcolor'|
-||'activelinkbgcolor' 'albc'|| string (default: ##88FF00)
-____
-Background color of the current active link during hint mode.
-____
-
-
-|\'alfc'| |\'activelinkfgcolor'|
-||'activelinkfgcolor' 'alfc'|| string (default: black)
-____
-Foreground color of the current active link during hint mode.
-____
-
-
 |\'cd'| |\'cdpath'|
 ||'cdpath' 'cd'|| string (default: black)
 ____
@@ -446,20 +432,6 @@ Determines when the last window will have a status line. Possible values:
 --------------------------------------
 
 Note: laststatus=1 not implemented yet.
-____
-
-
-|\'lbc'| |\'linkbgcolor'|
-||'linkbgcolor' 'lbc'|| string (default: yellow)
-____
-Background color of a link during hint mode.
-____
-
-
-|\'lfc'| |\'linkfgcolor'|
-||'linkfgcolor' 'lfc'|| string (default: black)
-____
-Foreground color of a link during hint mode.
 ____
 
 
