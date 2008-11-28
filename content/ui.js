@@ -1417,6 +1417,8 @@ function ItemList(id) //{{{
                 nodes[i] = row;
             for (let [i, row] in util.Array.iterator2(nodes))
             {
+                if (!row)
+                    continue;
                 let display = (i >= start && i < end);
                 if (display && row.parentNode != items)
                 {

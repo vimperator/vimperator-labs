@@ -124,8 +124,9 @@ CompletionContext.prototype = {
     // Temporary
     get allSubstrings()
     {
+        let lists = [c.substrings for ([i, c] in Iterator(this.contextList)) if (c.hasItems && c.items.length)];
+        let minStart = Math.min.apply(Math, [c.offset for ([k, c] in Iterator(this.contextList)) if (c.hasItems && c.items.length)]);
         let self = this;
-        let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
         let items = this.contextList.map(function (context) {
             if (!context.hasItems)
                 return [];
