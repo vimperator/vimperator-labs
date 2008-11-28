@@ -944,10 +944,12 @@ function Options() //{{{
         // TODO: Run this by default?
         validateCompleter: function (values)
         {
-            let self = this;
-            let completions = completion.runCompleter(function (context) self.completer(context), "");
+            let context = CompletionContext("");
+            let res = this.completer(context);
+            if (!res)
+                res = context.allItems.map(function (item) [item.text]);
             return Array.concat(values).every(
-                function (value) completions.some(function (item) item[0] == value));
+                function (value) res.some(function (item) item[0] == value));
         },
 
         get store() storage.options,

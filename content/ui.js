@@ -106,6 +106,7 @@ function CommandLine() //{{{
 
     var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
+    var lastSubstring = "";
 
     var statusTimer = new util.Timer(5, 100, function statusTell() {
         if (completionIndex >= completions.items.length)
@@ -324,6 +325,9 @@ function CommandLine() //{{{
             // highlight= won't work here.
             let start = commandWidget.selectionStart;
             let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
+            if (substring.length < 2 && substring != lastSubstring.substr(Math.max(0, lastSubstring.length - substring.length)))
+                return;
+            lastSubstring = substring;
             let node = <span style={highlight.get("Preview").value}>{substring}</span>
             editor.insertNode(util.xmlToDom(node, document), editor.rootElement, 1);
             commandWidget.selectionStart = commandWidget.selectionEnd = start;

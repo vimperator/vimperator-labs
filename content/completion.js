@@ -464,6 +464,14 @@ CompletionContext.prototype = {
             context.incomplete = false;
         }
     },
+
+    wait: function wait(interruptable, timeout)
+    {
+        let end = Date.now() + timeout;
+        while (this.incomplete && (!timeout || Date.now() > end))
+            liberator.threadYield(true, interruptable);
+        return this.incomplete;
+    }
 }
 
 function Completion() //{{{
@@ -1015,8 +1023,7 @@ function Completion() //{{{
             let res = context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 2)));
             if (res) // FIXME
                 return { items: res.map(function (i) ({ item: i })) };
-            while (context.incomplete)
-                liberator.threadYield(true, true);
+            context.wait(true);
             return context.allItems;
         },
 

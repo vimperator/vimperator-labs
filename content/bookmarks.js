@@ -235,7 +235,7 @@ function Bookmarks() //{{{
         "string", "google",
         {
             completer: function completer(context) completion.search(context, true),
-            validator: function validator(value)   completion.runCompleter("search", "", true).some(function ([s]) s == value)
+            validator: options.validateCompleter
         });
 
     options.add(["preload"],

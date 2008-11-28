@@ -21,6 +21,117 @@
         <!-- No white space. The table is white-space: pre; :( -->
         <content><html:span class="td-strut"/><html:span class="td-span"><children/></html:span></content>
     </binding>
+    <binding id="gradient" inheritstyle="true">
+        <content>
+            <div xmlns="http://www.w3.org/1999/xhtml" style="white-space: normal; border: 1px solid green; margin: 6px;">
+                <div xbl:inherits="style=right" style="height: 3px"/>
+                <table width="100%" style="height: 3px; margin-top: -3px">
+                    <tr>
+    <td xbl:inherits="style=left" style="opacity: 0.01"/>
+    <td xbl:inherits="style=left" style="opacity: 0.02"/>
+    <td xbl:inherits="style=left" style="opacity: 0.03"/>
+    <td xbl:inherits="style=left" style="opacity: 0.04"/>
+    <td xbl:inherits="style=left" style="opacity: 0.05"/>
+    <td xbl:inherits="style=left" style="opacity: 0.06"/>
+    <td xbl:inherits="style=left" style="opacity: 0.07"/>
+    <td xbl:inherits="style=left" style="opacity: 0.08"/>
+    <td xbl:inherits="style=left" style="opacity: 0.09"/>
+    <td xbl:inherits="style=left" style="opacity: 0.1"/>
+    <td xbl:inherits="style=left" style="opacity: 0.11"/>
+    <td xbl:inherits="style=left" style="opacity: 0.12"/>
+    <td xbl:inherits="style=left" style="opacity: 0.13"/>
+    <td xbl:inherits="style=left" style="opacity: 0.14"/>
+    <td xbl:inherits="style=left" style="opacity: 0.15"/>
+    <td xbl:inherits="style=left" style="opacity: 0.16"/>
+    <td xbl:inherits="style=left" style="opacity: 0.17"/>
+    <td xbl:inherits="style=left" style="opacity: 0.18"/>
+    <td xbl:inherits="style=left" style="opacity: 0.19"/>
+    <td xbl:inherits="style=left" style="opacity: 0.2"/>
+    <td xbl:inherits="style=left" style="opacity: 0.21"/>
+    <td xbl:inherits="style=left" style="opacity: 0.22"/>
+    <td xbl:inherits="style=left" style="opacity: 0.23"/>
+    <td xbl:inherits="style=left" style="opacity: 0.24"/>
+    <td xbl:inherits="style=left" style="opacity: 0.25"/>
+    <td xbl:inherits="style=left" style="opacity: 0.26"/>
+    <td xbl:inherits="style=left" style="opacity: 0.27"/>
+    <td xbl:inherits="style=left" style="opacity: 0.28"/>
+    <td xbl:inherits="style=left" style="opacity: 0.29"/>
+    <td xbl:inherits="style=left" style="opacity: 0.3"/>
+    <td xbl:inherits="style=left" style="opacity: 0.31"/>
+    <td xbl:inherits="style=left" style="opacity: 0.32"/>
+    <td xbl:inherits="style=left" style="opacity: 0.33"/>
+    <td xbl:inherits="style=left" style="opacity: 0.34"/>
+    <td xbl:inherits="style=left" style="opacity: 0.35"/>
+    <td xbl:inherits="style=left" style="opacity: 0.36"/>
+    <td xbl:inherits="style=left" style="opacity: 0.37"/>
+    <td xbl:inherits="style=left" style="opacity: 0.38"/>
+    <td xbl:inherits="style=left" style="opacity: 0.39"/>
+    <td xbl:inherits="style=left" style="opacity: 0.4"/>
+    <td xbl:inherits="style=left" style="opacity: 0.41"/>
+    <td xbl:inherits="style=left" style="opacity: 0.42"/>
+    <td xbl:inherits="style=left" style="opacity: 0.43"/>
+    <td xbl:inherits="style=left" style="opacity: 0.44"/>
+    <td xbl:inherits="style=left" style="opacity: 0.45"/>
+    <td xbl:inherits="style=left" style="opacity: 0.46"/>
+    <td xbl:inherits="style=left" style="opacity: 0.47"/>
+    <td xbl:inherits="style=left" style="opacity: 0.48"/>
+    <td xbl:inherits="style=left" style="opacity: 0.49"/>
+    <td xbl:inherits="style=left" style="opacity: 0.5"/>
+    <td xbl:inherits="style=left" style="opacity: 0.51"/>
+    <td xbl:inherits="style=left" style="opacity: 0.52"/>
+    <td xbl:inherits="style=left" style="opacity: 0.53"/>
+    <td xbl:inherits="style=left" style="opacity: 0.54"/>
+    <td xbl:inherits="style=left" style="opacity: 0.55"/>
+    <td xbl:inherits="style=left" style="opacity: 0.56"/>
+    <td xbl:inherits="style=left" style="opacity: 0.57"/>
+    <td xbl:inherits="style=left" style="opacity: 0.58"/>
+    <td xbl:inherits="style=left" style="opacity: 0.59"/>
+    <td xbl:inherits="style=left" style="opacity: 0.6"/>
+    <td xbl:inherits="style=left" style="opacity: 0.61"/>
+    <td xbl:inherits="style=left" style="opacity: 0.62"/>
+    <td xbl:inherits="style=left" style="opacity: 0.63"/>
+    <td xbl:inherits="style=left" style="opacity: 0.64"/>
+    <td xbl:inherits="style=left" style="opacity: 0.65"/>
+    <td xbl:inherits="style=left" style="opacity: 0.66"/>
+    <td xbl:inherits="style=left" style="opacity: 0.67"/>
+    <td xbl:inherits="style=left" style="opacity: 0.68"/>
+    <td xbl:inherits="style=left" style="opacity: 0.69"/>
+    <td xbl:inherits="style=left" style="opacity: 0.7"/>
+    <td xbl:inherits="style=left" style="opacity: 0.71"/>
+    <td xbl:inherits="style=left" style="opacity: 0.72"/>
+    <td xbl:inherits="style=left" style="opacity: 0.73"/>
+    <td xbl:inherits="style=left" style="opacity: 0.74"/>
+    <td xbl:inherits="style=left" style="opacity: 0.75"/>
+    <td xbl:inherits="style=left" style="opacity: 0.76"/>
+    <td xbl:inherits="style=left" style="opacity: 0.77"/>
+    <td xbl:inherits="style=left" style="opacity: 0.78"/>
+    <td xbl:inherits="style=left" style="opacity: 0.79"/>
+    <td xbl:inherits="style=left" style="opacity: 0.8"/>
+    <td xbl:inherits="style=left" style="opacity: 0.81"/>
+    <td xbl:inherits="style=left" style="opacity: 0.82"/>
+    <td xbl:inherits="style=left" style="opacity: 0.83"/>
+    <td xbl:inherits="style=left" style="opacity: 0.84"/>
+    <td xbl:inherits="style=left" style="opacity: 0.85"/>
+    <td xbl:inherits="style=left" style="opacity: 0.86"/>
+    <td xbl:inherits="style=left" style="opacity: 0.87"/>
+    <td xbl:inherits="style=left" style="opacity: 0.88"/>
+    <td xbl:inherits="style=left" style="opacity: 0.89"/>
+    <td xbl:inherits="style=left" style="opacity: 0.9"/>
+    <td xbl:inherits="style=left" style="opacity: 0.91"/>
+    <td xbl:inherits="style=left" style="opacity: 0.92"/>
+    <td xbl:inherits="style=left" style="opacity: 0.93"/>
+    <td xbl:inherits="style=left" style="opacity: 0.94"/>
+    <td xbl:inherits="style=left" style="opacity: 0.95"/>
+    <td xbl:inherits="style=left" style="opacity: 0.96"/>
+    <td xbl:inherits="style=left" style="opacity: 0.97"/>
+    <td xbl:inherits="style=left" style="opacity: 0.98"/>
+    <td xbl:inherits="style=left" style="opacity: 0.99"/>
+    <td xbl:inherits="style=left" style="opacity: 1"/>
+                    </tr>
+                </table>
+            </div>
+        </content>
+    </binding>
 </bindings>
 
 <!-- vim:se ft=xbl sw=4 sts=4 tw=0 et: -->
