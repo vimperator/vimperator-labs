@@ -1514,10 +1514,13 @@ function Completion() //{{{
                 let ctxt = context.fork(name, 0);
 
                 ctxt.title = [engine.description + " Suggestions"];
-                ctxt.background = true;
                 ctxt.compare = null;
-                ctxt.regenerate = true;
-                ctxt.generate = function () bookmarks.getSuggestions(name, this.filter);
+                ctxt.incomplete = true;
+                bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
+                    ctxt.incomplete = false;
+                    ctxt.completions = compl;
+                    liberator.dump(compl);
+                });
             });
         },
 

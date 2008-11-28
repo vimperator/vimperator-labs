@@ -285,18 +285,25 @@ const util = { //{{{
         return ret;
     },
 
-    httpGet: function httpGet(url)
+    httpGet: function httpGet(url, callback)
     {
         try
         {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("GET", url, false);
+            let xmlhttp = new XMLHttpRequest();
+            if (callback)
+            {
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4)
+                        callback(xmlhttp)
+                }
+            }
+            xmlhttp.open("GET", url, !!callback);
             xmlhttp.send(null);
             return xmlhttp;
         }
         catch (e)
         {
-            liberator.log("Error opening " + url, 1);
+            liberator.log("Error opening " + url + ": " + e, 1);
         }
     },
 

@@ -503,7 +503,7 @@ function Bookmarks() //{{{
             return searchEngines;
         },
 
-        getSuggestions: function getSuggestions(engine, query)
+        getSuggestions: function getSuggestions(engine, query, callback)
         {
             let ss = Components.classes["@mozilla.org/browser/search-service;1"]
                                .getService(Components.interfaces.nsIBrowserSearchService);
@@ -515,16 +515,25 @@ function Bookmarks() //{{{
             if (!queryURI)
                 return [];
 
-            let resp = util.httpGet(queryURI);
-            let json = Components.classes["@mozilla.org/dom/json;1"]
-                                 .createInstance(Components.interfaces.nsIJSON);
-            try
+            function process(resp)
             {
-                let results = json.decode(resp.responseText)[1];
-                return [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
+                let json = Components.classes["@mozilla.org/dom/json;1"]
+                                     .createInstance(Components.interfaces.nsIJSON);
+                let results = [];
+                try
+                {
+                    results = json.decode(resp.responseText)[1];
+                    results = [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
+                }
+                catch (e) {}
+                if (!callback)
+                    return results;
+                callback(results);
             }
-            catch (e) {}
-            return [];
+
+            let resp = util.httpGet(queryURI, callback && process);
+            if (!callback)
+                return process(resp);
         },
 
         // TODO: add filtering
