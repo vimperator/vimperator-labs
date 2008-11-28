@@ -395,11 +395,7 @@ let (array = util.Array)
 }
 
 const styles = storage.newObject("styles", Styles, false);
-try
-{
-    const highlight = storage.newObject("highlight", Highlights, false);
-}
-catch (e) { liberator.reportError(e) }
+const highlight = storage.newObject("highlight", Highlights, false);
 
 liberator.registerObserver("load_commands", function ()
 {

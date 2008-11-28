@@ -867,12 +867,8 @@ function Completion() //{{{
                 let filter = key + (string || "");
                 for (let [,obj] in Iterator(objects))
                 {
-                    try
-                    {
-                        this.context.fork(obj[1], top[OFFSET], this, fill,
-                            obj[0], obj[1], compl, compl != orig, filter, last, key.length);
-                    }
-                    catch (e) { liberator.reportError(e) }
+                    this.context.fork(obj[1], top[OFFSET], this, fill,
+                        obj[0], obj[1], compl, compl != orig, filter, last, key.length);
                 }
                 if (orig)
                     return;
@@ -1153,7 +1149,6 @@ function Completion() //{{{
             context.format = bookmarks.format;
             context.completions = bookmarks.get(context.filter)
             context.filters = [];
-            liberator.dump(tags);
             if (tags)
                 context.filters.push(function ({ item: item }) tags.every(function (tag) item.tags.indexOf(tag) > -1));
         },
@@ -1519,7 +1514,6 @@ function Completion() //{{{
                 bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
                     ctxt.incomplete = false;
                     ctxt.completions = compl;
-                    liberator.dump(compl);
                 });
             });
         },
