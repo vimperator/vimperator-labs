@@ -314,7 +314,7 @@ CompletionContext.prototype = {
             let start = 0;
             let idx;
             let length = filter.length;
-            while ((idx = text.indexOf(filter, start)) > -1 && idx < length)
+            while ((idx = text.indexOf(filter, start)) > -1 && idx < text.length)
             {
                 for (let end in util.range(idx + length, text.length + 1))
                     substrings.push(text.substring(idx, end));
@@ -1372,12 +1372,13 @@ function Completion() //{{{
             // TODO: Highlight when invalid
             context.advance(context.filter.length - len);
 
-            /* Not vim compatible, but is a significant enough improvement
-             * that it's worth breaking compatibility.
-             */
+            context.title = ["Option Value"];
             let completions = completer(context);
             if (!completions)
                 return;
+            /* Not vim compatible, but is a significant enough improvement
+             * that it's worth breaking compatibility.
+             */
             if (newValues instanceof Array)
             {
                 completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);

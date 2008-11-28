@@ -319,7 +319,7 @@ function CommandLine() //{{{
         catch (e) {}
         let wildmode = options.get("wildmode");
         let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
-        if (wildmode.checkHas(wildType, "longest"))
+        if (wildmode.checkHas(wildType, "longest") && commandWidget.selectionStart == commandWidget.value.length)
         {
             // highlight= won't work here.
             let start = commandWidget.selectionStart;

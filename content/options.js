@@ -695,9 +695,8 @@ function Options() //{{{
                 else if (prefix == "no")
                     return;
 
-                let [name, value] = context.filter.split("=", 2);
                 let option = opt.option;
-                context.advance(name.length + 1);
+                context.advance(context.filter.indexOf("=") + 1);
 
                 if (!option)
                     context.highlight(0, name.length, "SPELLCHECK");
@@ -713,7 +712,6 @@ function Options() //{{{
                     });
                 }
 
-                context.title = ["Option Value"];
                 completion.optionValue(context, opt.name, opt.operator);
             },
             literal: true,

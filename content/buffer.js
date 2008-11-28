@@ -495,8 +495,8 @@ function Buffer() //{{{
             argCount: "?",
             completer: function (context)
             {
-                context.title = ["Page Info"];
                 completion.optionValue(context, "pageinfo", "+", "");
+                context.title = ["Page Info"];
             }
         });
 
