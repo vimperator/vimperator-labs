@@ -499,7 +499,7 @@ function CommandLine() //{{{
                 // TODO: allow for escaping the ","
                 try
                 {
-                    new RegExp("^(" + value.join("|") + ")$");
+                    RegExp("^(" + values.join("|") + ")$");
                     return true;
                 }
                 catch (e)
