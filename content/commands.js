@@ -128,34 +128,18 @@ Command.prototype = {
         exec(args);
     },
 
-    // return true if the candidate name matches one of the command's aliases
-    // (including all acceptable abbreviations)
     hasName: function (name)
     {
-        // match a candidate name against a command name abbreviation spec - returning
-        // true if the candidate matches unambiguously
-        function matchAbbreviation(name, format)
+        for (let [,spec] in Iterator(this.specs))
         {
-            var minimum = format.indexOf("[");                    // minumum number of characters for a command name match
-            var fullname = format.replace(/\[(\w+)\]$/, "$1");    // full command name
-            if (fullname.indexOf(name) == 0 && name.length >= minimum)
+            let fullName = spec.replace(/\[(\w+)]$/, "$1");
+            let index = spec.indexOf("[");
+            let min = index == -1 ? fullName.length : index;
+
+            if (fullName.indexOf(name) == 0 && name.length >= min)
                 return true;
-            else
-                return false;
         }
 
-        for (let i = 0; i < this.specs.length; i++)
-        {
-            if (this.specs[i] == name)                       // literal command name
-            {
-                return true;
-            }
-            else if (/^(\w+|!)\[\w+\]$/.test(this.specs[i])) // abbreviation spec
-            {
-                if (matchAbbreviation(name, this.specs[i]))
-                    return true;
-            }
-        }
         return false;
     },
 
