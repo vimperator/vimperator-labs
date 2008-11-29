@@ -573,7 +573,7 @@ function Completion() //{{{
 
             // v[0] in orig and orig[v[0]] catch different cases. XPCOM
             // objects are problematic, to say the least.
-            if (obj.__proto__ == modules || obj.__proto__ == plugins) // Special case.
+            if ([modules, plugins, userContext].some(function (o) o.isPrototypeOf(obj)))
                 compl = [v for (v in Iterator(obj))];
             else
             {
@@ -790,7 +790,7 @@ function Completion() //{{{
 
             let cache = this.context.cache;
             this.context.getCache("eval", Object);
-            this.context.getCache("evalContext", function () ({ __proto__: modules }));
+            this.context.getCache("evalContext", function () ({ __proto__: userContext }));
 
             /* Okay, have parse stack. Figure out what we're completing. */
 
@@ -839,7 +839,6 @@ function Completion() //{{{
 
                     if (prev != statement)
                         s = EVAL_TMP + "." + s;
-                    liberator.dump("s  : " + s);
                     cacheKey = str.substring(statement, dot);
 
                     if (checkFunction(prev, dot, cacheKey))
@@ -858,7 +857,8 @@ function Completion() //{{{
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
                 cacheKey = null;
-                let obj = [[cache.evalContext, "Local Variables"], [modules, "modules"], [window, "window"]]; // Default objects;
+                let obj = [[cache.evalContext, "Local Variables"], [userContext, "Global Variables"],
+                           [modules, "modules"], [window, "window"]]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
                     dot = statement - 1;
@@ -906,6 +906,8 @@ function Completion() //{{{
                         }
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
+                        if (obj == cache.evalContext)
+                            context.regenerate = true;
                         context.generate = function () self.objectKeys(obj);
                     }
                 }
