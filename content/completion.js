@@ -276,14 +276,14 @@ CompletionContext.prototype = {
         if (this.maxItems)
             filtered = filtered.slice(0, this.maxItems);
 
+        if (options.get("wildoptions").has("sort") && this.compare)
+            filtered.sort(this.compare);
         let quote = this.quote;
         if (quote)
             filtered.forEach(function (item) {
                 item.unquoted = item.text;
                 item.text = quote[0] + quote[1](item.text) + quote[2];
             })
-        if (options.get("wildoptions").has("sort") && this.compare)
-            filtered.sort(this.compare);
         return this.cache.filtered = filtered;
     },
 
@@ -886,8 +886,8 @@ function Completion() //{{{
                                 return a - b;
                             return isNaN(b) - isNaN(a) || compare(a, b);
                         }
-                        if (!context.anchored) // We've alreasy listed anchored matches, so don't list them again here.
-                            context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
+                        if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
+                            context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
                         context.generate = function () self.objectKeys(obj);
                     }
                 }
