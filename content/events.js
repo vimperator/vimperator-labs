@@ -886,16 +886,16 @@ function Events() //{{{
                         {
                             if (modifier) // check for modifiers
                             {
-                                ctrl  = /[C]-/i.test(matches[1]);
-                                alt   = /[A]-/i.test(matches[1]);
-                                shift = /[S]-/i.test(matches[1]);
-                                meta  = /[M]-/i.test(matches[1]);
+                                ctrl  = /[C]-/i.test(modifier);
+                                alt   = /[A]-/i.test(modifier);
+                                shift = /[S]-/i.test(modifier);
+                                meta  = /[M]-/i.test(modifier);
                             }
                             if (keyname.length == 1)
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
-                                charCode = matches[2].charCodeAt(0);
+                                charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
                             {
@@ -905,7 +905,7 @@ function Events() //{{{
                             {
                                 string = "<Nop>";
                             }
-                            else if (keyCode = getKeyCode(matches[2]))
+                            else if (keyCode = getKeyCode(keyname))
                             {
                                 charCode = 0;
                             }
