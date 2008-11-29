@@ -34,6 +34,7 @@ function Script(name)
         return plugins.contexts[name];
     plugins.contexts[name] = this;
     this.NAME = name;
+    this.__context__ = this;
 }
 Script.prototype = plugins;
 

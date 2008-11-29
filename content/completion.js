@@ -158,6 +158,7 @@ CompletionContext.prototype = {
     },
 
     get caret() this._caret - this.offset,
+    set caret(val) this._caret = val + this.offset,
 
     get compare() this._compare || function () 0,
     set compare(val) this._compare = val,
@@ -452,8 +453,8 @@ CompletionContext.prototype = {
         this.updateAsync = false;
         if (this.editor)
         {
-            this.value = this.editor.rootElement.textContent;
-            this._caret = this.editor.selection.getRangeAt(0).startOffset;
+            this.value = this.editor.selection.focusNode.textContent;
+            this._caret = this.editor.selection.focusOffset;
         }
         else
         {
@@ -880,11 +881,11 @@ function Completion() //{{{
                         //  Constants are unsorted, and appear before other non-null strings.
                         //  Other strings are sorted in the default manner.
                         let compare = context.compare;
-                        context.compare = function ({ item: { key: a } }, { item: { key: b } })
+                        context.compare = function (a, b)
                         {
-                            if (!isNaN(a) && !isNaN(b))
-                                return a - b;
-                            return isNaN(b) - isNaN(a) || compare(a, b);
+                            if (!isNaN(a.key) && !isNaN(b.key))
+                                return a.key - b.key;
+                            return isNaN(b.key) - isNaN(a.key) || compare(a, b);
                         }
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));

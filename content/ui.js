@@ -206,8 +206,15 @@ function CommandLine() //{{{
 
             if (compl)
             {
-                setCommand(command.substring(0, completions.start) + compl + completionPostfix);
-                commandWidget.selectionStart = commandWidget.selectionEnd = completions.start + compl.length;
+                previewClear();
+                let editor = commandWidget.inputField.editor;
+
+                editor.selection.focusNode.textContent = command.substring(0, completions.start) + compl + completionPostfix;
+
+                let range = editor.selection.getRangeAt(0);
+                range.setStart(range.startContainer, completions.start + compl.length);
+                range.collapse(true);
+
                 if (longest)
                     liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
 
@@ -306,18 +313,21 @@ function CommandLine() //{{{
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
     }
 
-    function previewSubstring()
+    function previewClear()
     {
-        if (!options.get("wildoptions").has("auto") || !completionContext)
-            return;
-        // Kludge. Major kludge.
-        let editor = commandWidget.inputField.editor;
         try
         {
+            let editor = commandWidget.inputField.editor;
             let node = editor.rootElement;
             editor.deleteNode(node.firstChild.nextSibling);
         }
         catch (e) {}
+    }
+    function previewSubstring()
+    {
+        if (!options.get("wildoptions").has("auto") || !completionContext)
+            return;
+        let editor = commandWidget.inputField.editor;
         let wildmode = options.get("wildmode");
         let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
         if (wildmode.checkHas(wildType, "longest") && commandWidget.selectionStart == commandWidget.value.length)
@@ -812,13 +822,7 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            let editor = commandWidget.inputField.editor;
-            try
-            {
-                let node = editor.rootElement;
-                editor.deleteNode(node.firstChild.nextSibling);
-            }
-            catch (e) {}
+            previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
