@@ -51,10 +51,11 @@ function CompletionContext(editor, name, offset)
             self.contexts[name] = this;
         self.filters = parent.filters.slice();
         self.incomplete = false;
-        self.message = null;
-        self.parent = parent;
-        self.offset = parent.offset + (offset || 0);
         self.keys = util.cloneObject(parent.keys);
+        self.message = null;
+        self.offset = parent.offset + (offset || 0);
+        self.parent = parent;
+        self.waitingForTab = false;
         delete self._filter; // FIXME?
         delete self._generate;
         delete self._ignoreCase;
@@ -62,7 +63,7 @@ function CompletionContext(editor, name, offset)
             self[key] = parent[key]);
         if (self != this)
             return self;
-        ["_caret", "contextList", "maxItems", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value", "waitingForTab"].forEach(function (key) {
+        ["_caret", "contextList", "maxItems", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
             self.__defineGetter__(key, function () this.top[key]);
             self.__defineSetter__(key, function (val) this.top[key] = val);
         });
@@ -99,6 +100,7 @@ function CompletionContext(editor, name, offset)
         this.onUpdate = function () true;
         this.top = this;
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
+        this.__defineGetter__("waitingForTab", function () this.contextList.some(function (c) c.parent && c.waitingForTab));
         this.reset();
     }
     this.cache = {};
@@ -201,8 +203,8 @@ CompletionContext.prototype = {
         this.process = format.process || this.process;
     },
 
-    //get message() this._message || (this.incomplete ? "Waiting..." : null),
-    //set message(val) this._message = val,
+    get message() this._message || (this.waitingForTab ? "Waiting for <Tab>" : null),
+    set message(val) this._message = val,
 
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },
@@ -280,7 +282,7 @@ CompletionContext.prototype = {
                 item.unquoted = item.text;
                 item.text = quote[0] + quote[1](item.text) + quote[2];
             })
-        if (options.get("wildoptions").has("sort"))
+        if (options.get("wildoptions").has("sort") && this.compare)
             filtered.sort(this.compare);
         return this.cache.filtered = filtered;
     },
@@ -577,7 +579,10 @@ function Completion() //{{{
             // return that, too.
             if (orig.wrappedJSObject)
                 compl.push(["wrappedJSObject", obj]);
-            // Parse keys for sorting
+
+            // Add keys for sorting later.
+            // Numbers are parsed to ints.
+            // Constants, which should be unsorted, are found and marked null.
             compl.forEach(function (item) {
                 let key = item[0];
                 if (!isNaN(key))
@@ -586,6 +591,7 @@ function Completion() //{{{
                     key = "";
                 item.key = key;
             });
+
             return compl;
         }
 
@@ -615,9 +621,11 @@ function Completion() //{{{
         let get = function get(n, m, o)
         {
             let a = stack[n >= 0 ? n : stack.length + n];
-            if (m == undefined)
+            if (o != null)
+                a = a[o];
+            if (m == null)
                 return a;
-            return a[o][a[o].length - m - 1];
+            return a[a.length - m - 1];
         }
 
         function buildStack(start)
@@ -755,9 +763,6 @@ function Completion() //{{{
 
             /* Okay, have parse stack. Figure out what we're completing. */
 
-            if (/[\])}"';]/.test(str[lastIdx - 1]) && last != '"' && last != '"')
-                return;
-
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
             let prev = 0;
@@ -776,7 +781,6 @@ function Completion() //{{{
                 if (!res || self.context.tabPressed || key in self.context.cache.eval)
                     return false;
                 self.context.waitingForTab = true;
-                self.context.message = "Waiting for <Tab>";
                 return true;
             }
 
@@ -840,7 +844,7 @@ function Completion() //{{{
                 context.itemCache = context.parent.itemCache;
                 context.key = name;
 
-                if (last != undefined)
+                if (last != null)
                     context.quote = [last, function (text) util.escapeString(text.substr(offset), ""), last];
                 else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
                     context.filters.push(function (item) /^[\w$][\w\d$]*$/.test(item.text));
@@ -852,18 +856,27 @@ function Completion() //{{{
             {
                 let orig = compl;
                 if (!compl)
-                    compl = function (context, obj) {
+                {
+                    compl = function (context, obj)
+                    {
                         context.process = [null, function highlight(item, v) template.highlight(v, true)];
-                        if (!context.anchored)
-                            context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
+                        // Sort in a logical fasion for object keys:
+                        //  Numbers are sorted as numbers, rather than strings, and appear first.
+                        //  Constants are unsorted, and appear before other non-null strings.
+                        //  Other strings are sorted in the default manner.
+                        let compare = context.compare;
                         context.compare = function ({ item: { key: a } }, { item: { key: b } })
                         {
                             if (!isNaN(a) && !isNaN(b))
                                 return a - b;
-                            return String.localeCompare(a, b);
+                            return isNaN(b) - isNaN(a) || compare(a, b);
                         }
+                        if (!context.anchored) // We've alreasy listed anchored matches, so don't list them again here.
+                            context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, key.length), key));
                         context.generate = function () self.objectKeys(obj);
                     }
+                }
+                // TODO: Make this a generic completion helper function.
                 let filter = key + (string || "");
                 for (let [,obj] in Iterator(objects))
                 {
@@ -884,17 +897,26 @@ function Completion() //{{{
             // Otherwise, do nothing.
             if (last == "'" || last == '"')
             {
-            // TODO: Make this work with unquoted integers.
-
                 /*
                  * str = "foo[bar + 'baz"
                  * obj = "foo"
                  * key = "bar + ''"
                  */
+
                 // The top of the stack is the sting we're completing.
                 // Wrap it in its delimiters and eval it to process escape sequences.
-                let string = str.substring(top[OFFSET] + 1);
+                let string = str.substring(get(-1)[OFFSET] + 1, lastIdx);
                 string = eval(last + string + last);
+
+                function getKey()
+                {
+                    if (last == "")
+                        return "";
+                    // After the opening [ upto the opening ", plus '' to take care of any operators before it
+                    let key = str.substring(get(-2, 0, STATEMENTS), get(-1, null, OFFSET)) + "''";
+                    // Now eval the key, to process any referenced variables.
+                    return this.eval(key);
+                }
 
                 /* Is this an object accessor? */
                 if (get(-2)[CHAR] == "[") // Are we inside of []?
@@ -912,12 +934,8 @@ function Completion() //{{{
 
                     // Begining of the statement upto the opening [
                     let obj = getObj(-3, get(-2)[OFFSET]);
-                    // After the opening [ upto the opening ", plus '' to take care of any operators before it
-                    let key = str.substring(get(-2)[OFFSET] + 1, top[OFFSET]) + "''";
-                    // Now eval the key, to process any referenced variables.
-                    key = this.eval(key);
 
-                    return complete.call(this, obj, key, null, string, last);
+                    return complete.call(this, obj, getKey(), null, string, last);
                 }
 
                 // Is this a function call?
@@ -934,7 +952,6 @@ function Completion() //{{{
                         return; // No. We're done.
 
                     let [offset, obj, func] = getObjKey(-3);
-                    let key = str.substring(get(-2, 0, STATEMENTS), top[OFFSET]) + "''";
                     if (!obj.length)
                         return;
 
@@ -957,19 +974,29 @@ function Completion() //{{{
                         prev = idx;
                         args.__defineGetter__(i, function () self.eval(ret));
                     }
-                    key = this.eval(key);
+                    let key = getKey();
                     args.push(key + string);
 
-                    compl = function (context, obj) {
+                    compl = function (context, obj)
+                    {
                         let res = completer.call(self, context, func, obj, args);
                         if (res)
                             context.completions = res;
                     }
+
                     obj[0][1] += "." + func + "(... [" + args.length + "]";
                     return complete.call(this, obj, key, compl, string, last);
                 }
 
+                // In a string that's not an obj key or a function arg.
                 // Nothing to do.
+                return;
+            }
+
+            // Wait for a keypress.
+            if (!this.context.tabPressed && /[{([\])}"';]/.test(str[lastIdx - 1]) && last != '"' && last != '"')
+            {
+                this.context.waitingForTab = true;
                 return;
             }
 
