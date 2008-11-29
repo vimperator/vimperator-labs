@@ -305,7 +305,7 @@ function Mappings() //{{{
             for (let [,name] in Iterator(map.names))
             {
                 for (let [,mode] in Iterator(map.modes))
-                    removeMap(mode, map.name);
+                    removeMap(mode, name);
             }
 
             addMap(map, true);
