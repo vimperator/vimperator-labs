@@ -349,7 +349,6 @@ CompletionContext.prototype = {
     advance: function advance(count)
     {
         delete this._ignoreCase;
-        liberator.dump(count);
         if (this.quote)
         {
             count = this.quote[0].length + this.quote[1](this.filter.substr(0, count)).length;
