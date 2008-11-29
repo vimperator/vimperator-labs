@@ -628,7 +628,7 @@ function Completion() //{{{
             return a[a.length - m - 1];
         }
 
-        function buildStack(start)
+        function buildStack(filter)
         {
             let self = this;
             /* Push and pop the stack, maintaining references to 'top' and 'last'. */
@@ -661,15 +661,26 @@ function Completion() //{{{
 
             let i = 0, c = "";     /* Current index and character, respectively. */
 
-            stack = [];
-            functions = [];
-            push("#root");
+            // Reuse the old stack.
+            if (str && filter.substr(0, str.length) == str)
+            {
+                i = str.length;
+                if (this.popStatement)
+                    top[STATEMENTS].pop();
+            }
+            else
+            {
+                stack = [];
+                functions = [];
+                push("#root");
+            }
 
             /* Build a parse stack, discarding entries as opening characters
              * match closing characters. The stack is walked from the top entry
              * and down as many levels as it takes us to figure out what it is
              * that we're completing.
              */
+            str = filter;
             let length = str.length;
             for (; i < length; lastChar = c, i++)
             {
@@ -733,8 +744,12 @@ function Completion() //{{{
                 }
             }
 
+            this.popStatement = false;
             if (!/[\w\d$]/.test(lastChar) && lastNonwhite != ".")
+            {
+                this.popStatement = true;
                 top[STATEMENTS].push(i);
+            }
 
             lastIdx = i;
         }
@@ -742,13 +757,11 @@ function Completion() //{{{
         this.complete = function _complete(context)
         {
             this.context = context;
-            let string = context.filter;
 
             let self = this;
             try
             {
-                str = string;
-                buildStack.call(this);
+                buildStack.call(this, context.filter);
             }
             catch (e)
             {
