@@ -31,6 +31,13 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 const plugins = {};
 plugins.__proto__ = modules;
 
+const EVAL_ERROR = "__liberator_eval_error";
+const EVAL_RESULT = "__liberator_eval_result";
+const EVAL_STRING = "__liberator_eval_string";
+const userContext = {
+    __proto__: modules
+};
+
 const liberator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -705,29 +712,32 @@ const liberator = (function () //{{{
                 commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
-        eval: function (str)
+        loadScript: function (uri, context)
         {
-            const fileName = "chrome://liberator/content/liberator.js";
-            const line = new Error().lineNumber + 3;
+            let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                   .getService(Components.interfaces.mozIJSSubScriptLoader);
+            loader.loadSubScript(uri, context);
+        },
+
+        eval: function (str, context)
+        {
             try
             {
-                return window.eval(str);
+                if (!context)
+                    context = userContext;
+                context[EVAL_ERROR] = null;
+                context[EVAL_STRING] = str;
+                context[EVAL_RESULT] = null;
+                this.loadScript("chrome://liberator/content/eval.js", context);
+                if (context[EVAL_ERROR])
+                    throw context[EVAL_ERROR];
+                return context[EVAL_RESULT];
             }
-            catch (e)
+            finally
             {
-                if (e.fileName == fileName && e.lineNumber >= line)
-                {
-                    e.source = str;
-                    e.fileName = "<Evaled string>";
-                    e.lineNumber -= line;
-                    if (modules.io && io.sourcing)
-                    {
-                        liberator.dump(io.sourcing);
-                        e.fileName = io.sourcing.file;
-                        e.lineNumber += io.sourcing.line;
-                    }
-                }
-                throw e;
+                delete context[EVAL_ERROR];
+                delete context[EVAL_RESULT];
+                delete context[EVAL_STRING];
             }
         },
 

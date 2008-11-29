@@ -822,11 +822,9 @@ lookup:
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
                 {
-                    let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                           .getService(Components.interfaces.mozIJSSubScriptLoader);
                     try
                     {
-                        loader.loadSubScript(uri.spec, new Script(file.path));
+                        liberator.loadScript(uri.spec, new Script(file.path));
                     }
                     catch (e)
                     {

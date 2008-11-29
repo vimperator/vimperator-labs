@@ -26,12 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-// An eval with a cleaner lexical scope.
-modules._cleanEval = function _cleanEval(__liberator_eval_arg, __liberator_eval_tmp)
-{
-    return window.eval(__liberator_eval_arg);
-}
-
 function CompletionContext(editor, name, offset)
 {
     if (!(this instanceof arguments.callee))
@@ -359,6 +353,13 @@ CompletionContext.prototype = {
             this._filter = this._filter.substr(count);
     },
 
+    getCache: function (key, defVal)
+    {
+        if (!(key in this.cache))
+            this.cache[key] = defVal();
+        return this.cache[key];
+    },
+
     getItems: function getItems(start, end)
     {
         let self = this;
@@ -493,8 +494,6 @@ function Completion() //{{{
     catch (e) {}
 
     const EVAL_TMP = "__liberator_eval_tmp";
-    Javascript.cleanEval = _cleanEval;
-    delete modules._cleanEval;
 
     function Javascript()
     {
@@ -571,11 +570,19 @@ function Completion() //{{{
             // the wrappedJSObject instead, and return any keys
             // available in the object itself.
             let orig = obj;
-            if (obj.wrappedJSObject)
-                obj = obj.wrappedJSObject;
+
             // v[0] in orig and orig[v[0]] catch different cases. XPCOM
             // objects are problematic, to say the least.
-            compl = [v for (v in this.iter(obj)) if (v[0] in orig || orig[v[0]] !== undefined)];
+            if (obj.__proto__ == modules || obj.__proto__ == plugins) // Special case.
+                compl = [v for (v in Iterator(obj))];
+            else
+            {
+                if (obj.wrappedJSObject)
+                    obj = obj.wrappedJSObject;
+                compl = [v for (v in this.iter(obj))
+                    if ((typeof orig == "object" && v[0] in orig) || orig[v[0]] !== undefined)];
+            }
+
             // And if wrappedJSObject happens to be available,
             // return that, too.
             if (orig.wrappedJSObject)
@@ -599,18 +606,26 @@ function Completion() //{{{
         this.eval = function eval(arg, key, tmp)
         {
             let cache = this.context.cache.eval;
+            let context = this.context.cache.evalContext;
+
             if (!key)
                 key = arg;
             if (key in cache)
                 return cache[key];
 
+            context[EVAL_TMP] = tmp;
             try
             {
-                return cache[key] = Javascript.cleanEval(arg, tmp);
+                let res = liberator.eval(arg, context);
+                return res;
             }
             catch (e)
             {
                 return null;
+            }
+            finally
+            {
+                delete context[EVAL_TMP];
             }
         }
 
@@ -773,8 +788,9 @@ function Completion() //{{{
                 return;
             }
 
-            if (!this.context.cache.eval)
-                this.context.cache.eval = {};
+            let cache = this.context.cache;
+            this.context.getCache("eval", Object);
+            this.context.getCache("evalContext", function () ({ __proto__: modules }));
 
             /* Okay, have parse stack. Figure out what we're completing. */
 
@@ -794,7 +810,7 @@ function Completion() //{{{
             function checkFunction(start, end, key)
             {
                 let res = functions.some(function (idx) idx >= start && idx < end);
-                if (!res || self.context.tabPressed || key in self.context.cache.eval)
+                if (!res || self.context.tabPressed || key in cache.eval)
                     return false;
                 self.context.waitingForTab = true;
                 return true;
@@ -817,12 +833,13 @@ function Completion() //{{{
                 {
                     if (dot < statement)
                         continue;
-                    if (dot > stop)
+                    if (dot > stop || dot <= prev)
                         break;
                     let s = str.substring(prev, dot);
 
                     if (prev != statement)
                         s = EVAL_TMP + "." + s;
+                    liberator.dump("s  : " + s);
                     cacheKey = str.substring(statement, dot);
 
                     if (checkFunction(prev, dot, cacheKey))
@@ -841,7 +858,7 @@ function Completion() //{{{
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
                 cacheKey = null;
-                let obj = [[modules, "modules"], [window, "window"]]; // Default objects;
+                let obj = [[cache.evalContext, "Local Variables"], [modules, "modules"], [window, "window"]]; // Default objects;
                 /* Is this an object dereference? */
                 if (dot < statement) // No.
                     dot = statement - 1;
@@ -1022,7 +1039,7 @@ function Completion() //{{{
             let [offset, obj, key] = getObjKey(-1);
 
             // Wait for a keypress before completing the default objects.
-            if (!this.context.tabPressed && key == "" && obj.length == 2)
+            if (!this.context.tabPressed && key == "" && obj.length > 1)
             {
                 this.context.waitingForTab = true;
                 this.context.message = "Waiting for key press";
