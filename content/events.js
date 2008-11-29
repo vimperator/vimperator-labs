@@ -716,7 +716,7 @@ function Events() //{{{
         "List all macros",
         function (args) { completion.listCompleter("macro", args[0]) },
         {
-            argCount: "1",
+            argCount: "?",
             completer: function (context) completion.macro(context),
         });
 

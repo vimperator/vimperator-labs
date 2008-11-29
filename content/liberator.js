@@ -830,6 +830,7 @@ const liberator = (function () //{{{
             if (window != ww.activeWindow)
                 return;
 
+            let elem = config.mainWidget || window.content;
             // TODO: make more generic
             try
             {
@@ -840,16 +841,15 @@ const liberator = (function () //{{{
                         i = 0;
                     gDBView.selection.select(i);
                 }
+
+                if (this.has("tabs"))
+                {
+                    let frame = tabs.localStore.focusedFrame;
+                    if (frame && frame.top == window.content)
+                        elem = frame;
+                }
             }
             catch (e) {}
-
-            let elem = config.mainWidget || window.content;
-            if (this.has("tabs"))
-            {
-                let frame = tabs.localStore.focusedFrame;
-                if (frame && frame.top == window.content)
-                    elem = frame;
-            }
             if (clearFocusedElement && document.commandDispatcher.focusedElement)
                 document.commandDispatcher.focusedElement.blur();
             if (elem && (elem != document.commandDispatcher.focusedElement))
