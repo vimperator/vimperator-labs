@@ -369,7 +369,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str == "xml";
-        let output = util.xmlToDom(<div class={"ex-command-output " + highlightGroup}>{template.maybeXML(str)}</div>, doc);
+        let output = util.xmlToDom(<div class={"ex-command-output "} highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
@@ -753,11 +753,11 @@ function CommandLine() //{{{
 
             liberator.callInMainThread(function () {
                 let where = setLine;
-                if (flags & this.FORCE_MULTILINE)
+                if (flags & commandline.FORCE_MULTILINE)
                     where = setMultiline;
-                else if (flags & this.FORCE_SINGLELINE)
+                else if (flags & commandline.FORCE_SINGLELINE)
                     where = function () setLine(str, highlightGroup, true);
-                else if (flags & this.DISALLOW_MULTILINE)
+                else if (flags & commandline.DISALLOW_MULTILINE)
                 {
                     if (!outputContainer.collapsed)
                         where = null;
