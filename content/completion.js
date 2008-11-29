@@ -1332,12 +1332,14 @@ function Completion() //{{{
             }
         },
 
-        history: function _history(context)
+        history: function _history(context, maxItems)
         {
             context.format = history.format;
             context.title = ["History"]
             context.compare = null;
             //context.background = true;
+            if (context.maxItems == null)
+                context.maxItems = 100;
             context.regenerate = true;
             context.generate = function () history.get(context.filter, this.maxItems);
         },
