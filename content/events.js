@@ -418,14 +418,14 @@ function Events() //{{{
     {
         str = str.toLowerCase();
 
-        for (let i = 0; i < keyTable.length; i++)
+        for (let [,key] in Iterator(keyTable))
         {
-            for (let j = 0; j < keyTable[i][1].length; j++)
+            for (let [,name] in Iterator(key[1]))
             {
                 // we don't store lowercase keys in the keyTable, because we
                 // also need to get good looking strings for the reverse action
-                if (keyTable[i][1][j].toLowerCase() == str)
-                    return keyTable[i][0];
+                if (name.toLowerCase() == str)
+                    return key[0];
             }
         }
 
@@ -871,34 +871,39 @@ function Events() //{{{
             {
                 noremap = !!noremap;
 
-                for (var i = 0; i < keys.length; i++)
+                for (let i = 0; i < keys.length; i++)
                 {
-                    var charCode = keys.charCodeAt(i);
-                    var keyCode = 0;
-                    var shift = false, ctrl = false, alt = false, meta = false;
+                    let charCode = keys.charCodeAt(i);
+                    let keyCode = 0;
+                    let shift = false, ctrl = false, alt = false, meta = false;
+                    let string = null;
 
                     //if (charCode == 92) // the '\' key FIXME: support the escape key
                     if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
                     {
-                        var matches = keys.substr(i + 1).match(/([CSMAcsma]-)*([^>]+)/);
-                        if (matches && matches[2])
+                        let [match, modifier, keyname] = keys.match(/<([CSMA]-)*(.+?)>/i) || [];
+                        if (keyname)
                         {
-                            if (matches[1]) // check for modifiers
+                            if (modifier) // check for modifiers
                             {
-                                ctrl  = /[cC]-/.test(matches[1]);
-                                alt   = /[aA]-/.test(matches[1]);
-                                shift = /[sS]-/.test(matches[1]);
-                                meta  = /[mM]-/.test(matches[1]);
+                                ctrl  = /[C]-/i.test(matches[1]);
+                                alt   = /[A]-/i.test(matches[1]);
+                                shift = /[S]-/i.test(matches[1]);
+                                meta  = /[M]-/i.test(matches[1]);
                             }
-                            if (matches[2].length == 1)
+                            if (keyname.length == 1)
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
                                 charCode = matches[2].charCodeAt(0);
                             }
-                            else if (matches[2].toLowerCase() == "space")
+                            else if (keyname.toLowerCase() == "space")
                             {
                                 charCode = 32;
+                            }
+                            else if (keyname.toLowerCase() == "nop")
+                            {
+                                string = "<Nop>";
                             }
                             else if (keyCode = getKeyCode(matches[2]))
                             {
@@ -909,7 +914,7 @@ function Events() //{{{
                                 break;
                             }
 
-                            i += matches[0].length + 1;
+                            i += match.length - 1;
                         }
                     }
                     else // a simple key
@@ -918,15 +923,23 @@ function Events() //{{{
                         shift = (keys[i] >= "A" && keys[i] <= "Z");
                     }
 
-                    var elem = window.document.commandDispatcher.focusedElement;
+                    let elem = window.document.commandDispatcher.focusedElement;
                     if (!elem)
                         elem = window.content;
 
-                    var evt = doc.createEvent("KeyEvents");
+                    let evt = doc.createEvent("KeyEvents");
                     evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                     evt.noremap = noremap;
                     evt.isMacro = true;
-                    elem.dispatchEvent(evt);
+                    if (string)
+                    {
+                        evt.liberatorString = string;
+                        events.onKeyPress(evt);
+                    }
+                    else
+                    {
+                        elem.dispatchEvent(evt);
+                    }
                     if (!this.feedingKeys)
                         break;
                     // stop feeding keys if page loading failed
@@ -952,10 +965,13 @@ function Events() //{{{
         toString: function (event)
         {
             if (!event)
-                return;
+                return "[object Mappings]";
 
-            var key = null;
-            var modifier = "";
+            if (event.liberatorString)
+                return event.liberatorString;
+
+            let key = null;
+            let modifier = "";
 
             if (event.ctrlKey)
                 modifier += "C-";
@@ -1210,7 +1226,7 @@ function Events() //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
-            var key = events.toString(event);
+            let key = events.toString(event);
             if (!key)
                  return true;
 
@@ -1253,9 +1269,9 @@ function Events() //{{{
                 }
             }
 
-            var stop = true; // set to false if we should NOT consume this event but let Firefox handle it
+            let stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
-            var win = document.commandDispatcher.focusedWindow;
+            let win = document.commandDispatcher.focusedWindow;
             if (win && win.document.designMode == "on" && !config.isComposeWindow)
                 return false;
 
@@ -1362,13 +1378,20 @@ function Events() //{{{
             if (liberator.mode == modes.CUSTOM)
                 return true;
 
-            var countStr = input.buffer.match(/^[0-9]*/)[0];
-            var candidateCommand = (input.buffer + key).replace(countStr, "");
-            var map;
+            let countStr = input.buffer.match(/^[0-9]*/)[0];
+            let candidateCommand = (input.buffer + key).replace(countStr, "");
+            let map;
             if (event.noremap)
                 map = mappings.getDefault(liberator.mode, candidateCommand);
             else
                 map = mappings.get(liberator.mode, candidateCommand);
+
+            let candidates = mappings.getCandidates(liberator.mode, candidateCommand);
+            if (candidates.length == 0 && !map)
+            {
+                map = input.pendingMap;
+                input.pendingMap = null;
+            }
 
             // counts must be at the start of a complete mapping (10j -> go 10 lines down)
             if (/^[1-9][0-9]*$/.test(input.buffer + key))
@@ -1386,7 +1409,7 @@ function Events() //{{{
             {
                 input.buffer = "";
                 inputBufferLength = 0;
-                var tmp = input.pendingArgMap; // must be set to null before .execute; if not
+                let tmp = input.pendingArgMap; // must be set to null before .execute; if not
                 input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
@@ -1399,8 +1422,7 @@ function Events() //{{{
             // only follow a map if there isn't a longer possible mapping
             // (allows you to do :map z yy, when zz is a longer mapping than z)
             // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
-            else if (map && !skipMap && (map.rhs ||
-                     mappings.getCandidates(liberator.mode, candidateCommand).length == 0))
+            else if (map && !skipMap && (map.rhs || candidates.length == 0))
             {
                 input.count = parseInt(countStr, 10);
                 if (isNaN(input.count))
@@ -1436,13 +1458,14 @@ function Events() //{{{
                     if (modes.isReplaying && !waitForPageLoaded())
                         return true;
 
-                    var ret = map.execute(null, input.count);
+                    let ret = map.execute(null, input.count);
                     if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
                         stop = false;
                 }
             }
             else if (mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !skipMap)
             {
+                input.pendingMap = map;
                 input.buffer += key;
                 inputBufferLength++;
             }
@@ -1465,6 +1488,7 @@ function Events() //{{{
                 input.buffer = "";
                 input.pendingArgMap = null;
                 input.pendingMotionMap = null;
+                input.pendingMap = null;
 
                 if (key != "<Esc>" && key != "<C-[>")
                 {
@@ -1489,7 +1513,7 @@ function Events() //{{{
                 event.stopPropagation();
             }
 
-            var motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
+            let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
             statusline.updateInputBuffer(motionMap + input.buffer);
             return false;
         },

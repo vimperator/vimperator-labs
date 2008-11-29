@@ -1369,9 +1369,9 @@ function ItemList(id) //{{{
             context.cache.nodes = [];
             dom(<div key="root">
                     <div highlight="Completions">
-                        {context.createRow(context.title || [], "CompTitle")}
+                        { context.createRow(context.title || [], "CompTitle") }
                     </div>
-                    <div key="message" highlight="CompMsg" style="display: none"/>
+                    <div key="message" highlight="CompMsg"/>
                     <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
                     <div key="waiting" highlight="CompMsg">Waiting...</div>
@@ -1499,32 +1499,32 @@ function ItemList(id) //{{{
 
             //let now = Date.now();
 
+            let sel = selIndex;
             let len = items.allItems.items.length;
+            let newOffset = startIndex;
+
             if (index == -1 || index == len) // wrapped around
             {
-                if (selIndex >= 0)
-                    getCompletion(selIndex).removeAttribute("selected");
-                else // list is shown the first time
-                    fill(0);
+                if (selIndex < 0)
+                    newOffset = 0;
                 selIndex = -1;
-                return;
+            }
+            else
+            {
+                if (index <= startIndex + CONTEXT_LINES)
+                    newOffset = index - CONTEXT_LINES;
+                if (index >= endIndex - CONTEXT_LINES)
+                    newOffset = index + CONTEXT_LINES - maxItems + 1;
+
+                newOffset = Math.min(newOffset, len - maxItems);
+                newOffset = Math.max(newOffset, 0);
+
+                selIndex = index;
             }
 
-            // find start index
-            let newOffset = startIndex;
-            if (index >= endIndex - CONTEXT_LINES)
-                newOffset = index + CONTEXT_LINES - maxItems + 1;
-            else if (index <= startIndex + CONTEXT_LINES)
-                newOffset = index - CONTEXT_LINES;
-
-            newOffset = Math.min(newOffset, len - maxItems);
-            newOffset = Math.max(newOffset, 0);
-
-            if (selIndex > -1)
+            if (sel > -1)
                 getCompletion(selIndex).removeAttribute("selected");
-
-            let res = fill(newOffset);
-            selIndex = index;
+            fill(newOffset);
             getCompletion(index).setAttribute("selected", "true");
 
             //if (index == 0)
