@@ -6,111 +6,111 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
+Highlights.prototype.CSS = <![CDATA[
+    Boolean     color: red;
+    Function    color: navy;
+    Null        color: blue;
+    Number      color: blue;
+    Object      color: maroon;
+    String      color: green;
+
+    Normal      color: black; background: white;
+    ErrorMsg    color: white; background: red; font-weight: bold;
+    InfoMsg     color: black; background: white;
+    ModeMsg     color: black; background: white;
+    MoreMsg     color: green; background: white;
+    WarningMsg  color: red; background: white;
+    Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
+    NonText     color: blue; min-height: 16px; padding-left: 2px;
+    Preview     color: gray;
+
+    CompGroup
+    CompGroup:not(:first-of-type) margin-top: .5em;
+    CompTitle          color: magenta; background: white; font-weight: bold;
+    CompTitle>*        /* border-bottom: 1px dashed magenta; */
+    CompMsg            font-style: italic; margin-left: 16px;
+    CompItem
+    CompItem[selected] background: yellow;
+    CompItem>*         padding: 0 .5ex;
+    CompIcon           width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
+    CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
+    CompResult         width: 45%; overflow: hidden;
+    CompDesc           color: gray; width: 50%;
+    CompLess           text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
+    CompLess::after    content: "\2303" /* Unicode up arrowhead */
+    CompMore           text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
+    CompMore::after    content: "\2304" /* Unicode down arrowhead */
+
+    Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
+    GradientLeft    background-color: magenta;
+    GradientRight   background-color: white;
+
+    Indicator   color: blue;
+    Filter      font-weight: bold;
+
+    Keyword     color: red;
+    Tag         color: blue;
+
+    LineNr      color: orange; background: white;
+    Question    color: green; background: white; font-weight: bold;
+
+    StatusLine       color: white; background: black;
+    StatusLineBroken color: black; background: #FF6060; /* light-red */
+    StatusLineSecure color: black; background: #B0FF00; /* light-green */
+
+    TabClose
+    TabIcon
+    TabText
+    TabNumber      font-weight: bold; margin: 0px; padding-right: .3ex;
+    TabIconNumber {
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
+    }
+
+    Title       color: magenta; background: white; font-weight: bold;
+    URL         text-decoration: none; color: green; background: inherit;
+    URL:hover   text-decoration: underline; cursor: pointer;
+
+    FrameIndicator,,* {
+        background-color: red;
+        opacity: 0.5;
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    Bell         border: none; background-color: black;
+    Hint,,* {
+        font-family: monospace;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+        background-color: red;
+        border-color: ButtonShadow;
+        border-width: 0px;
+        border-style: solid;
+        padding: 0px 1px 0px 1px;
+    }
+    Hint::after,,*  content: attr(number);
+    HintElem,,*     background-color: yellow;  color: black;
+    HintActive,,*   background-color: #88FF00; color: black;
+    HintImage,,*    opacity: .5;
+
+    Search,,* {
+        font-size: inherit;
+        padding: 0;
+        color: black;
+        background-color: yellow;
+        padding: 0;
+    }
+    ]]>.toString();
 function Highlights(name, store, serial)
 {
-    const highlightCSS = <![CDATA[
-        Boolean     color: red;
-        Function    color: navy;
-        Null        color: blue;
-        Number      color: blue;
-        Object      color: maroon;
-        String      color: green;
-
-        Normal      color: black; background: white;
-        ErrorMsg    color: white; background: red; font-weight: bold;
-        InfoMsg     color: black; background: white;
-        ModeMsg     color: black; background: white;
-        MoreMsg     color: green; background: white;
-        WarningMsg  color: red; background: white;
-        Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
-        NonText     color: blue; min-height: 16px; padding-left: 2px;
-        Preview     color: gray;
-
-        CompGroup
-        CompGroup:not(:first-of-type) margin-top: .5em;
-        CompTitle          color: magenta; background: white; font-weight: bold;
-        CompTitle>*        /* border-bottom: 1px dashed magenta; */
-        CompMsg            font-style: italic; margin-left: 16px;
-        CompItem
-        CompItem[selected] background: yellow;
-        CompItem>*         padding: 0 .5ex;
-        CompIcon           width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
-        CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
-        CompResult         width: 45%; overflow: hidden;
-        CompDesc           color: gray; width: 50%;
-        CompLess           text-align: center; height: .5ex; line-height: .5ex; padding-top: 1ex;
-        CompLess::after    content: "\2303" /* Unicode up arrowhead */
-        CompMore           text-align: center; height: .5ex; line-height: .5ex;
-        CompMore::after    content: "\2304" /* Unicode down arrowhead */
-
-        Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
-        GradientLeft    background-color: magenta;
-        GradientRight   background-color: white;
-
-        Indicator   color: blue;
-        Filter      font-weight: bold;
-
-        Keyword     color: red;
-        Tag         color: blue;
-
-        LineNr      color: orange; background: white;
-        Question    color: green; background: white; font-weight: bold;
-
-        StatusLine       color: white; background: black;
-        StatusLineBroken color: black; background: #FF6060; /* light-red */
-        StatusLineSecure color: black; background: #B0FF00; /* light-green */
-
-        TabClose
-        TabIcon
-        TabText
-        TabNumber      font-weight: bold; margin: 0px; padding-right: .3ex;
-        TabIconNumber {
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
-        }
-
-        Title       color: magenta; background: white; font-weight: bold;
-        URL         text-decoration: none; color: green; background: inherit;
-        URL:hover   text-decoration: underline; cursor: pointer;
-
-        FrameIndicator,,* {
-            background-color: red;
-            opacity: 0.5;
-            z-index: 999;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-        Bell         border: none; background-color: black;
-        Hint,,* {
-            font-family: monospace;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-            background-color: red;
-            border-color: ButtonShadow;
-            border-width: 0px;
-            border-style: solid;
-            padding: 0px 1px 0px 1px;
-        }
-        Hint::after,,*  content: attr(number);
-        HintElem,,*     background-color: yellow;  color: black;
-        HintActive,,*   background-color: #88FF00; color: black;
-        HintImage,,*    opacity: .5;
-
-        Search,,* {
-            font-size: inherit;
-            padding: 0;
-            color: black;
-            background-color: yellow;
-            padding: 0;
-        }
-        ]]>.toString();
     var self = this;
     var highlight = {};
     var styles = storage.styles;
@@ -144,6 +144,7 @@ function Highlights(name, store, serial)
             if (style.default == null)
             {
                 delete highlight[style.class];
+                styles.removeSheet(style.selector, null, null, null, true);
                 return null;
             }
             newStyle = style.default;
@@ -167,14 +168,24 @@ function Highlights(name, store, serial)
         return "[liberator|highlight~=" + hl + "]" + rest
     };
 
-    highlightCSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
-                .split("\n").filter(function (s) /\S/.test(s))
-                .forEach(function (style)
+    this.reload = function ()
     {
-        style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
-        highlight[style.class] = style;
-        self.set(style.class);
-    });
+        this.CSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
+                    .split("\n").filter(function (s) /\S/.test(s))
+                    .forEach(function (style)
+        {
+            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
+            let old = highlight[style.class];
+            highlight[style.class] = style;
+            if (old && old.value != old.default)
+                style.value = old.value;
+        });
+        for (let [class, hl] in Iterator(highlight))
+        {
+            if (hl.value == hl.default)
+                this.set(class);
+        }
+    }
 }
 
 function Styles(name, store, serial)
@@ -402,6 +413,8 @@ let (array = util.Array)
 
 const styles = storage.newObject("styles", Styles, false);
 const highlight = storage.newObject("highlight", Highlights, false);
+highlight.CSS = Highlights.prototype.CSS;
+highlight.reload();
 
 liberator.registerObserver("load_commands", function ()
 {

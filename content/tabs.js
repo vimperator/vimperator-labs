@@ -220,8 +220,8 @@ function Tabs() //{{{
                 validator: options.validateCompleter
             });
         // TODO: Add option, or only apply when go~=[nN]
-        styles.addSheet("tab-binding", "chrome://*",
-            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/vimperator/bindings.xml#tab) !important; }", true);
+        styles.addSheet("tab-binding", "chrome://browser/content/browser.xul",
+            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#tab) !important; }", true);
 
     }
 

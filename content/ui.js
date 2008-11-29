@@ -1418,9 +1418,11 @@ function ItemList(id) //{{{
 
         let haveCompletions = false;
         let off = 0;
+        let end = endIndex;
         function getRows(context)
         {
             function fix(n) Math.max(0, Math.min(len, n));
+            end -= context.message + context.incomplete;
             let len = context.items.length;
             let start = off;
             off += len;

@@ -1405,6 +1405,8 @@ function Completion() //{{{
         {
             let opt = options.get(name);
             let completer = opt.completer;
+            if (!completer)
+                return;
 
             let curValues = curValue != null ? opt.parseValues(curValue) : opt.values;
             let newValues = opt.parseValues(context.filter);
