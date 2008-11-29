@@ -1325,8 +1325,11 @@ function ItemList(id) //{{{
 
     let gradient =
         <div highlight="Gradient">
-            <div style="height: 0px"><div highlight="GradientRight Gradient"/></div>
-            <table highlight="Gradient" width="100%">
+            <div style="height: 0px">
+                <div highlight="GradientRight Gradient"
+                     style="border: 0 !important; margin: 0 !important; padding: 0 !important;"/>
+            </div>
+            <table width="100%" style="height: 100%">
                 <tr>
                     { template.map(util.range(0, 100), function (i)
                       <td highlight="GradientLeft" style={"opacity: " + (1 - i / 100)}/>) }
@@ -1378,7 +1381,7 @@ function ItemList(id) //{{{
             if (!context.items.length && !context.message && !context.incomplete)
                 return;
             context.cache.nodes = [];
-            dom(<div key="root">
+            dom(<div key="root" highlight="CompGroup">
                     <div highlight="Completions">
                         { context.createRow(context.title || [], "CompTitle") }
                     </div>

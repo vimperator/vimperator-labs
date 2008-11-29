@@ -26,6 +26,8 @@ function Highlights(name, store, serial)
         NonText     color: blue; min-height: 16px; padding-left: 2px;
         Preview     color: gray;
 
+        CompGroup
+        CompGroup:not(:first-of-type) margin-top: .5em;
         CompTitle          color: magenta; background: white; font-weight: bold;
         CompTitle>*        /* border-bottom: 1px dashed magenta; */
         CompMsg            font-style: italic; margin-left: 16px;
@@ -41,7 +43,7 @@ function Highlights(name, store, serial)
         CompMore           text-align: center; height: .5ex; line-height: .5ex;
         CompMore::after    content: "\2304" /* Unicode down arrowhead */
 
-        Gradient        height: 1px; margin-bottom: -1px;
+        Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
         GradientLeft    background-color: magenta;
         GradientRight   background-color: white;
 
