@@ -63,7 +63,7 @@ function Bookmarks() //{{{
         var bookmarks = [];
         var self = this;
 
-        this.__defineGetter__("name",  function () key);
+        this.__defineGetter__("name",  function () name);
         this.__defineGetter__("store", function () store);
         this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks; });
 
@@ -324,6 +324,7 @@ function Bookmarks() //{{{
             completer: function completer(context, args)
             {
                 context.quote = null;
+                context.filter = args.join(" ");
                 completion.bookmark(context, args["-tags"]);
             },
             options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags],
@@ -359,11 +360,9 @@ function Bookmarks() //{{{
         // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
-        get: function get(filter, tags, bypassCache)
+        get: function get(filter, tags, maxItems)
         {
-            if (bypassCache) // Is this really necessary anymore?
-                cache.load();
-            return completion.filterURLArray(cache.bookmarks, filter, tags);
+            return completion.runCompleter("bookmark", filter, maxItems, tags);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder

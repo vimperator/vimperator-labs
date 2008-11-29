@@ -138,6 +138,8 @@ const util = { //{{{
 
     cloneObject: function cloneObject(obj)
     {
+        if (obj instanceof Array)
+            return obj.slice();
         let newObj = {};
         for (let [k, v] in Iterator(obj))
             newObj[k] = v;

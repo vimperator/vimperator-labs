@@ -43,9 +43,7 @@ function CompletionContext(editor, name, offset)
             self = this.contexts[name];
         else
             self.contexts[name] = this;
-        self.filters = parent.filters.slice();
         self.incomplete = false;
-        self.keys = util.cloneObject(parent.keys);
         self.message = null;
         self.offset = parent.offset + (offset || 0);
         self.parent = parent;
@@ -53,7 +51,11 @@ function CompletionContext(editor, name, offset)
         delete self._filter; // FIXME?
         delete self._generate;
         delete self._ignoreCase;
-        ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "quote", "title", "top"].forEach(function (key)
+        ["filters", "keys", "title", "quote"].forEach(function (key) {
+            if (parent[key])
+                self[key] = util.cloneObject(parent[key]);
+        });
+        ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "top"].forEach(function (key)
             self[key] = parent[key]);
         if (self != this)
             return self;
@@ -103,7 +105,9 @@ function CompletionContext(editor, name, offset)
     this.message = null;
     this.name = name || "";
     this._completions = []; // FIXME
-    this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) : item.item[self.keys[key]];
+    this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) :
+            key in self.keys ? item.item[self.keys[key]]
+                             : item.item[key];
 }
 CompletionContext.prototype = {
     // Temporary
@@ -162,7 +166,7 @@ CompletionContext.prototype = {
     {
         // Accept a generator
         if (!(items instanceof Array))
-            items = [x for (x in items)];
+            items = [x for (x in Iterator(items))];
         delete this.cache.filtered;
         delete this.cache.filter;
         this.cache.rows = [];
@@ -1102,67 +1106,6 @@ function Completion() //{{{
                 completionService.stopSearch();
         },
 
-        // discard all entries in the 'urls' array, which don't match 'filter
-        // urls must be of type [{ url: "..", title: "..", tags: [...], keyword: ".." }, ...]
-        filterURLArray: function filterURLArray(urls, filter, filterTags)
-        {
-            var filtered = [];
-            // completions which don't match the url but just the description
-            // list them at the end of the array
-            var additionalCompletions = [];
-
-            if (urls.length == 0)
-                return [];
-
-            var hasTags = urls[0].tags !== undefined;
-
-            filterTags = filterTags || [];
-
-            // TODO: use ignorecase and smartcase settings
-            var ignorecase = (filter == filter.toLowerCase() && filterTags.every(function checkMixedCase(t) t == t.toLowerCase()));
-
-            if (ignorecase)
-            {
-                filter = filter.toLowerCase();
-                filterTags = filterTags.map(String.toLowerCase);
-            }
-
-            // Longest Common Subsequence
-            // This shouldn't use buildLongestCommonSubstring for performance
-            // reasons, so as not to cycle through the urls twice
-            let filterTokens = filter.split(/\s+/);
-            for (let [,elem] in Iterator(urls))
-            {
-                let item = elem.item || elem; // Kludge
-                let url   = item.url || "";
-                let title = item.title || "";
-                let tags  = item.tags || [];
-                if (ignorecase)
-                {
-                    url = url.toLowerCase();
-                    title = title.toLowerCase();
-                    tags = tags.map(String.toLowerCase);
-                }
-
-                // filter on tags
-                if (filterTags.some(function aryIndex(tag) tag && tags.indexOf(tag) == -1))
-                    continue;
-
-                if (url.indexOf(filter) == -1)
-                {
-                    // no direct match of filter in the url, but still accept this item
-                    // if _all_ tokens of filter match either the url or the title
-                    if (filterTokens.every(function (token) url.indexOf(token) > -1 || title.indexOf(token) > -1))
-                        additionalCompletions.push(elem);
-                    continue;
-                }
-
-                filtered.push(elem);
-            }
-
-            return filtered.concat(additionalCompletions);
-        },
-
         // generic helper function which checks if the given "items" array pass "filter"
         // items must be an array of strings
         match: function match(items, filter, caseSensitive)
@@ -1209,10 +1152,10 @@ function Completion() //{{{
         {
             context.title = ["Bookmark", "Title"];
             context.format = bookmarks.format;
-            context.completions = bookmarks.get(context.filter)
-            context.filters = [];
-            if (tags)
-                context.filters.push(function ({ item: item }) tags.every(function (tag) item.tags.indexOf(tag) > -1));
+            // Need to make a copy because set completions() checks instanceof Array,
+            // and this may be an Array from another window.
+            context.completions = Array.slice(storage["bookmark-cache"].bookmarks);
+            completion.urls(context, tags);
         },
 
         buffer: function buffer(context)
@@ -1657,6 +1600,49 @@ function Completion() //{{{
         addUrlCompleter: function addUrlCompleter(opt)
         {
             this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
+        },
+
+        urls: function (context, tags)
+        {
+            let compare = String.localeCompare;
+            let contains = String.indexOf
+            if (context.ignoreCase)
+            {
+                compare = util.compareIgnoreCase;
+                contains = function (a, b) a && a.toLowerCase().indexOf(b.toLowerCase()) > -1;
+            }
+
+            if (tags)
+                context.filters.push(function (item) tags.
+                    every(function (tag) (context.getKey(item, "tags") || []).
+                        some(function (t) !compare(tag, t))));
+
+            if (!context.title)
+                context.title = ["URL", "Title"];
+
+            context.fork("additional", 0, this, function (context) {
+                context.title[0] += " (additional)";
+                context.filter = context.parent.filter; // FIXME
+                context.completions = context.parent.completions;
+                // For items whose URL doesn't exactly match the filter,
+                // accept them if all tokens match either the URL or the title.
+                // Filter out all directly matching strings.
+                let match = context.filters[0];
+                context.filters[0] = function (item) !match.call(this, item);
+                // and all that don't match the tokens.
+                let tokens = context.filter.split(/\s+/);
+                context.filters.push(function (item) tokens.every(
+                        function (tok) contains(context.getKey(item, "url"), tok) ||
+                                       contains(context.getKey(item, "title"), tok)));
+
+                let re = RegExp(tokens.filter(util.identity).map(util.escapeRegex).join("|"), "g");
+                function highlight(item, text, i) process[i].call(this, item, template.highlightRegexp(text, re));
+                let process = [template.icon, function (item, k) k];
+                context.process = [
+                    function (item, text) highlight.call(this, item, item.text, 0),
+                    function (item, text) highlight.call(this, item, text, 1)
+                ];
+            });
         },
 
         userCommand: function userCommand(context)

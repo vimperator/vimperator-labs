@@ -169,8 +169,11 @@ const template = {
         str = String(str).replace(" ", "\u00a0");
         let s = <></>;
         let start = 0;
+        let n = 0;
         for (let [i, length] in iter)
         {
+            if (n++ > 8)
+                return s + <>{str.substr(start)}</>;
             XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += highlight(str.substr(i, length));
