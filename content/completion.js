@@ -573,7 +573,7 @@ function Completion() //{{{
 
             // v[0] in orig and orig[v[0]] catch different cases. XPCOM
             // objects are problematic, to say the least.
-            if ([modules, plugins, userContext].some(function (o) o.isPrototypeOf(obj)))
+            if (modules.isPrototypeOf(obj))
                 compl = [v for (v in Iterator(obj))];
             else
             {

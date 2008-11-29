@@ -350,7 +350,7 @@ const util = { //{{{
         try // window.content often does not want to be queried with "var i in object"
         {
             let hasValue = !("__iterator__" in object);
-            if (object.__proto__ == modules || object.__proto__ == plugins)
+            if (modules.isPrototypeOf(object))
             {
                 object = Iterator(object);
                 hasValue = false;

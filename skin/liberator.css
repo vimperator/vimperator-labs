@@ -65,6 +65,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
     display: table-cell;
     vertical-align: middle;
 }
+
+[liberator|highlight~=CompMsg] {
+    height: 1.5em;
+    line-height: 1.5em !important;
+}
+
 .td-span {
     display: inline-block;
     overflow: visible;
