@@ -470,6 +470,10 @@ const util = { //{{{
             }
             catch (e) {}
 
+            // removes spaces from the string if it starts with http:// or something like that
+            if (/^\w+:\/\//.test(urls[url]))
+                urls[url] = urls[url].replace(/\s+/g, "");
+
             // strip each 'URL' - makes things simpler later on
             urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
 
