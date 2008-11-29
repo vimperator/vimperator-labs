@@ -1323,6 +1323,17 @@ function ItemList(id) //{{{
     doc.body.appendChild(doc.createTextNode(""));
     doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where completions/MOW are shown at once, or ls=0. Should use :highlight.
 
+    let gradient =
+        <div highlight="Gradient">
+            <div style="height: 0px"><div highlight="GradientRight Gradient"/></div>
+            <table highlight="Gradient" width="100%">
+                <tr>
+                    { template.map(util.range(0, 100), function (i)
+                      <td highlight="GradientLeft" style={"opacity: " + (1 - i / 100)}/>) }
+                </tr>
+            </table>
+        </div>;
+
     var items = null;
     var startIndex = -1;  // The index of the first displayed item
     var endIndex = -1;    // The index one *after* the last displayed item
@@ -1371,6 +1382,7 @@ function ItemList(id) //{{{
                     <div highlight="Completions">
                         { context.createRow(context.title || [], "CompTitle") }
                     </div>
+                    { gradient }
                     <div key="message" highlight="CompMsg"/>
                     <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
@@ -1418,7 +1430,7 @@ function ItemList(id) //{{{
                 nodes.message.textContent = context.message;
             nodes.message.style.display = context.message ? "block" : "none";
             nodes.waiting.style.display = context.incomplete ? "block" : "none";
-            nodes.up.style.display = "none";
+            nodes.up.style.opacity = "0";
             nodes.down.style.display = "none";
 
             let root = nodes.root
@@ -1446,8 +1458,13 @@ function ItemList(id) //{{{
                 else if (!display && row.parentNode == items)
                     items.removeChild(row);
             }
-            nodes.up.style.display = (start == 0) ? "none" : "block";
-            nodes.down.style.display = (end == context.items.length) ? "none" : "block";
+            if (context.items.length == 0)
+                return;
+            nodes.up.style.opacity = (start == 0) ? "0" : "1";
+            if (end != context.items.length)
+                nodes.down.style.display = "block"
+            else
+                nodes.up.style.display = "block"
         });
 
         divNodes.noCompletions.style.display = haveCompletions ? "none" : "block";

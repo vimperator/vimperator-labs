@@ -27,7 +27,7 @@ function Highlights(name, store, serial)
         Preview     color: gray;
 
         CompTitle          color: magenta; background: white; font-weight: bold;
-        CompTitle>*        border-bottom: 1px dashed magenta;
+        CompTitle>*        /* border-bottom: 1px dashed magenta; */
         CompMsg            font-style: italic; margin-left: 16px;
         CompItem
         CompItem[selected] background: yellow;
@@ -40,6 +40,10 @@ function Highlights(name, store, serial)
         CompLess::after    content: "\2303" /* Unicode up arrowhead */
         CompMore           text-align: center; height: .5ex; line-height: .5ex;
         CompMore::after    content: "\2304" /* Unicode down arrowhead */
+
+        Gradient        height: 1px; margin-bottom: -1px;
+        GradientLeft    background-color: magenta;
+        GradientRight   background-color: white;
 
         Indicator   color: blue;
         Filter      font-weight: bold;
