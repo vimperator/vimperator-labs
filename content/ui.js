@@ -1424,8 +1424,6 @@ function ItemList(id) //{{{
             let root = nodes.root
             let items = nodes.items;
             let [start, end] = getRows(context);
-            if (start == end)
-                return;
 
             for (let [i, row] in Iterator(context.getRows(start, end, doc)))
                 nodes[i] = row;
@@ -1437,8 +1435,12 @@ function ItemList(id) //{{{
                 if (display && row.parentNode != items)
                 {
                     do
+                    {
                         var next = nodes[++i];
-                    while ((!next || next.parentNode != items) && i < end)
+                        if (next && next.parentNode != items)
+                            next = null;
+                    }
+                    while (!next && i < end)
                     items.insertBefore(row, next);
                 }
                 else if (!display && row.parentNode == items)
@@ -1508,6 +1510,7 @@ function ItemList(id) //{{{
                 if (selIndex < 0)
                     newOffset = 0;
                 selIndex = -1;
+                index = -1;
             }
             else
             {
@@ -1523,9 +1526,10 @@ function ItemList(id) //{{{
             }
 
             if (sel > -1)
-                getCompletion(selIndex).removeAttribute("selected");
+                getCompletion(sel).removeAttribute("selected");
             fill(newOffset);
-            getCompletion(index).setAttribute("selected", "true");
+            if (index >= 0)
+                getCompletion(index).setAttribute("selected", "true");
 
             //if (index == 0)
             //    this.start = now;

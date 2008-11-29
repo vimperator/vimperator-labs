@@ -290,6 +290,7 @@ const util = { //{{{
         try
         {
             let xmlhttp = new XMLHttpRequest();
+            xmlhttp.mozBackgroundRequest = true;
             if (callback)
             {
                 xmlhttp.onreadystatechange = function () {
