@@ -15,8 +15,8 @@ const template = {
                 continue;
             if (sep && n++)
                 ret += sep;
-            if (interruptable && n % interruptable == 0)
-                liberator.threadYield(true, true);
+            //if (interruptable && n % interruptable == 0)
+            //    liberator.threadYield(false, true);
             ret += val;
         }
         return ret;
