@@ -43,20 +43,24 @@ function CompletionContext(editor, name, offset)
             self = this.contexts[name];
         else
             self.contexts[name] = this;
+
+        self.parent = parent;
+        ["filters", "keys", "title", "quote"].forEach(function (key)
+            self[key] = parent[key] && util.cloneObject(parent[key]));
+        ["anchored", "compare", "editor", "_filter", "filterFunc", "keys", "_process", "top"].forEach(function (key)
+            self[key] = parent[key]);
+
+        self.__defineGetter__("value", function () this.top.value);
+
+        self.offset = parent.offset;
+        self.advance(offset);
+
         self.incomplete = false;
         self.message = null;
-        self.offset = parent.offset + (offset || 0);
-        self.parent = parent;
         self.waitingForTab = false;
-        delete self._filter; // FIXME?
+        //delete self._filter; // FIXME?
         delete self._generate;
         delete self._ignoreCase;
-        ["filters", "keys", "title", "quote"].forEach(function (key) {
-            if (parent[key])
-                self[key] = util.cloneObject(parent[key]);
-        });
-        ["anchored", "compare", "editor", "filterFunc", "keys", "_process", "top"].forEach(function (key)
-            self[key] = parent[key]);
         if (self != this)
             return self;
         ["_caret", "contextList", "maxItems", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
@@ -345,14 +349,14 @@ CompletionContext.prototype = {
     advance: function advance(count)
     {
         delete this._ignoreCase;
-        this.offset += count;
+        liberator.dump(count);
         if (this.quote)
         {
-            this.offset += this.quote[0].length;
+            count = this.quote[0].length + this.quote[1](this.filter.substr(0, count)).length;
             this.quote[0] = "";
             this.quote[2] = "";
         }
-        // XXX
+        this.offset += count;
         if (this._filter)
             this._filter = this._filter.substr(count);
     },
@@ -1254,7 +1258,7 @@ function Completion() //{{{
 
             [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
             let cmdContext = context.fork(cmd, prefix.length);
-            let argContext = cmdContext.fork("args", args.completeStart);
+            let argContext = context.fork("args", prefix.length);
             args = command.parseArgs(cmdContext.filter, argContext);
             if (args)
             {

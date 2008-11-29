@@ -434,7 +434,7 @@ function Commands() //{{{
             {
                 // Push possible option matches into completions
                 if (complete && !onlyArgumentsRemaining)
-                    completeOpts = [[opt[0], opt[0][0]] for ([i, opt] in Iterator(options))];
+                    completeOpts = [[opt[0], opt[0][0]] for ([i, opt] in Iterator(options)) if (!(opt[0][0] in args))];
             }
             function resetCompletions()
             {
