@@ -871,7 +871,7 @@ function Events() //{{{
             {
                 noremap = !!noremap;
 
-                for (let i = 0; i < keys.length; i++)
+                for (var i = 0; i < keys.length; i++)
                 {
                     let charCode = keys.charCodeAt(i);
                     let keyCode = 0;
