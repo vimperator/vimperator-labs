@@ -717,7 +717,7 @@ function Events() //{{{
         function (args) { completion.listCompleter("macro", args[0]) },
         {
             argCount: "?",
-            completer: function (context) completion.macro(context),
+            completer: function (context) completion.macro(context)
         });
 
     commands.add(["pl[ay]"],
