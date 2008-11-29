@@ -480,8 +480,6 @@ function Commands() //{{{
                     continue;
                 }
 
-                matchOpts(sub);
-
                 var optname = "";
                 if (!onlyArgumentsRemaining)
                 {
@@ -530,10 +528,12 @@ function Commands() //{{{
                                     let type = argTypes[opt[1]];
                                     if (type && (!complete || arg != null))
                                     {
+                                        let orig = arg;
                                         arg = type.parse(arg);
                                         if (arg == null || (typeof arg == "number" && isNaN(arg)))
                                         {
-                                            echoerr("Invalid argument for " + type.description + " option: " + optname);
+                                            if (!complete || orig != "" || args.completeStart != str.length)
+                                                echoerr("Invalid argument for " + type.description + " option: " + optname);
                                             if (complete)
                                                 complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
                                             else
@@ -565,6 +565,8 @@ function Commands() //{{{
                         }
                     }
                 }
+
+                matchOpts(sub);
 
                 if (complete)
                 {

@@ -308,7 +308,7 @@ function Bookmarks() //{{{
         {
             argCount: "?",
             bang: true,
-            options: [[["-title", "-t"],    commands.OPTION_STRING],
+            options: [[["-title", "-t"],    commands.OPTION_STRING, null, function () [[content.document.title, "Current Page Title"]]],
                       [["-tags", "-T"],     commands.OPTION_LIST, null, tags],
                       [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)]]
         });

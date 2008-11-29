@@ -499,7 +499,7 @@ function Completion() //{{{
     {
         let json = Components.classes["@mozilla.org/dom/json;1"]
                              .createInstance(Components.interfaces.nsIJSON);
-        const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, FUNCTIONS = 5;
+        const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
         let top = [];  /* The element on the top of the stack. */
@@ -634,7 +634,7 @@ function Completion() //{{{
             /* Push and pop the stack, maintaining references to 'top' and 'last'. */
             let push = function push(arg)
             {
-                top = [i, arg, [i], [], [], []];
+                top = [i, arg, [i], [], [], [], []];
                 last = top[CHAR];
                 stack.push(top);
             }
@@ -734,8 +734,9 @@ function Completion() //{{{
                         case "]": pop("["); break;
                         case "}": pop("{"); /* Fallthrough */
                         case ";":
-                        case ",":
                             top[FULL_STATEMENTS].push(i);
+                        case ",":
+                            top[COMMA];
                             break;
                     }
 
@@ -788,6 +789,7 @@ function Completion() //{{{
                 prev = v + 1;
             }
 
+            // Don't eval any function calls unless the user presses tab.
             function checkFunction(start, end, key)
             {
                 let res = functions.some(function (idx) idx >= start && idx < end);
@@ -981,7 +983,7 @@ function Completion() //{{{
                     // Split up the arguments
                     let prev = get(-2)[OFFSET];
                     let args = [];
-                    for (let [i, idx] in Iterator(get(-2)[FULL_STATEMENTS]))
+                    for (let [i, idx] in Iterator(get(-2)[COMMA]))
                     {
                         let arg = str.substring(prev + 1, idx);
                         prev = idx;
@@ -1006,13 +1008,6 @@ function Completion() //{{{
                 return;
             }
 
-            // Wait for a keypress.
-            if (!this.context.tabPressed && /[{([\])}"';]/.test(str[lastIdx - 1]) && last != '"' && last != '"')
-            {
-                this.context.waitingForTab = true;
-                return;
-            }
-
             /*
              * str = "foo.bar.baz"
              * obj = "foo.bar"
@@ -1024,6 +1019,14 @@ function Completion() //{{{
              */
 
             let [offset, obj, key] = getObjKey(-1);
+
+            // Wait for a keypress before completing the default objects.
+            if (!this.context.tabPressed && key == "" && obj.length == 2)
+            {
+                this.context.waitingForTab = true;
+                this.context.message = "Waiting for key press";
+                return;
+            }
 
             if (!/^(?:\w[\w\d]*)?$/.test(key))
                 return; /* Not a word. Forget it. Can this even happen? */
