@@ -21,7 +21,7 @@
                     <xul:spring flex="1"/>
                 </xul:vbox>
             </xul:stack>
-            <xul:label xbl:inherits="value=ordinal" liberator:highlight="TabNumber"/>
+            <xul:label xbl:inherits="value=ordinal" class="hl-TabNumber"/>
             <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" class="tab-text" liberator:highlight="TabText"/>
             <xul:toolbarbutton anonid="close-button" tabindex="-1" class="tab-close-button" liberator:highlight="TabClose"/>
         </content>
