@@ -384,7 +384,7 @@ function Mappings() //{{{
 
             let maps = mappingsIterator(modes, user);
             if (filter)
-                maps = (map for (map in maps) if (map.names[0] == filter));
+                maps = [map for (map in maps) if (map.names[0] == filter)];
 
             let list = <table>
                     {
