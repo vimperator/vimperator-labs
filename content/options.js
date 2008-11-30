@@ -683,8 +683,6 @@ function Options() //{{{
 
                 let opt = options.parseOpt(filter, modifiers);
                 let prefix = opt.prefix;
-                if (prefix)
-                    context.advance(prefix.length);
 
                 if (context.filter.indexOf("=") == -1)
                 {
@@ -694,6 +692,9 @@ function Options() //{{{
                 }
                 else if (prefix == "no")
                     return;
+
+                if (prefix)
+                    context.advance(prefix.length);
 
                 let option = opt.option;
                 context.advance(context.filter.indexOf("=") + 1);

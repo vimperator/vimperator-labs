@@ -309,7 +309,7 @@ CompletionContext.prototype = {
     get substrings()
     {
         let items = this.items;
-        if (items.length == 0)
+        if (items.length == 0 || !this.hasItems)
             return [];
         if (this._substrings)
             return this._substrings;
@@ -1395,6 +1395,7 @@ function Completion() //{{{
         option: function option(context, scope)
         {
             context.title = ["Option"];
+            context.anchored = true;
             context.keys = { text: "names", description: "description" };
             context.completions = options;
             if (scope)
