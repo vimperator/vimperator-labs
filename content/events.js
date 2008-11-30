@@ -326,7 +326,6 @@ function Events() //{{{
 //    getBrowser().addEventListener("submit", function (event)
 //    {
 //        // reset buffer loading state as early as possible, important for macros
-//        dump("submit\n");
 //        buffer.loaded = 0;
 //    }, null);
 
@@ -878,18 +877,18 @@ function Events() //{{{
                     let shift = false, ctrl = false, alt = false, meta = false;
                     let string = null;
 
-                    //if (charCode == 92) // the '\' key FIXME: support the escape key
-                    if (charCode == 60 && !escapeKey) // the '<' key starts a complex key
+                    //if (keys[i] == "\\") // FIXME: support the escape key
+                    if (keys[i] == "<" && !escapeKey) // start a complex key
                     {
-                        let [match, modifier, keyname] = keys.match(/<([CSMA]-)*(.+?)>/i) || [];
+                        let [match, modifier, keyname] = keys.substr(i).match(/<([CSMA]-)*(.+?)>/i) || [];
                         if (keyname)
                         {
                             if (modifier) // check for modifiers
                             {
-                                ctrl  = /[C]-/i.test(modifier);
-                                alt   = /[A]-/i.test(modifier);
-                                shift = /[S]-/i.test(modifier);
-                                meta  = /[M]-/i.test(modifier);
+                                ctrl  = /C-/i.test(modifier);
+                                alt   = /A-/i.test(modifier);
+                                shift = /S-/i.test(modifier);
+                                meta  = /M-/i.test(modifier);
                             }
                             if (keyname.length == 1)
                             {
@@ -1072,10 +1071,6 @@ function Events() //{{{
             if (elem && elem.readOnly)
                 return;
 
-            //liberator.log("onFocusChange: " + elem);
-            //liberator.dump("=+++++++++=\n" + util.objectToString(event.target) + "\n")
-            //liberator.dump (elem + ": " + win + "\n");//" - target: " + event.target + " - origtarget: " + event.originalTarget + " - expltarget: " + event.explicitOriginalTarget + "\n");
-
             if (elem && (
                    (elem instanceof HTMLInputElement && (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password")) ||
                    (elem instanceof HTMLSelectElement)
@@ -1126,7 +1121,6 @@ function Events() //{{{
                // FIXME: currently this hack is disabled to make macros work
                // this.wantsModeReset = true;
                // setTimeout(function () {
-               //     liberator.dump("cur: " + liberator.mode + "\n");
                //     if (events.wantsModeReset)
                //     {
                //         events.wantsModeReset = false;
@@ -1231,7 +1225,7 @@ function Events() //{{{
                  return true;
 
             //liberator.log(key + " in mode: " + liberator.mode);
-            //liberator.dump(key + " in mode: " + liberator.mode + "\n");
+            //liberator.dump(key + " in mode: " + liberator.mode);
 
             if (modes.isRecording)
             {
