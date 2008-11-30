@@ -601,7 +601,7 @@ function Mail() //{{{
         {
             var value = gPrefBranch.getIntPref("mail.show_headers", 2);
             gPrefBranch.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
-            MsgReload();
+            ReloadMessage();
         });
 
     mappings.add(myModes, ["x"],
@@ -1034,7 +1034,7 @@ function Mail() //{{{
             gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", values[value][0]);
             gPrefBranch.setIntPref("mailnews.display.html_as", values[value][1]);
             gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", values[value][2]);
-            MsgReload();
+            ReloadMessage();
         }
     };
     //}}}

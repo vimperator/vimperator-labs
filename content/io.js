@@ -48,6 +48,8 @@ function IO() //{{{
     const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
+    const ioService          = Components.classes['@mozilla.org/network/io-service;1']
+                                         .getService(Components.interfaces.nsIIOService);
     const environmentService = Components.classes["@mozilla.org/process/environment;1"]
                                          .getService(Components.interfaces.nsIEnvironment);
     const directoryService   = Components.classes["@mozilla.org/file/directory_service;1"]
@@ -817,7 +819,7 @@ lookup:
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = ioManager.readFile(file);
-                let uri = makeFileURI(file);
+                let uri = ioService.newFileURI(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
