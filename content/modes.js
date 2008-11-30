@@ -121,7 +121,8 @@ const modes = (function () //{{{
             // Kludge to prevent the input field losing focus on MS/Mac
             setTimeout(function () {
                 let focus = document.commandDispatcher.focusedElement;
-                if (focus != document.getElementById("urlbar").inputField)
+                let urlbar = document.getElementById("urlbar");
+                if (!urlbar || focus != urlbar.inputField)
                     liberator.focusContent(false);
             }, 100);
         }
