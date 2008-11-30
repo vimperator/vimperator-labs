@@ -114,7 +114,7 @@ function Bookmarks() //{{{
             bookmarks = [];
             this.__defineGetter__("bookmarks", function () bookmarks);
 
-            var folders = rootFolders.concat([]);
+            var folders = rootFolders.slice();
             var query = historyService.getNewQuery();
             var options = historyService.getNewQueryOptions();
             while (folders.length > 0)

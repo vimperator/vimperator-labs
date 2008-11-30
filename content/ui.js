@@ -755,6 +755,8 @@ function CommandLine() //{{{
                 return false;
             if (silent)
                 return false;
+            if (modes.main == modes.COMMAND_LINE)
+                return false;
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
@@ -1206,6 +1208,8 @@ function CommandLine() //{{{
 
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
+            if (modes.main == modes.COMMAND_LINE)
+                return;
             let win = multilineOutputWidget.contentWindow;
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
