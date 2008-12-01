@@ -38,6 +38,7 @@ BUGS:
 - :bmarks, :hs output and 'cpt'=bh completions are broken
 - :runtime is broken, possibly Windows only
 - :regressions is broken, also now blanks the MOW when run
+- more prompt now reads "-- More --" at the end of multipage output when there is no more content
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
