@@ -235,7 +235,7 @@ function IO() //{{{
             }
         },
         {
-            //argCount: "?", // FIXME: --djk
+            argCount: "?",
             completer: function (context) completion.directory(context, true),
             literal: 0
         });
