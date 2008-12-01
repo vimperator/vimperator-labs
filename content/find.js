@@ -204,7 +204,7 @@ function Search() //{{{
                 this.startPt.setStart(node, node.childNodes.length);
                 this.startPt.setEnd(node, node.childNodes.length);
                 if (n++ % 20 == 0)
-                    liberator.threadYield();
+                    liberator.threadYield(true);
                 if (liberator.interrupted)
                     break;
             }

@@ -30,8 +30,13 @@ the terms of any one of the MPL, the GPL or the LGPL.
 plugins.contexts = {};
 function Script(name)
 {
-    if (plugins.contexts[name])
-        return plugins.contexts[name];
+    let self = plugins.contexts[name]
+    if (self)
+    {
+        if (self.onUnload)
+            self.onUnload();
+        return self;
+    }
     plugins.contexts[name] = this;
     this.NAME = name;
     this.__context__ = this;

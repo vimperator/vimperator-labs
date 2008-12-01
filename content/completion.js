@@ -501,7 +501,7 @@ CompletionContext.prototype = {
     {
         let end = Date.now() + timeout;
         while (this.incomplete && (!timeout || Date.now() > end))
-            liberator.threadYield(true, interruptable);
+            liberator.threadYield(false, interruptable);
         return this.incomplete;
     }
 }

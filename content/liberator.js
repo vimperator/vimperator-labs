@@ -1021,7 +1021,10 @@ const liberator = (function () //{{{
             if (urls.length > 20 && !force)
             {
                 commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no])",
-                    function (resp) { if (resp && resp.match(/^y(es)?$/i)) liberator.open(urls, where, true); });
+                    function (resp) {
+                        if (resp && resp.match(/^y(es)?$/i))
+                            liberator.open(urls, where, true);
+                    });
                 return true;
             }
 
@@ -1044,7 +1047,7 @@ const liberator = (function () //{{{
                     case liberator.NEW_BACKGROUND_TAB:
                     case liberator.NEW_TAB:
                         if (!liberator.has("tabs"))
-                            open(urls, liberator.NEW_WINDOW);
+                            return open(urls, liberator.NEW_WINDOW);
 
                         let tab = getBrowser().addTab(url, null, null, postdata);
                         if (where == liberator.NEW_TAB)
@@ -1295,7 +1298,7 @@ const liberator = (function () //{{{
             liberator.interrupted = false;
             do
             {
-                mainThread.processNextEvent(true);
+                mainThread.processNextEvent(!flush);
                 if (liberator.interrupted)
                     throw new Error("Interrupted");
             }

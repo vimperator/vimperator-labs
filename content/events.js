@@ -566,13 +566,14 @@ function Events() //{{{
         if (buffer.loaded == 1)
             return true;
 
-        var ms = 25000; // maximum time to wait - TODO: add option
-        var then = new Date().getTime();
-        for (let now = then; now - then < ms; now = new Date().getTime())
+        let start = Date.now();
+        let end = start + 25000; // maximum time to wait - TODO: add option
+        let now;
+        while (now = Date.now(), now < end)
         {
             liberator.threadYield();
-            if ((now - then) % 1000 < 10)
-                liberator.dump("waited: " + (now - then) + " ms");
+            if ((now - start) % 1000 < 10)
+                liberator.dump("waited: " + (now - start) + " ms");
 
             if (!events.feedingKeys)
                 return false;

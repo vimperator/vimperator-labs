@@ -417,7 +417,7 @@ const util = { //{{{
         {
             if (Date.now() > endTime)
             {
-                liberator.threadYield(false, true);
+                liberator.threadYield(true, true);
                 endTime = Date.now() + time;
             }
             yield start++;
