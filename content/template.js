@@ -172,11 +172,12 @@ const template = {
         let n = 0;
         for (let [i, length] in iter)
         {
-            if (n++ > 8)
+            if (n++ > 50) // Prevent infinite loops.
                 return s + <>{str.substr(start)}</>;
             XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += highlight(str.substr(i, length));
+            liberator.dump(s);
             start = i + length;
         }
         return s + <>{str.substr(start)}</>;

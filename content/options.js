@@ -286,9 +286,9 @@ Option.prototype = {
 Option.validateCompleter = function (values)
 {
     let context = CompletionContext("");
-    let res = this.completer(context);
+    let res = context.fork("", 0, this, this.completer);
     if (!res)
-        res = context.allItems.map(function (item) [item.text]);
+        res = context.allItems.items.map(function (item) [item.text]);
     return Array.concat(values).every(
         function (value) res.some(function (item) item[0] == value));
 }; //}}}
