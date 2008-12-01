@@ -177,7 +177,6 @@ const template = {
             XML.ignoreWhitespace = false;
             s += <>{str.substring(start, i)}</>;
             s += highlight(str.substr(i, length));
-            liberator.dump(s);
             start = i + length;
         }
         return s + <>{str.substr(start)}</>;

@@ -378,7 +378,7 @@ function CommandLine() //{{{
          * The problem elsewhere is that E4X tends to insert new lines
          * after interpolated data.
          */
-        XML.ignoreWhitespace = typeof str == "xml";
+        XML.ignoreWhitespace = typeof str != "xml";
         let output = util.xmlToDom(<div class={"ex-command-output "} highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
