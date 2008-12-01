@@ -523,6 +523,7 @@ function Buffer() //{{{
             window.stylesheetSwitchAll(window.content, args);
         },
         {
+            argCount: "?",
             completer: function (context) completion.alternateStylesheet(context),
             literal: 0
         });

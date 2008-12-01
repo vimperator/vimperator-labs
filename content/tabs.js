@@ -472,6 +472,7 @@ function Tabs() //{{{
                 }
             },
             {
+                argCount: "?",
                 bang: true,
                 count: true,
                 completer: function (context) completion.buffer(context),
@@ -481,7 +482,10 @@ function Tabs() //{{{
         commands.add(["buffers", "files", "ls", "tabs"],
             "Show a list of all buffers",
             function (args) { tabs.list(args.literalArg); },
-            { literal: 0 });
+            {
+                argCount: "?",
+                literal: 0
+            });
 
         commands.add(["quita[ll]", "qa[ll]"],
             "Quit " + config.name,
@@ -608,6 +612,7 @@ function Tabs() //{{{
                 window.undoCloseTab(count - 1);
             },
             {
+                argCount: "?",
                 completer: function (context)
                 {
                     context.keys = { text: function (item) item.state.entries[0].url, description: "title" };

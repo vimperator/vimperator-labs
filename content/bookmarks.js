@@ -341,6 +341,7 @@ function Bookmarks() //{{{
             liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
         },
         {
+            argCount: "?",
             completer: function completer(context) completion.bookmark(context),
             literal: 0
         });
@@ -660,6 +661,7 @@ function History() //{{{
             }
         },
         {
+            argCount: "?",
             bang: true,
             completer: function completer(context)
             {
@@ -712,6 +714,7 @@ function History() //{{{
             }
         },
         {
+            argCount: "?",
             bang: true,
             completer: function completer(context)
             {

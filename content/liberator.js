@@ -273,7 +273,7 @@ const liberator = (function () //{{{
                 }
             },
             {
-                argCount: "+",
+                argCount: "1",
                 // TODO: add this as a standard menu completion function
                 completer: function (context)
                 {
@@ -326,9 +326,10 @@ const liberator = (function () //{{{
                 liberator.help(args.string);
             },
             {
+                argCount: "?",
                 bang: true,
                 completer: function (context) completion.help(context),
-                literal: 0
+                literal: 0 // FIXME: why literal?
             });
 
         commands.add(["javas[cript]", "js"],

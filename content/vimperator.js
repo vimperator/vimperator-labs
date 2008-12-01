@@ -340,7 +340,7 @@ const config = { //{{{
                 liberator.echoerr("No sidebar " + args + " found");
             },
             {
-                argCount: "+",
+                argCount: "1",
                 completer: function (context) completion.sidebar(context),
                 literal: 0
             });
