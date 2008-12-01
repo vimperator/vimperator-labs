@@ -146,7 +146,10 @@ function Buffer() //{{{
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
-        { completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))] });
+        {
+            completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
+            validator: Option.validateCompleter
+        });
 
     options.add(["scroll", "scr"],
         "Number of lines to scroll with <C-u> and <C-d> commands",
@@ -162,7 +165,7 @@ function Buffer() //{{{
                 ["1", "Show the link in the status line"],
                 ["2", "Show the link in the command line"]
             ],
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["usermode", "um"],
@@ -173,7 +176,7 @@ function Buffer() //{{{
             {
                 try
                 {
-                    getMarkupDocumentViewer().authorStyleDisabled = value;
+                    window.getMarkupDocumentViewer().authorStyleDisabled = value;
                 }
                 catch (e) {}
 
@@ -183,7 +186,7 @@ function Buffer() //{{{
             {
                 try
                 {
-                    return getMarkupDocumentViewer().authorStyleDisabled;
+                    return window.getMarkupDocumentViewer().authorStyleDisabled;
                 }
                 catch (e) {}
             }
@@ -217,7 +220,7 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["<C-c>"],
         "Stop loading",
-        function () { BrowserStop(); });
+        function () { window.BrowserStop(); });
 
     // scrolling
     mappings.add(myModes, ["j", "<Down>", "<C-e>"],
@@ -517,7 +520,7 @@ function Buffer() //{{{
             if (options["usermode"])
                 options["usermode"] = false;
 
-            stylesheetSwitchAll(window.content, args);
+            window.stylesheetSwitchAll(window.content, args);
         },
         {
             completer: function (context) completion.alternateStylesheet(context),
@@ -567,9 +570,9 @@ function Buffer() //{{{
                                                .getDocumentMetadata("content-disposition");
             } catch (e) {}
 
-            internalSave(doc.location.href, doc, null, contentDisposition,
+            window.internalSave(doc.location.href, doc, null, contentDisposition,
                 doc.contentType, false, null, chosenData, doc.referrer ?
-                makeURI(doc.referrer) : null, true);
+                window.makeURI(doc.referrer) : null, true);
         },
         {
             argCount: "?",
@@ -579,7 +582,7 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
-        function () { BrowserStop(); },
+        function () { window.BrowserStop(); },
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],
@@ -671,7 +674,7 @@ function Buffer() //{{{
             {
                 try
                 {
-                    urlSecurityCheck(data.href, principal,
+                    window.urlSecurityCheck(data.href, principal,
                             Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                 }
                 catch (e)
@@ -793,7 +796,7 @@ function Buffer() //{{{
 
         get alternateStyleSheets()
         {
-            var stylesheets = getAllStyleSheets(window.content);
+            var stylesheets = window.getAllStyleSheets(window.content);
 
             return stylesheets.filter(
                 function (stylesheet) /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title)
@@ -1106,15 +1109,15 @@ function Buffer() //{{{
         saveLink: function (elem, skipPrompt)
         {
             var doc  = elem.ownerDocument;
-            var url  = makeURLAbsolute(elem.baseURI, elem.href);
+            var url  = window.makeURLAbsolute(elem.baseURI, elem.href);
             var text = elem.textContent;
 
             try
             {
-                urlSecurityCheck(url, doc.nodePrincipal);
+                window.urlSecurityCheck(url, doc.nodePrincipal);
                 // we always want to save that link relative to the current working directory
                 options.setPref("browser.download.lastDir", io.getCurrentDirectory().path);
-                saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
+                window.saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
             }
             catch (e)
             {

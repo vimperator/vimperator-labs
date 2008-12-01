@@ -235,7 +235,7 @@ function Bookmarks() //{{{
         "string", "google",
         {
             completer: function completer(context) completion.search(context, true),
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["preload"],
@@ -270,7 +270,7 @@ function Bookmarks() //{{{
         "Show jumplist",
         function ()
         {
-            var sh = getWebNavigation().sessionHistory;
+            var sh = window.getWebNavigation().sessionHistory;
 
             let entries = [sh.getEntryAtIndex(i, false) for (i in util.range(0, sh.count))];
             let list = template.jumps(sh.index, entries);
@@ -516,8 +516,8 @@ function Bookmarks() //{{{
 
             function process(resp)
             {
-                let json = Components.classes["@mozilla.org/dom/json;1"]
-                                     .createInstance(Components.interfaces.nsIJSON);
+                const json = Components.classes["@mozilla.org/dom/json;1"]
+                                       .createInstance(Components.interfaces.nsIJSON);
                 let results = [];
                 try
                 {
@@ -557,7 +557,7 @@ function Bookmarks() //{{{
             // did not :open <tab> once before
             this.getSearchEngines();
 
-            url = getShortcutOrURI(searchString, aPostDataRef);
+            url = window.getShortcutOrURI(searchString, aPostDataRef);
             if (url == searchString)
                 url = null;
 
@@ -642,12 +642,12 @@ function History() //{{{
             {
                 if (args)
                 {
-                    var sh = getWebNavigation().sessionHistory;
+                    var sh = window.getWebNavigation().sessionHistory;
                     for (let i = sh.index - 1; i >= 0; i--)
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
                         {
-                            getWebNavigation().gotoIndex(i);
+                            window.getWebNavigation().gotoIndex(i);
                             return;
                         }
                     }
@@ -664,7 +664,7 @@ function History() //{{{
             completer: function completer(context)
             {
                 let filter = context.filter;
-                var sh = getWebNavigation().sessionHistory;
+                var sh = window.getWebNavigation().sessionHistory;
                 var completions = [];
                 for (let i in util.range(sh.index, 0, true))
                 {
@@ -694,12 +694,12 @@ function History() //{{{
             {
                 if (args)
                 {
-                    var sh = getWebNavigation().sessionHistory;
+                    var sh = window.getWebNavigation().sessionHistory;
                     for (let i in util.range(sh.index + 1, sh.count))
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
                         {
-                            getWebNavigation().gotoIndex(i);
+                            window.getWebNavigation().gotoIndex(i);
                             return;
                         }
                     }
@@ -716,7 +716,7 @@ function History() //{{{
             completer: function completer(context)
             {
                 let filter = context.filter;
-                var sh = getWebNavigation().sessionHistory;
+                var sh = window.getWebNavigation().sessionHistory;
                 var completions = [];
                 for (let i in util.range(sh.index + 1, sh.count))
                 {
@@ -786,29 +786,29 @@ function History() //{{{
         // TODO: better names and move to buffer.?
         stepTo: function stepTo(steps)
         {
-            let index = getWebNavigation().sessionHistory.index + steps;
-            if (index >= 0 && index < getWebNavigation().sessionHistory.count)
-                getWebNavigation().gotoIndex(index);
+            let index = window.getWebNavigation().sessionHistory.index + steps;
+            if (index >= 0 && index < window.getWebNavigation().sessionHistory.count)
+                window.getWebNavigation().gotoIndex(index);
             else
                 liberator.beep();
         },
 
         goToStart: function goToStart()
         {
-            let index = getWebNavigation().sessionHistory.index;
+            let index = window.getWebNavigation().sessionHistory.index;
             if (index == 0)
                 return liberator.beep(); // really wanted?
 
-            getWebNavigation().gotoIndex(0);
+            window.getWebNavigation().gotoIndex(0);
         },
 
         goToEnd: function goToEnd()
         {
-            let index = getWebNavigation().sessionHistory.index;
-            if (index == getWebNavigation().sessionHistory.count - 1)
+            let index = window.getWebNavigation().sessionHistory.index;
+            if (index == window.getWebNavigation().sessionHistory.count - 1)
                 return liberator.beep();
 
-            getWebNavigation().gotoIndex(max);
+            window.getWebNavigation().gotoIndex(max);
         },
 
         // if openItems is true, open the matching history items in tabs rather than display

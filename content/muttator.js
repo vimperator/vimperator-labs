@@ -53,23 +53,23 @@ const config = { //{{{
 
     dialogs: [
         ["about",            "About Thunderbird",
-            function () { openAboutDialog(); }],
+            function () { window.openAboutDialog(); }],
         ["addons",           "Manage Add-ons",
-            function () { openAddonsMgr(); }],
+            function () { window.openAddonsMgr(); }],
         ["addressbook",      "Address book",
-            function () { toAddressBook(); }],
+            function () { window.toAddressBook(); }],
         ["checkupdates",     "Check for updates",
-            function () { checkForUpdates(); }],
+            function () { window.checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
          function () { Components.classes[GLUE_CID].getService(Components.interfaces.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
-            function () { toJavaScriptConsole(); }],
+            function () { window.toJavaScriptConsole(); }],
         /*["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],*/
         ["dominspector",     "DOM Inspector",
-            function () { inspectDOMDocument(content.document); }],
+            function () { window.inspectDOMDocument(content.document); }],
         ["downloads",        "Manage Downloads",
-            function () { toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); }],
+            function () { window.toOpenWindowByType('Download:Manager', 'chrome://mozapps/content/downloads/downloads.xul', 'chrome,dialog=no,resizable'); }],
         /*["import",           "Import Preferences, Bookmarks, History, etc. from other browsers",
             function () { BrowserImport(); }],
         ["openfile",         "Open the file selector dialog",
@@ -87,9 +87,9 @@ const config = { //{{{
         ["print",            "Show print dialog",
             function () { PrintUtils.print(); }],
         ["saveframe",        "Save frame to disk",
-            function () { saveFrameDocument(); }],
+            function () { window.saveFrameDocument(); }],
         ["savepage",         "Save page to disk",
-            function () { saveDocument(window.content.document); }],
+            function () { window.saveDocument(window.content.document); }],
         /*["searchengines",    "Manage installed search engines",
             function () { openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
@@ -135,11 +135,11 @@ const config = { //{{{
 
             mappings.add([modes.COMPOSE],
                 ["y"], "Send message now",
-                function () { goDoCommand("cmd_sendNow"); });
+                function () { window.goDoCommand("cmd_sendNow"); });
 
             mappings.add([modes.COMPOSE],
                 ["Y"], "Send message later",
-                function () { goDoCommand("cmd_sendLater"); });
+                function () { window.goDoCommand("cmd_sendLater"); });
 
             // FIXME: does not really work reliably
             mappings.add([modes.COMPOSE],

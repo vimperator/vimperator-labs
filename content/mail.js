@@ -218,7 +218,7 @@ function Mail() //{{{
 
                 return value;
             },
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     /*options.add(["threads"],
@@ -271,7 +271,7 @@ function Mail() //{{{
 
     mappings.add(myModes, ["d", "<Del>"],
         "Move mail to Trash folder",
-        function () { goDoCommand("cmd_delete"); });
+        function () { window.goDoCommand("cmd_delete"); });
 
     mappings.add(myModes, ["j", "<Right>"],
         "Select next message",
@@ -351,19 +351,19 @@ function Mail() //{{{
 
     mappings.add(myModes, ["r"],
         "Reply to sender",
-        function () { goDoCommand("cmd_reply"); });
+        function () { window.goDoCommand("cmd_reply"); });
 
     mappings.add(myModes, ["R"],
         "Reply to all",
-        function () { goDoCommand("cmd_replyall"); });
+        function () { window.goDoCommand("cmd_replyall"); });
 
     mappings.add(myModes, ["f"],
         "Forward message",
-        function () { goDoCommand("cmd_forward"); });
+        function () { window.goDoCommand("cmd_forward"); });
 
     mappings.add(myModes, ["F"],
         "Forward message inline",
-        function () { goDoCommand("cmd_forwardInline"); });
+        function () { window.goDoCommand("cmd_forwardInline"); });
 
     // SCROLLING
     mappings.add(myModes, ["<Down>"],
@@ -526,11 +526,11 @@ function Mail() //{{{
 
     mappings.add(myModes, ["zr", "zR"],
         "Expand all threads",
-        function () { goDoCommand("cmd_expandAllThreads"); });
+        function () { window.goDoCommand("cmd_expandAllThreads"); });
 
     mappings.add(myModes, ["zm", "zM"],
         "Collapse all threads",
-        function () { goDoCommand("cmd_collapseAllThreads"); });
+        function () { window.goDoCommand("cmd_collapseAllThreads"); });
 
     mappings.add(myModes, ["<C-i>"],
         "Go forward",
@@ -728,7 +728,7 @@ function Mail() //{{{
 
     commands.add(["empty[trash]"],
         "Empty trash of the current account",
-        function () { goDoCommand("cmd_emptyTrash"); },
+        function () { window.goDoCommand("cmd_emptyTrash"); },
         { argCount: "0" });
 
     commands.add(["get[messages]"],

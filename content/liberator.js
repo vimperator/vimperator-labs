@@ -76,7 +76,7 @@ const liberator = (function () //{{{
         }
         catch (e)
         {
-            toJavaScriptConsole();
+            window.toJavaScriptConsole();
             liberator.reportError(e);
         }
     }
@@ -135,7 +135,7 @@ const liberator = (function () //{{{
                         ["b", "Bookmark bar"]
                     ].concat(!liberator.has("tabs") ? [] : tabopts);
                 },
-                validator: options.validateCompleter
+                validator: Option.validateCompleter
             });
 
         options.add(["helpfile", "hf"],
@@ -648,17 +648,18 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
-        callAsync: function (self, func)
+        newThread: function () threadManager.newThread(0),
+
+        callAsync: function (thread, self, func)
         {
-            let thread = threadManager.newThread(0);
+            hread = thread || threadManager.newThread(0);
             thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
         callFunctionInThread: function (thread, func)
         {
-            if (!thread)
-                thread = threadManager.newThread(0);
+            thread = thread || threadManager.newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
             thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
@@ -1026,54 +1027,54 @@ const liberator = (function () //{{{
             if (urls.length == 0)
                 return false;
 
-            if (liberator.forceNewTab && liberator.has("tabs"))
-                where = liberator.NEW_TAB;
-            else if (!where || !liberator.has("tabs"))
-                where = liberator.CURRENT_TAB;
-
-            var url = typeof urls[0] == "string" ? urls[0] : urls[0][0];
-            var postdata = typeof urls[0] == "string" ? null : urls[0][1];
-            var whichwindow = window;
-
-            // decide where to load the first url
-            switch (where)
+            function open(urls, where)
             {
-                case liberator.CURRENT_TAB:
-                    getBrowser().loadURIWithFlags(url, null, null, null, postdata);
-                    break;
+                let url = Array.concat(urls)[0];
+                let postdata = Array.concat(urls)[1];
+                let whichwindow = window;
 
-                case liberator.NEW_TAB:
-                    var firsttab = getBrowser().addTab(url, null, null, postdata);
-                    getBrowser().selectedTab = firsttab;
-                    break;
+                // decide where to load the first url
+                switch (where)
+                {
+                    case liberator.CURRENT_TAB:
+                        getBrowser().loadURIWithFlags(url, null, null, null, postdata);
+                        break;
 
-                case liberator.NEW_BACKGROUND_TAB:
-                    getBrowser().addTab(url, null, null, postdata);
-                    break;
+                    case liberator.NEW_BACKGROUND_TAB:
+                    case liberator.NEW_TAB:
+                        if (!liberator.has("tabs"))
+                            open(urls, liberator.NEW_WINDOW);
 
-                case liberator.NEW_WINDOW:
-                    window.open();
-                    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                       .getService(Components.interfaces.nsIWindowMediator);
-                    whichwindow = wm.getMostRecentWindow("navigator:browser");
-                    whichwindow.loadURI(url, null, postdata);
-                    break;
+                        let tab = getBrowser().addTab(url, null, null, postdata);
+                        if (where == liberator.NEW_TAB)
+                            getBrowser().selectedTab = tab;
+                        break;
 
-                default:
-                    liberator.echoerr("Exxx: Invalid 'where' directive in liberator.open(...)");
-                    return false;
+                    case liberator.NEW_WINDOW:
+                        const wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                             .getService(Components.interfaces.nsIWindowMediator);
+                        window.open();
+                        whichwindow = wm.getMostRecentWindow("navigator:browser");
+                        whichwindow.loadURI(url, null, postdata);
+                        break;
+
+                    default:
+                        liberator.echoerr("Exxx: Invalid 'where' directive in liberator.open(...)");
+                        return false;
+                }
             }
 
-            // only load more than one url if we have tab support
-            if (!liberator.has("tabs"))
-                return true;
+            if (liberator.forceNewTab)
+                where = liberator.NEW_TAB;
+            else if (!where)
+                where = liberator.CURRENT_TAB;
 
-            // all other URLs are always loaded in background
-            for (let i = 1; i < urls.length; i++)
+            for (let [i, url] in Iterator(urls))
             {
-                url = typeof urls[i] == "string" ? urls[i] : urls[i][0];
-                postdata = typeof urls[i] == "string" ? null : urls[i][1];
-                whichwindow.getBrowser().addTab(url, null, null, postdata);
+                open(url, where);
+                if (i == 0 && !liberator.has("tabs"))
+                    break;
+                where = liberator.NEW_BACKGROUND_TAB;
             }
 
             return true;
@@ -1101,7 +1102,7 @@ const liberator = (function () //{{{
                           .getService(nsIAppStartup)
                           .quit(nsIAppStartup.eForceQuit);
             else
-                goQuitApplication();
+                window.goQuitApplication();
         },
 
         reportError: function (error)

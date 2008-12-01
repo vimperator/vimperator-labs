@@ -130,14 +130,12 @@ function Tabs() //{{{
                 {
                     tabStrip.collapsed = true;
                 }
-                else if (value == 1)
-                {
-                    options.setPref("browser.tabStrip.autoHide", true);
-                    tabStrip.collapsed = false;
-                }
                 else
                 {
-                    options.setPref("browser.tabStrip.autoHide", false);
+                    let pref = "browser.tabStrip.autoHide";
+                    if (options.getPref(pref) == null)
+                        pref = "browser.tabs.autoHide";
+                    options.setPref(pref, value == 1);
                     tabStrip.collapsed = false;
                 }
 
@@ -151,7 +149,7 @@ function Tabs() //{{{
                     ["2", "Always show tab bar"]
                 ];
             },
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     if (config.name == "Vimperator")
@@ -169,7 +167,7 @@ function Tabs() //{{{
                         ["paste", "P and gP mappings"]
                     ];
                 },
-                validator: options.validateCompleter
+                validator: Option.validateCompleter
             });
 
         options.add(["newtab"],
@@ -187,7 +185,7 @@ function Tabs() //{{{
                         ["prefs", ":pref[erences]! or :prefs! command"]
                     ];
                 },
-                validator: options.validateCompleter
+                validator: Option.validateCompleter
             });
 
         options.add(["popups", "pps"],
@@ -217,7 +215,7 @@ function Tabs() //{{{
                         ["4", "Open in the same tab unless it has a specific requested size"]
                     ];
                 },
-                validator: options.validateCompleter
+                validator: Option.validateCompleter
             });
         // TODO: Add option, or only apply when go~=[nN]
         styles.addSheet("tab-binding", "chrome://browser/content/browser.xul",
@@ -361,7 +359,7 @@ function Tabs() //{{{
         },
         {
             argCount: "+",
-            completer: function (context) completion.ex(context.filter),
+            completer: function (context) completion.ex(context),
             literal: 0
         });
 
@@ -583,53 +581,37 @@ function Tabs() //{{{
             function (args)
             {
                 let count = args.count;
-                args = args.string;
+                args = args[0]
 
                 if (count < 1)
                     count = 1;
 
                 if (args)
                 {
-                    let ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                                       .getService(Components.interfaces.nsISessionStore);
-                    let undoItems = eval("(" + ss.getClosedTabData(window) + ")");
-                    let found = false;
-
-                    for (let i = 0; i < undoItems.length; i++)
+                    count = 0;
+                    for (let [i, item] in Iterator(tabs.closedTabs))
                     {
-                        if (undoItems[i].state.entries[0].url == args)
+                        if (item.state.entries[0].url == args)
                         {
                             count = i + 1;
-                            found = true;
                             break;
                         }
                     }
 
-                    if (!found)
+                    if (!count)
                     {
                         liberator.echoerr("Exxx: No matching closed tab");
                         return;
                     }
                 }
 
-                undoCloseTab(count - 1);
+                window.undoCloseTab(count - 1);
             },
             {
                 completer: function (context)
                 {
-                    // get closed-tabs from nsSessionStore
-                    var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                                       .getService(Components.interfaces.nsISessionStore);
-                    var undoItems = eval("(" + ss.getClosedTabData(window) + ")");
-                    var completions = [];
-                    for (let i = 0; i < undoItems.length; i++)
-                    {
-                        var url = undoItems[i].state.entries[0].url;
-                        var title = undoItems[i].title;
-                        if (completion.match([url, title], context.filter, false))
-                            completions.push([url, title]);
-                    }
-                    return [0, completions];
+                    context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
+                    context.completions = tabs.closedTabs;
                 },
                 count: true,
                 literal: 0
@@ -639,12 +621,8 @@ function Tabs() //{{{
             "Undo closing of all closed tabs",
             function (args)
             {
-                let ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                                   .getService(Components.interfaces.nsISessionStore);
-                let undoItems = eval("(" + ss.getClosedTabData(window) + ")");
-
-                for (let i = 0; i < undoItems.length; i++)
-                    undoCloseTab(); // doesn't work with i as the index to undoCloseTab
+                for (let i in Itarator(tabs.closedTabs))
+                    window.undoCloseTab(0);
 
             },
             { argCount: "0" });
@@ -739,6 +717,15 @@ function Tabs() //{{{
             return getBrowser().mTabContainer.selectedItem;
         },
 
+        get closedTabs()
+        {
+            const json = Components.classes["@mozilla.org/dom/json;1"]
+                                   .createInstance(Components.interfaces.nsIJSON);
+            const ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                                 .getService(Components.interfaces.nsISessionStore);
+            return json.decode(ss.getClosedTabData(window));
+        },
+
         list: function (filter)
         {
             completion.listCompleter("buffer", filter);
@@ -764,7 +751,7 @@ function Tabs() //{{{
                         else
                         {
                             if (buffer.URL != "about:blank" ||
-                                getWebNavigation().sessionHistory.count > 0)
+                                window.getWebNavigation().sessionHistory.count > 0)
                             {
                                 liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
                                 getBrowser().removeTab(tab);

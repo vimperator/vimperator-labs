@@ -298,7 +298,7 @@ function Mappings() //{{{
 
         addUserMap: function (modes, keys, description, action, extra)
         {
-            keys = keys.map(function (key) expandLeader(key));
+            keys = keys.map(expandLeader);
             var map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence

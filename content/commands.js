@@ -635,7 +635,7 @@ function Commands() //{{{
 
             // check for correct number of arguments
             if (args.length == 0 && /^[1+]$/.test(argCount) ||
-                    literal != null && /[+?]/.test(argCount) && !/\S/.test(args.literalArg || ""))
+                    literal != null && /[1+]/.test(argCount) && !/\S/.test(args.literalArg || ""))
             {
                 if (!complete)
                 {

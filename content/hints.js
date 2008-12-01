@@ -328,15 +328,15 @@ function Hints() //{{{
             if (!followFirst)
                 return false; // no return hit; don't examine uniqueness
 
-            // OK. return hit. But there's more than one hint. And
+            // OK. return hit. But there's more than one hint, and
             // there's no tab-selected current link. Do not follow in mode 2
-            if ((options["followhints"] == 2) && validHints.length > 1 && !hintNumber)
+            if (options["followhints"] == 2 && validHints.length > 1 && !hintNumber)
                 return liberator.beep();
         }
 
         if (!followFirst)
         {
-            var firstHref = validHints[0].getAttribute("href") || null;
+            let firstHref = validHints[0].getAttribute("href") || null;
             if (firstHref)
             {
                 if (validHints.some(function (e) e.getAttribute("href") != firstHref))
@@ -551,7 +551,7 @@ function Hints() //{{{
         "string", DEFAULT_HINTTAGS);
 
     options.add(["hinttimeout", "hto"],
-        "Automatically follow non unique numerical hint",
+        "Timeout before automatically following a non-unique numerical hint",
         "number", 0,
         { validator: function (value) value >= 0 });
 
@@ -560,7 +560,14 @@ function Hints() //{{{
         // better one right now.
         "Change the behaviour of <Return> in hint mode",
         "number", 0,
-        { validator: function (value) value >= 0 && value < 3 });
+        {
+            completer: function () [
+                ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on [m]<Return>[m]."],
+                ["1", "Follow the selected hint on [m]<Return>[m]."],
+                ["2", "Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected."]
+            ],
+            validator: function (value) Option.validateCompleter
+        });
 
     options.add(["hintmatching", "hm"],
         "How links are matched",
@@ -570,7 +577,7 @@ function Hints() //{{{
             {
                 return [[m, ""] for each (m in ["contains", "wordstartswith", "firstletters", "custom"])];
             },
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["wordseparators", "wsp"],

@@ -465,30 +465,26 @@ const util = { //{{{
     {
         let urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
 
-        for (let url = 0; url < urls.length; url++)
-        {
+        return urls.map(function (url) {
             try
             {
-                let file = io.getFile(urls[url]);
+                let file = io.getFile(url);
                 if (file.exists() && file.isReadable())
-                {
-                    urls[url] = file.path;
-                    continue;
-                }
+                    return file.path;
             }
             catch (e) {}
 
             // removes spaces from the string if it starts with http:// or something like that
-            if (/^\w+:\/\//.test(urls[url]))
-                urls[url] = urls[url].replace(/\s+/g, "");
+            if (/^\w+:\/\//.test(url))
+                url = url.replace(/\s+/g, "");
 
             // strip each 'URL' - makes things simpler later on
-            urls[url] = urls[url].replace(/^\s+/, "").replace(/\s+$/, "");
+            url = url.replace(/^\s+|\s+$/, "");
 
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or does not contain any of: .:/) try opening it with a search engine
             // or keyword bookmark
-            if (/\s/.test(urls[url]) || !/[.:\/]/.test(urls[url]))
+            if (/\s/.test(url) || !/[.:\/]/.test(url))
             {
                 // TODO: it would be clearer if the appropriate call to
                 // getSearchURL was made based on whether or not the first word was
@@ -497,27 +493,22 @@ const util = { //{{{
                 // like the comments below ;-)
 
                 // check for a search engine match in the string
-                let searchURL = bookmarks.getSearchURL(urls[url], false);
+                let searchURL = bookmarks.getSearchURL(url, false);
                 if (searchURL)
                 {
-                    urls[url] = searchURL;
-                    continue;
+                    return searchURL;
                 }
                 else // no search engine match, search for the whole string in the default engine
                 {
-                    searchURL = bookmarks.getSearchURL(urls[url], true);
+                    searchURL = bookmarks.getSearchURL(url, true);
                     if (searchURL)
-                    {
-                        urls[url] = searchURL;
-                        continue;
-                    }
+                        return searchURL;
                 }
             }
             // if we are here let Firefox handle the url and hope it does
             // something useful with it :)
-        }
-
-        return urls;
+            return url;
+        });
     },
 
     xmlToDom: function xmlToDom(node, doc, nodes)

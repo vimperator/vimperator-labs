@@ -49,7 +49,7 @@ function AutoCommands() //{{{
         "stringlist", "",
         {
             completer: function () config.autocommands.concat([["all", "All events"]]),
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["focuscontent", "fc"],
@@ -808,7 +808,7 @@ function Events() //{{{
                 // make sure the page is stopped before starting to play the macro
                 try
                 {
-                    getWebNavigation().stop(nsIWebNavigation.STOP_ALL);
+                    window.getWebNavigation().stop(nsIWebNavigation.STOP_ALL);
                 }
                 catch (e) {}
 
@@ -1321,13 +1321,13 @@ function Events() //{{{
         //      {
         //      //alert(command_line.value.substring(0, command_line.selectionStart));
         //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
-        //                               readFromClipboard() +
+        //                               window.readFromClipboard() +
         //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
         //         alert(command_line.value);
         //      }
         //      //else
         // //       {
-        // //           openURLs(readFromClipboard());
+        // //           openURLs(window.readFromClipboard());
         // //       }
         //      return true;
         //  } }}}

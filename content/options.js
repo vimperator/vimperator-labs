@@ -281,6 +281,16 @@ Option.prototype = {
             return "E474: Invalid argument: " + values;
         this.setValues(newValue, scope);
     }
+};
+  // TODO: Run this by default?
+Option.validateCompleter = function (values)
+{
+    let context = CompletionContext("");
+    let res = this.completer(context);
+    if (!res)
+        res = context.allItems.map(function (item) [item.text]);
+    return Array.concat(values).every(
+        function (value) res.some(function (item) item[0] == value));
 }; //}}}
 
 function Options() //{{{
@@ -504,7 +514,7 @@ function Options() //{{{
             }
             else
             {
-                openPreferences();
+                window.openPreferences();
             }
         },
         {
@@ -940,17 +950,6 @@ function Options() //{{{
             ret.values = ret.option.parseValues(ret.value);
 
             return ret;
-        },
-
-        // TODO: Run this by default?
-        validateCompleter: function (values)
-        {
-            let context = CompletionContext("");
-            let res = this.completer(context);
-            if (!res)
-                res = context.allItems.map(function (item) [item.text]);
-            return Array.concat(values).every(
-                function (value) res.some(function (item) item[0] == value));
         },
 
         get store() storage.options,

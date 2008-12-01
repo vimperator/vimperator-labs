@@ -109,7 +109,7 @@ function CompletionContext(editor, name, offset)
     this.message = null;
     this.name = name || "";
     this._completions = []; // FIXME
-    this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item) :
+    this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item.item) :
             key in self.keys ? item.item[self.keys[key]]
                              : item.item[key];
 }
@@ -225,17 +225,36 @@ CompletionContext.prototype = {
     {
         this.hasItems = true;
         this._generate = arg;
+        liberator.dump(this.name + ": set generate()");
         if (this.background && this.regenerate)
         {
+            //**/ this.__i = (this.__i || 0) + 1;
+            //**/ let self = this;
+            //**/ function dump(msg) liberator.callInMainThread(function () liberator.dump(self.name + ":" + self.__i + ": " + msg));
+            //**/ dump("set generate() regenerating");
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
-            liberator.callAsync(this, function () {
-                let items = this.generate();
+            let thread = this.getCache("backgroundThread", liberator.newThread);
+            //**/ dump(thread);
+            liberator.callAsync(thread, this, function () {
+                //**/ dump("In async");
                 if (this.cache.backgroundLock != lock)
+                {
+                    //**/ dump("Lock !ok");
                     return;
+                }
+                let items = this.generate();
+                //**/ dump("Generated");
+                if (this.cache.backgroundLock != lock)
+                {
+                    //**/ dump("Lock !ok");
+                    return;
+                }
                 this.incomplete = false;
+                //**/ dump("completions=");
                 this.completions = items;
+                //**/ dump("completions==");
             });
         }
     },
@@ -907,9 +926,9 @@ function Completion() //{{{
                         let compare = context.compare;
                         context.compare = function (a, b)
                         {
-                            if (!isNaN(a.key) && !isNaN(b.key))
-                                return a.key - b.key;
-                            return isNaN(b.key) - isNaN(a.key) || compare(a, b);
+                            if (!isNaN(a.item.key) && !isNaN(b.item.key))
+                                return a.item.key - b.item.key;
+                            return isNaN(b.item.key) - isNaN(a.item.key) || compare(a, b);
                         }
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
@@ -1457,7 +1476,7 @@ function Completion() //{{{
             let prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                   .getService(Components.interfaces.nsIPrefBranch);
             context.title = ["Firefox Preference", "Value"];
-            context.keys = { text: function (item) item.item, description: function (item) options.getPref(item.item) };
+            context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
             context.completions = prefs.getChildList("", { value: 0 });
         },
 

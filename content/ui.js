@@ -480,7 +480,7 @@ function CommandLine() //{{{
 
                  return engines.map(function (engine) [engine.alias, engine.description]);
              },
-             validator: options.validateCompleter
+             validator: Option.validateCompleter
          });
 
     // TODO: these belong in ui.js
@@ -489,7 +489,7 @@ function CommandLine() //{{{
         "charlist", "sfl",
         {
             completer: function completer(filter) [k for each (k in completion.urlCompleters)],
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["wildcase", "wic"],
@@ -501,7 +501,7 @@ function CommandLine() //{{{
                 ["match", "Case is always significant"],
                 ["ignore", "Case is never significant"]
             ],
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["wildignore", "wig"],
@@ -538,7 +538,7 @@ function CommandLine() //{{{
                     ["list:longest",  "List all and complete common string"]
                 ];
             },
-            validator: options.validateCompleter,
+            validator: Option.validateCompleter,
             checkHas: function (value, val)
             {
                 let [first, second] = value.split(":", 2);
@@ -557,7 +557,7 @@ function CommandLine() //{{{
                     ["sort", "Always sort the completion list"]
                 ];
             },
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1422,7 +1422,7 @@ function ItemList(id) //{{{
 
         let haveCompletions = false;
         let off = 0;
-        let end = endIndex;
+        let end = startIndex + maxItems;
         function getRows(context)
         {
             function fix(n) Math.max(0, Math.min(len, n));
@@ -1430,7 +1430,9 @@ function ItemList(id) //{{{
             let len = context.items.length;
             let start = off;
             off += len;
-            return [fix(offset - start), fix(endIndex - start)];
+            let res = [fix(offset - start), fix(end - start)];
+            res[2] = (context.incomplete && res[1] >= offset && off - 1 < end);
+            return res;
         }
 
         items.contextList.forEach(function fill_eachContext(context) {
@@ -1439,16 +1441,16 @@ function ItemList(id) //{{{
                 return;
             haveCompletions = true;
 
+            let root = nodes.root
+            let items = nodes.items;
+            let [start, end, waiting] = getRows(context);
+
             if (context.message)
                 nodes.message.textContent = context.message;
             nodes.message.style.display = context.message ? "block" : "none";
-            nodes.waiting.style.display = context.incomplete ? "block" : "none";
+            nodes.waiting.style.display = waiting ? "block" : "none";
             nodes.up.style.opacity = "0";
             nodes.down.style.display = "none";
-
-            let root = nodes.root
-            let items = nodes.items;
-            let [start, end] = getRows(context);
 
             for (let [i, row] in Iterator(context.getRows(start, end, doc)))
                 nodes[i] = row;
@@ -1616,7 +1618,7 @@ function StatusLine() //{{{
                     ["2", "Always display status line"]
                 ];
             },
-            validator: options.validateCompleter
+            validator: Option.validateCompleter
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1671,7 +1673,7 @@ function StatusLine() //{{{
             // when session information is available, add [+] when we can go backwards
             if (config.name == "Vimperator")
             {
-                let sh = getWebNavigation().sessionHistory;
+                let sh = window.getWebNavigation().sessionHistory;
                 let modified = "";
                 if (sh.index > 0)
                     modified += "+";
