@@ -36,6 +36,7 @@ BUGS:
 - Form elements in iframes must be selected twice, whether by tabbing or
   clicking.
 - :bmarks, :hs output and 'cpt'=bh completions are broken
+- :runtime is broken, possibly Windows only
 
 FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
