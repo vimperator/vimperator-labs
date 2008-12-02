@@ -1041,7 +1041,7 @@ const liberator = (function () //{{{
                 switch (where)
                 {
                     case liberator.CURRENT_TAB:
-                        getBrowser().loadURIWithFlags(url, null, null, null, postdata);
+                        getBrowser().loadURIWithFlags(url, nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
                         break;
 
                     case liberator.NEW_BACKGROUND_TAB:
