@@ -1,6 +1,6 @@
 #### configuration
 
-VERSION       = 2.0pre
-NAME          = vimperator
+VERSION       = 0.5pre
+NAME          = muttator
 
-include ../liberator/Makefile.common
+include Makefile.common

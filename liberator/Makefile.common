@@ -3,70 +3,43 @@
 TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
+BASE	      = $(TOP)/../liberator
 
 DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
 
+MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
+
 # TODO: specify source files manually?
-JAR_TXT_FILES = ${shell find -L content skin locale \
-			-type f				\
-			-a ! -path '*CVS*'		\
-			-a \(				\
-				-path '*.js'		\
-			     -o -path '*.css'		\
-			     -o -path '*.dtd'		\
-			     -o -path '*.xml'		\
-			     -o -path '*.xul'		\
-			     -o -path '*.html'		\
- 			     -o -path '*.xhtml'		\
-			   \)				\
-		}
-JAR_DIRS      = $(foreach f,${JAR_FILES},$(dir $f))
-JAR_BIN_FILES = ${shell find content skin webcontent	\
-			-type f				\
-			-a ! -path '*CVS*'		\
-			-a -path '*.png'		\
-		}
-JAR_FILES     = ${JAR_BIN_FILES} ${JAR_TXT_FILES} ${DOC_FILES}
+JAR_BASES     = $(TOP) $(BASE)
+JAR_DIRS      = content skin locale
+JAR_TEXTS     = js css dtd xml xul html xhtml
+JAR_BINS      = png
+
 JAR           = chrome/${NAME}.jar
 
-XPI_TXT_FILES = install.rdf chrome.manifest TODO AUTHORS Donators NEWS License.txt \
-		${shell find -L modules components	\
-			-type f				\
-			-a ! -path '*CVS*'		\
-			-a \(				\
-				-path '*.js'		\
-			     -o	-path '*.jsm'		\
-			   \)				\
-		}
-XPI_DIRS      = $(foreach f,${XPI_FILES},$(dir $f))
-XPI_BIN_FILES = ${JAR} Makefile.common Makefile
-XPI_FILES     = ${XPI_BIN_FILES} ${XPI_TXT_FILES}
-XPI_NAME      = ${NAME}_${VERSION}.xpi
-XPI           = ../downloads/${XPI_NAME}
+XPI_BASES     = $(JAR_BASES) $(TOP)/..
+XPI_FILES     = install.rdf TODO AUTHORS Donators NEWS License.txt
+XPI_DIRS      = modules components chrome
+XPI_TEXTS     = js jsm
+XPI_BINS      = jar
+
+XPI_NAME      = ${NAME}_${VERSION}
+XPI_PATH      = ../downloads/${XPI_NAME}
+XPI	      = $(XPI_PATH).xpi
 
 RDF           = ../downloads/update.rdf
 RDF_IN        = ${RDF}.in
 
 BUILD_DIR     = build.${VERSION}.${OS}
-BUILD_JAR_DIR = ${BUILD_DIR}/jar
-BUILD_XPI_DIR = ${BUILD_DIR}/xpi
-
-BUILD_JAR_SUBDIRS = $(sort ${JAR_DIRS:%=${BUILD_JAR_DIR}/%})
-BUILD_XPI_SUBDIRS = $(sort ${XPI_DIRS:%=${BUILD_XPI_DIR}/%})
 
 ASCIIDOC = asciidoc
-ZIP = zip
-SED = sed
-PERL = perl
 
-# specify V=1 on make line to see more verbose output
-Q=$(if ${V},,@)
-CP_V=$(if ${V},-v)
+.SILENT:
 
 #### rules
 
-.PHONY: all help info doc jar xpi install clean distclean
+.PHONY: all help info doc jar xpi install clean distclean $(JAR)
 all: help
 
 help:
@@ -105,67 +78,33 @@ ${RDF}: ${RDF_IN} Makefile
 
 clean:
 	@echo "Cleanup..."
-	${Q}rm -f ${JAR} ${XPI}
-	${Q}find . -name '*~' -exec rm -f {} \;
+	rm -f ${JAR} ${XPI}
+	find . -name '*~' -exec rm -f {} \;
 
 distclean: clean
 	@echo "More cleanup..."
-	${Q}rm -f ${DOC_FILES}
-	${Q}rm -rf ${BUILD_DIR}
+	rm -f ${DOC_FILES}
+	rm -rf ${BUILD_DIR}
 
 #### xpi
 
-${BUILD_XPI_SUBDIRS}:
-	${Q}mkdir -p $@
-
-${XPI}: ${BUILD_XPI_SUBDIRS} ${XPI_FILES}
+$(XPI): $(JAR)
 	@echo "Building XPI..."
-	${Q}mkdir -p $(dir ${XPI})
-	${Q}for f in ${XPI_BIN_FILES} ; do \
-		cp $$f ${BUILD_XPI_DIR}/$$f ; \
-	    done
-	${Q}for f in ${XPI_TXT_FILES} ; do \
-		${SED} -e "s,###VERSION###,${VERSION},g" \
-		       -e "s,###DATE###,${BUILD_DATE},g" \
-		       < $$f > ${BUILD_XPI_DIR}/$$f ; \
-		( diff -q $$f ${BUILD_XPI_DIR}/$$f 1>/dev/null ) || \
-		( echo "modified: $$f" ; \
-		  diff -u $$f ${BUILD_XPI_DIR}/$$f | grep '^[-+][^-+]' ) ; \
-	    done
-
-	@# sed -e -> does not work correctly on MacOS's sed, therefore we use perl
-	@# ${Q}${SED} -e 's,\(skin\|content\|locale/.*\)/$$,jar:chrome/${NAME}.jar!/\1/,' \
-
-	${Q}${PERL} -pe 's,(skin|content|locale/.*)/$$,jar:chrome/${NAME}.jar!/\1/,' \
-	           < chrome.manifest > ${BUILD_XPI_DIR}/chrome.manifest
-	${Q}( cd ${BUILD_XPI_DIR} && ${ZIP} -r ${TOP}/${XPI} ${XPI_FILES} )
+	mkdir -p $(XPI_PATH)
+	awk -v 'name=$(NAME)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
+	$(MAKE_JAR) "$(XPI)" "$(XPI_BASES)" "$(XPI_DIRS)" "$(XPI_TEXTS)" "$(XPI_BINS)" "$(XPI_FILES)"
 	@echo "SUCCESS: $@"
 
 #### jar
 
-${BUILD_JAR_SUBDIRS}:
-	${Q}mkdir -p $@
-
-${JAR}: ${BUILD_JAR_SUBDIRS} ${JAR_FILES}
+$(JAR):
 	@echo "Building JAR..."
-	${Q}mkdir -p $(dir ${JAR})
-	${Q}for f in ${JAR_BIN_FILES} ; do \
-		cp $$f ${BUILD_JAR_DIR}/$$f ; \
-	    done
-	${Q}for f in ${JAR_TXT_FILES} ; do \
-		${SED} -e "s,###VERSION###,${VERSION},g" \
-		       -e "s,###DATE###,${BUILD_DATE},g" \
-		       < $$f > ${BUILD_JAR_DIR}/$$f ; \
-		( diff -q $$f ${BUILD_JAR_DIR}/$$f 1>/dev/null ) || \
-		( echo "modified: $$f" ; \
-		  diff -u $$f ${BUILD_JAR_DIR}/$$f | grep '^[-+][^-+]' ) ; \
-	    done
-	${Q}( cd ${BUILD_JAR_DIR} && ${ZIP} -r ${TOP}/${JAR} ${JAR_FILES} )
+	$(MAKE_JAR) "$(JAR)" "$(JAR_BASES)" "$(JAR_DIRS)" "$(JAR_TEXTS)" "$(JAR_BINS)" "$(JAR_FILES)"
 	@echo "SUCCESS: $@"
 
 #### doc
 
 ${DOC_FILES}: %.html: %.txt Makefile.common locale/en-US/asciidoc.conf
 	@echo "DOC $@"
-	${Q}${ASCIIDOC} --unsafe -a linkcss -o $@ $<
+	${ASCIIDOC} --unsafe -a linkcss -o $@ $<
 

@@ -5,25 +5,31 @@
 
     modules.modules = modules;
 
-    var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                           .getService(Components.interfaces.mozIJSSubScriptLoader);
-    function load(script, i)
+    const loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService(Components.interfaces.mozIJSSubScriptLoader);
+    function load(script)
     {
-        try
+        for (let [i, base] in Iterator(prefix))
         {
-            loader.loadSubScript(BASE + script, modules)
-        }
-        catch (e)
-        {
-            if (Components.utils.reportError)
-                Components.utils.reportError(e);
-            dump("liberator: Loading script " + script + ": " + e + "\n");
-            if (!i || i < 3)
-                return load(script, i + 1); // Sometimes loading (seemingly randomly) fails
+            try
+            {
+                loader.loadSubScript(base + script, modules)
+                return;
+            }
+            catch (e)
+            {
+                if (i + 1 < prefix.length)
+                    continue;
+                if (Components.utils.reportError)
+                    Components.utils.reportError(e);
+                dump("liberator: Loading script " + script + ": " + e + "\n");
+            }
         }
     }
 
     Components.utils.import("resource://liberator/storage.jsm", modules);
+
+    let prefix = [BASE];
 
     ["liberator.js",
      "config.js",
@@ -43,6 +49,7 @@
      "template.js",
      "ui.js"].forEach(load);
 
+    prefix.unshift("chrome://" + modules.config.name.toLowerCase() + "/content/");
     if (modules.config.scripts)
         modules.config.scripts.forEach(load);
 
