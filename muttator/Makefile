@@ -3,4 +3,4 @@
 VERSION       = 0.5pre
 NAME          = muttator
 
-include ../liberator/Makefile.common
+include Makefile.common
