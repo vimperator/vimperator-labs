@@ -12,6 +12,6 @@ override chrome://liberator/content/config.js	  chrome://muttator/content/config
 overlay  chrome://messenger/content/messenger.xul chrome://liberator/content/liberator.xul
 overlay  chrome://messenger/content/messenger.xul chrome://muttator/content/muttator.xul
 
-overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/compose/liberator.xul
-overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/compose/compose.xul
+overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://muttator/content/compose/liberator.xul
+overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://muttator/content/compose/compose.xul
 
