@@ -147,6 +147,13 @@ The same as [c]:set[c] command, but operates on global options only.
 See [c]:set[c] for details.
 ____
 
+
+|expand-environment-var| |expand-env| |:set_env| +
+
+Environment variables are expanded for path options like 'cdpath' and
+'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
+character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
+
 section:Setting{nbsp}Firefox{nbsp}options[firefox-options]
 
 Most Firefox options are not touched/overridden by Vimperator. In order to set
