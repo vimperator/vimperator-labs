@@ -1,7 +1,7 @@
 { content = $1 ~ /^(content|skin|locale)$/ }
-content && $NF ~ /^[a-z]/ { $NF = name "/" $NF }
+content && $NF ~ /^[a-z]/ { $NF = "/" name "/" $NF }
 content {
-    sub(/^\.\.\//, "", $NF);
+    sub(/^\.\./, "", $NF);
     $NF = "jar:chrome/" name ".jar!" $NF
 }
 {
