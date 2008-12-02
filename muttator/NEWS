@@ -1,0 +1,51 @@
+<pre>
+2008-08-xx:
+    * version 0.5
+    * new "threads" option (non-functional for now)
+
+2008-08-03:
+    * version 0.4
+    * new 'autoexternal' option to edit new messages/reply with the external editor by default
+      NOTE: You must set this option in your .muttatorrc, as options are not shared between the
+      main thunderbird window and the compose window!
+    * various "l" mappings for labeling messages
+    * "p" to open RSS message in browser
+    * "y" to yank sender or RSS URL
+    * "Y" to yank subject
+    * "R" to reply to all
+    * new compose mappings: s, t and i: Focus subject:, To: or message body
+    * q quits composer now
+    * new "x" mapping to toggle HTML display (is there a need for "simple HTML"?)
+    * new "h" mapping to toggle headers
+
+2008-06-04:
+    * version 0.3
+    * new tab related mappings + commands
+    * new :contacts and :contact commands for address book operations
+    * new :message command
+    * new -- COMPOSE -- mode with mutt-like keybindings (y to send message, e to edit message)
+    * external editor support for sending messages
+    * m to open a new message compose window
+    * new M command to send a new message to the sender of the currently selected message
+    * completions for :{go,copy,move}to commands
+    * :emptytrash command
+    * new * and # mappings to select next/prev message from same author (not perfect matching however)
+    * J, K, ]s, etc. search in closed threads now
+    * gj and gk to select messages in closed threads
+    * "t" to select current thread, use "lr" now to label a message as read
+    * KMail-like mode-independent scrolling with left/right and up/down
+    * many small improvements
+
+2008-04-30:
+    * version 0.2
+    * ctrl-s mappings to move messages to an "Archive" folder (inspired by gmail)
+    * new :moveto and :copyto commands
+    * u and ctrl-r mappings to undo/redo
+    * new muttator specific :help screen
+    * small bug fixes
+
+2008-04-29:
+    * version 0.1
+    * first public release, straight port from vimperator with many basic mappings
+</pre>
+<!-- vim: set sw=4 ts=4 et: -->

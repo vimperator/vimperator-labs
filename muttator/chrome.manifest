@@ -1,6 +1,6 @@
 # Thunderbird
-content	 muttator        content/
-locale	 liberator en-US locale/en-US/
+content  muttator content/
+locale   liberator en-US locale/en-US/
 
 content	 liberator             ../liberator/content/
 resource liberator             ../liberator/modules/
@@ -10,7 +10,7 @@ override chrome://liberator/content/liberator.dtd chrome://muttator/content/libe
 override chrome://liberator/content/config.js	  chrome://muttator/content/config.js
 
 overlay  chrome://messenger/content/messenger.xul chrome://liberator/content/liberator.xul
-overlay  chrome://messenger/content/messenger.xul chrome://liberator/content/muttator.xul
+overlay  chrome://messenger/content/messenger.xul chrome://muttator/content/muttator.xul
 
 overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/compose/liberator.xul
 overlay  chrome://messenger/content/messengercompose/messengercompose.xul chrome://liberator/content/compose/compose.xul
