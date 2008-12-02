@@ -367,6 +367,7 @@ function IO() //{{{
             let output = io.system(args);
             let command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
 
+            liberator.echo(template.generic(<span style="white-space: pre">{output}</span>))
             liberator.echo(command + util.escapeHTML(output));
 
             autocommands.trigger("ShellCmdPost", {});

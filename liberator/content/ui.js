@@ -376,7 +376,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str != "xml";
-        let output = util.xmlToDom(<div class={"ex-command-output "} highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
+        let output = util.xmlToDom(<div class={"ex-command-output "} style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
