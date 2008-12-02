@@ -133,9 +133,10 @@ function CommandLine() //{{{
         let wildmode = options.get("wildmode");
         let wildType = wildmode.values[Math.min(wildIndex++, wildmode.values.length - 1)];
 
+        let first = wildmode.value == "";
         let hasList = wildmode.checkHas(wildType, "list");
         let longest = wildmode.checkHas(wildType, "longest");
-        let full = !longest && wildmode.checkHas(wildType, "full");
+        let full = first || !longest && wildmode.checkHas(wildType, "full");
 
         // we need to build our completion list first
         if (completionIndex == UNINITIALIZED || completionContext.waitingForTab)
@@ -166,7 +167,9 @@ function CommandLine() //{{{
             }
         }
 
-        if (full)
+        if (first)
+            completionIndex = 0;
+        else if (full)
         {
             if (event.shiftKey)
                 completionIndex--;

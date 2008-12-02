@@ -81,7 +81,7 @@ const template = {
     icon: function (item, text)
     {
         let icon = this.getKey(item, "icon");
-        return <><span highlight="CompIcon">{icon ? <img src={icon}/> : <></>}</span>{text}</>
+        return <><span highlight="CompIcon">{icon ? <img src={icon}/> : <></>}</span><span class="td-strut"/>{text}</>
     },
 
     filter: function (str) <span highlight="Filter">{str}</span>,
