@@ -169,17 +169,10 @@ function CommandLine() //{{{
         if (full)
         {
             if (event.shiftKey)
-            {
                 completionIndex--;
-                if (completionIndex < -1)
-                    completionIndex = completions.items.length - 1;
-            }
             else
-            {
                 completionIndex++;
-                if (completionIndex > completions.items.length)
-                    completionIndex = 0;
-            }
+            completionIndex = Math.max(0, Math.min(completions.items.length - 1, completionIndex));
 
             statusTimer.tell();
         }
@@ -209,7 +202,8 @@ function CommandLine() //{{{
                 previewClear();
                 let editor = commandWidget.inputField.editor;
 
-                editor.selection.focusNode.textContent = command.substring(0, completions.start) + compl + completionPostfix;
+                commandWidget.value = command.substring(0, completions.start) + compl + completionPostfix;
+                editor.selection.focusNode.textContent = commandWidget.value;
 
                 let range = editor.selection.getRangeAt(0);
                 range.setStart(range.startContainer, completions.start + compl.length);

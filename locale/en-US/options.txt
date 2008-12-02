@@ -349,11 +349,12 @@ ____
 
 Change the behaviour of [m]<Return>[m] in hint mode. Possible values:
 
-`---------`----------------------------------------------------------------------------------------------------------------------------------------------------------
-*0*       Default behavior. Link is followed as soon as text uniquely identifies it. Pressing [m]<Return>[m] follows the tab selected hint (if any) or the first link.
-*1*       Like 0, but don't follow link automatically if text has uniquely identified it.
-*2*       Like 1, but don't follow first link if there are more than 1 possibilities.
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`---------`----------------------------------------------------------
+*0*       Follow the first hint as soon as typed text uniquely identifies it.
+	  Follow the selected hint on [m]<Return>[m].
+*1*       Follow the selected hint on [m]<Return>[m].
+*2*       Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected.
+---------------------------------------------------------------------
 
 ____
 
