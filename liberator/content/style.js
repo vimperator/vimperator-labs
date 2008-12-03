@@ -416,6 +416,9 @@ const highlight = storage.newObject("highlight", Highlights, false);
 highlight.CSS = Highlights.prototype.CSS;
 highlight.reload();
 
+liberator.triggerObserver("load_styles", "styles");
+liberator.triggerObserver("load_highlight", "highlight");
+
 liberator.registerObserver("load_commands", function ()
 {
     // TODO: :colo default needs :hi clear

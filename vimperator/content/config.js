@@ -140,6 +140,8 @@ const config = { //{{{
         }
 
         // load Vimperator specific modules
+        // FIXME: Why aren't these listed in config.scripts?
+        // FIXME: Why isn't this automatic?
         liberator.loadModule("search",     Search);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
@@ -147,6 +149,24 @@ const config = { //{{{
         liberator.loadModule("marks",      Marks);
         liberator.loadModule("quickmarks", QuickMarks);
         liberator.loadModule("hints",      Hints);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        ////////////////////// STYLES //////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
+        let img = Image();
+        img.src = "chrome://vimperator/content/vimperator.png";
+        img.onload = function () {
+            styles.addSheet("logo", "chrome://liberator/locale/*",
+                ".vimperator-logo {" + <>
+                     display: inline-block;
+                     width:   {img.width};
+                     height:  {img.height};
+                </> + "}" +
+                ".vimperator-logo::after { content: url(chrome://vimperator/content/vimperator.png) }",
+                true);
+            delete img;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
