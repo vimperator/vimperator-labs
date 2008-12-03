@@ -38,7 +38,7 @@ function CommandLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
+    const UNINITIALIZED = {}; // notifies us, if we need to start history/tab-completion from the beginning
 
     storage.newArray("history-search", true);
     storage.newArray("history-command", true);
@@ -104,6 +104,7 @@ function CommandLine() //{{{
             self.reset();
         };
         this.context = context;
+        this.editor = context.editor;
         this.selected = null;
         this.wildmode = options.get("wildmode");
         this.itemList = completionList;
@@ -124,17 +125,16 @@ function CommandLine() //{{{
         },
         set completion set_completion(completion)
         {
-            previewClear();
-            let editor = commandWidget.inputField.editor;
+            this.previewClear();
 
             // Change the completion text.
             // The second line is a hack to deal with some substring
             // preview corner cases.
             commandWidget.value = this.prefix + completion + this.suffix;
-            editor.selection.focusNode.textContent = commandWidget.value;
+            this.editor.selection.focusNode.textContent = commandWidget.value;
 
             // Reset the caret to one position after the completion.
-            let range = editor.selection.getRangeAt(0);
+            let range = this.editor.selection.getRangeAt(0);
             range.setStart(range.startContainer, this.prefix.length + completion.length);
             range.collapse(true);
         },
@@ -154,6 +154,42 @@ function CommandLine() //{{{
             full:    this.wildmode.checkHas(this.wildtype, "full")
         }),
 
+        preview: function preview()
+        {
+            // This will only work with autocomplete.
+            if (!options.get("wildoptions").has("auto") || !completions)
+                return;
+
+            if (this.type.longest && !this.suffix)
+            {
+                let start = commandWidget.selectionStart;
+                let substring = this.substring;
+
+                // Don't show 1-character substrings unless we've just hit backspace
+                if (substring.length < 2 && (!this.lastSubstring || this.lastSubstring.indexOf(substring) != 0))
+                    return;
+                this.lastSubstring = substring;
+                // Chop off the bits we already have.
+                substring = substring.substr(completions.value.length);
+
+                // highlight="Preview" won't work in the editor.
+                let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
+                    document);
+                this.editor.insertNode(node, this.editor.rootElement, 1);
+                commandWidget.selectionStart = commandWidget.selectionEnd = start;
+            }
+        },
+
+        previewClear: function previewClear()
+        {
+            try
+            {
+                let node = this.editor.rootElement;
+                this.editor.deleteNode(node.firstChild.nextSibling);
+            }
+            catch (e) {}
+        },
+
         reset: function reset(show)
         {
             this.wildtypes = this.wildmode.values;
@@ -171,7 +207,7 @@ function CommandLine() //{{{
                 this.wildIndex = 0;
             }
 
-            previewSubstring();
+            this.preview();
         },
 
         select: function select(idx)
@@ -261,12 +297,9 @@ function CommandLine() //{{{
         }
     }
 
-    var completionList = new ItemList("liberator-completions");
-    var completions = null;
-
-    var wildIndex = 0;  // keep track how often we press <Tab> in a row
-    var startHints = false; // whether we're waiting to start hints mode
-    var lastSubstring = "";
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// TIMERS //////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     var statusTimer = new util.Timer(5, 100, function statusTell() {
         if (completions.selected == null)
@@ -274,6 +307,7 @@ function CommandLine() //{{{
         else
             statusline.updateProgress("match " + (completions.selected + 1) + " of " + completions.items.length);
     });
+
     var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
         if (events.feedingKeys || !completions)
             return;
@@ -288,32 +322,9 @@ function CommandLine() //{{{
             completions.tab(event.shiftKey);
     });
 
-    // the containing box for the promptWidget and commandWidget
-    var commandlineWidget = document.getElementById("liberator-commandline");
-    // the prompt for the current command, for example : or /. Can be blank
-    var promptWidget = document.getElementById("liberator-commandline-prompt");
-    // the command bar which contains the current command
-    var commandWidget = document.getElementById("liberator-commandline-command");
-    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
-
-    // the widget used for multiline output
-    var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
-    var outputContainer = multilineOutputWidget.parentNode;
-
-    // the widget used for multiline intput
-    var multilineInputWidget = document.getElementById("liberator-multiline-input");
-
-    // we need to save the mode which were in before opening the command line
-    // this is then used if we focus the command line again without the "official"
-    // way of calling "open"
-    var currentExtendedMode = null;     // the extended mode which we last openend the command line for
-    var currentPrompt = null;
-    var currentCommand = null;
-
-    // save the arguments for the inputMultiline method which are needed in the event handler
-    var multilineRegexp = null;
-    var multilineCallback = null;
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// CALLBACKS ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     // callback for prompt mode
     var promptSubmitCallback = null;
@@ -328,7 +339,18 @@ function CommandLine() //{{{
         if (options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(false);
         else
-            completions.selected = completions.RESET;
+            completions.reset();
+    });
+
+    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
+    liberator.registerCallback("submit", modes.PROMPT, closePrompt);
+    liberator.registerCallback("change", modes.PROMPT, function (str) {
+        if (promptChangeCallback)
+            return promptChangeCallback(str);
+    });
+    liberator.registerCallback("complete", modes.PROMPT, function (context) {
+        if (promptCompleter)
+            promptCompleter(context);
     });
 
     function closePrompt(value)
@@ -340,12 +362,46 @@ function CommandLine() //{{{
         if (callback)
             callback(value);
     }
-    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
-    liberator.registerCallback("submit", modes.PROMPT, closePrompt);
-    liberator.registerCallback("change", modes.PROMPT,
-        function (str) { if (promptChangeCallback) return promptChangeCallback(str); });
-    liberator.registerCallback("complete", modes.PROMPT,
-        function (context) { if (promptCompleter) promptCompleter(context); });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// VARIABLES ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    const completionList = new ItemList("liberator-completions");
+    var completions = null;
+
+    var wildIndex = 0;  // keep track how often we press <Tab> in a row
+    var startHints = false; // whether we're waiting to start hints mode
+    var lastSubstring = "";
+
+    // the containing box for the promptWidget and commandWidget
+    const commandlineWidget = document.getElementById("liberator-commandline");
+    // the prompt for the current command, for example : or /. Can be blank
+    const promptWidget = document.getElementById("liberator-commandline-prompt");
+    // the command bar which contains the current command
+    const commandWidget = document.getElementById("liberator-commandline-command");
+
+    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
+
+    // the widget used for multiline output
+    const multilineOutputWidget = document.getElementById("liberator-multiline-output");
+    const outputContainer = multilineOutputWidget.parentNode;
+
+    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
+
+    // the widget used for multiline intput
+    const multilineInputWidget = document.getElementById("liberator-multiline-input");
+
+    // we need to save the mode which were in before opening the command line
+    // this is then used if we focus the command line again without the "official"
+    // way of calling "open"
+    var currentExtendedMode = null;     // the extended mode which we last openend the command line for
+    var currentPrompt = null;
+    var currentCommand = null;
+
+    // save the arguments for the inputMultiline method which are needed in the event handler
+    var multilineRegexp = null;
+    var multilineCallback = null;
 
     function setHighlightGroup(group)
     {
@@ -367,44 +423,6 @@ function CommandLine() //{{{
             promptWidget.collapsed = true;
         }
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
-    }
-
-    function previewClear()
-    {
-        try
-        {
-            let editor = commandWidget.inputField.editor;
-            let node = editor.rootElement;
-            editor.deleteNode(node.firstChild.nextSibling);
-        }
-        catch (e) {}
-    }
-    function previewSubstring()
-    {
-        // This will only work with autocomplete.
-        if (!options.get("wildoptions").has("auto") || !completions)
-            return;
-
-        let editor = commandWidget.inputField.editor;
-
-        if (completions.type.longest && !completions.suffix)
-        {
-            let start = commandWidget.selectionStart;
-            let substring = completions.substring;
-
-            // Don't show 1-character substrings unless we've just hit backspace
-            if (substring.length < 2 && lastSubstring.indexOf(substring) != 0)
-                return;
-            lastSubstring = substring;
-            // Chop off the bits we already have.
-            substring = substring.substr(completions.value.length);
-
-            // highlight="Preview" won't work in the editor.
-            let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
-                document);
-            editor.insertNode(node, editor.rootElement, 1);
-            commandWidget.selectionStart = commandWidget.selectionEnd = start;
-        }
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
@@ -889,7 +907,7 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            previewClear();
+            completions.previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
@@ -916,7 +934,6 @@ function CommandLine() //{{{
             else if (event.type == "input")
             {
                 liberator.triggerCallback("change", currentExtendedMode, command);
-                previewSubstring();
             }
             else if (event.type == "keypress")
             {
