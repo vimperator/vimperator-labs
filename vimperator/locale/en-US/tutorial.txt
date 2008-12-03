@@ -122,8 +122,8 @@ following pairs sequences are equivalent:
   :open my.webmail.com<CR>
   omy.webmail.com<CR>
 
-  :tabopen vimperator.mozdev.org<CR>
-  tvimperator.mozdev.org<CR>
+  :tabopen vimperator.org<CR>
+  tvimperator.org<CR>
 
 section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints-tutorial]
 
@@ -149,7 +149,7 @@ To activate QuickHint mode, press either [m]f[m] or [m]F[m].  The lower-case
 [m]f[m] will open the resulting link in the current tab, while the upper-case
 [m]F[m] will open it in a new tab.
 
-To test it, try this link: http://vimperator.mozdev.org/[Vimperator Homepage].
+To test it, try this link: http://vimperator.org/[Vimperator Homepage].
 Activate QuickHint mode with [m]f[m] or [m]F[m] to highlight all currently
 visible links.  Then start typing the text of the link.  The link should be
 uniquely identified soon, and Vimperator will open it.  Once you're done,

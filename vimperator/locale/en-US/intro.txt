@@ -8,7 +8,7 @@ VIMperator :)*
 
 section:Introduction[intro]
 
-http://vimperator.mozdev.org[Vimperator] is a free browser add-on for Firefox,
+http://vimperator.org[Vimperator] is a free browser add-on for Firefox,
 which makes it look and behave like the http://www.vim.org[Vim]
 text editor. It has similar key bindings, and you could call it a modal
 web browser, as key bindings differ according to which mode you are in.
