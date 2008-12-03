@@ -36,7 +36,7 @@ do
             for f in $(getfiles "$bin" "$dir")
             do
                 mkdir -p "$stage/${f%/*}"
-                cp $f "$stage/$f"
+                cp $top/$f "$stage/$f"
             done
             for f in $(getfiles "$text" "$dir")
             do
