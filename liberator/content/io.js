@@ -28,18 +28,26 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 plugins.contexts = {};
-function Script(name)
+function Script(file)
 {
-    let self = plugins.contexts[name]
+    let self = plugins.contexts[file.path]
     if (self)
     {
         if (self.onUnload)
             self.onUnload();
         return self;
     }
-    plugins.contexts[name] = this;
-    this.NAME = name;
+    plugins.contexts[file.path] = this;
+    this.NAME = file.leafName.replace(/\..*/, "").replace(/-([a-z])/, function (_0, _1) _1.toUpperCase());
+    this.PATH = file.path;
     this.__context__ = this;
+
+    // This belongs elsewhere
+    for (let [,dir] in Iterator(io.getRuntimeDirectories("plugin")))
+    {
+        if (dir.contains(file, false))
+            plugins[name] = this.NAME;
+    }
 }
 Script.prototype = plugins;
 
@@ -833,7 +841,7 @@ lookup:
                 {
                     try
                     {
-                        liberator.loadScript(uri.spec, new Script(file.path));
+                        liberator.loadScript(uri.spec, new Script(file));
                     }
                     catch (e)
                     {
