@@ -225,13 +225,14 @@ CompletionContext.prototype = {
     {
         this.hasItems = true;
         this._generate = arg;
-        liberator.dump(this.name + ": set generate()");
+        //**/ liberator.dump(this.name + ": set generate()");
         if (this.background && this.regenerate)
         {
             //**/ this.__i = (this.__i || 0) + 1;
             //**/ let self = this;
             //**/ function dump(msg) liberator.callInMainThread(function () liberator.dump(self.name + ":" + self.__i + ": " + msg));
             //**/ dump("set generate() regenerating");
+
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
@@ -837,8 +838,6 @@ function Completion() //{{{
                 let res = functions.some(function (idx) idx >= start && idx < end);
                 if (!res || self.context.tabPressed || key in cache.eval)
                     return false;
-                liberator.dump(cache.eval[key]);
-                liberator.dumpStack();
                 self.context.waitingForTab = true;
                 return true;
             }

@@ -38,7 +38,7 @@ function CommandLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const UNINITIALIZED = -2; // notifies us, if we need to start history/tab-completion from the beginning
+    const UNINITIALIZED = {}; // notifies us, if we need to start history/tab-completion from the beginning
 
     storage.newArray("history-search", true);
     storage.newArray("history-command", true);
@@ -96,161 +96,235 @@ function CommandLine() //{{{
 
     var silent = false;
 
-    var completionList = new ItemList("liberator-completions");
-    var completions = { start: 0, items: [] };
-    var completionContext = null;
-    // for the example command "open sometext| othertext" (| is the cursor pos):
-    var completionPrefix = "";     // will be: "open sometext"
-    var completionPostfix = "";    // will be: " othertext"
-    var completionIndex = UNINITIALIZED;
-
-    var wildIndex = 0;  // keep track how often we press <Tab> in a row
-    var startHints = false; // whether we're waiting to start hints mode
-    var lastSubstring = "";
-
-    var statusTimer = new util.Timer(5, 100, function statusTell() {
-        if (completionIndex >= completions.items.length)
-            statusline.updateProgress("");
-        else
-            statusline.updateProgress("match " + (completionIndex + 1) + " of " + completions.items.length);
-    });
-    var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
-        if (events.feedingKeys)
-            return;
-        completionContext.reset();
-        completionContext.fork("ex", 0, completion, "ex");
-        commandline.setCompletions(completionContext.allItems);
-    });
-
-    var tabTimer = new util.Timer(10, 10, function tabTell(event) {
-
-        let command = commandline.getCommand();
-
-        // always reset our completion history so up/down keys will start with new values
-        historyIndex = UNINITIALIZED;
-
-        // TODO: call just once, and not on each <Tab>
-        let wildmode = options.get("wildmode");
-        let wildType = wildmode.values[Math.min(wildIndex++, wildmode.values.length - 1)];
-
-        let first = wildmode.value == "";
-        let hasList = wildmode.checkHas(wildType, "list");
-        let longest = wildmode.checkHas(wildType, "longest");
-        let full = first || !longest && wildmode.checkHas(wildType, "full");
-
-        // we need to build our completion list first
-        if (completionIndex == UNINITIALIZED || completionContext.waitingForTab)
+    function Completions(context)
+    {
+        let self = this;
+        context.onUpdate = function ()
         {
-            completionIndex = -1;
-            completionPrefix = command.substring(0, commandWidget.selectionStart);
-            completionPostfix = command.substring(commandWidget.selectionStart);
-            completions = liberator.triggerCallback("complete", currentExtendedMode, completionPrefix);
+            self.reset();
+        };
+        this.context = context;
+        this.editor = context.editor;
+        this.selected = null;
+        this.wildmode = options.get("wildmode");
+        this.itemList = completionList;
+        this.itemList.setItems(context);
+        this.reset();
+    }
+    Completions.prototype = {
+        UP: {},
+        DOWN: {},
+        PAGE_UP: {},
+        PAGE_DOWN: {},
+        RESET: null,
 
-            completionList.setItems(completionContext);
-        }
-
-        if (completions.items.length == 0)
+        get completion() 
         {
-            // Wait for items to come available
-            // TODO: also use that code when we DO have completions but too few
-            let end = Date.now() + 5000;
-            while (completionContext.incomplete && completions.items.length == 0 && Date.now() < end)
-            {
-                liberator.threadYield();
-                completions = completionContext.allItems;
-            }
+            let str = commandline.getCommand();
+            return str.substring(this.prefix.length, str.length - this.suffix.length);
+        },
+        set completion set_completion(completion)
+        {
+            this.previewClear();
 
-            if (completions.items.length == 0) // still not more matches
-            {
-                liberator.beep();
+            // Change the completion text.
+            // The second line is a hack to deal with some substring
+            // preview corner cases.
+            commandWidget.value = this.prefix + completion + this.suffix;
+            this.editor.selection.focusNode.textContent = commandWidget.value;
+
+            // Reset the caret to one position after the completion.
+            let range = this.editor.selection.getRangeAt(0);
+            range.setStart(range.startContainer, this.prefix.length + completion.length);
+            range.collapse(true);
+        },
+
+        get start() this.context.allItems.start,
+
+        get items() this.context.allItems.items,
+
+        get substring() this.context.longestAllSubstring,
+
+        get wildtype() this.wildtypes[this.wildIndex] || "",
+
+        get type() ({
+            list:    this.wildmode.checkHas(this.wildtype, "list"),
+            longest: this.wildmode.checkHas(this.wildtype, "longest"),
+            first:   this.wildmode.checkHas(this.wildtype, ""),
+            full:    this.wildmode.checkHas(this.wildtype, "full")
+        }),
+
+        preview: function preview()
+        {
+            // This will only work with autocomplete.
+            if (!options.get("wildoptions").has("auto") || !completions)
                 return;
-            }
-        }
 
-        if (first)
-            completionIndex = 0;
-        else if (full)
+            if (this.type.longest && !this.suffix)
+            {
+                let start = commandWidget.selectionStart;
+                let substring = this.substring;
+
+                // Don't show 1-character substrings unless we've just hit backspace
+                if (substring.length < 2 && (!this.lastSubstring || this.lastSubstring.indexOf(substring) != 0))
+                    return;
+                this.lastSubstring = substring;
+                // Chop off the bits we already have.
+                substring = substring.substr(completions.value.length);
+
+                // highlight="Preview" won't work in the editor.
+                let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
+                    document);
+                this.editor.insertNode(node, this.editor.rootElement, 1);
+                commandWidget.selectionStart = commandWidget.selectionEnd = start;
+            }
+        },
+
+        previewClear: function previewClear()
         {
-            if (event.shiftKey)
-                completionIndex--;
+            try
+            {
+                let node = this.editor.rootElement;
+                this.editor.deleteNode(node.firstChild.nextSibling);
+            }
+            catch (e) {}
+        },
+
+        reset: function reset(show)
+        {
+            this.wildtypes = this.wildmode.values;
+            this.wildIndex = -1;
+
+            this.prefix = this.context.value.substr(0, this.start);
+            this.value  = this.context.value.substr(this.start, this.context.caret);
+            this.suffix = this.context.value.substr(this.context.caret);
+
+            if (show)
+            {
+                this.itemList.reset();
+                this.select(this.RESET);
+                this.itemList.show();
+                this.wildIndex = 0;
+            }
+
+            this.preview();
+        },
+
+        select: function select(idx)
+        {
+            switch (idx)
+            {
+                case this.UP:
+                    if (this.selected == null)
+                        idx = this.items.length - 1;
+                    else
+                        idx = this.selected - 1;
+                    break;
+                case this.DOWN:
+                    if (this.selected == null)
+                        idx = 0;
+                    else
+                        idx = this.selected + 1;
+                    break;
+                case this.RESET:
+                    idx = null;
+                    break;
+                default:         idx = Math.max(0, Math.max(this.items.length - 1, idx));
+            }
+            this.itemList.selectItem(idx);
+            if (idx < 0 || idx >= this.items.length || idx == null)
+            {
+                // Wrapped. Start again.
+                this.selected = null;
+                this.completion = this.value;
+            }
             else
-                completionIndex++;
-            completionIndex = Math.max(0, Math.min(completions.items.length - 1, completionIndex));
+            {
+                this.selected = idx;
+                this.completion = this.items[idx].text;
+            }
+        },
+
+        tab: function tab(reverse)
+        {
+            // Check if we need to run the completer.
+            if (this.context.waitingForTab || this.wildIndex == -1)
+            {
+                this.context.reset();
+                this.context.tabPressed = true;
+                liberator.triggerCallback("complete", currentExtendedMode, this.context);
+                this.reset(true);
+            }
+
+            if (this.items.length == 0)
+            {
+                // No items. Wait for any unfinished completers.
+                let end = Date.now() + 5000;
+                while (this.context.incomplete && this.items.length == 0 && Date.now() < end)
+                    liberator.threadYield();
+
+                if (this.items.length == 0)
+                    return liberator.beep();
+            }
+
+            switch (this.wildtype.replace(/.*:/, ""))
+            {
+                case "":
+                    this.select(0);
+                    break;
+                case "longest":
+                    if (this.items.length > 1)
+                    {
+                        if (this.substring && this.substring != this.completion)
+                        {
+                            this.completion = this.substring;
+                            liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
+                        }
+                        break;
+                    }
+                    // Fallthrough
+                case "full":
+                    this.select(reverse ? this.UP : this.DOWN)
+                    break;
+            }
+
+            if (this.type.list)
+                completionList.show();
+
+            this.wildIndex = Math.max(0, Math.min(this.wildtypes.length - 1, this.wildIndex + 1));
 
             statusTimer.tell();
         }
+    }
 
-        // the following line is not inside if (hasList) for list:longest,full
-        completionList.selectItem(completionIndex);
-        if (hasList)
-            completionList.show();
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// TIMERS //////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
-        if ((completionIndex == -1 || completionIndex >= completions.items.length) && !longest) // wrapped around matches, reset command line
-        {
-            if (full)
-                setCommand(completionPrefix + completionPostfix);
-        }
+    var statusTimer = new util.Timer(5, 100, function statusTell() {
+        if (completions.selected == null)
+            statusline.updateProgress("");
         else
-        {
-            let compl = null;
-            if (longest && completions.items.length > 1)
-                compl = completions.longestSubstring;
-            else if (full)
-                compl = completions.items[completionIndex].text;
-            else if (completions.items.length == 1)
-                compl = completions.items[0].text;
-
-            if (compl)
-            {
-                previewClear();
-                let editor = commandWidget.inputField.editor;
-
-                commandWidget.value = command.substring(0, completions.start) + compl + completionPostfix;
-                editor.selection.focusNode.textContent = commandWidget.value;
-
-                let range = editor.selection.getRangeAt(0);
-                range.setStart(range.startContainer, completions.start + compl.length);
-                range.collapse(true);
-
-                if (longest)
-                    liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
-
-                // Start a new completion in the next iteration. Useful for commands like :source
-                // RFC: perhaps the command can indicate whether the completion should be restarted
-                //      -> should be doable now, since the completion items are objects
-                // Needed for :source to grab another set of completions after a file/directory has been filled out
-                // if (completions.length == 1 && !full)
-                //     completionIndex = UNINITIALIZED;
-            }
-        }
+            statusline.updateProgress("match " + (completions.selected + 1) + " of " + completions.items.length);
     });
 
-    // the containing box for the promptWidget and commandWidget
-    var commandlineWidget = document.getElementById("liberator-commandline");
-    // the prompt for the current command, for example : or /. Can be blank
-    var promptWidget = document.getElementById("liberator-commandline-prompt");
-    // the command bar which contains the current command
-    var commandWidget = document.getElementById("liberator-commandline-command");
-    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
+    var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
+        if (events.feedingKeys || !completions)
+            return;
+        completions.context.reset();
+        liberator.triggerCallback("complete", currentExtendedMode, completions.context);
+        completions.reset(true);
+        completions.itemList.show();
+    });
 
-    // the widget used for multiline output
-    var multilineOutputWidget = document.getElementById("liberator-multiline-output");
-    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
-    var outputContainer = multilineOutputWidget.parentNode;
+    var tabTimer = new util.Timer(10, 10, function tabTell(event) {
+        if (completions)
+            completions.tab(event.shiftKey);
+    });
 
-    // the widget used for multiline intput
-    var multilineInputWidget = document.getElementById("liberator-multiline-input");
-
-    // we need to save the mode which were in before opening the command line
-    // this is then used if we focus the command line again without the "official"
-    // way of calling "open"
-    var currentExtendedMode = null;     // the extended mode which we last openend the command line for
-    var currentPrompt = null;
-    var currentCommand = null;
-
-    // save the arguments for the inputMultiline method which are needed in the event handler
-    var multilineRegexp = null;
-    var multilineCallback = null;
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// CALLBACKS ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     // callback for prompt mode
     var promptSubmitCallback = null;
@@ -258,18 +332,25 @@ function CommandLine() //{{{
     var promptCompleter = null;
 
     liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
-    liberator.registerCallback("complete", modes.EX, function (str) {
-        completionContext.reset();
-        completionContext.tabPressed = true;
-        completionContext.fork("ex", 0, completion, "ex");
-        return completionContext.allItems;
+    liberator.registerCallback("complete", modes.EX, function (context) {
+        context.fork("ex", 0, completion, "ex");
     });
     liberator.registerCallback("change", modes.EX, function (command) {
-        completion.cancel(); // cancel any previous completion function
         if (options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(false);
         else
-            completionIndex = UNINITIALIZED;
+            completions.reset();
+    });
+
+    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
+    liberator.registerCallback("submit", modes.PROMPT, closePrompt);
+    liberator.registerCallback("change", modes.PROMPT, function (str) {
+        if (promptChangeCallback)
+            return promptChangeCallback(str);
+    });
+    liberator.registerCallback("complete", modes.PROMPT, function (context) {
+        if (promptCompleter)
+            promptCompleter(context);
     });
 
     function closePrompt(value)
@@ -281,12 +362,46 @@ function CommandLine() //{{{
         if (callback)
             callback(value);
     }
-    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
-    liberator.registerCallback("submit", modes.PROMPT, closePrompt);
-    liberator.registerCallback("change", modes.PROMPT,
-        function (str) { if (promptChangeCallback) return promptChangeCallback(str); });
-    liberator.registerCallback("complete", modes.PROMPT,
-        function (str) { if (promptCompleter) return promptCompleter(str); });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// VARIABLES ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    const completionList = new ItemList("liberator-completions");
+    var completions = null;
+
+    var wildIndex = 0;  // keep track how often we press <Tab> in a row
+    var startHints = false; // whether we're waiting to start hints mode
+    var lastSubstring = "";
+
+    // the containing box for the promptWidget and commandWidget
+    const commandlineWidget = document.getElementById("liberator-commandline");
+    // the prompt for the current command, for example : or /. Can be blank
+    const promptWidget = document.getElementById("liberator-commandline-prompt");
+    // the command bar which contains the current command
+    const commandWidget = document.getElementById("liberator-commandline-command");
+
+    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
+
+    // the widget used for multiline output
+    const multilineOutputWidget = document.getElementById("liberator-multiline-output");
+    const outputContainer = multilineOutputWidget.parentNode;
+
+    multilineOutputWidget.contentDocument.body.id = "liberator-multiline-output-content";
+
+    // the widget used for multiline intput
+    const multilineInputWidget = document.getElementById("liberator-multiline-input");
+
+    // we need to save the mode which were in before opening the command line
+    // this is then used if we focus the command line again without the "official"
+    // way of calling "open"
+    var currentExtendedMode = null;     // the extended mode which we last openend the command line for
+    var currentPrompt = null;
+    var currentCommand = null;
+
+    // save the arguments for the inputMultiline method which are needed in the event handler
+    var multilineRegexp = null;
+    var multilineCallback = null;
 
     function setHighlightGroup(group)
     {
@@ -308,37 +423,6 @@ function CommandLine() //{{{
             promptWidget.collapsed = true;
         }
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
-    }
-
-    function previewClear()
-    {
-        try
-        {
-            let editor = commandWidget.inputField.editor;
-            let node = editor.rootElement;
-            editor.deleteNode(node.firstChild.nextSibling);
-        }
-        catch (e) {}
-    }
-    function previewSubstring()
-    {
-        if (!options.get("wildoptions").has("auto") || !completionContext)
-            return;
-        let editor = commandWidget.inputField.editor;
-        let wildmode = options.get("wildmode");
-        let wildType = wildmode.values[Math.min(wildIndex, wildmode.values.length - 1)];
-        if (wildmode.checkHas(wildType, "longest") && commandWidget.selectionStart == commandWidget.value.length)
-        {
-            // highlight= won't work here.
-            let start = commandWidget.selectionStart;
-            let substring = completionContext.longestAllSubstring.substr(start - completionContext.allItems.start);
-            if (substring.length < 2 && substring != lastSubstring.substr(Math.max(0, lastSubstring.length - substring.length)))
-                return;
-            lastSubstring = substring;
-            let node = <span style={highlight.get("Preview").value}>{substring}</span>
-            editor.insertNode(util.xmlToDom(node, document), editor.rootElement, 1);
-            commandWidget.selectionStart = commandWidget.selectionEnd = start;
-        }
     }
 
     // sets the command - e.g. 'tabopen', 'open http://example.com/'
@@ -527,6 +611,7 @@ function CommandLine() //{{{
             completer: function completer(filter)
             {
                 return [
+                    // Why do we need ""?
                     ["",              "Complete only the first match"],
                     ["full",          "Complete the next full match"],
                     ["longest",       "Complete to longest common string"],
@@ -677,7 +762,7 @@ function CommandLine() //{{{
                                      // FORCE_MULTILINE is given, FORCE_MULTILINE takes precedence
         APPEND_TO_MESSAGES : 1 << 3, // add the string to the message history
 
-        get completionContext() completionContext,
+        get completionContext() completions.context,
 
         get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
@@ -692,7 +777,12 @@ function CommandLine() //{{{
 
         getCommand: function getCommand()
         {
-            return commandWidget.inputField.editor.rootElement.firstChild.textContent;
+            try
+            {
+                return commandWidget.inputField.editor.rootElement.firstChild.textContent;
+            }
+            catch (e) {}
+            return commandWidget.value;
         },
 
         open: function open(prompt, cmd, extendedMode)
@@ -704,7 +794,6 @@ function CommandLine() //{{{
             currentExtendedMode = extendedMode || null;
 
             historyIndex = UNINITIALIZED;
-            completionIndex = UNINITIALIZED;
 
             modes.set(modes.COMMAND_LINE, currentExtendedMode);
             setHighlightGroup(this.HL_NORMAL);
@@ -713,11 +802,8 @@ function CommandLine() //{{{
 
             commandWidget.focus();
 
-            completionContext = CompletionContext(commandWidget.inputField.editor);
-            completionContext.onUpdate = function ()
-            {
-                commandline.setCompletions(this.allItems);
-            };
+            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
+
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
                 options.get("wildoptions").has("auto") &&
@@ -821,7 +907,7 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            previewClear();
+            completions.previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
@@ -848,7 +934,6 @@ function CommandLine() //{{{
             else if (event.type == "input")
             {
                 liberator.triggerCallback("change", currentExtendedMode, command);
-                previewSubstring();
             }
             else if (event.type == "keypress")
             {
@@ -889,7 +974,7 @@ function CommandLine() //{{{
                     event.stopPropagation();
 
                     // always reset the tab completion if we use up/down keys
-                    completionIndex = UNINITIALIZED;
+                    completions.select(completions.RESET);
 
                     // save 'start' position for iterating through the history
                     if (historyIndex == UNINITIALIZED)
@@ -954,6 +1039,7 @@ function CommandLine() //{{{
                 {
                     // reset the tab completion
                     completionIndex = historyIndex = UNINITIALIZED;
+                    completions.reset();
 
                     // and blur the command line if there is no text left
                     if (command.length == 0)
@@ -1239,55 +1325,16 @@ function CommandLine() //{{{
             outputContainer.collapsed = false;
         },
 
-        // to allow asynchronous adding of completions
-        setCompletions: function setCompletions(newCompletions)
-        {
-            if (liberator.mode != modes.COMMAND_LINE)
-                return;
-
-            // don't show an empty result, if we are just waiting for data to arrive
-            // FIXME: Maybe. CompletionContext
-            //if (newCompletions.incompleteResult && newCompletions.items.length == 0)
-            //    return;
-
-            completionList.setItems(completionContext);
-
-            // try to keep the old item selected
-            if (completionIndex >= 0 && completionIndex < newCompletions.items.length && completionIndex < completions.items.length)
-            {
-                if (newCompletions.items[completionIndex][0] != completions.items[completionIndex][0])
-                    completionIndex = -1;
-            }
-            else
-                completionIndex = -1;
-
-            let oldStart = completions.start;
-            completions = newCompletions;
-            if (typeof completions.start != "number")
-                completions.start = oldStart;
-
-            completionList.selectItem(completionIndex);
-            if (options.get("wildoptions").has("auto"))
-                completionList.show();
-
-            // why do we have to set that here? Without that, we lose the
-            // prefix when wrapping around searches
-            // with that, we SOMETIMES have problems with <tab> followed by <s-tab> in :open completions
-
-            previewSubstring();
-            let command = this.getCommand();
-            completionPrefix = command.substring(0, commandWidget.selectionStart);
-            completionPostfix = command.substring(commandWidget.selectionStart);
-        },
-
         // TODO: does that function need to be public?
         resetCompletions: function resetCompletions()
         {
             autocompleteTimer.reset();
-            completion.cancel();
-            completions = { start: completions.start, items: [] };
-            completionIndex = historyIndex = UNINITIALIZED;
-            wildIndex = 0;
+            if (completions)
+            {
+                completions.context.reset();
+                completions.reset();
+            }
+            historyIndex = UNINITIALIZED;
             removeSuffix = "";
         }
     };
@@ -1509,12 +1556,19 @@ function ItemList(id) //{{{
         },
         visible: function visible() !container.collapsed,
 
+        reset: function ()
+        {
+            startIndex = endIndex = selIndex = -1;
+            div = null;
+            this.selectItem(-1);
+        },
+
         // if @param selectedItem is given, show the list and select that item
         setItems: function setItems(newItems, selectedItem)
         {
             startIndex = endIndex = selIndex = -1;
             items = newItems;
-            init();
+            this.reset();
             if (typeof selectedItem == "number")
             {
                 this.selectItem(selectedItem);
@@ -1530,11 +1584,14 @@ function ItemList(id) //{{{
 
             //let now = Date.now();
 
+            if (div == null)
+                init();
+
             let sel = selIndex;
             let len = items.allItems.items.length;
             let newOffset = startIndex;
 
-            if (index == -1 || index == len) // wrapped around
+            if (index == -1 || index == null || index == len) // wrapped around
             {
                 if (selIndex < 0)
                     newOffset = 0;
