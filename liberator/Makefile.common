@@ -97,7 +97,7 @@ $(XPI): $(JAR)
 
 #### jar
 
-$(JAR):
+$(JAR): doc
 	@echo "Building JAR..."
 	$(MAKE_JAR) "$(JAR)" "$(JAR_BASES)" "$(JAR_DIRS)" "$(JAR_TEXTS)" "$(JAR_BINS)" "$(JAR_FILES)"
 	@echo "SUCCESS: $@"
