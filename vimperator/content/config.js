@@ -159,11 +159,11 @@ const config = { //{{{
         img.onload = function () {
             styles.addSheet("logo", "chrome://liberator/locale/*",
                 ".vimperator-logo {" + <>
-                     display: inline-block;
-                     width:   {img.width};
-                     height:  {img.height};
-                </> + "}" +
-                ".vimperator-logo::after { content: url(chrome://vimperator/content/vimperator.png) }",
+                     display:    inline-block;
+                     background: url({img.src});
+                     width:      {img.width}px;
+                     height:     {img.height}px;
+                </> + "}",
                 true);
             delete img;
         }
