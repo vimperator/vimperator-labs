@@ -75,12 +75,13 @@ function CompletionContext(editor, name, offset)
         else
             this.editor = editor;
         this.compare = function (a, b) String.localeCompare(a.text, b.text);
+
         this.filterFunc = function (items)
         {
-            let self = this;
-            return this.filters.reduce(
-                    function (res, filter) res.filter(function (item) filter.call(self, item)),
-                    items);
+                let self = this;
+                return this.filters.
+                    reduce(function (res, filter) res.filter(function (item) filter.call(self, item)),
+                            items);
         }
         this.filters = [function (item) {
             let text = Array.concat(this.getKey(item, "text"));
@@ -146,8 +147,7 @@ CompletionContext.prototype = {
         });
 
         let substrings = lists.reduce(
-                function (res, list) res.filter(
-                    function (str) list.some(function (s) s.substr(0, str.length) == str)),
+                function (res, list) res.filter(function (str) list.some(function (s) s.substr(0, str.length) == str)),
                 lists.pop());
         if (!substrings) // FIXME: How is this undefined?
             return [];
@@ -642,8 +642,7 @@ function Completion() //{{{
             context[EVAL_TMP] = tmp;
             try
             {
-                let res = liberator.eval(arg, context);
-                return res;
+                return cache[key] = liberator.eval(arg, context);
             }
             catch (e)
             {
@@ -838,6 +837,8 @@ function Completion() //{{{
                 let res = functions.some(function (idx) idx >= start && idx < end);
                 if (!res || self.context.tabPressed || key in cache.eval)
                     return false;
+                liberator.dump(cache.eval[key]);
+                liberator.dumpStack();
                 self.context.waitingForTab = true;
                 return true;
             }
@@ -1600,6 +1601,7 @@ function Completion() //{{{
                     return true;
                 });
             });
+            context.completions = completions;
         },
 
         // filter a list of urls
