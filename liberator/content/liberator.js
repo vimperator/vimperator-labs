@@ -676,9 +676,12 @@ const liberator = (function () //{{{
             window.dump(("config" in modules && config.name.toLowerCase()) + ": " + message);
         },
 
-        dumpStack: function (msg)
+        dumpStack: function (msg, frames)
         {
-            liberator.dump((msg || "") + (new Error()).stack);
+            let stack = Error().stack.replace(/(?:.*\n){2}/, "");
+            if (frames != null)
+                [stack] = stack.match(RegExp("(?:.*\n){0," + frames + "}"));
+            liberator.dump((msg || "Stack") + "\n" + stack);
         },
 
         echo: function (str, flags)
@@ -965,7 +968,10 @@ const liberator = (function () //{{{
                                 io.source(file.path, false);
                                 liberator.pluginFiles[file.path] = true;
                             }
-                            catch (e) {};
+                            catch (e)
+                            {
+                                liberator.reportError(e);
+                            }
                         }
                     });
                 }
