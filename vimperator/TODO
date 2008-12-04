@@ -78,6 +78,3 @@ FEATURES:
   have a look into the split browser extension
 - many other ideas are listed in the wiki
 
-RANDOM IDEAS:
-* hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
-
