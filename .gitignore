@@ -1,1 +1,4 @@
 *.xpi
+*/locale/*/*.html
+*/chrome
+*~
