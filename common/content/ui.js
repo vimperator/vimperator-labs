@@ -665,6 +665,7 @@ function CommandLine() //{{{
             completer: function completer(value)
             {
                 return [
+                    ["",     "Default completion that won't show or sort the results"],
                     ["auto", "Automatically show completions while you are typing"],
                     ["sort", "Always sort the completion list"]
                 ];
