@@ -238,6 +238,7 @@ function Styles(name, store, serial)
             try
             {
                 this.registerSheet(cssUri(wrapCSS(sheet)), !force);
+                this.registerAgentSheet(cssUri(wrapCSS(sheet)))
             }
             catch (e)
             {
@@ -299,6 +300,7 @@ function Styles(name, store, serial)
             if (!sheet.ref.length)
             {
                 this.unregisterSheet(cssUri(wrapCSS(sheet)));
+                this.unregisterAgentSheet(cssUri(wrapCSS(sheet)));
                 if (sheets.indexOf(sheet) > -1)
                     sheets.splice(sheets.indexOf(sheet), 1);
             }
@@ -329,6 +331,21 @@ function Styles(name, store, serial)
         uri = ios.newURI(uri, null, null);
         if (sss.sheetRegistered(uri, sss.USER_SHEET))
             sss.unregisterSheet(uri, sss.USER_SHEET);
+    }
+
+    // FIXME
+    this.registerAgentSheet = function (uri)
+    {
+        this.unregisterAgentSheet(uri);
+        uri = ios.newURI(uri, null, null);
+        sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
+    }
+
+    this.unregisterAgentSheet = function (uri)
+    {
+        uri = ios.newURI(uri, null, null);
+        if (sss.sheetRegistered(uri, sss.AGENT_SHEET))
+            sss.unregisterSheet(uri, sss.AGENT_SHEET);
     }
 
     function wrapCSS(sheet)

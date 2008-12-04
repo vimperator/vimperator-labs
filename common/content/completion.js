@@ -122,6 +122,8 @@ CompletionContext.prototype = {
         {
             let self = this;
             let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
+            if (minStart == Infinity)
+                minStart = 0;
             let items = this.contextList.map(function (context) {
                 if (!context.hasItems)
                     return [];

@@ -232,9 +232,9 @@ function CommandLine() //{{{
             this.wildtypes = this.wildmode.values;
             this.wildIndex = -1;
 
-            this.prefix = this.context.value.substr(0, this.start);
-            this.value  = this.context.value.substr(this.start, this.context.caret);
-            this.suffix = this.context.value.substr(this.context.caret);
+            this.prefix = this.context.value.substring(0, this.start);
+            this.value  = this.context.value.substring(this.start, this.caret);
+            this.suffix = this.context.value.substring(this.caret);
 
             if (show)
             {
@@ -1372,7 +1372,7 @@ function CommandLine() //{{{
             if (completions)
             {
                 completions.context.reset();
-                completions.reset();
+                //completions.reset();
             }
             historyIndex = UNINITIALIZED;
             removeSuffix = "";

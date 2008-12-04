@@ -92,48 +92,63 @@ const liberator = (function () //{{{
             "Allow reading of an RC file in the current directory",
             "boolean", false);
 
-        const tabopts = [
-            ["n", "Tab number", null, highlight.selector("TabNumber")],
-            ["N", "Tab number over icon", null, highlight.selector("TabIconNumber")]
-        ];
+
+        const groups = {
+            config: {
+                opts: config.guioptions,
+                setter: function (opts)
+                {
+                    for (let [opt, [,ids]] in Iterator(this.opts))
+                    {
+                        ids.map(function (id) document.getElementById(id))
+                           .forEach(function (elem)
+                        {
+                            if (elem)
+                                elem.collapsed = (opts.indexOf(opt) == -1)
+                        });
+                    }
+                }
+            },
+            scroll: {
+                opts: { r: ["Right Scrollbar"] },
+                setter: function (opts)
+                {
+                    if (opts.indexOf("r") == -1)
+                        styles.addSheet("scrollbar", "*", "html|html > xul|scrollbar { visibility: collapse !important; }", true, true);
+                    else
+                        styles.removeSheet("scrollbar", null, null, null, true);
+                }
+            },
+            tab: {
+                opts: {
+                    n: ["Tab number", highlight.selector("TabNumber")],
+                    N: ["Tab number over icon", highlight.selector("TabIconNumber")]
+                },
+                setter: function (opts)
+                {
+                    let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) >= 0)];
+                    let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
+                    styles.addSheet("taboptions", "chrome://*", css, true, true);
+                    statusline.updateTabCount();
+                }
+            }
+        };
+
         options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
             "charlist", config.defaults.guioptions || "",
             {
                 setter: function (value)
                 {
-                    for (let [opt, ids] in Iterator(config.guioptions))
-                    {
-                        ids.forEach(function (id)
-                        {
-                            try
-                            {
-                                document.getElementById(id).collapsed = (value.indexOf(opt) < 0);
-                            }
-                            catch (e) {}
-                        });
-                    }
-                    let classes = tabopts.filter(function (o) value.indexOf(o[0]) == -1)
-                                         .map(function (a) a[3])
-                    if (!classes.length)
-                    {
-                        styles.removeSheet("taboptions", null, null, null, true);
-                    }
-                    else
-                    {
-                        storage.styles.addSheet("taboptions", "chrome://*", classes.join(",") + "{ display: none; }", true, true);
-                        statusline.updateTabCount();
-                    }
-
+                    for (let [,group] in Iterator(groups))
+                        group.setter(value);
                     return value;
                 },
                 completer: function (filter)
                 {
-                    return [
-                        ["m", "Menubar"],
-                        ["T", "Toolbar"],
-                        ["b", "Bookmark bar"]
-                    ].concat(!liberator.has("tabs") ? [] : tabopts);
+                    let opts = [v.opts for ([k, v] in Iterator(groups))];
+                    opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
+                    return util.Array.flatten(opts);
                 },
                 validator: Option.validateCompleter
             });

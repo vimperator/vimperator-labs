@@ -33,8 +33,13 @@ const config = { //{{{
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
-    defaults: { guioptions: "" },
-    guioptions: { m: ["toolbar-menubar"], T: ["nav-bar"], b: ["PersonalToolbar"] },
+    defaults: { guioptions: "r" },
+
+    guioptions: {
+        m: ["MenuBar",      ["toolbar-menubar"]],
+        T: ["Toolbar",      ["nav-bar"]],
+        b: ["Bookmark bar", ["PersonalToolbar"]]
+    },
 
     get visualbellWindow() getBrowser().mPanelContainer,
     styleableChrome: "chrome://browser/content/browser.xul",
