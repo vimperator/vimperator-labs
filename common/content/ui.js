@@ -375,22 +375,21 @@ function CommandLine() //{{{
     liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
     liberator.registerCallback("change", modes.PROMPT, function (str) {
+        liberator.triggerCallback("change", modes.EX, str);
         if (promptChangeCallback)
-            return promptChangeCallback(str);
+            return promptChangeCallback.call(commandline, str);
     });
     liberator.registerCallback("complete", modes.PROMPT, function (context) {
         if (promptCompleter)
-            promptCompleter(context);
+            context.fork("input", 0, commandline, promptCompleter);
     });
 
     function closePrompt(value)
     {
         let callback = promptSubmitCallback;
         promptSubmitCallback = null;
-        currentExtendedMode = null;
-        commandline.clear();
         if (callback)
-            callback(value);
+            callback.call(commandline, value == null ? commandline.getCommand() : value);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -845,9 +844,14 @@ function CommandLine() //{{{
         // normally used when pressing esc, does not execute a command
         close: function close()
         {
-            let res = liberator.triggerCallback("cancel", currentExtendedMode);
+            let mode = currentExtendedMode;
+            currentExtendedMode = null;
+            liberator.triggerCallback("cancel", mode);
+
             inputHistory.add(this.getCommand());
             statusline.updateProgress(""); // we may have a "match x of y" visible
+            liberator.focusContent(false);
+
             this.clear();
         },
 
@@ -911,11 +915,15 @@ function CommandLine() //{{{
             promptSubmitCallback = callback;
             promptChangeCallback = extra.onChange;
             promptCompleter = extra.completer;
+
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
             currentExtendedMode = modes.PROMPT;
-            setPrompt(prompt + " ", this.HL_QUESTION);
+
+            setPrompt(prompt, extra.promptHighlight || this.HL_QUESTION);
             setCommand(extra.default || "");
             commandWidget.focus();
+
+            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
         },
 
         // reads a multi line input and returns the string once the last line matches
@@ -938,7 +946,8 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            completions.previewClear();
+            if (completions)
+                completions.previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
@@ -979,14 +988,10 @@ function CommandLine() //{{{
                 //   FIXME: <Esc> should trigger "cancel" event
                 if (events.isAcceptKey(key))
                 {
-                    let mode = currentExtendedMode; // save it here, as setMode() resets it
+                    let mode = currentExtendedMode; // save it here, as modes.pop() resets it
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
-                    inputHistory.add(command);
-                    modes.pop(!commandline.silent);
-                    this.resetCompletions();
-                    completionList.hide();
-                    liberator.focusContent(false);
-                    statusline.updateProgress(""); // we may have a "match x of y" visible
+                    modes.pop();
+
                     return liberator.triggerCallback("submit", mode, command);
                 }
                 // user pressed UP or DOWN arrow to cycle history completion

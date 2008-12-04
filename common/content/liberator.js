@@ -1026,7 +1026,7 @@ const liberator = (function () //{{{
 
             if (urls.length > 20 && !force)
             {
-                commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no])",
+                commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no]) ",
                     function (resp) {
                         if (resp && resp.match(/^y(es)?$/i))
                             liberator.open(urls, where, true);
