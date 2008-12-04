@@ -26,36 +26,44 @@ Show all options. Show all options.
 ____
 
 |E518| |E519|
-||:se[t] {option}?||
+||:se[t] {option}*||
 ____
 Show value of {option}.
 ____
 
-||:se[t] {option}||
+||:se[t] {option} [...]||
 ____
 Toggle option: set, switch it on. +
 Number option: show value. +
 String option: show value.
 ____
 
-||:se[t] no((option))|| +
+||:se[t] no((option)) [...]|| +
 ____
 Toggle option: Reset, switch it off.
 ____
 
-||:se[t] {option}!|| +
-||:se[t] inv((option))|| +
+||:se[t] {option}! [...]|| +
+||:se[t] inv((option)) [...]|| +
 ____
 Toggle option: Invert value.
 ____
 
-||:se[t] inv((option))={value}|| +
+||:se[t] inv((option))={value} [...]|| +
+||:se[t] {option}!={value} [...]|| +
 ____
 For list options, toggle the specified values.
+
+If the option is a list, the given values are toggled. Given
+    :set opt=foo,bar
+Then,
+    :set opt!=foo,baz
+results in
+    opt=bar,baz
 ____
 
 |:set-default|
-||:se[t] {option}&||
+||:se[t] {option}& [...]||
 ____
 Reset option to its default value.
 ____
@@ -66,7 +74,7 @@ Set all options to their default value.
 ____
 
 |:set-args| |E487| |E521|
-||:se[t] {option}={value}|| +
+||:se[t] {option}={value} [...]|| +
 ____
 Set string or number option to {value}. +
 For numeric options the value must be given in decimal.
@@ -74,7 +82,7 @@ The old value can be inserted by typing [m]<Tab>[m].
 ____
 
 |:set+=|
-||:se[t] {option}+={value}|| +
+||:se[t] {option}+={value} [...]|| +
 ____
 Add the {value} to a number option, or append the
 {value} to a string option.  When the option is a
@@ -86,7 +94,7 @@ present the option value doesn't change.
 ____
 
 |:set^=|
-||:se[t] {option}^={value}|| +
+||:se[t] {option}^={value} [...]|| +
 ____
 Multiply the {value} to a number option, or prepend
 the {value} to a string option.  When the option is a
@@ -95,7 +103,7 @@ value was empty.
 ____
 
 |:set-=|
-||:se[t] {option}-={value}|| +
+||:se[t] {option}-={value} [...]|| +
 
 ____
 Subtract the {value} from a number option, or remove

@@ -1,5 +1,7 @@
 2008-XX-XX:
     * version 2.0 (probably)
+    * IMPORTANT: :set now sets multiple options, as in Vim. Spaces in values
+      must be quoted or escaped.
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
       value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
       to use 'h' in 'complete'.

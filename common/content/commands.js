@@ -417,7 +417,7 @@ function Commands() //{{{
                 argCount = "*";
 
             var args = [];       // parsed options
-            args.__iterator__ = util.Array.iterator2;
+            args.__iterator__ = function () util.Array.iterator2(this);
             args.string = str;   // for access to the unparsed string
             args.literalArg = "";
 

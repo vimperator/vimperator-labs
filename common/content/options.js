@@ -351,18 +351,18 @@ function Options() //{{{
 
     function loadPreference(name, forcedDefault, defaultBranch)
     {
-        var defaultValue = null; // XXX
+        let defaultValue = null; // XXX
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
-        var branch = defaultBranch ? prefService.getDefaultBranch("") : prefService;
-        var type = prefService.getPrefType(name);
+        let branch = defaultBranch ? prefService.getDefaultBranch("") : prefService;
+        let type = prefService.getPrefType(name);
         try
         {
             switch (type)
             {
                 case prefService.PREF_STRING:
-                    var value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+                    let value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
                     if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
@@ -562,114 +562,114 @@ function Options() //{{{
         function (args, modifiers)
         {
             let bang = args.bang;
-            args = args.string;
-            if (bang)
+            if (!args.length)
+                args[0] = "all";
+
+            for (let [,arg] in args)
             {
-                var onlyNonDefault = false;
-                if (!args)
+                if (bang)
                 {
-                    args = "all";
-                    onlyNonDefault = true;
-                }
+                    var onlyNonDefault = false;
 
-                let [matches, name, postfix, valueGiven, operator, value] =
-                args.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
-                let reset = (postfix == "&");
-                let invertBoolean = (postfix == "!");
+                    let [matches, name, postfix, valueGiven, operator, value] =
+                    arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+                    let reset = (postfix == "&");
+                    let invertBoolean = (postfix == "!");
 
-                if (name == "all" && reset)
-                    liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
-                else if (name == "all")
-                    options.listPrefs(onlyNonDefault, "");
-                else if (reset)
-                    options.resetPref(name);
-                else if (invertBoolean)
-                    options.invertPref(name);
-                else if (valueGiven)
-                {
-                    switch (value)
+                    if (name == "all" && reset)
+                        liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
+                    else if (name == "all")
+                        options.listPrefs(onlyNonDefault, "");
+                    else if (reset)
+                        options.resetPref(name);
+                    else if (invertBoolean)
+                        options.invertPref(name);
+                    else if (valueGiven)
                     {
-                        case undefined:
-                            value = "";
-                            break;
-                        case "true":
-                            value = true;
-                            break;
-                        case "false":
-                            value = false;
-                            break;
-                        default:
-                            if (/^\d+$/.test(value))
-                                value = parseInt(value, 10);
+                        switch (value)
+                        {
+                            case undefined:
+                                value = "";
+                                break;
+                            case "true":
+                                value = true;
+                                break;
+                            case "false":
+                                value = false;
+                                break;
+                            default:
+                                if (/^\d+$/.test(value))
+                                    value = parseInt(value, 10);
+                        }
+                        options.setPref(name, value);
                     }
-                    options.setPref(name, value);
-                }
-                else
-                {
-                    options.listPrefs(onlyNonDefault, name);
-                }
-                return;
-            }
-
-            let opt = options.parseOpt(args, modifiers);
-            if (!opt)
-            {
-                liberator.echoerr("Error parsing :set command: " + args);
-                return;
-            }
-
-            let option = opt.option;
-            if (option == null && !opt.all)
-            {
-                liberator.echoerr("No such option: " + opt.name);
-                return;
-            }
-
-            // reset a variable to its default value
-            if (opt.reset)
-            {
-                if (opt.all)
-                {
-                    for (let option in options)
-                        option.reset();
-                }
-                else
-                {
-                    option.reset();
-                }
-            }
-            // read access
-            else if (opt.get)
-            {
-                if (opt.all)
-                {
-                    options.list(opt.onlyNonDefault, opt.scope);
-                }
-                else
-                {
-                    if (option.type == "boolean")
-                        liberator.echo((opt.optionValue ? "  " : "no") + option.name);
                     else
-                        liberator.echo("  " + option.name + "=" + opt.optionValue);
-                }
-            }
-            // write access
-            // NOTE: the behavior is generally Vim compatible but could be
-            // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
-            else
-            {
-                if (opt.option.type == "boolean")
-                {
-                    if (opt.valueGiven)
                     {
-                        liberator.echoerr("E474: Invalid argument: " + args);
-                        return;
+                        options.listPrefs(onlyNonDefault, name);
                     }
-                    opt.values = !opt.unsetBoolean;
+                    return;
                 }
-                let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
-                if (res)
-                    liberator.echoerr(res);
+
+                let opt = options.parseOpt(arg, modifiers);
+                if (!opt)
+                {
+                    liberator.echoerr("Error parsing :set command: " + arg);
+                    return;
+                }
+
+                let option = opt.option;
+                if (option == null && !opt.all)
+                {
+                    liberator.echoerr("No such option: " + opt.name);
+                    return;
+                }
+
+                // reset a variable to its default value
+                if (opt.reset)
+                {
+                    if (opt.all)
+                    {
+                        for (let option in options)
+                            option.reset();
+                    }
+                    else
+                    {
+                        option.reset();
+                    }
+                }
+                // read access
+                else if (opt.get)
+                {
+                    if (opt.all)
+                    {
+                        options.list(opt.onlyNonDefault, opt.scope);
+                    }
+                    else
+                    {
+                        if (option.type == "boolean")
+                            liberator.echo((opt.optionValue ? "  " : "no") + option.name);
+                        else
+                            liberator.echo("  " + option.name + "=" + opt.optionValue);
+                    }
+                }
+                // write access
+                // NOTE: the behavior is generally Vim compatible but could be
+                // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
+                else
+                {
+                    if (opt.option.type == "boolean")
+                    {
+                        if (opt.valueGiven)
+                        {
+                            liberator.echoerr("E474: Invalid argument: " + arg);
+                            return;
+                        }
+                        opt.values = !opt.unsetBoolean;
+                    }
+                    let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
+                    if (res)
+                        liberator.echoerr(res);
+                }
             }
         },
         {
@@ -684,7 +684,11 @@ function Options() //{{{
                     if (filter[filter.length - 1] == "=")
                     {
                         context.advance(filter.length);
-                        context.completions = [options.getPref(filter.substr(0, filter.length - 1)), "Current Value"];
+                        filter = filter.substr(0, filter.length - 1);
+                        context.completions = [
+                                [loadPreference(filter, null, false), "Current Value"],
+                                [loadPreference(filter, null, true), "Default Value"]
+                        ];
                         return;
                     }
 
@@ -728,7 +732,6 @@ function Options() //{{{
 
                 completion.optionValue(context, opt.name, opt.operator);
             },
-            literal: 0,
             serial: function () [
                 {
                     command: this.name,
@@ -886,7 +889,7 @@ function Options() //{{{
             let prefs = function () {
                 for each (let pref in prefArray)
                 {
-                    var userValue = prefService.prefHasUserValue(pref);
+                    let userValue = prefService.prefHasUserValue(pref);
                     if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
                         continue;
 
