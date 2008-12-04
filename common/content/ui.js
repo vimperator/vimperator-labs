@@ -265,7 +265,9 @@ function CommandLine() //{{{
                 case this.RESET:
                     idx = null;
                     break;
-                default:         idx = Math.max(0, Math.max(this.items.length - 1, idx));
+                default:
+                    idx = Math.max(0, Math.min(this.items.length - 1, idx));
+                    break;
             }
             this.itemList.selectItem(idx);
             if (idx < 0 || idx >= this.items.length || idx == null)
