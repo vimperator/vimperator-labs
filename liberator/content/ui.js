@@ -356,6 +356,11 @@ function CommandLine() //{{{
     ////////////////////// CALLBACKS ///////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // callback for prompt mode
+    var promptSubmitCallback = null;
+    var promptChangeCallback = null;
+    var promptCompleter = null;
+
     liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
     liberator.registerCallback("complete", modes.EX, function (context) {
         context.fork("ex", 0, completion, "ex");
@@ -369,19 +374,14 @@ function CommandLine() //{{{
 
     liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
-    liberator.registerCallback("change", modes.PROMPT, function (str, ok) {
-        liberator.triggerCallback("change", modes.EX, str);
+    liberator.registerCallback("change", modes.PROMPT, function (str) {
         if (promptChangeCallback)
-            promptChangeCallback(str, ok);
+            return promptChangeCallback(str);
     });
     liberator.registerCallback("complete", modes.PROMPT, function (context) {
         if (promptCompleter)
-            context.fork("prompt", 0, commandline, promptCompleter);
+            promptCompleter(context);
     });
-
-    var promptSubmitCallback = null;
-    var promptChangeCallback = null;
-    var promptCompleter = null;
 
     function closePrompt(value)
     {
@@ -390,7 +390,7 @@ function CommandLine() //{{{
         currentExtendedMode = null;
         commandline.clear();
         if (callback)
-            callback.call(commandline, value);
+            callback(value);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -554,22 +554,6 @@ function CommandLine() //{{{
             arg = String(arg);
 
         return arg;
-    }
-
-    function close(callback)
-    {
-        let command = commandline.getCommand();
-        inputHistory.add(command);
-        commandline.resetCompletions();
-        completionList.hide();
-        statusline.updateProgress(""); // we may have a "match x of y" visible
-
-        let mode = currentExtendedMode; // save it here, as setMode() resets it
-        currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
-        modes.pop(!commandline.silent);
-
-        liberator.focusContent(false);
-        return liberator.triggerCallback(callback, mode, command, callback == "submit");
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -858,9 +842,11 @@ function CommandLine() //{{{
         },
 
         // normally used when pressing esc, does not execute a command
-        close: function ()
+        close: function close()
         {
-            close("cancel");
+            let res = liberator.triggerCallback("cancel", currentExtendedMode);
+            inputHistory.add(this.getCommand());
+            statusline.updateProgress(""); // we may have a "match x of y" visible
             this.clear();
         },
 
@@ -924,14 +910,11 @@ function CommandLine() //{{{
             promptSubmitCallback = callback;
             promptChangeCallback = extra.onChange;
             promptCompleter = extra.completer;
-
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
             currentExtendedMode = modes.PROMPT;
             setPrompt(prompt + " ", this.HL_QUESTION);
             setCommand(extra.default || "");
             commandWidget.focus();
-
-            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
         },
 
         // reads a multi line input and returns the string once the last line matches
@@ -954,8 +937,7 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            if (completions)
-                completions.previewClear();
+            completions.previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
@@ -973,7 +955,7 @@ function CommandLine() //{{{
             }
             else if (event.type == "focus")
             {
-                if (liberator.mode != modes.COMMAND_LINE && event.target == commandWidget.inputField)
+                if (!currentExtendedMode && event.target == commandWidget.inputField)
                 {
                     event.target.blur();
                     liberator.beep();
@@ -996,7 +978,15 @@ function CommandLine() //{{{
                 //   FIXME: <Esc> should trigger "cancel" event
                 if (events.isAcceptKey(key))
                 {
-                    return close("submit");
+                    let mode = currentExtendedMode; // save it here, as setMode() resets it
+                    currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
+                    inputHistory.add(command);
+                    modes.pop(!commandline.silent);
+                    this.resetCompletions();
+                    completionList.hide();
+                    liberator.focusContent(false);
+                    statusline.updateProgress(""); // we may have a "match x of y" visible
+                    return liberator.triggerCallback("submit", mode, command);
                 }
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
