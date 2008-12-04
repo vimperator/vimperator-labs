@@ -27,7 +27,7 @@ ________________________________________________________________________________
 ||:delmac[ros] {args}|| +
 ||:delmac[ros]!||
 ________________________________________________________________________________
-Delete recorded macros matching the regular expression [args]. If [!] is given
+Delete recorded macros matching the regular expression {args}. If [!] is given
 all macros are deleted.
 ________________________________________________________________________________
 
