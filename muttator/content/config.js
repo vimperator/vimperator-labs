@@ -33,8 +33,14 @@ const config = { //{{{
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
-    defaults: { guioptions: "f" },
-    guioptions: { m: ["mail-toolbar-menubar2"], T: ["mail-bar2"], f: ["folderPaneBox", "folderpane_splitter"], F: ["folderPaneHeader"] },
+    defaults: { guioptions: "fr" },
+
+    guioptions: {
+        m: ["MenuBar",            ["mail-toolbar-menubar2"]],
+        T: ["Toolbar" ,           ["mail-bar2"]],
+        f: ["Folder list",        ["folderPaneBox", "folderpane_splitter"]],
+        F: ["Folder list header", ["folderPaneHeader"]]
+    },
 
     get isComposeWindow() window.wintype == "msgcompose",
     get browserModes() [modes.MESSAGE],
