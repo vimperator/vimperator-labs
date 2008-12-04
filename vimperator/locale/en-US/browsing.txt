@@ -160,20 +160,24 @@ ________________________________________________________________________________
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
-||:[count]ba[ck][!] [url]|| +
+||:[count]ba[ck] {url}|| +
+||:ba[ck]!|| +
 ||CTRL-o||
 ________________________________________________________________________________
-Go [count] pages back in the browser history.
-The special version [c]:back![c] goes to the beginning of the browser history.
+Go [count] pages back in the browser history. If {url} is specified go back to
+the first matching URL. The special version [c]:back![c] goes to the beginning
+of the browser history.
 ________________________________________________________________________________
 
 
 |L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
-||:[count]fo[rward][!] [url]|| +
+||:[count]fo[rward] {url}|| +
+||:fo[rward]!|| +
 ||CTRL-i||
 ________________________________________________________________________________
-Go [count] pages forward in the browser history.
-The special version [c]:forward![c] goes to the end of the browser history.
+Go [count] pages forward in the browser history. If {url} is specified go
+forward to the first matching URL. The special version [c]:forward![c] goes to
+the end of the browser history.
 ________________________________________________________________________________
 
 
@@ -182,9 +186,8 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 List all jumps aka current tab's history aka session history.
 
-Current history position is marked with >, jump numbers are counters
-to be used with [c]:back[c] (above zero record) or [c]:forward[c]
-(below zero record).
+Current history position is marked with >, jump numbers are counters to be used
+with [c]:back[c] (above zero record) or [c]:forward[c] (below zero record).
 ________________________________________________________________________________
 
 
