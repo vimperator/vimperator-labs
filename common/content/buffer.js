@@ -599,22 +599,23 @@ function Buffer() //{{{
         "Set zoom value of current web page",
         function (args)
         {
+            let arg = args[0];
             let level;
 
-            if (!args.string)
+            if (!arg)
             {
                 level = 100;
             }
-            else if (/^\d+$/.test(args.string))
+            else if (/^\d+$/.test(arg))
             {
-                level = parseInt(args.string, 10);
+                level = parseInt(arg, 10);
             }
-            else if (/^[+-]\d+$/.test(args.string))
+            else if (/^[+-]\d+$/.test(arg))
             {
                 if (args.bang)
-                    level = buffer.fullZoom + parseInt(args.string, 10);
+                    level = buffer.fullZoom + parseInt(arg, 10);
                 else
-                    level = buffer.textZoom + parseInt(args.string, 10);
+                    level = buffer.textZoom + parseInt(arg, 10);
 
                 // relative args shouldn't take us out of range
                 if (level < ZOOM_MIN)
@@ -633,7 +634,10 @@ function Buffer() //{{{
             else
                 buffer.textZoom = level;
         },
-        { bang: true });
+        {
+            argCount: "?",
+            bang: true
+        });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PAGE INFO ///////////////////////////////////////////////
