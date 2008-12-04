@@ -101,7 +101,7 @@ function CommandLine() //{{{
         let self = this;
         context.onUpdate = function ()
         {
-            self.reset();
+            self.reset(true);
         };
         this.context = context;
         this.editor = context.editor;
@@ -159,7 +159,7 @@ function CommandLine() //{{{
             full:    this.wildmode.checkHas(this.wildtype, "full")
         }),
 
-        complete: function (show, tabPressed)
+        complete: function complete(show, tabPressed)
         {
             this.context.reset();
             this.context.tabPressed = tabPressed;
@@ -169,9 +169,9 @@ function CommandLine() //{{{
 
         preview: function preview()
         {
-            if (this.wildtype < 0 || this.suffix || !this.items.length)
-                return;
             this.previewClear();
+            if (this.wildIndex < 0 || this.suffix || !this.items.length)
+                return;
 
             let substring = "";
             switch (this.wildtype.replace(/.*:/, ""))
@@ -946,8 +946,6 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            if (completions)
-                completions.previewClear();
             let command = this.getCommand();
 
             if (event.type == "blur")
@@ -973,10 +971,14 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
+                if (completions)
+                    completions.previewClear();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
+                if (completions)
+                    completions.previewClear();
                 if (!currentExtendedMode)
                     return true;
 
