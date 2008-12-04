@@ -5,7 +5,7 @@ content {
     $NF = "jar:chrome/" name ".jar!" $NF
 }
 {
-    sub("^\\.\\./liberator/", "", $NF)
+    sub("^\\.\\./common/", "", $NF)
     print
 }
 
