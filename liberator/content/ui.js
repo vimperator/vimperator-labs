@@ -134,9 +134,14 @@ function CommandLine() //{{{
             this.editor.selection.focusNode.textContent = commandWidget.value;
 
             // Reset the caret to one position after the completion.
-            let range = this.editor.selection.getRangeAt(0);
-            range.setStart(range.startContainer, this.prefix.length + completion.length);
-            range.collapse(true);
+            this.caret = this.prefix.length + completion.length;
+        },
+
+        get caret() this.editor.selection.focusOffset,
+        set caret(offset)
+        {
+            commandWidget.selectionStart = offset;
+            commandWidget.selectionEnd = offset;
         },
 
         get start() this.context.allItems.start,
@@ -154,40 +159,72 @@ function CommandLine() //{{{
             full:    this.wildmode.checkHas(this.wildtype, "full")
         }),
 
+        complete: function (show, tabPressed)
+        {
+            this.context.reset();
+            this.context.tabPressed = tabPressed;
+            liberator.triggerCallback("complete", currentExtendedMode, this.context);
+            this.reset(show, tabPressed);
+        },
+
         preview: function preview()
         {
-            // This will only work with autocomplete.
-            if (!options.get("wildoptions").has("auto") || !completions)
+            if (this.wildtype < 0 || this.suffix || !this.items.length)
                 return;
+            this.previewClear();
 
-            if (this.type.longest && !this.suffix)
+            let substring = "";
+            switch (this.wildtype.replace(/.*:/, ""))
             {
-                let start = commandWidget.selectionStart;
-                let substring = this.substring;
-
-                // Don't show 1-character substrings unless we've just hit backspace
-                if (substring.length < 2 && (!this.lastSubstring || this.lastSubstring.indexOf(substring) != 0))
-                    return;
-                this.lastSubstring = substring;
-                // Chop off the bits we already have.
-                substring = substring.substr(completions.value.length);
-
-                // highlight="Preview" won't work in the editor.
-                let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
-                    document);
-                this.editor.insertNode(node, this.editor.rootElement, 1);
-                commandWidget.selectionStart = commandWidget.selectionEnd = start;
+                case "":
+                    substring = this.items[0].text;
+                    break;
+                case "longest":
+                    if (this.items.length > 1)
+                    {
+                        substring = this.substring;
+                        break;
+                    }
+                    // Fallthrough
+                case "full":
+                    let item = this.items[this.selected != null ? this.selected + 1 : 0];
+                    if (item)
+                        substring = item.text;
+                    break;
             }
+
+            // Don't show 1-character substrings unless we've just hit backspace
+            if (substring.length < 2 && (!this.lastSubstring || this.lastSubstring.indexOf(substring) != 0))
+                return;
+            this.lastSubstring = substring;
+
+            let value = this.completion;
+            if (util.compareIgnoreCase(value, substring.substr(0, value.length)))
+                return;
+            substring = substring.substr(value.length);
+            this.removeSubstring = substring;
+
+            // highlight="Preview" won't work in the editor.
+            let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
+                document);
+            let start = this.caret;
+            this.editor.insertNode(node, this.editor.rootElement, 1);
+            this.caret = start;
         },
 
         previewClear: function previewClear()
         {
-            try
+            let node = this.editor.rootElement.firstChild;
+            if (node && node.nextSibling)
+                this.editor.deleteNode(node.nextSibling);
+            else if (this.removeSubstring)
             {
-                let node = this.editor.rootElement;
-                this.editor.deleteNode(node.firstChild.nextSibling);
+                let str = this.removeSubstring;
+                let cmd = commandWidget.value;
+                if (cmd.substr(cmd.length - str.length) == str)
+                    commandWidget.value = cmd.substr(0, cmd.length - str.length);
             }
-            catch (e) {}
+            delete this.removeSubstring;
         },
 
         reset: function reset(show)
@@ -203,7 +240,6 @@ function CommandLine() //{{{
             {
                 this.itemList.reset();
                 this.select(this.RESET);
-                this.itemList.show();
                 this.wildIndex = 0;
             }
 
@@ -249,12 +285,7 @@ function CommandLine() //{{{
         {
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
-            {
-                this.context.reset();
-                this.context.tabPressed = true;
-                liberator.triggerCallback("complete", currentExtendedMode, this.context);
-                this.reset(true);
-            }
+                this.complete(true, true);
 
             if (this.items.length == 0)
             {
@@ -292,6 +323,7 @@ function CommandLine() //{{{
                 completionList.show();
 
             this.wildIndex = Math.max(0, Math.min(this.wildtypes.length - 1, this.wildIndex + 1));
+            this.preview();
 
             statusTimer.tell();
         }
@@ -311,9 +343,7 @@ function CommandLine() //{{{
     var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
         if (events.feedingKeys || !completions)
             return;
-        completions.context.reset();
-        liberator.triggerCallback("complete", currentExtendedMode, completions.context);
-        completions.reset(true);
+        completions.complete(true, false);
         completions.itemList.show();
     });
 
@@ -499,7 +529,7 @@ function CommandLine() //{{{
         if (lines == 0)
             lines = 1;
 
-        multilineInputWidget.setAttribute("rows", lines.toString());
+        multilineInputWidget.setAttribute("rows", String(lines));
     }
 
     // used for the :echo[err] commands
@@ -1542,18 +1572,7 @@ function ItemList(id) //{{{
 
         clear: function clear() { this.setItems(); doc.body.innerHTML = ""; },
         hide: function hide() { container.collapsed = true; },
-        show: function show()
-        {
-            /* FIXME: Should only happen with autocomplete,
-             * possibly only with async entries.
-             */
-            if (container.collapsed)
-            {
-                minHeight = 0;
-                setTimeout(function () { fill(null); }, 0);
-            }
-            container.collapsed = false;
-        },
+        show: function show() { container.collapsed = false; },
         visible: function visible() !container.collapsed,
 
         reset: function ()
@@ -1566,6 +1585,8 @@ function ItemList(id) //{{{
         // if @param selectedItem is given, show the list and select that item
         setItems: function setItems(newItems, selectedItem)
         {
+            if (container.collapsed)
+                minHeight = 0;
             startIndex = endIndex = selIndex = -1;
             items = newItems;
             this.reset();

@@ -105,7 +105,7 @@ const modes = (function () //{{{
             case modes.COMMAND_LINE:
                 // clean up for HINT mode
                 if (modes.extended & modes.HINTS)
-                        hints.hide();
+                    hints.hide();
                 commandline.close();
                 break;
         }
@@ -180,12 +180,12 @@ const modes = (function () //{{{
             // if a main mode is set, the extended is always cleared
             if (typeof mainMode === "number")
             {
-                if (!silent && mainMode != main)
-                    handleModeChange(main, mainMode);
-
                 main = mainMode;
                 if (!extendedMode)
                     extended = modes.NONE;
+
+                if (!silent && mainMode != main)
+                    handleModeChange(main, mainMode);
             }
             if (typeof extendedMode === "number")
                 extended = extendedMode;

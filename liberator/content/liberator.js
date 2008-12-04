@@ -257,7 +257,7 @@ const liberator = (function () //{{{
             "Execute the specified menu item from the command line",
             function (args)
             {
-                let args = args.string;
+                args = args.string;
                 let items = getMenuItems();
 
                 if (!items.some(function (i) i.fullMenuPath == args))
