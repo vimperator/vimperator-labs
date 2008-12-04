@@ -915,6 +915,8 @@ function CommandLine() //{{{
             setPrompt(prompt + " ", this.HL_QUESTION);
             setCommand(extra.default || "");
             commandWidget.focus();
+
+            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
         },
 
         // reads a multi line input and returns the string once the last line matches
