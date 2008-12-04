@@ -17,21 +17,10 @@ BUGS:
 
 - insert abbreviations broken on <space>
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
-- http://www.maximonline.com/jokes/ - the prev and next buttons on the image map are not hinted
 - ;s saves the page rather than the image
-- :set! browser.urlbar.clickSelectsAll=true -> clicking in the location bar unfocuses it immediately
-- http://apcmag.com/why_os_x_106_snow_leopard_should_leave_powerpc_in_the_cold.htm - scrolls the wrong
-  window with j/k (the green slashdot thing for me).
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
 
 (recent CVS regressions):
-- A cached "awesomebar completion" result is still displayed, after the user removes "l" from the 'cpt' and
-  no other matches are found
-- "History" struct is very slow, causing massive problems/delays at startup. Adding 1000 History structs to an array
-  takes about a second here, while adding the same amount of ['a', 'b'] arrays just takes 4ms. Probably all
-  Structs are slow, as removing the "icon" -> favicon field didn't make it faster.
-- start with an empty window with an about:blank tab only:
-  :b a<tab>  changes the (Untitled) title to "about:blank"
 - visual caret mode is broken
 - Form elements in iframes must be selected twice, whether by tabbing or
   clicking.
@@ -48,6 +37,7 @@ FEATURES:
 8 all search commands should start searching from the top of the visible viewport
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
   quick searches in the RC file.
+  Why not just add a bookmark? --Kris
 7 adaptive learning for tab-completions
   (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
@@ -81,7 +71,6 @@ FEATURES:
   maybe impossible, needs a per-site key from google
 4 y and Y could maybe changed to, but probably not: Y, yy and yl=yank location, ys=yank selection,
   yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
-4 Add -nargs, -complete, etc. to :command
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 A format for 'guitablabel' and 'statusline' 
 3 add a command-line window (:help cmdline-window in Vim). 
@@ -91,3 +80,4 @@ FEATURES:
 
 RANDOM IDEAS:
 * hide scrollbars: (window.content.document.body.style.overflow = "hidden" has problems with the mouse wheel)
+
