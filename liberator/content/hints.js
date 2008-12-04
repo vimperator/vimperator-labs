@@ -598,8 +598,18 @@ function Hints() //{{{
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (arg) { hints.show(arg); },
-        { flags: Mappings.flags.ARGUMENT });
+        function (arg) {
+            commandline.input(";", function (arg) {
+                setTimeout(function () { hints.show(arg) }, 0);
+            },
+            {
+                completer: function (context) {
+                    context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))]
+                },
+                onChange: function () { commandline.close() }
+            });
+        });
+        //{ flags: Mappings.flags.ARGUMENT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

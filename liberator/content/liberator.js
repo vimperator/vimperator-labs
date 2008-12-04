@@ -600,14 +600,14 @@ const liberator = (function () //{{{
             callbacks.push([type, mode, func]);
         },
 
-        triggerCallback: function (type, mode, data)
+        triggerCallback: function (type, mode)
         {
             // liberator.dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
-            for (let i = 0; i < callbacks.length; i++)
+            for (let [,callback] in Iterator(callbacks))
             {
-                var [thistype, thismode, thisfunc] = callbacks[i];
+                var [thistype, thismode, thisfunc] = callbacks;
                 if (mode == thismode && type == thistype)
-                    return thisfunc.call(this, data);
+                    return thisfunc.apply(this, Array.slice(arguments, 2));
             }
             return false;
         },

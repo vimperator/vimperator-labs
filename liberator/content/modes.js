@@ -152,6 +152,11 @@ const modes = (function () //{{{
                 mainModes.push(this[name]);
         },
 
+        getMode: function (name)
+        {
+            return modeMap[name];
+        },
+
         // show the current mode string in the command line
         show: function ()
         {

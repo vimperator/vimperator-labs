@@ -45,7 +45,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     this.description = description || "";
 
     // "", 0 are valid default values
-    this.defaultValue = (defaultValue === undefined) ? null : defaultValue;
+    this.defaultValue = (defaultValue == null) ? null : defaultValue;
 
     this.setter = extraInfo.setter || null;
     this.getter = extraInfo.getter || null;
@@ -73,7 +73,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
 }
 Option.prototype = {
     get globalvalue() options.store.get(this.name),
-    set globalvalue(val) { options.store.set(this.name, val) },
+    set globalvalue(val) options.store.set(this.name, val),
 
     parseValues: function (value)
     {
