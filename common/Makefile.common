@@ -3,7 +3,7 @@
 TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
-BASE	      = $(TOP)/../liberator
+BASE	      = $(TOP)/../common
 
 DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}

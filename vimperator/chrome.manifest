@@ -1,10 +1,10 @@
 # Firefox
-content	 vimperator       content/
-locale	 liberator  en-US locale/en-US/
+content  vimperator       content/
+locale   liberator  en-US locale/en-US/
 
-content	 liberator             ../liberator/content/
-resource liberator             ../liberator/modules/
-skin	 liberator classic/1.0 ../liberator/skin/
+content  liberator             ../common/content/
+resource liberator             ../common/modules/
+skin     liberator classic/1.0 ../common/skin/
 
 override chrome://liberator/content/liberator.dtd chrome://vimperator/content/liberator.dtd
 override chrome://liberator/content/config.js	  chrome://vimperator/content/config.js
