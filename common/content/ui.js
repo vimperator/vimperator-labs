@@ -859,7 +859,6 @@ function CommandLine() //{{{
             liberator.focusContent(false);
 
             this.clear();
-            liberator.dump("keepCommand: " + keepCommand);
             keepCommand = false;
         },
 
