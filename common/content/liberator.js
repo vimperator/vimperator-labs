@@ -110,14 +110,19 @@ const liberator = (function () //{{{
                 }
             },
             scroll: {
-                opts: { r: ["Right Scrollbar"] },
+                opts: { r: ["Right Scrollbar", "vertical"], l: ["Left Scrollbar", "vertical"], b: ["Bottom Scrollbar", "horizontal"] },
                 setter: function (opts)
                 {
-                    if (opts.indexOf("r") == -1)
-                        styles.addSheet("scrollbar", "*", "html|html > xul|scrollbar { visibility: collapse !important; }", true, true);
+                    let dir = ["horizontal", "vertical"].filter(function (dir) !Array.some(opts, function (o) this.opts[o][1] == dir, this), this);
+                    let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
+
+                    if (class.length)
+                        styles.addSheet("scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true, true);
                     else
                         styles.removeSheet("scrollbar", null, null, null, true);
-                }
+                    options.setPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
+                },
+                validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
             },
             tab: {
                 opts: {
@@ -150,7 +155,8 @@ const liberator = (function () //{{{
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
                     return util.Array.flatten(opts);
                 },
-                validator: Option.validateCompleter
+                validator: function (val) Option.validateCompleter.call(this, val) &&
+                        [v for ([k, v] in Iterator(groups))].every(function (g) !g.validator || g.validator(val))
             });
 
         options.add(["helpfile", "hf"],

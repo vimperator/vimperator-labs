@@ -33,12 +33,12 @@ const config = { //{{{
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
-    defaults: { guioptions: "r" },
+    defaults: { guioptions: "rb" },
 
     guioptions: {
         m: ["Menubar",      ["toolbar-menubar"]],
         T: ["Toolbar",      ["nav-bar"]],
-        b: ["Bookmark bar", ["PersonalToolbar"]]
+        B: ["Bookmark bar", ["PersonalToolbar"]]
     },
 
     get visualbellWindow() getBrowser().mPanelContainer,
