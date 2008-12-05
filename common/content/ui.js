@@ -251,6 +251,9 @@ function CommandLine() //{{{
 
         _reset: function _reset()
         {
+            this.prefix = this.prefix + this.value.substr(0, this.start);
+            this.value  = this.value.substr(this.start);
+
             this.itemList.reset();
             this.itemList.selectItem(this.selected);
 
