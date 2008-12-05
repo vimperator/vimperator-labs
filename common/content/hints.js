@@ -239,12 +239,13 @@ function Hints() //{{{
                     setClass(imgspan, activeHint == hintnum)
                 }
 
-                span.setAttribute("number", hintnum++);
+                span.setAttribute("number", hintnum);
                 if (imgspan)
                     imgspan.setAttribute("number", hintnum);
                 else
                     setClass(elem, activeHint == hintnum);
                 validHints.push(elem);
+                hintnum++;
             }
         }
 
