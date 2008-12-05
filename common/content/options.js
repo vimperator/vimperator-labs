@@ -563,19 +563,29 @@ function Options() //{{{
         {
             let bang = args.bang;
             if (!args.length)
-                args[0] = "all";
+                args[0] = "";
 
             for (let [,arg] in args)
             {
                 if (bang)
                 {
                     var onlyNonDefault = false;
+                    var reset = false;
+                    var invertBoolean = false;
 
-                    let [matches, name, postfix, valueGiven, operator, value] =
-                    arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
-                    let reset = (postfix == "&");
-                    let invertBoolean = (postfix == "!");
-
+                    if (args[0] == "")
+                    {
+                        var name = "all";
+                        onlyNonDefault = true;
+                    }
+                    else
+                    {
+                        var [matches, name, postfix, valueGiven, operator, value] =
+                        arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+                        reset = (postfix == "&");
+                        invertBoolean = (postfix == "!");
+                    }
+                    
                     if (name == "all" && reset)
                         liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
                     else if (name == "all")
