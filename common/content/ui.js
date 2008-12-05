@@ -302,7 +302,7 @@ function CommandLine() //{{{
         {
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
-                this.complete(false, true);
+                this.complete(true, true);
 
             if (this.items.length == 0)
             {
