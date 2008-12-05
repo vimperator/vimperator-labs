@@ -278,14 +278,35 @@ function Bookmarks() //{{{
         },
         { argCount: "0" });
 
+    // TODO: Clean this up.
     function tags(context, args)
     {
         let filter = context.filter;
         let have = filter.split(",");
+
         args.completeFilter = have.pop();
+
         let prefix = filter.substr(0, filter.length - args.completeFilter.length);
         let tags = util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(cache.bookmarks))]));
+
         return [[prefix + tag, tag] for ([i, tag] in Iterator(tags)) if (have.indexOf(tag) < 0)];
+    }
+
+    function title(context, args)
+    {
+        if (!args.bang)
+            return [[content.document.title, "Current Page Title"]];
+        context.keys.text = "title";
+        context.keys.description = "url";
+        return bookmarks.get(args.join(" "), args["-tags"], null, { keyword: args["-keyword"], title: context.filter });
+    }
+
+    function keyword(context, args)
+    {
+        if (!args.bang)
+            return [];
+        context.keys.text = "keyword";
+        return bookmarks.get(args.join(" "), args["-tags"], null, { keyword: context.filter, title: args["-title"] });
     }
 
     commands.add(["bma[rk]"],
@@ -308,7 +329,16 @@ function Bookmarks() //{{{
         {
             argCount: "?",
             bang: true,
-            options: [[["-title", "-t"],    commands.OPTION_STRING, null, function () [[content.document.title, "Current Page Title"]]],
+            completer: function (context, args)
+            {
+                if (!args.bang)
+                {
+                    context.completions = [[content.document.documentURI, "Current Location"]];
+                    return
+                }
+                completion.bookmark(context, args["-tags"], { keyword: args["-keyword"], title: args["-title"] });
+            },
+            options: [[["-title", "-t"],    commands.OPTION_STRING, null, title],
                       [["-tags", "-T"],     commands.OPTION_LIST, null, tags],
                       [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)]]
         });
@@ -361,9 +391,9 @@ function Bookmarks() //{{{
         // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
-        get: function get(filter, tags, maxItems)
+        get: function get(filter, tags, maxItems, extra)
         {
-            return completion.runCompleter("bookmark", filter, maxItems, tags);
+            return completion.runCompleter("bookmark", filter, maxItems, tags, extra);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder

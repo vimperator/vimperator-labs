@@ -143,7 +143,7 @@ Command.prototype = {
         return false;
     },
 
-    parseArgs: function (args, complete) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete)
+    parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra)
 
 }; //}}}
 
@@ -319,7 +319,7 @@ function Commands() //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
-        parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete)
+        parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra)
         {
             // returns [count, parsed_argument]
             function getNextArg(str)
@@ -420,6 +420,10 @@ function Commands() //{{{
             args.__iterator__ = function () util.Array.iterator2(this);
             args.string = str;   // for access to the unparsed string
             args.literalArg = "";
+
+            // FIXME!
+            for (let [k, v] in Iterator(extra || []))
+                args[k] = v;
 
             var invalid = false;
             // FIXME: best way to specify these requirements?

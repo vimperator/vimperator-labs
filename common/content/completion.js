@@ -452,9 +452,9 @@ CompletionContext.prototype = {
         catch (e) {}
     },
 
-    match: function match(str)
+    // FIXME
+    _match: function _match(filter, str)
     {
-        let filter = this.filter;
         if (this.ignoreCase)
         {
             filter = filter.toLowerCase();
@@ -463,6 +463,11 @@ CompletionContext.prototype = {
         if (this.anchored)
             return str.substr(0, filter.length) == filter;
         return str.indexOf(filter) > -1;
+    },
+
+    match: function match(str)
+    {
+        return this._match(this.filter, str);
     },
 
     reset: function reset()
@@ -1172,10 +1177,16 @@ function Completion() //{{{
             context.completions = config.autocommands;
         },
 
-        bookmark: function bookmark(context, tags)
+        bookmark: function bookmark(context, tags, extra)
         {
             context.title = ["Bookmark", "Title"];
             context.format = bookmarks.format;
+            for (let val in Iterator(extra || []))
+            {
+                let [k, v] = val; // Need let block here for closure.
+                if (v)
+                    context.filters.push(function (item) this._match(v, this.getKey(item, k)));
+            }
             // Need to make a copy because set completions() checks instanceof Array,
             // and this may be an Array from another window.
             context.completions = Array.slice(storage["bookmark-cache"].bookmarks);
@@ -1279,7 +1290,7 @@ function Completion() //{{{
             [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
             let cmdContext = context.fork(cmd, prefix.length);
             let argContext = context.fork("args", prefix.length);
-            args = command.parseArgs(cmdContext.filter, argContext);
+            args = command.parseArgs(cmdContext.filter, argContext, { count: count, bang: bang });
             if (args)
             {
                 // FIXME: Move to parseCommand
