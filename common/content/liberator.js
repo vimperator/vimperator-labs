@@ -126,7 +126,7 @@ const liberator = (function () //{{{
                 },
                 setter: function (opts)
                 {
-                    let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) >= 0)];
+                    let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
                     let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
                     styles.addSheet("taboptions", "chrome://*", css, true, true);
                     statusline.updateTabCount();
