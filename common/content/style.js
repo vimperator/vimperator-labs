@@ -27,7 +27,7 @@ Highlights.prototype.CSS = <![CDATA[
     CompGroup
     CompGroup:not(:first-of-type) margin-top: .5em;
     CompTitle          color: magenta; background: white; font-weight: bold;
-    CompTitle>*        /* border-bottom: 1px dashed magenta; */
+    CompTitle>*        padding: 0 .5ex;
     CompMsg            font-style: italic; margin-left: 16px;
     CompItem
     CompItem[selected] background: yellow;

@@ -130,7 +130,7 @@ function Hints() //{{{
                 continue;
 
             var computedStyle = doc.defaultView.getComputedStyle(elem, null);
-            if (computedStyle.getPropertyValue("visibility") == "hidden" || computedStyle.getPropertyValue("display") == "none")
+            if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
                 continue;
 
             // TODO: mozilla docs recommend localName instead of tagName
@@ -162,7 +162,7 @@ function Hints() //{{{
         }
 
         // also generate hints for frames
-        Array.forEach(win.frames, function (frame) { generate(frame); });
+        Array.forEach(win.frames, generate);
 
         return true;
     }
@@ -284,32 +284,7 @@ function Hints() //{{{
 
             // animate the disappearance of the first hint
             if (timeout && firstElem)
-            {
-                // USE THIS FOR MAKING THE SELECTED ELEM RED
-                //                firstElem.style.backgroundColor = "red";
-                //                firstElem.style.color = "white";
-                //                setTimeout(function () {
-                //                        firstElem.style.backgroundColor = firstElemBgColor;
-                //                        firstElem.style.color = firstElemColor;
-                //                }, 200);
-                // OR USE THIS FOR BLINKING:
-                //                var counter = 0;
-                //                var id = setInterval(function () {
-                //                    firstElem.style.backgroundColor = "red";
-                //                    if (counter % 2 == 0)
-                //                        firstElem.style.backgroundColor = "yellow";
-                //                    else
-                //                        firstElem.style.backgroundColor = "#88FF00";
-                //
-                //                    if (counter++ >= 2)
-                //                    {
-                //                        firstElem.style.backgroundColor = firstElemBgColor;
-                //                        firstElem.style.color = firstElemColor;
-                //                        clearTimeout(id);
-                //                    }
-                //                }, 100);
                 setTimeout(function () { firstElem.removeAttributeNS(NS.uri, "highlight") }, timeout);
-            }
         }
         styles.removeSheet("hint-positions", null, null, null, true);
 
