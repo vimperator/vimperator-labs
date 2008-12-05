@@ -612,23 +612,23 @@ ____
 |\'shell'| |\'sh'|
 ||'shell' 'sh'|| string (default: on)
 ____
-Show the current mode in the command-line.
+Shell to use for executing :! and :run commands.
 ____
 
 
 |\'shellcmdflag'| |\'shcf'|
 ||'shellcmdflag' 'shcf'|| string (default: $SHELL or "sh", Win32: "cmd.exe")
 ____
-Shell to use for executing :! and :run commands.
+Flag passed to shell when executing :! and :run commands.
+
+E.g. bash -c gvim
 ____
 
 
 |\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
 ||'showmode' 'smd'|| boolean (default: "-c", Win32: "/c")
 ____
-Flag passed to shell when executing :! and :run commands.
-
-E.g. bash -c gvim
+Show the current mode in the command-line.
 ____
 
 
