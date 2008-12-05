@@ -24,7 +24,6 @@ BUGS:
 - visual caret mode is broken
 - Form elements in iframes must be selected twice, whether by tabbing or
   clicking.
-- :runtime is broken, possibly Windows only
 - :regressions is broken, also now blanks the MOW when run
 - more prompt now reads "-- More --" at the end of multipage output when there is no more content
 
