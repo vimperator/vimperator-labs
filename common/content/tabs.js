@@ -133,9 +133,9 @@ function Tabs() //{{{
                 else
                 {
                     let pref = "browser.tabStrip.autoHide";
-                    if (options.getPref(pref) == null)
+                    if (options.getPref(pref) == null) // Try for FF 3.0 & 3.1
                         pref = "browser.tabs.autoHide";
-                    options.setPref(pref, value == 1);
+                    options.safeSetPref(pref, value == 1);
                     tabStrip.collapsed = false;
                 }
 
@@ -200,8 +200,8 @@ function Tabs() //{{{
                                   [1, 2], // always in new window
                                   [2, 1]];// current tab unless it has specified sizes
 
-                    options.setPref("browser.link.open_newwindow.restriction", values[value][0]);
-                    options.setPref("browser.link.open_newwindow", values[value][1]);
+                    options.safeSetPref("browser.link.open_newwindow.restriction", values[value][0]);
+                    options.safeSetPref("browser.link.open_newwindow", values[value][1]);
 
                     return value;
                 },

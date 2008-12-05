@@ -64,6 +64,7 @@ const liberator = (function () //{{{
         observers.push([type, callback]);
     }
 
+    let nError = 0;
     function loadModule(name, func)
     {
         var message = "Loading module " + name + "...";
@@ -76,7 +77,8 @@ const liberator = (function () //{{{
         }
         catch (e)
         {
-            window.toJavaScriptConsole();
+            if (nError++ == 0)
+                window.toJavaScriptConsole();
             liberator.reportError(e);
         }
     }
@@ -120,7 +122,7 @@ const liberator = (function () //{{{
                         styles.addSheet("scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true, true);
                     else
                         styles.removeSheet("scrollbar", null, null, null, true);
-                    options.setPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
+                    options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
                 },
                 validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
             },
@@ -178,7 +180,7 @@ const liberator = (function () //{{{
             {
                 setter: function (value)
                 {
-                    options.setPref("accessibility.typeaheadfind.enablesound", !value);
+                    options.safeSetPref("accessibility.typeaheadfind.enablesound", !value);
                     return value;
                 }
             });
@@ -1122,6 +1124,7 @@ const liberator = (function () //{{{
         // quit liberator, no matter how many tabs/windows are open
         quit: function (saveSession, force)
         {
+            // TODO: Use safeSetPref?
             if (saveSession)
                 options.setPref("browser.startup.page", 3); // start with saved session
             else
