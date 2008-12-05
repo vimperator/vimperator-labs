@@ -115,7 +115,7 @@ const liberator = (function () //{{{
                 opts: { r: ["Right Scrollbar", "vertical"], l: ["Left Scrollbar", "vertical"], b: ["Bottom Scrollbar", "horizontal"] },
                 setter: function (opts)
                 {
-                    let dir = ["horizontal", "vertical"].filter(function (dir) !Array.some(opts, function (o) this.opts[0] && this.opts[o][1] == dir, this), this);
+                    let dir = ["horizontal", "vertical"].filter(function (dir) !Array.some(opts, function (o) this.opts[o] && this.opts[o][1] == dir, this), this);
                     let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
                     if (class.length)
