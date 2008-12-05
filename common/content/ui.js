@@ -241,7 +241,7 @@ function CommandLine() //{{{
             if (show)
             {
                 this.itemList.reset();
-                this.select(this.RESET);
+                this.selected = null;
                 this.wildIndex = 0;
             }
 
@@ -251,15 +251,8 @@ function CommandLine() //{{{
 
         _reset: function _reset()
         {
-            this.prefix = this.context.value.substring(0, this.start);
-            this.value  = this.context.value.substring(this.start, this.caret);
-            this.suffix = this.context.value.substring(this.caret);
-
             this.itemList.reset();
             this.itemList.selectItem(this.selected);
-
-            this.wildIndex = 0;
-            this.wildtypes = this.wildmode.values;
 
             this.preview();
         },

@@ -208,12 +208,13 @@ function Hints() //{{{
                 let hint = pageHints[i];
                 [elem, text, span, imgspan] = hint;
 
-                if (!validHint(text))
-                {
-                    span.style.display = "none";
-                    if (imgspan)
-                        imgspan.style.display = "none";
+                let valid = validHint(text);
+                span.style.display = (valid ? "" : "none");
+                if (imgspan)
+                    imgspan.style.display = (valid ? "" : "none");
 
+                if (!valid)
+                {
                     elem.removeAttributeNS(NS.uri, "highlight");
                     continue inner;
                 }
@@ -238,7 +239,6 @@ function Hints() //{{{
                     setClass(imgspan, activeHint == hintnum)
                 }
 
-                span.style.display = "inline";
                 span.setAttribute("number", hintnum++);
                 if (imgspan)
                     imgspan.setAttribute("number", hintnum);
