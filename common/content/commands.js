@@ -297,6 +297,95 @@ function Commands() //{{{
             return exCommands.filter(function (cmd) cmd.isUserCommand);
         },
 
+        // returns [count, parsed_argument]
+        parseArg: function getNextArg(str)
+        {
+            var stringDelimiter = null;
+            var escapeNext = false;
+
+            var arg = "";
+
+            outer:
+            for (let i = 0; i < str.length; i++)
+            {
+                inner:
+                switch (str[i])
+                {
+                    case '"':
+                    case "'":
+                        if (escapeNext)
+                        {
+                            escapeNext = false;
+                            break;
+                        }
+                        switch (stringDelimiter)
+                        {
+                            case str[i]:
+                                stringDelimiter = null;
+                                continue outer;
+                            case null:
+                                stringDelimiter = str[i];
+                                continue outer;
+                        }
+                        break;
+
+                    // \ is an escape key for non quoted or "-quoted strings
+                    // for '-quoted strings it is taken literally, apart from \' and \\
+                    case "\\":
+                        if (escapeNext)
+                        {
+                            escapeNext = false;
+                            break;
+                        }
+                        else
+                        {
+                            // in non-quoted strings, only escape "\\" and "\ ", otherwise drop "\\"
+                            if (!stringDelimiter && str[i + 1] != "\\" && str[i + 1] != " ")
+                                continue outer;
+                            // in single quoted strings, only escape "\\" and "\'", otherwise keep "\\"
+                            if (stringDelimiter == "'" && str[i + 1] != "\\" && str[i + 1] != "'")
+                                break;
+                            escapeNext = true;
+                            continue outer;
+                        }
+                        break;
+
+                    default:
+                        if (stringDelimiter == "'")
+                        {
+                            escapeNext = false;
+                            break;
+                        }
+                        if (escapeNext)
+                        {
+                            escapeNext = false;
+                            switch (str[i])
+                            {
+                                case "n": arg += "\n"; break;
+                                case "t": arg += "\t"; break;
+                                default:
+                                    break inner; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
+                            }
+                            continue outer;
+                        }
+                        else if (stringDelimiter != '"' && /\s/.test(str[i]))
+                        {
+                            return [i, arg];
+                        }
+                        break;
+                }
+                arg += str[i];
+            }
+
+            // TODO: add parsing of a " comment here:
+            if (stringDelimiter)
+                return [str.length, arg, stringDelimiter];
+            if (escapeNext)
+                return [str.length, arg, "\\"];
+            else
+                return [str.length, arg];
+        },
+
         // in '-quoted strings, only ' and \ itself are escaped
         // in "-quoted strings, also ", \n and \t are translated
         // in non-quoted strings everything is taken literally apart from "\ " and "\\"
@@ -321,94 +410,7 @@ function Commands() //{{{
         // TODO: should it handle comments?
         parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra)
         {
-            // returns [count, parsed_argument]
-            function getNextArg(str)
-            {
-                var stringDelimiter = null;
-                var escapeNext = false;
-
-                var arg = "";
-
-                outer:
-                for (let i = 0; i < str.length; i++)
-                {
-                    inner:
-                    switch (str[i])
-                    {
-                        case '"':
-                        case "'":
-                            if (escapeNext)
-                            {
-                                escapeNext = false;
-                                break;
-                            }
-                            switch (stringDelimiter)
-                            {
-                                case str[i]:
-                                    stringDelimiter = null;
-                                    continue outer;
-                                case null:
-                                    stringDelimiter = str[i];
-                                    continue outer;
-                            }
-                            break;
-
-                        // \ is an escape key for non quoted or "-quoted strings
-                        // for '-quoted strings it is taken literally, apart from \' and \\
-                        case "\\":
-                            if (escapeNext)
-                            {
-                                escapeNext = false;
-                                break;
-                            }
-                            else
-                            {
-                                // in non-quoted strings, only escape "\\" and "\ ", otherwise drop "\\"
-                                if (!stringDelimiter && str[i + 1] != "\\" && str[i + 1] != " ")
-                                    continue outer;
-                                // in single quoted strings, only escape "\\" and "\'", otherwise keep "\\"
-                                if (stringDelimiter == "'" && str[i + 1] != "\\" && str[i + 1] != "'")
-                                    break;
-                                escapeNext = true;
-                                continue outer;
-                            }
-                            break;
-
-                        default:
-                            if (stringDelimiter == "'")
-                            {
-                                escapeNext = false;
-                                break;
-                            }
-                            if (escapeNext)
-                            {
-                                escapeNext = false;
-                                switch (str[i])
-                                {
-                                    case "n": arg += "\n"; break;
-                                    case "t": arg += "\t"; break;
-                                    default:
-                                        break inner; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
-                                }
-                                continue outer;
-                            }
-                            else if (stringDelimiter != '"' && /\s/.test(str[i]))
-                            {
-                                return [i, arg];
-                            }
-                            break;
-                    }
-                    arg += str[i];
-                }
-
-                // TODO: add parsing of a " comment here:
-                if (stringDelimiter)
-                    return [str.length, arg, stringDelimiter];
-                if (escapeNext)
-                    return [str.length, arg, "\\"];
-                else
-                    return [str.length, arg];
-            }
+            function getNextArg(str) commands.parseArg(str);
 
             if (!options)
                 options = [];
@@ -694,6 +696,8 @@ function Commands() //{{{
 
             return [count, cmd, !!special, args || "", heredoc];
         },
+
+        get complQuote() complQuote,
 
         get quoteArg() quoteArg,
 
