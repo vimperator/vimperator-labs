@@ -384,6 +384,36 @@ function Options() //{{{
         }
     }
 
+    //
+    // firefox preferences which need to be changed to work well with vimperator
+    //
+
+    // work around firefox popup blocker
+    // TODO: Make this work like safeSetPref
+    var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
+    if (!/keypress/.test(popupAllowedEvents))
+    {
+        storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
+        liberator.registerObserver("shutdown", function ()
+        {
+            if (loadPreference("dom.popup_allowed_events", "")
+                    == popupAllowedEvents + " keypress")
+                storePreference("dom.popup_allowed_events", popupAllowedEvents);
+        });
+    }
+
+    // safeSetPref might try to echomsg. Need commandline.
+    liberator.registerObserver("load_commandline", function () {
+        // TODO: maybe reset in .destroy()?
+        // TODO: move to vim.js or buffer.js
+        // we have our own typeahead find implementation
+        options.safeSetPref("accessibility.typeaheadfind.autostart", false);
+        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in firefox
+    });
+
+    // start with saved session
+    storePreference("browser.startup.page", 3);
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -772,7 +802,7 @@ function Options() //{{{
                                        .map(function (pref) [pref, ""])]);
     });
 
-    let options = {
+    return {
 
         OPTION_SCOPE_GLOBAL: 1,
         OPTION_SCOPE_LOCAL:  2,
@@ -980,38 +1010,6 @@ function Options() //{{{
                 liberator.echoerr("E488: Trailing characters: " + name + "!");
         }
     };
-
-    //
-    // firefox preferences which need to be changed to work well with vimperator
-    //
-
-    // work around firefox popup blocker
-    // TODO: Make this work like safeSetPref
-    var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
-    if (!/keypress/.test(popupAllowedEvents))
-    {
-        storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
-        liberator.registerObserver("shutdown", function ()
-        {
-            if (loadPreference("dom.popup_allowed_events", "")
-                    == popupAllowedEvents + " keypress")
-                storePreference("dom.popup_allowed_events", popupAllowedEvents);
-        });
-    }
-
-    // safeSetPref might try to echomsg. Need commandline.
-    liberator.registerObserver("load_commandline", function () {
-        // TODO: maybe reset in .destroy()?
-        // TODO: move to vim.js or buffer.js
-        // we have our own typeahead find implementation
-        options.safeSetPref("accessibility.typeaheadfind.autostart", false);
-        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in firefox
-    });
-
-    // start with saved session
-    storePreference("browser.startup.page", 3);
-
-    return options;
     //}}}
 }; //}}}
 
