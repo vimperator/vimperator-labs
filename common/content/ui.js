@@ -102,7 +102,7 @@ function CommandLine() //{{{
         let self = this;
         context.onUpdate = function ()
         {
-            self.reset(true);
+            self._reset();
         };
         this.context = context;
         this.editor = context.editor;
@@ -165,7 +165,9 @@ function CommandLine() //{{{
             this.context.reset();
             this.context.tabPressed = tabPressed;
             liberator.triggerCallback("complete", currentExtendedMode, this.context);
+            this.context.updateAsync = true;
             this.reset(show, tabPressed);
+            this.wildIndex = 0;
         },
 
         preview: function preview()
@@ -230,7 +232,6 @@ function CommandLine() //{{{
 
         reset: function reset(show)
         {
-            this.wildtypes = this.wildmode.values;
             this.wildIndex = -1;
 
             this.prefix = this.context.value.substring(0, this.start);
@@ -243,6 +244,22 @@ function CommandLine() //{{{
                 this.select(this.RESET);
                 this.wildIndex = 0;
             }
+
+            this.wildtypes = this.wildmode.values;
+            this.preview();
+        },
+
+        _reset: function _reset()
+        {
+            this.prefix = this.context.value.substring(0, this.start);
+            this.value  = this.context.value.substring(this.start, this.caret);
+            this.suffix = this.context.value.substring(this.caret);
+
+            this.itemList.reset();
+            this.itemList.selectItem(this.selected);
+
+            this.wildIndex = 0;
+            this.wildtypes = this.wildmode.values;
 
             this.preview();
         },
@@ -288,7 +305,7 @@ function CommandLine() //{{{
         {
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
-                this.complete(true, true);
+                this.complete(false, true);
 
             if (this.items.length == 0)
             {
@@ -350,7 +367,8 @@ function CommandLine() //{{{
         completions.itemList.show();
     });
 
-    var tabTimer = new util.Timer(10, 10, function tabTell(event) {
+    var tabTimer = new util.Timer(0, 0, function tabTell(event) {
+        liberator.dump("tabTell");
         if (completions)
             completions.tab(event.shiftKey);
     });
@@ -1076,7 +1094,8 @@ function CommandLine() //{{{
                 // user pressed TAB to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {
-                    tabTimer.tell(event);
+                    // tabTimer.tell(event);
+                    completions.tab(event.shiftKey);
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();

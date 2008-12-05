@@ -47,7 +47,6 @@ function Hints() //{{{
     var pageHints = [];
     var validHints = []; // store the indices of the "hints" array with valid elements
 
-    var escapeNumbers = false; // escape mode for numbers. true -> treated as hint-text
     var activeTimeout = null;  // needed for hinttimeout > 0
     var canUpdate = false;
 
@@ -89,7 +88,7 @@ function Hints() //{{{
         validHints = [];
         canUpdate = false;
         docs = [];
-        escapeNumbers = false;
+        hints.escNumbers = false;
 
         if (activeTimeout)
             clearTimeout(activeTimeout);
@@ -98,7 +97,7 @@ function Hints() //{{{
 
     function updateStatusline()
     {
-        statusline.updateInputBuffer((escapeNumbers ? mappings.getMapLeader() : "") + (hintNumber || ""));
+        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (hintNumber || ""));
     }
 
     function generate(win)
@@ -724,8 +723,8 @@ function Hints() //{{{
                     break;
 
                case mappings.getMapLeader():
-                   escapeNumbers = !escapeNumbers;
-                   if (escapeNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
+                   hints.escNumbers = !hints.escNumbers;
+                   if (hints.escNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
                        hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
 
                    updateStatusline();
@@ -734,18 +733,6 @@ function Hints() //{{{
                 default:
                     if (/^\d$/.test(key))
                     {
-                        // FIXME: Kludge.
-                        if (escapeNumbers)
-                        {
-                            let cmdline = document.getElementById("liberator-commandline-command");
-                            let start = cmdline.selectionStart;
-                            let end = cmdline.selectionEnd;
-                            cmdline.value = cmdline.value.substr(0, start) + key + cmdline.value.substr(start);
-                            cmdline.selectionStart = start + 1;
-                            cmdline.selectionEnd = end + 1;
-                            return;
-                        }
-
                         prevInput = "number";
 
                         var oldHintNumber = hintNumber;
@@ -779,7 +766,7 @@ function Hints() //{{{
                         // the hint after a timeout, as the user might have wanted to follow link 34
                         if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
                         {
-                            var timeout = options["hinttimeout"];
+                            let timeout = options["hinttimeout"];
                             if (timeout > 0)
                                 activeTimeout = setTimeout(function () { processHints(true); }, timeout);
 

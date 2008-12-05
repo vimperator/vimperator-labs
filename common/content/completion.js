@@ -1300,7 +1300,6 @@ function Completion() //{{{
                         cmdContext.completions = compObject.items;
                     }
                 }
-                context.updateAsync = true;
             }
         },
 

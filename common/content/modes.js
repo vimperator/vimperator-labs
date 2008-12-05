@@ -86,10 +86,9 @@ const modes = (function () //{{{
             case modes.VISUAL:
                 if (newMode == modes.CARET)
                 {
-                    // clear any selection made
-                    var selection = window.content.getSelection();
                     try
-                    { // a simple if (selection) does not work
+                    { // clear any selection made; a simple if (selection) does not work
+                        let selection = window.content.getSelection();
                         selection.collapseToStart();
                     }
                     catch (e) {}
@@ -113,7 +112,7 @@ const modes = (function () //{{{
         if (newMode == modes.NORMAL)
         {
             // disable caret mode when we want to switch to normal mode
-            var value = options.getPref("accessibility.browsewithcaret", false);
+            let value = options.getPref("accessibility.browsewithcaret", false);
             if (value)
                 options.setPref("accessibility.browsewithcaret", false);
 
@@ -124,7 +123,7 @@ const modes = (function () //{{{
                 let urlbar = document.getElementById("urlbar");
                 if (!urlbar || focus != urlbar.inputField)
                     liberator.focusContent(false);
-            }, 100);
+            }, 0);
         }
     }
 
