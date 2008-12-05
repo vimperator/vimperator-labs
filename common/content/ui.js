@@ -95,6 +95,7 @@ function CommandLine() //{{{
     var lastMowOutput = null;
 
     var silent = false;
+    var keepCommand = false;
 
     function Completions(context)
     {
@@ -363,7 +364,9 @@ function CommandLine() //{{{
     var promptChangeCallback = null;
     var promptCompleter = null;
 
-    liberator.registerCallback("submit", modes.EX, function (command) { liberator.execute(command); });
+    liberator.registerCallback("submit", modes.EX, function (command) {
+        liberator.execute(command);
+    });
     liberator.registerCallback("complete", modes.EX, function (context) {
         context.fork("ex", 0, completion, "ex");
     });
@@ -824,6 +827,7 @@ function CommandLine() //{{{
             currentPrompt = prompt || "";
             currentCommand = cmd || "";
             currentExtendedMode = extendedMode || null;
+            keepCommand = false;
 
             historyIndex = UNINITIALIZED;
 
@@ -855,6 +859,8 @@ function CommandLine() //{{{
             liberator.focusContent(false);
 
             this.clear();
+            liberator.dump("keepCommand: " + keepCommand);
+            keepCommand = false;
         },
 
         clear: function clear()
@@ -864,7 +870,8 @@ function CommandLine() //{{{
             completionList.hide();
             this.resetCompletions();
 
-            setLine("", this.HL_NORMAL);
+            if (!keepCommand || this.silent)
+                setLine("", this.HL_NORMAL);
         },
 
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
@@ -993,8 +1000,9 @@ function CommandLine() //{{{
                 if (events.isAcceptKey(key))
                 {
                     let mode = currentExtendedMode; // save it here, as modes.pop() resets it
+                    keepCommand = (mode == modes.EX); // Fixme.
                     currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
-                    modes.pop();
+                    modes.pop(!this.silent);
 
                     return liberator.triggerCallback("submit", mode, command);
                 }

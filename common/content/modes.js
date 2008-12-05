@@ -182,7 +182,7 @@ const modes = (function () //{{{
             // if a main mode is set, the extended is always cleared
             if (typeof mainMode === "number")
             {
-                if (!silent && mainMode != main)
+                if (mainMode != main)
                     handleModeChange(main, mainMode);
 
                 main = mainMode;
