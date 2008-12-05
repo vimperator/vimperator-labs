@@ -56,7 +56,7 @@ ________________________________________________________________________________
 
 
 |:doautoa| |:doautoall|
-||:doautocmda[ll] {event} [url]|| +
+||:doautoa[ll] {event} [url]|| +
 ________________________________________________________________________________
 Apply the autocommands matching the specified URL to all buffers. If no [url]
 is specified use the current URL.
