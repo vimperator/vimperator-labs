@@ -413,6 +413,8 @@ function IO() //{{{
 
         sourcing: null,
 
+        pathSeparator: WINDOWS ? "\\" : "/",
+
         expandPath: function (path)
         {
             // TODO: proper pathname separator translation like Vim - this should be done elsewhere

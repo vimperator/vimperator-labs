@@ -1217,12 +1217,12 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(context)
         {
-            options.get("runtimepath").values.forEach(function (path) {
-                context.fork(path, 0, null, function (context) {
-                    context.filter = path + "/colors/" + context.filter;
+            io.getRuntimeDirectories("colors").forEach(function (dir) {
+                context.fork(dir.path, 0, null, function (context) {
+                    context.filter = dir.path + io.pathSeparator + context.filter;
                     completion.file(context, true);
-                    context.title = [path + "/colors/"];
-                    context.quote = function (text) text.replace(/\.vimp$/, "");
+                    context.title = [dir.path]; // TODO: why not "Colorscheme"?
+                    context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
                 });
             });
         },
