@@ -238,7 +238,6 @@ function Hints() //{{{
                     setClass(imgspan, activeHint == hintnum)
                 }
 
-                span.style.display = "inline";
                 span.setAttribute("number", hintnum++);
                 if (imgspan)
                     imgspan.setAttribute("number", hintnum);

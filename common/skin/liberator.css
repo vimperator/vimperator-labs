@@ -37,6 +37,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 [liberator|highlight~=Hint] {
     z-index: 5000;
     position: absolute;
+    display: inline;
 }
 [liberator|highlight~=Search] {
     display: inline;
