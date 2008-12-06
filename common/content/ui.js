@@ -1362,11 +1362,11 @@ function CommandLine() //{{{
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
             if (showHelp)
-                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG);
+                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG, true);
             else if (force || (options["more"] && isScrollable() && !atEnd()))
-                setLine("-- More --", this.HL_MOREMSG);
+                setLine("-- More --", this.HL_MOREMSG, true);
             else
-                setLine("Press ENTER or type command to continue", this.HL_QUESTION);
+                setLine("Press ENTER or type command to continue", this.HL_QUESTION, true);
         },
 
         updateOutputHeight: function updateOutputHeight(open)
