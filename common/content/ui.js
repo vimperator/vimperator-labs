@@ -1354,8 +1354,10 @@ function CommandLine() //{{{
 
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
-            if (modes.main == modes.COMMAND_LINE)
+            // prevent MOW events (still useful) from wiping out the command-line when in EX extended mode
+            if (modes.extended != modes.OUTPUT_MULTILINE)
                 return;
+
             let win = multilineOutputWidget.contentWindow;
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
