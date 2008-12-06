@@ -724,20 +724,23 @@ lookup:
         {
             liberator.echomsg("Calling shell to execute: " + command, 4);
 
+            function escape(str) '"' + str.replace(/[\\"$]/g, "\\$1") + '"';
+
             let stdoutFile = ioManager.createTempFile();
             let stderrFile = ioManager.createTempFile();
-
-            function escapeQuotes(str) str.replace('"', '\\"', "g");
 
             if (!stdoutFile || !stderrFile) // FIXME: error reporting
                 return "";
 
             if (WINDOWS)
+            {
                 command = "cd /D " + cwd.path + " && " + command + " > " + stdoutFile.path + " 2> " + stderrFile.path;
+            }
             else
-                // TODO: should we only attempt the actual command conditionally on a successful cd?
-                command = "cd " + escapeQuotes(cwd.path) + "; " + command + " > \"" + escapeQuotes(stdoutFile.path) + "\""
-                            + " 2> \"" + escapeQuotes(stderrFile.path) + "\"";
+            {
+                let cmd = [options["shell"], options["shellcmdflag"], command].map(escape).join(" ");
+                command = "cd " + escape(cwd.path) + " && exec " + cmd + " >" + escape(stdoutFile.path) + " 2>" + escape(stderrFile.path);
+            }
 
             let stdinFile = null;
 
@@ -745,7 +748,7 @@ lookup:
             {
                 stdinFile = ioManager.createTempFile(); // FIXME: no returned file?
                 ioManager.writeFile(stdinFile, input);
-                command += " < \"" + escapeQuotes(stdinFile.path) + "\"";
+                command += " <" + escape(stdinFile.path);
             }
 
             let res = ioManager.run(options["shell"], [options["shellcmdflag"], command], true);
@@ -757,7 +760,6 @@ lookup:
 
             stdoutFile.remove(false);
             stderrFile.remove(false);
-
             if (stdinFile)
                 stdinFile.remove(false);
 
