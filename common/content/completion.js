@@ -95,6 +95,7 @@ function CompletionContext(editor, name, offset)
             }
             return false;
         }];
+        this.anchored = true;
         this.contexts = { name: this };
         this.keys = { text: 0, description: 1, icon: "icon" };
         this.offset = offset || 0;
@@ -197,12 +198,14 @@ CompletionContext.prototype = {
     },
 
     get format() ({
+        anchored: this.anchored,
         title: this.title,
         keys: this.keys,
         process: this.process
     }),
     set format(format)
     {
+        this.anchored = format.anchored,
         this.title = format.title || this.title;
         this.keys = format.keys || this.keys;
         this.process = format.process || this.process;
@@ -478,14 +481,16 @@ CompletionContext.prototype = {
         // Not ideal.
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
+
         this.contextList = [];
         this.offset = 0;
         this.process = [];
         this.selectionTypes = {};
         this.tabPressed = false;
         this.title = ["Completions"];
-        this.waitingForTab = false;
         this.updateAsync = false;
+        this.waitingForTab = false;
+
         if (this.editor)
         {
             this.value = this.editor.selection.focusNode.textContent;
@@ -1128,30 +1133,6 @@ function Completion() //{{{
                        .items.map(function (i) i.item);
         },
 
-        // cancel any ongoing search
-        cancel: function cancel()
-        {
-            if (completionService)
-                completionService.stopSearch();
-        },
-
-        // generic helper function which checks if the given "items" array pass "filter"
-        // items must be an array of strings
-        match: function match(items, filter, caseSensitive)
-        {
-            if (typeof filter != "string" || !items)
-                return false;
-
-            var itemsStr = items.join(" ");
-            if (!caseSensitive)
-            {
-                filter = filter.toLowerCase();
-                itemsStr = itemsStr.toLowerCase();
-            }
-
-            return filter.split(/\s+/).every(function strIndex(str) itemsStr.indexOf(str) > -1);
-        },
-
         listCompleter: function listCompleter(name, filter, maxItems)
         {
             let context = CompletionContext(filter || "");
@@ -1241,7 +1222,6 @@ function Completion() //{{{
         command: function command(context)
         {
             context.title = ["Command"];
-            context.anchored = true;
             context.keys = { text: "longNames", description: "description" };
             context.completions = [k for (k in commands)];
         },
@@ -1325,7 +1305,6 @@ function Completion() //{{{
             if (tail)
                 context.advance(dir.length);
             context.keys = { text: 0, description: 1, icon: 2 };
-            context.anchored = true;
             context.background = true;
             context.key = dir;
             context.generate = function generate_file()
@@ -1391,6 +1370,7 @@ function Completion() //{{{
         {
             if (!completionService)
                 return
+            context.anchored = false;
             context.title = ["Smart Completions"];
             context.keys.icon = 2;
             context.incomplete = true;
@@ -1426,7 +1406,6 @@ function Completion() //{{{
         option: function option(context, scope)
         {
             context.title = ["Option"];
-            context.anchored = true;
             context.keys = { text: "names", description: "description" };
             context.completions = options;
             if (scope)
@@ -1487,6 +1466,7 @@ function Completion() //{{{
         {
             let prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                   .getService(Components.interfaces.nsIPrefBranch);
+            context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
             context.completions = prefs.getChildList("", { value: 0 });
@@ -1499,7 +1479,6 @@ function Completion() //{{{
             let engines = bookmarks.getSearchEngines();
 
             context.title = ["Search Keywords"];
-            context.anchored = true;
             context.completions = keywords.concat(engines);
             context.keys = { text: 0, description: 1, icon: 2 };
 
@@ -1514,7 +1493,6 @@ function Completion() //{{{
                 context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
-                    context.anchored = true;
                     context.background = true;
                     context.compare = null;
                     context.generate = function () {
@@ -1655,6 +1633,7 @@ function Completion() //{{{
                     every(function (tag) (context.getKey(item, "tags") || []).
                         some(function (t) !compare(tag, t))));
 
+            context.anchored = false;
             if (!context.title)
                 context.title = ["URL", "Title"];
 
