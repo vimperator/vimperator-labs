@@ -24,7 +24,7 @@ Highlights.prototype.CSS = <![CDATA[
     NonText     color: blue; min-height: 16px; padding-left: 2px;
     Preview     color: gray;
 
-    CmdLine     font-family: monospace; padding: 1px;
+    CmdLine,>*  font-family: monospace; padding: 1px;
 
     CompGroup
     CompGroup:not(:first-of-type) margin-top: .5em;
@@ -177,6 +177,9 @@ function Highlights(name, store, serial)
                     .forEach(function (style)
         {
             style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
+            if (/^[>+ ]/.test(style.selector))
+                style.selector = self.selector(style.class + style.selector);
+
             let old = highlight[style.class];
             highlight[style.class] = style;
             if (old && old.value != old.default)
