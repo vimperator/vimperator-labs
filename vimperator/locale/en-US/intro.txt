@@ -15,7 +15,8 @@ web browser, as key bindings differ according to which mode you are in.
 
 |warning| +
 Warning:
-To provide the most authentic Vim experience, the Firefox menubar and toolbar were hidden. +
+To provide the most authentic Vim experience, the Firefox menubar and toolbar
+are hidden. +
 If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
 If you don't like Vimperator at all, you can uninstall it by typing
 [c]:addons[c] and remove/disable it. +
