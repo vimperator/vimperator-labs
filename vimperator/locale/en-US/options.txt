@@ -38,18 +38,18 @@ Number option: show value. +
 String option: show value.
 ____
 
-||:se[t] no((option)) [...]|| +
+||:se[t] no[a]{option}[a] [...]|| +
 ____
 Toggle option: Reset, switch it off.
 ____
 
 ||:se[t] {option}! [...]|| +
-||:se[t] inv((option)) [...]|| +
+||:se[t] inv[a]{option}[a] [...]|| +
 ____
 Toggle option: Invert value.
 ____
 
-||:se[t] inv((option))={value} [...]|| +
+||:se[t] inv[a]{option}[a]={value} [...]|| +
 ||:se[t] {option}!={value} [...]|| +
 ____
 For list options, toggle the specified values.
@@ -122,8 +122,8 @@ ____
 ||:setl[ocal] all|| +
 ||:setl[ocal] {option}?|| +
 ||:setl[ocal] {option}|| +
-||:setl[ocal] no{option}|| +
-||:setl[ocal] inv{option}|| +
+||:setl[ocal] no[a]{option}[a]|| +
+||:setl[ocal] inv[a]{option}[a]|| +
 ||:setl[ocal] {option}&|| +
 ||:setl[ocal] all&|| +
 ||:setl[ocal] {option}={value}|| +
@@ -141,8 +141,8 @@ ____
 ||:setg[lobal] all|| +
 ||:setg[lobal] {option}?|| +
 ||:setg[lobal] {option}|| +
-||:setg[lobal] no{option}|| +
-||:setg[lobal] inv{option}|| +
+||:setg[lobal] no[a]{option}[a]|| +
+||:setg[lobal] inv[a]{option}[a]|| +
 ||:setg[lobal] {option}&|| +
 ||:setg[lobal] all&|| +
 ||:setg[lobal] {option}={value}|| +
