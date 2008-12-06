@@ -79,13 +79,16 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 onclick="liberator.modules.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
-        <hbox id="liberator-commandline" hidden="false" liberator:highlight="Normal">
-            <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-            <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
-                oninput="liberator.modules.commandline.onEvent(event);"
-                onfocus="liberator.modules.commandline.onEvent(event);"
-                onblur="liberator.modules.commandline.onEvent(event);"/>
-        </hbox>
+        <stack orient="horizontal" align="stretch" class="liberator-container" liberator:highlight="CmdLine">
+            <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
+            <hbox id="liberator-commandline" hidden="false" class="liberator-container" liberator:highlight="Normal">
+                <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                    oninput="liberator.modules.commandline.onEvent(event);"
+                    onfocus="liberator.modules.commandline.onEvent(event);"
+                    onblur="liberator.modules.commandline.onEvent(event);"/>
+            </hbox>
+        </stack>
 
         <vbox class="liberator-container" hidden="false" collapsed="false">
             <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"

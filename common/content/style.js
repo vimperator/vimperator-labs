@@ -24,6 +24,8 @@ Highlights.prototype.CSS = <![CDATA[
     NonText     color: blue; min-height: 16px; padding-left: 2px;
     Preview     color: gray;
 
+    CmdLine     font-family: monospace; padding: 1px;
+
     CompGroup
     CompGroup:not(:first-of-type) margin-top: .5em;
     CompTitle          color: magenta; background: white; font-weight: bold;

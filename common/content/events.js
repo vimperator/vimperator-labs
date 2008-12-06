@@ -298,8 +298,6 @@ function Events() //{{{
             {
                 // TODO: is all of that necessary?
                 modes.reset();
-                commandline.clear();
-                modes.show();
                 statusline.updateTabCount();
                 tabs.updateSelectionHistory();
 
@@ -1179,7 +1177,6 @@ function Events() //{{{
                             selection.collapseToStart();
                         }
                         catch (e) {}
-                        commandline.clear();
 
                         modes.reset();
                         liberator.focusContent(true);

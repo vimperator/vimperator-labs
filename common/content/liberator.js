@@ -1215,6 +1215,8 @@ const liberator = (function () //{{{
             config.dialogs = config.dialogs || [];
             config.helpFiles = config.helpFiles || [];
 
+            liberator.triggerObserver("load");
+
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
             loadModule("options",      Options);

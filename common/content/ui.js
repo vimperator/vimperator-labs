@@ -430,7 +430,11 @@ function CommandLine() //{{{
     // the command bar which contains the current command
     const commandWidget = document.getElementById("liberator-commandline-command");
 
+
+    const messageBox = document.getElementById("liberator-message");
+
     commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
+    messageBox.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
 
     // the widget used for multiline output
     const multilineOutputWidget = document.getElementById("liberator-multiline-output");
@@ -454,8 +458,12 @@ function CommandLine() //{{{
 
     function setHighlightGroup(group)
     {
-        commandlineWidget.setAttributeNS(NS.uri, "highlight", group);
+        messageBox.setAttributeNS(NS.uri, "highlight", group);
     }
+
+    function commandShown() modes.main == modes.COMMAND_LINE &&
+            !(modes.extended & modes.INPUT_MULTILINE) &&
+            !(modes.extended & modes.OUTPUT_MULTILINE);
 
     // sets the prompt - for example, : or /
     function setPrompt(pmt, highlightGroup)
@@ -483,15 +491,16 @@ function CommandLine() //{{{
     function setLine(str, highlightGroup, forceSingle)
     {
         setHighlightGroup(highlightGroup);
-        setPrompt("");
-        setCommand(str);
-        if (!forceSingle &&
-            commandWidget.inputField.editor.rootElement
-                         .scrollWidth > commandWidget.inputField.scrollWidth)
-        {
-            setCommand("");
+        messageBox.value = str;
+
+        if (!commandShown())
+            commandline.hide();
+
+        let field = messageBox.inputField;
+        if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
             setMultiline(<span highlight="Message">{str}</span>, highlightGroup);
-        }
+        else
+            messageBox.collapsed = false;
     }
 
     // TODO: extract CSS
@@ -847,9 +856,10 @@ function CommandLine() //{{{
             historyIndex = UNINITIALIZED;
 
             modes.set(modes.COMMAND_LINE, currentExtendedMode);
-            setHighlightGroup(this.HL_NORMAL);
+
             setPrompt(currentPrompt);
             setCommand(currentCommand);
+            commandlineWidget.collapsed = false;
 
             commandWidget.focus();
 
@@ -873,19 +883,19 @@ function CommandLine() //{{{
             statusline.updateProgress(""); // we may have a "match x of y" visible
             liberator.focusContent(false);
 
-            this.clear();
-            keepCommand = false;
-        },
-
-        clear: function clear()
-        {
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
             completionList.hide();
             this.resetCompletions();
 
+            this.hide();
+            keepCommand = false;
+        },
+
+        hide: function hide()
+        {
             if (!keepCommand || this.silent)
-                setLine("", this.HL_NORMAL);
+                commandlineWidget.collapsed = true;
         },
 
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
@@ -975,13 +985,8 @@ function CommandLine() //{{{
             {
                 // prevent losing focus, there should be a better way, but it just didn't work otherwise
                 setTimeout(function () {
-                    if (liberator.mode == modes.COMMAND_LINE &&
-                        !(modes.extended & modes.INPUT_MULTILINE) &&
-                        !(modes.extended & modes.OUTPUT_MULTILINE) &&
-                        event.originalTarget == commandWidget.inputField)
-                    {
+                    if (commandShown() && event.originalTarget == commandWidget.inputField)
                         commandWidget.inputField.focus();
-                    }
                 }, 0);
             }
             else if (event.type == "focus")
@@ -1339,9 +1344,7 @@ function CommandLine() //{{{
 
             if (passEvent || closeWindow)
             {
-                // FIXME: use mode stack
                 modes.pop();
-                this.clear();
 
                 if (passEvent)
                     events.onKeyPress(event);
@@ -1354,10 +1357,6 @@ function CommandLine() //{{{
 
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
-            // prevent MOW events (still useful) from wiping out the command-line when in EX extended mode
-            if (modes.extended != modes.OUTPUT_MULTILINE)
-                return;
-
             let win = multilineOutputWidget.contentWindow;
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;

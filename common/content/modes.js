@@ -159,12 +159,7 @@ const modes = (function () //{{{
             if (!options["showmode"])
                 return;
 
-            // never show mode messages if we are in command line mode
-            if (main == modes.COMMAND_LINE)
-                return;
-
-            commandline.echo(getModeMessage(), commandline.HL_MODEMSG,
-                                        commandline.DISALLOW_MULTILINE);
+            commandline.echo(getModeMessage(), "ModeMsg");
         },
 
         // add/remove always work on the extended mode only
@@ -178,6 +173,7 @@ const modes = (function () //{{{
         // if silent == true, you also need to take care of the mode handling changes yourself
         set: function (mainMode, extendedMode, silent)
         {
+            silent = (silent || main == mainMode && extended == extendedMode);
             // if a main mode is set, the extended is always cleared
             if (typeof mainMode === "number")
             {

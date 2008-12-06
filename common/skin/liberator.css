@@ -96,8 +96,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 @-moz-document 
     url-prefix(chrome://) {
 
-#liberator-container  {
-    font-family: monospace;
+.liberator-container > * {
+    font-family: inherit;
 }
 
 #liberator-completions {
@@ -108,13 +108,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 
 /* fixes the min-height: 22px from firefox */
-#status-bar, statusbarpanel {
+#status-bar,
+statusbarpanel {
     -moz-appearance: none !important;
 	min-height: 18px !important;
     border: none !important;
     font-weight: bold;
     font-family: monospace;
 }
+
 #liberator-statusline {
     font-family: monospace;
     margin: 0px;
@@ -138,14 +140,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     display: none;
 }
 
-#liberator-commandline {
-    padding: 1px;
-    font-family: monospace;
-    /*
-    background-color: white;
-    color: black;
-    */
-}
 #liberator-commandline-prompt {
     margin: 0px;
     padding: 0px;
@@ -156,11 +150,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
     color: inherit;
 }
 
-#liberator-visualbell {
-    border: none;
-    background-color: black;
-}
-
 #sidebar {
     max-width: 90% !important;
     min-width: 10% !important;
@@ -168,29 +157,37 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /* MOW */
 
-#liberator-completions, #liberator-multiline-output, #liberator-multiline-input {
+#liberator-completions,
+#liberator-multiline-output,
+#liberator-multiline-input {
     overflow: hidden;
     background-color: white;
     color: black;
 }
 
-#liberator-completions-content, #liberator-multiline-output-content, #liberator-multiline-input {
+#liberator-completions-content,
+#liberator-multiline-output-content,
+#liberator-multiline-input {
     white-space: pre;
     font-family: -moz-fixed;
     margin: 0px;
 }
 
-#liberator-completions-content *, #liberator-multiline-output-content * {
+#liberator-completions-content *,
+#liberator-multiline-output-content * {
     font: inherit;
 }
 
-#liberator-completions-content table, #liberator-multiline-output-content table {
+#liberator-completions-content table,
+#liberator-multiline-output-content table {
     white-space: inherit;
     border-spacing: 0px;
 }
 
-#liberator-completions-content td, #liberator-multiline-output-content td,
-#liberator-completions-content th, #liberator-multiline-output-content th {
+#liberator-completions-content td,
+#liberator-multiline-output-content td,
+#liberator-completions-content th,
+#liberator-multiline-output-content th {
     padding: 0px 2px;
 }
 
