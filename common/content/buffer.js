@@ -892,7 +892,7 @@ function Buffer() //{{{
                       return null;
                   }
                 },
-                asIterator ? XPathResult.UNORDERED_NODE_ITERATOR_TYPE : XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+                asIterator ? XPathResult.ORDERED_NODE_ITERATOR_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
                 null
             );
 
@@ -959,100 +959,57 @@ function Buffer() //{{{
             elem.dispatchEvent(evt);
         },
 
-        followDocumentRelationship: function (relationship)
+        followDocumentRelationship: function (rel)
         {
-            function followFrameRelationship(relationship, parsedFrame)
-            {
-                var regexps;
-                var relText;
-                var patternText;
-                var revString;
-                switch (relationship)
-                {
-                    case "next":
-                        regexps = options.get("nextpattern").values;
-                        revString = "previous";
-                        break;
-                    case "previous":
-                        // TODO: accept prev\%[ious]
-                        regexps = options.get("previouspattern").values;
-                        revString = "next";
-                        break;
-                    default:
-                        liberator.echoerr("Bad document relationship: " + relationship);
-                }
+            let regexps = options.get(rel + "pattern").values
+                                 .map(function (re) RegExp(re, "i"));
 
-                relText = new RegExp(relationship, "i");
-                revText = new RegExp(revString, "i");
-                var elems = parsedFrame.document.getElementsByTagName("link");
-                // links have higher priority than normal <a> hrefs
-                for (let i = 0; i < elems.length; i++)
+            function followFrame(frame)
+            {
+                function iter(elems) (e for ([i, e] in Iterator(elems)) if (e.rel.toLowerCase() == rel || e.rev.toLowerCase() == rel));
+
+                // <link>s have higher priority than normal <a> hrefs
+                let elems = frame.document.getElementsByTagName("link");
+                for (let elem in iter(elems))
                 {
-                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-                    {
-                            liberator.open(elems[i].href);
-                            return true;
-                    }
+                    liberator.open(elem.href);
+                    return true;
                 }
 
                 // no links? ok, look for hrefs
-                elems = parsedFrame.document.getElementsByTagName("a");
-                for (let i = 0; i < elems.length; i++)
+                elems = frame.document.getElementsByTagName("a");
+                for (let elem in iter(elems))
                 {
-                    if (relText.test(elems[i].rel) || revText.test(elems[i].rev))
-                    {
-                        buffer.followLink(elems[i], liberator.CURRENT_TAB);
-                        return true;
-                    }
+                    buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                    return true;
                 }
 
-                for (let pattern = 0; pattern < regexps.length; pattern++)
+                let res = buffer.evaluateXPath(options["hinttags"], frame.document);
+                for (let [,regex] in Iterator(regexps))
                 {
-                    patternText = new RegExp(regexps[pattern], "i");
-                    for (let i = 0; i < elems.length; i++)
+                    for (let i in util.range(res.snapshotLength, 0, true))
                     {
-                        if (patternText.test(elems[i].textContent))
+                        let elem = res.snapshotItem(i);
+                        if (regex.test(elem.textContent))
                         {
-                            buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                            buffer.followLink(elem, liberator.CURRENT_TAB);
                             return true;
                         }
-                        else
+                        // images with alt text being href
+                        if (Array.some(elem.childNodes, function (child) regex.test(child.alt)))
                         {
-                            // images with alt text being href
-                            var children = elems[i].childNodes;
-                            for (let j = 0; j < children.length; j++)
-                            {
-                                if (patternText.test(children[j].alt))
-                                {
-                                    buffer.followLink(elems[i], liberator.CURRENT_TAB);
-                                    return true;
-                                }
-                            }
+                            buffer.followLink(elem, liberator.CURRENT_TAB);
+                            return true;
                         }
                     }
                 }
                 return false;
             }
 
-            var retVal;
-            if (window.content.frames.length != 0)
-            {
-                retVal = followFrameRelationship(relationship, window.content);
-                if (!retVal)
-                {
-                    // only loop through frames if the main content didnt match
-                    for (let i = 0; i < window.content.frames.length; i++)
-                    {
-                        retVal = followFrameRelationship(relationship, window.content.frames[i]);
-                        if (retVal)
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                retVal = followFrameRelationship(relationship, window.content);
-            }
+            let retVal = followFrame(window.content);
+            if (!retVal)
+                // only loop through frames if the main content didnt match
+                retVal = Array.some(window.content.frames, followFrame);
 
             if (!retVal)
                 liberator.beep();
