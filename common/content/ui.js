@@ -38,33 +38,8 @@ function CommandLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const UNINITIALIZED = {}; // notifies us, if we need to start history/tab-completion from the beginning
-
     storage.newArray("history-search", true);
     storage.newArray("history-command", true);
-
-    var inputHistory = {
-        get mode() (modes.extended == modes.EX) ? "command" : "search",
-
-        get store() storage["history-" + this.mode],
-
-        get length() this.store.length,
-
-        get: function get(index) this.store.get(index),
-
-        add: function add(str)
-        {
-            if (!str)
-                return;
-
-            this.store.mutate('filter', function (line) line != str);
-            this.store.push(str);
-            this.store.truncate(options["history"], true);
-        }
-    };
-
-    var historyIndex = UNINITIALIZED;
-    var historyStart = "";
 
     var messageHistory = {
         _messages: [],
@@ -97,19 +72,91 @@ function CommandLine() //{{{
     var silent = false;
     var keepCommand = false;
 
-    function Completions(context)
+    function History(inputField, mode)
     {
+        if (!(this instanceof arguments.callee))
+            return new arguments.callee(inputField, mode);
+
+        this.input = inputField;
+        this.store = storage["history-" + mode];
+        this.reset();
+    }
+    History.prototype = {
+        reset: function ()
+        {
+            this.index = null;
+        },
+
+        save: function ()
+        {
+            let str = this.input.value;
+            this.store.mutate('filter', function (line) line != str);
+            this.store.push(str);
+            this.store.truncate(options["history"], true);
+        },
+
+        replace: function (val)
+        {
+            this.input.value = val;
+            liberator.triggerCallback("change", currentExtendedMode, val);
+        },
+
+        select: function (backward, matchCurrent)
+        {
+            // always reset the tab completion if we use up/down keys
+            completions.select(completions.RESET);
+
+            let diff = backward ? -1 : 1;
+
+            if (this.index == null)
+            {
+                this.original = this.input.value;
+                this.index = this.store.length;
+            }
+
+            // search the history for the first item matching the current
+            // commandline string
+            while (true)
+            {
+                this.index += diff;
+                if (this.index < 0 && this.index > this.store.length)
+                {
+                    this.index = Math.max(0, Math.min(this.store.length, this.index));
+                    liberator.beep();
+                    break;
+                }
+
+                let hist = this.store.get(this.index);
+
+                // user pressed DOWN when there is no newer history item
+                if (hist == null)
+                    hist = this.original;
+
+                if (!matchCurrent || hist.substr(0, this.original.length) == this.original)
+                {
+                    this.replace(hist);
+                    break;
+                }
+            }
+        }
+    };
+
+    function Completions(input)
+    {
+        if (!(this instanceof arguments.callee))
+            return new arguments.callee(input);
+
         let self = this;
-        context.onUpdate = function ()
+        this.context = CompletionContext(input.editor);
+        this.context.onUpdate = function ()
         {
             self._reset();
         };
-        this.context = context;
-        this.editor = context.editor;
+        this.editor = input.editor;
         this.selected = null;
         this.wildmode = options.get("wildmode");
         this.itemList = completionList;
-        this.itemList.setItems(context);
+        this.itemList.setItems(this.context);
         this.reset();
     }
     Completions.prototype = {
@@ -208,7 +255,7 @@ function CommandLine() //{{{
             this.removeSubstring = substring;
 
             // highlight="Preview" won't work in the editor.
-            let node = util.xmlToDom(<span style={highlight.get("Preview").value}>{substring}</span>,
+            let node = util.xmlToDom(<span highlight="Preview">{substring}</span>,
                 document);
             let start = this.caret;
             this.editor.insertNode(node, this.editor.rootElement, 1);
@@ -418,8 +465,8 @@ function CommandLine() //{{{
 
     const completionList = new ItemList("liberator-completions");
     var completions = null;
+    var history = null;
 
-    var wildIndex = 0;  // keep track how often we press <Tab> in a row
     var startHints = false; // whether we're waiting to start hints mode
     var lastSubstring = "";
 
@@ -461,24 +508,17 @@ function CommandLine() //{{{
         messageBox.setAttributeNS(NS.uri, "highlight", group);
     }
 
+    // Whether the command line must be open.
     function commandShown() modes.main == modes.COMMAND_LINE &&
             !(modes.extended & modes.INPUT_MULTILINE) &&
             !(modes.extended & modes.OUTPUT_MULTILINE);
 
     // sets the prompt - for example, : or /
-    function setPrompt(pmt, highlightGroup)
+    function setPrompt(val, highlightGroup)
     {
-        promptWidget.value = pmt;
-
-        if (pmt)
-        {
-            promptWidget.size = pmt.length;
-            promptWidget.collapsed = false;
-        }
-        else
-        {
-            promptWidget.collapsed = true;
-        }
+        promptWidget.value = val;
+        promptWidget.size = val.length;
+        promptWidget.collapsed = (val == "");
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
     }
 
@@ -488,7 +528,7 @@ function CommandLine() //{{{
         commandWidget.value = cmd;
     }
 
-    function setLine(str, highlightGroup, forceSingle)
+    function echoLine(str, highlightGroup, forceSingle)
     {
         setHighlightGroup(highlightGroup);
         messageBox.value = str;
@@ -498,15 +538,13 @@ function CommandLine() //{{{
 
         let field = messageBox.inputField;
         if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
-            setMultiline(<span highlight="Message">{str}</span>, highlightGroup);
+            echoMultiline(<span highlight="Message">{str}</span>, highlightGroup);
         else
             messageBox.collapsed = false;
     }
 
-    // TODO: extract CSS
-    //     : resize upon a window resize
-    //     : echoed lines longer than v-c-c.width should wrap and use MOW
-    function setMultiline(str, highlightGroup)
+    // TODO: resize upon a window resize
+    function echoMultiline(str, highlightGroup)
     {
         //outputContainer.collapsed = true;
         let doc = multilineOutputWidget.contentDocument;
@@ -518,7 +556,7 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str != "xml";
-        let output = util.xmlToDom(<div class={"ex-command-output "} style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
+        let output = util.xmlToDom(<div class="ex-command-output" style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
         XML.ignoreWhitespace = true;
 
         lastMowOutput = output;
@@ -554,10 +592,7 @@ function CommandLine() //{{{
     {
         let lines = multilineInputWidget.value.split("\n").length - 1;
 
-        if (lines == 0)
-            lines = 1;
-
-        multilineInputWidget.setAttribute("rows", String(lines));
+        multilineInputWidget.setAttribute("rows", Math.min(lines, 1));
     }
 
     // used for the :echo[err] commands
@@ -579,7 +614,7 @@ function CommandLine() //{{{
         if (typeof arg === "object")
             arg = util.objectToString(arg, useColor);
         else if (typeof arg != "xml")
-            arg = String(arg);
+            arg = <span highlight="CmdOutput">{arg}</span>;
 
         return arg;
     }
@@ -853,8 +888,6 @@ function CommandLine() //{{{
             currentExtendedMode = extendedMode || null;
             keepCommand = false;
 
-            historyIndex = UNINITIALIZED;
-
             modes.set(modes.COMMAND_LINE, currentExtendedMode);
 
             setPrompt(currentPrompt);
@@ -863,7 +896,8 @@ function CommandLine() //{{{
 
             commandWidget.focus();
 
-            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
+            history = History(commandWidget.inputField, (modes.extended == modes.EX) ? "command" : "search");
+            completions = Completions(commandWidget.inputField);
 
             // open the completion list automatically if wanted
             if (/\s/.test(cmd) &&
@@ -879,23 +913,27 @@ function CommandLine() //{{{
             currentExtendedMode = null;
             liberator.triggerCallback("cancel", mode);
 
-            inputHistory.add(this.getCommand());
+            if (history)
+                history.save();
+
+            completions = null;
+            history = null;
+
             statusline.updateProgress(""); // we may have a "match x of y" visible
             liberator.focusContent(false);
 
             multilineInputWidget.collapsed = true;
             outputContainer.collapsed = true;
             completionList.hide();
-            this.resetCompletions();
 
-            this.hide();
+            if (!keepCommand || this.silent)
+                this.hide();
             keepCommand = false;
         },
 
         hide: function hide()
         {
-            if (!keepCommand || this.silent)
-                commandlineWidget.collapsed = true;
+            commandlineWidget.collapsed = true;
         },
 
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
@@ -914,25 +952,28 @@ function CommandLine() //{{{
             if (flags & this.APPEND_TO_MESSAGES)
                 messageHistory.add({ str: str, highlight: highlightGroup });
 
-            liberator.callInMainThread(function () {
-                let where = setLine;
+            // The DOM isn't threadsafe. It must only be accessed from the main thread.
+            liberator.callInMainThread(function ()
+            {
+                let action = echoLine;
                 if (flags & commandline.FORCE_MULTILINE)
-                    where = setMultiline;
+                    action = echoMultiline;
                 else if (flags & commandline.FORCE_SINGLELINE)
-                    where = function () setLine(str, highlightGroup, true);
+                    action = echoLine;
                 else if (flags & commandline.DISALLOW_MULTILINE)
                 {
                     if (!outputContainer.collapsed)
-                        where = null;
+                        action = null;
                     else
-                        where = function () setLine(str, highlightGroup, true);
+                        action = echoLine;
                 }
-                else if (/\n|<br\/?>/.test(str))
-                    where = setMultiline;
+                else if (/\n/.test(str) || typeof str == "xml")
+                    action = echoMultiline;
 
-                if (where)
-                    where(str, highlightGroup);
+                if (action)
+                    action(str, highlightGroup, (flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE)));
 
+                // Why do we do this? --Kris
                 currentExtendedMode = null;
             });
 
@@ -956,7 +997,7 @@ function CommandLine() //{{{
             setCommand(extra.default || "");
             commandWidget.focus();
 
-            completions = new Completions(CompletionContext(commandWidget.inputField.editor));
+            completions = Completions(commandWidget.inputField);
         },
 
         // reads a multi line input and returns the string once the last line matches
@@ -1028,85 +1069,28 @@ function CommandLine() //{{{
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
                 {
-                    function loadHistoryItem(index)
-                    {
-                        setCommand(inputHistory.get(historyIndex));
-                        liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
-                    }
-
-                    let previousItem = /Up/.test(key);
-                    let matchCurrent = !/(Page|S-)/.test(key);
-
+                    // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
 
-                    // always reset the tab completion if we use up/down keys
-                    completions.select(completions.RESET);
-
-                    // save 'start' position for iterating through the history
-                    if (historyIndex == UNINITIALIZED)
-                    {
-                        historyIndex = inputHistory.length;
-                        historyStart = command;
-                    }
-
-                    // search the history for the first item matching the current
-                    // commandline string
-                    while (historyIndex >= -1 && historyIndex <= inputHistory.length)
-                    {
-                        previousItem ? historyIndex-- : historyIndex++;
-
-                        // user pressed DOWN when there is no newer history item
-                        if (historyIndex == inputHistory.length)
-                        {
-                            setCommand(historyStart);
-                            liberator.triggerCallback("change", currentExtendedMode, this.getCommand());
-                            break;
-                        }
-
-                        // cannot go past history start/end
-                        if (historyIndex <= -1)
-                        {
-                            historyIndex = 0;
-                            liberator.beep();
-                            break;
-                        }
-                        else if (historyIndex >= inputHistory.length + 1)
-                        {
-                            historyIndex = inputHistory.length;
-                            liberator.beep();
-                            break;
-                        }
-
-                        if (matchCurrent)
-                        {
-                            if (inputHistory.get(historyIndex).indexOf(historyStart) == 0)
-                            {
-                                loadHistoryItem(historyIndex);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            loadHistoryItem(historyIndex);
-                            break;
-                        }
-                    }
+                    history.select(/Up/.test(key), !/(Page|S-)/.test(key));
+                    return false;
                 }
                 // user pressed TAB to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {
-                    // tabTimer.tell(event);
-                    completions.tab(event.shiftKey);
                     // prevent tab from moving to the next field
                     event.preventDefault();
                     event.stopPropagation();
+
+                    // tabTimer.tell(event);
+                    completions.tab(event.shiftKey);
                     return false;
                 }
                 else if (key == "<BS>")
                 {
                     // reset the tab completion
-                    completionIndex = historyIndex = UNINITIALIZED;
+                    history.reset();
                     completions.reset();
 
                     // and blur the command line if there is no text left
@@ -1362,11 +1346,11 @@ function CommandLine() //{{{
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
             if (showHelp)
-                setLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG, true);
+                echoLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG, true);
             else if (force || (options["more"] && isScrollable() && !atEnd()))
-                setLine("-- More --", this.HL_MOREMSG, true);
+                echoLine("-- More --", this.HL_MOREMSG, true);
             else
-                setLine("Press ENTER or type command to continue", this.HL_QUESTION, true);
+                echoLine("Press ENTER or type command to continue", this.HL_QUESTION, true);
         },
 
         updateOutputHeight: function updateOutputHeight(open)
@@ -1375,6 +1359,8 @@ function CommandLine() //{{{
                 return;
 
             let doc = multilineOutputWidget.contentDocument;
+
+            // The container needs to be collapsed for this calculation to work.
             outputContainer.collapsed = true;
             let availableHeight = 250;
             try
@@ -1385,7 +1371,7 @@ function CommandLine() //{{{
             catch (e) {}
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
             outputContainer.height = Math.min(doc.height, availableHeight) + "px";
-            doc.body.style.minWidth = undefined;
+            doc.body.style.minWidth = "";
             outputContainer.collapsed = false;
         },
 
@@ -1394,12 +1380,10 @@ function CommandLine() //{{{
         {
             autocompleteTimer.reset();
             if (completions)
-            {
                 completions.context.reset();
+                // Needed?
                 //completions.reset();
-            }
-            historyIndex = UNINITIALIZED;
-            removeSuffix = "";
+            history.reset();
         }
     };
     //}}}
@@ -1431,7 +1415,7 @@ function ItemList(id) //{{{
 
     function dom(xml, map) util.xmlToDom(xml, doc, map);
     function elemToString(elem) elem.nodeType == elem.TEXT_NODE ? elem.data :
-        "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for (a in util.Array.iterator(elem.attributes))]).join(" ") + ">";
+        "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for ([i, a] in Iterator(elem.attributes))]).join(" ") + ">";
     var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
@@ -1439,19 +1423,7 @@ function ItemList(id) //{{{
     doc.body.appendChild(doc.createTextNode(""));
     doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where completions/MOW are shown at once, or ls=0. Should use :highlight.
 
-    let gradient =
-        <div highlight="Gradient">
-            <div style="height: 0px">
-                <div highlight="GradientRight Gradient"
-                     style="border: 0 !important; margin: 0 !important; padding: 0 !important;"/>
-            </div>
-            <table width="100%" style="height: 100%">
-                <tr>
-                    { template.map(util.range(0, 100), function (i)
-                      <td highlight="GradientLeft" style={"opacity: " + (1 - i / 100)}/>) }
-                </tr>
-            </table>
-        </div>;
+    let gradient = template.gradient("GradientLeft", "GradientRight");
 
     var items = null;
     var startIndex = -1;  // The index of the first displayed item
@@ -1776,7 +1748,7 @@ function StatusLine() //{{{
             }
             else
             {
-                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)$"), "$1 [Help]");
+                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)"), "$1 [Help]");
             }
 
             // when session information is available, add [+] when we can go backwards
@@ -1827,7 +1799,7 @@ function StatusLine() //{{{
                     progressStr = "["
                         + "====================".substr(0, progress)
                         + ">"
-                        + "\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0".substr(0, 19 - progress)
+                        + "                    ".substr(0, 19 - progress)
                         + "]";
                 }
                 progressWidget.value = progressStr;
@@ -1844,11 +1816,10 @@ function StatusLine() //{{{
             }
 
             // update the ordinal which is used for numbered tabs only when the user has
-            // tab numbers set, and the host application supports it
-            if (config.hostApplication == "Firefox" &&
-                (options.get("guioptions").has("n") || options.get("guioptions").has("N")))
+            // tab numbers set
+            if (options.get("guioptions").has("n", "N"))
             {
-                for (let [i, tab] in Iterator(Array.slice(getBrowser().mTabs)))
+                for (let [i, tab] in Iterator(getBrowser().mTabs))
                     tab.setAttribute("ordinal", i + 1);
             }
 

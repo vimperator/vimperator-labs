@@ -645,7 +645,7 @@ function Buffer() //{{{
 
     addPageInfoSection("f", "Feeds", function (verbose)
     {
-        var doc = window.content.document;
+        let doc = window.content.document;
 
         const feedTypes = {
             "application/rss+xml": "RSS",
@@ -662,7 +662,7 @@ function Buffer() //{{{
 
             if (!isFeed)
             {
-                var type = data.type && data.type.toLowerCase();
+                let type = data.type && data.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
                 isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
@@ -696,21 +696,20 @@ function Buffer() //{{{
 
         // put feeds rss into pageFeeds[]
         let nFeed = 0;
-        var linkNodes = doc.getElementsByTagName("link");
-        for (link in util.Array.iterator(linkNodes))
+        for (let [,link] in Iterator(doc.getElementsByTagName("link")))
         {
             if (!link.href)
                 return;
 
-            var rel = link.rel && link.rel.toLowerCase();
+            let rel = link.rel && link.rel.toLowerCase();
 
             if (rel == "feed" || (link.type && rel == "alternate"))
             {
-                var feed = { title: link.title, href: link.href, type: link.type || "" };
+                let feed = { title: link.title, href: link.href, type: link.type || "" };
                 if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
                 {
                     nFeed++;
-                    var type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                    let type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
                     if (verbose)
                         yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
                 }
@@ -726,10 +725,9 @@ function Buffer() //{{{
         let doc = window.content.document;
 
         // get file size
-        const nsICacheService = Components.interfaces.nsICacheService;
         const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
         const cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
-                                       .getService(nsICacheService);
+                                       .getService(Components.interfaces.nsICacheService);
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
         for (let proto in util.Array.iterator(["HTTP", "FTP"]))
@@ -743,7 +741,7 @@ function Buffer() //{{{
             catch (e) {}
         }
 
-        var pageSize = []; // [0] bytes; [1] kbytes
+        let pageSize = []; // [0] bytes; [1] kbytes
         if (cacheEntryDescriptor)
         {
             pageSize[0] = util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
@@ -752,8 +750,9 @@ function Buffer() //{{{
                 pageSize.length = 1; // don't output "xx Bytes" twice
         }
 
-        var lastModVerbose = new Date(doc.lastModified).toLocaleString();
-        var lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
+        let lastModVerbose = new Date(doc.lastModified).toLocaleString();
+        let lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
+
         // FIXME: probably not portable across different language versions
         if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
             lastModVerbose = lastMod = null;
@@ -790,7 +789,7 @@ function Buffer() //{{{
         var metaNodes = window.content.document.getElementsByTagName("meta");
 
         return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
-                    .sort(function (a, b) String.localeCompare(a[0].toLowerCase(), b[0].toLowerCase()));
+                    .sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -932,28 +931,22 @@ function Buffer() //{{{
         // TODO: merge with followLink()?
         focusElement: function (elem)
         {
-            var doc = window.content.document;
-            var elemTagName = elem.localName.toLowerCase();
+            let doc = window.content.document;
+            let elemTagName = elem.localName.toLowerCase();
             if (elemTagName == "frame" || elemTagName == "iframe")
             {
                 elem.contentWindow.focus();
                 return false;
             }
-            else
-            {
-                elem.focus();
-            }
+
+            elem.focus();
 
             var evt = doc.createEvent("MouseEvents");
             var x = 0;
             var y = 0;
             // for imagemap
             if (elemTagName == "area")
-            {
-                var coords = elem.getAttribute("coords").split(",");
-                x = Number(coords[0]);
-                y = Number(coords[1]);
-            }
+                [x, y] = elem.getAttribute("coords").split(",").map(Number);
 
             evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
             elem.dispatchEvent(evt);

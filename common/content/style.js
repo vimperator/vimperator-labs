@@ -25,6 +25,7 @@ Highlights.prototype.CSS = <![CDATA[
     Preview     color: gray;
 
     CmdLine,>*  font-family: monospace; padding: 1px;
+    CmdOutput   white-space: pre;
 
     CompGroup
     CompGroup:not(:first-of-type) margin-top: .5em;

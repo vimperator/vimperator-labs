@@ -373,10 +373,8 @@ function IO() //{{{
             lastRunCommand = args;
 
             let output = io.system(args);
-            let command = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>";
 
-            liberator.echo(template.generic(<span style="white-space: pre">{output}</span>))
-            liberator.echo(command + util.escapeHTML(output));
+            commandline.echo(template.generic(<span highlight="CmdOutput">{output}</span>));
 
             autocommands.trigger("ShellCmdPost", {});
         },
