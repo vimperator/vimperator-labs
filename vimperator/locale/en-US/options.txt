@@ -486,7 +486,7 @@ ____
 |\'nextpattern'|
 ||'nextpattern'|| stringlist
 ____
-(default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
+(default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 
 Patterns to use when guessing the \'next' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
@@ -578,7 +578,7 @@ ____
 |\'previouspattern'|
 ||'previouspattern'|| stringlist
 ____
-(default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
+(default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 
 Patterns to use when guessing the \'previous' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
@@ -798,7 +798,7 @@ ____
 |\'wsp'| |\'wordseparators'| +
 ||'wordseparators' 'wsp'|| string
 ____
-(default: [\.,!\?:;/\\"\^\$%&§\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+(default: [\.,!\?:;/\\"\^\$%&?\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
 
 A regexp which defines the word separators which are used for the
 'hintmatching' types "wordstartswith" and "firstletters" to split the words in
