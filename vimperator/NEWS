@@ -20,7 +20,7 @@
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
 
-    * add 'guioptions'=r to toggle the scrollbar.
+    * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.
     * remove spaces and newlines when open urls starting with http:// or similar
 	  before :o http://linux .com would search for http://linux and for .com, now
 	  it just opens linux.com. Also handy when pasting broken urls with p or P.
