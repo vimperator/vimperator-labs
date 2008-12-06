@@ -980,7 +980,7 @@ function Buffer() //{{{
                 elems = frame.document.getElementsByTagName("a");
                 for (let elem in iter(elems))
                 {
-                    buffer.followLink(elems[i], liberator.CURRENT_TAB);
+                    buffer.followLink(elem, liberator.CURRENT_TAB);
                     return true;
                 }
 
