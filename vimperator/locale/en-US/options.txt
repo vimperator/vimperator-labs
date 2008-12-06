@@ -488,9 +488,9 @@ ____
 ____
 (default: \bnext,^>$,^(>>|Â»)$,^(>|Â»),(>|Â»)$,\bmore\b)
 
-Patterns to use when guessing the 'next' page in a document sequence.
-Each pattern, in order, is matched against all links in the page with the first match being used.
-The patterns are case insensitive regular expressions.
+Patterns to use when guessing the \'next' page in a document sequence. Each
+pattern, in order, is matched against all links in the page with the first
+match being used. The patterns are case insensitive regular expressions.
 ____
 
 
@@ -580,9 +580,9 @@ ____
 ____
 (default: \bprev|previous\b,^<$,^(<<|Â«)$,^(<|Â«),(<|Â«)$)
 
-Patterns to use when guessing the 'previous' page in a document sequence
-Each pattern, in order, is matched against all links in the page with the first match being used.
-The patterns are case insensitive regular expressions.
+Patterns to use when guessing the \'previous' page in a document sequence. Each
+pattern, in order, is matched against all links in the page with the first
+match being used. The patterns are case insensitive regular expressions.
 ____
 
 
