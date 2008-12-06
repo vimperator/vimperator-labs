@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Nov 28
+" Last Change:      2008 Dec 07
 
 if exists("b:current_syntax")
   finish
@@ -68,7 +68,7 @@ syn region vimperatorJavaScript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end
 syn region vimperatorJavaScript matchgroup=vimperatorJavascriptDelimiter
 	\ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
 
-let s:cssRegionStart = '\%(^\s*sty\%[le]!\=\s\+\%(-\%(n\s\+\|name=\)\S\+\s\+\)\=[^-]\S\+\s\+\)\@<='
+let s:cssRegionStart = '\%(^\s*sty\%[le]!\=\s\+\%(-\%(n\|name\)\%(\s\+\|=\)\S\+\s\+\)\=[^-]\S\+\s\+\)\@<='
 execute 'syn region vimperatorCss start="' . s:cssRegionStart . '" end="$" contains=@cssTop keepend oneline'
 execute 'syn region vimperatorCss matchgroup=vimperatorCssDelimiter'
 	\ 'start="' . s:cssRegionStart . '<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@cssTop fold'
