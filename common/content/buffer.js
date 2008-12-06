@@ -1500,7 +1500,7 @@ function Marks() //{{{
             // ignore invalid mark characters unless there are no valid mark chars
             if (args && !/[a-zA-Z]/.test(args))
             {
-                liberator.echoerr("E283: No marks matching \"" + args + "\"");
+                liberator.echoerr("E283: No marks matching " + args.quote());
                 return;
             }
 
@@ -1640,7 +1640,7 @@ function Marks() //{{{
                 marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
                 if (marks.length == 0)
                 {
-                    liberator.echoerr("E283: No marks matching \"" + filter + "\"");
+                    liberator.echoerr("E283: No marks matching " + filter.quote());
                     return;
                 }
             }

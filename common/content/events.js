@@ -611,7 +611,7 @@ function Events() //{{{
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    liberator.echomsg("Searching for \"macros/*\" in \"" + dir.path + "\"", 2);
+                    liberator.echomsg('Searching for "macros/*" in ' + dir.path.quote(), 2);
 
                     liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 

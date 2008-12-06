@@ -241,8 +241,7 @@ function IO() //{{{
 
                 if (!found)
                 {
-                    liberator.echoerr("E344: Can't find directory \"" + args + "\" in cdpath"
-                                    + "\n"
+                    liberator.echoerr("E344: Can't find directory " + args.quote() + " in cdpath\n"
                                     + "E472: Command failed");
                 }
             }
@@ -275,21 +274,13 @@ function IO() //{{{
 
             if (file.exists() && !args.bang)
             {
-                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+                liberator.echoerr("E189: " + filename.quote() + " exists (add ! to override)");
                 return;
             }
 
-            // FIXME: Use a set/specifiable list here:
+            // TODO: Use a set/specifiable list here:
             let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
             lines = util.Array.flatten(lines);
-
-            // :mkvimrc doesn't save autocommands, so we don't either - remove this code at some point
-            // line += "\n\" Auto-Commands\n";
-            // for (let item in autocommands)
-            //     line += "autocmd " + item.event + " " + item.pattern.source + " " + item.command + "\n";
-
-            // if (mappings.getMapLeader() != "\\")
-            //    line += "\nlet mapleader = \"" + mappings.getMapLeader() + "\"\n";
 
             // source a user .vimperatorrc file
             lines.unshift('"' + liberator.version);
@@ -302,7 +293,7 @@ function IO() //{{{
             }
             catch (e)
             {
-                liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
+                liberator.echoerr("E190: Cannot open " + filename.quote() + " for writing");
                 liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
             }
         },
@@ -474,7 +465,7 @@ function IO() //{{{
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
-                    liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
+                    liberator.echoerr("E344: Can't find directory " + dir.path.quote() + " in path");
                     return null;
                 }
 
@@ -777,7 +768,7 @@ lookup:
             let found = false;
 
             // FIXME: should use original arg string
-            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
+            liberator.echomsg("Searching for " + paths.join(" ").quote() + " in " + options["runtimepath"].quote(), 2);
 
             outer:
             for (let [,dir] in Iterator(dirs))
@@ -786,7 +777,7 @@ lookup:
                 {
                     let file = joinPaths(dir, path);
 
-                    liberator.echomsg("Searching for \"" + file.path, 3);
+                    liberator.echomsg("Searching for " + file.path.quote(), 3);
 
                     if (file.exists() && file.isFile() && file.isReadable())
                     {
@@ -800,7 +791,7 @@ lookup:
             }
 
             if (!found)
-                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+                liberator.echomsg("not found in 'runtimepath': " + paths.join(" ").quote(), 1); // FIXME: should use original arg string
 
             return found;
         },
@@ -823,9 +814,9 @@ lookup:
                     if (!silent)
                     {
                         if (file.exists() && file.isDirectory())
-                            liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
+                            liberator.echomsg("Cannot source a directory: " + filename.quote(), 0);
                         else
-                            liberator.echomsg("could not source: \"" + filename + "\"", 1);
+                            liberator.echomsg("could not source: " + filename.quote(), 1);
 
                         liberator.echoerr("E484: Can't open file " + filename);
                     }
@@ -833,7 +824,7 @@ lookup:
                     return;
                 }
 
-                liberator.echomsg("sourcing \"" + filename + "\"", 2);
+                liberator.echomsg("sourcing " + filename.quote(), 2);
 
                 let str = ioManager.readFile(file);
                 let uri = ioService.newFileURI(file);
@@ -943,7 +934,7 @@ lookup:
                 if (scriptNames.indexOf(file.path) == -1)
                     scriptNames.push(file.path);
 
-                liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
+                liberator.echomsg("finished sourcing " + filename.quote(), 2);
 
                 liberator.log("Sourced: " + file.path, 3);
             }

@@ -235,7 +235,7 @@ const liberator = (function () //{{{
                         if (dialogs[i][0] == args)
                             return dialogs[i][2]();
                     }
-                    liberator.echoerr(args ? "Dialog \"" + args + "\" not available" : "E474: Invalid argument");
+                    liberator.echoerr(args ? "Dialog " + args.quote() + " not available" : "E474: Invalid argument");
                 }
                 catch (e)
                 {
@@ -918,7 +918,7 @@ const liberator = (function () //{{{
                 if (config.helpFiles.indexOf(helpFile) != -1)
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
-                    liberator.echo("Sorry, help file \"" + helpFile + "\" not found");
+                    liberator.echo("Sorry, help file " + helpFile.quote() + " not found");
 
                 return;
             }
@@ -977,7 +977,7 @@ const liberator = (function () //{{{
                 for (let [,dir] in Iterator(dirs))
                 {
                     // TODO: search plugins/**/* for plugins
-                    liberator.echomsg("Searching for \"plugin/*.{js,vimp}\" in \"" + dir.path + "\"", 2);
+                    liberator.echomsg('Searching for "plugin/*.{js,vimp}" in ' + dir.path.quote(), 2);
 
                     liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
 
