@@ -11,6 +11,7 @@
 // Usage: :[count]regr[essions]
 // When [count] is given, just run this test. TODO: move to :regressions [spec]?
 
+var skipTests = []; // TODO: allow skipping tests somehow
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Put definitions here which might change due to internal liberator refactoring
@@ -32,22 +33,24 @@ var singlelineOutput = document.getElementById("liberator-commandline-command")
 // You can also mix commands mappings
 let tests = [
     { cmds: [":!dir"],
-      verify: function () Tests.getMultilineOutput().length > 10 },
+      verify: function () getMultilineOutput().length > 10 },
     { cmds: [":abbr VIMP vimperator labs", ":abbr"],
-      verify: function () Tests.getMultilineOutput().indexOf("vimperator labs") >= 0 },
+      verify: function () getMultilineOutput().indexOf("vimperator labs") >= 0 },
     { cmds: [":unabbr VIMP", ":abbr"],
-      verify: function () Tests.getMultilineOutput().indexOf("vimperator labs") == -1 },
+      verify: function () getMultilineOutput().indexOf("vimperator labs") == -1 },
     { cmds: [":bmarks"],
-      verify: function () Tests.getMultilineOutput().length > 100 },
+      verify: function () getMultilineOutput().length > 100 },
     { cmds: [":echo \"test\""],
-      verify: function () Tests.getOutput() == "test" },
+      verify: function () getOutput() == "test" },
     // { cmds: [":echomsg \"testmsg\""],
-    //   verify: function () Tests.getOutput() == "testmsg" },
+    //   verify: function () getOutput() == "testmsg" },
     // { cmds: [":echoerr \"testerr\""],
-    //   verify: function () Tests.getOutput() == "testerr" },
-    { cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
-      verify: function () this._initialPos.y != Tests.getBufferPosition().y,
-      init: function () this._initialPos = Tests.getBufferPosition() }
+    //   verify: function () getOutput() == "testerr" },
+    /*{ cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
+      verify: function () this._initialPos.y != getBufferPosition().y,
+	  init: function () this._initialPos = getBufferPosition() }*/
+
+	// testing tab behavior
 ];
 
 // these functions highly depend on the liberator API, so use ex command tests whenever possible
@@ -61,37 +64,39 @@ let functions = [
 // even after doing major vimperator refactoring
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// I want to move the functions to top-level for brevity, but not until we have
-// solved the namespace issue of loading simple function () { ... } declarations
-// into "modules".
-var Tests = {
-    resetEnvironment: function ()
-    {
-        multilineOutput.contentDocument.body.innerHTML = "";
-        singlelineOutput.value = "";
-    },
+function resetEnvironment()
+{
+	multilineOutput.contentDocument.body.innerHTML = "";
+	singlelineOutput.value = "";
+}
 
-    getOutput:           function () multilineOutput.contentDocument.body.textContent || singlelineOutput.value,
-    getMultilineOutput:  function () multilineOutput.contentDocument.body.textContent,
-    getSinglelineOutput: function () singlelineOutput.value,
+function getOutput()            multilineOutput.contentDocument.body.textContent || singlelineOutput.value;
+function getMultilineOutput()   multilineOutput.contentDocument.body.textContent;
+function getSinglelineOutput()  singlelineOutput.value;
 
-    getBufferPosition: function ()
-    {
-        let win = window.content;
-        return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
-                 y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
-    },
+function getTabIndex() getBrowser().mTabContainer.selectedIndex;
+function getTabCount() getBrowser().mTabs.length;
+
+function getBufferPosition()
+{
+	let win = window.content;
+	return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
+			 y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
+};
 
     // TODO: need to find a way to wait for page load
-    getLocation: function () window.content.document.location.href
-}
+function getLocation() window.content.document.location.href;
+
+
+
+
 
 
 commands.addUserCommand(["regr[essions]"],
     "Run regression tests",
-    function (args, special, count)
+    function (args)
     {
-        // TODO: might need to increase the 'messages' option temprarily
+        // TODO: might need to increase the 'messages' option temporarily
         // TODO: count (better even range) support to just run test 34 of 102
         // TODO: bang support to either: a) run commands like deleting bookmarks which
         //       should only be done in a clean profile or b) run functions and not
@@ -108,38 +113,50 @@ commands.addUserCommand(["regr[essions]"],
             // 1.) run commands and mappings tests
             for (let [, test] in Iterator(tests))
             {
+				liberator.dump(args.count + "-" + currentTest);
                 currentTest++;
-                if (count >= 1 && currentTest != count)
+                if (args.count >= 1 && currentTest != args.count)
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription);
-                Tests.resetEnvironment();
+				liberator.dump(testDescription);
+                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+                resetEnvironment();
                 if ("init" in test)
                     test.init();
 
-                test.cmds.forEach(function (cmd) {
+                //test.cmds.forEach(function (cmd) {
+				let cmd = test.cmds[0];
+				//let cmd = ":echomsg \"" + testDescription + "\"";
+				//alert(cmd.indexOf(":"));
                     if (cmd[0] == ":")
+					{
+                    //if (/^:/.test(cmd))
+                    //    liberator.execute(cmd);
+					//alert(cmd);
                         liberator.execute(cmd);
+					}
                     else
-                        events.feedkeys(cmd);
-                });
+						 events.feedkeys(cmd);
+					//liberator.sleep(1000);
+					liberator.echomsg(cmd + "...", 0);
+                //});
 
                 if (!test.verify())
                     liberator.echoerr("Test " + currentTest + " failed: " + testDescription);
                 else
-                    successfulTests++;
+					successfulTests++;
             }
 
             // 2.) Run function tests
             for (let [, func] in Iterator(functions))
             {
                 currentTest++;
-                if (count >= 1 && currentTest != count)
+                if (args.count >= 1 && currentTest != args.count)
                     continue;
 
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
-                Tests.resetEnvironment();
+                resetEnvironment();
 
                 if (!func())
                     liberator.echoerr("Test " + currentTest + " failed!");
@@ -147,18 +164,22 @@ commands.addUserCommand(["regr[essions]"],
                     successfulTests++;
             }
 
-            liberator.echomsg(successfulTests + " of " + (count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
+            liberator.echomsg(successfulTests + " of " + (args.count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
             liberator.execute(":messages");
         }
 
-        if (special)
-            run();
-        else
-            commandline.input("Running tests should always be done in a new profile. Use ! or confirm with 'yes' to continue:", function (res) { if (res == "yes") run(); } );
+        if (!args.bang)
+		{
+			liberator.echo("<b>Running tests should always be done in a new profile.</b>\n" +
+			               "Use :regressions! to skip this prompt.");
+            commandline.input("Type 'yes' to run the tests:", function (res) { if (res == "yes") run(); } );
+			return;
+		}
+		run();
     },
     {
         bang: true,
-        argCount: 0,
+        argCount: "0",
         count: true
     });
 
