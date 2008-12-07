@@ -977,7 +977,8 @@ function CommandLine() //{{{
                 else
                 {
                     if (messageBox.value == lastEcho)
-                        echoMultiline(lastEcho);
+                        echoMultiline(<span highlight="Message">{lastEcho}</span>,
+                            messageBox.getAttributeNS(NS.uri, "highlight"));
                     lastEcho = (action == echoLine) && str;
                 }
 

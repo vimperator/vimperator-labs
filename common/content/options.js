@@ -405,7 +405,7 @@ function Options() //{{{
     // safeSetPref might try to echomsg. Need commandline.
     liberator.registerObserver("load_commandline", function () {
         // TODO: maybe reset in .destroy()?
-        // TODO: move to vim.js or buffer.js
+        // TODO: move to buffer.js
         // we have our own typeahead find implementation
         options.safeSetPref("accessibility.typeaheadfind.autostart", false);
         options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in firefox
@@ -562,7 +562,6 @@ function Options() //{{{
         }
     );
 
-    // TODO: support setting multiple options at once
     commands.add(["se[t]"],
         "Set an option",
         function (args, modifiers)
