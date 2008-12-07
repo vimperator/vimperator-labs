@@ -223,7 +223,7 @@ const template = {
 
     jumps: function jumps(index, elems)
     {
-        return this.generic(
+        return this.commandOutput(
             <table>
                 <tr style="text-align: left;" highlight="Title">
                     <th colspan="2">jump</th><th>title</th><th>URI</th>
@@ -242,7 +242,7 @@ const template = {
 
     options: function options(title, opts)
     {
-        return this.generic(
+        return this.commandOutput(
             <table>
                 <tr highlight="Title" align="left">
                     <th>--- {title} ---</th>
@@ -281,7 +281,7 @@ const template = {
     tabular: function tabular(headings, style, iter)
     {
         /* This might be mind-bogglingly slow. We'll see. */
-        return this.generic(
+        return this.commandOutput(
             <table>
                 <tr highlight="Title" align="left">
                 {
@@ -303,7 +303,7 @@ const template = {
 
     usage: function usage(iter)
     {
-        return this.generic(
+        return this.commandOutput(
             <table>
             {
                 this.map(iter, function (item)
