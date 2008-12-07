@@ -741,7 +741,10 @@ function Options() //{{{
                 {
                     context.fork("default", 0, this, function (context) {
                         context.title = ["Extra Completions"];
-                        context.completions = [[option.value, "Current value"], [option.defaultValue, "Default value"]].filter(function (f) f[0])
+                        context.completions = [
+                                [option.value, "Current value"],
+                                [option.defaultValue, "Default value"]
+                        ].filter(function (f) f[0] != "");
                     });
                 }
 
