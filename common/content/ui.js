@@ -881,6 +881,7 @@ function CommandLine() //{{{
 
         open: function open(prompt, cmd, extendedMode)
         {
+            liberator.dump("commandline.open: " + (extendedMode && modes.getMode(extendedMode).name));
             // save the current prompts, we need it later if the command widget
             // receives focus without calling the this.open() method
             currentPrompt = prompt || "";
@@ -910,6 +911,7 @@ function CommandLine() //{{{
         close: function close()
         {
             let mode = currentExtendedMode;
+            liberator.dump("commandline.close: " + (mode && modes.getMode(mode).name));
             currentExtendedMode = null;
             liberator.triggerCallback("cancel", mode);
 
@@ -923,11 +925,13 @@ function CommandLine() //{{{
             liberator.focusContent(false);
 
             multilineInputWidget.collapsed = true;
-            outputContainer.collapsed = true;
             completionList.hide();
 
             if (!keepCommand || this.silent)
+            {
+                outputContainer.collapsed = true;
                 this.hide();
+            }
             keepCommand = false;
         },
 
