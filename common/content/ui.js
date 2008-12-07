@@ -526,6 +526,8 @@ function CommandLine() //{{{
     function setCommand(cmd)
     {
         commandWidget.value = cmd;
+        commandWidget.selectionStart = cmd.length;
+        commandWidget.selectionEnd = cmd.length;
     }
 
     function echoLine(str, highlightGroup, forceSingle)
@@ -901,10 +903,7 @@ function CommandLine() //{{{
             completions = Completions(commandWidget.inputField);
 
             // open the completion list automatically if wanted
-            if (/\s/.test(cmd) &&
-                options.get("wildoptions").has("auto") &&
-                extendedMode == modes.EX)
-                    autocompleteTimer.tell(false);
+            liberator.triggerCallback("change", currentExtendedMode, cmd);
         },
 
         // normally used when pressing esc, does not execute a command
@@ -1380,7 +1379,6 @@ function CommandLine() //{{{
             outputContainer.collapsed = false;
         },
 
-        // TODO: does that function need to be public?
         resetCompletions: function resetCompletions()
         {
             autocompleteTimer.reset();
