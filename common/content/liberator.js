@@ -1313,13 +1313,13 @@ const liberator = (function () //{{{
             return true;
         },
 
-        callInMainThread: function (callback)
+        callInMainThread: function (callback, self)
         {
             let mainThread = threadManager.mainThread;
             if (!threadManager.isMainThread)
-                mainThread.dispatch({ run: callback }, mainThread.DISPATCH_NORMAL);
+                mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
             else
-                callback();
+                callback.call(self);
         },
 
         threadYield: function (flush, interruptable)

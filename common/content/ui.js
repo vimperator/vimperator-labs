@@ -71,6 +71,7 @@ function CommandLine() //{{{
 
     var silent = false;
     var keepCommand = false;
+    var lastEcho = null;
 
     function History(inputField, mode)
     {
@@ -951,12 +952,17 @@ function CommandLine() //{{{
             // The DOM isn't threadsafe. It must only be accessed from the main thread.
             liberator.callInMainThread(function ()
             {
-                let action = outputContainer.collapsed ? echoLine : echoMultiline;
-                if (flags & commandline.FORCE_MULTILINE)
+                let action = echoLine;
+                if (!outputContainer.collapsed || messageBox.value == lastEcho)
                     action = echoMultiline;
-                else if (flags & commandline.FORCE_SINGLELINE)
+
+                let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
+
+                if (flags & this.FORCE_MULTILINE)
+                    action = echoMultiline;
+                else if (flags & this.FORCE_SINGLELINE)
                     action = echoLine;
-                else if (flags & commandline.DISALLOW_MULTILINE)
+                else if (flags & this.DISALLOW_MULTILINE)
                 {
                     if (!outputContainer.collapsed)
                         action = null;
@@ -966,9 +972,18 @@ function CommandLine() //{{{
                 else if (/\n/.test(str) || typeof str == "xml")
                     action = echoMultiline;
 
+                if (single)
+                    lastEcho = null;
+                else
+                {
+                    if (messageBox.value == lastEcho)
+                        echoMultiline(lastEcho);
+                    lastEcho = (action == echoLine) && str;
+                }
+
                 if (action)
-                    action(str, highlightGroup, (flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE)));
-            });
+                    action(str, highlightGroup, single);
+            }, this);
 
             return true;
         },
