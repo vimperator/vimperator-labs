@@ -995,6 +995,7 @@ function CommandLine() //{{{
 
             setPrompt(prompt, extra.promptHighlight || this.HL_QUESTION);
             setCommand(extra.default || "");
+            commandlineWidget.collapsed = false;
             commandWidget.focus();
 
             completions = Completions(commandWidget.inputField);
@@ -1383,7 +1384,8 @@ function CommandLine() //{{{
                 completions.context.reset();
                 // Needed?
                 //completions.reset();
-            history.reset();
+            if (history)
+                history.reset();
         }
     };
     //}}}
