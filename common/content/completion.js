@@ -1305,7 +1305,7 @@ function Completion() //{{{
             if (tail)
                 context.advance(dir.length);
             context.keys = { text: 0, description: 1, icon: 2 };
-            context.background = true;
+            // context.background = true;
             context.key = dir;
             context.generate = function generate_file()
             {
