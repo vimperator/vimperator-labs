@@ -1177,26 +1177,26 @@ function Completion() //{{{
         buffer: function buffer(context)
         {
             filter = context.filter.toLowerCase();
+            context.anchored = false;
             context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
             let process = context.process[0];
-            context.process = [function (item)
+            context.process = [function (item, text)
                     <>
                         <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
-                        { process.call(this, item) }
+                        { process.call(this, item, text) }
                     </>];
 
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
+                let indicator = " ";
                 if (i == tabs.index())
                    indicator = "%"
                 else if (i == tabs.index(tabs.alternate))
                    indicator = "#";
-                else
-                   indicator = " ";
 
                 let tab = tabs.getTab(i);
-                i = i + 1;
                 let url = browser.contentDocument.location.href;
+                i = i + 1;
 
                 return {
                     text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
