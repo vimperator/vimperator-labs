@@ -42,6 +42,7 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 * [m];[m] to focus a link and hover it with the mouse
 * [m]?[m] to show information about the element (incomplete)
 * [m]a[m] to save its destination (prompting for save location)
+* [m]f[m] to focus a frame
 * [m]s[m] to save its destination
 * [m]o[m] to open its location in the current tab
 * [m]t[m] to open its location in a new tab
