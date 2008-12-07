@@ -81,7 +81,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
         <stack orient="horizontal" align="stretch" class="liberator-container" liberator:highlight="CmdLine">
             <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
-            <hbox id="liberator-commandline" hidden="false" class="liberator-container" liberator:highlight="Normal">
+            <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
                 <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                 <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                     oninput="liberator.modules.commandline.onEvent(event);"

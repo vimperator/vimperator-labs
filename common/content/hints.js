@@ -354,7 +354,7 @@ function Hints() //{{{
         }
 
         hintNumber = 0;
-        hintString = commandline.getCommand();
+        hintString = commandline.command;
         updateStatusline();
         showHints();
         if (validHints.length == 1)

@@ -204,9 +204,9 @@ const template = {
             return str;
     },
 
-    generic: function generic(xml)
+    commandOutput: function generic(xml)
     {
-        return <>:{commandline.getCommand()}<br/>{xml}</>;
+        return <>:{commandline.command}<br/>{xml}</>;
     },
 
     // every item must have a .xml property which defines how to draw itself

@@ -168,7 +168,7 @@ function CommandLine() //{{{
 
         get completion() 
         {
-            let str = commandline.getCommand();
+            let str = commandline.command;
             return str.substring(this.prefix.length, str.length - this.suffix.length);
         },
         set completion set_completion(completion)
@@ -373,7 +373,7 @@ function CommandLine() //{{{
                         if (this.substring && this.substring != this.completion)
                         {
                             this.completion = this.substring;
-                            liberator.triggerCallback("change", currentExtendedMode, commandline.getCommand());
+                            liberator.triggerCallback("change", currentExtendedMode, commandline.command);
                         }
                         break;
                     }
@@ -412,7 +412,6 @@ function CommandLine() //{{{
     });
 
     var tabTimer = new util.Timer(0, 0, function tabTell(event) {
-        liberator.dump("tabTell");
         if (completions)
             completions.tab(event.shiftKey);
     });
@@ -456,7 +455,7 @@ function CommandLine() //{{{
         let callback = promptSubmitCallback;
         promptSubmitCallback = null;
         if (callback)
-            callback.call(commandline, value == null ? commandline.getCommand() : value);
+            callback.call(commandline, value == null ? commandline.command : value);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -477,7 +476,6 @@ function CommandLine() //{{{
     // the command bar which contains the current command
     const commandWidget = document.getElementById("liberator-commandline-command");
 
-
     const messageBox = document.getElementById("liberator-message");
 
     commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
@@ -496,6 +494,9 @@ function CommandLine() //{{{
     // this is then used if we focus the command line again without the "official"
     // way of calling "open"
     var currentExtendedMode = null;     // the extended mode which we last openend the command line for
+    // modules.__defineGetter__("currentExtendedMode", function () _currentExtendedMode)
+    // modules.__defineSetter__("currentExtendedMode", function (val) (liberator.dumpStack("currentExtendedMode = " + (val && modes.getMode(val).name)),
+    //          _currentExtendedMode = val))
     var currentPrompt = null;
     var currentCommand = null;
 
@@ -541,8 +542,6 @@ function CommandLine() //{{{
         let field = messageBox.inputField;
         if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
             echoMultiline(<span highlight="Message">{str}</span>, highlightGroup);
-        else
-            messageBox.collapsed = false;
     }
 
     // TODO: resize upon a window resize
@@ -871,7 +870,7 @@ function CommandLine() //{{{
                 storage.styles.removeSheet("silent-mode", null, null, null, true);
         },
 
-        getCommand: function getCommand()
+        get command()
         {
             try
             {
@@ -880,6 +879,7 @@ function CommandLine() //{{{
             catch (e) {}
             return commandWidget.value;
         },
+        set command(cmd) commandWidget.value = cmd,
 
         open: function open(prompt, cmd, extendedMode)
         {
@@ -890,11 +890,11 @@ function CommandLine() //{{{
             currentExtendedMode = extendedMode || null;
             keepCommand = false;
 
-            modes.set(modes.COMMAND_LINE, currentExtendedMode);
-
             setPrompt(currentPrompt);
             setCommand(currentCommand);
             commandlineWidget.collapsed = false;
+
+            modes.set(modes.COMMAND_LINE, currentExtendedMode);
 
             commandWidget.focus();
 
@@ -940,12 +940,7 @@ function CommandLine() //{{{
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function echo(str, highlightGroup, flags)
         {
-            let focused = document.commandDispatcher.focusedElement;
-            if (focused && focused == commandWidget.inputField || focused == multilineInputWidget.inputField)
-                return false;
             if (silent)
-                return false;
-            if (modes.main == modes.COMMAND_LINE)
                 return false;
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
@@ -956,7 +951,7 @@ function CommandLine() //{{{
             // The DOM isn't threadsafe. It must only be accessed from the main thread.
             liberator.callInMainThread(function ()
             {
-                let action = echoLine;
+                let action = outputContainer.collapsed ? echoLine : echoMultiline;
                 if (flags & commandline.FORCE_MULTILINE)
                     action = echoMultiline;
                 else if (flags & commandline.FORCE_SINGLELINE)
@@ -973,9 +968,6 @@ function CommandLine() //{{{
 
                 if (action)
                     action(str, highlightGroup, (flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE)));
-
-                // Why do we do this? --Kris
-                currentExtendedMode = null;
             });
 
             return true;
@@ -1022,7 +1014,7 @@ function CommandLine() //{{{
 
         onEvent: function onEvent(event)
         {
-            let command = this.getCommand();
+            let command = this.command;
 
             if (event.type == "blur")
             {
@@ -1034,7 +1026,7 @@ function CommandLine() //{{{
             }
             else if (event.type == "focus")
             {
-                if (!currentExtendedMode && event.target == commandWidget.inputField)
+                if (!commandShown() && event.target == commandWidget.inputField)
                 {
                     event.target.blur();
                     liberator.beep();

@@ -159,7 +159,7 @@ const modes = (function () //{{{
             if (!options["showmode"])
                 return;
 
-            commandline.echo(getModeMessage(), "ModeMsg");
+            commandline.echo(getModeMessage(), "ModeMsg", commandline.DISALLOW_MULTILINE);
         },
 
         // add/remove always work on the extended mode only
@@ -226,8 +226,11 @@ const modes = (function () //{{{
 
         remove: function (mode)
         {
-            extended &= ~mode;
-            this.show();
+            if (extended & mode)
+            {
+                extended &= ~mode;
+                this.show();
+            }
         },
 
         get passNextKey() passNextKey,

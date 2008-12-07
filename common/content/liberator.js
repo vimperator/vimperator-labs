@@ -475,7 +475,7 @@ const liberator = (function () //{{{
                             totalUnits = "msec";
                         }
 
-                        var str = template.generic(
+                        let str = template.commandOutput(
                                 <table>
                                     <tr highlight="Title" align="left">
                                         <th colspan="3">Code execution summary</th>
@@ -528,7 +528,7 @@ const liberator = (function () //{{{
                 if (args.bang)
                     liberator.open("about:");
                 else
-                    liberator.echo(template.generic(<>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
+                    liberator.echo(template.commandOutput(<>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
             },
             {
                 argCount: "0",
@@ -850,10 +850,10 @@ const liberator = (function () //{{{
                 err = "E477: No ! allowed";
             }
 
-            if (!err)
-                command.execute(args, special, count, modifiers);
-            else
-                liberator.echoerr(err);
+            if (err)
+                return liberator.echoerr(err);
+            commandline.command = str.replace(/^\s*:\s*/);
+            command.execute(args, special, count, modifiers);
         },
 
         // TODO: move to buffer.focus()?

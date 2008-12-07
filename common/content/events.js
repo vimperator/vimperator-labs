@@ -207,7 +207,7 @@ function AutoCommands() //{{{
                 }
             });
 
-            var list = template.generic(
+            var list = template.commandOutput(
                 <table>
                     <tr highlight="Title">
                         <td colspan="2">----- Auto Commands -----</td>
