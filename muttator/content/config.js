@@ -33,7 +33,7 @@ const config = { //{{{
 
     /*** optional options, there are checked for existance and a fallback provided  ***/
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
-    defaults: { guioptions: "fr" },
+    defaults: { guioptions: "frb" },
 
     guioptions: {
         m: ["MenuBar",            ["mail-toolbar-menubar2"]],
