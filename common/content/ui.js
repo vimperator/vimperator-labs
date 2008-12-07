@@ -615,7 +615,7 @@ function CommandLine() //{{{
 
         if (typeof arg === "object")
             arg = util.objectToString(arg, useColor);
-        else if (typeof arg != "xml")
+        else if (typeof arg == "string" && /\n/.test(arg))
             arg = <span highlight="CmdOutput">{arg}</span>;
 
         return arg;
@@ -883,7 +883,6 @@ function CommandLine() //{{{
 
         open: function open(prompt, cmd, extendedMode)
         {
-            liberator.dump("commandline.open: " + (extendedMode && modes.getMode(extendedMode).name));
             // save the current prompts, we need it later if the command widget
             // receives focus without calling the this.open() method
             currentPrompt = prompt || "";
@@ -910,7 +909,6 @@ function CommandLine() //{{{
         close: function close()
         {
             let mode = currentExtendedMode;
-            liberator.dump("commandline.close: " + (mode && modes.getMode(mode).name));
             currentExtendedMode = null;
             liberator.triggerCallback("cancel", mode);
 
