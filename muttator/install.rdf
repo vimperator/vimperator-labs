@@ -8,9 +8,8 @@
 	<em:version>###VERSION###</em:version>
 	<em:description>Make Thunderbird behave like Vim</em:description>
 	<em:creator>Martin Stubenschrott</em:creator>
-	<em:homepageURL>http://muttator.mozdev.org</em:homepageURL>
+	<em:homepageURL>http://vimperator.org/</em:homepageURL>
 	<em:iconURL>chrome://muttator/skin/icon.png</em:iconURL>
-	<!--em:updateURL>http://downloads.mozdev.org/vimperator/update.rdf</em:updateURL-->
 	<em:file>
 	    <Description about="urn:mozilla:extension:file:vimperator.jar">
 			<em:package>content/muttator/</em:package>

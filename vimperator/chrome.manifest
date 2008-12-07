@@ -1,5 +1,6 @@
 # Firefox
-content  vimperator       content/
+content  vimperator               content/
+skin     vimperator classic/1.0   skin/
 locale   liberator  en-US locale/en-US/
 
 content  liberator             ../common/content/

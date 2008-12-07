@@ -8,9 +8,8 @@
 	<em:version>###VERSION###</em:version>
 	<em:description>Make Firefox behave like Vim</em:description>
 	<em:creator>Martin Stubenschrott</em:creator>
-	<em:homepageURL>http://vimperator.mozdev.org</em:homepageURL>
-	<em:iconURL>chrome://liberator/skin/icon.png</em:iconURL>
-	<!--em:updateURL>http://downloads.mozdev.org/vimperator/update.rdf</em:updateURL-->
+	<em:homepageURL>http://vimperator.org</em:homepageURL>
+	<em:iconURL>chrome://vimperator/skin/icon.png</em:iconURL>
 	<em:file>
 	    <Description about="urn:mozilla:extension:file:vimperator.jar">
 		<em:package>content/vimperator/</em:package>
