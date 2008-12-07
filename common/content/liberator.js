@@ -528,9 +528,7 @@ const liberator = (function () //{{{
                 if (args.bang)
                     liberator.open("about:");
                 else
-                    liberator.echo(":" + util.escapeHTML(commandline.getCommand()) + "\n" +
-                                    config.name + " " + liberator.version +
-                                    " running on:\n" + navigator.userAgent);
+                    liberator.echo(template.generic(<>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
             },
             {
                 argCount: "0",
