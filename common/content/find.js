@@ -381,7 +381,7 @@ function Search() //{{{
             }
             else
             {
-                liberator.echo((up ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+                commandline.echo((up ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
 
                 if (options["hlsearch"])
                     this.highlight(lastSearchString);

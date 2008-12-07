@@ -882,6 +882,8 @@ function CommandLine() //{{{
         },
         set command(cmd) commandWidget.value = cmd,
 
+        get message() messageBox.value,
+
         open: function open(prompt, cmd, extendedMode)
         {
             // save the current prompts, we need it later if the command widget
@@ -1070,8 +1072,8 @@ function CommandLine() //{{{
                 if (events.isAcceptKey(key))
                 {
                     let mode = currentExtendedMode; // save it here, as modes.pop() resets it
-                    keepCommand = (mode == modes.EX); // Fixme.
-                    currentExtendedMode = null; /* Don't let modes.pop trigger "cancel" */
+                    keepCommand = true;
+                    currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                     modes.pop(!this.silent);
 
                     return liberator.triggerCallback("submit", mode, command);

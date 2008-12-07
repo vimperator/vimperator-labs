@@ -35,6 +35,8 @@ const modes = (function () //{{{
     var main = 1;     // NORMAL
     var extended = 0; // NONE
 
+    var lastShown = null;
+
     var passNextKey = false;
     var passAllKeys = false;
     var isRecording = false;
@@ -218,6 +220,7 @@ const modes = (function () //{{{
         reset: function (silent)
         {
             modeStack = [];
+            liberator.dump("reset");
             if (config.isComposeWindow)
                 this.set(modes.COMPOSE, modes.NONE, silent);
             else
