@@ -365,7 +365,7 @@ function IO() //{{{
 
             let output = io.system(args);
 
-            commandline.commandOutput(template.commandOutput(<span highlight="CmdOutput">{output}</span>));
+            commandline.echo(template.commandOutput(<span highlight="CmdOutput">{output}</span>));
 
             autocommands.trigger("ShellCmdPost", {});
         },
