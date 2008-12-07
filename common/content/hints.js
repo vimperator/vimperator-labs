@@ -42,6 +42,7 @@ function Hints() //{{{
     var hintNumber = 0;  // only the numerical part of the hint
     var usedTabKey = false; // when we used <Tab> to select an element
     var prevInput = "";    // record previous user input type, "text" || "number"
+    var extendedhintCount;  // for the count arugument of Mode#action (extended hint only)
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var pageHints = [];
@@ -335,7 +336,7 @@ function Hints() //{{{
         setTimeout(function () {
             if (modes.extended & modes.HINTS)
                 modes.reset();
-            hintMode.action(elem, elem.href || "");
+            hintMode.action(elem, elem.href || "", extendedhintCount);
         }, timeout);
         return true;
     }
@@ -574,7 +575,8 @@ function Hints() //{{{
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (arg) {
+        function (count) {
+            extendedhintCount = count;
             commandline.input(";", function (arg) { setTimeout(function () hints.show(arg), 0) },
                 {
                     promptHighlight: "Normal",
@@ -583,8 +585,7 @@ function Hints() //{{{
                     },
                     onChange: function () { modes.pop() }
                 });
-        });
-        //{ flags: Mappings.flags.ARGUMENT });
+        }, { flags: Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
