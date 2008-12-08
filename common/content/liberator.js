@@ -856,7 +856,6 @@ const liberator = (function () //{{{
             command.execute(args, special, count, modifiers);
         },
 
-        // TODO: move to buffer.focus()?
         // after pressing Escape, put focus on a non-input field of the browser document
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
@@ -870,15 +869,14 @@ const liberator = (function () //{{{
             // TODO: make more generic
             try
             {
-                if (liberator.has("mail") && clearFocusedElement && !config.isComposeWindow)
+                if (this.has("mail") && !config.isComposeWindow)
                 {
                     let i = gDBView.selection.currentIndex;
                     if (i == -1 && gDBView.rowCount >= 0)
                         i = 0;
                     gDBView.selection.select(i);
                 }
-
-                if (this.has("tabs"))
+                else if (this.has("tabs"))
                 {
                     let frame = tabs.localStore.focusedFrame;
                     if (frame && frame.top == window.content)
