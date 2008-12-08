@@ -80,13 +80,9 @@ function Editor() //{{{
                 if (typeof count != "number" || count < 1)
                     count = 1;
 
-                var controller = getBrowser().docShell
-                                 .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                                 .getInterface(Components.interfaces.nsISelectionDisplay)
-                                 .QueryInterface(Components.interfaces.nsISelectionController);
-
-                 while (count--)
-                     controller[caretModeMethod](caretModeArg, false);
+                let controller = buffer.selectionController;
+                while (count--)
+                    controller[caretModeMethod](caretModeArg, false);
             },
             extraInfo);
 
@@ -96,11 +92,7 @@ function Editor() //{{{
                 if (typeof count != "number" || count < 1 || !hasCount)
                     count = 1;
 
-                var controller = getBrowser().docShell
-                                 .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                                 .getInterface(Components.interfaces.nsISelectionDisplay)
-                                 .QueryInterface(Components.interfaces.nsISelectionController);
-
+                let controller = buffer.selectionController;
                 while (count--)
                 {
                     if (modes.extended & modes.TEXTAREA)
