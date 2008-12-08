@@ -174,10 +174,15 @@ commands.addUserCommand(["regr[essions]"],
 
         if (!args.bang)
 		{
-			liberator.echo(<><span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/></> +
-						   <>It should not do any harm to your profile, but your current settings like options, abbreviations or mappings might not be in the same state as before running the tests.</> +
-						   <>Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/></> +
-			               <>Use :regressions! to skip this prompt.</>);
+			liberator.echo(<>
+				<span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/>
+
+				It should not do any harm to your profile, but your current settings like options,
+				abbreviations or mappings might not be in the same state as before running the tests.
+				Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/>
+
+			        Use :regressions! to skip this prompt.
+			</>);
             commandline.input("Type 'yes' to run the tests:", function (res) { if (res == "yes") run(); } );
 			return;
 		}
