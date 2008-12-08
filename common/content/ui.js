@@ -91,6 +91,8 @@ function CommandLine() //{{{
         save: function ()
         {
             let str = this.input.value;
+            if (/^\s*$/.test(str))
+                return;
             this.store.mutate('filter', function (line) line != str);
             this.store.push(str);
             this.store.truncate(options["history"], true);
@@ -946,8 +948,6 @@ function CommandLine() //{{{
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
-            // liberator.dump(String(str));
-            // try { liberator.dump(str.toXMLString()) } catch(e) {};
             if (flags & this.APPEND_TO_MESSAGES)
                 messageHistory.add({ str: str, highlight: highlightGroup });
 
