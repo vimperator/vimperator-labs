@@ -826,11 +826,9 @@ function CommandLine() //{{{
             }
             else if (messageHistory.length > 1)
             {
-                let list = <></>;
-
-                for (let [,message] in Iterator(messageHistory.messages))
-                    list += <div highlight={message.highlight + " Message"}>{message.str}</div>;
-
+                XML.ignoreWhitespace = false;
+                let list = template.map(messageHistory.messages, function (message)
+                    <div highlight={message.highlight + " Message"}>{message.str}</div>);
                 liberator.echo(list, commandline.FORCE_MULTILINE);
             }
         },
@@ -948,6 +946,8 @@ function CommandLine() //{{{
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
+            // liberator.dump(String(str));
+            // try { liberator.dump(str.toXMLString()) } catch(e) {};
             if (flags & this.APPEND_TO_MESSAGES)
                 messageHistory.add({ str: str, highlight: highlightGroup });
 
@@ -1101,8 +1101,7 @@ function CommandLine() //{{{
                 else if (key == "<BS>")
                 {
                     // reset the tab completion
-                    history.reset();
-                    completions.reset();
+                    this.resetCompletions();
 
                     // and blur the command line if there is no text left
                     if (command.length == 0)

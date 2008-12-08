@@ -167,8 +167,10 @@ commands.addUserCommand(["regr[essions]"],
             }
 
 			let runTests = (args.count >= 1 ? 1 : totalTests) - skippedTests;
+			XML.ignoreWhitespace = false;
 			liberator.echomsg(<><span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
-			                  tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
+			                  tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in
+					  <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
             liberator.execute(":messages");
         }
 
