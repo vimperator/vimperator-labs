@@ -753,20 +753,20 @@ function Completion() //{{{
                 {
                     // A word character following a non-word character, or simply a non-word
                     // character. Start a new statement.
-                    if (/[\w$]/.test(c) && !/[\w\d$]/.test(lastChar) || !/[\w\d\s$]/.test(c))
+                    if (/[a-zA-Z_$]/.test(c) && !/[\w$]/.test(lastChar) || !/[\w\s$]/.test(c))
                         top[STATEMENTS].push(i);
 
                     // A "." or a "[" dereferences the last "statement" and effectively
                     // joins it to this logical statement.
-                    if ((c == "." || c == "[") && /[\w\d$\])"']/.test(lastNonwhite)
-                    ||  lastNonwhite == "." && /[\w$]/.test(c))
+                    if ((c == "." || c == "[") && /[\w$\])"']/.test(lastNonwhite)
+                    ||  lastNonwhite == "." && /[a-zA-Z_$]/.test(c))
                             top[STATEMENTS].pop();
 
                     switch (c)
                     {
                         case "(":
                             /* Function call, or if/while/for/... */
-                            if (/[\w\d$]/.test(lastNonwhite))
+                            if (/[\w$]/.test(lastNonwhite))
                             {
                                 functions.push(i);
                                 top[FUNCTIONS].push(i);
@@ -800,7 +800,7 @@ function Completion() //{{{
             }
 
             this.popStatement = false;
-            if (!/[\w\d$]/.test(lastChar) && lastNonwhite != ".")
+            if (!/[\w$]/.test(lastChar) && lastNonwhite != ".")
             {
                 this.popStatement = true;
                 top[STATEMENTS].push(i);
@@ -918,7 +918,7 @@ function Completion() //{{{
                 if (last != null)
                     context.quote = [last, function (text) util.escapeString(text.substr(offset), ""), last];
                 else // We're not looking for a quoted string, so filter out anything that's not a valid identifier
-                    context.filters.push(function (item) /^[\w$][\w\d$]*$/.test(item.text));
+                    context.filters.push(function (item) /^[a-zA-Z_$][\w$]*$/.test(item.text));
 
                 compl.call(self, context, obj);
             }
@@ -1086,7 +1086,7 @@ function Completion() //{{{
                 return;
             }
 
-            if (!/^(?:\w[\w\d]*)?$/.test(key))
+            if (!/^(?:[a-zA-Z_$][\w$]*)?$/.test(key))
                 return; /* Not a word. Forget it. Can this even happen? */
 
             try
