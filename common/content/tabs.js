@@ -707,11 +707,10 @@ function Tabs() //{{{
         {
             for (let [i, browser] in this.browsers)
             {
-                if (browser.contentWindow == content)
-                    return i;
-                if (browser.contentDocument == content)
+                if (browser.contentWindow == content || browser.contentDocument == content)
                     return i;
             }
+            return -1;
         },
 
         getTab: function (index)
