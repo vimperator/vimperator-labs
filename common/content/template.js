@@ -213,7 +213,7 @@ const template = {
     // @param headers is an array of strings, the text for the header columns
     genericTable: function genericTable(items, format)
     {
-        this.listCompleter(function (context) {
+        completion.listCompleter(function (context) {
             context.filterFunc = null;
             if (format)
                 context.format = format;
