@@ -1712,7 +1712,7 @@ function StatusLine() //{{{
                 if (value == 0)
                     document.getElementById("status-bar").collapsed = true;
                 else if (value == 1)
-                    liberator.echo("show status line only with > 1 window not implemented yet");
+                    liberator.echoerr("show status line only with > 1 window not implemented yet");
                 else
                     document.getElementById("status-bar").collapsed = false;
 

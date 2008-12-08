@@ -476,7 +476,7 @@ function Buffer() //{{{
             var aps = options.getPref("print.always_print_silent");
             var spp = options.getPref("print.show_print_progress");
 
-            liberator.echo("Sending to printer...");
+            liberator.echomsg("Sending to printer...");
             options.setPref("print.always_print_silent", args.bang);
             options.setPref("print.show_print_progress", !args.bang);
 
@@ -484,7 +484,7 @@ function Buffer() //{{{
 
             options.setPref("print.always_print_silent", aps);
             options.setPref("print.show_print_progress", spp);
-            liberator.echo("Print job sent.");
+            liberator.echomsg("Print job sent.");
         },
         {
             argCount: "0",

@@ -1036,7 +1036,7 @@ function Events() //{{{
                     break;
                 }
                 else
-                    liberator.echo("Waiting for page to load...");
+                    liberator.echomsg("Waiting for page to load...");
             }
             modes.show();
 
@@ -1236,7 +1236,7 @@ function Events() //{{{
                 {
                     modes.isRecording = false;
                     liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
-                    liberator.echo("Recorded macro '" + currentMacro + "'");
+                    liberator.echomsg("Recorded macro '" + currentMacro + "'");
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1259,7 +1259,7 @@ function Events() //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    setTimeout(function () { liberator.echo("Canceled playback of macro '" + lastMacro + "'") }, 100);
+                    setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'") }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
