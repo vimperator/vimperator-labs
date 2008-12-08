@@ -508,22 +508,22 @@ function Tabs() //{{{
             "Move the current tab after tab N",
             function (args)
             {
-                let special = args.bang;
-                args = args.string;
+                let arg = args[0];
 
                 // FIXME: tabmove! N should probably produce an error
-                if (!/^([+-]?\d+|)$/.test(args))
+                if (arg && !/^([+-]?\d+)$/.test(arg))
                 {
                     liberator.echoerr("E488: Trailing characters");
                     return;
                 }
 
-                if (!args)
-                    args = "$"; // if not specified, move to the last tab
-
-                tabs.move(getBrowser().mCurrentTab, args, special);
+                // if not specified, move to after the last tab
+                tabs.move(getBrowser().mCurrentTab, arg || "$", args.bang);
             },
-            { bang: true });
+            {
+                argCount: "?",
+                bang: true
+            });
 
         commands.add(["tabo[nly]"],
             "Close all other tabs",

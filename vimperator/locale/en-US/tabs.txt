@@ -128,13 +128,14 @@ ________________________________________________________________________________
 
 
 |:tabm| |:tabmove|
-||:tabm[ove] [N]|| +
-||:tabm[ove][!] +N | -N|| +
+||:tabm[ove] [a][N][a]|| +
+||:tabm[ove][!] [a]+N[a] | [a]-N[a]|| +
 ________________________________________________________________________________
-Move the current tab to a position after tab N. When N is 0, the current tab
-is made the first one. Without N the current tab is made the last one. N can
-also be prefixed with "+" or "-" to indicate a relative movement. If [!] is
-specified the movement wraps around the start or end of the tab list.
+Move the current tab to a position after tab [a]N[a]. When [a]N[a] is 0, the
+current tab is made the first one. Without [a]N[a] the current tab is made the
+last one. [a]N[a] can also be prefixed with "+" or "-" to indicate a relative
+movement. If [!] is specified the movement wraps around the start or end of the
+tab list.
 ________________________________________________________________________________
 
 
