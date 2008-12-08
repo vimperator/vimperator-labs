@@ -51,9 +51,9 @@ let tests = [
     //   verify: function () getOutput() == "testerr" },
     { cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
       verify: function () this._initialPos.y != getBufferPosition().y,
-	  init: function () this._initialPos = getBufferPosition() }
+      init: function () this._initialPos = getBufferPosition() }
 
-	// testing tab behavior
+    // testing tab behavior
 ];
 
 // these functions highly depend on the liberator API, so use ex command tests whenever possible
@@ -69,10 +69,10 @@ let functions = [
 
 function resetEnvironment()
 {
-	multilineOutput.contentDocument.body.innerHTML = "";
-	singlelineOutput.value = "";
-	commandline.close();
-	modes.reset();
+    multilineOutput.contentDocument.body.innerHTML = "";
+    singlelineOutput.value = "";
+    commandline.close();
+    modes.reset();
 }
 
 function getOutput()            multilineOutput.contentDocument.body.textContent || singlelineOutput.value;
@@ -84,15 +84,33 @@ function getTabCount() getBrowser().mTabs.length;
 
 function getBufferPosition()
 {
-	let win = window.content;
-	return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
-			 y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
+    let win = window.content;
+    return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
+             y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
 };
 
     // TODO: need to find a way to wait for page load
 function getLocation() window.content.document.location.href;
 
+var doc;
 
+function echoLine(str, group)
+{
+    if (!doc)
+        return;
+    doc.body.appendChild(util.xmlToDom(
+            <div highlight={group} style="border: 1px solid gray; white-space: pre">{str}</div>,
+            doc));
+}
+function echoMulti(str, group)
+{
+    if (!doc)
+        return;
+    doc.body.appendChild(util.xmlToDom(<div class="ex-command-output"
+                style="white-space: nowrap; border: 1px solid black"
+                highlight={group}>{template.maybeXML(str)}</div>,
+            doc));
+}
 
 commands.addUserCommand(["regr[essions]"],
     "Run regression tests",
@@ -104,17 +122,44 @@ commands.addUserCommand(["regr[essions]"],
         //       should only be done in a clean profile or b) run functions and not
         //       just ex command tests; Yet to be decided
 
+        let updateOutputHeight = null;
+        function init()
+        {
+            liberator.registerObserver("echoLine", echoLine);
+            liberator.registerObserver("echoMulti", echoMulti);
+            liberator.open("chrome://liberator/content/buffer.xhtml", liberator.NEW_TAB);
+            events.waitForPageLoad();
+            doc = content.document;
+
+            updateOutputHeight = commandline.updateOutputHeight;
+            commandline.updateOutputHeight = function (open)
+            {
+                let elem = document.getElementById("liberator-multiline-output");
+                if (open)
+                    elem.collapsed = false;
+                elem.height = 0;
+            };
+        }
+        function cleanup()
+        {
+            liberator.unregisterObserver("echoLine", echoLine);
+            liberator.unregisterObserver("echoMulti", echoMulti);
+            commandline.updateOutputHeight = updateOutputHeight;
+        }
+
         function run ()
         {
             let now = Date.now();
             let totalTests = tests.length + functions.length;
             let successfulTests = 0;
-			let skippedTests = 0;
+            let skippedTests = 0;
             let currentTest = 0;
+
+            init();
 
             // TODO: might want to unify 'tests' and 'functions' handling
             // 1.) run commands and mappings tests
-			outer:
+            outer:
             for (let [, test] in Iterator(tests))
             {
                 currentTest++;
@@ -122,15 +167,15 @@ commands.addUserCommand(["regr[essions]"],
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-				for (let [,cmd] in Iterator(test.cmds))
-				{
-					if (skipTests.indexOf(cmd) != -1)
-					{
-						skippedTests++;
-						liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
-						continue outer;
-					}
-				};
+                for (let [,cmd] in Iterator(test.cmds))
+                {
+                    if (skipTests.indexOf(cmd) != -1)
+                    {
+                        skippedTests++;
+                        liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+                        continue outer;
+                    }
+                };
 
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
                 resetEnvironment();
@@ -141,13 +186,13 @@ commands.addUserCommand(["regr[essions]"],
                     if (cmd[0] == ":")
                         liberator.execute(cmd);
                     else
-						 events.feedkeys(cmd);
+                         events.feedkeys(cmd);
                 });
 
                 if (!test.verify())
                     liberator.echoerr("Test " + currentTest + " failed: " + testDescription);
                 else
-					successfulTests++;
+                    successfulTests++;
             }
 
             // 2.) Run function tests
@@ -166,29 +211,32 @@ commands.addUserCommand(["regr[essions]"],
                     successfulTests++;
             }
 
-			let runTests = (args.count >= 1 ? 1 : totalTests) - skippedTests;
-			XML.ignoreWhitespace = false;
-			liberator.echomsg(<><span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
-			                  tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in
-					  <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
+            cleanup();
+
+            let runTests = (args.count >= 1 ? 1 : totalTests) - skippedTests;
+            XML.ignoreWhitespace = false;
+            liberator.echomsg(<><span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
+                              tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in
+                      <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
             liberator.execute(":messages");
         }
 
         if (!args.bang)
-		{
-			liberator.echo(<>
-				<span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/>
+        {
+            liberator.echo(<>
+                <span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/>
 
-				It should not do any harm to your profile, but your current settings like options,
-				abbreviations or mappings might not be in the same state as before running the tests.
-				Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/>
+                It should not do any harm to your profile, but your current settings like options,
+                abbreviations or mappings might not be in the same state as before running the tests.
+                Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/>
+                <!--' vim. -->
 
-			        Use :regressions! to skip this prompt.
-			</>);
-            commandline.input("Type 'yes' to run the tests:", function (res) { if (res == "yes") run(); } );
-			return;
-		}
-		run();
+                Use :regressions! to skip this prompt.
+            </>);
+            commandline.input("Type 'yes' to run the tests: ", function (res) { if (res == "yes") run(); } );
+            return;
+        }
+        run();
     },
     {
         bang: true,
@@ -196,4 +244,4 @@ commands.addUserCommand(["regr[essions]"],
         count: true
     });
 
-// vimperator: set et ts=4 sw=4 :
+// vimperator: set et sts=4 sw=4 :

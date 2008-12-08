@@ -635,12 +635,17 @@ const liberator = (function () //{{{
 
         registerObserver: registerObserver,
 
-        triggerObserver: function (type, data)
+        unregisterObserver: function (type, callback)
+        {
+            observers = observers.filter(function ([t, c]) t != type || c != callback);
+        },
+
+        triggerObserver: function (type)
         {
             for (let [,[thistype, callback]] in Iterator(observers))
             {
                 if (thistype == type)
-                    callback(data);
+                    callback.apply(null, Array.slice(arguments, 1));
             }
         },
 

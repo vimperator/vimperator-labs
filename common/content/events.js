@@ -559,48 +559,7 @@ function Events() //{{{
     }
 
     // return true when load successful, or false otherwise
-    function waitForPageLoaded()
-    {
-        liberator.dump("start waiting in loaded state: " + buffer.loaded);
-        liberator.threadYield(true); // clear queue
-
-        if (buffer.loaded == 1)
-            return true;
-
-        let start = Date.now();
-        let end = start + 25000; // maximum time to wait - TODO: add option
-        let now;
-        while (now = Date.now(), now < end)
-        {
-            liberator.threadYield();
-            if ((now - start) % 1000 < 10)
-                liberator.dump("waited: " + (now - start) + " ms");
-
-            if (!events.feedingKeys)
-                return false;
-
-            if (buffer.loaded > 0)
-            {
-                liberator.sleep(250);
-                break;
-            }
-            else
-                liberator.echo("Waiting for page to load...");
-        }
-        modes.show();
-
-        // TODO: allow macros to be continued when page does not fully load with an option
-        var ret = (buffer.loaded == 1);
-        if (!ret)
-            liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
-        liberator.dump("done waiting: " + ret);
-
-        // sometimes the input widget had focus when replaying a macro
-        // maybe this call should be moved somewhere else?
-        // liberator.focusContent(true);
-
-        return ret;
-    }
+    function waitForPageLoaded() events.waitForPageLoaded();
 
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
@@ -1049,6 +1008,49 @@ function Events() //{{{
         isCancelKey: function (key)
         {
             return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
+        },
+
+        waitForPageLoad: function ()
+        {
+            liberator.dump("start waiting in loaded state: " + buffer.loaded);
+            liberator.threadYield(true); // clear queue
+
+            if (buffer.loaded == 1)
+                return true;
+
+            let start = Date.now();
+            let end = start + 25000; // maximum time to wait - TODO: add option
+            let now;
+            while (now = Date.now(), now < end)
+            {
+                liberator.threadYield();
+                if ((now - start) % 1000 < 10)
+                    liberator.dump("waited: " + (now - start) + " ms");
+
+                if (!events.feedingKeys)
+                    return false;
+
+                if (buffer.loaded > 0)
+                {
+                    liberator.sleep(250);
+                    break;
+                }
+                else
+                    liberator.echo("Waiting for page to load...");
+            }
+            modes.show();
+
+            // TODO: allow macros to be continued when page does not fully load with an option
+            var ret = (buffer.loaded == 1);
+            if (!ret)
+                liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+            liberator.dump("done waiting: " + ret);
+
+            // sometimes the input widget had focus when replaying a macro
+            // maybe this call should be moved somewhere else?
+            // liberator.focusContent(true);
+
+            return ret;
         },
 
         // argument "event" is delibarately not used, as i don't seem to have

@@ -547,6 +547,8 @@ function CommandLine() //{{{
         setHighlightGroup(highlightGroup);
         messageBox.value = str;
 
+        liberator.triggerObserver("echoLine", str, highlightGroup, forceSingle);
+
         if (!commandShown())
             commandline.hide();
 
@@ -561,6 +563,8 @@ function CommandLine() //{{{
         //outputContainer.collapsed = true;
         let doc = multilineOutputWidget.contentDocument;
         let win = multilineOutputWidget.contentWindow;
+
+        liberator.triggerObserver("echoMultiline", str, highlightGroup);
 
         /* If it's already XML, assume it knows what it's doing.
          * Otherwise, white space is significant.
