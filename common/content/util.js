@@ -481,11 +481,17 @@ const util = { //{{{
             // strip each 'URL' - makes things simpler later on
             url = url.replace(/^\s+|\s+$/, "");
 
-            // if the string doesn't look like a valid URL (i.e. contains a space or no dot)
-            // or starts with a known protocol try opening it with a search engine
-            // or keyword bookmark
+            // if the string
+            //    * contains a space OR
+            //    * does NOT have a period or a slash in it
+            // AND
+            //    * has no valid protocol
+            // then assume that we want to defsearch (or bookmark
+            // keyword) it. Otherwise, let Firefox figure it out
             let proto = url.match(/^([-\w]+):/);
-            if (!/\./.test(url) && (/[\s]/.test(url) || !proto || !Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]]))
+            if( ( /\s/.test(url) || !/[.\/]/.test(url) )
+                  &&
+                  !( proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]] ) )
             {
                 // TODO: it would be clearer if the appropriate call to
                 // getSearchURL was made based on whether or not the first word was
