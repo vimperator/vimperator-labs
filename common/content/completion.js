@@ -1089,8 +1089,16 @@ function Completion() //{{{
             if (!/^(?:\w[\w\d]*)?$/.test(key))
                 return; /* Not a word. Forget it. Can this even happen? */
 
-            top[OFFSET] = offset;
-            return complete.call(this, obj, key);
+            try
+            { // FIXME
+                var o = top[OFFSET];
+                top[OFFSET] = offset;
+                return complete.call(this, obj, key);
+            }
+            finally
+            {
+                top[OFFSET] = o;
+            }
         }
     };
     let javascript = new Javascript();
