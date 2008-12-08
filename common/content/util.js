@@ -484,7 +484,7 @@ const util = { //{{{
             // if the string doesn't look like a valid URL (i.e. contains a space
             // or starts with a known protocol try opening it with a search engine
             // or keyword bookmark
-            let proto = url.match(/^(\w+):/);
+            let proto = url.match(/^([-\w]+):/);
             if (/\s/.test(url) || !proto || !Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]])
             {
                 // TODO: it would be clearer if the appropriate call to
