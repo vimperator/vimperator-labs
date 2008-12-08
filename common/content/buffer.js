@@ -84,7 +84,7 @@ function Buffer() //{{{
 
     function findScrollableWindow()
     {
-        var win = window.document.commandDispatcher.focusedWindow;
+        let win = window.document.commandDispatcher.focusedWindow;
         if (win && (win.scrollMaxX > 0 || win.scrollMaxY > 0))
             return win;
 
@@ -102,8 +102,8 @@ function Buffer() //{{{
     // both values are given in percent, -1 means no change
     function scrollToPercentiles(horizontal, vertical)
     {
-        var win = findScrollableWindow();
-        var h, v;
+        let win = findScrollableWindow();
+        let h, v;
 
         if (horizontal < 0)
             h = win.scrollX;
@@ -330,8 +330,8 @@ function Buffer() //{{{
             }
             else
             {
-                var elements = [];
-                var matches = buffer.evaluateXPath(
+                let elements = [];
+                let matches = buffer.evaluateXPath(
                     // TODO: type="file"
                     "//input[not(@type) or @type='text' or @type='password'] | //textarea[not(@disabled) and not(@readonly)] |" +
                     "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
@@ -397,7 +397,8 @@ function Buffer() //{{{
         "Copy selected text or current word",
         function ()
         {
-            var sel = buffer.getCurrentWord();
+            let sel = buffer.getCurrentWord();
+
             if (sel)
                 util.copyToClipboard(sel, true);
             else
@@ -473,8 +474,8 @@ function Buffer() //{{{
         "Print current document",
         function (args)
         {
-            var aps = options.getPref("print.always_print_silent");
-            var spp = options.getPref("print.show_print_progress");
+            let aps = options.getPref("print.always_print_silent");
+            let spp = options.getPref("print.show_print_progress");
 
             liberator.echomsg("Sending to printer...");
             options.setPref("print.always_print_silent", args.bang);
@@ -509,7 +510,7 @@ function Buffer() //{{{
         {
             args = args.string;
 
-            var titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
+            let titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
             if (args && titles.indexOf(args) == -1)
             {
@@ -768,7 +769,7 @@ function Buffer() //{{{
         yield ["Title", doc.title];
         yield ["URL", template.highlightURL(doc.location.toString(), true)];
 
-        var ref = "referrer" in doc && doc.referrer;
+        let ref = "referrer" in doc && doc.referrer;
         if (ref)
             yield ["Referrer", template.highlightURL(ref, true)];
 
@@ -786,7 +787,7 @@ function Buffer() //{{{
     addPageInfoSection("m", "Meta Tags", function (verbose)
     {
         // get meta tag data, sort and put into pageMeta[]
-        var metaNodes = window.content.document.getElementsByTagName("meta");
+        let metaNodes = window.content.document.getElementsByTagName("meta");
 
         return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
                     .sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));
@@ -800,7 +801,7 @@ function Buffer() //{{{
 
         get alternateStyleSheets()
         {
-            var stylesheets = window.getAllStyleSheets(window.content);
+            let stylesheets = window.getAllStyleSheets(window.content);
 
             return stylesheets.filter(
                 function (stylesheet) /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title)
@@ -878,7 +879,7 @@ function Buffer() //{{{
             if (!elem)
                 elem = doc;
 
-            var result = doc.evaluate(expression, elem,
+            let result = doc.evaluate(expression, elem,
                 function lookupNamespaceURI(prefix)
                 {
                   switch (prefix)
@@ -941,9 +942,9 @@ function Buffer() //{{{
 
             elem.focus();
 
-            var evt = doc.createEvent("MouseEvents");
-            var x = 0;
-            var y = 0;
+            let evt = doc.createEvent("MouseEvents");
+            let x = 0;
+            let y = 0;
             // for imagemap
             if (elemTagName == "area")
                 [x, y] = elem.getAttribute("coords").split(",").map(Number);
@@ -1011,12 +1012,12 @@ function Buffer() //{{{
         // artificially "clicks" a link in order to open it
         followLink: function (elem, where)
         {
-            var doc = elem.ownerDocument;
-            var view = doc.defaultView;
-            var offsetX = 1;
-            var offsetY = 1;
+            let doc = elem.ownerDocument;
+            let view = doc.defaultView;
+            let offsetX = 1;
+            let offsetY = 1;
 
-            var localName = elem.localName.toLowerCase();
+            let localName = elem.localName.toLowerCase();
             if (localName == "frame" || localName == "iframe") // broken?
             {
                 elem.contentWindow.focus();
@@ -1024,12 +1025,12 @@ function Buffer() //{{{
             }
             else if (localName == "area") // for imagemap
             {
-                var coords = elem.getAttribute("coords").split(",");
+                let coords = elem.getAttribute("coords").split(",");
                 offsetX = Number(coords[0]) + 1;
                 offsetY = Number(coords[1]) + 1;
             }
 
-            var ctrlKey = false, shiftKey = false;
+            let ctrlKey = false, shiftKey = false;
             switch (where)
             {
                 case liberator.NEW_TAB:
@@ -1048,7 +1049,7 @@ function Buffer() //{{{
 
             elem.focus();
 
-            var evt = doc.createEvent("MouseEvents");
+            let evt = doc.createEvent("MouseEvents");
             ["mousedown", "mouseup", "click"].forEach(function (event) {
                 evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
                         ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
@@ -1063,9 +1064,9 @@ function Buffer() //{{{
 
         saveLink: function (elem, skipPrompt)
         {
-            var doc  = elem.ownerDocument;
-            var url  = window.makeURLAbsolute(elem.baseURI, elem.href);
-            var text = elem.textContent;
+            let doc  = elem.ownerDocument;
+            let url  = window.makeURLAbsolute(elem.baseURI, elem.href);
+            let text = elem.textContent;
 
             try
             {
@@ -1087,7 +1088,7 @@ function Buffer() //{{{
 
         scrollColumns: function (cols)
         {
-            var win = findScrollableWindow();
+            let win = findScrollableWindow();
             const COL_WIDTH = 20;
 
             if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
@@ -1103,14 +1104,14 @@ function Buffer() //{{{
 
         scrollLines: function (lines)
         {
-            var win = findScrollableWindow();
+            let win = findScrollableWindow();
             checkScrollYBounds(win, lines);
             win.scrollByLines(lines);
         },
 
         scrollPages: function (pages)
         {
-            var win = findScrollableWindow();
+            let win = findScrollableWindow();
             checkScrollYBounds(win, pages);
             win.scrollByPages(pages);
         },
@@ -1120,7 +1121,7 @@ function Buffer() //{{{
             if (count > 0)
                 options["scroll"] = count;
 
-            var win = findScrollableWindow();
+            let win = findScrollableWindow();
             checkScrollYBounds(win, direction);
 
             if (options["scroll"] > 0)
@@ -1151,7 +1152,7 @@ function Buffer() //{{{
                 return;
 
             count = Math.max(count, 1);
-            var frames = [];
+            let frames = [];
 
             // find all frames - depth-first search
             (function (frame) {
@@ -1165,7 +1166,7 @@ function Buffer() //{{{
 
             // remove all unfocusable frames
             // TODO: find a better way to do this - walking the tree is too slow
-            var start = document.commandDispatcher.focusedWindow;
+            let start = document.commandDispatcher.focusedWindow;
             frames = frames.filter(function (frame) {
                 frame.focus();
                 return document.commandDispatcher.focusedWindow == frame;
@@ -1177,10 +1178,10 @@ function Buffer() //{{{
             //       focused.  Since this is not the current FF behaviour,
             //       we initalize current to -1 so the first call takes us to the
             //       first frame.
-            var current = frames.indexOf(document.commandDispatcher.focusedWindow);
+            let current = frames.indexOf(document.commandDispatcher.focusedWindow);
 
             // calculate the next frame to focus
-            var next = current;
+            let next = current;
             if (forward)
             {
                 next = current + count;
@@ -1211,7 +1212,7 @@ function Buffer() //{{{
 
             // add the frame indicator
             let doc = frames[next].document;
-            var indicator = util.xmlToDom(<div highlight="FrameIndicator"/>, doc);
+            let indicator = util.xmlToDom(<div highlight="FrameIndicator"/>, doc);
             doc.body.appendChild(indicator);
 
             setTimeout(function () { doc.body.removeChild(indicator); }, 500);
@@ -1243,7 +1244,7 @@ function Buffer() //{{{
                 if (bookmarks.isBookmarked(this.URL))
                     info += ", bookmarked";
 
-                var pageInfoText = <>"{file}" [{info}] {title}</>;
+                let pageInfoText = <>"{file}" [{info}] {title}</>;
                 liberator.echo(pageInfoText, commandline.FORCE_SINGLELINE);
                 return;
             }
@@ -1260,18 +1261,18 @@ function Buffer() //{{{
         viewSelectionSource: function ()
         {
             // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
-            var focusedWindow = document.commandDispatcher.focusedWindow;
+            let focusedWindow = document.commandDispatcher.focusedWindow;
             if (focusedWindow == window)
                 focusedWindow = content;
 
-            var docCharset = null;
+            let docCharset = null;
             if (focusedWindow)
                 docCharset = "charset=" + focusedWindow.document.characterSet;
 
-            var reference = null;
+            let reference = null;
             reference = focusedWindow.getSelection();
 
-            var docUrl = null;
+            let docUrl = null;
             window.openDialog("chrome://global/content/viewPartialSource.xul",
                     "_blank", "scrollbars,resizable,chrome,dialog=no",
                     docUrl, docCharset, reference, "selection");
@@ -1317,10 +1318,10 @@ function Marks() //{{{
 
     function onPageLoad(event)
     {
-        var win = event.originalTarget.defaultView;
+        let win = event.originalTarget.defaultView;
         for (let i = 0, length = pendingJumps.length; i < length; i++)
         {
-            var mark = pendingJumps[i];
+            let mark = pendingJumps[i];
             if (win && win.location.href == mark.location)
             {
                 win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
@@ -1340,10 +1341,10 @@ function Marks() //{{{
 
     function removeLocalMark(mark)
     {
-        var localmark = localMarks.get(mark);
+        let localmark = localMarks.get(mark);
         if (localmark)
         {
-            var win = window.content;
+            let win = window.content;
             for (let [i,] in Iterator(localmark))
             {
                 if (localmark[i].location == win.location.href)
@@ -1360,7 +1361,7 @@ function Marks() //{{{
 
     function removeURLMark(mark)
     {
-        var urlmark = urlMarks.get(mark);
+        let urlmark = urlMarks.get(mark);
         if (urlmark)
         {
             liberator.log("Deleting URL mark: " + markToString(mark, urlmark), 5);
@@ -1440,7 +1441,7 @@ function Marks() //{{{
                 liberator.echoerr("E474: Invalid argument");
                 return;
             }
-            var matches;
+            let matches;
             if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
             {
                 // NOTE: this currently differs from Vim's behavior which
@@ -1454,8 +1455,8 @@ function Marks() //{{{
             {
                 for (let i = 0; i < matches.length; i++)
                 {
-                    var start = matches[i][0];
-                    var end   = matches[i][2];
+                    let start = matches[i][0];
+                    let end   = matches[i][2];
                     if (/[a-z]/.test(start) != /[a-z]/.test(end) ||
                         /[A-Z]/.test(start) != /[A-Z]/.test(end) ||
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
@@ -1475,7 +1476,7 @@ function Marks() //{{{
         "Mark current location within the web page",
         function (args)
         {
-            var mark = args[0];
+            let mark = args[0];
             if (mark.length > 1)
             {
                 liberator.echoerr("E488: Trailing characters");
@@ -1504,7 +1505,7 @@ function Marks() //{{{
                 return;
             }
 
-            var filter = args.replace(/[^a-zA-Z]/g, "");
+            let filter = args.replace(/[^a-zA-Z]/g, "");
             marks.list(filter);
         });
 
@@ -1517,7 +1518,7 @@ function Marks() //{{{
         // TODO: add support for frameset pages
         add: function (mark)
         {
-            var win = window.content;
+            let win = window.content;
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
@@ -1525,9 +1526,9 @@ function Marks() //{{{
                 return;
             }
 
-            var x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
-            var y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
-            var position = { x: x, y: y };
+            let x = win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0;
+            let y = win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0;
+            let position = { x: x, y: y };
 
             if (isURLMark(mark))
             {
@@ -1556,7 +1557,7 @@ function Marks() //{{{
             }
             else
             {
-                var pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
+                let pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
                 for (let [mark,] in urlMarks)
                 {
                     if (pattern.test(mark))
@@ -1572,7 +1573,7 @@ function Marks() //{{{
 
         jumpTo: function (mark)
         {
-            var ok = false;
+            let ok = false;
 
             if (isURLMark(mark))
             {
@@ -1587,11 +1588,11 @@ function Marks() //{{{
                         liberator.open(slice.location, liberator.NEW_TAB);
                         return;
                     }
-                    var index = tabs.index(slice.tab);
+                    let index = tabs.index(slice.tab);
                     if (index != -1)
                     {
                         tabs.select(index);
-                        var win = slice.tab.linkedBrowser.contentWindow;
+                        let win = slice.tab.linkedBrowser.contentWindow;
                         if (win.location.href != slice.location)
                         {
                             pendingJumps.push(slice);
@@ -1627,7 +1628,7 @@ function Marks() //{{{
 
         list: function (filter)
         {
-            var marks = getSortedMarks();
+            let marks = getSortedMarks();
 
             if (marks.length == 0)
             {
