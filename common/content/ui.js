@@ -1095,8 +1095,7 @@ function CommandLine() //{{{
                     event.preventDefault();
                     event.stopPropagation();
 
-                    // tabTimer.tell(event);
-                    completions.tab(event.shiftKey);
+                    tabTimer.tell(event);
                     return false;
                 }
                 else if (key == "<BS>")
@@ -1117,6 +1116,11 @@ function CommandLine() //{{{
                     this.resetCompletions();
                 }
                 return true; // allow this event to be handled by Firefox
+            }
+            else if (event.type == "keyup")
+            {
+                if (key == "<Tab>" || key == "<S-Tab>")
+                    tabTimer.flush();
             }
         },
 

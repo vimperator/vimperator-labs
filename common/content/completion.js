@@ -1493,7 +1493,7 @@ function Completion() //{{{
                 context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
-                    context.background = true;
+                    // context.background = true;
                     context.compare = null;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");

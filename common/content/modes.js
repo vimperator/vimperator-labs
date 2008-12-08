@@ -74,9 +74,6 @@ const modes = (function () //{{{
     // for its cleanup here
     function handleModeChange(oldMode, newMode)
     {
-        // TODO: fix v.log() to work with verbosity level
-        //liberator.log("switching from mode " + oldMode + " to mode " + newMode, 7);
-        //liberator.dump("switching from mode " + oldMode + " to mode " + newMode + "\n");
 
         switch (oldMode)
         {
@@ -220,7 +217,6 @@ const modes = (function () //{{{
         reset: function (silent)
         {
             modeStack = [];
-            liberator.dump("reset");
             if (config.isComposeWindow)
                 this.set(modes.COMPOSE, modes.NONE, silent);
             else
