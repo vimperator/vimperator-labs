@@ -11,7 +11,8 @@
 // Usage: :[count]regr[essions]
 // When [count] is given, just run this test. TODO: move to :regressions [spec]?
 
-var skipTests = []; // TODO: allow skipping tests somehow
+// all tests
+var skipTests = [":bmarks", "gg"];
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Put definitions here which might change due to internal liberator refactoring
@@ -41,14 +42,16 @@ let tests = [
     { cmds: [":bmarks"],
       verify: function () getMultilineOutput().length > 100 },
     { cmds: [":echo \"test\""],
-      verify: function () getOutput() == "test" },
+      verify: function () getSinglelineOutput() == "test" },
+    { cmds: [":qmark V http://test.vimperator.org", ":qmarks"],
+      verify: function () getMultilineOutput().indexOf("test.vimperator.org") >= 0 },
     // { cmds: [":echomsg \"testmsg\""],
     //   verify: function () getOutput() == "testmsg" },
     // { cmds: [":echoerr \"testerr\""],
     //   verify: function () getOutput() == "testerr" },
-    /*{ cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
+    { cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
       verify: function () this._initialPos.y != getBufferPosition().y,
-	  init: function () this._initialPos = getBufferPosition() }*/
+	  init: function () this._initialPos = getBufferPosition() }
 
 	// testing tab behavior
 ];
@@ -89,9 +92,6 @@ function getLocation() window.content.document.location.href;
 
 
 
-
-
-
 commands.addUserCommand(["regr[essions]"],
     "Run regression tests",
     function (args)
@@ -107,40 +107,42 @@ commands.addUserCommand(["regr[essions]"],
             let now = Date.now();
             let totalTests = tests.length + functions.length;
             let successfulTests = 0;
+			let skippedTests = 0;
             let currentTest = 0;
 
             // TODO: might want to unify 'tests' and 'functions' handling
             // 1.) run commands and mappings tests
+			outer:
             for (let [, test] in Iterator(tests))
             {
-				liberator.dump(args.count + "-" + currentTest);
                 currentTest++;
                 if (args.count >= 1 && currentTest != args.count)
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-				liberator.dump(testDescription);
+				for (let [,cmd] in Iterator(test.cmds))
+				{
+					if (skipTests.indexOf(cmd) != -1)
+					{
+						skippedTests++;
+						liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+						continue outer;
+					}
+				};
+
                 liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
                 resetEnvironment();
                 if ("init" in test)
                     test.init();
 
-                //test.cmds.forEach(function (cmd) {
-				let cmd = test.cmds[0];
-				//let cmd = ":echomsg \"" + testDescription + "\"";
-				//alert(cmd.indexOf(":"));
+                test.cmds.forEach(function (cmd) {
                     if (cmd[0] == ":")
 					{
-                    //if (/^:/.test(cmd))
-                    //    liberator.execute(cmd);
-					//alert(cmd);
                         liberator.execute(cmd);
 					}
                     else
 						 events.feedkeys(cmd);
-					//liberator.sleep(1000);
-					liberator.echomsg(cmd + "...", 0);
-                //});
+                });
 
                 if (!test.verify())
                     liberator.echoerr("Test " + currentTest + " failed: " + testDescription);
@@ -164,14 +166,19 @@ commands.addUserCommand(["regr[essions]"],
                     successfulTests++;
             }
 
-            liberator.echomsg(successfulTests + " of " + (args.count >= 1 ? 1 : totalTests) + " tests successfully completed in " + ((Date.now() - now) / 1000.0) + " msec");
+			let runTests = (args.count >= 1 ? 1 : totalTests) - skippedTests;
+			liberator.echomsg(<><span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
+			                  tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
             liberator.execute(":messages");
         }
 
         if (!args.bang)
 		{
-			liberator.echo("<b>Running tests should always be done in a new profile.</b>\n" +
-			               "Use :regressions! to skip this prompt.");
+			XML.prettyPrinting = true;
+			liberator.echo(<><span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/></> +
+						   <>It should not do any harm to your profile, but your current settings like options, abbreviations or mappings might not be in the same state as before running the tests.</> +
+						   <>Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/></> +
+			               <>Use :regressions! to skip this prompt.</>);
             commandline.input("Type 'yes' to run the tests:", function (res) { if (res == "yes") run(); } );
 			return;
 		}
