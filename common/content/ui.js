@@ -122,7 +122,7 @@ function CommandLine() //{{{
             while (true)
             {
                 this.index += diff;
-                if (this.index < 0 && this.index > this.store.length)
+                if (this.index < 0 || this.index > this.store.length)
                 {
                     this.index = Math.max(0, Math.min(this.store.length, this.index));
                     liberator.beep();
