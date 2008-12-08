@@ -483,13 +483,13 @@ const util = { //{{{
 
             // if the string
             //    * contains a space OR
-            //    * does NOT have a period or a slash in it
+            //    * does NOT have a period in it
             // AND
             //    * has no valid protocol
             // then assume that we want to defsearch (or bookmark
             // keyword) it. Otherwise, let Firefox figure it out
             let proto = url.match(/^([-\w]+):/);
-            if( ( /\s/.test(url) || !/[.\/]/.test(url) )
+            if( ( /\s/.test(url) || !/\./.test(url) )
                   &&
                   !( proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]] ) )
             {
