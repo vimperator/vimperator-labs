@@ -99,7 +99,7 @@ function echoLine(str, group)
     if (!doc)
         return;
     doc.body.appendChild(util.xmlToDom(
-            <div highlight={group} style="border: 1px solid gray; white-space: pre">{str}</div>,
+            <div highlight={group} style="border: 1px solid gray; white-space: pre; height: 1.5em; line-height: 1.5em;">{str}</div>,
             doc));
 }
 function echoMulti(str, group)
@@ -107,7 +107,7 @@ function echoMulti(str, group)
     if (!doc)
         return;
     doc.body.appendChild(util.xmlToDom(<div class="ex-command-output"
-                style="white-space: nowrap; border: 1px solid black"
+                style="white-space: nowrap; border: 1px solid black; min-height: 1.5em;"
                 highlight={group}>{template.maybeXML(str)}</div>,
             doc));
 }
@@ -130,6 +130,7 @@ commands.addUserCommand(["regr[essions]"],
             liberator.open("chrome://liberator/content/buffer.xhtml", liberator.NEW_TAB);
             events.waitForPageLoad();
             doc = content.document;
+            doc.body.setAttributeNS(NS.uri, "highlight", "CmdLine");
 
             updateOutputHeight = commandline.updateOutputHeight;
             commandline.updateOutputHeight = function (open)
