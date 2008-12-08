@@ -975,7 +975,7 @@ function QuickMarks() //{{{
         add: function add(qmark, location)
         {
             qmarks.set(qmark, location);
-            liberator.echo("Added Quick Mark '" + qmark + "': " + location);
+            liberator.echomsg("Added Quick Mark '" + qmark + "': " + location, 1);
         },
 
         remove: function remove(filter)

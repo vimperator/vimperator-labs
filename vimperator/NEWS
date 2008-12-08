@@ -19,6 +19,7 @@
       special versions for the old behavior
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
+	* IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages
 
     * add ";f" extended hint mode to focus a frame
     * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.

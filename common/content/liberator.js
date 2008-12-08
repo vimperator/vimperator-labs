@@ -171,7 +171,7 @@ const liberator = (function () //{{{
 
         options.add(["verbose", "vbs"],
             "Define which info messages are displayed",
-            "number", 0,
+            "number", 1,
             { validator: function (value) value >= 0 && value <= 15 });
 
         options.add(["visualbell", "vb"],
