@@ -126,6 +126,14 @@ function CommandLine() //{{{
                 {
                     this.index = Math.max(0, Math.min(this.store.length, this.index));
                     liberator.beep();
+                    // I don't know why this kludge is needed. It
+                    // prevents the caret from moving to the end of
+                    // the input field.
+                    if (this.input.value == "")
+                    {
+                        this.input.value = " ";
+                        this.input.value = "";
+                    }
                     break;
                 }
 
