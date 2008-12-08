@@ -481,11 +481,11 @@ const util = { //{{{
             // strip each 'URL' - makes things simpler later on
             url = url.replace(/^\s+|\s+$/, "");
 
-            // if the string doesn't look like a valid URL (i.e. contains a space
+            // if the string doesn't look like a valid URL (i.e. contains a space or no dot)
             // or starts with a known protocol try opening it with a search engine
             // or keyword bookmark
             let proto = url.match(/^([-\w]+):/);
-            if (/\s/.test(url) || !proto || !Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]])
+            if (!/\./.test(url) && (/[\s]/.test(url) || !proto || !Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]]))
             {
                 // TODO: it would be clearer if the appropriate call to
                 // getSearchURL was made based on whether or not the first word was
