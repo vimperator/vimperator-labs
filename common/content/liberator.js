@@ -272,7 +272,7 @@ const liberator = (function () //{{{
             }
 
             let items = [];
-            addChildren(document.getElementById(config.guioptions["m"]), "");
+            addChildren(document.getElementById(config.guioptions["m"][1]), "");
             return items;
         }
 
