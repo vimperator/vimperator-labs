@@ -69,9 +69,9 @@ function Tabs() //{{{
     // - "$" for the last tab
     function indexFromSpec(spec, wrap)
     {
-        var position = getBrowser().mTabContainer.selectedIndex;
-        var length   = getBrowser().mTabs.length;
-        var last     = length - 1;
+        let position = getBrowser().mTabContainer.selectedIndex;
+        let length   = getBrowser().mTabs.length;
+        let last     = length - 1;
 
         if (spec === undefined || spec === "")
             return position;
@@ -97,13 +97,13 @@ function Tabs() //{{{
 
     function copyTab(to, from)
     {
-        var ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                           .getService(Components.interfaces.nsISessionStore);
+        const ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                             .getService(Components.interfaces.nsISessionStore);
 
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
 
-        var tabState = ss.getTabState(from);
+        let tabState = ss.getTabState(from);
         ss.setTabState(to, tabState);
     }
 
@@ -194,7 +194,7 @@ function Tabs() //{{{
             {
                 setter: function (value)
                 {
-                    var values = [[0, 1], // always in current tab
+                    let values = [[0, 1], // always in current tab
                                   [0, 3], // in a new tab
                                   [2, 3], // in a new window if it has specified sizes
                                   [1, 2], // always in new window
@@ -405,7 +405,7 @@ function Tabs() //{{{
 
             if (args || count > 0)
             {
-                var index;
+                let index;
 
                 // count is ignored if an arg is specified, as per Vim
                 if (args)
@@ -537,7 +537,7 @@ function Tabs() //{{{
                 let special = args.bang;
                 args = args.string;
 
-                var where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
+                let where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
                 if (/\btabopen\b/.test(options["activate"]))
                     where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
 
@@ -561,9 +561,9 @@ function Tabs() //{{{
             "Duplicate current tab",
             function (args)
             {
-                var tab = tabs.getTab();
+                let tab = tabs.getTab();
 
-                var activate = args.bang ? true : false;
+                let activate = args.bang ? true : false;
                 if (/\btabopen\b/.test(options["activate"]))
                     activate = !activate;
 
@@ -692,12 +692,12 @@ function Tabs() //{{{
         // @returns an array of tabs which match filter
         get: function (filter)
         {
-            var buffers = [];
+            let buffers = [];
             for (let [i, browser] in this.browsers)
             {
-                var title = browser.contentTitle || "(Untitled)";
-                var uri = browser.currentURI.spec;
-                var number = i + 1;
+                let title = browser.contentTitle || "(Untitled)";
+                let uri = browser.currentURI.spec;
+                let number = i + 1;
                 buffers.push([number, title, uri]);
             }
             return buffers;
@@ -739,7 +739,7 @@ function Tabs() //{{{
         // NOTE: position is a 0 based index
         move: function (tab, spec, wrap)
         {
-            var index = indexFromSpec(spec, wrap);
+            let index = indexFromSpec(spec, wrap);
             getBrowser().moveTabTo(tab, index);
         },
 
@@ -747,7 +747,7 @@ function Tabs() //{{{
         // quitOnLastTab = 2: quit and save session
         remove: function (tab, count, focusLeftTab, quitOnLastTab)
         {
-            var removeOrBlankTab = {
+            let removeOrBlankTab = {
                     Firefox: function (tab)
                     {
                         if (getBrowser().mTabs.length > 1)
@@ -816,9 +816,9 @@ function Tabs() //{{{
 
         select: function (spec, wrap)
         {
-            var index = indexFromSpec(spec, wrap);
+            let index = indexFromSpec(spec, wrap);
             // FIXME:
-            if (index === -1)
+            if (index == -1)
             {
                 liberator.beep(); // XXX: move to ex-handling?
                 return;
@@ -940,7 +940,7 @@ function Tabs() //{{{
 
         cloneTab: function (tab, activate)
         {
-            var newTab = getBrowser().addTab();
+            let newTab = getBrowser().addTab();
             copyTab(newTab, tab);
 
             if (activate)
@@ -955,9 +955,9 @@ function Tabs() //{{{
                 tab = getBrowser().mTabContainer.selectedItem;
 
             window.open();
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
-            var win = wm.getMostRecentWindow("navigator:browser");
+            const wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                 .getService(Components.interfaces.nsIWindowMediator);
+            let win = wm.getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);
             this.remove(tab, 1, false, 1);
@@ -973,7 +973,7 @@ function Tabs() //{{{
 
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null
-            var index = tabs.index(tabs.alternate);
+            let index = tabs.index(tabs.alternate);
 
             // TODO: since a tab close is more like a bdelete for us we
             // should probably reopen the closed tab when a 'deleted'
