@@ -508,20 +508,20 @@ function Buffer() //{{{
         "Select the author style sheet to apply",
         function (args)
         {
-            args = args.string;
+            let arg = args.literalArg;
 
             let titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
-            if (args && titles.indexOf(args) == -1)
+            if (arg && titles.indexOf(arg) == -1)
             {
-                liberator.echoerr("E475: Invalid argument: " + args);
+                liberator.echoerr("E475: Invalid argument: " + arg);
                 return;
             }
 
             if (options["usermode"])
                 options["usermode"] = false;
 
-            window.stylesheetSwitchAll(window.content, args);
+            window.stylesheetSwitchAll(window.content, arg);
         },
         {
             argCount: "?",
