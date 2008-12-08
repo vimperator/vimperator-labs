@@ -71,6 +71,8 @@ function resetEnvironment()
 {
 	multilineOutput.contentDocument.body.innerHTML = "";
 	singlelineOutput.value = "";
+	commandline.close();
+	modes.reset();
 }
 
 function getOutput()            multilineOutput.contentDocument.body.textContent || singlelineOutput.value;
@@ -137,9 +139,7 @@ commands.addUserCommand(["regr[essions]"],
 
                 test.cmds.forEach(function (cmd) {
                     if (cmd[0] == ":")
-					{
                         liberator.execute(cmd);
-					}
                     else
 						 events.feedkeys(cmd);
                 });
@@ -174,7 +174,6 @@ commands.addUserCommand(["regr[essions]"],
 
         if (!args.bang)
 		{
-			XML.prettyPrinting = true;
 			liberator.echo(<><span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/></> +
 						   <>It should not do any harm to your profile, but your current settings like options, abbreviations or mappings might not be in the same state as before running the tests.</> +
 						   <>Just make sure, you don't :mkvimperatorrc, after running the tests.<br/><br/></> +
