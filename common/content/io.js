@@ -729,7 +729,7 @@ lookup:
             }
             else
             {
-                let cmd = [options["shell"], options["shellcmdflag"], command].map(escape).join(" ");
+                let cmd = util.Array.flatten([options["shell"], options["shellcmdflag"].split(/\s+/), command]).map(escape).join(" ");
                 command = "cd " + escape(cwd.path) + " && exec " + cmd + " >" + escape(stdoutFile.path) + " 2>" + escape(stderrFile.path);
             }
 
@@ -742,7 +742,7 @@ lookup:
                 command += " <" + escape(stdinFile.path);
             }
 
-            let res = ioManager.run(options["shell"], [options["shellcmdflag"], command], true);
+            let res = ioManager.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
 
             if (res > 0)
                 var output = ioManager.readFile(stderrFile) + "\nshell returned " + res;
