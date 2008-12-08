@@ -251,7 +251,10 @@ function AutoCommands() //{{{
                     lastPattern = autoCmd.pattern;
 
                     liberator.echomsg("autocommand " + autoCmd.command, 9);
-                    liberator.execute(commands.replaceTokens(autoCmd.command, args));
+                    if (autoCmd.command instanceof Function)
+                        autoCmd.command.call(autoCmd, args);
+                    else
+                        liberator.execute(commands.replaceTokens(autoCmd.command, args));
                 }
             }
         }
