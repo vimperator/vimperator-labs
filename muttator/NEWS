@@ -1,7 +1,7 @@
-<pre>
-2008-08-xx:
+2008-xx-xx:
     * version 0.5
     * new "threads" option (non-functional for now)
+    * new "archivefolder" option
 
 2008-08-03:
     * version 0.4
@@ -47,5 +47,5 @@
 2008-04-29:
     * version 0.1
     * first public release, straight port from vimperator with many basic mappings
-</pre>
+
 <!-- vim: set sw=4 ts=4 et: -->
