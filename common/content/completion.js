@@ -1580,7 +1580,7 @@ function Completion() //{{{
             context.completions = Array.map(menu.childNodes, function (n) [n.label, ""]);
         },
 
-        alternateStylesheet: function alternateStylesheet(context)
+        alternateStyleSheet: function alternateStylesheet(context)
         {
             context.title = ["Stylesheet", "Location"];
 

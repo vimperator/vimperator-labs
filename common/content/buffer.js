@@ -525,7 +525,7 @@ function Buffer() //{{{
         },
         {
             argCount: "?",
-            completer: function (context) completion.alternateStylesheet(context),
+            completer: function (context) completion.alternateStyleSheet(context),
             literal: 0
         });
 

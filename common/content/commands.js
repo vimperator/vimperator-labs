@@ -740,7 +740,7 @@ function Commands() //{{{
 
     // TODO: offer completion.ex?
     var completeOptionMap = {
-        altstyle: "alternateStylesheet", bookmark: "bookmark",
+        altstyle: "alternateStyleSheet", bookmark: "bookmark",
         buffer: "buffer", color: "colorScheme", command: "command",
         dialog: "dialog", dir: "directory", environment: "environment",
         event: "autocmdEvent", file: "file", help: "help",
