@@ -207,7 +207,7 @@ function AutoCommands() //{{{
                 }
             });
 
-            var list = template.commandOutput(
+            let list = template.commandOutput(
                 <table>
                     <tr highlight="Title">
                         <td colspan="2">----- Auto Commands -----</td>
@@ -282,7 +282,7 @@ function Events() //{{{
 
     try // not every extension has a getBrowser() method
     {
-        var tabcontainer = getBrowser().mTabContainer;
+        let tabcontainer = getBrowser().mTabContainer;
         if (tabcontainer) // not every VIM-like extension has a tab container
         {
             tabcontainer.addEventListener("TabMove", function (event)
@@ -434,14 +434,14 @@ function Events() //{{{
 
     function isFormElemFocused()
     {
-        var elt = window.document.commandDispatcher.focusedElement;
+        let elt = window.document.commandDispatcher.focusedElement;
         if (elt == null)
             return false;
 
         try
         { // sometimes the elt doesn't have .localName
-            var tagname = elt.localName.toLowerCase();
-            var type = elt.type.toLowerCase();
+            let tagname = elt.localName.toLowerCase();
+            let type = elt.type.toLowerCase();
 
             if ((tagname == "input" && (type != "image")) ||
                     tagname == "textarea" ||
@@ -524,7 +524,7 @@ function Events() //{{{
                 if (options["focuscontent"])
                 {
                     setTimeout(function () {
-                        var focused = document.commandDispatcher.focusedElement;
+                        let focused = document.commandDispatcher.focusedElement;
                         if (focused && (focused.value !== undefined) && focused.value.length == 0)
                             focused.blur();
                     }, 100);
@@ -741,7 +741,7 @@ function Events() //{{{
 
         playMacro: function (macro)
         {
-            var res = false;
+            let res = false;
             if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1)
             {
                 liberator.echoerr("E354: Invalid register name: '" + macro + "'");
@@ -794,13 +794,13 @@ function Events() //{{{
             if (!filter)
                 return macros;
 
-            var re = new RegExp(filter);
+            let re = new RegExp(filter);
             return ([macro, keys] for ([macro, keys] in macros) if (re.test(macro)));
         },
 
         deleteMacros: function (filter)
         {
-            var re = new RegExp(filter);
+            let re = new RegExp(filter);
 
             for (let [item,] in macros)
             {
@@ -817,13 +817,13 @@ function Events() //{{{
         //              if you want < to be taken literally, prepend it with a \\
         feedkeys: function (keys, noremap, silent)
         {
-            var doc = window.document;
-            var view = window.document.defaultView;
-            var escapeKey = false; // \ to escape some special keys
+            let doc = window.document;
+            let view = window.document.defaultView;
+            let escapeKey = false; // \ to escape some special keys
 
-            var wasFeeding = this.feedingKeys;
+            let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
-            var wasSilent = commandline.silent;
+            let wasSilent = commandline.silent;
             if (silent)
                 commandline.silent = silent;
 
@@ -1041,7 +1041,7 @@ function Events() //{{{
             modes.show();
 
             // TODO: allow macros to be continued when page does not fully load with an option
-            var ret = (buffer.loaded == 1);
+            let ret = (buffer.loaded == 1);
             if (!ret)
                 liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
             liberator.dump("done waiting: " + ret);
@@ -1066,8 +1066,8 @@ function Events() //{{{
 
             function hasHTMLDocument(win) win && win.document && win.document instanceof HTMLDocument
 
-            var win  = window.document.commandDispatcher.focusedWindow;
-            var elem = window.document.commandDispatcher.focusedElement;
+            let win  = window.document.commandDispatcher.focusedWindow;
+            let elem = window.document.commandDispatcher.focusedElement;
 
             if (win && win.top == content && liberator.has("tabs"))
                 tabs.localStore.focusedFrame = win;
@@ -1136,8 +1136,8 @@ function Events() //{{{
 
         onSelectionChange: function (event)
         {
-            var couldCopy = false;
-            var controller = document.commandDispatcher.getControllerForCommand("cmd_copy");
+            let couldCopy = false;
+            let controller = document.commandDispatcher.getControllerForCommand("cmd_copy");
             if (controller && controller.isCommandEnabled("cmd_copy"))
                 couldCopy = true;
 
@@ -1176,7 +1176,7 @@ function Events() //{{{
                 {
                     case modes.NORMAL:
                         // clear any selection made
-                        var selection = window.content.getSelection();
+                        let selection = window.content.getSelection();
                         try
                         { // a simple if (selection) does not seem to work
                             selection.collapseToStart();
@@ -1606,7 +1606,7 @@ function Events() //{{{
             },
             setOverLink : function (link, b)
             {
-                var ssli = options["showstatuslinks"];
+                let ssli = options["showstatuslinks"];
                 if (link && ssli)
                 {
                     if (ssli == 1)
@@ -1635,8 +1635,8 @@ function Events() //{{{
         prefObserver: {
             register: function ()
             {
-                var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                            .getService(Components.interfaces.nsIPrefService);
+                const prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                                              .getService(Components.interfaces.nsIPrefService);
                 this._branch = prefService.getBranch(""); // better way to monitor all changes?
                 this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
                 this._branch.addObserver("", this, false);
@@ -1658,7 +1658,7 @@ function Events() //{{{
                 switch (aData)
                 {
                     case "accessibility.browsewithcaret":
-                        var value = options.getPref("accessibility.browsewithcaret", false);
+                        let value = options.getPref("accessibility.browsewithcaret", false);
                         liberator.mode = value ? modes.CARET : modes.NORMAL;
                         break;
                 }
