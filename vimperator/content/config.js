@@ -233,21 +233,20 @@ const config = { //{{{
                 {
                     if (/^file:\/|^\//.test(url))
                     {
-                        //var strippedFilename = url.replace(/^(file:\/\/)?(.*)/, "$2");
-                        var file = io.getFile(url);
-                        if (!file.exists() || !file.isDirectory())
-                            return false;
-                        else
-                            return true;
+                        let file = io.getFile(url);
+                        return file.exists() && file.isDirectory();
                     }
-
-                    // for all other locations just check if the URL ends with /
-                    return /\/$/.test(url);
+                    else
+                    {
+                        // for all other locations just check if the URL ends with /
+                        return /\/$/.test(url);
+                    }
                 }
 
                 if (count < 1)
                     count = 1;
 
+                // XXX
                 var url = buffer.URL;
                 for (let i = 0; i < count; i++)
                 {
@@ -259,11 +258,9 @@ const config = { //{{{
                 url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
 
                 if (url == buffer.URL)
-                {
                     liberator.beep();
-                    return;
-                }
-                liberator.open(url);
+                else
+                    liberator.open(url);
             },
             { flags: Mappings.flags.COUNT });
 
