@@ -220,7 +220,7 @@ const config = { //{{{
             "Open homepage in a new tab",
             function ()
             {
-                var homepages = gHomeButton.getHomePage();
+                let homepages = gHomeButton.getHomePage();
                 liberator.open(homepages, /\bhomepage\b/.test(options["activate"]) ?
                         liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
             });
@@ -247,7 +247,7 @@ const config = { //{{{
                     count = 1;
 
                 // XXX
-                var url = buffer.URL;
+                let url = buffer.URL;
                 for (let i = 0; i < count; i++)
                 {
                     if (isDirectory(url))
@@ -268,7 +268,7 @@ const config = { //{{{
             "Go to the root of the website",
             function ()
             {
-                var uri = content.document.location;
+                let uri = content.document.location;
                 if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
                 {
                     liberator.beep();
@@ -318,7 +318,7 @@ const config = { //{{{
             "Redraw the screen",
             function ()
             {
-                var wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+                let wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
                                 getInterface(Components.interfaces.nsIDOMWindowUtils);
                 wu.redraw();
                 modes.show();
@@ -398,8 +398,8 @@ const config = { //{{{
             {
                 setter: function (value)
                 {
-                    var ioService = Components.classes['@mozilla.org/network/io-service;1']
-                                              .getService(Components.interfaces.nsIIOService2);
+                    const ioService = Components.classes['@mozilla.org/network/io-service;1']
+                                                .getService(Components.interfaces.nsIIOService2);
 
                     ioService.offline = !value;
                     gPrefService.setBoolPref("browser.offline", ioService.offline);
@@ -421,7 +421,7 @@ const config = { //{{{
                 {
                     try
                     {
-                        var id = config.mainWindowID || "main-window";
+                        let id = config.mainWindowID || "main-window";
                         document.getElementById(id).setAttribute("titlemodifier", value);
                         if (window.content.document.title.length > 0)
                             document.title = window.content.document.title + " - " + value;
