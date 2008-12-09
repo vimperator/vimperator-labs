@@ -9,7 +9,7 @@ modifying the tree. Here is a brief synopsis of the kind of
 usage you'll see herein:
 
 > let xml =
-	<foo bar="baz" baz="qux">
+        <foo bar="baz" baz="qux">
             <bar>
                 <baz id="1"/>
             </bar>

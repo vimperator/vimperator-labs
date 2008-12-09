@@ -59,23 +59,23 @@ function Hints() //{{{
     Mode.defaultValue("tags", function () function () options.hinttags);
     function extended() options.extendedhinttags;
     const hintModes = {
-        ";": Mode("Focus hint",		    		 function (elem) buffer.focusElement(elem),                             extended),
-        a: Mode("Save hint with prompt",		 function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                   function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //html|body"),
-        s: Mode("Save hint",					 function (elem) buffer.saveLink(elem, true)),
-        o: Mode("Follow hint",					 function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
-        t: Mode("Follow hint in a new tab",		 function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
-        b: Mode("Follow hint in a background tab",	 function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
-        v: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, false),                    extended),
-        V: Mode("View hint source",				 function (elem, loc) buffer.viewSource(loc, true),                     extended),
-        w: Mode("Follow hint in a new window",	 function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
+        ";": Mode("Focus hint",                    function (elem) buffer.focusElement(elem),                             extended),
+        a: Mode("Save hint with prompt",           function (elem) buffer.saveLink(elem, false)),
+        f: Mode("Focus frame",                     function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //html|body"),
+        s: Mode("Save hint",                       function (elem) buffer.saveLink(elem, true)),
+        o: Mode("Follow hint",                     function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
+        t: Mode("Follow hint in a new tab",        function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
+        b: Mode("Follow hint in a background tab", function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
+        v: Mode("View hint source",                function (elem, loc) buffer.viewSource(loc, false),                    extended),
+        V: Mode("View hint source",                function (elem, loc) buffer.viewSource(loc, true),                     extended),
+        w: Mode("Follow hint in a new window",     function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
 
-        "?": Mode("Show information for hint",	 function (elem) buffer.showElementInfo(elem),                          extended),
-        O: Mode("Open location based on hint",	 function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Open new tab based on hint",	 function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Open new window based on hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
-        y: Mode("Yank hint location",			 function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",		 function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+        "?": Mode("Show information for hint",     function (elem) buffer.showElementInfo(elem),                          extended),
+        O: Mode("Open location based on hint",     function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode("Open new tab based on hint",      function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode("Open new window based on hint",   function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        y: Mode("Yank hint location",              function (elem, loc) util.copyToClipboard(loc, true)),
+        Y: Mode("Yank hint description",           function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
     };
 
     // reset all important variables

@@ -1348,20 +1348,20 @@ function Events() //{{{
 
                 if (modes.extended & modes.HINTS)
                 {
-  	                // under HINT mode, certain keys are redirected to hints.onEvent
-                	if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
-                		|| key == mappings.getMapLeader()
-                		|| (key == "<BS>" && hints.previnput == "number")
-                		|| (/^[0-9]$/.test(key) && !hints.escNumbers))
-                	{
-                		hints.onEvent(event);
-                		event.preventDefault();
-                		event.stopPropagation();
-                		return false;
-                	}
+                    // under HINT mode, certain keys are redirected to hints.onEvent
+                    if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
+                        || key == mappings.getMapLeader()
+                        || (key == "<BS>" && hints.previnput == "number")
+                        || (/^[0-9]$/.test(key) && !hints.escNumbers))
+                    {
+                        hints.onEvent(event);
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return false;
+                    }
 
-                	// others are left to generate the 'input' event or handled by firefox
-                	return;
+                    // others are left to generate the 'input' event or handled by firefox
+                    return;
                 }
             }
 
