@@ -468,51 +468,40 @@ const util = { //{{{
         return urls.map(function (url) {
             try
             {
+                // Try to find a matching file.
                 let file = io.getFile(url);
                 if (file.exists() && file.isReadable())
                     return file.path;
             }
             catch (e) {}
 
-            // removes spaces from the string if it starts with http:// or something like that
-            if (/^\w+:\/\//.test(url))
-                url = url.replace(/\s+/g, "");
-
             // strip each 'URL' - makes things simpler later on
             url = url.replace(/^\s+|\s+$/, "");
 
-            // if the string
-            //    * contains a space OR
-            //    * does NOT have a period in it
-            // AND
-            //    * has no valid protocol
-            // then assume that we want to defsearch (or bookmark
-            // keyword) it. Otherwise, let Firefox figure it out
+            // Look for a valid protocol
             let proto = url.match(/^([-\w]+):/);
-            if ((/\s/.test(url) || !/\./.test(url)) &&
-                !(proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]]))
-            {
-                // TODO: it would be clearer if the appropriate call to
-                // getSearchURL was made based on whether or not the first word was
-                // indeed an SE alias rather than seeing if getSearchURL can
-                // process the call usefully and trying again if it fails - much
-                // like the comments below ;-)
+            if (proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]])
+                // Handle as URL, but remove spaces. Useful for copied/'p'asted URLs.
+                return url.replace(/\s+/g, "");
 
-                // check for a search engine match in the string
-                let searchURL = bookmarks.getSearchURL(url, false);
-                if (searchURL)
-                {
-                    return searchURL;
-                }
-                else // no search engine match, search for the whole string in the default engine
-                {
-                    searchURL = bookmarks.getSearchURL(url, true);
-                    if (searchURL)
-                        return searchURL;
-                }
-            }
-            // if we are here let Firefox handle the url and hope it does
-            // something useful with it :)
+            // Ok, not a valid proto. If it looks like URL-ish (foo.com/bar),
+            // let Gecko figure it out.
+            if (/[.]/.test(url) && !/\s/.test(url))
+                return url;
+
+            // TODO: it would be clearer if the appropriate call to
+            // getSearchURL was made based on whether or not the first word was
+            // indeed an SE alias rather than seeing if getSearchURL can
+            // process the call usefully and trying again if it fails - much
+            // like the comments below ;-)
+
+            // check for a search engine match in the string, then try to
+            // search for the whole string in the default engine
+            let searchURL = bookmarks.getSearchURL(url, false) || bookmarks.getSearchURL(url, true);
+            if (searchURL)
+                return searchURL;
+
+            // Hmm. No defsearch? Let Firefox deal with it, then.
             return url;
         });
     },
