@@ -202,6 +202,10 @@ function Mail() //{{{
 //        "Set the external text editor",
 //        "string", "gvim -f");
 
+    options.add(["archivefolder"],
+        "Set the archive folder",
+        "string", "Archive");
+
     options.add(["layout"],
         "Set the layout of the mail window",
         "string", "inherit",
@@ -430,7 +434,7 @@ function Mail() //{{{
 
     mappings.add(myModes, ["<C-s>"],
         "Archive message",
-        function () { moveOrCopy(false, "Archive"); });
+        function () { moveOrCopy(false, options["archivefolder"]); });
 
     mappings.add(myModes, ["]s"],
         "Select next starred message",
