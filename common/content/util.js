@@ -489,9 +489,8 @@ const util = { //{{{
             // then assume that we want to defsearch (or bookmark
             // keyword) it. Otherwise, let Firefox figure it out
             let proto = url.match(/^([-\w]+):/);
-            if( ( /\s/.test(url) || !/\./.test(url) )
-                  &&
-                  !( proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]] ) )
+            if ((/\s/.test(url) || !/\./.test(url)) &&
+                !(proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]]))
             {
                 // TODO: it would be clearer if the appropriate call to
                 // getSearchURL was made based on whether or not the first word was
