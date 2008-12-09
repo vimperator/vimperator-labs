@@ -1583,22 +1583,18 @@ function Completion() //{{{
         alternateStylesheet: function alternateStylesheet(context)
         {
             context.title = ["Stylesheet", "Location"];
-            context.keys = { text: "title", description: function (item) item.href };
 
             // unify split style sheets
-            let completions = buffer.alternateStyleSheets;
-            completions.forEach(function (stylesheet) {
-                stylesheet.href = stylesheet.href || "inline";
-                completions = completions.filter(function (sheet) {
-                    if (stylesheet.title == sheet.title && stylesheet != sheet)
-                    {
-                        stylesheet.href += ", " + sheet.href;
-                        return false;
-                    }
-                    return true;
-                });
+            let styles = {};
+
+            buffer.alternateStyleSheets.forEach(function (style) {
+                if (style.title in styles)
+                    styles[style.title].push(style.href);
+                else
+                    styles[style.title] = [style.href];
             });
-            context.completions = completions;
+
+            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
         },
 
         // filter a list of urls
