@@ -1161,6 +1161,23 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        alternateStyleSheet: function alternateStylesheet(context)
+        {
+            context.title = ["Stylesheet", "Location"];
+
+            // unify split style sheets
+            let styles = {};
+
+            buffer.alternateStyleSheets.forEach(function (style) {
+                if (style.title in styles)
+                    styles[style.title].push(style.href);
+                else
+                    styles[style.title] = [style.href];
+            });
+
+            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
+        },
+
         autocmdEvent: function autocmdEvent(context)
         {
             context.completions = config.autocommands;
@@ -1217,11 +1234,12 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(context)
         {
+            // TODO: use path for the description?
             io.getRuntimeDirectories("colors").forEach(function (dir) {
                 context.fork(dir.path, 0, null, function (context) {
                     context.filter = dir.path + io.pathSeparator + context.filter;
                     completion.file(context, true);
-                    context.title = [dir.path]; // TODO: why not "Colorscheme"?
+                    context.title = ["Color Scheme"];
                     context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
                 });
             });
@@ -1578,23 +1596,6 @@ function Completion() //{{{
             let menu = document.getElementById("viewSidebarMenu");
             context.title = ["Sidebar Panel"];
             context.completions = Array.map(menu.childNodes, function (n) [n.label, ""]);
-        },
-
-        alternateStyleSheet: function alternateStylesheet(context)
-        {
-            context.title = ["Stylesheet", "Location"];
-
-            // unify split style sheets
-            let styles = {};
-
-            buffer.alternateStyleSheets.forEach(function (style) {
-                if (style.title in styles)
-                    styles[style.title].push(style.href);
-                else
-                    styles[style.title] = [style.href];
-            });
-
-            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
         },
 
         // filter a list of urls
