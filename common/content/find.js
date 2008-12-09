@@ -337,7 +337,7 @@ function Search() //{{{
         // TODO: backwards seems impossible i fear :(
         find: function (str, backwards)
         {
-            var fastFind = getBrowser().fastFind;
+            let fastFind = getBrowser().fastFind;
 
             processUserPattern(str);
 
@@ -359,8 +359,8 @@ function Search() //{{{
             if (getBrowser().fastFind.searchString != lastSearchString)
                 this.find(lastSearchString, false);
 
-            var up = reverse ? !lastSearchBackwards : lastSearchBackwards;
-            var result = getBrowser().fastFind.findAgain(up, linksOnly);
+            let up = reverse ? !lastSearchBackwards : lastSearchBackwards;
+            let result = getBrowser().fastFind.findAgain(up, linksOnly);
 
             if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
             {
