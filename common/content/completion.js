@@ -1605,9 +1605,9 @@ function Completion() //{{{
         // if the 'complete' argument is passed like "h", it temporarily overrides the complete option
         url: function url(context, complete)
         {
-            var numLocationCompletions = 0; // how many async completions did we already return to the caller?
-            var start = 0;
-            var skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
+            let numLocationCompletions = 0; // how many async completions did we already return to the caller?
+            let start = 0;
+            let skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
             if (skip)
                 context.advance(skip[0].length);
 
