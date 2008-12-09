@@ -5,6 +5,8 @@ BUGS:
 
 FEATURES:
 9 edit messages with vim
+8 the archives need to be mailbox specific
+  - currently it archives mail to the first Archive folder found
 7 :set! mailnews.wraplength=140 or similar
 6 add a feature to show emails from threads under each other like in gmail
 
