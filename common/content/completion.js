@@ -1169,10 +1169,10 @@ function Completion() //{{{
             let styles = {};
 
             buffer.alternateStyleSheets.forEach(function (style) {
-                if (style.title in styles)
-                    styles[style.title].push(style.href);
-                else
-                    styles[style.title] = [style.href];
+                if (!(style.title in styles))
+                    styles[style.title] = [];
+
+                styles[style.title].push(style.href || "inline");
             });
 
             context.completions = [[s, styles[s].join(", ")] for (s in styles)];
