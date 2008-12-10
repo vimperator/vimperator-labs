@@ -359,10 +359,10 @@ const config = { //{{{
             "Open the sidebar window",
             function (args)
             {
-                args = args.string;
+                let arg = args.literalArg;
 
                 // focus if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == args)
+                if (document.getElementById("sidebar-title").value == arg)
                 {
                     document.getElementById("sidebar-box").focus();
                     return;
@@ -372,14 +372,14 @@ const config = { //{{{
 
                 for (let [,panel] in Iterator(menu.childNodes))
                 {
-                    if (panel.label == args)
+                    if (panel.label == arg)
                     {
                         panel.doCommand();
                         return;
                     }
                 }
 
-                liberator.echoerr("No sidebar " + args + " found");
+                liberator.echoerr("No sidebar " + arg + " found");
             },
             {
                 argCount: "1",
