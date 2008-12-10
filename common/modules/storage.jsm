@@ -27,7 +27,61 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-var EXPORTED_SYMBOLS = ["storage"];
+var EXPORTED_SYMBOLS = ["storage", "Timer"];
+
+function Timer(minInterval, maxInterval, callback)
+{
+    let timer = Components.classes["@mozilla.org/timer;1"]
+                          .createInstance(Components.interfaces.nsITimer);
+    this.doneAt = 0;
+    this.latest = 0;
+    this.notify = function (aTimer)
+    {
+        timer.cancel();
+        this.latest = 0;
+        /* minInterval is the time between the completion of the command and the next firing. */
+        this.doneAt = Date.now() + minInterval;
+
+        try
+        {
+            callback(this.arg);
+        }
+        finally
+        {
+            this.doneAt = Date.now() + minInterval;
+        }
+    };
+    this.tell = function (arg)
+    {
+        if (arg !== undefined)
+            this.arg = arg;
+
+        let now = Date.now();
+        if (this.doneAt == -1)
+            timer.cancel();
+
+        let timeout = minInterval;
+        if (now > this.doneAt && this.doneAt > -1)
+            timeout = 0;
+        else if (this.latest)
+            timeout = Math.min(timeout, this.latest - now);
+        else
+            this.latest = now + maxInterval;
+
+        timer.initWithCallback(this, Math.max(timeout, 0), timer.TYPE_ONE_SHOT);
+        this.doneAt = -1;
+    };
+    this.reset = function ()
+    {
+        timer.cancel();
+        this.doneAt = 0;
+    };
+    this.flush = function ()
+    {
+        if (this.latest)
+            this.notify();
+    };
+}
 
 var prefService = Components.classes["@mozilla.org/preferences-service;1"]
                             .getService(Components.interfaces.nsIPrefService)
@@ -159,6 +213,7 @@ function ArrayStore(name, store, data)
         var funcName = aFuncName;
         arguments[0] = array;
         array = Array[funcName].apply(Array, arguments);
+        this.fireEvent("change", null);
     };
 
     this.get = function get(index)
@@ -172,6 +227,7 @@ ArrayStore.prototype = prototype;
 
 var keys = {};
 var observers = {};
+var timers = {};
 
 var storage = {
     newObject: function newObject(key, constructor, store, type, reload)
@@ -181,6 +237,7 @@ var storage = {
             if (key in this && !reload)
                 throw Error;
             keys[key] = new constructor(key, store, loadPref(key, store, type || Object));
+            timers[key] = new Timer(1000, 10000, function () storage.save(key));
             this.__defineGetter__(key, function () keys[key]);
         }
         return keys[key];
@@ -217,6 +274,7 @@ var storage = {
     {
         for each (callback in observers[key])
             callback(key, event, arg);
+        timers[key].tell();
     },
 
     save: function save(key)

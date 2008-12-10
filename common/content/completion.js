@@ -1404,7 +1404,7 @@ function Completion() //{{{
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
             context.compare = null;
-            let timer = new util.Timer(50, 100, function (result) {
+            let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
                     [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]

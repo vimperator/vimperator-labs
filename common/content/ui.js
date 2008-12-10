@@ -408,21 +408,21 @@ function CommandLine() //{{{
     ////////////////////// TIMERS //////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var statusTimer = new util.Timer(5, 100, function statusTell() {
+    var statusTimer = new Timer(5, 100, function statusTell() {
         if (completions.selected == null)
             statusline.updateProgress("");
         else
             statusline.updateProgress("match " + (completions.selected + 1) + " of " + completions.items.length);
     });
 
-    var autocompleteTimer = new util.Timer(201, 300, function autocompleteTell(tabPressed) {
+    var autocompleteTimer = new Timer(201, 300, function autocompleteTell(tabPressed) {
         if (events.feedingKeys || !completions)
             return;
         completions.complete(true, false);
         completions.itemList.show();
     });
 
-    var tabTimer = new util.Timer(0, 0, function tabTell(event) {
+    var tabTimer = new Timer(0, 0, function tabTell(event) {
         if (completions)
             completions.tab(event.shiftKey);
     });
