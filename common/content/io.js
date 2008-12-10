@@ -340,16 +340,15 @@ function IO() //{{{
         "Run a command",
         function (args)
         {
-            let special = args.bang;
-            args = args.string;
+            let arg = args.literalArg;
 
             // :!! needs to be treated specially as the command parser sets the
-            // special flag but removes the ! from args
-            if (special)
-                args = "!" + args;
+            // bang flag but removes the ! from arg
+            if (args.bang)
+                arg = "!" + arg;
 
             // replaceable bang and no previous command?
-            if (/((^|[^\\])(\\\\)*)!/.test(args) && !lastRunCommand)
+            if (/((^|[^\\])(\\\\)*)!/.test(arg) && !lastRunCommand)
             {
                 liberator.echoerr("E34: No previous command");
                 return;
@@ -357,13 +356,13 @@ function IO() //{{{
 
             // NOTE: Vim doesn't replace ! preceded by 2 or more backslashes and documents it - desirable?
             // pass through a raw bang when escaped or substitute the last command
-            args = args.replace(/(\\)*!/g,
+            arg = arg.replace(/(\\)*!/g,
                 function (m) /^\\(\\\\)*!$/.test(m) ? m.replace("\\!", "!") : m.replace("!", lastRunCommand)
             );
 
-            lastRunCommand = args;
+            lastRunCommand = arg;
 
-            let output = io.system(args);
+            let output = io.system(arg);
 
             commandline.echo(template.commandOutput(<span highlight="CmdOutput">{output}</span>));
 
