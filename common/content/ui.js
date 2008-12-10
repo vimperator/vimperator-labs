@@ -1846,7 +1846,7 @@ function StatusLine() //{{{
             // tab numbers set
             if (options.get("guioptions").has("n", "N"))
             {
-                for (let [i, tab] in Iterator(getBrowser().mTabs))
+                for (let [i, tab] in util.Array.iterator2(getBrowser().mTabs))
                     tab.setAttribute("ordinal", i + 1);
             }
 
