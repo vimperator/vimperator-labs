@@ -921,7 +921,7 @@ function Editor() //{{{
                         return true;
                     }
                 }
-                liberator.echoerr("No abbreviations found");
+                liberator.echomsg("No abbreviations found");
                 return false;
             }
             else // list all (for that filter {i,c,!})
