@@ -346,13 +346,13 @@ const liberator = (function () //{{{
                     return;
                 }
 
-                liberator.help(args.string);
+                liberator.help(args.literalArg);
             },
             {
                 argCount: "?",
                 bang: true,
                 completer: function (context) completion.help(context),
-                literal: 0 // FIXME: why literal?
+                literal: 0
             });
 
         commands.add(["javas[cript]", "js"],
