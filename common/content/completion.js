@@ -1211,6 +1211,7 @@ function Completion() //{{{
                         <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
                         { process.call(this, item, text) }
                     </>];
+                
 
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
                 let indicator = " ";

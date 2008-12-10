@@ -251,7 +251,7 @@ function AutoCommands() //{{{
                     lastPattern = autoCmd.pattern;
 
                     liberator.echomsg("autocommand " + autoCmd.command, 9);
-                    if (autoCmd.command instanceof Function)
+                    if (typeof autoCmd.command == "function")
                         autoCmd.command.call(autoCmd, args);
                     else
                         liberator.execute(commands.replaceTokens(autoCmd.command, args));

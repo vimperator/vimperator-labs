@@ -216,15 +216,17 @@ commands.addUserCommand(["regr[essions]"],
 
             let runTests = (args.count >= 1 ? 1 : totalTests) - skippedTests;
             XML.ignoreWhitespace = false;
-            liberator.echomsg(<><span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
-                              tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in
-                      <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec</>);
+            liberator.echomsg(<e4x>
+                          <span style="font-weight: bold">{successfulTests}</span> of <span style="font-weight: bold">{runTests}</span>
+                          tests successfully completed (<span style="font-weight: bold">{skippedTests}</span> tests skipped) in
+                          <span class="time-total">{((Date.now() - now) / 1000.0)}</span> msec
+                      </e4x>.*);
             liberator.execute(":messages");
         }
 
         if (!args.bang)
         {
-            liberator.echo(<>
+            liberator.echo(<e4x>
                 <span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/>
 
                 It should not do any harm to your profile, but your current settings like options,
@@ -233,7 +235,7 @@ commands.addUserCommand(["regr[essions]"],
                 <!--' vim. -->
 
                 Use :regressions! to skip this prompt.
-            </>);
+            </e4x>.*);
             commandline.input("Type 'yes' to run the tests: ", function (res) { if (res == "yes") run(); } );
             return;
         }

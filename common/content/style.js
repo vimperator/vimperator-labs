@@ -6,6 +6,7 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
+// <css>
 Highlights.prototype.CSS = <![CDATA[
     Boolean     color: red;
     Function    color: navy;
@@ -112,6 +113,8 @@ Highlights.prototype.CSS = <![CDATA[
         padding: 0;
     }
     ]]>.toString();
+// </css>
+
 function Highlights(name, store, serial)
 {
     var self = this;

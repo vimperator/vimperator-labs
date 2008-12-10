@@ -50,6 +50,7 @@ const template = {
             var desc = this.process[1].call(this, item, this.getKey(item, "description"));
         }
 
+        // <e4x>
         return <div highlight={class || "CompItem"} style="white-space: nowrap">
                    <!-- The non-breaking spaces prevent empty elements
                       - from pushing the baseline down and enlarging
@@ -58,6 +59,7 @@ const template = {
                    <li highlight="CompResult">{text}&#160;</li>
                    <li highlight="CompDesc">{desc}&#160;</li>
                </div>;
+        // </e4x>
     },
 
     bookmarkDescription: function (item, text)
@@ -223,6 +225,7 @@ const template = {
 
     jumps: function jumps(index, elems)
     {
+        // <e4x>
         return this.commandOutput(
             <table>
                 <tr style="text-align: left;" highlight="Title">
@@ -238,10 +241,12 @@ const template = {
                     </tr>)
                 }
             </table>);
+        // </e4x>
     },
 
     options: function options(title, opts)
     {
+        // <e4x>
         return this.commandOutput(
             <table>
                 <tr highlight="Title" align="left">
@@ -257,11 +262,13 @@ const template = {
                     </tr>)
                 }
             </table>);
+        // </e4x>
     },
 
     table: function table(title, data, indent)
     {
         let table =
+        // <e4x>
             <table>
                 <tr highlight="Title" align="left">
                     <th colspan="2">{title}</th>
@@ -274,6 +281,7 @@ const template = {
                     </tr>)
                 }
             </table>;
+        // </e4x>
         if (table.tr.length() > 1)
             return table;
     },
@@ -281,6 +289,7 @@ const template = {
     tabular: function tabular(headings, style, iter)
     {
         /* This might be mind-bogglingly slow. We'll see. */
+        // <e4x>
         return this.commandOutput(
             <table>
                 <tr highlight="Title" align="left">
@@ -299,10 +308,12 @@ const template = {
                     </tr>)
                 }
             </table>);
+        // </e4x>
     },
 
     usage: function usage(iter)
     {
+        // <e4x>
         return this.commandOutput(
             <table>
             {
@@ -313,6 +324,7 @@ const template = {
                 </tr>)
             }
             </table>);
+        // </e4x>
     }
 };
 
