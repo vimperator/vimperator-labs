@@ -27,6 +27,7 @@ BUGS:
 - :regressions is broken, also now blanks the MOW when run
 
 FEATURES:
+9 fix local options
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 :highlight clear and :colorscheme default
