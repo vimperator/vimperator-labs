@@ -179,7 +179,11 @@ function Editor() //{{{
 
         commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
             "Remove an abbreviation" + modeDescription,
-            function (args) { editor.removeAbbreviation(mode, args.string); });
+            function (args) { editor.removeAbbreviation(mode, args.literalArg); },
+            {
+                argCount: "1",
+                literal: 0
+            });
 
         commands.add([ch + "abc[lear]"],
             "Remove all abbreviations" + modeDescription,

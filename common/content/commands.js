@@ -408,6 +408,9 @@ function Commands() //{{{
         // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
         //                             specified in "options"
         // TODO: should it handle comments?
+        //     : it might be nice to be able to specify that certain quoting
+        //     should be disabled E.g. backslash without having to resort to
+        //     using literal etc
         parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra)
         {
             function getNextArg(str) commands.parseArg(str);
