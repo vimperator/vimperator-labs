@@ -510,6 +510,7 @@ liberator.registerObserver("load_commands", function ()
                         compl.push([content.location.href, "Current URL"]);
                     }
                     catch (e) {}
+                    context.anchored = false;
                     context.completions = compl.concat([[s, ""] for each (s in styles.sites)])
                 }
                 else if (args.completeArg == 1)
