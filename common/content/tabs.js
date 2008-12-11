@@ -663,13 +663,15 @@ function Tabs() //{{{
             return store.options;
         },
 
-        get localStore()
+        getLocalStore: function (tab)
         {
-            let tab = this.getTab();
+            let tab = this.getTab(tab);
             if (!tab.liberatorStore)
                 tab.liberatorStore = {};
             return tab.liberatorStore;
         },
+
+        get localStore() this.getLocalStore(),
 
         get tabStrip()
         {

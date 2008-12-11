@@ -59,11 +59,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
         <commandset id="onVimperatorFocus"
             commandupdater="true"
             events="focus"
-            oncommandupdate="if (typeof liberator.modules.events != 'undefined') liberator.modules.events.onFocusChange(event);"/>
+            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onFocusChange(event);"/>
         <commandset id="onVimperatorSelect"
             commandupdater="true"
             events="select"
-            oncommandupdate="if (typeof liberator.modules.events != 'undefined') liberator.modules.events.onSelectionChange(event);"/>
+            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
 
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->

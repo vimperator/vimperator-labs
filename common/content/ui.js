@@ -631,6 +631,8 @@ function CommandLine() //{{{
             arg = util.objectToString(arg, useColor);
         else if (typeof arg == "string" && /\n/.test(arg))
             arg = <span highlight="CmdOutput">{arg}</span>;
+        else
+            arg = String(arg);
 
         return arg;
     }

@@ -811,7 +811,7 @@ function Events() //{{{
 
         // This method pushes keys into the event queue from liberator
         // it is similar to vim's feedkeys() method, but cannot cope with
-        // 2 partially feeded strings, you have to feed one parsable string
+        // 2 partially-fed strings, you have to feed one parsable string
         //
         // @param keys: a string like "2<C-f>" to pass
         //              if you want < to be taken literally, prepend it with a \\
@@ -829,6 +829,8 @@ function Events() //{{{
 
             try
             {
+                liberator.threadYield(true, true);
+
                 noremap = !!noremap;
 
                 for (var i = 0; i < keys.length; i++)
@@ -1259,7 +1261,8 @@ function Events() //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'") }, 100);
+                    if (lastMacro)
+                        setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'") }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1527,23 +1530,18 @@ function Events() //{{{
 
         // TODO: move to buffer.js?
         progressListener: {
-            QueryInterface: function (aIID)
-            {
-                if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-                        aIID.equals(Components.interfaces.nsIXULBrowserWindow) || // for setOverLink();
-                        aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-                        aIID.equals(Components.interfaces.nsISupports))
-                    return this;
-                throw Components.results.NS_NOINTERFACE;
-            },
+            QueryInterface: XPCOMUtils.generateQI([
+                Components.interfaces.nsIWebProgressListener,
+                Components.interfaces.nsIXULBrowserWindow
+            ]),
 
             // XXX: function may later be needed to detect a canceled synchronous openURL()
             onStateChange: function (webProgress, request, flags, status)
             {
+                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
                 // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
                 // receive statechange events for loading images and other parts of the web page
-                if (flags & (Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT |
-                            Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+                if (flags & (nsIWebProgressListener.STATE_IS_DOCUMENT | nsIWebProgressListener.STATE_IS_WINDOW))
                 {
                     // This fires when the load event is initiated
                     // only thrown for the current tab, not when another tab changes
@@ -1624,11 +1622,13 @@ function Events() //{{{
                 }
             },
 
-            // stub functions for the interfaces
-            setJSStatus: function (status) { ; },
-            setJSDefaultStatus: function (status) { ; },
-            setDefaultStatus: function (status) { ; },
-            onLinkIconAvailable: function () { ; }
+            // nsIXULBrowserWindow stubs
+            setJSDefaultStatus: function (status) {},
+            setJSStatus: function (status) {},
+
+            // Stub for something else, presumably. Not in any documented
+            // interface.
+            onLinkIconAvailable: function () {}
         },
 
         // TODO: move to options.js?
