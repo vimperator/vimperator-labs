@@ -219,6 +219,16 @@ const config = { //{{{
             liberator.loadModule("marks",       Marks);
             liberator.loadModule("hints",       Hints);
         }
+
+        commands.add(["pref[erences]", "prefs"],
+            "Show " + config.hostApplication + " preferences",
+            function (args)
+            {
+                window.openOptionsDialog();
+            },
+            {
+                argCount: "0"
+            });
     }
 }; //}}}
 

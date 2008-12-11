@@ -314,6 +314,26 @@ const config = { //{{{
                 literal: 0
             });
 
+        commands.add(["pref[erences]", "prefs"],
+            "Show " + config.hostApplication + " preferences",
+            function (args)
+            {
+                if (args.bang) // open Firefox settings GUI dialog
+                {
+                    liberator.open("about:config",
+                        (options["newtab"] && options.get("newtab").has("all", "prefs"))
+                                ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                }
+                else
+                {
+                    window.openPreferences();
+                }
+            },
+            {
+                argCount: "0",
+                bang: true
+            });
+
         commands.add(["redr[aw]"],
             "Redraw the screen",
             function ()
