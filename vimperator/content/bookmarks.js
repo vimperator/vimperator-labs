@@ -321,7 +321,7 @@ function Bookmarks() //{{{
             if (bookmarks.add(false, title, url, keyword, tags, args.bang))
             {
                 let extra = (title == url) ? "" : " (" + title + ")";
-                liberator.echo("Added bookmark: " + url + extra, commandline.FORCE_SINGLELINE);
+                liberator.echomsg("Added bookmark: " + url + extra, 1, commandline.FORCE_SINGLELINE);
             }
             else
                 liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
@@ -368,7 +368,7 @@ function Bookmarks() //{{{
             let url = args.string || buffer.URL;
             let deletedCount = bookmarks.remove(url);
 
-            liberator.echo(deletedCount + " bookmark(s) with url `" + url + "' deleted", commandline.FORCE_SINGLELINE);
+            liberator.echomsg(deletedCount + " bookmark(s) with url `" + url + "' deleted", 1, commandline.FORCE_SINGLELINE);
         },
         {
             argCount: "?",

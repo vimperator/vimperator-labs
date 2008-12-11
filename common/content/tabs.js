@@ -334,7 +334,7 @@ function Tabs() //{{{
                 }
 
                 if (removed > 0)
-                    liberator.echo(removed + " fewer tab(s)");
+                    liberator.echomsg(removed + " fewer tab(s)", 9);
                 else
                     liberator.echoerr("E94: No matching tab for " + args);
             }

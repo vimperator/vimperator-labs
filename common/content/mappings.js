@@ -401,7 +401,7 @@ function Mappings() //{{{
             // TODO: Move this to an ItemList to show this automatically
             if (list.*.length() == list.text().length())
             {
-                liberator.echo("No mapping found");
+                liberator.echomsg("No mapping found");
                 return;
             }
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);

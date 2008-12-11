@@ -138,12 +138,12 @@ function Mail() //{{{
         if (copy)
         {
             MsgCopyMessage(folders[0]);
-            setTimeout(function () { liberator.echo(count + " message(s) copied to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echomsg(count + " message(s) copied to " + folders[0].prettyName, 1); }, 100);
         }
         else
         {
             MsgMoveMessage(folders[0]);
-            setTimeout(function () { liberator.echo(count + " message(s) moved to " + folders[0].prettyName); }, 100);
+            setTimeout(function () { liberator.echomsg(count + " message(s) moved to " + folders[0].prettyName, 1); }, 100);
         }
         return true;
     }

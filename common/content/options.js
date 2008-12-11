@@ -443,7 +443,7 @@ function Options() //{{{
                 if (str.*.length())
                     liberator.echo(str, commandline.FORCE_MULTILINE);
                 else
-                    liberator.echo("No variables found");
+                    liberator.echomsg("No variables found");
                 return;
             }
 

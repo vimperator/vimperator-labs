@@ -919,7 +919,7 @@ const liberator = (function () //{{{
                 if (config.helpFiles.indexOf(helpFile) != -1)
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
-                    liberator.echo("Sorry, help file " + helpFile.quote() + " not found");
+                    liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
 
                 return;
             }

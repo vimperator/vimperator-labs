@@ -123,7 +123,7 @@ function Addressbook() //{{{
                 displayName = generateDisplayName(firstName, lastName);
 
             if (addressbook.add(mailAddr, firstName, lastName, displayName))
-                liberator.echo("Added address: " + displayName + " <" + mailAddr + ">", commandline.FORCE_SINGLELINE);
+                liberator.echomsg("Added address: " + displayName + " <" + mailAddr + ">", 1, commandline.FORCE_SINGLELINE);
             else
                 liberator.echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
 

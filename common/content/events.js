@@ -128,7 +128,10 @@ function AutoCommands() //{{{
         {
             args = args.string;
             if (/^\s*$/.test(args))
-                return liberator.echo("No matching autocommands");
+            {
+                liberator.echomsg("No matching autocommands");
+                return;
+            }
 
             let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
             url = url || buffer.URL;
@@ -148,7 +151,7 @@ function AutoCommands() //{{{
                 // TODO: perhaps trigger could return the number of autocmds triggered
                 // TODO: Perhaps this should take -args to pass to the command?
                 if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
-                    liberator.echo("No matching autocommands");
+                    liberator.echomsg("No matching autocommands");
                 else
                     autocommands.trigger(event, { url: url });
             }

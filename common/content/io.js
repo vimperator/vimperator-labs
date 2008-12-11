@@ -219,7 +219,7 @@ function IO() //{{{
             if (isAbsolutePath(args))
             {
                 if (io.setCurrentDirectory(args))
-                    liberator.echo(io.getCurrentDirectory().path);
+                    liberator.echomsg(io.getCurrentDirectory().path);
             }
             else
             {
@@ -233,7 +233,7 @@ function IO() //{{{
                     if (dir.exists() && dir.isDirectory() && dir.isReadable())
                     {
                         io.setCurrentDirectory(dir.path);
-                        liberator.echo(io.getCurrentDirectory().path);
+                        liberator.echomsg(io.getCurrentDirectory().path);
                         found = true;
                         break;
                     }
@@ -260,7 +260,7 @@ function IO() //{{{
 
     commands.add(["pw[d]"],
         "Print the current directory name",
-        function () { liberator.echo(io.getCurrentDirectory().path); },
+        function () { liberator.echomsg(io.getCurrentDirectory().path); },
         { argCount: "0" });
 
     // "mkv[imperatorrc]" or "mkm[uttatorrc]"

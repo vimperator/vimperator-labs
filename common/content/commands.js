@@ -836,7 +836,7 @@ function Commands() //{{{
                 }
                 else
                 {
-                    liberator.echo("No user-defined commands found");
+                    liberator.echomsg("No user-defined commands found");
                 }
             }
         },
