@@ -372,15 +372,24 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["p", "<MiddleMouse>"],
         "Open (put) a URL based on the current clipboard contents in the current buffer",
-        function () { liberator.open(util.readFromClipboard()); });
+        function ()
+        {
+            let url = util.readFromClipboard();
+            if (url)
+                liberator.open(url);
+            else
+                liberator.beep();
+        });
 
     mappings.add(myModes, ["P"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
         function ()
         {
-            liberator.open(util.readFromClipboard(),
-                /\bpaste\b/.test(options["activate"]) ?
-                liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+            let url = util.readFromClipboard();
+            if (url)
+                liberator.open(url, options.get("activate").has("paste") ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+            else
+                liberator.beep();
         });
 
     // reloading
