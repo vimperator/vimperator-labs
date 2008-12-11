@@ -715,7 +715,7 @@ lookup:
         {
             liberator.echomsg("Calling shell to execute: " + command, 4);
 
-            function escape(str) '"' + str.replace(/[\\"$]/g, "\\$1") + '"';
+            function escape(str) '"' + str.replace(/([\\"$])/g, "\\$1") + '"';
 
             let stdoutFile = ioManager.createTempFile();
             let stderrFile = ioManager.createTempFile();
