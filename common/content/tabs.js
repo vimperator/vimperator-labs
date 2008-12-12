@@ -301,14 +301,14 @@ function Tabs() //{{{
         function (args)
         {
             let special = args.bang;
-            let count = args.count;
-            args = args.string;
+            let count   = args.count;
+            let arg     = args.literalArg;
 
-            if (args)
+            if (arg)
             {
-                args = args.toLowerCase();
+                arg = arg.toLowerCase();
                 let removed = 0;
-                let matches = args.match(/^(\d+):?/);
+                let matches = arg.match(/^(\d+):?/);
 
                 if (matches)
                 {
@@ -324,8 +324,8 @@ function Tabs() //{{{
                         let uri = browsers[i].currentURI.spec.toLowerCase();
                         let host = browsers[i].currentURI.host.toLowerCase();
 
-                        if (host.indexOf(args) >= 0 || uri == args ||
-                            (special && (title.indexOf(args) >= 0 || uri.indexOf(args) >= 0)))
+                        if (host.indexOf(arg) >= 0 || uri == arg ||
+                            (special && (title.indexOf(arg) >= 0 || uri.indexOf(arg) >= 0)))
                         {
                             tabs.remove(tabs.getTab(i));
                             removed++;
@@ -336,12 +336,13 @@ function Tabs() //{{{
                 if (removed > 0)
                     liberator.echomsg(removed + " fewer tab(s)", 9);
                 else
-                    liberator.echoerr("E94: No matching tab for " + args);
+                    liberator.echoerr("E94: No matching tab for " + arg);
             }
             else // just remove the current tab
                 tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
         },
         {
+            argCount: "?",
             bang: true,
             count: true,
             completer: function (context) completion.buffer(context),
@@ -374,13 +375,13 @@ function Tabs() //{{{
         function (args)
         {
             let count = args.count;
-            args = args.string;
+            let arg   = args[0];
 
             // count is ignored if an arg is specified, as per Vim
-            if (args)
+            if (arg)
             {
-                if (/^\d+$/.test(args))
-                    tabs.select("-" + args, true); // FIXME: urgh!
+                if (/^\d+$/.test(arg))
+                    tabs.select("-" + arg, true); // FIXME: urgh!
                 else
                     liberator.echoerr("E488: Trailing characters");
             }
@@ -393,7 +394,10 @@ function Tabs() //{{{
                 tabs.select("-1", true);
             }
         },
-        { count: true });
+        {
+            argCount: "?",
+            count: true
+        });
 
     // TODO: "Zero count" if 0 specified as arg
     commands.add(["tabn[ext]", "tn[ext]", "bn[ext]"],
@@ -401,18 +405,18 @@ function Tabs() //{{{
         function (args)
         {
             let count = args.count;
-            args = args.string;
+            let arg   = args[0];
 
-            if (args || count > 0)
+            if (arg || count > 0)
             {
                 let index;
 
                 // count is ignored if an arg is specified, as per Vim
-                if (args)
+                if (arg)
                 {
-                    if (/^\d+$/.test(args))
+                    if (/^\d+$/.test(arg))
                     {
-                        index = args - 1;
+                        index = arg - 1;
                     }
                     else
                     {
@@ -435,7 +439,10 @@ function Tabs() //{{{
                 tabs.select("+1", true);
             }
         },
-        { count: true });
+        {
+            argCount: "?",
+            count: true
+        });
 
     commands.add(["tabr[ewind]", "tabfir[st]", "br[ewind]", "bf[irst]"],
         "Switch to the first tab",
@@ -449,16 +456,16 @@ function Tabs() //{{{
             "Switch to a buffer",
             function (args)
             {
-                let count = args.count;
                 let special = args.special;
-                args = args.string;
+                let count   = args.count;
+                let arg     = args.literalArg;
 
                 // if a numeric arg is specified any count is ignored; if a
                 // count and non-numeric arg are both specified then E488
-                if (args && count > 0)
+                if (arg && count > 0)
                 {
-                    if (/^\d+$/.test(args))
-                        tabs.switchTo(args, special);
+                    if (/^\d+$/.test(arg))
+                        tabs.switchTo(arg, special);
                     else
                         liberator.echoerr("E488: Trailing characters");
                 }
@@ -468,7 +475,7 @@ function Tabs() //{{{
                 }
                 else
                 {
-                    tabs.switchTo(args, special);
+                    tabs.switchTo(arg, special);
                 }
             },
             {

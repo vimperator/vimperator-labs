@@ -84,7 +84,7 @@ ________________________________________________________________________________
 
 
 |b| |:b| |:buffer|
-||:[count]b[uffer][!] {url|index}|| +
+||:[count]b[uffer][!] [a][url|index][a]|| +
 ||b||
 ________________________________________________________________________________
 Go to the specified buffer from the buffer list. Argument can be either the
@@ -96,6 +96,8 @@ selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
 
 If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
+
+If no argument is given the current buffer remains current.
 ________________________________________________________________________________
 
 
