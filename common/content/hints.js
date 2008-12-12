@@ -135,8 +135,7 @@ function Hints() //{{{
             if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
                 continue;
 
-            // TODO: mozilla docs recommend localName instead of tagName
-            tagname = elem.tagName.toLowerCase();
+            tagname = elem.localName.toLowerCase();
             if (tagname == "input" || tagname == "textarea")
                 text = elem.value;
             else if (tagname == "select")
@@ -363,16 +362,21 @@ function Hints() //{{{
 
     function hintMatcher(hintString) //{{{
     {
+        function tokenize(pat, string) string.split(pat).map(String.toLowerCase);
         function containsMatcher(hintString) //{{{
         {
-            var tokens = hintString.split(/ +/);
-            return function (linkText) tokens.every(function (token) linkText.indexOf(token) >= 0);
+            var tokens = tokenize(/\s+/, hintString);
+            return function (linkText)
+            {
+                linkText = linkText.toLowerCase();
+                return tokens.every(function (token) linkText.indexOf(token) >= 0);
+            }
         } //}}}
 
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
         {
-            var hintStrings    = hintString.split(/ +/);
-            var wordSplitRegex = new RegExp(options["wordseparators"]);
+            var hintStrings    = tokenize(/\s+/, hintString);
+            var wordSplitRegex = RegExp(options["wordseparators"]);
 
             // What the **** does this do? --Kris
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
@@ -484,19 +488,17 @@ function Hints() //{{{
                 return true;
             }
 
-            function wordStartsWith(linkText)
+            return function (linkText)
             {
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
-                let words = linkText.split(wordSplitRegex).map(String.toLowerCase);
+                let words = tokenize(linkText, wordSplitRegex);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
                     return stringsAtBeginningOfWords(hintStrings, words, allowWordOverleaping);
             }
-
-            return wordStartsWith;
         } //}}}
 
         var hintMatching = options["hintmatching"];
