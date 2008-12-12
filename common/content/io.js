@@ -413,7 +413,7 @@ function IO() //{{{
             // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
             if (/^~/.test(path))
             {
-                let home = environmentService.get("VIMPERATOR_HOME");
+                let home = environmentService.get(config.name.toUpperCase() + "_HOME");
 
                 if (!home)
                     home = environmentService.get("HOME");
