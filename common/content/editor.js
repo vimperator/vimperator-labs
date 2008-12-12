@@ -48,7 +48,7 @@ function Editor() //{{{
 
     function getController()
     {
-        var ed = getEditor();
+        let ed = getEditor();
         if (!ed || !ed.controllers)
             return null;
 
@@ -71,7 +71,7 @@ function Editor() //{{{
     // add mappings for commands like h,j,k,l,etc. in CARET, VISUAL and TEXTAREA mode
     function addMovementMap(keys, hasCount, caretModeMethod, caretModeArg, textareaCommand, visualTextareaCommand)
     {
-        var extraInfo = {};
+        let extraInfo = {};
         if (hasCount)
             extraInfo.flags = Mappings.flags.COUNT;
 
@@ -152,7 +152,7 @@ function Editor() //{{{
     // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
     function addAbbreviationCommands(ch, modeDescription)
     {
-        var mode = ch || "!";
+        let mode = ch || "!";
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
         commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
@@ -416,7 +416,7 @@ function Editor() //{{{
             }
             else
             {
-                var sel = window.content.document.getSelection();
+                let sel = window.content.document.getSelection();
                 if (sel)
                     util.copyToClipboard(sel, true);
                 else
@@ -444,7 +444,7 @@ function Editor() //{{{
         ["f"], "Move to a character on the current line after the cursor",
         function (count, arg)
         {
-            var pos = editor.findCharForward(arg, count);
+            let pos = editor.findCharForward(arg, count);
             if (pos >= 0)
                 editor.moveToPosition(pos, true, liberator.mode == modes.VISUAL);
         },
@@ -454,7 +454,7 @@ function Editor() //{{{
         ["F"], "Move to a charater on the current line before the cursor",
         function (count, arg)
         {
-            var pos = editor.findCharBackward(arg, count);
+            let pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
                 editor.moveToPosition(pos, false, liberator.mode == modes.VISUAL);
         },
@@ -464,7 +464,7 @@ function Editor() //{{{
         ["t"], "Move before a character on the current line",
         function (count, arg)
         {
-            var pos = editor.findCharForward(arg, count);
+            let pos = editor.findCharForward(arg, count);
             if (pos >= 0)
                 editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
         },
@@ -474,7 +474,7 @@ function Editor() //{{{
         ["T"], "Move before a character on the current line, backwards",
         function (count, arg)
         {
-            var pos = editor.findCharBackward(arg, count);
+            let pos = editor.findCharBackward(arg, count);
             if (pos >= 0)
                 editor.moveToPosition(pos + 1, false, liberator.mode == modes.VISUAL);
         },
@@ -496,14 +496,14 @@ function Editor() //{{{
 
             while (count-- > 0)
             {
-                var text = getEditor().value;
-                var pos = getEditor().selectionStart;
+                let text = getEditor().value;
+                let pos = getEditor().selectionStart;
                 if (pos >= text.length)
                 {
                     liberator.beep();
                     return;
                 }
-                var chr = text[pos];
+                let chr = text[pos];
                 getEditor().value = text.substring(0, pos) +
                     (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
                     text.substring(pos + 1);
@@ -529,8 +529,8 @@ function Editor() //{{{
 
         line: function ()
         {
-            var line = 1;
-            var text = getEditor().value;
+            let line = 1;
+            let text = getEditor().value;
             for (let i = 0; i < getEditor().selectionStart; i++)
                 if (text[i] == "\n")
                     line++;
@@ -539,8 +539,8 @@ function Editor() //{{{
 
         col: function ()
         {
-            var col = 1;
-            var text = getEditor().value;
+            let col = 1;
+            let text = getEditor().value;
             for (let i = 0; i < getEditor().selectionStart; i++)
             {
                 col++;
@@ -552,30 +552,30 @@ function Editor() //{{{
 
         unselectText: function ()
         {
-            var elt = window.document.commandDispatcher.focusedElement;
+            let elt = window.document.commandDispatcher.focusedElement;
             if (elt && elt.selectionEnd)
                 elt.selectionEnd = elt.selectionStart;
         },
 
         selectedText: function ()
         {
-            var text = getEditor().value;
+            let text = getEditor().value;
             return text.substring(getEditor().selectionStart, getEditor().selectionEnd);
         },
 
         pasteClipboard: function ()
         {
-            var elt = window.document.commandDispatcher.focusedElement;
+            let elt = window.document.commandDispatcher.focusedElement;
 
             if (elt.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
-                var rangeStart = elt.selectionStart; // caret position
-                var rangeEnd = elt.selectionEnd;
-                var tempStr1 = elt.value.substring(0, rangeStart);
-                var tempStr2 = util.readFromClipboard();
-                var tempStr3 = elt.value.substring(rangeEnd);
+                let rangeStart = elt.selectionStart; // caret position
+                let rangeEnd = elt.selectionEnd;
+                let tempStr1 = elt.value.substring(0, rangeStart);
+                let tempStr2 = util.readFromClipboard();
+                let tempStr3 = elt.value.substring(rangeEnd);
                 elt.value = tempStr1 + tempStr2 + tempStr3;
                 elt.selectionStart = rangeStart + tempStr2.length;
                 elt.selectionEnd = elt.selectionStart;
@@ -585,7 +585,7 @@ function Editor() //{{{
         // count is optional, defaults to 1
         executeCommand: function (cmd, count)
         {
-            var controller = getController();
+            let controller = getController();
             if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd))
             {
                 liberator.beep();
@@ -595,7 +595,7 @@ function Editor() //{{{
             if (typeof count != "number" || count < 1)
                 count = 1;
 
-            var didCommand = false;
+            let didCommand = false;
             while (count--)
             {
                 // some commands need this try/catch workaround, because a cmd_charPrevious triggered
@@ -747,7 +747,7 @@ function Editor() //{{{
             lastFindChar = ch;
             lastFindCharFunc = this.findCharForward;
 
-            var text = getEditor().value;
+            let text = getEditor().value;
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
@@ -774,7 +774,7 @@ function Editor() //{{{
             lastFindChar = ch;
             lastFindCharFunc = this.findCharBackward;
 
-            var text = getEditor().value;
+            let text = getEditor().value;
             if (!typeof count == "number" || count < 1)
                 count = 1;
 
@@ -813,11 +813,11 @@ function Editor() //{{{
             if (!options["editor"])
                 return false;
 
-            var textBox = null;
+            let textBox = null;
             if (!(config.isComposeWindow))
                 textBox = document.commandDispatcher.focusedElement;
 
-            var text = ""; // XXX
+            let text = ""; // XXX
             if (textBox)
                 text = textBox.value;
             else if (typeof GetCurrentEditor == "function") // Thunderbird composer
@@ -866,15 +866,15 @@ function Editor() //{{{
     //        {
                 try
                 {
-                    var val = io.readFile(tmpfile);
+                    let val = io.readFile(tmpfile);
                     if (textBox)
                         textBox.value = val;
                     else
                     {
                         //document.getElementById("content-frame").contentDocument.designMode = "on";
-                        var editor = GetCurrentEditor();
-                        var wholeDocRange = editor.document.createRange();
-                        var rootNode = editor.rootElement.QueryInterface(Components.interfaces.nsIDOMNode);
+                        let editor = GetCurrentEditor();
+                        let wholeDocRange = editor.document.createRange();
+                        let rootNode = editor.rootElement.QueryInterface(Components.interfaces.nsIDOMNode);
                         wholeDocRange.selectNodeContents(rootNode);
                         editor.selection.addRange(wholeDocRange);
                         editor.selection.deleteFromDocument();
@@ -894,8 +894,8 @@ function Editor() //{{{
             // blink the textbox after returning
             if (textBox)
             {
-                var timeout = 100;
-                var colors = [tmpBg, oldBg, tmpBg, oldBg];
+                let timeout = 100;
+                let colors = [tmpBg, oldBg, tmpBg, oldBg];
                 (function () {
                     textBox.style.backgroundColor = colors.shift();
                     if (colors.length > 0)
@@ -982,7 +982,7 @@ function Editor() //{{{
 
             if (abbreviations[lhs][0][0] == "!")
             {
-                var tmpOpp = ("i" == filter) ? "c" : "i";
+                let tmpOpp = ("i" == filter) ? "c" : "i";
                 abbreviations[lhs][1] = [tmpOpp, abbreviations[lhs][0][1]];
                 abbreviations[lhs][0] = [filter, rhs];
                 return;
@@ -996,13 +996,13 @@ function Editor() //{{{
 
         expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
         {
-            var textbox   = getEditor();
+            let textbox   = getEditor();
             if (!textbox)
                 return;
-            var text      = textbox.value;
-            var currStart = textbox.selectionStart;
-            var currEnd   = textbox.selectionEnd;
-            var foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
+            let text      = textbox.value;
+            let currStart = textbox.selectionStart;
+            let currEnd   = textbox.selectionEnd;
+            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
             if (!foundWord)
                 return true;
 
@@ -1013,8 +1013,8 @@ function Editor() //{{{
                     if (lhs == foundWord && (abbreviations[lhs][i][0] == filter || abbreviations[lhs][i][0] == "!"))
                     {
                         // if found, replace accordingly
-                        var len = foundWord.length;
-                        var abbrText = abbreviations[lhs][i][1];
+                        let len = foundWord.length;
+                        let abbrText = abbreviations[lhs][i][1];
                         text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
                         textbox.value = text;
                         textbox.selectionStart = currStart - len + abbrText.length;
