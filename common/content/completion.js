@@ -26,7 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-function CompletionContext(editor, name, offset)
+function CompletionContext(editor, name, offset) //{{{
 {
     if (!(this instanceof arguments.callee))
         return new arguments.callee(editor, name, offset);
@@ -115,6 +115,7 @@ function CompletionContext(editor, name, offset)
             key in self.keys ? item.item[self.keys[key]]
                              : item.item[key];
 }
+
 CompletionContext.prototype = {
     // Temporary
     get allItems()
@@ -517,7 +518,7 @@ CompletionContext.prototype = {
             liberator.threadYield(false, interruptable);
         return this.incomplete;
     }
-};
+}; //}}}
 
 function Completion() //{{{
 {
