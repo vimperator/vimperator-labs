@@ -409,26 +409,15 @@ function IO() //{{{
             if (WINDOWS)
                 path = path.replace("/", "\\", "g");
 
-            /* expand "~" to 
-             *      (VIMPERATOR|MUTTATOR)_HOME or   (depending on config.name)
-             *      LIBERATOR_HOME or 
-             *      HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
-             * in that order */
-            if (/^~/.test(path))
+            // expand ~
+            if (path[0] == "~")
             {
-                // First try (VIMPERATOR|MUTTATOR)_HOME
-                let home = environmentService.get(config.name.toUpperCase() + "_HOME");
+                // Try $(VIMPERATOR|MUTTATOR)_HOME || $HOME first, on all systems
+                let home = environmentService.get(config.name.toUpperCase() + "_HOME") ||
+                           environmentService.get("HOME");
 
-                // If no (VIMPERATOR|MUTTATOR)_HOME, then try LIBERATOR_HOME
-                if (!home)
-                    home = environmentService.get("LIBERATOR_HOME");
-
-                // If no (VIMPERATOR|MUTTATOR)_HOME, try HOME
-                if (!home)
-                    home = environmentService.get("HOME");
-
-                // On Windows, stretch even farther for other options
-                if (WINDOWS && !home)
+                // Windows has its own ideosynchratic $HOME variables.
+                if (!home && WINDOWS)
                     home = environmentService.get("USERPROFILE") ||
                            environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
 
@@ -440,7 +429,7 @@ function IO() //{{{
             // Kris reckons we shouldn't replicate this 'bug'. --djk
             // TODO: should we be doing this for all paths?
             path = path.replace(
-                RegExp("\\$(\\w+)\\b|\\${(\\w+)}" + (WINDOWS ? "|%(\\w+)%" : ""), "g"),
+                !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
                 function (m, n1, n2, n3) environmentService.get(n1 || n2 || n3) || m
             );
 
