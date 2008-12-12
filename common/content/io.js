@@ -409,8 +409,19 @@ function IO() //{{{
             if (WINDOWS)
                 path = path.replace("/", "\\", "g");
 
+            // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
+            // TODO: Vim does not expand variables set to an empty string (and documents it).
+            // Kris reckons we shouldn't replicate this 'bug'. --djk
+            // TODO: should we be doing this for all paths?
+            function expand(path) path.replace(
+                !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g
+                         : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
+                function (m, n1, n2, n3) environmentService.get(n1 || n2 || n3) || m
+            );
+            path = expand(path);
+
             // expand ~
-            if (path[0] == "~")
+            if (/^~(?:$|\/)/.test(path))
             {
                 // Try $(VIMPERATOR|MUTTATOR)_HOME || $HOME first, on all systems
                 let home = environmentService.get(config.name.toUpperCase() + "_HOME") ||
@@ -424,15 +435,12 @@ function IO() //{{{
                 path = home + path.substr(1);
             }
 
-            // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
-            // TODO: Vim does not expand variables set to an empty string (and documents it).
-            // Kris reckons we shouldn't replicate this 'bug'. --djk
-            // TODO: should we be doing this for all paths?
-            path = path.replace(
-                !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
-                function (m, n1, n2, n3) environmentService.get(n1 || n2 || n3) || m
-            );
+            // TODO: Vim expands paths twice, once before checking for ~, once
+            // after, but doesn't document it. Is this just a bug? --Kris
+            path = expand(path);
 
+            // FIXME: Should we be doing this here? I think it should be done
+            // by the arg parser or nowhere. --Kris
             return path.replace("\\ ", " ", "g");
         },
 
