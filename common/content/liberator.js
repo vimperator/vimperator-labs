@@ -734,7 +734,7 @@ const liberator = (function () //{{{
         // TODO: add proper level constants
         echomsg: function (str, verbosity, flags)
         {
-            flags |= commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE;
+            flags |= commandline.APPEND_TO_MESSAGES; //| commandline.FORCE_SINGLELINE; // TODO: was there a reason for this? --djk
 
             if (verbosity == null)
                 verbosity = 0; // verbosity level is exclusionary
