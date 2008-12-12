@@ -743,13 +743,13 @@ function Commands() //{{{
 
     // TODO: offer completion.ex?
     var completeOptionMap = {
-        altstyle: "alternateStyleSheet", bookmark: "bookmark",
-        buffer: "buffer", color: "colorScheme", command: "command",
-        dialog: "dialog", dir: "directory", environment: "environment",
-        event: "autocmdEvent", file: "file", help: "help",
-        highlight: "highlightGroup", javascript: "javascript", macro: "macro",
-        mapping: "userMapping", menu: "menuItem", option: "option",
-        preference: "preference", search: "search",
+        abbreviation: "abbreviation", altstyle: "alternateStyleSheet",
+        bookmark: "bookmark", buffer: "buffer", color: "colorScheme",
+        command: "command", dialog: "dialog", dir: "directory",
+        environment: "environment", event: "autocmdEvent", file: "file",
+        help: "help", highlight: "highlightGroup", javascript: "javascript",
+        macro: "macro", mapping: "userMapping", menu: "menuItem",
+        option: "option", preference: "preference", search: "search",
         shellcmd: "shellCommand", sidebar: "sidebar", url: "url",
         usercommand: "userCommand"
     };

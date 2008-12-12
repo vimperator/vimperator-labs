@@ -166,6 +166,7 @@ function Editor() //{{{
                     editor.listAbbreviations(mode, lhs || "");
             },
             {
+                completer: function (context, args) completion.abbreviation(context, args, mode),
                 literal: 1,
                 serial: function () [
                     {
@@ -183,6 +184,7 @@ function Editor() //{{{
             function (args) { editor.removeAbbreviation(mode, args.literalArg); },
             {
                 argCount: "1",
+                completer: function (context, args) completion.abbreviation(context, args, mode),
                 literal: 0
             });
 
@@ -907,33 +909,6 @@ function Editor() //{{{
 
         // Abbreviations {{{
 
-        // filter is i, c or "!" (insert or command abbreviations or both)
-        // ! -> list all, on c or i ! matches too
-        listAbbreviations: function (filter, lhs)
-        {
-            let searchFilter = (filter == "!") ? "!ci" : filter + "!";
-            let list = [[mode, lhs, rhs] for ([lhs, [mode, rhs]] in abbrevs()) if (searchFilter.indexOf(mode) >= 0)];
-
-            if (lhs)
-                list = list.filter(function (abbrev) abbrev[1].indexOf(lhs) == 0);
-
-            if (!list.length)
-            {
-                liberator.echomsg("No abbreviations found");
-            }
-            else if (list.length == 1)
-            {
-                let [mode, lhs, rhs] = list[0];
-
-                liberator.echo(mode + "  " + lhs + "   " + rhs, commandline.FORCE_SINGLELINE); // 2 spaces, 3 spaces
-            }
-            else
-            {
-                list = template.tabular(["", "LHS", "RHS"], [], list);
-                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-            }
-        },
-
         // NOTE: I think this comment block is trying to say something but no
         // one is listening. In space, no one can hear you scream. --djk
         //
@@ -1019,6 +994,68 @@ function Editor() //{{{
                 abbreviations[lhs][0] = [filter, rhs];
         },
 
+        expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
+        {
+            var textbox   = getEditor();
+            if (!textbox)
+                return;
+            var text      = textbox.value;
+            var currStart = textbox.selectionStart;
+            var currEnd   = textbox.selectionEnd;
+            var foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
+            if (!foundWord)
+                return true;
+
+            for (let lhs in abbreviations)
+            {
+                for (let i = 0; i < abbreviations[lhs].length; i++)
+                {
+                    if (lhs == foundWord && (abbreviations[lhs][i][0] == filter || abbreviations[lhs][i][0] == "!"))
+                    {
+                        // if found, replace accordingly
+                        var len = foundWord.length;
+                        var abbrText = abbreviations[lhs][i][1];
+                        text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
+                        textbox.value = text;
+                        textbox.selectionStart = currStart - len + abbrText.length;
+                        textbox.selectionEnd   = currEnd   - len + abbrText.length;
+                        break;
+                    }
+                }
+            }
+            return true;
+        },
+
+        // filter is i, c or "!" (insert or command abbreviations or both)
+        // ! -> list all, on c or i ! matches too
+        getAbbreviations: function (filter, lhs)
+        {
+            let searchFilter = (filter == "!") ? "!ci" : filter + "!";
+            return list = [[mode, left, right] for ([left, [mode, right]] in abbrevs())
+                              if (searchFilter.indexOf(mode) >= 0 && left.indexOf(lhs || "") == 0)];
+        },
+
+        listAbbreviations: function (filter, lhs)
+        {
+            let list = this.getAbbreviations(filter, lhs);
+
+            if (!list.length)
+            {
+                liberator.echomsg("No abbreviations found");
+            }
+            else if (list.length == 1)
+            {
+                let [mode, lhs, rhs] = list[0];
+
+                liberator.echo(mode + "  " + lhs + "   " + rhs, commandline.FORCE_SINGLELINE); // 2 spaces, 3 spaces
+            }
+            else
+            {
+                list = template.tabular(["", "LHS", "RHS"], [], list);
+                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+            }
+        },
+
         removeAbbreviation: function (filter, lhs)
         {
             if (!lhs)
@@ -1082,38 +1119,6 @@ function Editor() //{{{
                     }
                 }
             }
-        },
-
-        expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
-        {
-            var textbox   = getEditor();
-            if (!textbox)
-                return;
-            var text      = textbox.value;
-            var currStart = textbox.selectionStart;
-            var currEnd   = textbox.selectionEnd;
-            var foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
-            if (!foundWord)
-                return true;
-
-            for (let lhs in abbreviations)
-            {
-                for (let i = 0; i < abbreviations[lhs].length; i++)
-                {
-                    if (lhs == foundWord && (abbreviations[lhs][i][0] == filter || abbreviations[lhs][i][0] == "!"))
-                    {
-                        // if found, replace accordingly
-                        var len = foundWord.length;
-                        var abbrText = abbreviations[lhs][i][1];
-                        text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
-                        textbox.value = text;
-                        textbox.selectionStart = currStart - len + abbrText.length;
-                        textbox.selectionEnd   = currEnd   - len + abbrText.length;
-                        break;
-                    }
-                }
-            }
-            return true;
         }
         //}}}
     };

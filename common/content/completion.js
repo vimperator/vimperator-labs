@@ -517,7 +517,7 @@ CompletionContext.prototype = {
             liberator.threadYield(false, interruptable);
         return this.incomplete;
     }
-}
+};
 
 function Completion() //{{{
 {
@@ -1161,6 +1161,15 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        abbreviation: function abbreviation(context, args, mode)
+        {
+            if (args.completeArg == 0)
+            {
+                let abbreviations = editor.getAbbreviations(mode);
+                context.completions = [[lhs, ""] for ([, [, lhs,]] in Iterator(abbreviations))];
+            }
+        },
+
         alternateStyleSheet: function alternateStylesheet(context)
         {
             context.title = ["Stylesheet", "Location"];
@@ -1683,7 +1692,7 @@ function Completion() //{{{
                 context.completions = maps;
             }
         }
-    // }}}
+        //}}}
     };
 
     const UrlCompleter = new Struct("name", "description", "completer");
