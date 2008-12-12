@@ -409,14 +409,25 @@ function IO() //{{{
             if (WINDOWS)
                 path = path.replace("/", "\\", "g");
 
-            // expand "~" to VIMPERATOR_HOME or HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+            /* expand "~" to 
+             *      LIBERATOR_HOME or 
+             *      (VIMPERATOR|MUTTATOR)_HOME or   (depending on config.name)
+             *      HOME (USERPROFILE or HOMEDRIVE\HOMEPATH on Windows if HOME is not set)
+             * in that order */
             if (/^~/.test(path))
             {
-                let home = environmentService.get(config.name.toUpperCase() + "_HOME");
+                // First try LIBERATOR_HOME
+                let home = environmentService.get("LIBERATOR_HOME");
 
+                // If no LIBERATOR_HOME, then try (VIMPERATOR|MUTTATOR)_HOME
+                if (!home)
+                    home = environmentService.get(config.name.toUpperCase() + "_HOME");
+
+                // If no (VIMPERATOR|MUTTATOR)_HOME, try HOME
                 if (!home)
                     home = environmentService.get("HOME");
 
+                // On Windows, stretch even farther for other options
                 if (WINDOWS && !home)
                     home = environmentService.get("USERPROFILE") ||
                            environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
