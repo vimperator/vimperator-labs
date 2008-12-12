@@ -38,7 +38,8 @@ function Editor() //{{{
     // store our last search with f, F, t or T
     var lastFindChar = null;
     var lastFindCharFunc = null;
-    var abbrev = {}; // abbrev["lhr"][0]["{i,c,!}","rhs"]
+    // XXX: this strikes me as a rather odd ds; everyone's a critic --djk
+    var abbreviations = {}; // abbreviations["lhr"][0]["{i,c,!}","rhs"]
 
     function getEditor()
     {
@@ -143,7 +144,7 @@ function Editor() //{{{
     // away makes me want to pull someone else's hair out. --Kris
     function abbrevs()
     {
-        for (let [lhs, abbr] in Iterator(abbrev))
+        for (let [lhs, abbr] in Iterator(abbreviations))
             for (let [,rhs] in Iterator(abbr))
                 yield [lhs, rhs];
     }
@@ -907,37 +908,35 @@ function Editor() //{{{
         // Abbreviations {{{
 
         // filter is i, c or "!" (insert or command abbreviations or both)
+        // ! -> list all, on c or i ! matches too
         listAbbreviations: function (filter, lhs)
         {
-            if (lhs) // list only that one
+            let searchFilter = (filter == "!") ? "!ci" : filter + "!";
+            let list = [[mode, lhs, rhs] for ([lhs, [mode, rhs]] in abbrevs()) if (searchFilter.indexOf(mode) >= 0)];
+
+            if (lhs)
+                list = list.filter(function (abbrev) abbrev[1].indexOf(lhs) == 0);
+
+            if (!list.length)
             {
-                if (abbrev[lhs])
-                {
-                    for (let [,abbr] in Iterator(abbrev[lhs]))
-                    {
-                        if (abbr[0] == filter)
-                            liberator.echo(abbr[0] + "    " + lhs + "        " + abbr[1]);
-                        // Is it me, or is this clearly very wrong? --Kris
-                        return true;
-                    }
-                }
                 liberator.echomsg("No abbreviations found");
-                return false;
             }
-            else // list all (for that filter {i,c,!})
+            else if (list.length == 1)
             {
-                var searchFilter = (filter == "!") ? "!ci"
-                                                   : filter + "!"; // ! -> list all, on c or i ! matches too)
+                let [mode, lhs, rhs] = list[0];
 
-                let list = [[rhs[0], lhs, rhs[1]] for ([lhs, rhs] in abbrevs()) if (searchFilter.indexOf(rhs[0]) > -1)];
-
-                if (!list.length)
-                    return liberator.echoerr("No abbreviations found");
+                liberator.echo(mode + "  " + lhs + "   " + rhs, commandline.FORCE_SINGLELINE); // 2 spaces, 3 spaces
+            }
+            else
+            {
                 list = template.tabular(["", "LHS", "RHS"], [], list);
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
         },
 
+        // NOTE: I think this comment block is trying to say something but no
+        // one is listening. In space, no one can hear you scream. --djk
+        //
         // System for adding abbreviations:
         //
         // filter == ! delete all, and set first (END)
@@ -965,37 +964,37 @@ function Editor() //{{{
         //
         addAbbreviation: function (filter, lhs, rhs)
         {
-            if (!abbrev[lhs])
+            if (!abbreviations[lhs])
             {
-                abbrev[lhs] = [];
-                abbrev[lhs][0] = [filter, rhs];
+                abbreviations[lhs] = [];
+                abbreviations[lhs][0] = [filter, rhs];
                 return;
             }
 
             if (filter == "!")
             {
-                if (abbrev[lhs][1])
-                    abbrev[lhs][1] = "";
-                abbrev[lhs][0] = [filter, rhs];
+                if (abbreviations[lhs][1])
+                    abbreviations[lhs][1] = "";
+                abbreviations[lhs][0] = [filter, rhs];
                 return;
             }
 
-            for (let i = 0; i < abbrev[lhs].length; i++)
+            for (let i = 0; i < abbreviations[lhs].length; i++)
             {
-                if (abbrev[lhs][i][1] == rhs)
+                if (abbreviations[lhs][i][1] == rhs)
                 {
-                    if (abbrev[lhs][i][0] == filter)
+                    if (abbreviations[lhs][i][0] == filter)
                     {
-                        abbrev[lhs][i] = [filter, rhs];
+                        abbreviations[lhs][i] = [filter, rhs];
                         return;
                     }
                     else
                     {
-                        if (abbrev[lhs][i][0] != "!")
+                        if (abbreviations[lhs][i][0] != "!")
                         {
-                            if (abbrev[lhs][1])
-                                abbrev[lhs][1] = "";
-                            abbrev[lhs][0] = ["!", rhs];
+                            if (abbreviations[lhs][1])
+                                abbreviations[lhs][1] = "";
+                            abbreviations[lhs][0] = ["!", rhs];
                             return;
                         }
                         else
@@ -1006,18 +1005,18 @@ function Editor() //{{{
                 }
             }
 
-            if (abbrev[lhs][0][0] == "!")
+            if (abbreviations[lhs][0][0] == "!")
             {
                 var tmpOpp = ("i" == filter) ? "c" : "i";
-                abbrev[lhs][1] = [tmpOpp, abbrev[lhs][0][1]];
-                abbrev[lhs][0] = [filter, rhs];
+                abbreviations[lhs][1] = [tmpOpp, abbreviations[lhs][0][1]];
+                abbreviations[lhs][0] = [filter, rhs];
                 return;
             }
 
-            if (abbrev[lhs][0][0] != filter)
-                abbrev[lhs][1] = [filter, rhs];
+            if (abbreviations[lhs][0][0] != filter)
+                abbreviations[lhs][1] = [filter, rhs];
             else
-                abbrev[lhs][0] = [filter, rhs];
+                abbreviations[lhs][0] = [filter, rhs];
         },
 
         removeAbbreviation: function (filter, lhs)
@@ -1028,34 +1027,34 @@ function Editor() //{{{
                 return false;
             }
 
-            if (abbrev[lhs]) // abbrev exists
+            if (abbreviations[lhs]) // abbreviations exists
             {
                 if (filter == "!")
                 {
-                    abbrev[lhs] = "";
+                    abbreviations[lhs] = "";
                     return true;
                 }
                 else
                 {
-                    if (!abbrev[lhs][1]) // only one exists
+                    if (!abbreviations[lhs][1]) // only one exists
                     {
-                        if (abbrev[lhs][0][0] == "!") // exists as ! -> no 'full' delete
+                        if (abbreviations[lhs][0][0] == "!") // exists as ! -> no 'full' delete
                         {
-                            abbrev[lhs][0][0] = (filter == "i") ? "c" : "i";   // ! - i = c; ! - c = i
+                            abbreviations[lhs][0][0] = (filter == "i") ? "c" : "i";   // ! - i = c; ! - c = i
                             return true;
                         }
-                        else if (abbrev[lhs][0][0] == filter)
+                        else if (abbreviations[lhs][0][0] == filter)
                         {
-                            abbrev[lhs] = "";
+                            abbreviations[lhs] = "";
                             return true;
                         }
                     }
-                    else // two abbrev's exists ( 'i' or 'c' (filter as well))
+                    else // two abbreviations exist ( 'i' or 'c' (filter as well))
                     {
-                        if (abbrev[lhs][0][0] == "c" && filter == "c")
-                            abbrev[lhs][0] = abbrev[lhs][1];
+                        if (abbreviations[lhs][0][0] == "c" && filter == "c")
+                            abbreviations[lhs][0] = abbreviations[lhs][1];
 
-                        abbrev[lhs][1] = "";
+                        abbreviations[lhs][1] = "";
 
                         return true;
                     }
@@ -1070,15 +1069,15 @@ function Editor() //{{{
         {
             if (filter == "!")
             {
-                abbrev = {};
+                abbreviations = {};
             }
             else
             {
-                for (let lhs in abbrev)
+                for (let lhs in abbreviations)
                 {
-                    for (let i = 0; i < abbrev[lhs].length; i++)
+                    for (let i = 0; i < abbreviations[lhs].length; i++)
                     {
-                        if (abbrev[lhs][i][0] == "!" || abbrev[lhs][i][0] == filter)
+                        if (abbreviations[lhs][i][0] == "!" || abbreviations[lhs][i][0] == filter)
                             this.removeAbbreviation(filter, lhs);
                     }
                 }
@@ -1097,15 +1096,15 @@ function Editor() //{{{
             if (!foundWord)
                 return true;
 
-            for (let lhs in abbrev)
+            for (let lhs in abbreviations)
             {
-                for (let i = 0; i < abbrev[lhs].length; i++)
+                for (let i = 0; i < abbreviations[lhs].length; i++)
                 {
-                    if (lhs == foundWord && (abbrev[lhs][i][0] == filter || abbrev[lhs][i][0] == "!"))
+                    if (lhs == foundWord && (abbreviations[lhs][i][0] == filter || abbreviations[lhs][i][0] == "!"))
                     {
                         // if found, replace accordingly
                         var len = foundWord.length;
-                        var abbrText = abbrev[lhs][i][1];
+                        var abbrText = abbreviations[lhs][i][1];
                         text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
                         textbox.value = text;
                         textbox.selectionStart = currStart - len + abbrText.length;

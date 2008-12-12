@@ -177,9 +177,9 @@ section:Abbreviations[abbreviations]
 ||:ab[breviate] {lhs}|| +
 ||:ab[breviate]||
 ________________________________________________________________________________
-Abbreviate a key sequence. Abbreviate {lhs} to {rhs}.
-If only {lhs} given, list that particular abbreviation.
-List all abbreviations, if no arguments to are given.
+Abbreviate a key sequence. Abbreviate {lhs} to {rhs}. If only {lhs} given, list
+any abbreviations that start with {lhs}. List all abbreviations, if no
+arguments are given.
 ________________________________________________________________________________
 
 
