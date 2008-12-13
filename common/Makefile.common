@@ -106,5 +106,5 @@ $(JAR): doc
 
 ${DOC_FILES}: %.html: %.txt $(BASE)/Makefile.common locale/en-US/asciidoc.conf
 	@echo "DOC $@"
-	${ASCIIDOC} --unsafe -a linkcss -a quirks! -o $@ $<
+	${ASCIIDOC} --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
 
