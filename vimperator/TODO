@@ -32,6 +32,7 @@ FEATURES:
   :open foo
 9 :highlight clear and :colorscheme default
 9 use the storage module for autocommands
+8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
