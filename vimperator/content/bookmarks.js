@@ -931,7 +931,7 @@ function QuickMarks() //{{{
             if (args.bang)
                 quickmarks.removeAll();
             else
-                quickmarks.remove(args);
+                quickmarks.remove(args.string);
         },
         { bang: true });
 
