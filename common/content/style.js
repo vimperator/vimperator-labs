@@ -560,9 +560,17 @@ liberator.registerObserver("load_commands", function ()
                 height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                 overflow: hidden !important;
             ]]>;
+            let clear = args[0] == "clear";
+            if (clear)
+                args.shift();
+
             let [key, css] = args;
-            if (!css && !(key && args.bang))
+            if (clear && css)
+                return liberator.echo("E488: Trailing characters");
+
+            if (!css && !clear)
             {
+                // List matching keys
                 let str = template.tabular(["Key", "Sample", "CSS"],
                     ["padding: 0 1em 0 0; vertical-align: top", "text-align: center"],
                     ([h.class,
@@ -573,15 +581,24 @@ liberator.registerObserver("load_commands", function ()
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 return;
             }
-            let error = highlight.set(key, css, args.bang, "-append" in args);
+            if (!key && clear)
+            {
+                for (let h in highlight)
+                    highlight.set(h.class, null, true);
+                return;
+            }
+            let error = highlight.set(key, css, clear, "-append" in args);
             if (error)
                 liberator.echoerr(error);
         },
         {
-            bang: true,
             // TODO: add this as a standard highlight completion function?
             completer: function (context, args)
             {
+                // Complete a highlight group on :hi clear ...
+                if (args.completeArg > 0 && args[0] == "clear")
+                    args.completeArg = args.completeArg > 1 ? -1 : 0;
+
                 if (args.completeArg == 0)
                     context.completions = [[v.class, ""] for (v in highlight)];
                 else if (args.completeArg == 1)
