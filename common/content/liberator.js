@@ -761,7 +761,15 @@ const liberator = (function () //{{{
                 context[EVAL_RESULT] = null;
                 this.loadScript("chrome://liberator/content/eval.js", context);
                 if (context[EVAL_ERROR])
+                {
+                    try
+                    {
+                        context[EVAL_ERROR].fileName = io.sourcing.file;
+                        context[EVAL_ERROR].lineNumber += io.sourcing.line;
+                    }
+                    catch (e) {}
                     throw context[EVAL_ERROR];
+                }
                 return context[EVAL_RESULT];
             }
             finally
