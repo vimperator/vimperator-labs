@@ -311,6 +311,10 @@ span.warning {
   font-weight: bold;
   color: red;
 }
+span.info {
+  font-weight: bold;
+  color: blue;
+}
 fieldset.paypal {
     border: none;
 }
