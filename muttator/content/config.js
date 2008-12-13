@@ -83,10 +83,10 @@ const config = { //{{{
         ["pageinfo",         "Show information about the current page",
             function () { BrowserPageInfo(); }],
         ["pagesource",       "View page source",
-            function () { BrowserViewSourceOfDocument(content.document); }],
-        ["preferences",      "Show Firefox preferences dialog",
-            function () { openPreferences(); }],
-        ["printpreview",     "Preview the page before printing",
+            function () { BrowserViewSourceOfDocument(content.document); }],*/
+        ["preferences",      "Show Thunderbird preferences dialog",
+            function () { openOptionsDialog(); }],
+        /*["printpreview",     "Preview the page before printing",
             function () { PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); }],*/
         ["printsetup",       "Setup the page size and orientation before printing",
             function () { PrintUtils.showPageSetup(); }],
