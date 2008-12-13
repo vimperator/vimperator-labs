@@ -164,6 +164,8 @@ function Commands() //{{{
         return NaN;
     }
 
+    const QUOTE_STYLE = "vimperator";
+
     const quoteMap = {
         "\n": "n",
         "\t": "t"
@@ -298,92 +300,63 @@ function Commands() //{{{
         },
 
         // returns [count, parsed_argument]
-        parseArg: function getNextArg(str)
+        parseArg: function parseArg(str)
         {
-            var stringDelimiter = null;
-            var escapeNext = false;
+            let arg = "";
+            let quote = null;
+            let len = str.length;
 
-            var arg = "";
-
-            outer:
-            for (let i = 0; i < str.length; i++)
+            while (str.length && !/^\s/.test(str))
             {
-                inner:
-                switch (str[i])
+                let res;
+
+                switch (QUOTE_STYLE)
                 {
-                    case '"':
-                    case "'":
-                        if (escapeNext)
-                        {
-                            escapeNext = false;
-                            break;
-                        }
-                        switch (stringDelimiter)
-                        {
-                            case str[i]:
-                                stringDelimiter = null;
-                                continue outer;
-                            case null:
-                                stringDelimiter = str[i];
-                                continue outer;
-                        }
+                    case "vim-sucks":
+                        if (res = str.match = str.match(/^()((?:[^\\\s]|\\.)+)((?:\\$)?)/))
+                            arg += res[2].replace(/\\(.)/g, "$1");
                         break;
 
-                    // \ is an escape key for non quoted or "-quoted strings
-                    // for '-quoted strings it is taken literally, apart from \' and \\
-                    case "\\":
-                        if (escapeNext)
-                        {
-                            escapeNext = false;
-                            break;
-                        }
-                        else
-                        {
-                            // in non-quoted strings, only escape "\\" and "\ ", otherwise drop "\\"
-                            if (!stringDelimiter && str[i + 1] != "\\" && str[i + 1] != " ")
-                                continue outer;
-                            // in single quoted strings, only escape "\\" and "\'", otherwise keep "\\"
-                            if (stringDelimiter == "'" && str[i + 1] != "\\" && str[i + 1] != "'")
-                                break;
-                            escapeNext = true;
-                            continue outer;
-                        }
+                    case "vimperator":
+                        if (res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                            arg += res[2].replace(/\\(.)/g, "$1");
+                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                            arg += eval(res[0] + (res[3] ? "" : '"'));
+                        else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                            arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                         break;
 
-                    default:
-                        if (stringDelimiter == "'")
-                        {
-                            escapeNext = false;
-                            break;
-                        }
-                        if (escapeNext)
-                        {
-                            escapeNext = false;
-                            switch (str[i])
-                            {
-                                case "n": arg += "\n"; break;
-                                case "t": arg += "\t"; break;
-                                default:
-                                    break inner; // this makes "a\fb" -> afb; wanted or should we return ab? --mst
-                            }
-                            continue outer;
-                        }
-                        else if (stringDelimiter != '"' && /\s/.test(str[i]))
-                        {
-                            return [i, arg];
-                        }
+                    case "rc-ish":
+                        if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                            arg += res[2].replace(/\\(.)/g, "$1");
+                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                            arg += eval(res[0] + (res[3] ? "" : '"'));
+                        else if (res = str.match(/^(')((?:[^']|'')*)('?)/))
+                            arg += res[2].replace("''", "'", "g");
+                        break;
+
+                    case "pythonesque":
+                        if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                            arg += res[2].replace(/\\(.)/g, "$1");
+                        else if (res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/))
+                            arg += res[2];
+                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                            arg += eval(res[0] + (res[3] ? "" : '"'));
+                        else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                            arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                         break;
                 }
-                arg += str[i];
+
+                if (!res)
+                    break;
+                if (!res[3])
+                    quote = res[1];
+                if (!res[1])
+                    quote = res[3];
+                str = str.substr(res[0].length);
             }
 
-            // TODO: add parsing of a " comment here:
-            if (stringDelimiter)
-                return [str.length, arg, stringDelimiter];
-            if (escapeNext)
-                return [str.length, arg, "\\"];
-            else
-                return [str.length, arg];
+            return [len - str.length, arg, quote];
         },
 
         // in '-quoted strings, only ' and \ itself are escaped
@@ -506,6 +479,8 @@ function Commands() //{{{
                                 if (sep == "=" || /\s/.test(sep) && opt[1] != this.OPTION_NOARG)
                                 {
                                     [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
+                                    if (quote == "\\" && !complete)
+                                        return liberator.echoerr("Trailing \\");
 
                                     // if we add the argument to an option after a space, it MUST not be empty
                                     if (sep != "=" && !quote && arg.length == 0)
@@ -595,6 +570,9 @@ function Commands() //{{{
 
                 // if not an option, treat this token as an argument
                 var [count, arg, quote] = getNextArg(sub);
+                if (quote == "\\" && !complete)
+                    return liberator.echoerr("Trailing \\");
+
                 if (complete)
                 {
                     args.quote = complQuote[quote] || complQuote[""];
