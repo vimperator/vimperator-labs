@@ -689,8 +689,8 @@ ____
 Change the title of the browser window.
 Vimperator changes the browser title from "Title of web page - Mozilla Firefox" to
 "Title of web page - Vimperator". +
-If you don't like that, you can restore it with: [c]:set titlestring=Mozilla
-Firefox[c].
+If you don't like that, you can restore it with:
+[c]:set titlestring=Mozilla\ Firefox[c].
 ____
 
 
@@ -698,7 +698,9 @@ ____
 ||'usermode' 'um'|| boolean (default: off)
 ____
 Show current website with a minimal style sheet to make it easily accessible.
-Note that this is a local option for now, later it may be split into a global and :setlocal part
+
+Note: this is a local option for now, a global value may be supported in the
+future.
 ____
 
 
@@ -752,7 +754,7 @@ ____
 ||'wildignore' 'wig'|| stringlist (default: "")
 ____
 List of file patterns to ignore when completing files. E.g. to ignore object
-files and Vim swap files [c]:set wildignore=.*\.o,\..*\.s[a-z]\\{2}[c]
+files and Vim swap files [c]:set wildignore=".*\.o,\..*\.s[a-z]\\{2}"[c]
 
 Note: Unlike Vim each pattern is a regexp rather than a glob.
 ____
