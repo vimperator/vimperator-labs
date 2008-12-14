@@ -603,6 +603,7 @@ function Bookmarks() //{{{
         list: function list(filter, tags, openItems, maxItems)
         {
             // FIXME: returning here doesn't make sense
+            //   Why the hell doesn't it make sense? --Kris
             if (!openItems)
                 return completion.listCompleter("bookmark", filter, maxItems, tags);
             let items = completion.runCompleter("bookmark", filter, maxItems, tags);
@@ -850,6 +851,7 @@ function History() //{{{
         list: function list(filter, openItems, maxItems)
         {
             // FIXME: returning here doesn't make sense
+            //   Why the hell doesn't it make sense? --Kris
             if (!openItems)
                 return completion.listCompleter("history", filter, maxItems);
             let items = completion.runCompleter("history", filter, maxItems);
