@@ -602,6 +602,7 @@ function Bookmarks() //{{{
         // if openItems is true, open the matching bookmarks items in tabs rather than display
         list: function list(filter, tags, openItems, maxItems)
         {
+            // FIXME: returning here doesn't make sense
             if (!openItems)
                 return completion.listCompleter("bookmark", filter, maxItems, tags);
             let items = completion.runCompleter("bookmark", filter, maxItems, tags);
@@ -848,6 +849,7 @@ function History() //{{{
         // if openItems is true, open the matching history items in tabs rather than display
         list: function list(filter, openItems, maxItems)
         {
+            // FIXME: returning here doesn't make sense
             if (!openItems)
                 return completion.listCompleter("history", filter, maxItems);
             let items = completion.runCompleter("history", filter, maxItems);

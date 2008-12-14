@@ -28,10 +28,11 @@ The following options are interpreted:
 
 If [!] is present, a new bookmark is always added. Otherwise, the first
 bookmark matching [url] is updated.
-When creating a new bookmark, if [-title] isn't given, either the web page's
-title or URL is used. You can omit the optional [url] argument, so just do
-[c]:bmark[c] to bookmark the currently loaded web page with a default title and
-without any tags.
+
+When creating a new bookmark, if [a][-title][a] isn't given, either the web
+page's title or URL is used. You can omit the optional [url] argument, so just
+do [c]:bmark[c] to bookmark the currently loaded web page with a default title
+and without any tags.
 ____________________________________________________________________________
 
 
@@ -49,12 +50,14 @@ ________________________________________________________________________________
 ||:bmarks[!] [filter]|| +
 ________________________________________________________________________________
 List or open multiple bookmarks. Open the message window at the bottom of the
-screen with all bookmarks which match [filter] either in the title or URL. +
+screen with all bookmarks which match [filter] either in the title or URL.
+
 The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
 opens all the found bookmarks in new tabs.
 
 Filter can also contain the following options: +
--tags=comma,separated,tag,list +
+-tags=comma,separated,tag,list (short option: -T) +
+-max=N (short options: -m)
 ________________________________________________________________________________
 
 
@@ -125,8 +128,12 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Show recently visited URLs. Open the message window at the bottom of the
 screen with all history items which match [filter] either in the title or URL.
+
 The special version [c]:history![c] works the same as [c]:history[c] except
 it opens all the found items in new tabs.
+
+Filter can also contain the following options: +
+-max=N (short options: -m)
 ________________________________________________________________________________
 
 section:QuickMarks[quickmarks]
