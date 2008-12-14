@@ -34,8 +34,9 @@ Available {events}:
 *VimperatorLeave*    Triggered before exiting Firefox
 --------------------------------------------------------------
 
-{pat} is a regular expression, use .* if you want to match all URLs. Note: This
-differs from Vim which uses a glob rather than a regexp for {pat}.
+{pat} is a regular expression, use .* if you want to match all URLs.
+
+Note: This differs from Vim which uses a glob rather than a regexp for {pat}.
 
 The following keywords are available where relevant:
 
