@@ -421,7 +421,7 @@ function IO() //{{{
             path = expand(path);
 
             // expand ~
-            if (/^~(?:$|\/)/.test(path))
+            if ((WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
             {
                 // Try $(VIMPERATOR|MUTTATOR)_HOME || $HOME first, on all systems
                 let home = environmentService.get(config.name.toUpperCase() + "_HOME") ||
