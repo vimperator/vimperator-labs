@@ -85,10 +85,10 @@ ________________________________________________________________________________
 
 |b| |:b| |:buffer|
 ||:[count]b[uffer][!] [a][url|index][a]|| +
-||b||
+||[count]b||
 ________________________________________________________________________________
 Go to the specified buffer from the buffer list. Argument can be either the
-buffer index or the full URL.
+buffer index or the full URL. If [count] is given, go to the [count]th buffer.
 
 If argument is neither a full URL nor an index but uniquely identifies a
 buffer, it is selected. With [!] the next buffer matching the argument is

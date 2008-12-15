@@ -249,7 +249,13 @@ function Tabs() //{{{
     {
         mappings.add([modes.NORMAL], ["b"],
             "Open a prompt to switch buffers",
-            function () { commandline.open(":", "buffer! ", modes.EX); });
+            function (count)
+            {
+                if (count != -1)
+                    return tabs.switchTo(String(count));
+                commandline.open(":", "buffer! ", modes.EX);
+            },
+            { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["B"],
             "Show buffer list",
