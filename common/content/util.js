@@ -485,7 +485,7 @@ const util = { //{{{
 
             // Ok, not a valid proto. If it looks like URL-ish (foo.com/bar),
             // let Gecko figure it out.
-            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w.]+:\d+(?:\/|$)/)
+            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w.]+:\d+(?:\/|$)/.test(url))
                 return url;
 
             // TODO: it would be clearer if the appropriate call to
