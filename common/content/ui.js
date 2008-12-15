@@ -954,6 +954,30 @@ function CommandLine() //{{{
             commandlineWidget.collapsed = true;
         },
 
+        get error()
+        {
+            if (lastEcho != messageBox.value && messageBox.getAttributeNS(NS.uri, "highlight") == this.HL_ERRORMSG)
+                return messageBox.value;
+            return null;
+        },
+        set error(status)
+        {
+            lastEcho = null;
+            echoLine(status, this.HL_ERRORMSG, true);
+        },
+
+        get status()
+        {
+            if (lastEcho != messageBox.value && messageBox.getAttributeNS(NS.uri, "highlight") == this.HL_NORMAL)
+                return messageBox.value;
+            return null;
+        },
+        set status(status)
+        {
+            lastEcho = null;
+            echoLine(status, this.HL_NORMAL, true);
+        },
+
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function echo(str, highlightGroup, flags)
         {
@@ -968,25 +992,17 @@ function CommandLine() //{{{
             // The DOM isn't threadsafe. It must only be accessed from the main thread.
             liberator.callInMainThread(function ()
             {
+                let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
+
                 let action = echoLine;
                 if (!outputContainer.collapsed || messageBox.value == lastEcho)
                     action = echoMultiline;
 
-                let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
+                if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || typeof str == "xml") && !(flags & this.FORCE_SINGLELINE))
+                    action = echoMultiline;
 
-                if (flags & this.FORCE_MULTILINE)
-                    action = echoMultiline;
-                else if (flags & this.FORCE_SINGLELINE)
-                    action = echoLine;
-                else if (flags & this.DISALLOW_MULTILINE)
-                {
-                    if (!outputContainer.collapsed)
-                        action = null;
-                    else
-                        action = echoLine;
-                }
-                else if (/\n/.test(str) || typeof str == "xml")
-                    action = echoMultiline;
+                if ((flags & this.DISALLOW_MULTILINE) && !outputContainer.collapsed)
+                    return;
 
                 if (single)
                     lastEcho = null;

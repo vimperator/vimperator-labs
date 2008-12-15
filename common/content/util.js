@@ -167,7 +167,7 @@ const util = { //{{{
         clipboardHelper.copyString(str);
 
         if (verbose)
-            liberator.echo("Yanked " + str, commandline.FORCE_SINGLELINE);
+            commandline.status = "Yanked " + str;
     },
 
     createURI: function createURI(str)

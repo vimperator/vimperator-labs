@@ -345,7 +345,7 @@ function Search() //{{{
             found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
-                setTimeout(function () liberator.echoerr("E486: Pattern not found: " + searchPattern, commandline.FORCE_SINGLELINE), 0);
+                setTimeout(function () commandline.error = "E486: Pattern not found: " + searchPattern, 0);
 
             return found;
         },
@@ -364,7 +364,7 @@ function Search() //{{{
 
             if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
             {
-                liberator.echoerr("E486: Pattern not found: " + lastSearchPattern, commandline.FORCE_SINGLELINE);
+                commandline.error = "E486: Pattern not found: " + lastSearchPattern;
             }
             else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
             {
@@ -381,7 +381,7 @@ function Search() //{{{
             }
             else
             {
-                commandline.echo((up ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+                commandline.status = (up ? "?" : "/") + lastSearchPattern;
 
                 if (options["hlsearch"])
                     this.highlight(lastSearchString);
