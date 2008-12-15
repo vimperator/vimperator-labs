@@ -604,6 +604,10 @@ function Bookmarks() //{{{
         {
             // FIXME: returning here doesn't make sense
             //   Why the hell doesn't it make sense? --Kris
+            // Because it unconditionally bypasses the final error message
+            // block and does so only when listing items, not opening them. In
+            // short it breaks the :bmarks command which doesn't make much
+            // sense to me but I'm old-fashioned. --djk
             if (!openItems)
                 return completion.listCompleter("bookmark", filter, maxItems, tags);
             let items = completion.runCompleter("bookmark", filter, maxItems, tags);
@@ -852,6 +856,7 @@ function History() //{{{
         {
             // FIXME: returning here doesn't make sense
             //   Why the hell doesn't it make sense? --Kris
+            // See comment at bookmarks.list --djk
             if (!openItems)
                 return completion.listCompleter("history", filter, maxItems);
             let items = completion.runCompleter("history", filter, maxItems);
