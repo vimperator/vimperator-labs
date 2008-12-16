@@ -526,12 +526,12 @@ function IO() //{{{
         {
             let file = Components.classes["@mozilla.org/file/local;1"]
                                  .createInstance(Components.interfaces.nsILocalFile);
-            let protocolHandler = Components.classes["@mozilla.org/network/protocol;1?name=file"]
-                                            .createInstance(Components.interfaces.nsIFileProtocolHandler);
 
             if (/file:\/\//.test(path))
             {
-                file = protocolHandler.getFileFromURLSpec(path);
+                file = Components.classes["@mozilla.org/network/protocol;1?name=file"]
+                                 .createInstance(Components.interfaces.nsIFileProtocolHandler)
+                                 .getFileFromURLSpec(path);
             }
             else
             {

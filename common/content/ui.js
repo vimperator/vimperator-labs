@@ -954,30 +954,6 @@ function CommandLine() //{{{
             commandlineWidget.collapsed = true;
         },
 
-        get error()
-        {
-            if (lastEcho != messageBox.value && messageBox.getAttributeNS(NS.uri, "highlight") == this.HL_ERRORMSG)
-                return messageBox.value;
-            return null;
-        },
-        set error(status)
-        {
-            lastEcho = null;
-            echoLine(status, this.HL_ERRORMSG, true);
-        },
-
-        get status()
-        {
-            if (lastEcho != messageBox.value && messageBox.getAttributeNS(NS.uri, "highlight") == this.HL_NORMAL)
-                return messageBox.value;
-            return null;
-        },
-        set status(status)
-        {
-            lastEcho = null;
-            echoLine(status, this.HL_NORMAL, true);
-        },
-
         // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
         echo: function echo(str, highlightGroup, flags)
         {
