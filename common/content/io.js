@@ -119,6 +119,7 @@ function IO() //{{{
     {
         let path = ioManager.getFile(head);
         path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
+        path.normalize();
         return path;
     }
 
@@ -894,8 +895,7 @@ lookup:
                                 // FIXME: messages need to be able to specify
                                 // whether they can be cleared/overwritten or
                                 // should be appended to and the MOW opened
-                                liberator.echoerr("Error detected while processing " + file.path,
-                                    commandline.FORCE_MULTILINE);
+                                liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);
                                 commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR, commandline.APPEND_TO_MESSAGES);
                                 liberator.echoerr("E492: Not an editor command: " + line);
                             }
