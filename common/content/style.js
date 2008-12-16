@@ -6,7 +6,7 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
-Highlights.prototype.CSS = <![CDATA[ /* <css> */
+Highlights.prototype.CSS = <![CDATA[
     Boolean     color: red;
     Function    color: navy;
     Null        color: blue;
