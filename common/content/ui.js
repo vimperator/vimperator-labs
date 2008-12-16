@@ -560,7 +560,6 @@ function CommandLine() //{{{
     // TODO: resize upon a window resize
     function echoMultiline(str, highlightGroup)
     {
-        //outputContainer.collapsed = true;
         let doc = multilineOutputWidget.contentDocument;
         let win = multilineOutputWidget.contentWindow;
 
@@ -945,6 +944,13 @@ function CommandLine() //{{{
             {
                 outputContainer.collapsed = true;
                 this.hide();
+            }
+            if (!outputContainer.collapsed)
+            {
+                setTimeout(function () {
+                    modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
+                    commandline.updateMorePrompt();
+                }, 0);
             }
             keepCommand = false;
         },
