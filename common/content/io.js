@@ -119,11 +119,8 @@ function IO() //{{{
     {
         let path = ioManager.getFile(head);
         path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
-        try
-        {
+        if (path.exists())
             path.normalize();
-        }
-        catch(e) {}
         return path;
     }
 
