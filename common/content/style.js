@@ -6,6 +6,7 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
+// <css>
 Highlights.prototype.CSS = <![CDATA[
     Boolean     color: red;
     Function    color: navy;
@@ -175,8 +176,8 @@ function Highlights(name, store, serial)
     this.reload = function ()
     {
         this.CSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
-                    .split("\n").filter(function (s) /\S/.test(s))
-                    .forEach(function (style)
+                .split("\n").filter(function (s) /\S/.test(s))
+                .forEach(function (style)
         {
             style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
             if (/^[>+ ]/.test(style.selector))
