@@ -23,7 +23,7 @@ the result highlighted as ErrorMsg and saves it to the message history.
 ________________________________________________________________________________
 
 
-|:echoe| |:echomsg|
+|:echom| |:echomsg|
 ||:echom[sg] {expr}|| +
 ________________________________________________________________________________
 Echo the expression as an infomational message. Just like [c]:ec[ho][c], but
