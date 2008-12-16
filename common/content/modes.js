@@ -174,9 +174,11 @@ const modes = (function () //{{{
         {
             silent = (silent || main == mainMode && extended == extendedMode);
             // if a main mode is set, the extended is always cleared
+            let oldMain = main, oldExtended = extended;
+            if (typeof extendedMode === "number")
+                extended = extendedMode;
             if (typeof mainMode === "number")
             {
-                let oldMain = main, oldExtended = extended;
                 main = mainMode;
                 if (!extendedMode)
                     extended = modes.NONE;
@@ -184,8 +186,6 @@ const modes = (function () //{{{
                 if (main != oldMain)
                     handleModeChange(oldMain, mainMode, oldExtended);
             }
-            if (typeof extendedMode === "number")
-                extended = extendedMode;
 
             if (!silent)
                 this.show();
