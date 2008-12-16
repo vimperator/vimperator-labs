@@ -941,6 +941,7 @@ function CommandLine() //{{{
             if (!keepCommand || this.silent)
             {
                 outputContainer.collapsed = true;
+                commandline.updateMorePrompt();
                 this.hide();
             }
             if (!outputContainer.collapsed)
@@ -1390,6 +1391,9 @@ function CommandLine() //{{{
 
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
+            if (outputContainer.collapsed)
+                return echoLine("", this.HL_NORMAL);
+
             let win = multilineOutputWidget.contentWindow;
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;

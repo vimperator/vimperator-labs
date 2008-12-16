@@ -22,16 +22,11 @@ BUGS:
 
 (recent CVS regressions):
 - visual caret mode is broken
-- Form elements in iframes must be selected twice, whether by tabbing or
-  clicking.
-- :regressions is broken
-- :set noshowmode | :echo "foobar\n"<ESC> doesn't clear the more prompt
 
 FEATURES:
 9 fix local options
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
-9 :colorscheme default
 9 use the storage module for autocommands
 8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer

@@ -155,10 +155,11 @@ const modes = (function () //{{{
         // show the current mode string in the command line
         show: function ()
         {
-            if (!options["showmode"])
-                return;
+            let msg = "";
+            if (options["showmode"])
+                msg = getModeMessage();
 
-            commandline.echo(getModeMessage(), "ModeMsg", commandline.FORCE_SINGLELINE);
+            commandline.echo(msg, "ModeMsg", commandline.FORCE_SINGLELINE);
         },
 
         // add/remove always work on the extended mode only

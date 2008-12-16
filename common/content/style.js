@@ -127,6 +127,7 @@ function Highlights(name, store, serial)
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
     function keys() [k for ([k, v] in Iterator(highlight))].sort();
+
     this.__iterator__ = function () (highlight[v] for ([k, v] in Iterator(keys())));
 
     this.get = function (k) highlight[k];
@@ -171,6 +172,12 @@ function Highlights(name, store, serial)
     {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
         return "[liberator|highlight~=" + hl + "]" + rest
+    };
+
+    this.clear = function ()
+    {
+        for (let [k, v] in Iterator(highlight))
+            this.set(k, null, true);
     };
 
     this.reload = function ()
@@ -453,10 +460,11 @@ liberator.registerObserver("load_commands", function ()
         {
             let scheme = args[0];
 
-            if (io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
-                autocommands.trigger("ColorScheme", { name: scheme });
-            else
-                liberator.echoerr("E185: Cannot find color scheme " + scheme);
+            if (scheme == "default")
+                highlight.clear();
+            else if (!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
+                return liberator.echoerr("E185: Cannot find color scheme " + scheme);
+            autocommands.trigger("ColorScheme", { name: scheme });
         },
         {
             argCount: "1",
@@ -581,11 +589,7 @@ liberator.registerObserver("load_commands", function ()
                 return;
             }
             if (!key && clear)
-            {
-                for (let h in highlight)
-                    highlight.set(h.class, null, true);
-                return;
-            }
+                return highlight.clear();
             let error = highlight.set(key, css, clear, "-append" in args);
             if (error)
                 liberator.echoerr(error);
