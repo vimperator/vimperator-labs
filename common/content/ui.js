@@ -107,7 +107,7 @@ function CommandLine() //{{{
         select: function (backward, matchCurrent)
         {
             // always reset the tab completion if we use up/down keys
-            completions.select(completions.RESET);
+            completions.reset();
 
             let diff = backward ? -1 : 1;
 
@@ -445,8 +445,6 @@ function CommandLine() //{{{
     liberator.registerCallback("change", modes.EX, function (command) {
         if (options.get("wildoptions").has("auto"))
             autocompleteTimer.tell(false);
-        else
-            completions.reset();
     });
 
     liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
@@ -1089,6 +1087,9 @@ function CommandLine() //{{{
             {
                 if (completions)
                     completions.previewClear();
+                this.resetCompletions();
+                liberator.dump("hist: " + history.index);
+                liberator.dump("    : " + history.input.value);
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
@@ -1142,7 +1143,7 @@ function CommandLine() //{{{
                     if (command.length == 0)
                     {
                         liberator.triggerCallback("cancel", currentExtendedMode);
-                        modes.pop(); // FIXME: use mode stack
+                        modes.pop();
                     }
                 }
                 else // any other key
