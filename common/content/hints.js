@@ -250,7 +250,11 @@ function Hints() //{{{
             }
         }
 
-        if (options.usermode)
+        // TODO: is it better to set up an observer for this property and set
+        // 'usermode' appropriately? We're generally not very well integrated
+        // into FF so having menu items toggle Vimperator options may be
+        // confusing. --djk
+        if (window.getMarkupDocumentViewer().authorStyleDisabled)
         {
             let css = [];
             // FIXME: Broken for imgspans.

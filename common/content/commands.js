@@ -764,7 +764,9 @@ function Commands() //{{{
                     else
                         func = "completion." + completeOptionMap[completeOpt];
 
-                    completeFunc = eval(func);
+                    //completeFunc = eval(func);
+                    completeFunc = func;
+                    liberator.log(func)
                 }
 
                 if (!commands.addUserCommand(
@@ -775,7 +777,9 @@ function Commands() //{{{
                             argCount: nargsOpt,
                             bang: bangOpt,
                             count: countOpt,
-                            completer: completeFunc,
+                            // TODO: handle missing function
+                            //completer: completeFunc,
+                            completer: function (context, args) eval(completeFunc + "(context, args)"),
                             replacementText: args.literalArg
                         },
                         args.bang)
