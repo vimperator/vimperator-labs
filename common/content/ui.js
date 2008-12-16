@@ -382,10 +382,7 @@ function CommandLine() //{{{
                     if (this.items.length > 1)
                     {
                         if (this.substring && this.substring != this.completion)
-                        {
                             this.completion = this.substring;
-                            liberator.triggerCallback("change", currentExtendedMode, commandline.command);
-                        }
                         break;
                     }
                     // Fallthrough
