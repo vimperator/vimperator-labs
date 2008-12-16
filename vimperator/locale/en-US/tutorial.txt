@@ -2,10 +2,10 @@ HEADER
 
 // Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu)
 
-+++<center>+++
++++<div style="text-align: center;">+++
 *This is a quickstart tutorial to help get new users up and running in
 Vimperator. It is not intended as a full reference explaining all features.*
-+++</center>+++
++++</div>+++
 
 section:Quick-start{nbsp}tutorial[tutorial]
 
