@@ -683,7 +683,7 @@ function Options() //{{{
                         context.completions = [
                                 [loadPreference(filter, null, false), "Current Value"],
                                 [loadPreference(filter, null, true), "Default Value"]
-                        ];
+                        ].filter(function ([k]) k != null);
                         return;
                     }
 
