@@ -409,7 +409,7 @@ function Bookmarks() //{{{
                     {
                         if (bmark[0] == uri.spec)
                         {
-                            var id = bmark[4];
+                            var id = bmark[5];
                             if (title)
                                 bookmarksService.setItemTitle(id, title);
                             break;
