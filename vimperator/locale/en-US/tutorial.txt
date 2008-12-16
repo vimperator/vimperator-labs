@@ -4,7 +4,7 @@ HEADER
 
 +++<center>+++
 *This is a quickstart tutorial to help get new users up and running in
-Vimperator. It is not indented as a full reference explaining all features.*
+Vimperator. It is not intended as a full reference explaining all features.*
 +++</center>+++
 
 section:Quick-start{nbsp}tutorial[tutorial]
