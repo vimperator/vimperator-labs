@@ -158,7 +158,7 @@ const modes = (function () //{{{
             if (!options["showmode"])
                 return;
 
-            commandline.echo(getModeMessage(), "ModeMsg", commandline.DISALLOW_MULTILINE);
+            commandline.echo(getModeMessage(), "ModeMsg", commandline.FORCE_SINGLELINE);
         },
 
         // add/remove always work on the extended mode only

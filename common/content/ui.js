@@ -999,7 +999,8 @@ function CommandLine() //{{{
                 let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
 
                 let action = echoLine;
-                if (!outputContainer.collapsed || messageBox.value == lastEcho)
+
+                if (!single && (!outputContainer.collapsed || messageBox.value == lastEcho))
                     action = echoMultiline;
 
                 if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || typeof str == "xml") && !(flags & this.FORCE_SINGLELINE))
