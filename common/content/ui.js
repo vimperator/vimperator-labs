@@ -415,7 +415,7 @@ function CommandLine() //{{{
             statusline.updateProgress("match " + (completions.selected + 1) + " of " + completions.items.length);
     });
 
-    var autocompleteTimer = new Timer(201, 300, function autocompleteTell(tabPressed) {
+    var autocompleteTimer = new Timer(201, 500, function autocompleteTell(tabPressed) {
         if (events.feedingKeys || !completions)
             return;
         completions.complete(true, false);
@@ -596,12 +596,12 @@ function CommandLine() //{{{
         {
             win.scrollTo(0, doc.height);
         }
-        commandline.updateMorePrompt();
 
         win.focus();
 
         startHints = false;
         modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
+        commandline.updateMorePrompt();
     }
 
     function autosizeMultilineInputWidget()

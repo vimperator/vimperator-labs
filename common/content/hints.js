@@ -587,6 +587,7 @@ function Hints() //{{{
                 {
                     promptHighlight: "Normal",
                     completer: function (context) {
+                        context.compare = function () 0;
                         context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
                     },
                     onChange: function () { modes.pop() }
