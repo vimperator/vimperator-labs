@@ -947,10 +947,8 @@ function CommandLine() //{{{
             }
             if (!outputContainer.collapsed)
             {
-                setTimeout(function () {
-                    modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
-                    commandline.updateMorePrompt();
-                }, 0);
+                modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
+                commandline.updateMorePrompt();
             }
             keepCommand = false;
         },

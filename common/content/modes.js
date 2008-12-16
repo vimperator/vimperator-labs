@@ -72,7 +72,7 @@ const modes = (function () //{{{
     // Usually you should only indicate to leave a special mode like HINTS
     // by calling modes.reset() and adding the stuff which is needed
     // for its cleanup here
-    function handleModeChange(oldMode, newMode)
+    function handleModeChange(oldMode, newMode, oldExtended)
     {
 
         switch (oldMode)
@@ -102,7 +102,7 @@ const modes = (function () //{{{
 
             case modes.COMMAND_LINE:
                 // clean up for HINT mode
-                if (modes.extended & modes.HINTS)
+                if (oldExtended & modes.HINTS)
                     hints.hide();
                 commandline.close();
                 break;
@@ -173,18 +173,19 @@ const modes = (function () //{{{
         set: function (mainMode, extendedMode, silent)
         {
             silent = (silent || main == mainMode && extended == extendedMode);
+            if (typeof extendedMode === "number")
+                extended = extendedMode;
             // if a main mode is set, the extended is always cleared
             if (typeof mainMode === "number")
             {
-                if (mainMode != main)
-                    handleModeChange(main, mainMode);
-
+                let oldMain = main, oldExtended = extended;
                 main = mainMode;
                 if (!extendedMode)
                     extended = modes.NONE;
+
+                if (main != oldMain)
+                    handleModeChange(oldMain, mainMode, oldExtended);
             }
-            if (typeof extendedMode === "number")
-                extended = extendedMode;
 
             if (!silent)
                 this.show();
