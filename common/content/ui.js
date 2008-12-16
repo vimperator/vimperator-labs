@@ -1088,8 +1088,6 @@ function CommandLine() //{{{
                 if (completions)
                     completions.previewClear();
                 this.resetCompletions();
-                liberator.dump("hist: " + history.index);
-                liberator.dump("    : " + history.input.value);
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
