@@ -734,7 +734,10 @@ const liberator = (function () //{{{
         // TODO: add proper level constants
         echomsg: function (str, verbosity, flags)
         {
-            flags |= commandline.APPEND_TO_MESSAGES; //| commandline.FORCE_SINGLELINE; // TODO: was there a reason for this? --djk
+            // TODO: is there a reason for this? --djk
+            // yes, it doesn't show the MOW on startup if you have e.g. some qmarks in your vimperatorrc.
+            // Feel free to add another flag like DONT_OPEN_MULTILINE if really needed --mst
+            flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE;
 
             if (verbosity == null)
                 verbosity = 0; // verbosity level is exclusionary

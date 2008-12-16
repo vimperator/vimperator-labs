@@ -562,7 +562,7 @@ function Events() //{{{
     }
 
     // return true when load successful, or false otherwise
-    function waitForPageLoaded() events.waitForPageLoaded();
+    function waitForPageLoaded() events.waitForPageLoad();
 
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
