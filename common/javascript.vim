@@ -44,10 +44,10 @@ syntax sync maxlines=200
 
 "" JavaScript comments
 syntax keyword javaScriptCommentTodo    TODO FIXME XXX TBD contained
-syntax region  javaScriptLineComment    start=+\/\/+ end="\v$|(\</?(css|e4x)\>)\@=" keepend contains=javaScriptCommentTodo,@Spell
+syntax region  javaScriptLineComment    start=+\/\/+ end="\v$|(\</?(css|e4x)\>)@=" keepend contains=javaScriptCommentTodo,@Spell
 syntax region  javaScriptLineComment    start=+^\s*\/\/+ skip=+\n\s*\/\/+ end="\v$|(\</?(css|e4x)\>)@=" keepend contains=javaScriptCommentTodo,@Spell fold
 syntax region  javaScriptCvsTag         start="\$\cid:" end="\$" oneline contained
-syntax region  javaScriptComment        start="/\*"  end="\*/\|\(</\=e4x>\)\@=" contains=javaScriptCommentTodo,javaScriptCvsTag,@Spell fold
+syntax region  javaScriptComment        start="/\*"  end="\v\*/|(\</?(css|e4x)\>)@=" contains=javaScriptCommentTodo,javaScriptCvsTag,@Spell fold
 
 "" JSDoc support start
 if !exists("javascript_ignore_javaScriptdoc")
@@ -149,11 +149,12 @@ endif "DOM/HTML/CSS
 
 
 "" Code blocks
-syntax cluster javaScriptAll       contains=javaScriptComment,javaScriptLineComment,javaScriptDocComment,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptLabel,javaScriptSource,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptStatement,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javascriptE4X,javascriptCSS
+syntax cluster javaScriptAll       contains=javaScriptComment,javaScriptLineComment,javaScriptDocComment,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptLabel,javaScriptSource,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptStatement,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javascriptE4X,javascriptCSS,javascriptCDATA
 syntax region  javaScriptBracket   matchgroup=javaScriptBracket transparent start="\[" end="\]" contains=@javaScriptAll,javaScriptParensErrB,javaScriptParensErrC,javaScriptBracket,javaScriptParen,javaScriptBlock,@htmlPreproc
 syntax region  javaScriptParen     matchgroup=javaScriptParen   transparent start="("  end=")"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrC,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc
 syntax region  javaScriptBlock     matchgroup=javaScriptBlock   transparent start="{"  end="}"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrB,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc 
 
+syntax region  javascriptCDATA	matchgroup=javascriptCDATA start="<\!\[CDATA\[" end="\]\]>" keepend contains=javascriptCSS
 syntax region  javascriptCSS	matchgroup=javascriptCSSDelimiter start="<css>" end="</css>" contains=@cssTop
 syntax region  javascriptE4X	matchgroup=javascriptE4XDelimiter start="<e4x>" end="</e4x>" contains=@xmlTop
 syntax region  javascriptE4X	matchgroup=javascriptE4XDelimiter start="<>" end="</>" contains=@xmlTop oneline
@@ -199,6 +200,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   else
     command -nargs=+ HiLink hi def link <args>
   endif
+  HiLink javascriptCDATA                String
   HiLink javaScriptComment              Comment
   HiLink javaScriptLineComment          Comment
   HiLink javaScriptDocComment           Comment
