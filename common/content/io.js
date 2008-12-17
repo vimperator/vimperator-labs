@@ -604,15 +604,14 @@ function IO() //{{{
             let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
             let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
-            let charset = "UTF-8";
+            let toCharset = "UTF-8";
             if (typeof file == "string")
                 file = ioManager.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             ifstream.init(file, -1, 0, 0);
-            const replacementChar = Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
-            icstream.init(ifstream, charset, 4096, replacementChar); // 4096 bytes buffering
+            icstream.init(ifstream, toCharset, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
 
             let buffer = "";
             let str = {};
