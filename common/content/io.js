@@ -720,48 +720,38 @@ lookup:
 
             function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
 
-            let stdoutFile = ioManager.createTempFile();
-            let stderrFile = ioManager.createTempFile();
+            return this.withTempFiles(function (stdin, stdout, stderr, cmd) {
 
-            if (!stdoutFile || !stderrFile) // FIXME: error reporting
-                return "";
+                if (input)
+                {
+                    this.writeFile(stdin, input);
+                    command += " <" + escape(stdin.path);
+                }
 
-            if (WINDOWS)
-            {
-                command = "cd /D " + cwd.path + " && " + command + " > " + stdoutFile.path + " 2> " + stderrFile.path;
-            }
-            else
-            {
-                let cmd = util.Array.flatten([options["shell"], options["shellcmdflag"].split(/\s+/), command]).map(escape).join(" ");
-                command = "cd " + escape(cwd.path) + " && exec " + cmd + " >" + escape(stdoutFile.path) + " 2>" + escape(stderrFile.path);
-            }
+                if (WINDOWS)
+                {
+                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path;
+                    var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
+                }
+                else
+                {
+                    this.writeFile(cmd, Array.concat("exec", options["shell"], options["shellcmdflag"].split(/\s+/), command).map(escape).join(" "));
+                    command = "cd " + escape(cwd.path) + ' && eval "$(cat <' + escape(cmd.path) + ')" >' + escape(stdout.path) + " 2>" + escape(stderr.path);
+                    liberator.dump("command: " + command);
+                    res = this.run("/bin/sh", ["-c", command], true);
+                }
 
-            let stdinFile = null;
+                if (res > 0) // FIXME: Is this really right? Shouldn't we always show both?
+                    var output = ioManager.readFile(stderr) + "\nshell returned " + res;
+                else
+                    output = ioManager.readFile(stdout);
 
-            if (input)
-            {
-                stdinFile = ioManager.createTempFile(); // FIXME: no returned file?
-                ioManager.writeFile(stdinFile, input);
-                command += " <" + escape(stdinFile.path);
-            }
+                // if there is only one \n at the end, chop it off
+                if (output && output.indexOf("\n") == output.length - 1)
+                    output = output.substr(0, output.length - 1);
 
-            let res = ioManager.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
-
-            if (res > 0)
-                var output = ioManager.readFile(stderrFile) + "\nshell returned " + res;
-            else
-                var output = ioManager.readFile(stdoutFile);
-
-            stdoutFile.remove(false);
-            stderrFile.remove(false);
-            if (stdinFile)
-                stdinFile.remove(false);
-
-            // if there is only one \n at the end, chop it off
-            if (output && output.indexOf("\n") == output.length - 1)
-                output = output.substr(0, output.length - 1);
-
-            return output;
+                return output;
+            }) || "";
         },
 
         // FIXME: multiple paths?
@@ -949,6 +939,21 @@ lookup:
             finally
             {
                 ioManager.sourcing = wasSourcing;
+            }
+        },
+
+        withTempFiles: function (fn, self)
+        {
+            let args = util.map(util.range(0, fn.length), this.createTempFile);
+            if (!args.every(util.identity))
+                return false;
+            try
+            {
+                return fn.apply(self || this, args);
+            }
+            finally
+            {
+                args.forEach(function (f) f.remove(false));
             }
         }
     }; //}}}
