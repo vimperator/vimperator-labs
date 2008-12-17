@@ -757,16 +757,14 @@ function Commands() //{{{
 
                 if (completeOpt)
                 {
-                    let func;
-
+                    // TODO: Should we catch any eval error? It'll be reported anyway.
                     if (/^custom,/.test(completeOpt))
-                        func = completeOpt.replace("custom,", "");
-                    else
-                        func = "completion." + completeOptionMap[completeOpt];
+                        completeFunc = liberator.eval(completeOpt.substr(7));
+                    else 
+                        completeFunc = completion[completeOptionMap[completeOpt]];
 
-                    //completeFunc = eval(func);
-                    completeFunc = func;
-                    liberator.log(func)
+                    if (completeFunc == null)
+                        return liberator.echoerr("No such completion function");
                 }
 
                 if (!commands.addUserCommand(
@@ -779,7 +777,7 @@ function Commands() //{{{
                             count: countOpt,
                             // TODO: handle missing function
                             //completer: completeFunc,
-                            completer: function (context, args) eval(completeFunc + "(context, args)"),
+                            completer: function (context, args) eval(completeFunc(context, args)),
                             replacementText: args.literalArg
                         },
                         args.bang)
