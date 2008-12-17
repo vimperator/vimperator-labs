@@ -1160,8 +1160,11 @@ function Completion() //{{{
         ////////////////////// COMPLETION TYPES ////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        // TODO: shouldn't all of these have a standard signature (context, args, ...)? --djk
         abbreviation: function abbreviation(context, args, mode)
         {
+            mode = mode || "!";
+
             if (args.completeArg == 0)
             {
                 let abbreviations = editor.getAbbreviations(mode);
@@ -1682,6 +1685,9 @@ function Completion() //{{{
 
         userMapping: function userMapping(context, args, modes)
         {
+            // FIXME: have we decided on a 'standard' way to handle this clash? --djk
+            modes = modes || [modules.modes.NORMAL];
+
             if (args.completeArg == 0)
             {
                 let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
