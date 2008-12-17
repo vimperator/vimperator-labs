@@ -771,10 +771,8 @@ function CommandLine() //{{{
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",
         function () { editor.expandAbbreviation("c"); });
 
-    // FIXME: Should be "g<" but that doesn't work unless it has a non-null
-    // rhs, getCandidates broken?
     mappings.add([modes.NORMAL],
-        ["g."], "Redisplay the last command output",
+        ["g<"], "Redisplay the last command output",
         function ()
         {
             if (lastMowOutput)

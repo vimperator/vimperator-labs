@@ -12,8 +12,8 @@ Display previously given messages.
 ________________________________________________________________________________
 
 
-|g.| +
-||g.||
+|g<| +
+||g<||
 ________________________________________________________________________________
 Redisplay the last command output. Only the most recent command's output is
 available.

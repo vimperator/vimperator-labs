@@ -90,7 +90,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[[|| Follow the link labeled \'prev', \'previous' or \'<' if it exists +
 
 ||g$|| Go to the last tab +
-||g.|| Redisplay the last command output +
+||g<|| Redisplay the last command output +
 ||g0|| Go to the first tab +
 ||g<C-g>|| Print file information +
 ||gB|| Repeat last :buffer[!] command in reverse direction +
