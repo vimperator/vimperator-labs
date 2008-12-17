@@ -69,7 +69,7 @@ const config = { //{{{
         ["checkupdates",     "Check for updates",
             function () { window.checkForUpdates(); }],
         ["cleardata",        "Clear private data",
-            function () { Components.classes[GLUE_CID].getService(Components.interfaces.nsIBrowserGlue).sanitize(window || null); }],
+            function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
         ["cookies",          "List your cookies",
             function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["console",          "JavaScript console",
@@ -338,8 +338,8 @@ const config = { //{{{
             "Redraw the screen",
             function ()
             {
-                let wu = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-                                getInterface(Components.interfaces.nsIDOMWindowUtils);
+                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor).
+                                getInterface(Ci.nsIDOMWindowUtils);
                 wu.redraw();
                 modes.show();
             },
@@ -418,8 +418,7 @@ const config = { //{{{
             {
                 setter: function (value)
                 {
-                    const ioService = Components.classes['@mozilla.org/network/io-service;1']
-                                                .getService(Components.interfaces.nsIIOService2);
+                    const ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService2);
 
                     ioService.offline = !value;
                     gPrefService.setBoolPref("browser.offline", ioService.offline);
@@ -428,8 +427,7 @@ const config = { //{{{
                 },
                 getter: function ()
                 {
-                    return Components.classes['@mozilla.org/network/io-service;1']
-                                     .getService(Components.interfaces.nsIIOService2).offline;
+                    return Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService2).offline;
                 }
             });
 

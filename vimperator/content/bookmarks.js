@@ -40,12 +40,9 @@ function Bookmarks() //{{{
     const historyService   = PlacesUtils.history;
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
-    const searchService    = Components.classes["@mozilla.org/browser/search-service;1"]
-                                       .getService(Components.interfaces.nsIBrowserSearchService);
-    const ioService        = Components.classes["@mozilla.org/network/io-service;1"]
-                                       .getService(Components.interfaces.nsIIOService);
-    const faviconService   = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                                       .getService(Components.interfaces.nsIFaviconService);
+    const searchService    = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+    const ioService        = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");
@@ -183,9 +180,9 @@ function Bookmarks() //{{{
             },
             QueryInterface: function QueryInterface(iid)
             {
-                if (iid.equals(Components.interfaces.nsINavBookmarkObserver) || iid.equals(Components.interfaces.nsISupports))
+                if (iid.equals(Ci.nsINavBookmarkObserver) || iid.equals(Ci.nsISupports))
                     return this;
-                throw Components.results.NS_ERROR_NO_INTERFACE;
+                throw Cr.NS_ERROR_NO_INTERFACE;
             }
         };
 
@@ -536,8 +533,7 @@ function Bookmarks() //{{{
 
         getSuggestions: function getSuggestions(engine, query, callback)
         {
-            let ss = Components.classes["@mozilla.org/browser/search-service;1"]
-                               .getService(Components.interfaces.nsIBrowserSearchService);
+            let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
             const responseType = "application/x-suggestions+json";
 
             let engine = ss.getEngineByAlias(engine);
@@ -548,8 +544,7 @@ function Bookmarks() //{{{
 
             function process(resp)
             {
-                const json = Components.classes["@mozilla.org/dom/json;1"]
-                                       .createInstance(Components.interfaces.nsIJSON);
+                const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
                 let results = [];
                 try
                 {
