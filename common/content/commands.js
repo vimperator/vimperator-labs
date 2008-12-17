@@ -757,14 +757,10 @@ function Commands() //{{{
 
                 if (completeOpt)
                 {
-                    // TODO: Should we catch any eval error? It'll be reported anyway.
                     if (/^custom,/.test(completeOpt))
-                        completeFunc = liberator.eval(completeOpt.substr(7));
+                        completeFunc = completeOpt.substr(7);
                     else 
-                        completeFunc = completion[completeOptionMap[completeOpt]];
-
-                    if (completeFunc == null)
-                        return liberator.echoerr("No such completion function");
+                        completeFunc = "completion." + completeOptionMap[completeOpt];
                 }
 
                 if (!commands.addUserCommand(
@@ -775,9 +771,20 @@ function Commands() //{{{
                             argCount: nargsOpt,
                             bang: bangOpt,
                             count: countOpt,
-                            // TODO: handle missing function
-                            //completer: completeFunc,
-                            completer: function (context, args) eval(completeFunc(context, args)),
+                            completer: function (context, args) {
+                                if (completeFunc)
+                                {
+                                    try
+                                    {
+                                        liberator.eval(completeFunc).call(completion, context, args)
+                                    }
+                                    catch (e)
+                                    {
+                                        // FIXME: should be pushed to the MOW
+                                        liberator.echoerr("E117: Unknown function: " + completeFunc);
+                                    }
+                                }
+                            },
                             replacementText: args.literalArg
                         },
                         args.bang)
