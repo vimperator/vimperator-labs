@@ -5,8 +5,7 @@
 
     modules.modules = modules;
 
-    const loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                             .getService(Components.interfaces.mozIJSSubScriptLoader);
+    const loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
     function load(script)
     {
         for (let [i, base] in Iterator(prefix))
@@ -20,14 +19,14 @@
             {
                 if (i + 1 < prefix.length)
                     continue;
-                if (Components.utils.reportError)
-                    Components.utils.reportError(e);
+                if (Cu.reportError)
+                    Cu.reportError(e);
                 dump("liberator: Loading script " + script + ": " + e + "\n");
             }
         }
     }
 
-    Components.utils.import("resource://liberator/storage.jsm", modules);
+    Cu.import("resource://liberator/storage.jsm", modules);
 
     let prefix = [BASE];
 

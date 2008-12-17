@@ -97,8 +97,7 @@ function Tabs() //{{{
 
     function copyTab(to, from)
     {
-        const ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                             .getService(Components.interfaces.nsISessionStore);
+        const ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
 
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
@@ -738,10 +737,8 @@ function Tabs() //{{{
 
         get closedTabs()
         {
-            const json = Components.classes["@mozilla.org/dom/json;1"]
-                                   .createInstance(Components.interfaces.nsIJSON);
-            const ss = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                                 .getService(Components.interfaces.nsISessionStore);
+            const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+            const ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
             return json.decode(ss.getClosedTabData(window));
         },
 
@@ -845,7 +842,7 @@ function Tabs() //{{{
         {
             if (bypassCache)
             {
-                const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+                const nsIWebNavigation = Ci.nsIWebNavigation;
                 const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
                 getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
             }
@@ -970,8 +967,7 @@ function Tabs() //{{{
                 tab = getBrowser().mTabContainer.selectedItem;
 
             window.open();
-            const wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                 .getService(Components.interfaces.nsIWindowMediator);
+            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
             let win = wm.getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);

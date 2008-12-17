@@ -133,9 +133,9 @@ function Search() //{{{
     var highlightObj = {
         search: function (aWord, matchCase)
         {
-            var finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
+            var finder = Cc["@mozilla.org/embedcomp/rangefind;1"]
                                    .createInstance()
-                                   .QueryInterface(Components.interfaces.nsIFind);
+                                   .QueryInterface(Ci.nsIFind);
             if (matchCase !== undefined)
                 finder.caseSensitive = matchCase;
 
@@ -342,7 +342,7 @@ function Search() //{{{
             processUserPattern(str);
 
             fastFind.caseSensitive = caseSensitive;
-            found = fastFind.find(searchString, linksOnly) != Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND;
+            found = fastFind.find(searchString, linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
             if (!found)
                 setTimeout(function () liberator.echoerr("E486: Pattern not found: " + searchPattern, commandline.FORCE_SINGLELINE), 0);
@@ -362,11 +362,11 @@ function Search() //{{{
             let up = reverse ? !lastSearchBackwards : lastSearchBackwards;
             let result = getBrowser().fastFind.findAgain(up, linksOnly);
 
-            if (result == Components.interfaces.nsITypeAheadFind.FIND_NOTFOUND)
+            if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND)
             {
                 liberator.echoerr("E486: Pattern not found: " + lastSearchPattern, commandline.FORCE_SINGLELINE);
             }
-            else if (result == Components.interfaces.nsITypeAheadFind.FIND_WRAPPED)
+            else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED)
             {
                 // hack needed, because wrapping causes a "scroll" event which clears
                 // our command line

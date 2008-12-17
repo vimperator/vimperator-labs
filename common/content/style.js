@@ -212,12 +212,9 @@ function Styles(name, store, serial)
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;
-    const consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                     .getService(Components.interfaces.nsIConsoleService);
-    const ios = Components.classes["@mozilla.org/network/io-service;1"]
-                          .getService(Components.interfaces.nsIIOService);
-    const sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
-                          .getService(Components.interfaces.nsIStyleSheetService);
+    const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+    const ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
     const namespace = '@namespace html "' + XHTML + '";\n' +
                       '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
@@ -377,7 +374,7 @@ function Styles(name, store, serial)
         return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
     }
 
-    let queryinterface = XPCOMUtils.generateQI([Components.interfaces.nsIConsoleListener]);
+    let queryinterface = XPCOMUtils.generateQI([Ci.nsIConsoleListener]);
     /* What happens if more than one thread tries to use this? */
     let testDoc = document.implementation.createDocument(XHTML, "doc", null);
     function checkSyntax(uri)
@@ -389,7 +386,7 @@ function Styles(name, store, serial)
             {
                 try
                 {
-                    message = message.QueryInterface(Components.interfaces.nsIScriptError);
+                    message = message.QueryInterface(Ci.nsIScriptError);
                     if (message.sourceName == uri)
                         errors.push(message);
                 }

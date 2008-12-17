@@ -84,8 +84,7 @@ const util = { //{{{
     // TODO: class could have better variable names/documentation
     Timer: function Timer(minInterval, maxInterval, callback)
     {
-        let timer = Components.classes["@mozilla.org/timer;1"]
-                              .createInstance(Components.interfaces.nsITimer);
+        let timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
         this.doneAt = 0;
         this.latest = 0;
         this.notify = function (aTimer)
@@ -162,8 +161,7 @@ const util = { //{{{
 
     copyToClipboard: function copyToClipboard(str, verbose)
     {
-        const clipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                                          .getService(Components.interfaces.nsIClipboardHelper);
+        const clipboardHelper = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper);
         clipboardHelper.copyString(str);
 
         if (verbose)
@@ -172,8 +170,7 @@ const util = { //{{{
 
     createURI: function createURI(str)
     {
-        const fixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
-                                .getService(Components.interfaces.nsIURIFixup);
+        const fixup = Cc["@mozilla.org/docshell/urifixup;1"].getService(Ci.nsIURIFixup);
         return fixup.createFixupURI(str, fixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
     },
 
@@ -430,10 +427,8 @@ const util = { //{{{
 
         try
         {
-            const clipboard = Components.classes['@mozilla.org/widget/clipboard;1']
-                                        .getService(Components.interfaces.nsIClipboard);
-            const transferable = Components.classes['@mozilla.org/widget/transferable;1']
-                                           .createInstance(Components.interfaces.nsITransferable);
+            const clipboard = Cc['@mozilla.org/widget/clipboard;1'].getService(Ci.nsIClipboard);
+            const transferable = Cc['@mozilla.org/widget/transferable;1'].createInstance(Ci.nsITransferable);
 
             transferable.addDataFlavor("text/unicode");
 
@@ -449,7 +444,7 @@ const util = { //{{{
 
             if (data)
             {
-                data = data.value.QueryInterface(Components.interfaces.nsISupportsString);
+                data = data.value.QueryInterface(Ci.nsISupportsString);
                 url = data.data.substring(0, dataLen.value / 2);
             }
         }
@@ -479,7 +474,7 @@ const util = { //{{{
 
             // Look for a valid protocol
             let proto = url.match(/^([-\w]+):/);
-            if (proto && Components.classes["@mozilla.org/network/protocol;1?name=" + proto[1]])
+            if (proto && Cc["@mozilla.org/network/protocol;1?name=" + proto[1]])
                 // Handle as URL, but remove spaces. Useful for copied/'p'asted URLs.
                 return url.replace(/\s+/g, "");
 

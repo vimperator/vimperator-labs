@@ -439,7 +439,7 @@ CompletionContext.prototype = {
         try // Firefox <3.1 doesn't have repaintSelection
         {
             this.selectionTypes[type] = null;
-            const selType = Components.interfaces.nsISelectionController["SELECTION_" + type];
+            const selType = Ci.nsISelectionController["SELECTION_" + type];
             const editor = this.editor;
             let sel = editor.selectionController.getSelection(selType);
             if (length == 0)
@@ -528,8 +528,7 @@ function Completion() //{{{
 
     try
     {
-        var completionService = Components.classes["@mozilla.org/browser/global-history;2"]
-                                          .getService(Components.interfaces.nsIAutoCompleteSearch);
+        var completionService = Cc["@mozilla.org/browser/global-history;2"].getService(Ci.nsIAutoCompleteSearch);
     }
     catch (e) {}
 
@@ -537,8 +536,7 @@ function Completion() //{{{
 
     function Javascript()
     {
-        let json = Components.classes["@mozilla.org/dom/json;1"]
-                             .createInstance(Components.interfaces.nsIJSON);
+        let json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
@@ -1501,8 +1499,7 @@ function Completion() //{{{
 
         preference: function preference(context)
         {
-            let prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                  .getService(Components.interfaces.nsIPrefBranch);
+            let prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
             context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
@@ -1553,8 +1550,7 @@ function Completion() //{{{
             if (!context.filter)
                 return;
 
-            let ss = Components.classes["@mozilla.org/browser/search-service;1"]
-                               .getService(Components.interfaces.nsIBrowserSearchService);
+            let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
             let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
             let completions = [];
@@ -1582,8 +1578,7 @@ function Completion() //{{{
             context.title = ["Shell Command", "Path"];
             context.generate = function ()
             {
-                const environmentService = Components.classes["@mozilla.org/process/environment;1"]
-                                                     .getService(Components.interfaces.nsIEnvironment);
+                const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
 
                 let dirNames = environmentService.get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];

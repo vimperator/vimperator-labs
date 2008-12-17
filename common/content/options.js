@@ -301,8 +301,7 @@ function Options() //{{{
 
     const SAVED = "liberator.saved.";
 
-    const prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                  .getService(Components.interfaces.nsIPrefBranch);
+    const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
     var optionHash = {};
 
     function optionObserver(key, event, option)
@@ -364,11 +363,11 @@ function Options() //{{{
             switch (type)
             {
                 case prefService.PREF_STRING:
-                    let value = branch.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+                    let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
                     if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
-                            value = branch.getComplexValue(name, Components.interfaces.nsIPrefLocalizedString).data;
+                            value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
                     return value;
                 case prefService.PREF_INT:
                     return branch.getIntPref(name);
@@ -778,8 +777,7 @@ function Options() //{{{
     {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
-                [function () Components.classes["@mozilla.org/preferences-service;1"]
-                                       .getService(Components.interfaces.nsIPrefBranch)
+                [function () Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch)
                                        .getChildList("", { value: 0 })
                                        .map(function (pref) [pref, ""])]);
     });

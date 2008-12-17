@@ -26,7 +26,12 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const plugins = {};
 plugins.__proto__ = modules;
@@ -44,8 +49,7 @@ const liberator = (function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const threadManager = Components.classes["@mozilla.org/thread-manager;1"]
-                                    .getService(Components.interfaces.nsIThreadManager);
+    const threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
     function Runnable(self, func, args)
     {
         this.self = self;
@@ -53,7 +57,7 @@ const liberator = (function () //{{{
         this.args = args;
     }
     Runnable.prototype = {
-        QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIRunnable]),
+        QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
         run: function () { this.func.apply(this.self, this.args); }
     };
 
@@ -668,8 +672,7 @@ const liberator = (function () //{{{
             }
             else
             {
-                let soundService = Components.classes["@mozilla.org/sound;1"]
-                                             .getService(Components.interfaces.nsISound);
+                let soundService = Cc["@mozilla.org/sound;1"].getService(Ci.nsISound);
                 soundService.beep();
             }
             return false; // so you can do: if (...) return liberator.beep();
@@ -748,8 +751,7 @@ const liberator = (function () //{{{
 
         loadScript: function (uri, context)
         {
-            let loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                   .getService(Components.interfaces.mozIJSSubScriptLoader);
+            let loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
             loader.loadSubScript(uri, context);
         },
 
@@ -876,8 +878,7 @@ const liberator = (function () //{{{
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
         {
-            let ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                               .getService(Components.interfaces.nsIWindowWatcher);
+            let ww = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
             if (window != ww.activeWindow)
                 return;
 
@@ -911,9 +912,8 @@ const liberator = (function () //{{{
 
         hasExtension: function (name)
         {
-            let manager = Components.classes["@mozilla.org/extensions/manager;1"]
-                                    .getService(Components.interfaces.nsIExtensionManager);
-            let extensions = manager.getItemList(Components.interfaces.nsIUpdateItem.TYPE_EXTENSION, {});
+            let manager = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager);
+            let extensions = manager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
 
             return extensions.some(function (e) e.name == name);
         },
@@ -1037,8 +1037,7 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                           .getService(Components.interfaces.nsIConsoleService);
+            var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
             consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
@@ -1096,8 +1095,7 @@ const liberator = (function () //{{{
                         break;
 
                     case liberator.NEW_WINDOW:
-                        const wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                             .getService(Components.interfaces.nsIWindowMediator);
+                        const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
                         window.open();
                         whichwindow = wm.getMostRecentWindow("navigator:browser");
                         whichwindow.loadURI(url, null, postdata);
@@ -1142,9 +1140,9 @@ const liberator = (function () //{{{
             else
                 options.setPref("browser.startup.page", 1); // start with default homepage session
 
-            const nsIAppStartup = Components.interfaces.nsIAppStartup;
+            const nsIAppStartup = Ci.nsIAppStartup;
             if (force)
-                Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                Cc["@mozilla.org/toolkit/app-startup;1"]
                           .getService(nsIAppStartup)
                           .quit(nsIAppStartup.eForceQuit);
             else
@@ -1153,8 +1151,8 @@ const liberator = (function () //{{{
 
         reportError: function (error)
         {
-            if (Components.utils.reportError)
-                Components.utils.reportError(error);
+            if (Cu.reportError)
+                Cu.reportError(error);
             try
             {
                 let obj = {
@@ -1174,13 +1172,11 @@ const liberator = (function () //{{{
 
         restart: function ()
         {
-            const nsIAppStartup = Components.interfaces.nsIAppStartup;
+            const nsIAppStartup = Ci.nsIAppStartup;
 
             // notify all windows that an application quit has been requested.
-            var os = Components.classes["@mozilla.org/observer-service;1"]
-                               .getService(Components.interfaces.nsIObserverService);
-            var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-                                       .createInstance(Components.interfaces.nsISupportsPRBool);
+            var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+            var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
             os.notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
@@ -1191,8 +1187,7 @@ const liberator = (function () //{{{
             os.notifyObservers(null, "quit-application-granted", null);
 
             // enumerate all windows and call shutdown handlers
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
+            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
             var windows = wm.getEnumerator(null);
             while (windows.hasMoreElements())
             {
@@ -1200,7 +1195,7 @@ const liberator = (function () //{{{
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            Components.classes["@mozilla.org/toolkit/app-startup;1"]
+            Cc["@mozilla.org/toolkit/app-startup;1"]
                       .getService(nsIAppStartup)
                       .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
@@ -1377,8 +1372,7 @@ const liberator = (function () //{{{
 
         get windows()
         {
-            var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                               .getService(Components.interfaces.nsIWindowMediator);
+            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
             var wa = [];
             var enumerator = wm.getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())

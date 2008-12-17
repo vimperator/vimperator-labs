@@ -576,8 +576,8 @@ function Buffer() //{{{
             try
             {
                 var contentDisposition = window.content
-                                               .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                                               .getInterface(Components.interfaces.nsIDOMWindowUtils)
+                                               .QueryInterface(Ci.nsIInterfaceRequestor)
+                                               .getInterface(Ci.nsIDOMWindowUtils)
                                                .getDocumentMetadata("content-disposition");
             } catch (e) {}
 
@@ -690,7 +690,7 @@ function Buffer() //{{{
                 try
                 {
                     window.urlSecurityCheck(data.href, principal,
-                            Components.interfaces.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
+                            Ci.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
                 }
                 catch (e)
                 {
@@ -735,9 +735,8 @@ function Buffer() //{{{
         let doc = window.content.document;
 
         // get file size
-        const ACCESS_READ = Components.interfaces.nsICache.ACCESS_READ;
-        const cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
-                                       .getService(Components.interfaces.nsICacheService);
+        const ACCESS_READ = Ci.nsICache.ACCESS_READ;
+        const cacheService = Cc["@mozilla.org/network/cache-service;1"].getService(Ci.nsICacheService);
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
         for (let proto in util.Array.iterator(["HTTP", "FTP"]))
@@ -1067,9 +1066,9 @@ function Buffer() //{{{
         },
 
         get selectionController() getBrowser().docShell
-                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                .getInterface(Components.interfaces.nsISelectionDisplay)
-                .QueryInterface(Components.interfaces.nsISelectionController),
+                .QueryInterface(Ci.nsIInterfaceRequestor)
+                .getInterface(Ci.nsISelectionDisplay)
+                .QueryInterface(Ci.nsISelectionController),
 
         saveLink: function (elem, skipPrompt)
         {

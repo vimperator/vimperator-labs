@@ -1534,21 +1534,21 @@ function Events() //{{{
         // TODO: move to buffer.js?
         progressListener: {
             QueryInterface: XPCOMUtils.generateQI([
-                Components.interfaces.nsIWebProgressListener,
-                Components.interfaces.nsIXULBrowserWindow
+                Ci.nsIWebProgressListener,
+                Ci.nsIXULBrowserWindow
             ]),
 
             // XXX: function may later be needed to detect a canceled synchronous openURL()
             onStateChange: function (webProgress, request, flags, status)
             {
-                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+                const nsIWebProgressListener = Ci.nsIWebProgressListener;
                 // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
                 // receive statechange events for loading images and other parts of the web page
                 if (flags & (nsIWebProgressListener.STATE_IS_DOCUMENT | nsIWebProgressListener.STATE_IS_WINDOW))
                 {
                     // This fires when the load event is initiated
                     // only thrown for the current tab, not when another tab changes
-                    if (flags & Components.interfaces.nsIWebProgressListener.STATE_START)
+                    if (flags & Ci.nsIWebProgressListener.STATE_START)
                     {
                         buffer.loaded = 0;
                         statusline.updateProgress(0);
@@ -1563,7 +1563,7 @@ function Events() //{{{
                                 liberator.mode == modes.HINTS ? 500 : 0);
                         }
                     }
-                    else if (flags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
+                    else if (flags & Ci.nsIWebProgressListener.STATE_STOP)
                     {
                         buffer.loaded = (status == 0 ? 1 : 2);
                         statusline.updateUrl();
@@ -1573,7 +1573,7 @@ function Events() //{{{
             // for notifying the user about secure web pages
             onSecurityChange: function (webProgress, aRequest, aState)
             {
-                const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+                const nsIWebProgressListener = Ci.nsIWebProgressListener;
                 if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
                     statusline.setClass("insecure");
                 else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
@@ -1638,10 +1638,9 @@ function Events() //{{{
         prefObserver: {
             register: function ()
             {
-                const prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                              .getService(Components.interfaces.nsIPrefService);
+                const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
                 this._branch = prefService.getBranch(""); // better way to monitor all changes?
-                this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
+                this._branch.QueryInterface(Ci.nsIPrefBranch2);
                 this._branch.addObserver("", this, false);
             },
 
@@ -1670,15 +1669,15 @@ function Events() //{{{
     }; //}}}
 
     window.XULBrowserWindow = eventManager.progressListener;
-    window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIWebNavigation)
-        .QueryInterface(Components.interfaces.nsIDocShellTreeItem).treeOwner
-        .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-        .getInterface(Components.interfaces.nsIXULWindow)
+    window.QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIWebNavigation)
+        .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
+        .QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIXULWindow)
         .XULBrowserWindow = window.XULBrowserWindow;
     try
     {
-        getBrowser().addProgressListener(eventManager.progressListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+        getBrowser().addProgressListener(eventManager.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
     }
     catch (e) {}
 

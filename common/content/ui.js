@@ -484,8 +484,8 @@ function CommandLine() //{{{
 
     const messageBox = document.getElementById("liberator-message");
 
-    commandWidget.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
-    messageBox.inputField.QueryInterface(Components.interfaces.nsIDOMNSEditableElement);
+    commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
+    messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
 
     // the widget used for multiline output
     const multilineOutputWidget = document.getElementById("liberator-multiline-output");
@@ -659,8 +659,7 @@ function CommandLine() //{{{
          {
              completer: function completer(value)
              {
-                 let ss = Components.classes["@mozilla.org/browser/search-service;1"]
-                                    .getService(Components.interfaces.nsIBrowserSearchService);
+                 let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
                  let engines = ss.getEngines({})
                                  .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
 

@@ -61,16 +61,12 @@ function IO() //{{{
     const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
-    const ioService          = Components.classes['@mozilla.org/network/io-service;1']
-                                         .getService(Components.interfaces.nsIIOService);
-    const environmentService = Components.classes["@mozilla.org/process/environment;1"]
-                                         .getService(Components.interfaces.nsIEnvironment);
-    const directoryService   = Components.classes["@mozilla.org/file/directory_service;1"]
-                                         .getService(Components.interfaces.nsIProperties);
-    const downloadManager    = Components.classes["@mozilla.org/download-manager;1"]
-                                         .createInstance(Components.interfaces.nsIDownloadManager);
+    const ioService          = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+    const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
+    const directoryService   = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
+    const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
 
-    var processDir = directoryService.get("CurWorkD", Components.interfaces.nsIFile);
+    var processDir = directoryService.get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
     var oldcwd = null;
 
@@ -135,8 +131,7 @@ function IO() //{{{
     {
         try
         {
-            Components.classes["@mozilla.org/file/local;1"]
-                      .createInstance(Components.interfaces.nsILocalFile)
+            Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile)
                       .initWithPath(path);
             return true;
         }
@@ -524,13 +519,11 @@ function IO() //{{{
         // also expands relative paths
         getFile: function (path, noCheckPWD)
         {
-            let file = Components.classes["@mozilla.org/file/local;1"]
-                                 .createInstance(Components.interfaces.nsILocalFile);
+            let file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
 
             if (/file:\/\//.test(path))
             {
-                file = Components.classes["@mozilla.org/network/protocol;1?name=file"]
-                                 .createInstance(Components.interfaces.nsIFileProtocolHandler)
+                file = Cc["@mozilla.org/network/protocol;1?name=file"].createInstance(Ci.nsIFileProtocolHandler)
                                  .getFileFromURLSpec(path);
             }
             else
@@ -567,9 +560,9 @@ function IO() //{{{
                     break;
             }
 
-            let file = directoryService.get("TmpD", Components.interfaces.nsIFile);
+            let file = directoryService.get("TmpD", Ci.nsIFile);
             file.append(tmpName);
-            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
+            file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
             if (file.exists())
                 return file;
@@ -583,8 +576,8 @@ function IO() //{{{
         {
             if (typeof file == "string")
                 file = ioManager.getFile(file);
-            else if (!(file instanceof Components.interfaces.nsILocalFile))
-                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+            else if (!(file instanceof Ci.nsILocalFile))
+                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (file.isDirectory())
             {
@@ -593,7 +586,7 @@ function IO() //{{{
                 while (entries.hasMoreElements())
                 {
                     let entry = entries.getNext();
-                    entry.QueryInterface(Components.interfaces.nsIFile);
+                    entry.QueryInterface(Ci.nsIFile);
                     array.push(entry);
                 }
                 if (sort)
@@ -608,19 +601,17 @@ function IO() //{{{
         // reads a file in "text" mode and returns the string
         readFile: function (file)
         {
-            let ifstream = Components.classes["@mozilla.org/network/file-input-stream;1"]
-                                     .createInstance(Components.interfaces.nsIFileInputStream);
-            let icstream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
-                                     .createInstance(Components.interfaces.nsIConverterInputStream);
+            let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+            let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
             let charset = "UTF-8";
             if (typeof file == "string")
                 file = ioManager.getFile(file);
-            else if (!(file instanceof Components.interfaces.nsILocalFile))
-                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+            else if (!(file instanceof Ci.nsILocalFile))
+                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             ifstream.init(file, -1, 0, 0);
-            const replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
+            const replacementChar = Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
             icstream.init(ifstream, charset, 4096, replacementChar); // 4096 bytes buffering
 
             let buffer = "";
@@ -639,16 +630,14 @@ function IO() //{{{
         // mode can be ">" or ">>" in addition to the normal MODE_* flags
         writeFile: function (file, buf, mode, perms)
         {
-            let ofstream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                                     .createInstance(Components.interfaces.nsIFileOutputStream);
-            let ocstream = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
-                                     .createInstance(Components.interfaces.nsIConverterOutputStream);
+            let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+            let ocstream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 
             let charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
             if (typeof file == "string")
                 file = ioManager.getFile(file);
-            else if (!(file instanceof Components.interfaces.nsILocalFile))
-                throw Components.results.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+            else if (!(file instanceof Ci.nsILocalFile))
+                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (mode == ">>")
                 mode = ioManager.MODE_WRONLY | ioManager.MODE_CREATE | ioManager.MODE_APPEND;
@@ -716,8 +705,7 @@ lookup:
                 return -1;
             }
 
-            let process = Components.classes["@mozilla.org/process/util;1"]
-                                    .createInstance(Components.interfaces.nsIProcess);
+            let process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
 
             process.init(file);
             process.run(blocking, args, args.length);

@@ -874,7 +874,7 @@ function Editor() //{{{
                         //document.getElementById("content-frame").contentDocument.designMode = "on";
                         let editor = GetCurrentEditor();
                         let wholeDocRange = editor.document.createRange();
-                        let rootNode = editor.rootElement.QueryInterface(Components.interfaces.nsIDOMNode);
+                        let rootNode = editor.rootElement.QueryInterface(Ci.nsIDOMNode);
                         wholeDocRange.selectNodeContents(rootNode);
                         editor.selection.addRange(wholeDocRange);
                         editor.selection.deleteFromDocument();
