@@ -185,8 +185,8 @@ ________________________________________________________________________________
 |:qma| |:qmark|
 ||:qma[rk] {a-zA-Z0-9} [url]|| +
 ________________________________________________________________________________
-Mark a URL with a letter for quick access. You can also mark whole groups like this:  +
-[c]:qmark f \http://forum1.com, \http://forum2.com, imdb some artist[c]
+Mark a URL with a letter for quick access. You can also mark whole groups like this: +
+ [c]:qmark f \http://forum1.com, \http://forum2.com, imdb some artist[c]
 ________________________________________________________________________________
 
 
