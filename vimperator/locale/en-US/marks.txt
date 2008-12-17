@@ -139,7 +139,7 @@ ________________________________________________________________________________
 section:QuickMarks[quickmarks]
 
 |go| +
-||go\\{a-zA-Z0-9\\}||
+||go[a]\\{a-zA-Z0-9\\}[a]||
 ________________________________________________________________________________
 Jump to a QuickMark in the current tab. Open any QuickMark in the current tab.
 You can mark any URLs with [m]M{a-zA-Z0-9}[m]. These QuickMarks are persistent
@@ -148,7 +148,7 @@ ________________________________________________________________________________
 
 
 |gn| +
-||gn\\{a-zA-Z0-9\\}||
+||gn[a]\\{a-zA-Z0-9\\}[a]||
 ________________________________________________________________________________
 Jump to a QuickMark in a new tab. Works like [m]go{a-zA-Z0-9}[m] but opens the
 QuickMark in a new tab. Whether the new tab is activated or not depends on the
@@ -159,7 +159,7 @@ ________________________________________________________________________________
 
 
 |M| +
-||M\\{a-zA-Z0-9\\}||
+||M[a]\\{a-zA-Z0-9\\}[a]||
 ________________________________________________________________________________
 Add new QuickMark for current URL. You can go to a marked URL in the current
 tab with [m]go{a-zA-Z0-9}[m] or in a new tab with [m]gn{a-zA-Z0-9}[m]. These
@@ -199,7 +199,7 @@ ________________________________________________________________________________
 section:Local{nbsp}marks[localmarks]
 
 |m| +
-||m\\{a-zA-Z\\}||
+||m[a]\\{a-zA-Z\\}[a]||
 ________________________________________________________________________________
 Set mark at the cursor position. Marks a-z are local to the buffer, whereas
 A-Z are valid between buffers.
@@ -207,7 +207,7 @@ ________________________________________________________________________________
 
 
 |\`| |\'| +
-||\'\\{a-zA-Z\\}||
+||\'[a]\\{a-zA-Z\\}[a]||
 ________________________________________________________________________________
 Jump to the mark in the current buffer. Marks a-z are local to the buffer,
 whereas A-Z are valid between buffers.
