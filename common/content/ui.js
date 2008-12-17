@@ -659,9 +659,8 @@ function CommandLine() //{{{
          {
              completer: function completer(value)
              {
-                 let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
-                 let engines = ss.getEngines({})
-                                 .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
+                 let engines = service.browserSearch.getEngines({})
+                                      .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
 
                  return engines.map(function (engine) [engine.alias, engine.description]);
              },

@@ -212,8 +212,8 @@ function Styles(name, store, serial)
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;
-    const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-    const ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const consoleService = service.console;
+    const ios = service.io;
     const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
     const namespace = '@namespace html "' + XHTML + '";\n' +
                       '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +

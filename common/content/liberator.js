@@ -43,13 +43,33 @@ const userContext = {
     __proto__: modules
 };
 
+let (cc = function (class, meth, iface) { try { return Cc[class][meth](iface) } catch (e) {} })
+{
+    const service = {
+        appStartup: cc("@mozilla.org/toolkit/app-startup;1", "getService", Ci.nsIAppStartup),
+        autoCompleteSearch: cc("@mozilla.org/browser/global-history;2", "getService", Ci.nsIAutoCompleteSearch),
+        browserSearch: cc("@mozilla.org/browser/search-service;1", "getService", Ci.nsIBrowserSearchService),
+        console: cc("@mozilla.org/consoleservice;1", "getService", Ci.nsIConsoleService),
+        directory: cc("@mozilla.org/file/directory_service;1", "getService", Ci.nsIProperties),
+        environment: cc("@mozilla.org/process/environment;1", "getService", Ci.nsIEnvironment),
+        io: cc("@mozilla.org/network/io-service;1", "getService", Ci.nsIIOService).QueryInterface(Ci.nsIIOService2),
+        json: cc("@mozilla.org/dom/json;1", "createInstance", Ci.nsIJSON),
+        observer: cc("@mozilla.org/observer-service;1", "getService", Ci.nsIObserverService),
+        pref: cc("@mozilla.org/preferences-service;1", "getService", Ci.nsIPrefService)
+                .QueryInterface(Ci.nsIPrefBranch).QueryInterface(nsIPrefBranch2),
+        sessionStore: cc("@mozilla.org/browser/sessionstore;1", "getService", Ci.nsISessionStore),
+        subscriptLoader: cc("@mozilla.org/moz/jssubscript-loader;1", "getService", Ci.mozIJSSubScriptLoader),
+        threadManager: cc("@mozilla.org/thread-manager;1", "getService", Ci.nsIThreadManager),
+        windowMediator: cc("@mozilla.org/appshell/window-mediator;1", "getService", Ci.nsIWindowMediator),
+    };
+};
+
 const liberator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
     function Runnable(self, func, args)
     {
         this.self = self;
@@ -678,18 +698,18 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
-        newThread: function () threadManager.newThread(0),
+        newThread: function () service.threadManager.newThread(0),
 
         callAsync: function (thread, self, func)
         {
-            hread = thread || threadManager.newThread(0);
+            hread = thread || service.threadManager.newThread(0);
             thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
         callFunctionInThread: function (thread, func)
         {
-            thread = thread || threadManager.newThread(0);
+            thread = thread || service.threadManager.newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
             thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
@@ -761,8 +781,7 @@ const liberator = (function () //{{{
 
         loadScript: function (uri, context)
         {
-            let loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-            loader.loadSubScript(uri, context);
+            service.subscriptLoader.loadSubScript(uri, context);
         },
 
         eval: function (str, context)
@@ -1047,8 +1066,7 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
+            service.console.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs
@@ -1085,7 +1103,6 @@ const liberator = (function () //{{{
             {
                 let url = Array.concat(urls)[0];
                 let postdata = Array.concat(urls)[1];
-                let whichwindow = window;
 
                 // decide where to load the first url
                 switch (where)
@@ -1105,10 +1122,9 @@ const liberator = (function () //{{{
                         break;
 
                     case liberator.NEW_WINDOW:
-                        const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
                         window.open();
-                        whichwindow = wm.getMostRecentWindow("navigator:browser");
-                        whichwindow.loadURI(url, null, postdata);
+                        service.windowMediator.getMostRecentWindow("navigator:browser")
+                               .loadURI(url, null, postdata);
                         break;
 
                     default:
@@ -1150,11 +1166,8 @@ const liberator = (function () //{{{
             else
                 options.setPref("browser.startup.page", 1); // start with default homepage session
 
-            const nsIAppStartup = Ci.nsIAppStartup;
             if (force)
-                Cc["@mozilla.org/toolkit/app-startup;1"]
-                          .getService(nsIAppStartup)
-                          .quit(nsIAppStartup.eForceQuit);
+                service.appStartup.quit(Ci.nsIAppStartup.eForceQuit);
             else
                 window.goQuitApplication();
         },
@@ -1182,32 +1195,26 @@ const liberator = (function () //{{{
 
         restart: function ()
         {
-            const nsIAppStartup = Ci.nsIAppStartup;
-
             // notify all windows that an application quit has been requested.
-            var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
             var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-            os.notifyObservers(cancelQuit, "quit-application-requested", null);
+            service.observer.notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
             if (cancelQuit.data)
                 return;
 
             // notify all windows that an application quit has been granted.
-            os.notifyObservers(null, "quit-application-granted", null);
+            service.observer.notifyObservers(null, "quit-application-granted", null);
 
             // enumerate all windows and call shutdown handlers
-            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-            var windows = wm.getEnumerator(null);
+            var windows = service.windowMediator.getEnumerator(null);
             while (windows.hasMoreElements())
             {
                 var win = windows.getNext();
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            Cc["@mozilla.org/toolkit/app-startup;1"]
-                      .getService(nsIAppStartup)
-                      .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+            service.appStartup.quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
         },
 
         // TODO: move to {muttator,vimperator,...}.js
@@ -1324,7 +1331,7 @@ const liberator = (function () //{{{
 
         sleep: function (delay)
         {
-            let mainThread = threadManager.mainThread;
+            let mainThread = service.threadManager.mainThread;
 
             let end = Date.now() + delay;
             while (Date.now() < end)
@@ -1334,8 +1341,8 @@ const liberator = (function () //{{{
 
         callInMainThread: function (callback, self)
         {
-            let mainThread = threadManager.mainThread;
-            if (!threadManager.isMainThread)
+            let mainThread = service.threadManager.mainThread;
+            if (!service.threadManager.isMainThread)
                 mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
             else
                 callback.call(self);
@@ -1343,7 +1350,7 @@ const liberator = (function () //{{{
 
         threadYield: function (flush, interruptable)
         {
-            let mainThread = threadManager.mainThread;
+            let mainThread = service.threadManager.mainThread;
             liberator.interrupted = false;
             do
             {
@@ -1382,9 +1389,8 @@ const liberator = (function () //{{{
 
         get windows()
         {
-            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
             var wa = [];
-            var enumerator = wm.getEnumerator("navigator:browser");
+            var enumerator = service.windowMediator.getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())
                 wa.push(enumerator.getNext());
             return wa;

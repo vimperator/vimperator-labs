@@ -133,9 +133,7 @@ function Search() //{{{
     var highlightObj = {
         search: function (aWord, matchCase)
         {
-            var finder = Cc["@mozilla.org/embedcomp/rangefind;1"]
-                                   .createInstance()
-                                   .QueryInterface(Ci.nsIFind);
+            var finder = Cc["@mozilla.org/embedcomp/rangefind;1"].createInstance(Ci.nsIFind);
             if (matchCase !== undefined)
                 finder.caseSensitive = matchCase;
 

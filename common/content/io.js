@@ -61,12 +61,9 @@ function IO() //{{{
     const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
-    const ioService          = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-    const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
-    const directoryService   = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
     const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
 
-    var processDir = directoryService.get("CurWorkD", Ci.nsIFile);
+    var processDir = service.directory.get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
     var oldcwd = null;
 
@@ -74,7 +71,7 @@ function IO() //{{{
     var scriptNames = [];
 
     // default option values
-    var cdpath = "," + (environmentService.get("CDPATH").replace(/[:;]/g, ",") || ",");
+    var cdpath = "," + (service.environment.get("CDPATH").replace(/[:;]/g, ",") || ",");
     var runtimepath = "~/" + (WINDOWS ? "" : ".") + EXTENSION_NAME;
     var shell, shellcmdflag;
 
@@ -87,7 +84,7 @@ function IO() //{{{
     }
     else
     {
-        shell = environmentService.get("SHELL") || "sh";
+        shell = service.environment.get("SHELL") || "sh";
         shellcmdflag = "-c";
     }
 
@@ -116,13 +113,13 @@ function IO() //{{{
         let path = ioManager.getFile(head);
         try
         {
-            path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
+            path.appendRelativePath(ioManager.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
             if (path.exists())
                 path.normalize();
         }
         catch(e)
         {
-            return { exists: function () false };
+            return { exists: function () false, __noSuchMethod__: function () { throw e } };
         }
         return path;
     }
@@ -131,7 +128,7 @@ function IO() //{{{
     {
         try
         {
-            Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile)
+            service.localFile
                       .initWithPath(path);
             return true;
         }
@@ -407,7 +404,7 @@ function IO() //{{{
 
         pathSeparator: WINDOWS ? "\\" : "/",
 
-        expandPath: function (path)
+        expandPath: function (path, relative)
         {
             // TODO: proper pathname separator translation like Vim - this should be done elsewhere
             if (WINDOWS)
@@ -420,21 +417,21 @@ function IO() //{{{
             function expand(path) path.replace(
                 !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g
                          : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
-                function (m, n1, n2, n3) environmentService.get(n1 || n2 || n3) || m
+                function (m, n1, n2, n3) service.environment.get(n1 || n2 || n3) || m
             );
             path = expand(path);
 
             // expand ~
-            if ((WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
+            if (!relative && (WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
             {
                 // Try $(VIMPERATOR|MUTTATOR)_HOME || $HOME first, on all systems
-                let home = environmentService.get(config.name.toUpperCase() + "_HOME") ||
-                           environmentService.get("HOME");
+                let home = service.environment.get(config.name.toUpperCase() + "_HOME") ||
+                           service.environment.get("HOME");
 
-                // Windows has its own ideosynchratic $HOME variables.
+                // Windows has its own ideosyncratic $HOME variables.
                 if (!home && WINDOWS)
-                    home = environmentService.get("USERPROFILE") ||
-                           environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
+                    home = service.environment.get("USERPROFILE") ||
+                           service.environment.get("HOMEDRIVE") + service.environment.get("HOMEPATH");
 
                 path = home + path.substr(1);
             }
@@ -560,7 +557,7 @@ function IO() //{{{
                     break;
             }
 
-            let file = directoryService.get("TmpD", Ci.nsIFile);
+            let file = service.directory.get("TmpD", Ci.nsIFile);
             file.append(tmpName);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
@@ -667,7 +664,7 @@ function IO() //{{{
             }
             else
             {
-                let dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+                let dirs = service.environment.get("PATH").split(WINDOWS ? ";" : ":");
                 // Windows tries the cwd first TODO: desirable?
                 if (WINDOWS)
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
@@ -685,7 +682,7 @@ lookup:
                         // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
-                            let extensions = environmentService.get("PATHEXT").split(";");
+                            let extensions = service.environment.get("PATHEXT").split(";");
                             for (let [,extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
@@ -830,7 +827,7 @@ lookup:
                 liberator.echomsg("sourcing " + filename.quote(), 2);
 
                 let str = ioManager.readFile(file);
-                let uri = ioService.newFileURI(file);
+                let uri = service.io.newFileURI(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))

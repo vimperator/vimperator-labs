@@ -97,13 +97,11 @@ function Tabs() //{{{
 
     function copyTab(to, from)
     {
-        const ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
 
-        let tabState = ss.getTabState(from);
-        ss.setTabState(to, tabState);
+        let tabState = service.sessionStore.getTabState(from);
+        service.sessionStore.setTabState(to, tabState);
     }
 
     // hide tabs initially
@@ -263,12 +261,12 @@ function Tabs() //{{{
 
         mappings.add([modes.NORMAL], ["d"],
             "Delete current buffer",
-            function (count) { tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
+            function (count) { tabs.remove(tabs.getTab(), count, false, 0); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["D"],
             "Delete current buffer, focus tab to the left",
-            function (count) { tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
+            function (count) { tabs.remove(tabs.getTab(), count, true, 0); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["gb"],
@@ -345,7 +343,7 @@ function Tabs() //{{{
                     liberator.echoerr("E94: No matching tab for " + arg);
             }
             else // just remove the current tab
-                tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+                tabs.remove(tabs.getTab(), count > 0 ? count : 1, special, 0);
         },
         {
             argCount: "?",
@@ -733,14 +731,12 @@ function Tabs() //{{{
             if (index != undefined)
                 return getBrowser().mTabs[index];
 
-            return getBrowser().mTabContainer.selectedItem;
+            return getBrowser().mCurrentTab;
         },
 
         get closedTabs()
         {
-            const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-            const ss = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-            return json.decode(ss.getClosedTabData(window));
+            return service.json.decode(service.sessionStore.getClosedTabData(window));
         },
 
         list: function (filter)
@@ -843,8 +839,7 @@ function Tabs() //{{{
         {
             if (bypassCache)
             {
-                const nsIWebNavigation = Ci.nsIWebNavigation;
-                const flags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
+                const flags = Ci.nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | Ci.nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
                 getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
             }
             else
@@ -968,8 +963,7 @@ function Tabs() //{{{
                 tab = getBrowser().mTabContainer.selectedItem;
 
             window.open();
-            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-            let win = wm.getMostRecentWindow("navigator:browser");
+            let win = service.windowMediator.getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);
             this.remove(tab, 1, false, 1);

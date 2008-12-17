@@ -526,17 +526,10 @@ function Completion() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    try
-    {
-        var completionService = Cc["@mozilla.org/browser/global-history;2"].getService(Ci.nsIAutoCompleteSearch);
-    }
-    catch (e) {}
-
     const EVAL_TMP = "__liberator_eval_tmp";
 
     function Javascript()
     {
-        let json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
@@ -1406,7 +1399,7 @@ function Completion() //{{{
 
         location: function location(context)
         {
-            if (!completionService)
+            if (!service.autoCompleteSearch)
                 return
             context.anchored = false;
             context.title = ["Smart Completions"];
@@ -1422,8 +1415,8 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            completionService.stopSearch();
-            completionService.startSearch(context.filter, "", context.result, {
+            service.autoCompleteSearch.stopSearch();
+            service.autoCompleteSearch.startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result) {
                     context.result = result;
                     timer.tell(result);
@@ -1502,11 +1495,10 @@ function Completion() //{{{
 
         preference: function preference(context)
         {
-            let prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
             context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = prefs.getChildList("", { value: 0 });
+            context.completions = service.prefs.getChildList("", { value: 0 });
         },
 
         search: function search(context, noSuggest)
@@ -1553,12 +1545,11 @@ function Completion() //{{{
             if (!context.filter)
                 return;
 
-            let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
             let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
             let completions = [];
             engineList.forEach(function (name) {
-                let engine = ss.getEngineByAlias(name);
+                let engine = service.browserSearch.getEngineByAlias(name);
                 if (!engine)
                     return;
                 let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
@@ -1581,9 +1572,7 @@ function Completion() //{{{
             context.title = ["Shell Command", "Path"];
             context.generate = function ()
             {
-                const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
-
-                let dirNames = environmentService.get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
+                let dirNames = service.environment.get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
                 for (let [,dirName] in Iterator(dirNames))
