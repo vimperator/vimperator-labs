@@ -51,8 +51,8 @@ section:Help{nbsp}topics[overview]
 
 TO BE WRITTEN...
 
-For now use [c]:viusage![c] to find out about available mappings and
-[c]:exusage![c] to find out about available commands. When in Message mode
+For now use [c]:viusage![c], [c]:exusage![c] and [c]:optionusage![c] to find
+out about available mappings, commands and options. When in Message mode
 (activated by [m]i[m]), most mappings from Vimperator are available.
 
 // - help:Initialization[starting.html]: How vimperator starts up, where it reads the config file...
