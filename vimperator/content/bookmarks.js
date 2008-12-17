@@ -697,18 +697,10 @@ function History() //{{{
             bang: true,
             completer: function completer(context)
             {
-                let filter = context.filter;
-                var sh = window.getWebNavigation().sessionHistory;
-                var completions = [];
-                for (let i in util.range(sh.index, 0, true))
-                {
-                    var entry = sh.getEntryAtIndex(i, false);
-                    var url = entry.URI.spec;
-                    var title = entry.title;
-                    if (completion.match([url, title], filter, false))
-                        completions.push([url, title]);
-                }
-                return [0, completions];
+                let sh = window.getWebNavigation().sessionHistory;
+
+                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, true))];
+                context.keys = { text: function (item) item.URI.spec, description: "title" };
             },
             count: true,
             literal: 0
@@ -750,18 +742,10 @@ function History() //{{{
             bang: true,
             completer: function completer(context)
             {
-                let filter = context.filter;
-                var sh = window.getWebNavigation().sessionHistory;
-                var completions = [];
-                for (let i in util.range(sh.index + 1, sh.count))
-                {
-                    var entry = sh.getEntryAtIndex(i, false);
-                    var url = entry.URI.spec;
-                    var title = entry.title;
-                    if (completion.match([url, title], filter, false))
-                        completions.push([url, title]);
-                }
-                return [0, completions];
+                let sh = window.getWebNavigation().sessionHistory;
+
+                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index + 1, sh.count))];
+                context.keys = { text: function (item) item.URI.spec, description: "title" };
             },
             count: true,
             literal: 0
