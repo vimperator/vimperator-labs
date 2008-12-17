@@ -302,7 +302,9 @@ function Options() //{{{
     const SAVED = "liberator.saved.";
 
     const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-    var optionHash = {};
+    const optionHash = {};
+
+    const prefContexts = [];
 
     function optionObserver(key, event, option)
     {
@@ -320,6 +322,13 @@ function Options() //{{{
 
     function storePreference(name, value)
     {
+        if (prefContexts.length)
+        {
+            let val = loadPreference(name, null);
+            if (val != null)
+                prefContexts[prefContexts.length - 1][name] = val;
+        }
+
         var type = prefService.getPrefType(name);
         switch (typeof value)
         {
@@ -988,7 +997,31 @@ function Options() //{{{
                 this.setPref(name, !this.getPref(name));
             else
                 liberator.echoerr("E488: Trailing characters: " + name + "!");
-        }
+        },
+
+        pushContext: function ()
+        {
+            prefContexts.push({});
+        },
+
+        popContext: function ()
+        {
+            for (let [k, v] in Iterator(prefContexts.pop()))
+                storePreference(k, v);
+        },
+
+        temporaryContext: function (fn, self)
+        {
+            try
+            {
+                this.pushContext();
+                return fn.call(self);
+            }
+            finally
+            {
+                this.popContext();
+            }
+        },
     };
     //}}}
 }; //}}}

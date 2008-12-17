@@ -483,21 +483,34 @@ function Buffer() //{{{
         "Print current document",
         function (args)
         {
-            let aps = options.getPref("print.always_print_silent");
-            let spp = options.getPref("print.show_print_progress");
+            options.temporaryContext(function () {
+                if (args[0])
+                {
+                    if (args[0][0] != ">")
+                        return liberator.echoerr("E488: Trailing characters");
+                    options.setPref("print.print_to_file", "true");
+                    options.setPref("print.print_to_filename", io.getFile(args[0].substr(1)).path);
+                    liberator.echomsg("Printing to file: " + args[0].substr(1));
+                }
+                else
+                {
+                    liberator.echomsg("Sending to printer...");
+                }
 
-            liberator.echomsg("Sending to printer...");
-            options.setPref("print.always_print_silent", args.bang);
-            options.setPref("print.show_print_progress", !args.bang);
+                options.setPref("print.always_print_silent", args.bang);
+                options.setPref("print.show_print_progress", !args.bang);
 
-            getBrowser().contentWindow.print();
+                getBrowser().contentWindow.print();
+            });
 
-            options.setPref("print.always_print_silent", aps);
-            options.setPref("print.show_print_progress", spp);
-            liberator.echomsg("Print job sent.");
+            if (args[0])
+                liberator.echomsg("Printed: " + args[0].substr(1));
+            else
+                liberator.echomsg("Print job sent.");
         },
         {
-            argCount: "0",
+            argCount: "?",
+            literal: 0,
             bang: true
         });
 

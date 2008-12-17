@@ -99,8 +99,7 @@ function IO() //{{{
             return [];
         else
             // empty list item means the current directory
-            return list.replace(/,$/, "")
-                       .split(",")
+            return list.replace(/,$/, "").split(",")
                        .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
     }
 
