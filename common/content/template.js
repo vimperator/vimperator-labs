@@ -66,7 +66,7 @@ const template = {
     {
         let extra = this.getKey(item, "extra");
         return <>
-            <a href="#" highlight="URL">{text}</a>&#160;
+            <a href={item.item.url} highlight="URL">{text}</a>&#160;
             {
                 !(extra && extra.length) ? "" :
                 <span class="extra-info">

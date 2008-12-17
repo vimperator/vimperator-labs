@@ -1176,6 +1176,20 @@ function CommandLine() //{{{
             function isScrollable() !win.scrollMaxY == 0;
             function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
+            if (event.type == "click")
+            {
+                if (event.target instanceof HTMLAnchorElement && event.button < 2)
+                {
+                    event.preventDefault();
+                    let target = event.button == 0 ? liberator.CURRENT_TAB : liberator.NEW_TAB;
+                    if (event.target.href == "#")
+                        liberator.open(String(event.target), target);
+                    else
+                        liberator.open(event.target.href, target);
+                }
+                return;
+            }
+
             let key = events.toString(event);
 
             if (startHints)
