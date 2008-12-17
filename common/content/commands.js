@@ -776,13 +776,20 @@ function Commands() //{{{
                                 {
                                     try
                                     {
-                                        liberator.eval(completeFunc).call(completion, context, args)
+                                        var completer = liberator.eval(completeFunc);
+
+                                        if (!(completer instanceof Function))
+                                            throw new TypeError("User-defined custom completer '" + completeFunc + "' is not a function");
                                     }
                                     catch (e)
                                     {
                                         // FIXME: should be pushed to the MOW
                                         liberator.echoerr("E117: Unknown function: " + completeFunc);
+                                        liberator.log(e);
+                                        return;
                                     }
+
+                                    completer.call(completion, context, args)
                                 }
                             },
                             replacementText: args.literalArg
