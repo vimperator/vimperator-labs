@@ -740,6 +740,16 @@ const liberator = (function () //{{{
             // TODO: is there a reason for this? --djk
             // yes, it doesn't show the MOW on startup if you have e.g. some qmarks in your vimperatorrc.
             // Feel free to add another flag like DONT_OPEN_MULTILINE if really needed --mst
+            //
+            // But it's _supposed_ to show the MOW on startup when there are
+            // messages, surely?  As far as I'm concerned it essentially works
+            // exactly as it should with the DISALLOW_MULTILINE flag removed.
+            // Sending N messages to the command-line in a row and having them
+            // overwrite each other is completely broken. I also think many of
+            // those messages like "Added quick mark" are plain silly but if
+            // you don't like them you can set verbose=0, or use :silent when
+            // someone adds it. I reckon another flag and 'class' of messages
+            // is just going to unnecessarily complicate things. --djk
             flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE;
 
             if (verbosity == null)
