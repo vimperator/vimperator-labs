@@ -28,6 +28,7 @@ FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 use the storage module for autocommands
+8 add support for filename special characters such as %
 8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
