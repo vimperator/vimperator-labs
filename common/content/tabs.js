@@ -263,12 +263,12 @@ function Tabs() //{{{
 
         mappings.add([modes.NORMAL], ["d"],
             "Delete current buffer",
-            function (count) { tabs.remove(getBrowser().mCurrentTab, count, false, 0); },
+            function (count) { tabs.remove(tabs.getTab(), count, false, 0); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["D"],
             "Delete current buffer, focus tab to the left",
-            function (count) { tabs.remove(getBrowser().mCurrentTab, count, true, 0); },
+            function (count) { tabs.remove(tabs.getTab(), count, true, 0); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["gb"],
@@ -345,7 +345,7 @@ function Tabs() //{{{
                     liberator.echoerr("E94: No matching tab for " + arg);
             }
             else // just remove the current tab
-                tabs.remove(getBrowser().mCurrentTab, count > 0 ? count : 1, special, 0);
+                tabs.remove(tabs.getTab(), count > 0 ? count : 1, special, 0);
         },
         {
             argCount: "?",
@@ -733,7 +733,7 @@ function Tabs() //{{{
             if (index != undefined)
                 return getBrowser().mTabs[index];
 
-            return getBrowser().mTabContainer.selectedItem;
+            return getBrowser().mCurrentTab;
         },
 
         get closedTabs()
