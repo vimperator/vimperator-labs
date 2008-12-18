@@ -1427,6 +1427,7 @@ function Events() //{{{
             // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
             else if (map && !skipMap && (map.rhs || candidates.length == 0))
             {
+                input.pendingMap = null;
                 input.count = parseInt(countStr, 10);
                 if (isNaN(input.count))
                     input.count = -1;
