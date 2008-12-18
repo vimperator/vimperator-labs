@@ -255,7 +255,17 @@ function AutoCommands() //{{{
 
                     liberator.echomsg("autocommand " + autoCmd.command, 9);
                     if (typeof autoCmd.command == "function")
-                        autoCmd.command.call(autoCmd, args);
+                    {
+                        try
+                        {
+                            autoCmd.command.call(autoCmd, args);
+                        }
+                        catch(e)
+                        {
+                            liberator.reportError(e);
+                            liberator.echoerr(e);
+                        }
+                    }
                     else
                         liberator.execute(commands.replaceTokens(autoCmd.command, args));
                 }
