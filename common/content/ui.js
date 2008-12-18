@@ -876,6 +876,20 @@ function CommandLine() //{{{
                 storage.styles.removeSheet("silent-mode", null, null, null, true);
         },
 
+        runSilently: function (fn, self)
+        {
+            let wasSilent = this.silent;
+            this.silent = true;
+            try
+            {
+                fn.call(self);
+            }
+            finally
+            {
+                this.silent = wasSilent;
+            }
+        },
+
         get command()
         {
             try
