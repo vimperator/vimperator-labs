@@ -841,6 +841,17 @@ function CommandLine() //{{{
         },
         { argCount: "0" });
 
+    commands.add(["sil[ent]"],
+        "Run a command silently",
+        function (args)
+        {
+            commandline.runSilently(function () liberator.execute(args[0]));
+        },
+        {
+            completer: function (context) completion.ex(context),
+            literal: 0
+        });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
