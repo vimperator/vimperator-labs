@@ -117,12 +117,12 @@ function IO() //{{{
         try
         {
             path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
-            if (path.exists())
+            if (path.exists() && path.normalize)
                 path.normalize();
         }
         catch(e)
         {
-            return { exists: function () false };
+            return { exists: function () false, __noSuchMethod__: function () { throw e } };
         }
         return path;
     }
@@ -131,8 +131,7 @@ function IO() //{{{
     {
         try
         {
-            Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile)
-                      .initWithPath(path);
+            Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile).initWithPath(path);
             return true;
         }
         catch (e)

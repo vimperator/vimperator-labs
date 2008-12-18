@@ -1416,9 +1416,7 @@ function CommandLine() //{{{
         {
             autocompleteTimer.reset();
             if (completions)
-                completions.context.reset();
-                // Needed?
-                //completions.reset();
+                completions.reset();
             if (history)
                 history.reset();
         }
