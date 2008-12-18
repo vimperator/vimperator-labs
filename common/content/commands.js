@@ -758,9 +758,30 @@ function Commands() //{{{
                 if (completeOpt)
                 {
                     if (/^custom,/.test(completeOpt))
-                        completeFunc = completeOpt.substr(7);
+                    {
+                        completeFunc = function ()
+                        {
+                            try
+                            {
+                                var completer = liberator.eval(completeOpt.substr(7));
+
+                                if (!(completer instanceof Function))
+                                    throw new TypeError("User-defined custom completer '" + completeOpt.substr(7) + "' is not a function");
+                            }
+                            catch (e)
+                            {
+                                // FIXME: should be pushed to the MOW
+                                liberator.echoerr("E117: Unknown function: " + completeOpt.substr(7));
+                                liberator.log(e);
+                                return undefined;
+                            }
+                            return completer.apply(this, Array.slice(arguments));
+                        }
+                    }
                     else 
-                        completeFunc = "completion." + completeOptionMap[completeOpt];
+                    {
+                        completeFunc = function () completion[completeOptionMap[completeOpt]].apply(this, Array.slice(arguments));
+                    }
                 }
 
                 if (!commands.addUserCommand(
@@ -773,24 +794,7 @@ function Commands() //{{{
                             count: countOpt,
                             completer: function (context, args) {
                                 if (completeFunc)
-                                {
-                                    try
-                                    {
-                                        var completer = liberator.eval(completeFunc);
-
-                                        if (!(completer instanceof Function))
-                                            throw new TypeError("User-defined custom completer '" + completeFunc + "' is not a function");
-                                    }
-                                    catch (e)
-                                    {
-                                        // FIXME: should be pushed to the MOW
-                                        liberator.echoerr("E117: Unknown function: " + completeFunc);
-                                        liberator.log(e);
-                                        return;
-                                    }
-
-                                    completer.call(completion, context, args)
-                                }
+                                    return completeFunc(context, args)
                             },
                             replacementText: args.literalArg
                         },
