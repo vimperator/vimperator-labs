@@ -177,7 +177,7 @@ function CommandLine() //{{{
         PAGE_DOWN: {},
         RESET: null,
 
-        get completion() 
+        get completion()
         {
             let str = commandline.command;
             return str.substring(this.prefix.length, str.length - this.suffix.length);

@@ -578,7 +578,7 @@ function Options() //{{{
                         reset = (postfix == "&");
                         invertBoolean = (postfix == "!");
                     }
-                    
+
                     if (name == "all" && reset)
                         liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
                     else if (name == "all")

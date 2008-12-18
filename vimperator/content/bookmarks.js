@@ -40,9 +40,9 @@ if (liberator.options.getPref("extensions.vimperator.commandline_cmd_history"))
         store = liberator.storage["quickmarks"];
         pref = liberator.options.getPref("extensions.vimperator.quickmarks")
                         .split("\n");
-        while(pref.length > 0)
+        while (pref.length > 0)
             store.set(pref.shift(), pref.shift());
-         
+
         liberator.options.resetPref("extensions.vimperator.commandline_cmd_history");
         liberator.options.resetPref("extensions.vimperator.commandline_search_history");
         liberator.options.resetPref("extensions.vimperator.quickmarks");

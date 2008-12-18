@@ -1222,7 +1222,7 @@ function Completion() //{{{
                         <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
                         { process.call(this, item, text) }
                     </>];
-                
+
 
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
                 let indicator = " ";
@@ -1374,6 +1374,7 @@ function Completion() //{{{
         help: function help(context)
         {
             context.title = ["Help"];
+            context.anchored = false;
             context.generate = function ()
             {
                 let res = config.helpFiles.map(function (file) {

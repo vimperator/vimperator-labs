@@ -22,6 +22,7 @@ BUGS:
 
 (recent CVS regressions):
 - visual caret mode is broken
+- BookmarkAdd is fired once for each bookmark periodically i.e. not in response to adding a bookmark
 
 FEATURES:
 9 fix local options

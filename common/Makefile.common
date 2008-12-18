@@ -107,7 +107,7 @@ $(JAR): doc
 
 check-asciidoc:
 	@asciidoc --version | awk '{ exit $$2 !~ /^8\.2\./ }' || \
-		echo >&2 "Warning: asciidoc versions other 8.2.x are unsupported"
+		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
 
 ${DOC_FILES}: %.html: %.txt $(BASE)/Makefile.common locale/en-US/asciidoc.conf
 	@echo "DOC $@"
