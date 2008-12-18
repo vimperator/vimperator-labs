@@ -825,53 +825,30 @@ function Editor() //{{{
             else
                 return false;
 
+            let oldbg, tmpBg;
             try
             {
-                var tmpfile = io.createTempFile();
-            }
-            catch (e)
-            {
-                liberator.echoerr("Could not create temporary file: " + e.message);
-                return false;
-            }
-            try
-            {
-                io.writeFile(tmpfile, text);
-            }
-            catch (e)
-            {
-                liberator.echoerr("Could not write to temporary file " + tmpfile.path + ": " + e.message);
-                return false;
-            }
+                let res = io.withTempFiles(function (tmpfile) {
+                    io.writeFile(tmpfile, text);
 
-            if (textBox)
-            {
-                textBox.setAttribute("readonly", "true");
-                var oldBg = textBox.style.backgroundColor;
-                var tmpBg = "yellow";
-                textBox.style.backgroundColor = "#bbbbbb";
-            }
+                    if (textBox)
+                    {
+                        textBox.setAttribute("readonly", "true");
+                        oldBg = textBox.style.backgroundColor;
+                        tmpBg = "yellow";
+                        textBox.style.backgroundColor = "#bbbbbb";
+                    }
 
-            this.editFileExternally(tmpfile.path);
+                    this.editFileExternally(tmpfile.path);
 
-            if (textBox)
-                textBox.removeAttribute("readonly");
+                    if (textBox)
+                        textBox.removeAttribute("readonly");
 
-    //        if (v:shell_error != 0)
-    //        {
-    //            tmpBg = "red";
-    //            liberator.echoerr("External editor returned with exit code " + retcode);
-    //        }
-    //        else
-    //        {
-                try
-                {
                     let val = io.readFile(tmpfile);
                     if (textBox)
                         textBox.value = val;
                     else
                     {
-                        //document.getElementById("content-frame").contentDocument.designMode = "on";
                         let editor = GetCurrentEditor();
                         let wholeDocRange = editor.document.createRange();
                         let rootNode = editor.rootElement.QueryInterface(Ci.nsIDOMNode);
@@ -879,31 +856,31 @@ function Editor() //{{{
                         editor.selection.addRange(wholeDocRange);
                         editor.selection.deleteFromDocument();
                         editor.insertText(val);
-                        //setTimeout(function () {
-                        //    document.getElementById("content-frame").contentDocument.designMode = "off";
-                        //}, 100);
                     }
-                }
-                catch (e)
-                {
-                    tmpBg = "red";
-                    liberator.echoerr("Could not read from temporary file " + tmpfile.path + ": " + e.message);
-                }
-    //        }
+                }, this)
+                if (res == false)
+                    throw "Couldn't create temporary file";
+            }
+            catch (e)
+            {
+                // Errors are unlikely, and our error messages won't
+                // likely be any more helpful than that given in the
+                // exception.
+                liberator.echoerr(e);
+                tmpBg = "red";
+            }
 
             // blink the textbox after returning
             if (textBox)
             {
-                let timeout = 100;
                 let colors = [tmpBg, oldBg, tmpBg, oldBg];
                 (function () {
                     textBox.style.backgroundColor = colors.shift();
                     if (colors.length > 0)
-                        setTimeout(arguments.callee, timeout);
+                        setTimeout(arguments.callee, 100);
                 })();
             }
 
-            tmpfile.remove(false);
             return true;
         },
 
