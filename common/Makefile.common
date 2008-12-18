@@ -63,7 +63,8 @@ info:
 	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
 	@echo    "xpi files           ${XPI_FILES}"
 
-doc: ${DOC_FILES}
+.PHONY: check-asciidoc
+doc: check-asciidoc ${DOC_FILES}
 xpi: ${XPI}
 jar: ${JAR}
 
@@ -103,6 +104,10 @@ $(JAR): doc
 	@echo "SUCCESS: $@"
 
 #### doc
+
+check-asciidoc:
+	@asciidoc --version | awk '{ exit $$2 !~ /^8\.2\./ }' || \
+		echo >&2 "Warning: asciidoc versions other 8.2.x are unsupported"
 
 ${DOC_FILES}: %.html: %.txt $(BASE)/Makefile.common locale/en-US/asciidoc.conf
 	@echo "DOC $@"
