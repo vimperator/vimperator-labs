@@ -56,13 +56,14 @@ function Bookmarks() //{{{
     function Cache(name, store, serial)
     {
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
+        const sleep = liberator.sleep;
 
         var bookmarks = [];
         var self = this;
 
         this.__defineGetter__("name",  function () name);
         this.__defineGetter__("store", function () store);
-        this.__defineGetter__("bookmarks", function () { this.load(); return bookmarks; });
+        this.__defineGetter__("bookmarks", function () this.load());
 
         this.__defineGetter__("keywords",
             function () [new Keyword(k.keyword, k.title, k.icon, k.url) for each (k in self.bookmarks) if (k.keyword)]);
@@ -104,31 +105,35 @@ function Bookmarks() //{{{
             return root;
         }
 
+        let loading = false;
         this.load = function load()
         {
-            // liberator.dump("cache.load()\n");
+            if (loading)
+            {
+                while (loading)
+                    sleep(10);
+                return bookmarks;
+            }
+
             // update our bookmark cache
             bookmarks = [];
-            this.__defineGetter__("bookmarks", function () bookmarks);
+            loading = true;
 
-            var folders = rootFolders.slice();
-            var query = historyService.getNewQuery();
-            var options = historyService.getNewQueryOptions();
+            let folders = rootFolders.slice();
+            let query = historyService.getNewQuery();
+            let options = historyService.getNewQueryOptions();
             while (folders.length > 0)
             {
-                //comment out the next line for now; the bug hasn't been fixed; final version should include the next line
-                //options.setGroupingMode(options.GROUP_BY_FOLDER);
                 query.setFolders(folders, 1);
                 folders.shift();
-                var result = historyService.executeQuery(query, options);
-                result.sortingMode = options.SORT_BY_VISITCOUNT_DESCENDING; /* This is silly. Results are still sorted by folder first. --Kris */
-                var rootNode = result.root;
-                rootNode.containerOpen = true;
+                let result = historyService.executeQuery(query, options);
+                let folder = result.root;
+                folder.containerOpen = true;
 
                 // iterate over the immediate children of this folder
-                for (let i = 0; i < rootNode.childCount; i++)
+                for (let i = 0; i < folder.childCount; i++)
                 {
-                    var node = rootNode.getChild(i);
+                    let node = folder.getChild(i);
                     if (node.type == node.RESULT_TYPE_FOLDER)   // folder
                         folders.push(node.itemId);
                     else if (node.type == node.RESULT_TYPE_URI) // bookmark
@@ -136,8 +141,11 @@ function Bookmarks() //{{{
                 }
 
                 // close a container after using it!
-                rootNode.containerOpen = false;
+                folder.containerOpen = false;
             }
+            this.__defineGetter__("bookmarks", function () bookmarks);
+            loading = false;
+            return bookmarks;
         };
 
         var observer = {
@@ -219,7 +227,7 @@ function Bookmarks() //{{{
         {
             // Forces a load, if not already loaded but wait 10sec
             // so most tabs should be restored and the CPU should be idle again usually
-            setTimeout(function () { liberator.callFunctionInThread(null, function () cache.load()); }, 10000);
+            setTimeout(function () { liberator.callFunctionInThread(null, function () cache.bookmarks); }, 10000);
         }
     });
 
