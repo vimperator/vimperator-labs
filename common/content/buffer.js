@@ -115,6 +115,7 @@ function Buffer() //{{{
         else
             v = win.scrollMaxY / 100 * vertical;
 
+        marks.add("'", true);
         win.scrollTo(h, v);
     }
 
@@ -1156,6 +1157,17 @@ function Buffer() //{{{
             scrollToPercentiles(-1, percentage);
         },
 
+        scrollToRatio: function (x, y)
+        {
+            scrollToPercentiles(x * 100, y * 100);
+        },
+
+        scrollTo: function (x, y)
+        {
+            marks.add("'", true);
+            content.scrollTo(x, y);
+        },
+
         scrollStart: function ()
         {
             scrollToPercentiles(0, -1);
@@ -1340,12 +1352,11 @@ function Marks() //{{{
     function onPageLoad(event)
     {
         let win = event.originalTarget.defaultView;
-        for (let i = 0, length = pendingJumps.length; i < length; i++)
+        for (let [i, mark] in Iterator(pendingJumps))
         {
-            let mark = pendingJumps[i];
             if (win && win.location.href == mark.location)
             {
-                win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
+                buffer.scrollToRatio(mark.position.x, mark.position.y);
                 pendingJumps.splice(i, 1);
                 return;
             }
@@ -1390,7 +1401,7 @@ function Marks() //{{{
         }
     }
 
-    function isLocalMark(mark) /^[a-z]$/.test(mark);
+    function isLocalMark(mark) /^['"a-z]$/.test(mark);
     function isURLMark(mark) /^[A-Z0-9]$/.test(mark);
 
     function localMarkIter()
@@ -1537,13 +1548,14 @@ function Marks() //{{{
     return {
 
         // TODO: add support for frameset pages
-        add: function (mark)
+        add: function (mark, silent)
         {
             let win = window.content;
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                liberator.echoerr("Marks support for frameset pages not implemented yet");
+                if (!silent)
+                    liberator.echoerr("Marks support for frameset pages not implemented yet");
                 return;
             }
 
@@ -1554,7 +1566,8 @@ function Marks() //{{{
             if (isURLMark(mark))
             {
                 urlMarks.set(mark, { location: win.location.href, position: position, tab: tabs.getTab() });
-                liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
+                if (!silent)
+                    liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
             }
             else if (isLocalMark(mark))
             {
@@ -1564,7 +1577,8 @@ function Marks() //{{{
                     localMarks.set(mark, []);
                 let vals = { location: win.location.href, position: position };
                 localMarks.get(mark).push(vals);
-                liberator.log("Adding local mark: " + markToString(mark, vals), 5);
+                if (!silent)
+                    liberator.log("Adding local mark: " + markToString(mark, vals), 5);
             }
         },
 
@@ -1621,7 +1635,7 @@ function Marks() //{{{
                             return;
                         }
                         liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
-                        win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                        buffer.scrollToRatio(slice.position.x, slice.position.y);
                         ok = true;
                     }
                 }
@@ -1636,7 +1650,7 @@ function Marks() //{{{
                     if (win.location.href == lmark.location)
                     {
                         liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
-                        win.scrollTo(lmark.position.x * win.scrollMaxX, lmark.position.y * win.scrollMaxY);
+                        buffer.scrollToRatio(lmark.position.x, lmark.position.y);
                         ok = true;
                         break;
                     }

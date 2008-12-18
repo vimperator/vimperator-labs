@@ -952,7 +952,7 @@ const liberator = (function () //{{{
                 setTimeout(function () {
                     let elem = buffer.evaluateXPath('//*[@class="tag" and text()="' + tag + '"]').snapshotItem(0);
                     if (elem)
-                        window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+                        buffer.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
                     else
                         liberator.dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
                 }, 500);
