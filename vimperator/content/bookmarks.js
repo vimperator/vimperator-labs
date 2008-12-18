@@ -728,6 +728,7 @@ function History() //{{{
 
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, true))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
+                liberator.dump(context.items);
             },
             count: true,
             literal: 0
