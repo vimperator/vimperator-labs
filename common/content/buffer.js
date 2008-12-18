@@ -172,24 +172,8 @@ function Buffer() //{{{
         "Show current website with a minimal style sheet to make it easily accessible",
         "boolean", false,
         {
-            setter: function (value)
-            {
-                try
-                {
-                    window.getMarkupDocumentViewer().authorStyleDisabled = value;
-                }
-                catch (e) {}
-
-                return value;
-            },
-            getter: function ()
-            {
-                try
-                {
-                    return window.getMarkupDocumentViewer().authorStyleDisabled;
-                }
-                catch (e) {}
-            }
+            setter: function (value) getBrowser().markupDocumentViewer.authorStyleDisabled = value,
+            getter: function () getBrowser().markupDocumentViewer.authorStyleDisabled
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

@@ -254,7 +254,7 @@ function Hints() //{{{
         // 'usermode' appropriately? We're generally not very well integrated
         // into FF so having menu items toggle Vimperator options may be
         // confusing. --djk
-        if (window.getMarkupDocumentViewer().authorStyleDisabled)
+        if (getBrowser().markupDocumentViewer.authorStyleDisabled)
         {
             let css = [];
             // FIXME: Broken for imgspans.
