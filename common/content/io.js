@@ -120,9 +120,9 @@ function IO() //{{{
             if (path.exists() && path.normalize)
                 path.normalize();
         }
-        catch(e)
+        catch (e)
         {
-            return { exists: function () false, __noSuchMethod__: function () { throw e } };
+            return { exists: function () false, __noSuchMethod__: function () { throw e; } };
         }
         return path;
     }

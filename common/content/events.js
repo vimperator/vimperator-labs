@@ -171,7 +171,6 @@ function AutoCommands() //{{{
         completion.setFunctionCompleter(autocommands.get, [function () config.autocommands]);
     });
 
-
     return {
 
         __iterator__: function () util.Array.iterator(store),

@@ -759,7 +759,7 @@ function Commands() //{{{
                 {
                     if (/^custom,/.test(completeOpt))
                         completeFunc = completeOpt.substr(7);
-                    else 
+                    else
                         completeFunc = "completion." + completeOptionMap[completeOpt];
                 }
 

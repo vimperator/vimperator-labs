@@ -98,7 +98,6 @@ const liberator = (function () //{{{
             "Allow reading of an RC file in the current directory",
             "boolean", false);
 
-
         const groups = {
             config: {
                 opts: config.guioptions,
