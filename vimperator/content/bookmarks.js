@@ -259,7 +259,7 @@ function Bookmarks() //{{{
         "string", "google",
         {
             completer: function completer(context) completion.search(context, true),
-            validator: Option.validateCompleter
+            validator: function validator(value) value == "" || Option.validateCompleter.call(this, value)
         });
 
     options.add(["preload"],
