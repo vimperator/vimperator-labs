@@ -26,9 +26,28 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-// TODO: with the new subscript loader, is there really no way to keep variable in per-file scope?
-//   Not really. --Kris
 const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
+
+if (liberator.options.getPref("extensions.vimperator.commandline_cmd_history"))
+{
+    // Try to import older command line history, quick marks, etc.
+    liberator.registerObserver("load_options", function () {
+        let store = liberator.storage["history-command"];
+        let pref  = liberator.options.getPref("extensions.vimperator.commandline_cmd_history");
+        for (let [k, v] in Iterator(pref.split("\n")))
+            store.push(v);
+
+        store = liberator.storage["quickmarks"];
+        pref = liberator.options.getPref("extensions.vimperator.quickmarks")
+                        .split("\n");
+        while(pref.length > 0)
+            store.set(pref.shift(), pref.shift());
+         
+        liberator.options.resetPref("extensions.vimperator.commandline_cmd_history");
+        liberator.options.resetPref("extensions.vimperator.commandline_search_history");
+        liberator.options.resetPref("extensions.vimperator.quickmarks");
+    });
+}
 
 // also includes methods for dealing with keywords and search engines
 function Bookmarks() //{{{
