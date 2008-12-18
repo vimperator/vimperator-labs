@@ -288,6 +288,7 @@ function Search() //{{{
         "Find word under cursor",
         function ()
         {
+            found = false;
             search.searchSubmitted(buffer.getCurrentWord(), false);
             search.findAgain();
         });
@@ -296,6 +297,7 @@ function Search() //{{{
         "Find word under cursor backwards",
         function ()
         {
+            found = false;
             search.searchSubmitted(buffer.getCurrentWord(), true);
             search.findAgain();
         });
