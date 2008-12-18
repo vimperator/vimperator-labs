@@ -1374,6 +1374,7 @@ function Completion() //{{{
         help: function help(context)
         {
             context.title = ["Help"];
+            context.anchored = false;
             context.generate = function ()
             {
                 let res = config.helpFiles.map(function (file) {
