@@ -66,7 +66,7 @@ function Hints() //{{{
     const hintModes = {
         ";": Mode("Focus hint",                    function (elem) buffer.focusElement(elem),                             extended),
         a: Mode("Save hint with prompt",           function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                     function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //html|body"),
+        f: Mode("Focus frame",                     function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
         s: Mode("Save hint",                       function (elem) buffer.saveLink(elem, true)),
         o: Mode("Follow hint",                     function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
         t: Mode("Follow hint in a new tab",        function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
