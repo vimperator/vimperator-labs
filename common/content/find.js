@@ -408,11 +408,10 @@ function Search() //{{{
             if (!command)
                 command = lastSearchPattern;
 
+            this.clear();
+
             if (!options["incsearch"] || !found)
-            {
-                this.clear();
                 this.find(command, backwards);
-            }
 
             lastSearchBackwards = backwards;
             //lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
