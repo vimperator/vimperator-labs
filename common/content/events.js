@@ -1201,52 +1201,51 @@ function Events() //{{{
         // global escape handler, is called in ALL modes
         onEscape: function ()
         {
-            if (!modes.passNextKey)
+            if (modes.passNextKey)
+                return;
+            if (modes.passAllKeys)
             {
-                if (modes.passAllKeys)
-                {
-                    modes.passAllKeys = false;
-                    return;
-                }
+                modes.passAllKeys = false;
+                return;
+            }
 
-                switch (liberator.mode)
-                {
-                    case modes.NORMAL:
-                        // clear any selection made
-                        let selection = window.content.getSelection();
-                        try
-                        { // a simple if (selection) does not seem to work
-                            selection.collapseToStart();
-                        }
-                        catch (e) {}
+            switch (liberator.mode)
+            {
+                case modes.NORMAL:
+                    // clear any selection made
+                    let selection = window.content.getSelection();
+                    try
+                    { // a simple if (selection) does not seem to work
+                        selection.collapseToStart();
+                    }
+                    catch (e) {}
 
+                    modes.reset();
+                    break;
+
+                case modes.VISUAL:
+                    if (modes.extended & modes.TEXTAREA)
+                        liberator.mode = modes.TEXTAREA;
+                    else if (modes.extended & modes.CARET)
+                        liberator.mode = modes.CARET;
+                    break;
+
+                case modes.CARET:
+                    // setting this option will trigger an observer which will
+                    // care about all other details like setting the NORMAL mode
+                    options.setPref("accessibility.browsewithcaret", false);
+                    break;
+
+                case modes.INSERT:
+                    if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
+                        liberator.mode = modes.TEXTAREA;
+                    else
                         modes.reset();
-                        break;
+                    break;
 
-                    case modes.VISUAL:
-                        if (modes.extended & modes.TEXTAREA)
-                            liberator.mode = modes.TEXTAREA;
-                        else if (modes.extended & modes.CARET)
-                            liberator.mode = modes.CARET;
-                        break;
-
-                    case modes.CARET:
-                        // setting this option will trigger an observer which will
-                        // care about all other details like setting the NORMAL mode
-                        options.setPref("accessibility.browsewithcaret", false);
-                        break;
-
-                    case modes.INSERT:
-                        if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
-                            liberator.mode = modes.TEXTAREA;
-                        else
-                            modes.reset();
-                        break;
-
-                    default: // HINTS, CUSTOM or COMMAND_LINE
-                        modes.reset();
-                        break;
-                }
+                default: // HINTS, CUSTOM or COMMAND_LINE
+                    modes.reset();
+                    break;
             }
         },
 

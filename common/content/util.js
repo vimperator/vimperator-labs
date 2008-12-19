@@ -311,6 +311,15 @@ const util = { //{{{
 
     identity: function identity(k) k,
 
+    intersection: function (r1, r2) ({
+        get width()  this.right - this.left,
+        get height() this.bottom - this.top,
+        left: Math.max(r1.left, r2.left),
+        right: Math.min(r1.right, r2.right),
+        top: Math.max(r1.top, r2.top),
+        bottom: Math.min(r1.bottom, r2.bottom)
+    }),
+
     map: function map(obj, fn)
     {
         let ary = [];

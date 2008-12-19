@@ -154,8 +154,8 @@ function Hints() //{{{
                 text = elem.textContent.toLowerCase();
 
             span = baseNodeAbsolute.cloneNode(true);
-            span.style.left = (rect.left + scrollX) + "px";
-            span.style.top = (rect.top + scrollY) + "px";
+            span.style.left = Math.max((rect.left + scrollX), scrollX) + "px";
+            span.style.top =  Math.max((rect.top  + scrollY), scrollY) + "px";
             fragment.appendChild(span);
 
             pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
