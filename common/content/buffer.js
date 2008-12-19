@@ -468,14 +468,18 @@ function Buffer() //{{{
         "Print current document",
         function (args)
         {
+            let arg = args[0];
+
+            // FIXME: arg handling is a bit of a mess, check for filename
+            if (arg && (liberator.has("Win32") || arg[0] != ">"))
+                return liberator.echoerr("E488: Trailing characters");
+
             options.temporaryContext(function () {
-                if (args[0])
+                if (arg)
                 {
-                    if (args[0][0] != ">")
-                        return liberator.echoerr("E488: Trailing characters");
                     options.setPref("print.print_to_file", "true");
-                    options.setPref("print.print_to_filename", io.getFile(args[0].substr(1)).path);
-                    liberator.echomsg("Printing to file: " + args[0].substr(1));
+                    options.setPref("print.print_to_filename", io.getFile(arg.substr(1)).path);
+                    liberator.echomsg("Printing to file: " + arg.substr(1));
                 }
                 else
                 {
@@ -488,8 +492,8 @@ function Buffer() //{{{
                 getBrowser().contentWindow.print();
             });
 
-            if (args[0])
-                liberator.echomsg("Printed: " + args[0].substr(1));
+            if (arg)
+                liberator.echomsg("Printed: " + arg.substr(1));
             else
                 liberator.echomsg("Print job sent.");
         },

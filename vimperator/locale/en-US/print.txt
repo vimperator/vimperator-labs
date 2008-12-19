@@ -10,6 +10,12 @@ number of copies, orientation, etc.  When used with [!], the dialog is skipped
 and the default printer used.
 ________________________________________________________________________________
 
+
+||:ha[rdcopy][!] >{filename}|| +
+________________________________________________________________________________
+As above, but write the output to {filename}.
+________________________________________________________________________________
+
 section:Firefox{nbsp}printing{nbsp}dialogs[firefox-print-dialogs]
 
 The "Print Preview" and "Page Setup" dialogs can be opened via the :dialog command
