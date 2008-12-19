@@ -568,10 +568,10 @@ function CommandLine() //{{{
          * after interpolated data.
          */
         XML.ignoreWhitespace = typeof str != "xml";
-        let output = util.xmlToDom(<div class="ex-command-output" style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>, doc);
+        lastMowOutput = <div class="ex-command-output" style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>;
+        let output = util.xmlToDom(lastMowOutput, doc);
         XML.ignoreWhitespace = true;
 
-        lastMowOutput = output;
 
         // FIXME: need to make sure an open MOW is closed when commands
         //        that don't generate output are executed
@@ -778,8 +778,7 @@ function CommandLine() //{{{
         function ()
         {
             if (lastMowOutput)
-                commandline.echo(lastMowOutput,
-                    commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+                echoMultiline(lastMowOutput, commandline.HL_NORMAL);
             else
                 liberator.beep();
         });
@@ -986,7 +985,10 @@ function CommandLine() //{{{
                 let action = echoLine;
 
                 if (!single && (!outputContainer.collapsed || messageBox.value == lastEcho))
+                {
+                    highlightGroup += " Message";
                     action = echoMultiline;
+                }
 
                 if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || typeof str == "xml") && !(flags & this.FORCE_SINGLELINE))
                     action = echoMultiline;
