@@ -1645,7 +1645,7 @@ function Completion() //{{{
             let engines = bookmarks.getSearchEngines();
 
             context.title = ["Search Keywords"];
-            context.completions = keywords.concat(engines);
+            context.completions = [ bookmarks.makeKeyword("", "No default search engine", null, "") ].concat( keywords.concat(engines) );
             context.keys = { text: 0, description: 1, icon: 2 };
 
             if (!space || noSuggest)
