@@ -232,12 +232,16 @@ const liberator = (function () //{{{
 
                 try
                 {
+                    // TODO: why are these sorts of properties arrays? --djk
                     let dialogs = config.dialogs;
 
-                    for (let i = 0; i < dialogs.length; i++)
+                    for (let [,dialog] in Iterator(dialogs))
                     {
-                        if (dialogs[i][0] == arg)
-                            return dialogs[i][2]();
+                        if (arg == dialog[0])
+                        {
+                            dialog[2]();
+                            return;
+                        }
                     }
 
                     liberator.echoerr("E475: Invalid argument: " + arg);
