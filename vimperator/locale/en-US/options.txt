@@ -247,9 +247,6 @@ This means, it you set 'defsearch' to "youtube", then [c]:open arnold
 schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
 schwarzenegger[c]. Therefore, you need to add a keyword or search engine
 "youtube" first.
-
-If 'defsearch' is empty, then Firefox will always attempt to open the
-raw [[arg]].
 ____
 
 
