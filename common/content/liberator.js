@@ -71,7 +71,7 @@ const liberator = (function () //{{{
     let nError = 0;
     function loadModule(name, func)
     {
-        var message = "Loading module " + name + "...";
+        let message = "Loading module " + name + "...";
         try
         {
             liberator.log(message, 0);
@@ -228,21 +228,23 @@ const liberator = (function () //{{{
             "Open a " + config.name + " dialog",
             function (args)
             {
-                args = args[0];
+                let arg = args[0];
 
                 try
                 {
-                    var dialogs = config.dialogs;
+                    let dialogs = config.dialogs;
+
                     for (let i = 0; i < dialogs.length; i++)
                     {
-                        if (dialogs[i][0] == args)
+                        if (dialogs[i][0] == arg)
                             return dialogs[i][2]();
                     }
-                    liberator.echoerr(args ? "Dialog " + args.quote() + " not available" : "E474: Invalid argument");
+
+                    liberator.echoerr("E475: Invalid argument: " + arg);
                 }
                 catch (e)
                 {
-                    liberator.echoerr("Error opening '" + args + "': " + e);
+                    liberator.echoerr("Error opening '" + arg + "': " + e);
                 }
             },
             {
@@ -321,7 +323,7 @@ const liberator = (function () //{{{
             {
                 try
                 {
-                    var cmd = liberator.eval(args.string);
+                    let cmd = liberator.eval(args.string);
                     liberator.execute(cmd);
                 }
                 catch (e)
@@ -491,13 +493,13 @@ const liberator = (function () //{{{
                     }
                     else
                     {
-                        var beforeTime = Date.now();
+                        let beforeTime = Date.now();
                         method();
 
                         if (special)
                             return;
 
-                        var afterTime = Date.now();
+                        let afterTime = Date.now();
 
                         if (afterTime - beforeTime >= 100)
                             liberator.echo("Total time: " + ((afterTime - beforeTime) / 1000.0).toFixed(2) + " sec");
@@ -551,7 +553,7 @@ const liberator = (function () //{{{
     // similar in his config
     function hideGUI()
     {
-        var guioptions = config.guioptions;
+        let guioptions = config.guioptions;
         for (let option in guioptions)
         {
             guioptions[option].forEach(function (elem) {
@@ -629,7 +631,7 @@ const liberator = (function () //{{{
             // liberator.dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
             for (let i = 0; i < callbacks.length; i++)
             {
-                var [thistype, thismode, thisfunc] = callbacks[i];
+                let [thistype, thismode, thisfunc] = callbacks[i];
                 if (mode == thismode && type == thistype)
                     return thisfunc.call(this, data);
             }
@@ -803,19 +805,24 @@ const liberator = (function () //{{{
         evalExpression: function (string)
         {
             string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
-            var matches = string.match(/^&(\w+)/);
+            let matches = string.match(/^&(\w+)/);
+
             if (matches)
             {
-                var opt = this.options.get(matches[1]);
+                let opt = this.options.get(matches[1]);
+
                 if (!opt)
                 {
                     this.echoerr("E113: Unknown option: " + matches[1]);
                     return;
                 }
-                var type = opt.type;
-                var value = opt.getter();
+
+                let type = opt.type;
+                let value = opt.getter();
+
                 if (type != "boolean" && type != "number")
                     value = value.toString();
+
                 return value;
             }
 
@@ -823,7 +830,9 @@ const liberator = (function () //{{{
             else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
             {
                 if (matches)
+                {
                     return matches[2].toString();
+                }
                 else
                 {
                     this.echoerr("E115: Missing quote: " + string);
@@ -837,7 +846,8 @@ const liberator = (function () //{{{
                 return parseInt(match[1], 10);
             }
 
-            var reference = this.variableReference(string);
+            let reference = this.variableReference(string);
+
             if (!reference[0])
                 this.echoerr("E121: Undefined variable: " + string);
             else
@@ -929,12 +939,12 @@ const liberator = (function () //{{{
 
         help: function (topic)
         {
-            var where = (options["newtab"] && options.get("newtab").has("all", "help"))
+            let where = (options["newtab"] && options.get("newtab").has("all", "help"))
                             ? liberator.NEW_TAB : liberator.CURRENT_TAB;
 
             if (!topic)
             {
-                var helpFile = options["helpfile"];
+                let helpFile = options["helpfile"];
 
                 if (config.helpFiles.indexOf(helpFile) != -1)
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
@@ -957,8 +967,8 @@ const liberator = (function () //{{{
                 }, 500);
             }
 
-            var items = completion.runCompleter("help", topic);
-            var partialMatch = -1;
+            let items = completion.runCompleter("help", topic);
+            let partialMatch = -1;
 
             for (let [i, item] in Iterator(items))
             {
@@ -1032,8 +1042,8 @@ const liberator = (function () //{{{
         // TODO: add proper level constants
         log: function (msg, level)
         {
-            var verbose = 0;
-            if (typeof level != "number") // XXX
+            let verbose = 0;
+            if (level == undefined)
                 level = 1;
 
             // options does not exist at the very beginning
@@ -1046,7 +1056,7 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+            const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
             consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
@@ -1183,8 +1193,8 @@ const liberator = (function () //{{{
             const nsIAppStartup = Ci.nsIAppStartup;
 
             // notify all windows that an application quit has been requested.
-            var os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-            var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
+            const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
+            const cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
             os.notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
@@ -1195,17 +1205,16 @@ const liberator = (function () //{{{
             os.notifyObservers(null, "quit-application-granted", null);
 
             // enumerate all windows and call shutdown handlers
-            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-            var windows = wm.getEnumerator(null);
+            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+            let windows = wm.getEnumerator(null);
             while (windows.hasMoreElements())
             {
-                var win = windows.getNext();
+                let win = windows.getNext();
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            Cc["@mozilla.org/toolkit/app-startup;1"]
-                      .getService(nsIAppStartup)
-                      .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+            Cc["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
+                .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
         },
 
         // TODO: move to {muttator,vimperator,...}.js
@@ -1357,7 +1366,7 @@ const liberator = (function () //{{{
             if (!string)
                 return [null, null, null];
 
-            var matches = string.match(/^([bwtglsv]):(\w+)/);
+            let matches = string.match(/^([bwtglsv]):(\w+)/);
             if (matches) // Variable
             {
                 // Other variables should be implemented
@@ -1380,12 +1389,14 @@ const liberator = (function () //{{{
 
         get windows()
         {
-            var wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-            var wa = [];
-            var enumerator = wm.getEnumerator("navigator:browser");
+            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+            let windows = [];
+            let enumerator = wm.getEnumerator("navigator:browser");
+
             while (enumerator.hasMoreElements())
-                wa.push(enumerator.getNext());
-            return wa;
+                windows.push(enumerator.getNext());
+
+            return windows;
         }
     };
     //}}}
