@@ -268,7 +268,7 @@ const liberator = (function () //{{{
                     }
                     else
                     {
-                        path = parent;
+                        let path = parent;
                         if (item.localName == "menu")
                             path += item.label + ".";
                         addChildren(item, path);
