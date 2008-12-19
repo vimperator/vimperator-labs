@@ -1099,6 +1099,7 @@ const liberator = (function () //{{{
                             return open(urls, liberator.NEW_WINDOW);
 
                         let tab = getBrowser().addTab(url, null, null, postdata);
+
                         if (where == liberator.NEW_TAB)
                             getBrowser().selectedTab = tab;
                         break;
@@ -1124,8 +1125,6 @@ const liberator = (function () //{{{
             for (let [i, url] in Iterator(urls))
             {
                 open(url, where);
-                if (i == 0 && !liberator.has("tabs"))
-                    break;
                 where = liberator.NEW_BACKGROUND_TAB;
             }
 
