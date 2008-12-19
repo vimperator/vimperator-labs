@@ -238,7 +238,7 @@ function Bookmarks() //{{{
     var cache = storage.newObject("bookmark-cache", Cache, false);
     storage.addObserver("bookmark-cache", bookmarkObserver);
     liberator.registerObserver("shutdown", function () {
-        storage.removeObserver("bookmark-cache", bookmarkObserver)
+        storage.removeObserver("bookmark-cache", bookmarkObserver);
     });
 
     liberator.registerObserver("enter", function () {
@@ -358,7 +358,7 @@ function Bookmarks() //{{{
                 if (!args.bang)
                 {
                     context.completions = [[content.document.documentURI, "Current Location"]];
-                    return
+                    return;
                 }
                 completion.bookmark(context, args["-tags"], { keyword: args["-keyword"], title: args["-title"] });
             },
@@ -784,7 +784,7 @@ function History() //{{{
         function (args) { history.list(args.join(" "), args.bang, args["-max"] || 1000); },
         {
             bang: true,
-            completer: function (context) { context.quote = null, completion.history(context) },
+            completer: function (context) { context.quote = null, completion.history(context); },
             options: [[["-max", "-m"], options.OPTION_INT]]
             // completer: function (filter) completion.history(filter)
         });
@@ -823,7 +823,7 @@ function History() //{{{
                     url: node.uri,
                     title: node.title,
                     icon: node.icon ? node.icon.spec : DEFAULT_FAVICON
-                }
+                };
             });
             root.containerOpen = false; // close a container after using it!
 
@@ -844,7 +844,10 @@ function History() //{{{
         {
             let index = window.getWebNavigation().sessionHistory.index;
             if (index == 0)
-                return liberator.beep(); // really wanted?
+            {
+                liberator.beep(); // XXX: really wanted?
+                return;
+            }
 
             window.getWebNavigation().gotoIndex(0);
         },
@@ -853,7 +856,10 @@ function History() //{{{
         {
             let index = window.getWebNavigation().sessionHistory.index;
             if (index == window.getWebNavigation().sessionHistory.count - 1)
-                return liberator.beep();
+            {
+                liberator.beep();
+                return;
+            }
 
             window.getWebNavigation().gotoIndex(max);
         },

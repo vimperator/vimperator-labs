@@ -73,7 +73,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
 }
 Option.prototype = {
     get globalvalue() options.store.get(this.name),
-    set globalvalue(val) { options.store.set(this.name, val) },
+    set globalvalue(val) { options.store.set(this.name, val); },
 
     parseValues: function (value)
     {
@@ -164,8 +164,8 @@ Option.prototype = {
         if (this.checkHas)
             test = function (val) values.some(function (value) self.checkHas(value, val));
         let values = this.values;
-        /* Return whether some argument matches */
-        return Array.some(arguments, function (val) test(val))
+        // return whether some argument matches
+        return Array.some(arguments, function (val) test(val));
     },
 
     hasName: function (name) this.names.indexOf(name) >= 0,

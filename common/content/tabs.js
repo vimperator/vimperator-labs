@@ -598,7 +598,7 @@ function Tabs() //{{{
             function (args)
             {
                 let count = args.count;
-                args = args[0]
+                args = args[0];
 
                 if (count < 1)
                     count = 1;

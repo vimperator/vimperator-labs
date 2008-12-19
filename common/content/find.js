@@ -176,7 +176,7 @@ function Search() //{{{
                 return;
             }
 
-            var baseNode = <span highlight="Search"/>
+            var baseNode = <span highlight="Search"/>;
             baseNode = util.xmlToDom(baseNode, window.content.document);
 
             var body = doc.body;
