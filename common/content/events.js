@@ -33,6 +33,7 @@ function AutoCommands() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var store = [];
+    var lastFocus = null;
 
     function matchAutoCmd(autoCmd, event, regex)
     {
@@ -1086,65 +1087,77 @@ function Events() //{{{
             if (win && win.top == content && liberator.has("tabs"))
                 tabs.localStore.focusedFrame = win;
 
-            if (elem && elem.readOnly)
-                return;
-
-            if (elem && (
-                   (elem instanceof HTMLInputElement && (elem.type.toLowerCase() == "text" || elem.type.toLowerCase() == "password")) ||
-                   (elem instanceof HTMLSelectElement)
-                ))
+            try
             {
-                this.wantsModeReset = false;
-                liberator.mode = modes.INSERT;
-                if (hasHTMLDocument(win))
-                    buffer.lastInputField = elem;
-                return;
-            }
+                if (elem && elem.readOnly)
+                    return;
 
-            if (elem && elem instanceof HTMLTextAreaElement)
-            {
-                this.wantsModeReset = false;
-                if (options["insertmode"])
-                    modes.set(modes.INSERT, modes.TEXTAREA);
-                else if (elem.selectionEnd - elem.selectionStart > 0)
-                    modes.set(modes.VISUAL, modes.TEXTAREA);
-                else
-                    modes.main = modes.TEXTAREA;
-                if (hasHTMLDocument(win))
-                    buffer.lastInputField = elem;
-                return;
-            }
-
-            if (config.name == "Muttator")
-            {
-                // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
-                if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
+                if ((elem instanceof HTMLInputElement && /^(text|password)$/.test(elem.type)) ||
+                    (elem instanceof HTMLSelectElement))
                 {
-                    if (config.isComposeWindow)
-                    {
-                        liberator.dump("Compose editor got focus");
-                        modes.set(modes.INSERT, modes.TEXTAREA);
-                    }
-                    else if (liberator.mode != modes.MESSAGE)
-                        liberator.mode = modes.MESSAGE;
+                    this.wantsModeReset = false;
+                    liberator.mode = modes.INSERT;
+                    if (hasHTMLDocument(win))
+                        buffer.lastInputField = elem;
                     return;
                 }
-            }
 
-            if (liberator.mode == modes.INSERT ||
-                liberator.mode == modes.TEXTAREA ||
-                liberator.mode == modes.MESSAGE ||
-                liberator.mode == modes.VISUAL)
+                if (elem instanceof HTMLTextAreaElement)
+                {
+                    this.wantsModeReset = false;
+                    if (options["insertmode"])
+                        modes.set(modes.INSERT, modes.TEXTAREA);
+                    else if (elem.selectionEnd - elem.selectionStart > 0)
+                        modes.set(modes.VISUAL, modes.TEXTAREA);
+                    else
+                        modes.main = modes.TEXTAREA;
+                    if (hasHTMLDocument(win))
+                        buffer.lastInputField = elem;
+                    return;
+                }
+
+                if (config.name == "Muttator")
+                {
+                    // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
+                    if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
+                    {
+                        if (config.isComposeWindow)
+                        {
+                            liberator.dump("Compose editor got focus");
+                            modes.set(modes.INSERT, modes.TEXTAREA);
+                        }
+                        else if (liberator.mode != modes.MESSAGE)
+                            liberator.mode = modes.MESSAGE;
+                        return;
+                    }
+                }
+
+                urlbar = document.getElementById("urlbar");
+                if (focus == null && urlbar && urlbar.inputField == lastFocus)
+                    liberator.threadYield(true);
+
+                if (liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.MESSAGE | modes.VISUAL))
+                {
+                     if (0) // FIXME: currently this hack is disabled to make macros work
+                     {
+                         this.wantsModeReset = true;
+                         setTimeout(function () {
+                             if (events.wantsModeReset)
+                             {
+                                 events.wantsModeReset = false;
+                                 modes.reset();
+                             }
+                         }, 0);
+                     }
+                     else
+                     {
+                         modes.reset();
+                     }
+                }
+            }
+            finally
             {
-               // FIXME: currently this hack is disabled to make macros work
-               // this.wantsModeReset = true;
-               // setTimeout(function () {
-               //     if (events.wantsModeReset)
-               //     {
-               //         events.wantsModeReset = false;
-               modes.reset();
-               //     }
-               // }, 0);
+                lastFocus = elem;
             }
         },
 
@@ -1198,7 +1211,6 @@ function Events() //{{{
                         catch (e) {}
 
                         modes.reset();
-                        liberator.focusContent(true);
                         break;
 
                     case modes.VISUAL:
@@ -1216,14 +1228,9 @@ function Events() //{{{
 
                     case modes.INSERT:
                         if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
-                        {
                             liberator.mode = modes.TEXTAREA;
-                        }
                         else
-                        {
                             modes.reset();
-                            liberator.focusContent(true);
-                        }
                         break;
 
                     default: // HINTS, CUSTOM or COMMAND_LINE
