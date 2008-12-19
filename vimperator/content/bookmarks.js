@@ -589,6 +589,13 @@ function Bookmarks() //{{{
                 return process(resp);
         },
 
+        // Allows for creation of anonymous keyword (e.g., for empty
+        // defsearch's)
+        makeKeyword: function makeKeyword(keyword, title, icon, url)
+        {
+            return new Keyword( keyword, title, icon, url );
+        },
+
         // TODO: add filtering
         // format of returned array:
         // [keyword, helptext, url]
