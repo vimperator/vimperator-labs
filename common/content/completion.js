@@ -920,8 +920,9 @@ function Completion() //{{{
                         case "}": pop("{"); /* Fallthrough */
                         case ";":
                             top[FULL_STATEMENTS].push(i);
+                            break;
                         case ",":
-                            top[COMMA];
+                            top[COMMA].push(i);
                             break;
                     }
 
@@ -1158,6 +1159,7 @@ function Completion() //{{{
                     let [offset, obj, func] = getObjKey(-3);
                     if (!obj.length)
                         return;
+                    obj = obj.slice(0, 1);
 
                     try
                     {
@@ -1176,7 +1178,7 @@ function Completion() //{{{
                     {
                         let arg = str.substring(prev + 1, idx);
                         prev = idx;
-                        args.__defineGetter__(i, function () self.eval(ret));
+                        args.__defineGetter__(i, function () self.eval(arg));
                     }
                     let key = getKey();
                     args.push(key + string);

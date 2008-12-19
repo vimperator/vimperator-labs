@@ -220,8 +220,8 @@ function Tabs() //{{{
             });
         let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
         // TODO: Add option, or only apply when go~=[nN]
-        styles.addSheet("tab-binding", "chrome://browser/content/browser.xul",
-            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }", true);
+        styles.addSheet(true, "tab-binding", "chrome://browser/content/browser.xul",
+            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }");
 
     }
 

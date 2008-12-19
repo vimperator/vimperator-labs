@@ -158,7 +158,7 @@ function Highlights(name, store, serial)
             return "Unknown highlight keyword: " + class;
 
         let style = highlight[key] || new Highlight(key);
-        styles.removeSheet(style.selector, null, null, null, true);
+        styles.removeSheet(true, style.selector);
 
         if (append)
             newStyle = (style.value || "").replace(/;?\s*$/, "; " + newStyle);
@@ -169,7 +169,7 @@ function Highlights(name, store, serial)
             if (style.default == null)
             {
                 delete highlight[style.class];
-                styles.removeSheet(style.selector, null, null, null, true);
+                styles.removeSheet(true, style.selector);
                 return null;
             }
             newStyle = style.default;
@@ -180,7 +180,7 @@ function Highlights(name, store, serial)
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
         css = style.selector + " { " + css + " }";
 
-        let error = styles.addSheet(style.selector, style.filter, css, true);
+        let error = styles.addSheet(true, style.selector, style.filter, css);
         if (error)
             return error;
         style.value = newStyle;
@@ -272,22 +272,23 @@ function Styles(name, store, serial)
     /**
      * Add a new stylesheet.
      *
+     * @param {boolean} system Declares whether this is a system or
+     *     user sheet. System sheets are used internally by
+     *     @liberator.
+>>>>>>> master:common/content/style.js
      * @param {string} name The name given to the stylesheet by
      *     which it may be later referenced.
      * @param {string} filter The sites to which this sheet will
      *     apply. Can be a domain name or a URL. Any URL ending in
      *     "*" is matched as a prefix.
      * @param {string} css The CSS to be applied.
-     * @param {boolean} system Declares whether this is a system or
-     *     user sheet. System sheets are used internally by
-     *     @liberator.
      */
-    this.addSheet = function (name, filter, css, system)
+    this.addSheet = function (system, name, filter, css)
     {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
         if (name && name in names)
-            this.removeSheet(name, null, null, null, system);
+            this.removeSheet(system, name);
 
         let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
         if (!sheet)
@@ -316,10 +317,26 @@ function Styles(name, store, serial)
     };
 
     /**
+     * Get a sheet with a given name or index.
+     *
+     * @param {boolean} system
+     * @param {string or number} sheet The sheet to retrieve. Strings indicate
+     *     sheet names, while numbers indicate indices.
+     */
+    this.get = function get(system, sheet)
+    {
+        let sheets = system ? systemSheets : userSheets;
+        let names = system ? systemNames : userNames;
+        if (typeof sheet == "number")
+            return sheets[sheet];
+        return names[sheet]
+    };
+
+    /**
      * Find sheets matching the parameters. See {@link #addSheet}
      * for parameters.
      */
-    this.findSheets = function (name, filter, css, index, system)
+    this.findSheets = function (system, name, filter, css, index)
     {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
@@ -343,7 +360,7 @@ function Styles(name, store, serial)
      * are removed from matching sheets. If any remain, the sheet is
      * left in place.
      */
-    this.removeSheet = function (name, filter, css, index, system)
+    this.removeSheet = function (system, name, filter, css, index)
     {
         let self = this;
         let sheets = system ? systemSheets : userSheets;
@@ -351,12 +368,12 @@ function Styles(name, store, serial)
 
         if (filter && filter.indexOf(",") > -1)
             return filter.split(",").reduce(
-                function (n, f) n + self.removeSheet(name, f, index, system), 0);
+                function (n, f) n + self.removeSheet(system, name, f, index), 0);
 
         if (filter == undefined)
             filter = "";
 
-        let matches = this.findSheets(name, filter, css, index, system);
+        let matches = this.findSheets(system, name, filter, css, index);
         if (matches.length == 0)
             return;
 
@@ -379,7 +396,7 @@ function Styles(name, store, serial)
             {
                 let sites = sheet.sites.filter(function (f) f != filter);
                 if (sites.length)
-                    this.addSheet(name, sites.join(","), css, system, true);
+                    this.addSheet(system, name, sites.join(","), css);
             }
         }
         return matches.length;
@@ -451,7 +468,19 @@ function Styles(name, store, serial)
 let (array = util.Array)
 {
     Styles.prototype = {
-        get sites() array.uniq(array.flatten([v.sites for ([k, v] in this.userSheets)]))
+        get sites() array.uniq(array.flatten([v.sites for ([k, v] in this.userSheets)])),
+        completeSite: function (context, content)
+        {
+            let compl = [];
+            try
+            {
+                compl.push([content.location.host, "Current Host"]);
+                compl.push([content.location.href, "Current URL"]);
+            }
+            catch (e) {}
+            context.anchored = false;
+            context.completions = compl.concat([[s, ""] for each (s in styles.sites)]);
+        }
     };
 }
 
@@ -470,6 +499,18 @@ highlight.reload();
 
 liberator.triggerObserver("load_styles", "styles");
 liberator.triggerObserver("load_highlight", "highlight");
+
+liberator.registerObserver("load_completion", function ()
+{
+    completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
+        [ // Prototype: (system, name, filter, css, index)
+            null,
+            function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,
+            function (context, obj, args) styles.completeSite(context, content),
+            null,
+            function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
+        ]);
+});
 
 liberator.registerObserver("load_commands", function ()
 {
@@ -513,14 +554,14 @@ liberator.registerObserver("load_commands", function ()
             {
                 if ("-append" in args)
                 {
-                    let sheet = styles.findSheets(name, null, null, null, false)[0];
+                    let sheet = styles.get(false, name);
                     if (sheet)
                     {
                         filter = sheet.sites.concat(filter).join(",");
                         css = sheet.css.replace(/;?\s*$/, "; " + css);
                     }
                 }
-                let err = styles.addSheet(name, filter, css, false, args.bang);
+                let err = styles.addSheet(false, name, filter, css);
                 if (err)
                     liberator.echoerr(err);
             }
@@ -532,18 +573,11 @@ liberator.registerObserver("load_commands", function ()
                 let compl = [];
                 if (args.completeArg == 0)
                 {
-                    try
-                    {
-                        compl.push([content.location.host, "Current Host"]);
-                        compl.push([content.location.href, "Current URL"]);
-                    }
-                    catch (e) {}
-                    context.anchored = false;
-                    context.completions = compl.concat([[s, ""] for each (s in styles.sites)]);
+                    styles.completeSite(context, content);
                 }
                 else if (args.completeArg == 1)
                 {
-                    let sheet = styles.findSheets(args["-name"], null, null, null, false)[0];
+                    let sheet = styles.get(false, args["-name"]);
                     if (sheet)
                         context.completions = [[sheet.css, "Current Value"]];
                 }
@@ -567,7 +601,7 @@ liberator.registerObserver("load_commands", function ()
         "Remove a user stylesheet",
         function (args)
         {
-            styles.removeSheet(args["-name"], args[0], args.literalArg, args["-index"], false);
+            styles.removeSheet(false, args["-name"], args[0], args.literalArg, args["-index"]);
         },
         {
             completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
