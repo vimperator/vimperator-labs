@@ -26,6 +26,25 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** 
+ * Creates a new completion context.
+ *
+ * @class A class to provide contexts for command completion.
+ * Manages the filtering and formatting of completions, and keeps
+ * track of the positions and quoting of replacement text. Allows for
+ * the creation of sub-contexts with different headers and quoting
+ * rules.
+ *
+ * @param {nsIEditor} editor The editor for which completion is
+ *     intended. May be a {CompletionContext} when forking a context,
+ *     or a {string} when creating a new one.
+ * @param {string} name The name of this context. Used when the
+ *     context is forked.
+ * @param {number} offset The offset from the parent context.
+ * @author Kris Maglione <maglione.k@gmail.com>
+ * @constructor
+ */
+
 function CompletionContext(editor, name, offset) //{{{
 {
     if (!(this instanceof arguments.callee))
@@ -44,7 +63,11 @@ function CompletionContext(editor, name, offset) //{{{
         else
             self.contexts[name] = this;
 
+        /** 
+         * @property {CompletionContext} This context's parent. {null} when this is a top-level context.
+         */
         self.parent = parent;
+
         ["filters", "keys", "title", "quote"].forEach(function (key)
             self[key] = parent[key] && util.cloneObject(parent[key]));
         ["anchored", "compare", "editor", "_filter", "filterFunc", "keys", "_process", "top"].forEach(function (key)
@@ -55,10 +78,20 @@ function CompletionContext(editor, name, offset) //{{{
         self.offset = parent.offset;
         self.advance(offset);
 
+        /**
+         * @property {boolean} Specifies that this context is not finished
+         *      generating results.
+         * @default false
+         */
         self.incomplete = false;
         self.message = null;
+        /**
+         * @property {boolean} Specifies that this context is waiting for the
+         *     user to press <Tab>. Useful when fetching completions could be
+         *     dangerous or slow, and the user has enabled autocomplete.
+         */
         self.waitingForTab = false;
-        //delete self._filter; // FIXME?
+
         delete self._generate;
         delete self._ignoreCase;
         if (self != this)
@@ -76,6 +109,11 @@ function CompletionContext(editor, name, offset) //{{{
             this.editor = editor;
         this.compare = function (a, b) String.localeCompare(a.text, b.text);
 
+        /**
+         * @property {function} The function used to filter the results.
+         * @default Selects all results which match every predicate in the
+         *     {@link #filters} array.
+         */
         this.filterFunc = function (items)
         {
                 let self = this;
@@ -83,6 +121,10 @@ function CompletionContext(editor, name, offset) //{{{
                     reduce(function (res, filter) res.filter(function (item) filter.call(self, item)),
                             items);
         }
+        /**
+         * @property {Array} An array of predicates on which to filter the
+         *     results.
+         */
         this.filters = [function (item) {
             let text = Array.concat(this.getKey(item, "text"));
             for (let [i, str] in Iterator(text))
@@ -95,22 +137,73 @@ function CompletionContext(editor, name, offset) //{{{
             }
             return false;
         }];
+        /**
+         * @property {boolean} Specifies whether this context results must
+         *     match the filter at the begining of the string.
+         * @default true
+         */
         this.anchored = true;
+        /**
+         * @property {Object} A map of all contexts, keyed on their names.
+         *    Names are assigned when a context is forked, with its specified
+         *    name appended, after a '/', to its parent's name.
+         */
         this.contexts = { name: this };
+        /**
+         * @property {Object} A mapping of keys, for {@link #getKey}. Given
+         *      { key: value }, getKey(item, key) will return values as such:
+         *      if value is a string, it will return item.item[value]. If it's a
+         *      function, it will return value(item.item).
+         */
         this.keys = { text: 0, description: 1, icon: "icon" };
+        /**
+         * @property {number} This context's offset from the begining of
+         *     {@link #editor}'s value.
+         */
         this.offset = offset || 0;
+        /**
+         * @property {function} A function which is called when any subcontext
+         *     changes its completion list. Only called when
+         *     {@link #updateAsync} is true.
+         */
         this.onUpdate = function () true;
+        /**
+         * @property {CompletionContext} The top-level completion context.
+         */
         this.top = this;
         this.__defineGetter__("incomplete", function () this.contextList.some(function (c) c.parent && c.incomplete));
         this.__defineGetter__("waitingForTab", function () this.contextList.some(function (c) c.parent && c.waitingForTab));
         this.reset();
     }
+    /**
+     * @property {Object} A general-purpose store for functions which need to
+     *     cache data between calls.
+     */
     this.cache = {};
+    /**
+     * @private
+     * @property {Object} A cache for return values of {@link #generate}.
+     */
     this.itemCache = {};
+    /**
+     * @property {string} A key detailing when the cached value of
+     *     {@link #generate} may be used. Every call to
+     *     {@link #generate} stores its result in {@link #itemCache}.
+     *     When itemCache[key] exists, its value is returned, and
+     *     {@link #generate} is not called again.
+     */
     this.key = "";
+    /**
+     * @property {string} A message to be shown before any results.
+     */
     this.message = null;
     this.name = name || "";
+    /** @private */
     this._completions = []; // FIXME
+    /**
+     * Returns a key, as detailed in {@link #keys}.
+     * @function
+     */
     this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item.item) :
             key in self.keys ? item.item[self.keys[key]]
                              : item.item[key];
@@ -118,6 +211,14 @@ function CompletionContext(editor, name, offset) //{{{
 
 CompletionContext.prototype = {
     // Temporary
+    /**
+     * @property {Object}
+     *
+     * An object describing the results from all sub-contexts. Results are
+     * adjusted so that all have the same starting offset.
+     *
+     * @deprecated
+     */
     get allItems()
     {
         try
@@ -372,6 +473,19 @@ CompletionContext.prototype = {
         return this._substrings = substrings;
     },
 
+    /**
+     * Advances the context <b>count</b> characters. {@link #filter} is
+     * advanced to match. If {@link #quote} is non-null, its prefix and suffix
+     * are set to the null-string.
+     *
+     * This function is still imperfect for quoted strings. When 
+     * {@link #quote} is non-null, it adjusts the count based on the quoted
+     * size of the <b>count</b>-character substring of the filter, which is
+     * accurate so long as unquoting and quoting a string will always map to
+     * the original quoted string, which is often not the case.
+     *
+     * @param {number} count The number of characters to advance the context.
+     */
     advance: function advance(count)
     {
         delete this._ignoreCase;
@@ -386,6 +500,12 @@ CompletionContext.prototype = {
             this._filter = this._filter.substr(count);
     },
 
+    /**
+     * Gets a key from {@link #cache}, setting it to <b>defVal</b> if it
+     * doesn't already exists.
+     * @param {string} key
+     * @param defVal
+     */
     getCache: function (key, defVal)
     {
         if (!(key in this.cache))
@@ -511,6 +631,13 @@ CompletionContext.prototype = {
         }
     },
 
+    /**
+     * Wait for all subcontexts to complete.
+     *
+     * @param {boolean} interruptable When true, the call may be interrupted
+     *    via <C-c>. In this case, "Interrupted" may be thrown.
+     * @param {number} timeout The maximum time, in milliseconds, to wait.
+     */
     wait: function wait(interruptable, timeout)
     {
         let end = Date.now() + timeout;
