@@ -125,7 +125,7 @@ const modes = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var self = {
-        NONE:             0,
+        NONE: 0,
 
         __iterator__: function () util.Array.iterator(this.all),
 
@@ -133,7 +133,8 @@ const modes = (function () //{{{
 
         get inputMode() main & (this.COMMAND_LINE | this.INPUT | this.TEXTAREA | this.COMPOSE),
 
-        addMode: function (name, extended, display) {
+        addMode: function (name, extended, display)
+        {
             let disp = name.replace("_", " ", "g");
             this[name] = 1 << lastMode++;
             modeMap[name] = modeMap[this[name]] = {

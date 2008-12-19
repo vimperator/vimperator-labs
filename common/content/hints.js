@@ -581,12 +581,14 @@ function Hints() //{{{
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",
-        function (count) {
+        function (count)
+        {
             extendedhintCount = count;
             commandline.input(";", function (arg) { setTimeout(function () hints.show(arg), 0) },
                 {
                     promptHighlight: "Normal",
-                    completer: function (context) {
+                    completer: function (context)
+                    {
                         context.compare = function () 0;
                         context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
                     },

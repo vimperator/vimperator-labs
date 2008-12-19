@@ -792,7 +792,8 @@ function Commands() //{{{
                             argCount: nargsOpt,
                             bang: bangOpt,
                             count: countOpt,
-                            completer: function (context, args) {
+                            completer: function (context, args)
+                            {
                                 if (completeFunc)
                                     return completeFunc(context, args)
                             },
