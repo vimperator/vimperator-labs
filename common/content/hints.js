@@ -271,7 +271,7 @@ function Hints() //{{{
                     css.push(highlight.selector(group) + "[number='" + elem.getAttribute("number") + "'] { " + elem.style.cssText + " }");
                 }
             }
-            styles.addSheet("hint-positions", "*", css.join("\n"), true, true);
+            styles.addSheet(true, "hint-positions", "*", css.join("\n"));
         }
 
         return true;
@@ -296,7 +296,7 @@ function Hints() //{{{
             if (timeout && firstElem)
                 setTimeout(function () { firstElem.removeAttributeNS(NS.uri, "highlight"); }, timeout);
         }
-        styles.removeSheet("hint-positions", null, null, null, true);
+        styles.removeSheet(true, "hint-positions");
 
         reset();
     }

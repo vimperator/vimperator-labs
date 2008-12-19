@@ -124,9 +124,9 @@ const liberator = (function () //{{{
                     let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
                     if (class.length)
-                        styles.addSheet("scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true, true);
+                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }");
                     else
-                        styles.removeSheet("scrollbar", null, null, null, true);
+                        styles.removeSheet(true, "scrollbar");
                     options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
                 },
                 validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
@@ -140,7 +140,7 @@ const liberator = (function () //{{{
                 {
                     let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
                     let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
-                    styles.addSheet("taboptions", "chrome://*", css, true, true);
+                    styles.addSheet(true, "taboptions", "chrome://*", css);
                     statusline.updateTabCount();
                 }
             }

@@ -46,8 +46,8 @@ function Buffer() //{{{
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
-    let error = styles.addSheet("font-size", "chrome://liberator/content/buffer.xhtml",
-        "body { font-size: " + fontSize + "; }", true);
+    let error = styles.addSheet(true, "font-size", "chrome://liberator/content/buffer.xhtml",
+        "body { font-size: " + fontSize + "; }");
 
     if ("ZoomManager" in window)
     {
