@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // Do NOT create instances of this class yourself, use the helper method
 // mappings.add() instead
 function Map(modes, cmds, description, action, extraInfo) //{{{
@@ -76,6 +78,9 @@ Map.prototype = {
 
 }; //}}}
 
+/**
+ * @instance mappings
+ */
 function Mappings() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 plugins.contexts = {};
 function Script(file)
 {
@@ -52,6 +54,9 @@ function Script(file)
 Script.prototype = plugins;
 
 // TODO: why are we passing around strings rather than file objects?
+/**
+ * @instance io
+ */
 function IO() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -838,7 +843,7 @@ lookup:
                 }
                 else if (/\.css$/.test(filename))
                 {
-                    storage.styles.registerSheet(uri.spec, !silent, true);
+                    storage.styles.registerSheet(uri.spec, true);
                 }
                 else
                 {

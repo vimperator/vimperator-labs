@@ -26,8 +26,16 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 const Point = new Struct("x", "y");
 
+/**
+ * A class to manage the primary web content buffer. The name comes
+ * from vim's term, 'buffer', which signifies instances of open
+ * files.
+ * @instance buffer
+ */
 function Buffer() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -808,6 +816,10 @@ function Buffer() //{{{
 
     return {
 
+        /**
+         * The alternative stylesheets for the current buffer. Only
+         * returns stylesheets for the 'screen' media type.
+         */
         get alternateStyleSheets()
         {
             let stylesheets = window.getAllStyleSheets(window.content);
@@ -817,9 +829,18 @@ function Buffer() //{{{
             );
         },
 
+        /**
+         * @property {Object} A map of page info sections to their
+         *     content generating functions.
+         */
         get pageInfo() pageInfo,
 
-        // 0 if loading, 1 if loaded or 2 if load failed
+        /**
+         * Returns whether the buffer is loaded. Values may be:
+         *   0 - Loading.
+         *   1 - Fully loaded.
+         *   2 - Load failed.
+         */
         get loaded()
         {
             if (window.content.document.pageIsFullyLoaded !== undefined)
@@ -832,7 +853,10 @@ function Buffer() //{{{
             window.content.document.pageIsFullyLoaded = value;
         },
 
-        // used to keep track of the right field for "gi"
+        /**
+         * The last focused input field in the buffer. Used by the
+         * "gi" key binding.
+         */
         get lastInputField()
         {
             if (window.content.document.lastInputField)
@@ -845,6 +869,9 @@ function Buffer() //{{{
             window.content.document.lastInputField = value;
         },
 
+        /**
+         * The current top-level document's URL.
+         */
         get URL()
         {
             return window.content.document.location.href;
@@ -855,6 +882,10 @@ function Buffer() //{{{
             return window.content.innerHeight;
         },
 
+        /**
+         * The current browser's text zoom level, as a percentage with
+         * 100 as 'normal'. Only affects text size.
+         */
         get textZoom()
         {
             return getBrowser().markupDocumentViewer.textZoom * 100;
@@ -864,6 +895,11 @@ function Buffer() //{{{
             setZoom(value, false);
         },
 
+        /**
+         * The current browser's text zoom level, as a percentage with
+         * 100 as 'normal'. Affects text size, as well as image size
+         * and block size.
+         */
         get fullZoom()
         {
             return getBrowser().markupDocumentViewer.fullZoom * 100;
@@ -873,14 +909,37 @@ function Buffer() //{{{
             setZoom(value, true);
         },
 
+        /**
+         * The current document's title.
+         */
         get title()
         {
             return window.content.document.title;
         },
 
+        /**
+         *
+         * @param {string} option The section's value in 'pageinfo'.
+         * @param {string} title The heading for this section's
+         *     output.
+         * @param {function} fn The function to generate this
+         *     section's output.
+         */
         addPageInfoSection: addPageInfoSection,
 
-        // returns an XPathResult object
+        /**
+         * Evaluates an XPath expression in the current or provided
+         * document.  It provides the xhtml and liberator XML
+         * namespaces. The result may be used as an iterator.
+         *
+         * @param {string} expression The XPath expression to evaluate.
+         * @param {Document} doc The document to evaluate the expression in.
+         * @default The current document.
+         * @param {Node} elem The context element.
+         * @default <b>doc</b>
+         * @param {boolean} asIterator Whether to return the results as an XPath
+         *     iterator.
+         */
         evaluateXPath: function (expression, doc, elem, asIterator)
         {
             if (!doc)
@@ -891,15 +950,10 @@ function Buffer() //{{{
             let result = doc.evaluate(expression, elem,
                 function lookupNamespaceURI(prefix)
                 {
-                  switch (prefix)
-                  {
-                    case "xhtml":
-                      return "http://www.w3.org/1999/xhtml";
-                    case "liberator":
-                      return NS.uri;
-                    default:
-                      return null;
-                  }
+                    return {
+                        xhtml: "http://www.w3.org/1999/xhtml",
+                        liberator: NS.uri
+                    }[prefix] || null;
                 },
                 asIterator ? XPathResult.ORDERED_NODE_ITERATOR_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
                 null
@@ -912,9 +966,13 @@ function Buffer() //{{{
             return result;
         },
 
-        // in contrast to vim, returns the selection if one is made,
-        // otherwise tries to guess the current word under the text cursor
-        // NOTE: might change the selection
+        /**
+         * Returns the currently selected word. If the selection is
+         * null, it tries to guess the word that the caret is
+         * positioned in.
+         *
+         * NOTE: might change the selection
+         */
         // FIXME: getSelection() doesn't always preserve line endings, see:
         // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
         getCurrentWord: function ()
@@ -936,8 +994,13 @@ function Buffer() //{{{
             return String(selection);
         },
 
-        // more advanced than a simple elem.focus() as it also works for iframes
-        // and image maps
+        /**
+         * Focuses the given element. In contrast to a simple
+         * elem.focus() call, this function works for iframes and
+         * image maps.
+         *
+         * @param {Node} elem The element to focus.
+         */
         // TODO: merge with followLink()?
         focusElement: function (elem)
         {
@@ -962,6 +1025,17 @@ function Buffer() //{{{
             elem.dispatchEvent(evt);
         },
 
+        /**
+         * Try to guess links the like of "next" and "prev". Though it
+         * has a singularly horrendous name, it turns out to be quite
+         * useful.
+         *
+         * @param {string} rel The relationship to look for. Looks for
+         *     links with matching @rel or @rev attributes, and,
+         *     failing that, looks for an option named rel +
+         *     "pattern", and finds the last link matching that
+         *     RegExp.
+         */
         followDocumentRelationship: function (rel)
         {
             let regexps = options.get(rel + "pattern").values
@@ -1018,7 +1092,13 @@ function Buffer() //{{{
                 liberator.beep();
         },
 
-        // artificially "clicks" a link in order to open it
+        /**
+         * Fakes a click on a link.
+         *
+         * @param {Node} elem The element to click.
+         * @param {number} where Where to open the link. See
+         *     {@link liberator.open}.
+         */
         followLink: function (elem, where)
         {
             let doc = elem.ownerDocument;
@@ -1066,6 +1146,9 @@ function Buffer() //{{{
             });
         },
 
+        /**
+         * The current document's selection controller.
+         */
         get selectionController() getBrowser().docShell
                 .QueryInterface(Ci.nsIInterfaceRequestor)
                 .getInterface(Ci.nsISelectionDisplay)
@@ -1090,11 +1173,19 @@ function Buffer() //{{{
             }
         },
 
+        /**
+         * Scrolls to the bottom of the current buffer.
+         */
         scrollBottom: function ()
         {
             scrollToPercentiles(-1, 100);
         },
 
+        /**
+         * Scrolls the window laterally <b>cols</b> columns.
+         *
+         * @param {number} cols The number of columns to scroll.
+         */
         scrollColumns: function (cols)
         {
             let win = findScrollableWindow();
@@ -1106,11 +1197,19 @@ function Buffer() //{{{
             win.scrollBy(COL_WIDTH * cols, 0);
         },
 
+        /**
+         * Scrolls the buffer to its rightmost position.
+         */
         scrollEnd: function ()
         {
             scrollToPercentiles(100, -1);
         },
 
+        /**
+         * Scrolls the buffer vertically <b>lines</b> rows.
+         *
+         * @param {number} lines The number of lines to scroll.
+         */
         scrollLines: function (lines)
         {
             let win = findScrollableWindow();
@@ -1118,6 +1217,11 @@ function Buffer() //{{{
             win.scrollByLines(lines);
         },
 
+        /**
+         * Scrolls the buffer vertically <b>pages</b> pages.
+         *
+         * @param {number} pages The number of pages to scroll.
+         */
         scrollPages: function (pages)
         {
             let win = findScrollableWindow();
@@ -1139,16 +1243,25 @@ function Buffer() //{{{
                 win.scrollBy(0, win.innerHeight / 2 * direction);
         },
 
+        /**
+         * Scrolls the current buffer vertically to <b>percentage</b>
+         */
         scrollToPercentile: function (percentage)
         {
             scrollToPercentiles(-1, percentage);
         },
 
+        /**
+         * Scrolls the current buffer laterally to its leftmost.
+         */
         scrollStart: function ()
         {
             scrollToPercentiles(0, -1);
         },
 
+        /**
+         * Scrolls the current buffer vertically to its top.
+         */
         scrollTop: function ()
         {
             scrollToPercentiles(-1, 0);
@@ -1310,6 +1423,9 @@ function Buffer() //{{{
     //}}}
 }; //}}}
 
+/**
+ * @instance marks
+ */
 function Marks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

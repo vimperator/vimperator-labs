@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // TODO: many methods do not work with Thunderbird correctly yet
 
 function Tabs() //{{{

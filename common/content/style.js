@@ -6,6 +6,19 @@
  it under any or all of those licenseses.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
+/**
+ * @constant
+ * @property {string} The default highlighting rules. They have the
+ * form:
+ *    rule ::= selector space css
+ *    selector ::= group
+ *               | group "," css-selector
+ *               | group "," css-selector "," scope
+ *    group ::= groupname
+ *            | groupname css-selector
+ */
 // <css>
 Highlights.prototype.CSS = <![CDATA[
     Boolean     color: red;
@@ -114,6 +127,12 @@ Highlights.prototype.CSS = <![CDATA[
     }
     ]]>.toString();
 
+/**
+ * A class to manage highlighting rules. The parameters are the
+ * standard paramaters for any {@link Storage} object.
+ *
+ * @author Kris Maglione <maglione.k@gmail.com>
+ */
 function Highlights(name, store, serial)
 {
     var self = this;
@@ -161,25 +180,35 @@ function Highlights(name, store, serial)
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
         css = style.selector + " { " + css + " }";
 
-        let error = styles.addSheet(style.selector, style.filter, css, true, force);
+        let error = styles.addSheet(style.selector, style.filter, css, true);
         if (error)
             return error;
         style.value = newStyle;
         highlight[style.class] = style;
     };
 
+    /**
+     * Gets a CSS selector given a highlight group.
+     */
     this.selector = function (class)
     {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
         return "[liberator|highlight~=" + hl + "]" + rest
     };
 
+    /**
+     * Clears all highlighting rules. Rules with default values are
+     * reset.
+     */
     this.clear = function ()
     {
         for (let [k, v] in Iterator(highlight))
             this.set(k, null, true);
     };
 
+    /**
+     * Reloads the values in {@link #CSS}.
+     */
     this.reload = function ()
     {
         this.CSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
@@ -203,6 +232,13 @@ function Highlights(name, store, serial)
     };
 }
 
+/**
+ * Manages named and unnamed user stylesheets, which apply to both
+ * chrome and content pages. The parameters are the standard
+ * paramaters for any {@link Storage} object.
+ *
+ * @author Kris Maglione <maglione.k@gmail.com>
+ */
 function Styles(name, store, serial)
 {
     /* Can't reference liberator or Components inside Styles --
@@ -233,7 +269,20 @@ function Styles(name, store, serial)
     this.__defineGetter__("systemNames", function () Iterator(systemNames));
     this.__defineGetter__("userNames", function () Iterator(userNames));
 
-    this.addSheet = function (name, filter, css, system, force)
+    /**
+     * Add a new stylesheet.
+     *
+     * @param {string} name The name given to the stylesheet by
+     *     which it may be later referenced.
+     * @param {string} filter The sites to which this sheet will
+     *     apply. Can be a domain name or a URL. Any URL ending in
+     *     "*" is matched as a prefix.
+     * @param {string} css The CSS to be applied.
+     * @param {boolean} system Declares whether this is a system or
+     *     user sheet. System sheets are used internally by
+     *     @liberator.
+     */
+    this.addSheet = function (name, filter, css, system)
     {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
@@ -249,7 +298,7 @@ function Styles(name, store, serial)
             sheet.ref = [];
             try
             {
-                this.registerSheet(cssUri(wrapCSS(sheet)), !force);
+                this.registerSheet(cssUri(wrapCSS(sheet)));
                 this.registerAgentSheet(cssUri(wrapCSS(sheet)))
             }
             catch (e)
@@ -266,6 +315,10 @@ function Styles(name, store, serial)
         return null;
     };
 
+    /**
+     * Find sheets matching the parameters. See {@link #addSheet}
+     * for parameters.
+     */
     this.findSheets = function (name, filter, css, index, system)
     {
         let sheets = system ? systemSheets : userSheets;
@@ -284,6 +337,12 @@ function Styles(name, store, serial)
         return matches.map(function (i) sheets[i]);
     };
 
+    /**
+     * Remove a stylesheet. See {@link #addSheet} for parameters.
+     * In cases where <b>filter</b> is supplied, the given filters
+     * are removed from matching sheets. If any remain, the sheet is
+     * left in place.
+     */
     this.removeSheet = function (name, filter, css, index, system)
     {
         let self = this;
@@ -326,11 +385,15 @@ function Styles(name, store, serial)
         return matches.length;
     };
 
-    this.registerSheet = function (uri, doCheckSyntax, reload)
+    /**
+     * Register a user stylesheet at the given URI.
+     *
+     * @param {string} uri The UrI of the sheet to register.
+     * @param {boolean} reload Whether to reload any sheets that are
+     *     already registered.
+     */
+    this.registerSheet = function (uri, reload)
     {
-        //dump (uri + "\n\n");
-        if (doCheckSyntax)
-            checkSyntax(uri);
         if (reload)
             this.unregisterSheet(uri);
         uri = ios.newURI(uri, null, null);
@@ -338,6 +401,9 @@ function Styles(name, store, serial)
             sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
     };
 
+    /**
+     * Unregister a sheet at the given URI.
+     */
     this.unregisterSheet = function (uri)
     {
         uri = ios.newURI(uri, null, null);
@@ -346,6 +412,10 @@ function Styles(name, store, serial)
     };
 
     // FIXME
+    /**
+     * Register an agent stylesheet.
+     * @deprecated
+     */
     this.registerAgentSheet = function (uri)
     {
         this.unregisterAgentSheet(uri);
@@ -353,6 +423,10 @@ function Styles(name, store, serial)
         sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
     };
 
+    /**
+     * Unregister an agent stylesheet.
+     * @deprecated
+     */
     this.unregisterAgentSheet = function (uri)
     {
         uri = ios.newURI(uri, null, null);
@@ -373,65 +447,6 @@ function Styles(name, store, serial)
                               .join(", ");
         return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
     }
-
-    let queryinterface = XPCOMUtils.generateQI([Ci.nsIConsoleListener]);
-    /* What happens if more than one thread tries to use this? */
-    let testDoc = document.implementation.createDocument(XHTML, "doc", null);
-    function checkSyntax(uri)
-    {
-        let errors = [];
-        let listener = {
-            QueryInterface: queryinterface,
-            observe: function (message)
-            {
-                try
-                {
-                    message = message.QueryInterface(Ci.nsIScriptError);
-                    if (message.sourceName == uri)
-                        errors.push(message);
-                }
-                catch (e) {}
-            }
-        };
-
-        try
-        {
-            consoleService.registerListener(listener);
-            if (testDoc.documentElement.firstChild)
-                testDoc.documentElement.removeChild(testDoc.documentElement.firstChild);
-            testDoc.documentElement.appendChild(util.xmlToDom(
-                    <html><head><link type="text/css" rel="stylesheet" href={uri}/></head></html>, testDoc));
-
-            while (true)
-            {
-                try
-                {
-                    // Throws NS_ERROR_DOM_INVALID_ACCESS_ERR if not finished loading
-                    testDoc.styleSheets[0].cssRules.length;
-                    break;
-                }
-                catch (e)
-                {
-                    if (e.name != "NS_ERROR_DOM_INVALID_ACCESS_ERR")
-                        return [e.toString()];
-                    sleep(10);
-                }
-            }
-        }
-        finally
-        {
-            consoleService.unregisterListener(listener);
-        }
-        if (errors.length)
-        {
-            let err = new Error("", errors[0].sourceName.replace(/^(chrome-data:text\/css,).*/, "$1..."), errors[0].lineNumber);
-            err.name = "CSSError";
-            err.message = errors.reduce(function (msg, e) msg + "; " + e.lineNumber + ": " + e.errorMessage,
-                errors.shift().errorMessage);
-            err.echoerr = err.fileName + ":" + err.lineNumber + ": " + err.message;
-            throw err;
-        }
-    }
 }
 let (array = util.Array)
 {
@@ -440,8 +455,16 @@ let (array = util.Array)
     };
 }
 
+/**
+ * @property {Styles}
+ */
 const styles = storage.newObject("styles", Styles, false);
+
+/**
+ * @property {Highlights}
+ */
 const highlight = storage.newObject("highlight", Highlights, false);
+
 highlight.CSS = Highlights.prototype.CSS;
 highlight.reload();
 
