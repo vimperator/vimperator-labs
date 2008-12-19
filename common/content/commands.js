@@ -759,19 +759,20 @@ function Commands() //{{{
                 {
                     if (/^custom,/.test(completeOpt))
                     {
+                        completeOpt = completeOpt.substr(7);
                         completeFunc = function ()
                         {
                             try
                             {
-                                var completer = liberator.eval(completeOpt.substr(7));
+                                var completer = liberator.eval(completeOpt);
 
                                 if (!(completer instanceof Function))
-                                    throw new TypeError("User-defined custom completer '" + completeOpt.substr(7) + "' is not a function");
+                                    throw new TypeError("User-defined custom completer '" + completeOpt + "' is not a function");
                             }
                             catch (e)
                             {
                                 // FIXME: should be pushed to the MOW
-                                liberator.echoerr("E117: Unknown function: " + completeOpt.substr(7));
+                                liberator.echoerr("E117: Unknown function: " + completeOpt);
                                 liberator.log(e);
                                 return undefined;
                             }
@@ -784,26 +785,23 @@ function Commands() //{{{
                     }
                 }
 
-                if (!commands.addUserCommand(
-                        [cmd],
-                        "User defined command",
-                        userCommand,
-                        {
-                            argCount: nargsOpt,
-                            bang: bangOpt,
-                            count: countOpt,
-                            completer: function (context, args)
-                            {
-                                if (completeFunc)
-                                    return completeFunc(context, args)
-                            },
-                            replacementText: args.literalArg
-                        },
-                        args.bang)
-                    )
-                {
+                let added = commands.addUserCommand([cmd],
+                                "User defined command",
+                                userCommand,
+                                {
+                                    argCount: nargsOpt,
+                                    bang: bangOpt,
+                                    count: countOpt,
+                                    completer: function (context, args)
+                                    {
+                                        if (completeFunc)
+                                            return completeFunc(context, args)
+                                    },
+                                    replacementText: args.literalArg
+                                }, args.bang);
+
+                if (!added)
                     liberator.echoerr("E174: Command already exists: add ! to replace it");
-                }
             }
             else
             {
