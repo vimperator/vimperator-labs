@@ -30,7 +30,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 plugins.contexts = {};
 function Script(file)
 {
-    let self = plugins.contexts[file.path]
+    let self = plugins.contexts[file.path];
     if (self)
     {
         if (self.onUnload)

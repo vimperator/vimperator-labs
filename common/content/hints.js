@@ -237,7 +237,7 @@ function Hints() //{{{
                         hint[IMGSPAN] = imgspan;
                         span.parentNode.appendChild(imgspan);
                     }
-                    setClass(imgspan, activeHint == hintnum)
+                    setClass(imgspan, activeHint == hintnum);
                 }
 
                 span.setAttribute("number", hintnum);
@@ -289,7 +289,7 @@ function Hints() //{{{
 
             // animate the disappearance of the first hint
             if (timeout && firstElem)
-                setTimeout(function () { firstElem.removeAttributeNS(NS.uri, "highlight") }, timeout);
+                setTimeout(function () { firstElem.removeAttributeNS(NS.uri, "highlight"); }, timeout);
         }
         styles.removeSheet("hint-positions", null, null, null, true);
 
@@ -374,7 +374,7 @@ function Hints() //{{{
             {
                 linkText = linkText.toLowerCase();
                 return tokens.every(function (token) linkText.indexOf(token) >= 0);
-            }
+            };
         } //}}}
 
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
@@ -502,7 +502,7 @@ function Hints() //{{{
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
                     return stringsAtBeginningOfWords(hintStrings, words, allowWordOverleaping);
-            }
+            };
         } //}}}
 
         let hintMatching = options["hintmatching"];
@@ -584,7 +584,7 @@ function Hints() //{{{
         function (count)
         {
             extendedhintCount = count;
-            commandline.input(";", function (arg) { setTimeout(function () hints.show(arg), 0) },
+            commandline.input(";", function (arg) { setTimeout(function () hints.show(arg), 0); },
                 {
                     promptHighlight: "Normal",
                     completer: function (context)

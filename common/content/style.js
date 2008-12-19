@@ -166,7 +166,7 @@ function Highlights(name, store, serial)
             return error;
         style.value = newStyle;
         highlight[style.class] = style;
-    }
+    };
 
     this.selector = function (class)
     {
@@ -200,7 +200,7 @@ function Highlights(name, store, serial)
             if (hl.value == hl.default)
                 this.set(class);
         }
-    }
+    };
 }
 
 function Styles(name, store, serial)
@@ -264,7 +264,7 @@ function Styles(name, store, serial)
             names[name] = sheet;
         }
         return null;
-    }
+    };
 
     this.findSheets = function (name, filter, css, index, system)
     {
@@ -324,7 +324,7 @@ function Styles(name, store, serial)
             }
         }
         return matches.length;
-    }
+    };
 
     this.registerSheet = function (uri, doCheckSyntax, reload)
     {
@@ -336,14 +336,14 @@ function Styles(name, store, serial)
         uri = ios.newURI(uri, null, null);
         if (reload || !sss.sheetRegistered(uri, sss.USER_SHEET))
             sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
-    }
+    };
 
     this.unregisterSheet = function (uri)
     {
         uri = ios.newURI(uri, null, null);
         if (sss.sheetRegistered(uri, sss.USER_SHEET))
             sss.unregisterSheet(uri, sss.USER_SHEET);
-    }
+    };
 
     // FIXME
     this.registerAgentSheet = function (uri)
@@ -351,14 +351,14 @@ function Styles(name, store, serial)
         this.unregisterAgentSheet(uri);
         uri = ios.newURI(uri, null, null);
         sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
-    }
+    };
 
     this.unregisterAgentSheet = function (uri)
     {
         uri = ios.newURI(uri, null, null);
         if (sss.sheetRegistered(uri, sss.AGENT_SHEET))
             sss.unregisterSheet(uri, sss.AGENT_SHEET);
-    }
+    };
 
     function wrapCSS(sheet)
     {
@@ -425,7 +425,7 @@ function Styles(name, store, serial)
         if (errors.length)
         {
             let err = new Error("", errors[0].sourceName.replace(/^(chrome-data:text\/css,).*/, "$1..."), errors[0].lineNumber);
-            err.name = "CSSError"
+            err.name = "CSSError";
             err.message = errors.reduce(function (msg, e) msg + "; " + e.lineNumber + ": " + e.errorMessage,
                 errors.shift().errorMessage);
             err.echoerr = err.fileName + ":" + err.lineNumber + ": " + err.message;
@@ -516,7 +516,7 @@ liberator.registerObserver("load_commands", function ()
                     }
                     catch (e) {}
                     context.anchored = false;
-                    context.completions = compl.concat([[s, ""] for each (s in styles.sites)])
+                    context.completions = compl.concat([[s, ""] for each (s in styles.sites)]);
                 }
                 else if (args.completeArg == 1)
                 {

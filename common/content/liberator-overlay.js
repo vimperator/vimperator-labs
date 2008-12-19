@@ -13,7 +13,7 @@
         {
             try
             {
-                loader.loadSubScript(base + script, modules)
+                loader.loadSubScript(base + script, modules);
                 return;
             }
             catch (e)

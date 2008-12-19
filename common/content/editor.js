@@ -857,7 +857,7 @@ function Editor() //{{{
                         editor.selection.deleteFromDocument();
                         editor.insertText(val);
                     }
-                }, this)
+                }, this);
                 if (res == false)
                     throw "Couldn't create temporary file";
             }

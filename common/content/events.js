@@ -689,7 +689,7 @@ function Events() //{{{
 
     commands.add(["macros"],
         "List all macros",
-        function (args) { completion.listCompleter("macro", args[0]) },
+        function (args) { completion.listCompleter("macro", args[0]); },
         {
             argCount: "?",
             completer: function (context) completion.macro(context)
@@ -1283,7 +1283,7 @@ function Events() //{{{
                 {
                     events.feedingKeys = false;
                     if (lastMacro)
-                        setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'") }, 100);
+                        setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
                     event.preventDefault();
                     event.stopPropagation();
                     return true;

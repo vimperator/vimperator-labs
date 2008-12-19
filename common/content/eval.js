@@ -1,4 +1,4 @@
-try { __liberator_eval_result = eval(__liberator_eval_string)
+try { __liberator_eval_result = eval(__liberator_eval_string);
 }
 catch (e)
 {

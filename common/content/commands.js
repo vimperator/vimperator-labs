@@ -120,7 +120,7 @@ Command.prototype = {
             if (matches && matches[2])
             {
                 commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
-                    function (args) { exec(matches[1] + "\n" + args) });
+                    function (args) { exec(matches[1] + "\n" + args); });
                 return;
             }
         }
@@ -169,7 +169,7 @@ function Commands() //{{{
     const quoteMap = {
         "\n": "n",
         "\t": "t"
-    }
+    };
     function quote(q, list)
     {
         let re = RegExp("[" + list + "]", "g");
@@ -184,7 +184,7 @@ function Commands() //{{{
         '"': quote('"', '\n\t"\\\\'),
         "'": quote("'", "\\\\'"),
         "":  quote("",  "\\\\ ")
-    }
+    };
 
     const ArgType = new Struct("description", "parse");
     const argTypes = [
@@ -555,7 +555,7 @@ function Commands() //{{{
                 if (complete)
                 {
                     if (argCount == "0" || args.length > 0  && (/[1?]/.test(argCount)))
-                        complete.highlight(i, sub.length, "SPELLCHECK")
+                        complete.highlight(i, sub.length, "SPELLCHECK");
                 }
 
                 if (args.length == literal)

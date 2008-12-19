@@ -109,7 +109,7 @@ const liberator = (function () //{{{
                            .forEach(function (elem)
                         {
                             if (elem)
-                                elem.collapsed = (opts.indexOf(opt) == -1)
+                                elem.collapsed = (opts.indexOf(opt) == -1);
                         });
                     }
                 }
