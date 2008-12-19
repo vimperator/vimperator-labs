@@ -242,8 +242,8 @@ function AutoCommands() //{{{
             liberator.echomsg("Executing " + event + " Auto commands for \"*\"", 8);
 
             let lastPattern = null;
-
             let url = args.url || "";
+
             for (let [,autoCmd] in Iterator(autoCmds))
             {
                 if (autoCmd.pattern.test(url))
@@ -252,22 +252,24 @@ function AutoCommands() //{{{
                         liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
 
                     lastPattern = autoCmd.pattern;
-
                     liberator.echomsg("autocommand " + autoCmd.command, 9);
+
                     if (typeof autoCmd.command == "function")
                     {
                         try
                         {
                             autoCmd.command.call(autoCmd, args);
                         }
-                        catch(e)
+                        catch (e)
                         {
                             liberator.reportError(e);
                             liberator.echoerr(e);
                         }
                     }
                     else
+                    {
                         liberator.execute(commands.replaceTokens(autoCmd.command, args));
+                    }
                 }
             }
         }
