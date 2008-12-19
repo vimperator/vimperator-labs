@@ -504,7 +504,8 @@ liberator.registerObserver("load_commands", function ()
         },
         {
             bang: true,
-            completer: function (context, args) {
+            completer: function (context, args)
+            {
                 let compl = [];
                 if (args.completeArg == 0)
                 {
@@ -541,7 +542,8 @@ liberator.registerObserver("load_commands", function ()
 
     commands.add(["dels[tyle]"],
         "Remove a user stylesheet",
-        function (args) {
+        function (args)
+        {
             styles.removeSheet(args["-name"], args[0], args.literalArg, args["-index"], false);
         },
         {

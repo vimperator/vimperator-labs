@@ -1552,7 +1552,8 @@ function Completion() //{{{
             });
             completionService.stopSearch();
             completionService.startSearch(context.filter, "", context.result, {
-                onSearchResult: function onSearchResult(search, result) {
+                onSearchResult: function onSearchResult(search, result)
+                {
                     context.result = result;
                     timer.tell(result);
                     if (result.searchResult <= result.RESULT_SUCCESS)

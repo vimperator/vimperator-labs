@@ -190,7 +190,8 @@ function Mappings() //{{{
                     [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
                 ],
                 literal: 1,
-                serial: function () {
+                serial: function ()
+                {
                     let noremap = this.name.indexOf("noremap") > -1;
                     return [
                         {
