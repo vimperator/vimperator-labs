@@ -726,22 +726,20 @@ lookup:
             return this.withTempFiles(function (stdin, stdout, stderr, cmd) {
 
                 if (input)
-                {
                     this.writeFile(stdin, input);
-                    command += " <" + escape(stdin.path);
-                }
 
                 if (WINDOWS)
                 {
-                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path;
+                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path + " < " + stdin.path;
                     var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
                 }
                 else
                 {
-                    this.writeFile(cmd, Array.concat("exec", options["shell"], options["shellcmdflag"].split(/\s+/), command).map(escape).join(" "));
-                    command = "cd " + escape(cwd.path) + ' && eval "$(cat <' + escape(cmd.path) + ')" >' + escape(stdout.path) + " 2>" + escape(stderr.path);
-                    liberator.dump("command: " + command);
-                    res = this.run("/bin/sh", ["-c", command], true);
+
+                    this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
+                            ["exec", ">" + escape(stdout.path), "2>" + escape(stderr.path), "<" + escape(stdin.path),
+                             escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
+                    res = this.run("/bin/sh", ["-e", cmd.path], true);
                 }
 
                 if (res > 0) // FIXME: Is this really right? Shouldn't we always show both?
