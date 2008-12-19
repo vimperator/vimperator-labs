@@ -116,13 +116,7 @@ const modes = (function () //{{{
                 options.setPref("accessibility.browsewithcaret", false);
 
             statusline.updateUrl();
-            // Kludge to prevent the input field losing focus on MS/Mac
-            setTimeout(function () {
-                let focus = document.commandDispatcher.focusedElement;
-                let urlbar = document.getElementById("urlbar");
-                if (!urlbar || focus != urlbar.inputField)
-                    liberator.focusContent(false);
-            }, 0);
+            liberator.focusContent(false);
         }
     }
 
@@ -136,6 +130,8 @@ const modes = (function () //{{{
         __iterator__: function () util.Array.iterator(this.all),
 
         get all() mainModes.slice(),
+
+        get inputMode() main & (this.COMMAND_LINE | this.INPUT | this.TEXTAREA | this.COMPOSE),
 
         addMode: function (name, extended, display) {
             let disp = name.replace("_", " ", "g");
