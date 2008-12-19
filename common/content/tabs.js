@@ -252,8 +252,9 @@ function Tabs() //{{{
             function (count)
             {
                 if (count != -1)
-                    return tabs.switchTo(String(count));
-                commandline.open(":", "buffer! ", modes.EX);
+                    tabs.switchTo(String(count));
+                else
+                    commandline.open(":", "buffer! ", modes.EX);
             },
             { flags: Mappings.flags.COUNT });
 
