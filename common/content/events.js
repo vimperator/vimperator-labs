@@ -1339,25 +1339,7 @@ function Events() //{{{
                     return false;
             }
 
-        //  // FIXME: handle middle click in content area {{{
-        //  //     alert(event.target.id);
-        //  if (/*event.type == 'mousedown' && */event.button == 1 && event.target.id == 'content')
-        //  {
-        //      //echo("foo " + event.target.id);
-        //      //if (document.commandDispatcher.focusedElement == command_line.inputField)
-        //      {
-        //      //alert(command_line.value.substring(0, command_line.selectionStart));
-        //          command_line.value = command_line.value.substring(0, command_line.selectionStart) +
-        //                               window.readFromClipboard() +
-        //                               command_line.value.substring(command_line.selectionEnd, command_line.value.length);
-        //         alert(command_line.value);
-        //      }
-        //      //else
-        // //       {
-        // //           openURLs(window.readFromClipboard());
-        // //       }
-        //      return true;
-        //  } }}}
+            // TODO: handle middle click in content area
 
             if (key != "<Esc>" && key != "<C-[>")
             {
