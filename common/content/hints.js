@@ -107,19 +107,19 @@ function Hints() //{{{
         if (!win)
             win = window.content;
 
-        var doc = win.document;
-        var height = win.innerHeight;
-        var width  = win.innerWidth;
-        var scrollX = doc.defaultView.scrollX;
-        var scrollY = doc.defaultView.scrollY;
+        let doc = win.document;
+        let height = win.innerHeight;
+        let width  = win.innerWidth;
+        let scrollX = doc.defaultView.scrollX;
+        let scrollY = doc.defaultView.scrollY;
 
-        var baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
+        let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
-        var elem, tagname, text, span, rect;
-        var res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
+        let elem, tagname, text, span, rect;
+        let res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
-        var fragment = util.xmlToDom(<div highlight="hints"/>, doc);
-        var start = pageHints.length;
+        let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
+        let start = pageHints.length;
         for (let elem in res)
         {
             // TODO: for iframes, this calculation is wrong
@@ -131,7 +131,7 @@ function Hints() //{{{
             if (!rect)
                 continue;
 
-            var computedStyle = doc.defaultView.getComputedStyle(elem, null);
+            let computedStyle = doc.defaultView.getComputedStyle(elem, null);
             if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
                 continue;
 
@@ -171,11 +171,11 @@ function Hints() //{{{
     // TODO: make it aware of imgspans
     function showActiveHint(newID, oldID)
     {
-        var oldElem = validHints[oldID - 1];
+        let oldElem = validHints[oldID - 1];
         if (oldElem)
             setClass(oldElem, false);
 
-        var newElem = validHints[newID - 1];
+        let newElem = validHints[newID - 1];
         if (newElem)
             setClass(newElem, true);
     }
@@ -274,7 +274,7 @@ function Hints() //{{{
 
     function removeHints(timeout)
     {
-        var firstElem = validHints[0] || null;
+        let firstElem = validHints[0] || null;
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
@@ -329,9 +329,9 @@ function Hints() //{{{
             }
         }
 
-        var timeout = followFirst || events.feedingKeys ? 0 : 500;
-        var activeIndex = (hintNumber ? hintNumber - 1 : 0);
-        var elem = validHints[activeIndex];
+        let timeout = followFirst || events.feedingKeys ? 0 : 500;
+        let activeIndex = (hintNumber ? hintNumber - 1 : 0);
+        let elem = validHints[activeIndex];
         removeHints(timeout);
 
         if (timeout == 0)
@@ -369,7 +369,7 @@ function Hints() //{{{
         function tokenize(pat, string) string.split(pat).map(String.toLowerCase);
         function containsMatcher(hintString) //{{{
         {
-            var tokens = tokenize(/\s+/, hintString);
+            let tokens = tokenize(/\s+/, hintString);
             return function (linkText)
             {
                 linkText = linkText.toLowerCase();
@@ -379,14 +379,14 @@ function Hints() //{{{
 
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
         {
-            var hintStrings    = tokenize(/\s+/, hintString);
-            var wordSplitRegex = RegExp(options["wordseparators"]);
+            let hintStrings    = tokenize(/\s+/, hintString);
+            let wordSplitRegex = RegExp(options["wordseparators"]);
 
             // What the **** does this do? --Kris
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
-                var charIdx         = 0;
-                var numMatchedWords = 0;
+                let charIdx         = 0;
+                let numMatchedWords = 0;
                 for (let [,word] in Iterator(words))
                 {
                     if (word.length == 0)
@@ -414,7 +414,7 @@ function Hints() //{{{
                     }
 
                     // the current word matches same characters as the previous word
-                    var prevCharIdx;
+                    let prevCharIdx;
                     if (wcIdx > 0)
                     {
                         prevCharIdx = charIdx;
@@ -468,7 +468,7 @@ function Hints() //{{{
 
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
-                var strIdx = 0;
+                let strIdx = 0;
                 for (let [,word] in Iterator(words))
                 {
                     if (word.length == 0)
@@ -505,7 +505,7 @@ function Hints() //{{{
             }
         } //}}}
 
-        var hintMatching = options["hintmatching"];
+        let hintMatching = options["hintmatching"];
         switch (hintMatching)
         {
             case "contains"      : return containsMatcher(hintString);
@@ -655,8 +655,8 @@ function Hints() //{{{
 
         onEvent: function (event)
         {
-            var key = events.toString(event);
-            var followFirst = false;
+            let key = events.toString(event);
+            let followFirst = false;
 
             // clear any timeout which might be active after pressing a number
             if (activeTimeout)
@@ -677,7 +677,7 @@ function Hints() //{{{
                     if (hintNumber == 0)
                         hintNumber = 1;
 
-                    var oldID = hintNumber;
+                    let oldID = hintNumber;
                     if (key == "<Tab>")
                     {
                         if (++hintNumber > validHints.length)
@@ -721,7 +721,7 @@ function Hints() //{{{
                     {
                         prevInput = "number";
 
-                        var oldHintNumber = hintNumber;
+                        let oldHintNumber = hintNumber;
                         if (hintNumber == 0 || usedTabKey)
                         {
                             usedTabKey = false;
