@@ -194,17 +194,17 @@ function IO() //{{{
         "Change the current directory",
         function (args)
         {
-            args = args.literalArg;
+            let arg = args.literalArg;
 
-            if (!args)
+            if (!arg)
             {
-                args = "~";
+                arg = "~";
             }
-            else if (args == "-")
+            else if (arg == "-")
             {
                 if (oldcwd)
                 {
-                    args = oldcwd.path;
+                    arg = oldcwd.path;
                 }
                 else
                 {
@@ -213,14 +213,14 @@ function IO() //{{{
                 }
             }
 
-            args = io.expandPath(args);
+            arg = io.expandPath(arg);
 
             // go directly to an absolute path or look for a relative path
             // match in 'cdpath'
             // TODO: handle ../ and ./ paths
-            if (isAbsolutePath(args))
+            if (isAbsolutePath(arg))
             {
-                if (io.setCurrentDirectory(args))
+                if (io.setCurrentDirectory(arg))
                     liberator.echomsg(io.getCurrentDirectory().path);
             }
             else
@@ -230,7 +230,7 @@ function IO() //{{{
 
                 for (let [,dir] in Iterator(dirs))
                 {
-                    dir = joinPaths(dir, args);
+                    dir = joinPaths(dir, arg);
 
                     if (dir.exists() && dir.isDirectory() && dir.isReadable())
                     {
@@ -243,7 +243,7 @@ function IO() //{{{
 
                 if (!found)
                 {
-                    liberator.echoerr("E344: Can't find directory " + args.quote() + " in cdpath\n"
+                    liberator.echoerr("E344: Can't find directory " + arg.quote() + " in cdpath\n"
                                     + "E472: Command failed");
                 }
             }
