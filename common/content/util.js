@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 const XHTML = "http://www.w3.org/1999/xhtml";
 const NS = Namespace("liberator", "http://vimperator.org/namespaces/liberator");
 default xml namespace = XHTML;

@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // TODO: proper backwards search - implement our own component?
 //     : implement our own highlighter?
 //     : frameset pages
@@ -37,6 +39,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : incremental searches shouldn't permanently update search modifiers
 
 // make sure you only create this object when the "liberator" object is ready
+/**
+ * @instance search
+ */
 function Search() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

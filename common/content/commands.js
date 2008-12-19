@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // Do NOT create instances of this class yourself, use the helper method
 // commands.add() instead
 function Command(specs, description, action, extraInfo) //{{{
@@ -147,6 +149,9 @@ Command.prototype = {
 
 }; //}}}
 
+/**
+ * @instance commands
+ */
 function Commands() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // do NOT create instances of this class yourself, use the helper method
 // options.add() instead
 function Option(names, description, type, defaultValue, extraInfo) //{{{
@@ -293,6 +295,9 @@ Option.validateCompleter = function (values)
         function (value) res.some(function (item) item[0] == value));
 }; //}}}
 
+/**
+ * @instance options
+ */
 function Options() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

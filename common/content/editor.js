@@ -26,9 +26,14 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+/** @scope modules */
+
 // command names taken from:
 // http://developer.mozilla.org/en/docs/Editor_Embedding_Guide
 
+/**
+ * @instance editor
+ */
 function Editor() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////

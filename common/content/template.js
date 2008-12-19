@@ -1,3 +1,6 @@
+
+/** @scope modules */
+
 const template = {
     add: function add(a, b) a + b,
     join: function join(c) function (a, b) a + c + b,
