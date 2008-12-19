@@ -289,18 +289,18 @@ const liberator = (function () //{{{
             "Execute the specified menu item from the command line",
             function (args)
             {
-                args = args.literalArg;
+                let arg = args.literalArg;
                 let items = getMenuItems();
 
-                if (!items.some(function (i) i.fullMenuPath == args))
+                if (!items.some(function (i) i.fullMenuPath == arg))
                 {
-                    liberator.echoerr("E334: Menu not found: " + args);
+                    liberator.echoerr("E334: Menu not found: " + arg);
                     return;
                 }
 
                 for (let [,item] in Iterator(items))
                 {
-                    if (item.fullMenuPath == args)
+                    if (item.fullMenuPath == arg)
                         item.doCommand();
                 }
             },
