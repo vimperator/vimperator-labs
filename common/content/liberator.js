@@ -1090,11 +1090,7 @@ const liberator = (function () //{{{
                 switch (where)
                 {
                     case liberator.CURRENT_TAB:
-                        try
-                        {
-                          getBrowser().loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
-                        }
-                        catch (e) {}
+                        getBrowser().loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
                         break;
 
                     case liberator.NEW_BACKGROUND_TAB:
@@ -1111,11 +1107,7 @@ const liberator = (function () //{{{
                         const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
                         window.open();
                         whichwindow = wm.getMostRecentWindow("navigator:browser");
-                        try
-                        {
-                          whichwindow.loadURI(url, null, postdata);
-                        }
-                        catch (e) {}
+                        whichwindow.loadURI(url, null, postdata);
                         break;
 
                     default:
