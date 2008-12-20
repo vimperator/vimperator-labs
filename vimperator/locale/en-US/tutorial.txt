@@ -62,8 +62,8 @@ and you can find out about the [m]gt[m] and [m]gT[m] mapping with
   :help gt<CR>
   :help gT<CR>
 
-Finally, in addition to the help system itself, [c]:exusage[c] and
-[c]:viusage[c] are useful quick-reference commands.
+Finally, in addition to the help system itself, [c]:exusage[c], [c]:viusage[c]
+and [c]:optionusage[c] are useful quick-reference commands.
 
 section:Mouseless[living-mouseless]
 

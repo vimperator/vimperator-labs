@@ -26,8 +26,8 @@ ________________________________________________________________________________
 |:echom| |:echomsg|
 ||:echom[sg] {expr}|| +
 ________________________________________________________________________________
-Echo the expression as an infomational message. Just like [c]:ec[ho][c], but
-also saves the message in the the message history.
+Echo the expression as an informational message. Just like [c]:ec[ho][c], but
+also saves the message in the message history.
 ________________________________________________________________________________
 
 
