@@ -20,6 +20,7 @@
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
     * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages
+    * IMPORTANT: option values containing whitespace must now be quoted E.g. :set editor=gvim\ -f
 
     * :hardcopy now supports output redirection to a file on Unix and MacUnix
     * add ";f" extended hint mode to focus a frame
