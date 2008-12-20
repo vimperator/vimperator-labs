@@ -503,6 +503,7 @@ function Hints() //{{{
                     return true;
 
                 let words = tokenize(linkText, wordSplitRegex);
+                liberator.dump(words);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
@@ -510,8 +511,7 @@ function Hints() //{{{
             };
         } //}}}
 
-        let hintMatching = options["hintmatching"];
-        switch (hintMatching)
+        switch (options["hintmatching"])
         {
             case "contains"      : return containsMatcher(hintString);
             case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);

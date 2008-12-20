@@ -113,3 +113,11 @@ ${DOC_FILES}: %.html: %.txt $(BASE)/Makefile.common locale/en-US/asciidoc.conf
 	@echo "DOC $@"
 	${ASCIIDOC} --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
 
+T2T = $(wildcard locale/*/*.t2t)
+t2t: $(T2T:%.t2t=%.xhtml)
+$(T2T:%.t2t=%.xhtml): locale/en-US/config.t2t
+
+%.xhtml: %.t2t
+	@echo "T2T $@"
+	txt2tags --quiet $<
+

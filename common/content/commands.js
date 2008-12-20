@@ -78,12 +78,6 @@ function Command(specs, description, action, extraInfo) //{{{
         return { names: names, longNames: longNames, shortNames: shortNames };
     };
 
-    // return the primary command name (the long name of the first spec listed)
-    /** @property {string} The command's cannonical name. */
-    this.name        = this.longNames[0];
-    /** @property {string[]} All of this command's long and short names. */
-    this.names       = expandedSpecs.names; // return all command name aliases
-
     let expandedSpecs = parseSpecs(specs);
     /** @property {string[]} All of this command's name spacs. e.g., "com[mand]" */
     this.specs      = specs;
@@ -91,6 +85,11 @@ function Command(specs, description, action, extraInfo) //{{{
     this.shortNames = expandedSpecs.shortNames;
     /** @property {string[]} All of this command's long names, e.g., "command" */
     this.longNames  = expandedSpecs.longNames;
+
+    /** @property {string} The command's cannonical name. */
+    this.name        = this.longNames[0];
+    /** @property {string[]} All of this command's long and short names. */
+    this.names       = expandedSpecs.names; // return all command name aliases
 
     /** @property {string} This command's description, as shown in :exinfo */
     this.description = description || "";
