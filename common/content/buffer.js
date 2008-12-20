@@ -1641,8 +1641,8 @@ function Marks() //{{{
     return {
 
         /**
-         * Add a named for the current buffer, at its current position. If
-         * mark matches [A-Z], it's considered a URL mark, and will jump to
+         * Add a named mark for the current buffer, at its current position.
+         * If mark matches [A-Z], it's considered a URL mark, and will jump to
          * the same position at the same URL no matter what buffer it's
          * selected from. If it matches [a-z'"], it's a local mark, and can
          * only be recalled from a buffer with a matching URL.
