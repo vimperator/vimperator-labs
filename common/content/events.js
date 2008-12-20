@@ -1300,7 +1300,7 @@ function Events() //{{{
             let stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
             let win = document.commandDispatcher.focusedWindow;
-            if (win && win.document.designMode == "on" && !config.isComposeWindow)
+            if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
                 return false;
 
             // menus have their own command handlers
