@@ -117,7 +117,7 @@ Option.prototype = {
             scope = this.scope;
         }
 
-        var aValue;
+        let aValue;
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             aValue = tabs.options[this.name];
@@ -334,7 +334,7 @@ function Options() //{{{
                 prefContexts[prefContexts.length - 1][name] = val;
         }
 
-        var type = prefService.getPrefType(name);
+        let type = prefService.getPrefType(name);
         switch (typeof value)
         {
             case "string":
@@ -439,7 +439,7 @@ function Options() //{{{
 
             if (!args)
             {
-                var str =
+                let str =
                     <table>
                     {
                         template.map(liberator.globalVariables, function ([i, value]) {
@@ -460,20 +460,20 @@ function Options() //{{{
                 return;
             }
 
-            var matches;
+            let matches;
             // 1 - type, 2 - name, 3 - +-., 4 - expr
             if (matches = args.match(/([$@&])?([\w:]+)\s*([-+.])?=\s*(.+)/))
             {
                 if (!matches[1])
                 {
-                    var reference = liberator.variableReference(matches[2]);
+                    let reference = liberator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
                     {
                         liberator.echoerr("E121: Undefined variable: " + matches[2]);
                         return;
                     }
 
-                    var expr = liberator.evalExpression(matches[4]);
+                    let expr = liberator.evalExpression(matches[4]);
                     if (expr === undefined)
                     {
                         liberator.echoerr("E15: Invalid expression: " + matches[4]);
@@ -506,14 +506,14 @@ function Options() //{{{
             // 1 - name
             else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
-                var reference = liberator.variableReference(matches[1]);
+                let reference = liberator.variableReference(matches[1]);
                 if (!reference[0])
                 {
                     liberator.echoerr("E121: Undefined variable: " + matches[1]);
                     return;
                 }
 
-                var value = reference[0][reference[1]];
+                let value = reference[0][reference[1]];
                 let prefix = typeof value == "number"   ? "#" :
                              typeof value == "function" ? "*" :
                                                           " ";
@@ -567,9 +567,9 @@ function Options() //{{{
             {
                 if (bang)
                 {
-                    var onlyNonDefault = false;
-                    var reset = false;
-                    var invertBoolean = false;
+                    let onlyNonDefault = false;
+                    let reset = false;
+                    let invertBoolean = false;
 
                     if (args[0] == "")
                     {
@@ -757,15 +757,15 @@ function Options() //{{{
         "Delete a variable",
         function (args)
         {
-            //var names = args.split(/ /);
+            //let names = args.split(/ /);
             //if (typeof names == "string") names = [names];
 
-            //var length = names.length;
+            //let length = names.length;
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
             for (let [,name] in args)
             {
-                var name = args[i];
-                var reference = liberator.variableReference(name);
+                let name = args[i];
+                let reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
                     if (!args.bang)
@@ -893,7 +893,7 @@ function Options() //{{{
             if (!filter)
                 filter = "";
 
-            var prefArray = prefService.getChildList("", { value: 0 });
+            let prefArray = prefService.getChildList("", { value: 0 });
             prefArray.sort();
             let prefs = function () {
                 for each (let pref in prefArray)
