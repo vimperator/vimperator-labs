@@ -28,6 +28,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
+/**
+ * A class representing EX commands. Instances are created by
+ * the {@link Commands} class.
+ *
+ * @private
+ */
 // Do NOT create instances of this class yourself, use the helper method
 // commands.add() instead
 function Command(specs, description, action, extraInfo) //{{{
@@ -73,30 +79,79 @@ function Command(specs, description, action, extraInfo) //{{{
     };
 
     let expandedSpecs = parseSpecs(specs);
+    /** @property {string[]} All of this command's name spacs. e.g., "com[mand]" */
     this.specs      = specs;
+    /** @property {string[]} All of this command's short names, e.g., "com" */
     this.shortNames = expandedSpecs.shortNames;
+    /** @property {string[]} All of this command's long names, e.g., "command" */
     this.longNames  = expandedSpecs.longNames;
 
-    // return the primary command name (the long name of the first spec listed)
+    /** @property {string} The command's cannonical name. */
     this.name        = this.longNames[0];
+    /** @property {string[]} All of this command's long and short names. */
     this.names       = expandedSpecs.names; // return all command name aliases
+
+    /** @property {string} This command's description, as shown in :exinfo */
     this.description = description || "";
+    /** @property {function (Args)} The function called to execute this command. */
     this.action      = action;
+    /** @property {string} This command's argument count spec. @see Commands#parseArguments */
     this.argCount    = extraInfo.argCount || 0;
+    /** @property {function (CompletionContext, Args)} This command's completer. @see CompletionContext */
     this.completer   = extraInfo.completer || null;
+    /** @property {boolean} Whether this command accepts a here document. */
     this.hereDoc     = extraInfo.hereDoc || false;
+    /** @property {Array} The options this command takes. @see Commands@parseArguments */
     this.options     = extraInfo.options || [];
+    /** @property {boolean} Whether this command may be called with a bang, e.g., :com! */
     this.bang        = extraInfo.bang || false;
+    /** @property {boolean} Whether this command may be called with a count, e.g., :12bdel */
     this.count       = extraInfo.count || false;
+    /**
+     * @property {boolean} At what index this command's literal
+     * arguments begin. For instance, with a value of 2, all arguments
+     * starting with the third are parsed as a single string, with all
+     * quoting characters passed literally. This is especially useful for
+     * commands which take key mappings or ex command lines as
+     * arguments.
+     */
     this.literal     = extraInfo.literal == null ? null : extraInfo.literal;
+    /**
+     * @property {function} Should return an array of <b>Object</b>s
+     * suitable to be passed to {@link Commands#commandToString}, one
+     * for each past invocation which should be restored on subsequent
+     * @liberator startups.
+     */
     this.serial      = extraInfo.serial;
 
+    /**
+     * @property {boolean} Specifies whether this is a user command.
+     * User commands may be created by plugins, or directly by users,
+     * and, unlike basic commands, may be overwritten. Users and
+     * plugin authors should create only user commands.
+     */
     this.isUserCommand   = extraInfo.isUserCommand || false;
+    /**
+     * @property {string} For commands defined via :command, contains
+     * the EX command line to be executed upon invocation.
+     */
     this.replacementText = extraInfo.replacementText || null;
 };
 
 Command.prototype = {
 
+    /**
+     * Execute this command.
+     *
+     * @param {Args} args The parsed args to be passed to
+     *     {@link #action}.
+     * @param {boolean} bang @deprecated Whether this command was
+     *     executed with a trailing !.
+     * @param {number} count @deprecated Whether this command was
+     *     executed a leading count.
+     * @param modifiers Any modifiers to be passed to 
+     *     {@link action}
+     */
     execute: function (args, bang, count, modifiers)
     {
         // XXX
@@ -130,6 +185,11 @@ Command.prototype = {
         exec(args);
     },
 
+    /**
+     * Returns whether this command may be invoked via <b>name</b>.
+     *
+     * @param {string} name
+     */
     hasName: function (name)
     {
         for (let [,spec] in Iterator(this.specs))
@@ -145,6 +205,18 @@ Command.prototype = {
         return false;
     },
 
+    /**
+     * A helper function to parse an argument string.
+     *
+     * @param {string} args The argument string to parse.
+     * @param {CompletionContext} complete A completion context.
+     *     Non-null when the arguments are being parsed for completion
+     *     purposes.
+     * @param {Object} extra Extra keys to be spliced into the
+     *     returned Args object.
+     * @returns Args
+     * @see Commands#parseArgs
+     */
     parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra)
 
 }; //}}}

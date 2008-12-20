@@ -734,7 +734,7 @@ ____
 |\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
 ||'visualbell' 'vb'|| boolean (default: off)
 ____
-Use visual bell instead of beeping on errors.  The visualbell style is
+Use visual bell instead of beeping on errors.  The visual bell style is
 controlled by [c]:hi Bell[c].  If no bell is desired use [c]:set t_vb=[c] together with
 this option.
 ____

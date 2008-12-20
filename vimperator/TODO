@@ -25,6 +25,7 @@ BUGS:
 - BookmarkAdd is fired once for each bookmark periodically i.e. not in response to adding a bookmark
 
 FEATURES:
+9 finish :help TODOs
 9 fix local options
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo

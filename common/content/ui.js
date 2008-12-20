@@ -267,7 +267,6 @@ function CommandLine() //{{{
             substring = substring.substr(value.length);
             this.removeSubstring = substring;
 
-            // highlight="Preview" won't work in the editor.
             let node = util.xmlToDom(<span highlight="Preview">{substring}</span>,
                 document);
             let start = this.caret;
@@ -1085,8 +1084,6 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                if (completions)
-                    completions.previewClear();
                 this.resetCompletions();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
@@ -1445,7 +1442,10 @@ function CommandLine() //{{{
         {
             autocompleteTimer.reset();
             if (completions)
-                completions.reset();
+            {
+                completions.wildIndex = -1;
+                completions.previewClear();
+            }
             if (history)
                 history.reset();
         }

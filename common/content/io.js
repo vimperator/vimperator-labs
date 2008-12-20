@@ -868,6 +868,8 @@ lookup:
                         {
                             ioManager.sourcing.line = i + 1;
                             // skip line comments and blank lines
+                            line = line.replace(/\r$/, "");
+
                             if (/^\s*(".*)?$/.test(line))
                                 continue;
 
@@ -899,7 +901,7 @@ lookup:
                                     if (matches)
                                     {
                                         args = matches[1];
-                                        heredocEnd = new RegExp("^" + matches[2] + "$", "m");
+                                        heredocEnd = RegExp("^" + matches[2] + "$", "m");
                                         if (matches[1])
                                             heredoc = matches[1] + "\n";
                                     }

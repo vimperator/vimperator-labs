@@ -499,10 +499,12 @@ function Hints() //{{{
 
             return function (linkText)
             {
+                liberator.dump(hintStrings);
+
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
-                let words = tokenize(linkText, wordSplitRegex);
+                let words = tokenize(wordSplitRegex, linkText);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
@@ -510,8 +512,7 @@ function Hints() //{{{
             };
         } //}}}
 
-        let hintMatching = options["hintmatching"];
-        switch (hintMatching)
+        switch (options["hintmatching"])
         {
             case "contains"      : return containsMatcher(hintString);
             case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
