@@ -589,8 +589,7 @@ function IO() //{{{
                 while (entries.hasMoreElements())
                 {
                     let entry = entries.getNext();
-                    entry.QueryInterface(Ci.nsIFile);
-                    array.push(entry);
+                    array.push(entry.QueryInterface(Ci.nsIFile));
                 }
                 if (sort)
                     return array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));

@@ -327,7 +327,7 @@ CompletionContext.prototype = {
             this.itemCache = {};
         this.cache.offset = this.offset;
         if (!this.itemCache[this.key])
-            this.itemCache[this.key] = this._generate.call(this);
+            this.itemCache[this.key] = this._generate.call(this) || [];
         return this.itemCache[this.key];
     },
     set generate(arg)
@@ -1384,7 +1384,7 @@ function Completion() //{{{
             io.getRuntimeDirectories("colors").forEach(function (dir) {
                 context.fork(dir.path, 0, null, function (context) {
                     context.filter = dir.path + io.pathSeparator + context.filter;
-                    completion.file(context, true);
+                    completion.file(context);
                     context.title = ["Color Scheme"];
                     context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
                 });
@@ -1404,10 +1404,10 @@ function Completion() //{{{
             context.completions = config.dialogs;
         },
 
-        directory: function directory(context, tail)
+        directory: function directory(context, full)
         {
-            this.file(context, tail);
-            context.filters.push(function (item) this.getKey(item, "description") == "Directory");
+            this.file(context, full);
+            context.filters.push(function ({ item: f }) f.isDirectory());
         },
 
         environment: function environment(context)
@@ -1468,40 +1468,39 @@ function Completion() //{{{
 
         // TODO: support file:// and \ or / path separators on both platforms
         // if "tail" is true, only return names without any directory components
-        file: function file(context, tail)
+        file: function file(context, full)
         {
-            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
             // dir == "" is expanded inside readDirectory to the current dir
+            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
 
-            context.title = ["Path", "Type"];
-            if (tail)
+            if (!full)
                 context.advance(dir.length);
-            context.keys = { text: 0, description: 1, icon: 2 };
+
+            context.title = [full ? "Path" : "Filename", "Type"];
+            context.keys = {
+                text: !full ? "leafName" : function (f) dir + f.leafName,
+                description: function (f) f.isDirectory() ? "Directory" : "File",
+                icon: function (f) f.isDirectory() ? "resource://gre/res/html/folder.png"
+                                                             : "moz-icon://" + f.leafName
+            };
+            context.compare = function ({ item: a }, { item: b })
+                        b.isDirectory() - a.isDirectory() || String.localeCompare(a.path, b.path);
+
+            if (options["wildignore"])
+            {
+                let wigRegexp = RegExp("(^" + options.get("wildignore").values.join("|") + ")$");
+                context.filters.push(function ({item: f}) f.isDirectory() || !wigRegexp.test(f.leafName));
+            }
+
             // context.background = true;
             context.key = dir;
             context.generate = function generate_file()
             {
-                context.cache.dir = dir;
-
                 try
                 {
-                    let files = io.readDirectory(dir);
-
-                    if (options["wildignore"])
-                    {
-                        let wigRegexp = RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
-                        files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
-                    }
-
-                    return files.map(
-                        function (file) [tail ? file.leafName : dir + file.leafName,
-                                         file.isDirectory() ? "Directory" : "File",
-                                         file.isDirectory() ? "resource://gre/res/html/folder.png"
-                                                            : "moz-icon://" + file.leafName]
-                    );
+                    return io.readDirectory(dir);
                 }
                 catch (e) {}
-                return [];
             };
         },
 
