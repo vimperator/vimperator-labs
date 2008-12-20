@@ -128,7 +128,7 @@ function CompletionContext(editor, name, offset) //{{{
          *     results.
          */
         this.filters = [function (item) {
-            let text = Array.concat(this.getKey(item, "text"));
+            let text = Array.concat(item.text);
             for (let [i, str] in Iterator(text))
             {
                 if (this.match(String(str)))
