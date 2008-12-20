@@ -34,9 +34,21 @@ default xml namespace = XHTML;
 
 const util = { //{{{
 
+    /**
+     * Array utility methods.
+     * @singleton
+     */
     Array: {
-        // [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
-        // From Common Lisp, more or less
+        /**
+         * Converts an array to an object. As in lisp, an assoc is an
+         * array of key-value pairs, which maps directly to an object,
+         * as such:
+         *    [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
+         *
+         * @param {Array[]} assoc
+         * @... {string} 0 - Key
+         * @...          1 - Value
+         */
         assocToObj: function assocToObj(assoc)
         {
             let obj = {};
@@ -44,9 +56,18 @@ const util = { //{{{
             return obj;
         },
 
-        // flatten an array: [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+        /**
+         * Flatten an array, such that all elements of the array are
+         * joined into a single array:
+         *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+         */
         flatten: function flatten(ary) Array.concat.apply([], ary),
 
+        /**
+         * Returns an Iterator for an array's values.
+         *
+         * @returns {Iterator(Object)}
+         */
         iterator: function iterator(ary)
         {
             let length = ary.length;
@@ -54,6 +75,11 @@ const util = { //{{{
                 yield ary[i];
         },
 
+        /**
+         * Returns an Iterator for the arrays indices and values.
+         *
+         * @returns {Iterator([{number}, {Object}])}
+         */
         iterator2: function (ary)
         {
             let length = ary.length;
@@ -61,6 +87,14 @@ const util = { //{{{
                 yield [i, ary[i]];
         },
 
+        /**
+         * Filters out all duplicates from an array. If
+         * <b>unsorted</b> is false, the array is sorted before
+         * duplicates are removed.
+         *
+         * @param {Array} ary
+         * @param {boolean} unsorted
+         */
         uniq: function uniq(ary, unsorted)
         {
             let ret = [];
@@ -83,6 +117,11 @@ const util = { //{{{
         }
     },
 
+    /**
+     * Returns a shallow copy of <b>obj</b>.
+     *
+     * @param {Object} obj
+     */
     cloneObject: function cloneObject(obj)
     {
         if (obj instanceof Array)
@@ -93,13 +132,35 @@ const util = { //{{{
         return newObj;
     },
 
+    /**
+     * Clips a string to a given length. If the input string is longer
+     * than <b>length</b>, an elipsis is appended.
+     *
+     * @param {string} str
+     * @param {number} length
+     * @returns {string}
+     */
     clip: function clip(str, length)
     {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
 
+    /**
+     * Compares two strings, case insensitively. Return values are as
+     * in String#localeCompare.
+     *
+     * @param {string} a
+     * @param {string} b
+     * @returns {number}
+     */
     compareIgnoreCase: function compareIgnoreCase(a, b) String.localeCompare(a.toLowerCase(), b.toLowerCase()),
 
+    /**
+     * Returns an object representing a Node's computed CSS style.
+     *
+     * @param {Node} node
+     * @returns {Object}
+     */
     computedStyle: function computedStyle(node)
     {
         while (node instanceof Text && node.parentNode)
