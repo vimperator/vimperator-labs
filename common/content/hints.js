@@ -499,11 +499,12 @@ function Hints() //{{{
 
             return function (linkText)
             {
+                liberator.dump(hintStrings);
+
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
-                let words = tokenize(linkText, wordSplitRegex);
-                liberator.dump(words);
+                let words = tokenize(wordSplitRegex, linkText);
                 if (hintStrings.length == 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
