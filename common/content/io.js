@@ -66,12 +66,9 @@ function IO() //{{{
     const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
-    const ioService          = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-    const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
-    const directoryService   = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties);
     const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
 
-    var processDir = directoryService.get("CurWorkD", Ci.nsIFile);
+    var processDir = service["directory"].get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
     var oldcwd = null;
 
@@ -79,8 +76,7 @@ function IO() //{{{
     var scriptNames = [];
 
     // default option values
-    var cdpath = "," + (environmentService.get("CDPATH").replace(/[:;]/g, ",") || ",");
-    var runtimepath = "~/" + (WINDOWS ? "" : ".") + EXTENSION_NAME;
+    var cdpath = "," + (service["environment"].get("CDPATH").replace(/[:;]/g, ",") || ",");
     var shell, shellcmdflag;
 
     if (WINDOWS)
@@ -92,7 +88,7 @@ function IO() //{{{
     }
     else
     {
-        shell = environmentService.get("SHELL") || "sh";
+        shell = service["environment"].get("SHELL") || "sh";
         shellcmdflag = "-c";
     }
 
@@ -120,7 +116,7 @@ function IO() //{{{
         let path = ioManager.getFile(head);
         try
         {
-            path.appendRelativePath(ioManager.expandPath(tail)); // FIXME: should only expand env vars and normalise path separators
+            path.appendRelativePath(ioManager.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
             if (path.exists() && path.normalize)
                 path.normalize();
         }
@@ -135,7 +131,7 @@ function IO() //{{{
     {
         try
         {
-            Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile).initWithPath(path);
+            service.getFile().initWithPath(path);
             return true;
         }
         catch (e)
@@ -179,7 +175,7 @@ function IO() //{{{
 
     options.add(["runtimepath", "rtp"],
         "List of directories searched for runtime files",
-        "stringlist", runtimepath,
+        "stringlist", IO.runtimePath,
         { setter: function (value) expandPathList(value) });
 
     options.add(["shell", "sh"],
@@ -410,46 +406,7 @@ function IO() //{{{
 
         pathSeparator: WINDOWS ? "\\" : "/",
 
-        expandPath: function (path)
-        {
-            // TODO: proper pathname separator translation like Vim - this should be done elsewhere
-            if (WINDOWS)
-                path = path.replace("/", "\\", "g");
-
-            // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
-            // TODO: Vim does not expand variables set to an empty string (and documents it).
-            // Kris reckons we shouldn't replicate this 'bug'. --djk
-            // TODO: should we be doing this for all paths?
-            function expand(path) path.replace(
-                !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g
-                         : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
-                function (m, n1, n2, n3) environmentService.get(n1 || n2 || n3) || m
-            );
-            path = expand(path);
-
-            // expand ~
-            if ((WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
-            {
-                // Try $(VIMPERATOR|MUTTATOR)_HOME || $HOME first, on all systems
-                let home = environmentService.get(config.name.toUpperCase() + "_HOME") ||
-                           environmentService.get("HOME");
-
-                // Windows has its own ideosynchratic $HOME variables.
-                if (!home && WINDOWS)
-                    home = environmentService.get("USERPROFILE") ||
-                           environmentService.get("HOMEDRIVE") + environmentService.get("HOMEPATH");
-
-                path = home + path.substr(1);
-            }
-
-            // TODO: Vim expands paths twice, once before checking for ~, once
-            // after, but doesn't document it. Is this just a bug? --Kris
-            path = expand(path);
-
-            // FIXME: Should we be doing this here? I think it should be done
-            // by the arg parser or nowhere. --Kris
-            return path.replace("\\ ", " ", "g");
-        },
+        expandPath: IO.expandPath,
 
         // TODO: there seems to be no way, short of a new component, to change
         // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
@@ -522,7 +479,7 @@ function IO() //{{{
         // also expands relative paths
         getFile: function (path, noCheckPWD)
         {
-            let file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+            let file = service.getFile();
 
             if (/file:\/\//.test(path))
             {
@@ -563,7 +520,7 @@ function IO() //{{{
                     break;
             }
 
-            let file = directoryService.get("TmpD", Ci.nsIFile);
+            let file = service["directory"].get("TmpD", Ci.nsIFile);
             file.append(tmpName);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
@@ -669,7 +626,7 @@ function IO() //{{{
             }
             else
             {
-                let dirs = environmentService.get("PATH").split(WINDOWS ? ";" : ":");
+                let dirs = service["environment"].get("PATH").split(WINDOWS ? ";" : ":");
                 // Windows tries the cwd first TODO: desirable?
                 if (WINDOWS)
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
@@ -687,7 +644,7 @@ lookup:
                         // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
-                            let extensions = environmentService.get("PATHEXT").split(";");
+                            let extensions = service["environment"].get("PATHEXT").split(";");
                             for (let [,extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
@@ -706,7 +663,7 @@ lookup:
                 return -1;
             }
 
-            let process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
+            let process = service.getProcess();
 
             process.init(file);
             process.run(blocking, args, args.length);
@@ -820,7 +777,7 @@ lookup:
                 liberator.echomsg("sourcing " + filename.quote(), 2);
 
                 let str = ioManager.readFile(file);
-                let uri = ioService.newFileURI(file);
+                let uri = service["io"].newFileURI(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))
@@ -963,5 +920,49 @@ lookup:
     return ioManager;
 
 }; //}}}
+
+IO.__defineGetter__("runtimePath", function () service["environment"].get(config.name.toUpperCase() + "_RUNTIME") ||
+        "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase());
+
+IO.expandPath = function (path, relative)
+{
+    // TODO: proper pathname separator translation like Vim - this should be done elsewhere
+    const WINDOWS = liberator.has("Win32");
+    if (WINDOWS)
+        path = path.replace("/", "\\", "g");
+
+    // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
+    // TODO: Vim does not expand variables set to an empty string (and documents it).
+    // Kris reckons we shouldn't replicate this 'bug'. --djk
+    // TODO: should we be doing this for all paths?
+    function expand(path) path.replace(
+        !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g
+                 : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
+        function (m, n1, n2, n3) service["environment"].get(n1 || n2 || n3) || m
+    );
+    path = expand(path);
+
+    // expand ~
+    if (!relative && (WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
+    {
+        // Try $HOME first, on all systems
+        let home = service["environment"].get("HOME");
+
+        // Windows has its own ideosyncratic $HOME variables.
+        if (!home && WINDOWS)
+            home = service["environment"].get("USERPROFILE") ||
+                   service["environment"].get("HOMEDRIVE") + service["environment"].get("HOMEPATH");
+
+        path = home + path.substr(1);
+    }
+
+    // TODO: Vim expands paths twice, once before checking for ~, once
+    // after, but doesn't document it. Is this just a bug? --Kris
+    path = expand(path);
+
+    // FIXME: Should we be doing this here? I think it should be done
+    // by the arg parser or nowhere. --Kris
+    return path.replace("\\ ", " ", "g");
+};
 
 // vim: set fdm=marker sw=4 ts=4 et:

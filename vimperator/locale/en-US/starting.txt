@@ -5,20 +5,20 @@ be documented here.
 
 section:Initialization[initialization,startup]
 
-At startup Vimperator sources a user RC file, containing Ex commands, and any
-JavaScript files found in the plugin directory. The RC file may be named
-[a].vimperatorrc[a] or [a]\_vimperatorrc[a]. The search order is:
+At startup Vimperator can perform user initialization commands. When one of
+the following is successfully located, it is executed, and no further
+locations are tried.
 
-* Unix and Mac: [a]\~/.vimperatorrc[a] then [a]\~/_vimperatorrc[a]
-* Windows - [a]\~/_vimperatorrc[a] then [a]\~/.vimperatorrc[a]
+|$VIMPERATOR_INIT|
+1. _$VIMPERATOR_INIT_ - May contain a single ex command, usually
+	[c]:source {file}[c].
+2. [a]\~/_vimperatorrc[a] - Windows only. If this file exists, its contents
+	are executed.
+3. [a]\~/.vimperatorrc[a] - If this file exists, its contents are executed.
 
 If 'exrc' is set then any RC file in the current directory is also sourced.
 
-The plugin directory can be in any of the directories in 'runtimepath'. Using
-the default value of 'runtimepath' this would be:
-
-* Unix and Mac - [a]\~/.vimperator/plugin[a]
-* Windows - [a]\~/vimperator/plugin[a]
+The plugin directory can be in any of the directories in 'runtimepath'.
 
 All directories in 'runtimepath' are searched for plugins and they are are all
 loaded.
@@ -30,8 +30,6 @@ The user's \'$HOME'(~) directory is determined as follows:
 * Unix and Mac - _$HOME_ is used.
 * Windows - if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
 _%HOMEDRIVE%%HOMEPATH%_.
-
-_$VIMPERATOR_HOME_ can be used to override the calculated _$HOME_ directory.
 
 section:Saving{nbsp}settings[save-settings]
 

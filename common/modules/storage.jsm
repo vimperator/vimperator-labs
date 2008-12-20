@@ -29,10 +29,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 var EXPORTED_SYMBOLS = ["storage", "Timer"];
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+
 function Timer(minInterval, maxInterval, callback)
 {
-    let timer = Components.classes["@mozilla.org/timer;1"]
-                          .createInstance(Components.interfaces.nsITimer);
+    let timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     this.doneAt = 0;
     this.latest = 0;
     this.notify = function (aTimer)
@@ -75,7 +79,7 @@ function Timer(minInterval, maxInterval, callback)
     {
         timer.cancel();
         this.doneAt = 0;
-    };
+    }
     this.flush = function ()
     {
         if (this.latest)
@@ -83,43 +87,95 @@ function Timer(minInterval, maxInterval, callback)
     };
 }
 
-var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                            .getService(Components.interfaces.nsIPrefService)
+function getFile(name)
+{
+    let file = storage.infoPath.clone();
+    file.append(name);
+    return file;
+}
+
+function readFile(file)
+{
+    let fileStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+    let stream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
+
+    try
+    {
+        fileStream.init(file, -1, 0, 0);
+        stream.init(fileStream, "UTF-8", 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
+
+        let hunks = [];
+        let res = {};
+        while (stream.readString(4096, res) != 0)
+            hunks.push(res.value);
+
+        stream.close();
+        fileStream.close();
+
+        return hunks.join("");
+    }
+    catch (e) {}
+}
+
+function writeFile(file, data)
+{
+    if (!file.exists())
+        file.create(file.NORMAL_FILE_TYPE, 0600);
+
+    let fileStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+    let stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+
+    fileStream.init(file, 0x20 | 0x08 | 0x02, 0600, 0); // PR_TRUNCATE | PR_CREATE | PR_WRITE
+    stream.init(fileStream, "UTF-8", 0, 0);
+
+    stream.writeString(data);
+
+    stream.close();
+    fileStream.close();
+}
+
+var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+var prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
                             .getBranch("extensions.liberator.datastore.");
-var json = Components.classes["@mozilla.org/dom/json;1"]
-                     .createInstance(Components.interfaces.nsIJSON);
+var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
 function getCharPref(name)
 {
     try
     {
-        return prefService.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+        return prefService.getComplexValue(name, Ci.nsISupportsString).data;
     }
     catch (e) {}
 }
 
 function setCharPref(name, value)
 {
-    var str = Components.classes['@mozilla.org/supports-string;1']
-                        .createInstance(Components.interfaces.nsISupportsString);
+    var str = Cc['@mozilla.org/supports-string;1'].createInstance(Ci.nsISupportsString);
     str.data = value;
-    return prefService.setComplexValue(name, Components.interfaces.nsISupportsString, str);
+    return prefService.setComplexValue(name, Ci.nsISupportsString, str);
 }
 
 function loadPref(name, store, type)
 {
     if (store)
         var pref = getCharPref(name);
+    if (!pref && storage.infoPath)
+        var file = readFile(getFile(name));
+    if (pref || file)
+        var result = json.decode(pref || file);
     if (pref)
-        var result = json.decode(pref);
+    {
+        prefService.clearUserPref(name);
+        savePref({ name: name, store: true, serial: pref })
+    }
     if (result instanceof type)
         return result;
 }
 
 function savePref(obj)
 {
-    if (obj.store)
-        setCharPref(obj.name, obj.serial)
+    if (obj.store && storage.infoPath)
+        writeFile(getFile(obj.name), obj.serial);
 }
 
 var prototype = {
@@ -259,7 +315,7 @@ var storage = {
         if (!(key in observers))
             observers[key] = [];
         if (observers[key].indexOf(callback) == -1)
-            observers[key].push({ ref: ref && Components.utils.getWeakReference(ref), callback: callback });
+            observers[key].push({ ref: ref && Cu.getWeakReference(ref), callback: callback });
     },
 
     removeObserver: function (key, callback)

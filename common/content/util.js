@@ -83,60 +83,6 @@ const util = { //{{{
         }
     },
 
-    // TODO: class could have better variable names/documentation
-    Timer: function Timer(minInterval, maxInterval, callback)
-    {
-        let timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-        this.doneAt = 0;
-        this.latest = 0;
-        this.notify = function (aTimer)
-        {
-            timer.cancel();
-            this.latest = 0;
-            /* minInterval is the time between the completion of the command and the next firing. */
-            this.doneAt = Date.now() + minInterval;
-
-            try
-            {
-                callback(this.arg);
-            }
-            finally
-            {
-                this.doneAt = Date.now() + minInterval;
-            }
-        };
-        this.tell = function (arg)
-        {
-            if (arg !== undefined)
-                this.arg = arg;
-
-            let now = Date.now();
-            if (this.doneAt == -1)
-                timer.cancel();
-
-            let timeout = minInterval;
-            if (now > this.doneAt && this.doneAt > -1)
-                timeout = 0;
-            else if (this.latest)
-                timeout = Math.min(timeout, this.latest - now);
-            else
-                this.latest = now + maxInterval;
-
-            timer.initWithCallback(this, Math.max(timeout, 0), timer.TYPE_ONE_SHOT);
-            this.doneAt = -1;
-        };
-        this.reset = function ()
-        {
-            timer.cancel();
-            this.doneAt = 0;
-        };
-        this.flush = function ()
-        {
-            if (this.latest)
-                this.notify();
-        };
-    },
-
     cloneObject: function cloneObject(obj)
     {
         if (obj instanceof Array)

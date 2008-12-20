@@ -590,10 +590,11 @@ match being used. The patterns are case insensitive regular expressions.
 ____
 
 
+|$VIMPERATOR_RUNTIME|
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
 ____
-(default: Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+(default: \'$VIMPERATOR_RUNTIME' or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
 
 List of directories searched for runtime files: +
 macros/ +

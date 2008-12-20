@@ -59,8 +59,8 @@ function Bookmarks() //{{{
     const historyService   = PlacesUtils.history;
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
-    const searchService    = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
-    const ioService        = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const searchService    = service.browserSearch;
+    const ioService        = service.io;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
@@ -561,7 +561,7 @@ function Bookmarks() //{{{
 
         getSuggestions: function getSuggestions(engine, query, callback)
         {
-            let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+            let ss = service.browserSearch;
             const responseType = "application/x-suggestions+json";
 
             let engine = ss.getEngineByAlias(engine);
@@ -572,7 +572,7 @@ function Bookmarks() //{{{
 
             function process(resp)
             {
-                const json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+                const json = service.json;
                 let results = [];
                 try
                 {
@@ -876,7 +876,7 @@ function History() //{{{
             let items = completion.runCompleter("history", filter, maxItems);
 
             if (items.length)
-                return liberator.open([i[0] for each (i in items)], liberator.NEW_TAB);
+                return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
 
             if (filter.length > 0)
                 liberator.echoerr("E283: No history matching \"" + filter + "\"");
