@@ -14,6 +14,8 @@ ________________________________________________________________________________
 ||:ha[rdcopy][!] >{filename}|| +
 ________________________________________________________________________________
 As above, but write the output to {filename}.
+
+Note: Not available on Windows.
 ________________________________________________________________________________
 
 section:Firefox{nbsp}printing{nbsp}dialogs[firefox-print-dialogs]
