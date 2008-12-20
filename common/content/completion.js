@@ -318,6 +318,22 @@ CompletionContext.prototype = {
     get message() this._message || (this.waitingForTab ? "Waiting for <Tab>" : null),
     set message(val) this._message = val,
 
+    get proto()
+    {
+        let res = {};
+        for (let i in Iterator(this.keys))
+        {
+            let [k, v] = i;
+            let _k = "_" + k;
+            if (typeof v == "function")
+                res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = v(this.item)));
+            else
+                res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = this.item[v]));
+            res.__defineSetter__(k, function (val) this[_k] = val);
+        }
+        return res;
+    },
+
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },
 
@@ -404,7 +420,8 @@ CompletionContext.prototype = {
         let self = this;
         delete this._substrings;
 
-        let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({ item: item }, "text"), item: item })));
+        let proto = this.proto;
+        let filtered = this.filterFunc(items.map(function (item) ({ __proto__: proto, item: item })));
         if (this.maxItems)
             filtered = filtered.slice(0, this.maxItems);
 
@@ -1334,9 +1351,9 @@ function Completion() //{{{
             context.format = bookmarks.format;
             for (let val in Iterator(extra || []))
             {
-                let [k, v] = val; // Need let block here for closure.
+                let [k, v] = val; // Need block scope here for the closure
                 if (v)
-                    context.filters.push(function (item) this._match(v, this.getKey(item, k)));
+                    context.filters.push(function (item) this._match(v, item[k]));
             }
             // Need to make a copy because set completions() checks instanceof Array,
             // and this may be an Array from another window.
@@ -1480,11 +1497,12 @@ function Completion() //{{{
             context.keys = {
                 text: !full ? "leafName" : function (f) dir + f.leafName,
                 description: function (f) f.isDirectory() ? "Directory" : "File",
+                isdir: function (f) f.isDirectory(),
                 icon: function (f) f.isDirectory() ? "resource://gre/res/html/folder.png"
                                                              : "moz-icon://" + f.leafName
             };
-            context.compare = function ({ item: a }, { item: b })
-                        b.isDirectory() - a.isDirectory() || String.localeCompare(a.path, b.path);
+            context.compare = function (a, b)
+                        b.isdir - a.isdir || String.localeCompare(a.text, b.text);
 
             if (options["wildignore"])
             {
@@ -1779,7 +1797,7 @@ function Completion() //{{{
 
             if (tags)
                 context.filters.push(function (item) tags.
-                    every(function (tag) (context.getKey(item, "tags") || []).
+                    every(function (tag) (item.tags || []).
                         some(function (t) !compare(tag, t))));
 
             context.anchored = false;
@@ -1798,8 +1816,8 @@ function Completion() //{{{
                 // and all that don't match the tokens.
                 let tokens = context.filter.split(/\s+/);
                 context.filters.push(function (item) tokens.every(
-                        function (tok) contains(context.getKey(item, "url"), tok) ||
-                                       contains(context.getKey(item, "title"), tok)));
+                        function (tok) contains(item.url, tok) ||
+                                       contains(item.title, tok)));
 
                 let re = RegExp(tokens.filter(util.identity).map(util.escapeRegex).join("|"), "g");
                 function highlight(item, text, i) process[i].call(this, item, template.highlightRegexp(text, re));
