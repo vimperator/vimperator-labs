@@ -1640,6 +1640,15 @@ function Marks() //{{{
 
     return {
 
+        /**
+         * Add a named for the current buffer, at its current position. If
+         * mark matches [A-Z], it's considered a URL mark, and will jump to
+         * the same position at the same URL no matter what buffer it's
+         * selected from. If it matches [a-z'"], it's a local mark, and can
+         * only be recalled from a buffer with a matching URL.
+         *
+         * @param {string} mark
+         */
         // TODO: add support for frameset pages
         add: function (mark)
         {
@@ -1672,6 +1681,15 @@ function Marks() //{{{
             }
         },
 
+        /**
+         * Remove all marks matching <b>filter</b>. If <b>special</b> is
+         * given, removes all local marks.
+         *
+         * @param {string} filter A string containing one character for each
+         *     mark to be removed.
+         * @param {boolean} special Whether to delete all local marks.
+         */
+        // FIXME: Shouldn't special be replaced with a null filter?
         remove: function (filter, special)
         {
             if (special)
@@ -1682,20 +1700,24 @@ function Marks() //{{{
             }
             else
             {
-                let pattern = new RegExp("[" + filter.replace(/\s+/g, "") + "]");
                 for (let [mark,] in urlMarks)
                 {
-                    if (pattern.test(mark))
+                    if (filter.indexOf(mark) >= 0)
                         removeURLMark(mark);
                 }
                 for (let [mark,] in localMarks)
                 {
-                    if (pattern.test(mark))
+                    if (filter.indexOf(mark) >= 0)
                         removeLocalMark(mark);
                 }
             }
         },
 
+        /**
+         * Jumps to the named mark. See {@link #add}
+         *
+         * @param {string} mark The mark to jump to.
+         */
         jumpTo: function (mark)
         {
             let ok = false;
@@ -1751,6 +1773,11 @@ function Marks() //{{{
                 liberator.echoerr("E20: Mark not set"); // FIXME: move up?
         },
 
+        /**
+         * List all marks matching <b>filter</b>.
+         *
+         * @param {string} filter
+         */
         list: function (filter)
         {
             let marks = getSortedMarks();
