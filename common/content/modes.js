@@ -54,13 +54,13 @@ const modes = (function () //{{{
             return "-- PASS THROUGH --";
 
         // when recording a macro
-        var macromode = "";
+        let macromode = "";
         if (modes.isRecording)
             macromode = "recording";
         else if (modes.isReplaying)
             macromode = "replaying";
 
-        var ext = "";
+        let ext = "";
         if (extended & modes.MENU) // TODO: desirable?
             ext += " (menu)";
         ext += " --" + macromode;
@@ -199,7 +199,7 @@ const modes = (function () //{{{
 
         pop: function (silent)
         {
-            var a = modeStack.pop();
+            let a = modeStack.pop();
             if (a)
                 this.set(a[0], a[1], silent);
             else

@@ -809,7 +809,7 @@ function CommandLine() //{{{
             command.description,
             function (args)
             {
-                var str = echoArgumentToString(args.string, true);
+                let str = echoArgumentToString(args.string, true);
                 if (str != null)
                     command.action(str);
             },
