@@ -320,10 +320,7 @@ function Options() //{{{
     }
 
     storage.newMap("options", false);
-    storage.addObserver("options", optionObserver);
-    liberator.registerObserver("shutdown", function () {
-        storage.removeObserver("options", optionObserver);
-    });
+    storage.addObserver("options", optionObserver, window);
 
     function storePreference(name, value)
     {

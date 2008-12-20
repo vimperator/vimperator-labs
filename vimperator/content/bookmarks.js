@@ -236,10 +236,7 @@ function Bookmarks() //{{{
     };
 
     var cache = storage.newObject("bookmark-cache", Cache, false);
-    storage.addObserver("bookmark-cache", bookmarkObserver);
-    liberator.registerObserver("shutdown", function () {
-        storage.removeObserver("bookmark-cache", bookmarkObserver);
-    });
+    storage.addObserver("bookmark-cache", bookmarkObserver, window);
 
     liberator.registerObserver("enter", function () {
         if (options["preload"])

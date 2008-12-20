@@ -253,27 +253,41 @@ var storage = {
         return this.newObject(key, ArrayStore, store, Array);
     },
 
-    addObserver: function addObserver(key, callback)
+    addObserver: function addObserver(key, callback, ref)
     {
+        this.removeDeadObservers();
         if (!(key in observers))
             observers[key] = [];
         if (observers[key].indexOf(callback) == -1)
-            observers[key].push(callback);
+            observers[key].push({ ref: ref && Components.utils.getWeakReference(ref), callback: callback });
     },
 
     removeObserver: function (key, callback)
     {
+        this.removeDeadObservers();
         if (!(key in observers))
             return;
-        observers[key] = observers[key].filter(function (elem) elem != callback);
+        observers[key] = observers[key].filter(function (elem) elem.callback != callback);
         if (observers[key].length == 0)
             delete obsevers[key];
     },
 
+    removeDeadObservers: function ()
+    {
+        for (let [key, ary] in Iterator(observers))
+        {
+            observers[key] = ary = ary.filter(function (o) !o.ref || o.ref.get());
+            if (!ary.length)
+                delete observers[key];
+        }
+    },
+
     fireEvent: function fireEvent(key, event, arg)
     {
-        for each (callback in observers[key])
-            callback(key, event, arg);
+        this.removeDeadObservers();
+        // Safe, since we have our own Array object here.
+        for each (let observer in observers[key])
+            observer.callback(key, event, arg);
         timers[key].tell();
     },
 
