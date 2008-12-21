@@ -559,12 +559,12 @@ function Bookmarks() //{{{
             return searchEngines;
         },
 
-        getSuggestions: function getSuggestions(engine, query, callback)
+        getSuggestions: function getSuggestions(engineName, query, callback)
         {
             let ss = service.browserSearch;
             const responseType = "application/x-suggestions+json";
 
-            let engine = ss.getEngineByAlias(engine);
+            let engine = ss.getEngineByAlias(engineName);
             if (engine && engine.supportsResponseType(responseType))
                 var queryURI = engine.getSubmission(query, responseType).uri.spec;
             if (!queryURI)
