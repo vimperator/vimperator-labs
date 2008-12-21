@@ -688,8 +688,8 @@ const liberator = (function () //{{{
 
         callAsync: function (thread, self, func)
         {
-            hread = thread || service["threadManager"].newThread(0);
-            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
+            thread = thread || service["threadManager"].newThread(0);
+            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 3)), thread.DISPATCH_NORMAL);
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
