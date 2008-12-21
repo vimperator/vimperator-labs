@@ -475,7 +475,7 @@ const util = { //{{{
     // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
     stringToURLArray: function stringToURLArray(str)
     {
-        let urls = str.split(new RegExp("\s*" + options["urlseparator"] + "\s*"));
+        let urls = str.split(RegExp("\s*" + options["urlseparator"] + "\s*"));
 
         return urls.map(function (url) {
             try

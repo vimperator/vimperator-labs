@@ -817,13 +817,13 @@ function Events() //{{{
             if (!filter)
                 return macros;
 
-            let re = new RegExp(filter);
+            let re = RegExp(filter);
             return ([macro, keys] for ([macro, keys] in macros) if (re.test(macro)));
         },
 
         deleteMacros: function (filter)
         {
-            let re = new RegExp(filter);
+            let re = RegExp(filter);
 
             for (let [item,] in macros)
             {
