@@ -939,6 +939,28 @@ const liberator = (function () //{{{
             return extensions.some(function (e) e.name == name);
         },
 
+        findHelp: function (topic)
+        {
+            let items = completion.runCompleter("help", topic);
+            let partialMatch = null;
+
+            function format(item) item[1] + "#" + encodeURIComponent(item[0]);
+
+            for (let [i, item] in Iterator(items))
+            {
+                if (item[0] == topic)
+                    return format(item);
+                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
+                {
+                    partialMatch = item;
+                }
+            }
+
+            if (partialMatch)
+                return format(partialMatch);
+            return null;
+        },
+
         help: function (topic)
         {
             let where = (options["newtab"] && options.get("newtab").has("all", "help"))
@@ -952,43 +974,16 @@ const liberator = (function () //{{{
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
                     liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
-
                 return;
             }
 
-            function jumpToTag(file, tag)
-            {
-                liberator.open("chrome://liberator/locale/" + file, where);
-                // TODO: it would be better to wait for pageLoad
-                setTimeout(function () {
-                    let elem = buffer.evaluateXPath('//*[@class="tag" and text()="' + tag + '"]').snapshotItem(0);
-                    if (elem)
-                        window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
-                    else
-                        liberator.dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
-                }, 500);
-            }
+            let page = this.findHelp(topic);
+            if (page == null)
+                return liberator.echoerr("E149: Sorry, no help for " + topic);
 
-            let items = completion.runCompleter("help", topic);
-            let partialMatch = -1;
-
-            for (let [i, item] in Iterator(items))
-            {
-                if (item[0] == topic)
-                {
-                    jumpToTag(item[1], item[0]);
-                    return;
-                }
-                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
-                {
-                    partialMatch = i;
-                }
-            }
-
-            if (partialMatch > -1)
-                jumpToTag(items[partialMatch][1], items[partialMatch][0]);
-            else
-                liberator.echoerr("E149: Sorry, no help for " + topic);
+            liberator.open("chrome://liberator/locale/" + page, where);
+            if (where == this.CURRENT_TAB)
+                content.postMessage("fragmentChange", "*");
         },
 
         globalVariables: {},
