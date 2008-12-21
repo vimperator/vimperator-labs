@@ -118,7 +118,7 @@ const modes = (function () //{{{
                 options.setPref("accessibility.browsewithcaret", false);
 
             statusline.updateUrl();
-            liberator.focusContent(false);
+            liberator.focusContent(true);
         }
     }
 
