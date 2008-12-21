@@ -334,7 +334,7 @@ function Options() //{{{
         switch (typeof value)
         {
             case "string":
-                if (type == service["pref"].PREF_INVALID || type == service["prefBranch"].PREF_STRING)
+                if (type == service["pref"].PREF_INVALID || type == service["pref"].PREF_STRING)
                     service["pref"].setCharPref(name, value);
                 else if (type == service["pref"].PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
