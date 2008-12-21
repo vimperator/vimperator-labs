@@ -68,7 +68,7 @@ ________________________________________________________________________________
 ||:tabopen[!] [arg1], [arg2], ...|| +
 ||t||
 ________________________________________________________________________________
-Just like help::open[browsing.html#opening], but opens the resulting web page(s)
+Just like [c]:open[c], but opens the resulting web page(s)
 in a new tab. When used with [!], the 'tabopen' value of the 'activate' option
 is negated.
 ________________________________________________________________________________
