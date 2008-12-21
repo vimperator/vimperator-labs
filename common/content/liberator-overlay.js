@@ -31,7 +31,8 @@
 
     let prefix = [BASE];
 
-    ["liberator.js",
+    ["service.js",
+     "liberator.js",
      "config.js",
      "util.js",
      "style.js",

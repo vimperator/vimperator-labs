@@ -817,13 +817,13 @@ function Events() //{{{
             if (!filter)
                 return macros;
 
-            let re = new RegExp(filter);
+            let re = RegExp(filter);
             return ([macro, keys] for ([macro, keys] in macros) if (re.test(macro)));
         },
 
         deleteMacros: function (filter)
         {
-            let re = new RegExp(filter);
+            let re = RegExp(filter);
 
             for (let [item,] in macros)
             {
@@ -1300,7 +1300,7 @@ function Events() //{{{
             let stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
             let win = document.commandDispatcher.focusedWindow;
-            if (win && win.document.designMode == "on" && !config.isComposeWindow)
+            if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
                 return false;
 
             // menus have their own command handlers
@@ -1549,10 +1549,9 @@ function Events() //{{{
             // XXX: function may later be needed to detect a canceled synchronous openURL()
             onStateChange: function (webProgress, request, flags, status)
             {
-                const nsIWebProgressListener = Ci.nsIWebProgressListener;
                 // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
                 // receive statechange events for loading images and other parts of the web page
-                if (flags & (nsIWebProgressListener.STATE_IS_DOCUMENT | nsIWebProgressListener.STATE_IS_WINDOW))
+                if (flags & (Ci.nsIWebProgressListener.STATE_IS_DOCUMENT | Ci.nsIWebProgressListener.STATE_IS_WINDOW))
                 {
                     // This fires when the load event is initiated
                     // only thrown for the current tab, not when another tab changes
@@ -1581,12 +1580,11 @@ function Events() //{{{
             // for notifying the user about secure web pages
             onSecurityChange: function (webProgress, aRequest, aState)
             {
-                const nsIWebProgressListener = Ci.nsIWebProgressListener;
-                if (aState & nsIWebProgressListener.STATE_IS_INSECURE)
+                if (aState & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
                     statusline.setClass("insecure");
-                else if (aState & nsIWebProgressListener.STATE_IS_BROKEN)
+                else if (aState & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
                     statusline.setClass("broken");
-                else if (aState & nsIWebProgressListener.STATE_IS_SECURE)
+                else if (aState & Ci.nsIWebProgressListener.STATE_IS_SECURE)
                     statusline.setClass("secure");
             },
             onStatusChange: function (webProgress, request, status, message)
@@ -1646,9 +1644,8 @@ function Events() //{{{
         prefObserver: {
             register: function ()
             {
-                const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
-                this._branch = prefService.getBranch(""); // better way to monitor all changes?
-                this._branch.QueryInterface(Ci.nsIPrefBranch2);
+                this._branch = service["pref"].getBranch("") // better way to monitor all changes?
+                                              .QueryInterface(Ci.nsIPrefBranch2);
                 this._branch.addObserver("", this, false);
             },
 

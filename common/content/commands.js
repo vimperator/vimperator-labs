@@ -176,7 +176,7 @@ Command.prototype = {
             let matches = args.match(/(.*)<<\s*(\S+)$/);
             if (matches && matches[2])
             {
-                commandline.inputMultiline(new RegExp("^" + matches[2] + "$", "m"),
+                commandline.inputMultiline(RegExp("^" + matches[2] + "$", "m"),
                     function (args) { exec(matches[1] + "\n" + args); });
                 return;
             }

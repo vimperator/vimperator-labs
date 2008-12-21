@@ -59,7 +59,7 @@ Map.prototype = {
 
     execute: function (motion, count, argument)
     {
-        var args = [];
+        let args = [];
 
         if (this.flags & Mappings.flags.MOTION)
             args.push(motion);
@@ -98,7 +98,7 @@ function Mappings() //{{{
 
     function addMap(map, userMap)
     {
-        var where = userMap ? user : main;
+        let where = userMap ? user : main;
         map.modes.forEach(function (mode) {
                 if (!(mode in where))
                     where[mode] = [];
@@ -108,7 +108,7 @@ function Mappings() //{{{
 
     function getMap(mode, cmd, stack)
     {
-        var maps = stack[mode] || [];
+        let maps = stack[mode] || [];
 
         for (let [,map] in Iterator(maps))
         {
@@ -121,8 +121,8 @@ function Mappings() //{{{
 
     function removeMap(mode, cmd)
     {
-        var maps = user[mode] || [];
-        var names;
+        let maps = user[mode] || [];
+        let names;
 
         for (let [i, map] in Iterator(maps))
         {
@@ -305,7 +305,7 @@ function Mappings() //{{{
         addUserMap: function (modes, keys, description, action, extra)
         {
             keys = keys.map(expandLeader);
-            var map = new Map(modes, keys, description || "User defined mapping", action, extra);
+            let map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
             for (let [,name] in Iterator(map.names))
@@ -353,7 +353,7 @@ function Mappings() //{{{
 
         getMapLeader: function ()
         {
-            var leaderRef = liberator.variableReference("mapleader");
+            let leaderRef = liberator.variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 

@@ -117,7 +117,7 @@ Option.prototype = {
             scope = this.scope;
         }
 
-        var aValue;
+        let aValue;
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             aValue = tabs.options[this.name];
@@ -306,7 +306,6 @@ function Options() //{{{
 
     const SAVED = "liberator.saved.";
 
-    const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
     const optionHash = {};
 
     const prefContexts = [];
@@ -320,10 +319,7 @@ function Options() //{{{
     }
 
     storage.newMap("options", false);
-    storage.addObserver("options", optionObserver);
-    liberator.registerObserver("shutdown", function () {
-        storage.removeObserver("options", optionObserver);
-    });
+    storage.addObserver("options", optionObserver, window);
 
     function storePreference(name, value)
     {
@@ -334,27 +330,27 @@ function Options() //{{{
                 prefContexts[prefContexts.length - 1][name] = val;
         }
 
-        var type = prefService.getPrefType(name);
+        let type = service["pref"].getPrefType(name);
         switch (typeof value)
         {
             case "string":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_STRING)
-                    prefService.setCharPref(name, value);
-                else if (type == prefService.PREF_INT)
+                if (type == service["pref"].PREF_INVALID || type == service["pref"].PREF_STRING)
+                    service["pref"].setCharPref(name, value);
+                else if (type == service["pref"].PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_INT)
-                    prefService.setIntPref(name, value);
+                if (type == service["pref"].PREF_INVALID || type == service["pref"].PREF_INT)
+                    service["pref"].setIntPref(name, value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_BOOL)
-                    prefService.setBoolPref(name, value);
-                else if (type == prefService.PREF_INT)
+                if (type == service["pref"].PREF_INVALID || type == service["pref"].PREF_BOOL)
+                    service["pref"].setBoolPref(name, value);
+                else if (type == service["pref"].PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
@@ -370,22 +366,22 @@ function Options() //{{{
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
-        let branch = defaultBranch ? prefService.getDefaultBranch("") : prefService;
-        let type = prefService.getPrefType(name);
+        let branch = defaultBranch ? service["pref"].getDefaultBranch("") : service["pref"];
+        let type = service["pref"].getPrefType(name);
         try
         {
             switch (type)
             {
-                case prefService.PREF_STRING:
+                case service["pref"].PREF_STRING:
                     let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
-                    if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
+                    if (!service["pref"].prefIsLocked(name) && !service["pref"].prefHasUserValue(name) &&
                         /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
                             value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
                     return value;
-                case prefService.PREF_INT:
+                case service["pref"].PREF_INT:
                     return branch.getIntPref(name);
-                case prefService.PREF_BOOL:
+                case service["pref"].PREF_BOOL:
                     return branch.getBoolPref(name);
                 default:
                     return defaultValue;
@@ -439,7 +435,7 @@ function Options() //{{{
 
             if (!args)
             {
-                var str =
+                let str =
                     <table>
                     {
                         template.map(liberator.globalVariables, function ([i, value]) {
@@ -460,20 +456,20 @@ function Options() //{{{
                 return;
             }
 
-            var matches;
+            let matches;
             // 1 - type, 2 - name, 3 - +-., 4 - expr
             if (matches = args.match(/([$@&])?([\w:]+)\s*([-+.])?=\s*(.+)/))
             {
                 if (!matches[1])
                 {
-                    var reference = liberator.variableReference(matches[2]);
+                    let reference = liberator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
                     {
                         liberator.echoerr("E121: Undefined variable: " + matches[2]);
                         return;
                     }
 
-                    var expr = liberator.evalExpression(matches[4]);
+                    let expr = liberator.evalExpression(matches[4]);
                     if (expr === undefined)
                     {
                         liberator.echoerr("E15: Invalid expression: " + matches[4]);
@@ -506,14 +502,14 @@ function Options() //{{{
             // 1 - name
             else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
-                var reference = liberator.variableReference(matches[1]);
+                let reference = liberator.variableReference(matches[1]);
                 if (!reference[0])
                 {
                     liberator.echoerr("E121: Undefined variable: " + matches[1]);
                     return;
                 }
 
-                var value = reference[0][reference[1]];
+                let value = reference[0][reference[1]];
                 let prefix = typeof value == "number"   ? "#" :
                              typeof value == "function" ? "*" :
                                                           " ";
@@ -567,9 +563,9 @@ function Options() //{{{
             {
                 if (bang)
                 {
-                    var onlyNonDefault = false;
-                    var reset = false;
-                    var invertBoolean = false;
+                    let onlyNonDefault = false;
+                    let reset = false;
+                    let invertBoolean = false;
 
                     if (args[0] == "")
                     {
@@ -685,7 +681,6 @@ function Options() //{{{
             completer: function (context, args, modifiers)
             {
                 let filter = context.filter;
-                var optionCompletions = [];
 
                 if (args.bang) // list completions for about:config entries
                 {
@@ -758,15 +753,15 @@ function Options() //{{{
         "Delete a variable",
         function (args)
         {
-            //var names = args.split(/ /);
+            //let names = args.split(/ /);
             //if (typeof names == "string") names = [names];
 
-            //var length = names.length;
+            //let length = names.length;
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
             for (let [,name] in args)
             {
-                var name = args[i];
-                var reference = liberator.variableReference(name);
+                let name = args[i];
+                let reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
                     if (!args.bang)
@@ -791,9 +786,8 @@ function Options() //{{{
     {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
-                [function () Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch)
-                                       .getChildList("", { value: 0 })
-                                       .map(function (pref) [pref, ""])]);
+                [function () service["pref"].getChildList("", { value: 0 })
+                                            .map(function (pref) [pref, ""])]);
     });
 
     return {
@@ -894,12 +888,12 @@ function Options() //{{{
             if (!filter)
                 filter = "";
 
-            var prefArray = prefService.getChildList("", { value: 0 });
+            let prefArray = service["pref"].getChildList("", { value: 0 });
             prefArray.sort();
             let prefs = function () {
                 for each (let pref in prefArray)
                 {
-                    let userValue = prefService.prefHasUserValue(pref);
+                    let userValue = service["pref"].prefHasUserValue(pref);
                     if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
                         continue;
 
@@ -992,13 +986,13 @@ function Options() //{{{
 
         resetPref: function (name)
         {
-            return prefService.clearUserPref(name);
+            return service["pref"].clearUserPref(name);
         },
 
         // this works only for booleans
         invertPref: function (name)
         {
-            if (prefService.getPrefType(name) == prefService.PREF_BOOL)
+            if (service["pref"].getPrefType(name) == service["pref"].PREF_BOOL)
                 this.setPref(name, !this.getPref(name));
             else
                 liberator.echoerr("E488: Trailing characters: " + name + "!");

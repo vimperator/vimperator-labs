@@ -49,8 +49,8 @@ const template = {
         }
         else
         {
-            var text = this.process[0].call(this, item, item.text || this.getKey(item, "text"));
-            var desc = this.process[1].call(this, item, this.getKey(item, "description"));
+            var text = this.process[0].call(this, item, item.text);
+            var desc = this.process[1].call(this, item, item.description);
         }
 
         // <e4x>
@@ -66,27 +66,23 @@ const template = {
     },
 
     bookmarkDescription: function (item, text)
-    {
-        let extra = this.getKey(item, "extra");
-        return <>
-            <a href={item.item.url} highlight="URL">{text}</a>&#160;
-            {
-                !(extra && extra.length) ? "" :
-                <span class="extra-info">
-                    ({
-                        template.map(extra, function (e)
-                        <>{e[0]}: <span highlight={e[2]}>{e[1]}</span></>,
-                        <>&#xa0;</>/* Non-breaking space */)
-                    })
-                </span>
-            }
-        </>
-    },
+    <>
+        <a href={item.item.url} highlight="URL">{text}</a>&#160;
+        {
+            !(item.extra && item.extra.length) ? "" :
+            <span class="extra-info">
+                ({
+                    template.map(item.extra, function (e)
+                    <>{e[0]}: <span highlight={e[2]}>{e[1]}</span></>,
+                    <>&#xa0;</>/* Non-breaking space */)
+                })
+            </span>
+        }
+    </> ,
 
     icon: function (item, text)
     {
-        let icon = this.getKey(item, "icon");
-        return <><span highlight="CompIcon">{icon ? <img src={icon}/> : <></>}</span><span class="td-strut"/>{text}</>
+        return <><span highlight="CompIcon">{item.icon ? <img src={item.icon}/> : <></>}</span><span class="td-strut"/>{text}</>
     },
 
     filter: function (str) <span highlight="Filter">{str}</span>,

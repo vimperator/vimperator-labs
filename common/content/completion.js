@@ -128,7 +128,7 @@ function CompletionContext(editor, name, offset) //{{{
          *     results.
          */
         this.filters = [function (item) {
-            let text = Array.concat(this.getKey(item, "text"));
+            let text = Array.concat(item.text);
             for (let [i, str] in Iterator(text))
             {
                 if (this.match(String(str)))
@@ -318,6 +318,22 @@ CompletionContext.prototype = {
     get message() this._message || (this.waitingForTab ? "Waiting for <Tab>" : null),
     set message(val) this._message = val,
 
+    get proto()
+    {
+        let res = {};
+        for (let i in Iterator(this.keys))
+        {
+            let [k, v] = i;
+            let _k = "_" + k;
+            if (typeof v == "function")
+                res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = v(this.item)));
+            else
+                res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = this.item[v]));
+            res.__defineSetter__(k, function (val) this[_k] = val);
+        }
+        return res;
+    },
+
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key] },
 
@@ -327,7 +343,7 @@ CompletionContext.prototype = {
             this.itemCache = {};
         this.cache.offset = this.offset;
         if (!this.itemCache[this.key])
-            this.itemCache[this.key] = this._generate.call(this);
+            this.itemCache[this.key] = this._generate.call(this) || [];
         return this.itemCache[this.key];
     },
     set generate(arg)
@@ -404,7 +420,8 @@ CompletionContext.prototype = {
         let self = this;
         delete this._substrings;
 
-        let filtered = this.filterFunc(items.map(function (item) ({ text: self.getKey({ item: item }, "text"), item: item })));
+        let proto = this.proto;
+        let filtered = this.filterFunc(items.map(function (item) ({ __proto__: proto, item: item })));
         if (this.maxItems)
             filtered = filtered.slice(0, this.maxItems);
 
@@ -658,17 +675,10 @@ function Completion() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    try
-    {
-        var completionService = Cc["@mozilla.org/browser/global-history;2"].getService(Ci.nsIAutoCompleteSearch);
-    }
-    catch (e) {}
-
     const EVAL_TMP = "__liberator_eval_tmp";
 
     function Javascript()
     {
-        let json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
@@ -1334,9 +1344,9 @@ function Completion() //{{{
             context.format = bookmarks.format;
             for (let val in Iterator(extra || []))
             {
-                let [k, v] = val; // Need let block here for closure.
+                let [k, v] = val; // Need block scope here for the closure
                 if (v)
-                    context.filters.push(function (item) this._match(v, this.getKey(item, k)));
+                    context.filters.push(function (item) this._match(v, item[k]));
             }
             // Need to make a copy because set completions() checks instanceof Array,
             // and this may be an Array from another window.
@@ -1384,7 +1394,7 @@ function Completion() //{{{
             io.getRuntimeDirectories("colors").forEach(function (dir) {
                 context.fork(dir.path, 0, null, function (context) {
                     context.filter = dir.path + io.pathSeparator + context.filter;
-                    completion.file(context, true);
+                    completion.file(context);
                     context.title = ["Color Scheme"];
                     context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
                 });
@@ -1404,10 +1414,10 @@ function Completion() //{{{
             context.completions = config.dialogs;
         },
 
-        directory: function directory(context, tail)
+        directory: function directory(context, full)
         {
-            this.file(context, tail);
-            context.filters.push(function (item) this.getKey(item, "description") == "Directory");
+            this.file(context, full);
+            context.filters.push(function ({ item: f }) f.isDirectory());
         },
 
         environment: function environment(context)
@@ -1468,40 +1478,40 @@ function Completion() //{{{
 
         // TODO: support file:// and \ or / path separators on both platforms
         // if "tail" is true, only return names without any directory components
-        file: function file(context, tail)
+        file: function file(context, full)
         {
-            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
             // dir == "" is expanded inside readDirectory to the current dir
+            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
 
-            context.title = ["Path", "Type"];
-            if (tail)
+            if (!full)
                 context.advance(dir.length);
-            context.keys = { text: 0, description: 1, icon: 2 };
+
+            context.title = [full ? "Path" : "Filename", "Type"];
+            context.keys = {
+                text: !full ? "leafName" : function (f) dir + f.leafName,
+                description: function (f) f.isDirectory() ? "Directory" : "File",
+                isdir: function (f) f.isDirectory(),
+                icon: function (f) f.isDirectory() ? "resource://gre/res/html/folder.png"
+                                                             : "moz-icon://" + f.leafName
+            };
+            context.compare = function (a, b)
+                        b.isdir - a.isdir || String.localeCompare(a.text, b.text);
+
+            if (options["wildignore"])
+            {
+                let wigRegexp = RegExp("(^" + options.get("wildignore").values.join("|") + ")$");
+                context.filters.push(function ({item: f}) f.isDirectory() || !wigRegexp.test(f.leafName));
+            }
+
             // context.background = true;
             context.key = dir;
             context.generate = function generate_file()
             {
-                context.cache.dir = dir;
-
                 try
                 {
-                    let files = io.readDirectory(dir);
-
-                    if (options["wildignore"])
-                    {
-                        let wigRegexp = RegExp("(^" + options["wildignore"].replace(",", "|", "g") + ")$");
-                        files = files.filter(function (f) f.isDirectory() || !wigRegexp.test(f.leafName))
-                    }
-
-                    return files.map(
-                        function (file) [tail ? file.leafName : dir + file.leafName,
-                                         file.isDirectory() ? "Directory" : "File",
-                                         file.isDirectory() ? "resource://gre/res/html/folder.png"
-                                                            : "moz-icon://" + file.leafName]
-                    );
+                    return io.readDirectory(dir);
                 }
                 catch (e) {}
-                return [];
             };
         },
 
@@ -1541,7 +1551,7 @@ function Completion() //{{{
 
         location: function location(context)
         {
-            if (!completionService)
+            if (!service["autoCompleteSearch"])
                 return
             context.anchored = false;
             context.title = ["Smart Completions"];
@@ -1557,8 +1567,8 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            completionService.stopSearch();
-            completionService.startSearch(context.filter, "", context.result, {
+            service["autoCompleteSearch"].stopSearch();
+            service["autoCompleteSearch"].startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result)
                 {
                     context.result = result;
@@ -1638,11 +1648,10 @@ function Completion() //{{{
 
         preference: function preference(context)
         {
-            let prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
             context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = prefs.getChildList("", { value: 0 });
+            context.completions = service["pref"].getChildList("", { value: 0 });
         },
 
         search: function search(context, noSuggest)
@@ -1689,12 +1698,11 @@ function Completion() //{{{
             if (!context.filter)
                 return;
 
-            let ss = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
             let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
             let completions = [];
             engineList.forEach(function (name) {
-                let engine = ss.getEngineByAlias(name);
+                let engine = service["browserSearch"].getEngineByAlias(name);
                 if (!engine)
                     return;
                 let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
@@ -1717,9 +1725,7 @@ function Completion() //{{{
             context.title = ["Shell Command", "Path"];
             context.generate = function ()
             {
-                const environmentService = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
-
-                let dirNames = environmentService.get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
+                let dirNames = service["environment"].get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
                 for (let [,dirName] in Iterator(dirNames))
@@ -1780,7 +1786,7 @@ function Completion() //{{{
 
             if (tags)
                 context.filters.push(function (item) tags.
-                    every(function (tag) (context.getKey(item, "tags") || []).
+                    every(function (tag) (item.tags || []).
                         some(function (t) !compare(tag, t))));
 
             context.anchored = false;
@@ -1799,8 +1805,8 @@ function Completion() //{{{
                 // and all that don't match the tokens.
                 let tokens = context.filter.split(/\s+/);
                 context.filters.push(function (item) tokens.every(
-                        function (tok) contains(context.getKey(item, "url"), tok) ||
-                                       contains(context.getKey(item, "title"), tok)));
+                        function (tok) contains(item.url, tok) ||
+                                       contains(item.title, tok)));
 
                 let re = RegExp(tokens.filter(util.identity).map(util.escapeRegex).join("|"), "g");
                 function highlight(item, text, i) process[i].call(this, item, template.highlightRegexp(text, re));

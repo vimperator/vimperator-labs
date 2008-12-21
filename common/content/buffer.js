@@ -746,15 +746,14 @@ function Buffer() //{{{
 
         // get file size
         const ACCESS_READ = Ci.nsICache.ACCESS_READ;
-        const cacheService = Cc["@mozilla.org/network/cache-service;1"].getService(Ci.nsICacheService);
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
         for (let proto in util.Array.iterator(["HTTP", "FTP"]))
         {
             try
             {
-                var cacheEntryDescriptor = cacheService.createSession(proto, 0, true)
-                                                       .openCacheEntry(cacheKey, ACCESS_READ, false);
+                var cacheEntryDescriptor = service["cache"].createSession(proto, 0, true)
+                                                           .openCacheEntry(cacheKey, ACCESS_READ, false);
                 break;
             }
             catch (e) {}

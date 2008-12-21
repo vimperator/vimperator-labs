@@ -51,7 +51,6 @@ const liberator = (function () //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const threadManager = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
     function Runnable(self, func, args)
     {
         this.self = self;
@@ -685,18 +684,18 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
-        newThread: function () threadManager.newThread(0),
+        newThread: function () service["threadManager"].newThread(0),
 
         callAsync: function (thread, self, func)
         {
-            hread = thread || threadManager.newThread(0);
+            hread = thread || service["threadManager"].newThread(0);
             thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
         callFunctionInThread: function (thread, func)
         {
-            thread = thread || threadManager.newThread(0);
+            thread = thread || service["threadManager"].newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
             thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
@@ -768,8 +767,7 @@ const liberator = (function () //{{{
 
         loadScript: function (uri, context)
         {
-            let loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-            loader.loadSubScript(uri, context);
+            service["subscriptLoader"].loadSubScript(uri, context);
         },
 
         eval: function (str, context)
@@ -903,8 +901,7 @@ const liberator = (function () //{{{
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
         {
-            let ww = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher);
-            if (window != ww.activeWindow)
+            if (window != service["windowWatcher"].activeWindow)
                 return;
 
             let elem = config.mainWidget || window.content;
@@ -937,10 +934,31 @@ const liberator = (function () //{{{
 
         hasExtension: function (name)
         {
-            let manager = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager);
-            let extensions = manager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+            let extensions = service["extensionManager"].getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
 
             return extensions.some(function (e) e.name == name);
+        },
+
+        findHelp: function (topic)
+        {
+            let items = completion.runCompleter("help", topic);
+            let partialMatch = null;
+
+            function format(item) item[1] + "#" + encodeURIComponent(item[0]);
+
+            for (let [i, item] in Iterator(items))
+            {
+                if (item[0] == topic)
+                    return format(item);
+                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
+                {
+                    partialMatch = item;
+                }
+            }
+
+            if (partialMatch)
+                return format(partialMatch);
+            return null;
         },
 
         help: function (topic)
@@ -956,43 +974,16 @@ const liberator = (function () //{{{
                     liberator.open("chrome://liberator/locale/" + helpFile, where);
                 else
                     liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
-
                 return;
             }
 
-            function jumpToTag(file, tag)
-            {
-                liberator.open("chrome://liberator/locale/" + file, where);
-                // TODO: it would be better to wait for pageLoad
-                setTimeout(function () {
-                    let elem = buffer.evaluateXPath('//*[@class="tag" and text()="' + tag + '"]').snapshotItem(0);
-                    if (elem)
-                        buffer.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
-                    else
-                        liberator.dump('no element: ' + '@class="tag" and text()="' + tag + '"\n' );
-                }, 500);
-            }
+            let page = this.findHelp(topic);
+            if (page == null)
+                return liberator.echoerr("E149: Sorry, no help for " + topic);
 
-            let items = completion.runCompleter("help", topic);
-            let partialMatch = -1;
-
-            for (let [i, item] in Iterator(items))
-            {
-                if (item[0] == topic)
-                {
-                    jumpToTag(item[1], item[0]);
-                    return;
-                }
-                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
-                {
-                    partialMatch = i;
-                }
-            }
-
-            if (partialMatch > -1)
-                jumpToTag(items[partialMatch][1], items[partialMatch][0]);
-            else
-                liberator.echoerr("E149: Sorry, no help for " + topic);
+            liberator.open("chrome://liberator/locale/" + page, where);
+            if (where == this.CURRENT_TAB)
+                content.postMessage("fragmentChange", "*");
         },
 
         globalVariables: {},
@@ -1062,8 +1053,7 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
+            service["console"].logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs
@@ -1100,7 +1090,6 @@ const liberator = (function () //{{{
             {
                 let url = Array.concat(urls)[0];
                 let postdata = Array.concat(urls)[1];
-                let whichwindow = window;
 
                 // decide where to load the first url
                 switch (where)
@@ -1121,10 +1110,9 @@ const liberator = (function () //{{{
                         break;
 
                     case liberator.NEW_WINDOW:
-                        const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
                         window.open();
-                        whichwindow = wm.getMostRecentWindow("navigator:browser");
-                        whichwindow.loadURI(url, null, postdata);
+                        service["windowMediator"].getMostRecentWindow("navigator:browser")
+                                                 .loadURI(url, null, postdata);
                         break;
 
                     default:
@@ -1164,11 +1152,8 @@ const liberator = (function () //{{{
             else
                 options.setPref("browser.startup.page", 1); // start with default homepage session
 
-            const nsIAppStartup = Ci.nsIAppStartup;
             if (force)
-                Cc["@mozilla.org/toolkit/app-startup;1"]
-                          .getService(nsIAppStartup)
-                          .quit(nsIAppStartup.eForceQuit);
+                service["appStartup"].quit(Ci.nsIAppStartup.eForceQuit);
             else
                 window.goQuitApplication();
         },
@@ -1196,31 +1181,26 @@ const liberator = (function () //{{{
 
         restart: function ()
         {
-            const nsIAppStartup = Ci.nsIAppStartup;
-
             // notify all windows that an application quit has been requested.
-            const os = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
-            const cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-            os.notifyObservers(cancelQuit, "quit-application-requested", null);
+            var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
+            service["observer"].notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
             if (cancelQuit.data)
                 return;
 
             // notify all windows that an application quit has been granted.
-            os.notifyObservers(null, "quit-application-granted", null);
+            service["observer"].notifyObservers(null, "quit-application-granted", null);
 
             // enumerate all windows and call shutdown handlers
-            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-            let windows = wm.getEnumerator(null);
+            let windows = service["windowMediator"].getEnumerator(null);
             while (windows.hasMoreElements())
             {
                 let win = windows.getNext();
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            Cc["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-                .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+            service["appStartup"].quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
         },
 
         // TODO: move to {muttator,vimperator,...}.js
@@ -1244,6 +1224,19 @@ const liberator = (function () //{{{
             config.autocommands = config.autocommands || [];
             config.dialogs = config.dialogs || [];
             config.helpFiles = config.helpFiles || [];
+
+            try
+            {
+                let infoPath = service.getFile();
+                infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
+                infoPath.append("info");
+                infoPath.append(service["profile"].selectedProfile.name);
+                storage.infoPath = infoPath;
+            }
+            catch (e)
+            {
+                liberator.reportError(e);
+            }
 
             liberator.triggerObserver("load");
 
@@ -1286,18 +1279,24 @@ const liberator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                let rcFile = io.getRCFile("~");
-
-                if (rcFile)
-                    io.source(rcFile.path, true);
+                let init = service["environment"].get(config.name.toUpperCase() + "_INIT");
+                if (init)
+                    liberator.execute(init);
                 else
-                    liberator.log("No user RC file found", 3);
+                {
+                    let rcFile = io.getRCFile("~");
+
+                    if (rcFile)
+                        io.source(rcFile.path, true);
+                    else
+                        liberator.log("No user RC file found", 3);
+                }
 
                 if (options["exrc"])
                 {
-                    let localRcFile = io.getRCFile(io.getCurrentDirectory().path);
-                    if (localRcFile)
-                        io.source(localRcFile.path, true);
+                    let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
+                    if (localRCFile)
+                        io.source(localRCFile.path, true);
                 }
 
                 if (options["loadplugins"])
@@ -1337,7 +1336,7 @@ const liberator = (function () //{{{
 
         sleep: function (delay)
         {
-            let mainThread = threadManager.mainThread;
+            let mainThread = service["threadManager"].mainThread;
 
             let end = Date.now() + delay;
             while (Date.now() < end)
@@ -1347,8 +1346,8 @@ const liberator = (function () //{{{
 
         callInMainThread: function (callback, self)
         {
-            let mainThread = threadManager.mainThread;
-            if (!threadManager.isMainThread)
+            let mainThread = service["threadManager"].mainThread;
+            if (!service["threadManager"].isMainThread)
                 mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
             else
                 callback.call(self);
@@ -1356,7 +1355,7 @@ const liberator = (function () //{{{
 
         threadYield: function (flush, interruptable)
         {
-            let mainThread = threadManager.mainThread;
+            let mainThread = service["threadManager"].mainThread;
             liberator.interrupted = false;
             do
             {
@@ -1395,10 +1394,8 @@ const liberator = (function () //{{{
 
         get windows()
         {
-            const wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
             let windows = [];
-            let enumerator = wm.getEnumerator("navigator:browser");
-
+            let enumerator = service["windowMediator"].getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())
                 windows.push(enumerator.getNext());
 

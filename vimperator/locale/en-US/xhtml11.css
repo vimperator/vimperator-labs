@@ -335,6 +335,14 @@ fieldset.paypal {
     font-weight: bold;
     color: #106326;
 }
+
+.option, .mapping, .command {
+    text-decoration: none;
+}
+.option:hover, .mapping:hover, .command:hover {
+    text-decoration: underline;
+}
+
 .quoteblock {
 	margin-left: 140px;
 	padding-bottom: 10px;

@@ -20,7 +20,10 @@
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
       VimperatorLeave respectively
     * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages
+    * IMPORTANT: $VIMPERATOR_HOME is no longer used.
 
+    * Added ~/.vimperator/info/{profile}/, similar to viminfo
+    * added $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT
     * :hardcopy now supports output redirection to a file on Unix and MacUnix
     * add ";f" extended hint mode to focus a frame
     * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.

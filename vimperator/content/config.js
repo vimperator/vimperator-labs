@@ -418,16 +418,13 @@ const config = { //{{{
             {
                 setter: function (value)
                 {
-                    const ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService2);
-
-                    ioService.offline = !value;
-                    gPrefService.setBoolPref("browser.offline", ioService.offline);
-
+                    service.io.offline = !value;
+                    gPrefService.setBoolPref("browser.offline", service.io.offline);
                     return value;
                 },
                 getter: function ()
                 {
-                    return Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService2).offline;
+                    return service.io.offline;
                 }
             });
 
