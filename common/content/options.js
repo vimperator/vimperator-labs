@@ -96,7 +96,7 @@ Option.prototype = {
     },
 
     get values() this.parseValues(this.value),
-    set values(values) this.setValues(this.scope, values),
+    set values(values) this.setValues(values, this.scope),
 
     getValues: function (scope) this.parseValues(this.get(scope)),
 
