@@ -127,26 +127,28 @@ const config = { //{{{
 
     init: function ()
     {
-        // TODO: support 'nrformats'?
+        // TODO: support 'nrformats'? -> probably not worth it --mst
         function incrementURL(count)
         {
             let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
-
             if (!matches)
+                return liberator.beep();
+
+            let [, pre, number, post] = matches;
+            let newNumber = parseInt(number, 10) + count;
+            let newNumberStr = String(newNumber > 0 ? newNumber : 0);
+            if (number.match(/^0/)) // add 0009<C-a> should become 0010
             {
-                liberator.beep();
-                return;
+                while(newNumberStr.length < number.length)
+                    newNumberStr = "0" + newNumberStr;
             }
 
-            [, pre, number, post] = matches;
-            let newNumber = parseInt(number, 10) + count;
-
-            liberator.open(pre + (newNumber > 0 ? newNumber : 0) + post);
+            liberator.open(pre + newNumberStr + post);
         }
 
         // load Vimperator specific modules
         // FIXME: Why aren't these listed in config.scripts?
-        // FIXME: Why isn't this automatic?
+        // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
         liberator.loadModule("search",     Search);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
