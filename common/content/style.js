@@ -135,9 +135,9 @@ Highlights.prototype.CSS = <![CDATA[
  */
 function Highlights(name, store, serial)
 {
-    var self = this;
-    var highlight = {};
-    var styles = storage.styles;
+    let self = this;
+    let highlight = {};
+    let styles = storage.styles;
 
     const Highlight = Struct("class", "selector", "filter", "default", "value");
     Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
