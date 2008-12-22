@@ -121,6 +121,7 @@ const util = { //{{{
      * Returns a shallow copy of <b>obj</b>.
      *
      * @param {Object} obj
+     * @returns {Object}
      */
     cloneObject: function cloneObject(obj)
     {
