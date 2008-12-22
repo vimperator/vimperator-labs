@@ -33,20 +33,20 @@ liberator.registerObserver("load_options", function () {
     if (!liberator.modules.options.getPref("extensions.vimperator.commandline_cmd_history"))
         return;
 
-    let store = liberator.storage["history-command"];
-    let pref  = liberator.options.getPref("extensions.vimperator.commandline_cmd_history");
+    let store = liberator.modules.storage["history-command"];
+    let pref  = liberator.modules.options.getPref("extensions.vimperator.commandline_cmd_history");
     for (let [k, v] in Iterator(pref.split("\n")))
         store.push(v);
 
-    store = liberator.storage["quickmarks"];
-    pref = liberator.options.getPref("extensions.vimperator.quickmarks")
+    store = liberator.modules.storage["quickmarks"];
+    pref = liberator.modules.options.getPref("extensions.vimperator.quickmarks")
                     .split("\n");
     while (pref.length > 0)
         store.set(pref.shift(), pref.shift());
 
-    liberator.options.resetPref("extensions.vimperator.commandline_cmd_history");
-    liberator.options.resetPref("extensions.vimperator.commandline_search_history");
-    liberator.options.resetPref("extensions.vimperator.quickmarks");
+    liberator.modules.options.resetPref("extensions.vimperator.commandline_cmd_history");
+    liberator.modules.options.resetPref("extensions.vimperator.commandline_search_history");
+    liberator.modules.options.resetPref("extensions.vimperator.quickmarks");
 });
 
 // also includes methods for dealing with keywords and search engines
