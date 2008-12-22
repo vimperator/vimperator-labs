@@ -123,7 +123,7 @@ function Tabs() //{{{
                 let tabStrip = tabs.tabStrip;
 
                 if (!tabStrip)
-                    return;
+                    return options['showtabline']; // XXX
 
                 if (value == 0)
                 {
@@ -689,10 +689,14 @@ function Tabs() //{{{
 
         get tabStrip()
         {
+            let tabStrip = null;
+
             if (config.hostApplication == "Firefox")
-                return getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+                tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
             else if (config.hostApplication == "Thunderbird")
-                return getBrowser().mStrip;
+                tabStrip = getBrowser().mStrip;
+
+            return tabStrip;
         },
 
         // @returns the index of the currently selected tab starting with 0
