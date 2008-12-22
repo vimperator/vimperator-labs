@@ -1029,7 +1029,7 @@ function Options() //{{{
             {
                 this.popContext();
             }
-        },
+        }
     };
     //}}}
 }; //}}}

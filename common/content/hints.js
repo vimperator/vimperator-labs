@@ -80,7 +80,7 @@ function Hints() //{{{
         T: Mode("Open new tab based on hint",      function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
         W: Mode("Open new window based on hint",   function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
         y: Mode("Yank hint location",              function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",           function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+        Y: Mode("Yank hint description",           function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
     };
 
     // reset all important variables
