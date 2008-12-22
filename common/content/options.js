@@ -986,7 +986,14 @@ function Options() //{{{
 
         resetPref: function (name)
         {
-            return service["pref"].clearUserPref(name);
+            try
+            {
+                return service["pref"].clearUserPref(name);
+            }
+            catch (e)
+            {
+                // ignore - thrown if not a user set value
+            }
         },
 
         // this works only for booleans
