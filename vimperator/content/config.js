@@ -174,7 +174,7 @@ const config = { //{{{
         let img = Image();
         img.src = "chrome://vimperator/content/vimperator.png";
         img.onload = function () {
-            styles.addSheet("logo", "chrome://liberator/locale/*",
+            styles.addSheet(true, "logo", "chrome://liberator/locale/*",
                 ".vimperator-logo {" + <>
                      display:    inline-block;
                      background: url({img.src});
