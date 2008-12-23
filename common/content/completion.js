@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-/** 
+/**
  * Creates a new completion context.
  *
  * @class A class to provide contexts for command completion.
@@ -65,7 +65,7 @@ function CompletionContext(editor, name, offset) //{{{
         else
             self.contexts[name] = this;
 
-        /** 
+        /**
          * @property {CompletionContext} This context's parent. {null} when this is a top-level context.
          */
         self.parent = parent;
@@ -497,7 +497,7 @@ CompletionContext.prototype = {
      * advanced to match. If {@link #quote} is non-null, its prefix and suffix
      * are set to the null-string.
      *
-     * This function is still imperfect for quoted strings. When 
+     * This function is still imperfect for quoted strings. When
      * {@link #quote} is non-null, it adjusts the count based on the quoted
      * size of the <b>count</b>-character substring of the filter, which is
      * accurate so long as unquoting and quoting a string will always map to
