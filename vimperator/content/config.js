@@ -132,14 +132,17 @@ const config = { //{{{
         {
             let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
             if (!matches)
-                return liberator.beep();
+            {
+                liberator.beep();
+                return;
+            }
 
             let [, pre, number, post] = matches;
             let newNumber = parseInt(number, 10) + count;
             let newNumberStr = String(newNumber > 0 ? newNumber : 0);
             if (number.match(/^0/)) // add 0009<C-a> should become 0010
             {
-                while(newNumberStr.length < number.length)
+                while (newNumberStr.length < number.length)
                     newNumberStr = "0" + newNumberStr;
             }
 
