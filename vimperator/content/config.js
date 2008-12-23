@@ -149,6 +149,13 @@ const config = { //{{{
         // load Vimperator specific modules
         // FIXME: Why aren't these listed in config.scripts?
         // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
+        //      Something like:
+        //          liberator.addModule("search", function Search() { ...
+        //      for all modules, or something similar. For modules which
+        //      require other modules, well, there's addObserver("load_foo",
+        //      or we could just make sure that they're all sourced in order.
+        //      The scripts could even just instantiate them themselves.
+        //        --Kris
         liberator.loadModule("search",     Search);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
