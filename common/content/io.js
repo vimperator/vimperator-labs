@@ -870,7 +870,7 @@ lookup:
                                 else
                                 {
                                     // execute a normal liberator command
-                                    liberator.execute(line);
+                                    liberator.execute(line, null, true);
                                 }
                             }
                         }

@@ -856,7 +856,7 @@ const liberator = (function () //{{{
         },
 
         // Execute an Ex command like str=":zoom 300"
-        execute: function (str, modifiers)
+        execute: function (str, modifiers, silent)
         {
             // skip comments and blank lines
             if (/^\s*("|$)/.test(str))
@@ -888,7 +888,8 @@ const liberator = (function () //{{{
 
             if (err)
                 return liberator.echoerr(err);
-            commandline.command = str.replace(/^\s*:\s*/, "");
+            if (!silent)
+                commandline.command = str.replace(/^\s*:\s*/, "");
             command.execute(args, special, count, modifiers);
         },
 
