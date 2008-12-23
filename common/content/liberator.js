@@ -950,7 +950,7 @@ const liberator = (function () //{{{
             {
                 if (item[0] == topic)
                     return format(item);
-                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
+                else if (!partialMatch && item[0].indexOf(topic) > -1)
                 {
                     partialMatch = item;
                 }
