@@ -30,23 +30,23 @@ const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // Try to import older command line history, quick marks, etc.
 liberator.registerObserver("load_options", function () {
-    if (!liberator.modules.options.getPref("extensions.vimperator.commandline_cmd_history"))
+    if (!options.getPref("extensions.vimperator.commandline_cmd_history"))
         return;
 
-    let store = liberator.modules.storage["history-command"];
-    let pref  = liberator.modules.options.getPref("extensions.vimperator.commandline_cmd_history");
+    let store = storage["history-command"];
+    let pref  = options.getPref("extensions.vimperator.commandline_cmd_history");
     for (let [k, v] in Iterator(pref.split("\n")))
         store.push(v);
 
-    store = liberator.modules.storage["quickmarks"];
-    pref = liberator.modules.options.getPref("extensions.vimperator.quickmarks")
+    store = storage["quickmarks"];
+    pref = options.getPref("extensions.vimperator.quickmarks")
                     .split("\n");
     while (pref.length > 0)
         store.set(pref.shift(), pref.shift());
 
-    liberator.modules.options.resetPref("extensions.vimperator.commandline_cmd_history");
-    liberator.modules.options.resetPref("extensions.vimperator.commandline_search_history");
-    liberator.modules.options.resetPref("extensions.vimperator.quickmarks");
+    options.resetPref("extensions.vimperator.commandline_cmd_history");
+    options.resetPref("extensions.vimperator.commandline_search_history");
+    options.resetPref("extensions.vimperator.quickmarks");
 });
 
 // also includes methods for dealing with keywords and search engines
