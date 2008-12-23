@@ -518,8 +518,7 @@ function CommandLine() //{{{
 
     // Whether the command line must be open.
     function commandShown() modes.main == modes.COMMAND_LINE &&
-            !(modes.extended & modes.INPUT_MULTILINE) &&
-            !(modes.extended & modes.OUTPUT_MULTILINE);
+            !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE));
 
     // sets the prompt - for example, : or /
     function setPrompt(val, highlightGroup)
@@ -603,7 +602,7 @@ function CommandLine() //{{{
     {
         let lines = multilineInputWidget.value.split("\n").length - 1;
 
-        multilineInputWidget.setAttribute("rows", Math.min(lines, 1));
+        multilineInputWidget.setAttribute("rows", Math.max(lines, 1));
     }
 
     // used for the :echo[err] commands
@@ -1036,8 +1035,11 @@ function CommandLine() //{{{
         // @param untilRegexp
         inputMultiline: function inputMultiline(untilRegexp, callbackFunc)
         {
-            // save the mode, because we need to restore it
+            // Kludge.
+            let cmd = !commandWidget.collapsed && this.command;
             modes.push(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
+            if (cmd != false)
+                echoLine(cmd, this.HL_NORMAL);
 
             // save the arguments, they are needed in the event handler onEvent
             multilineRegexp = untilRegexp;
