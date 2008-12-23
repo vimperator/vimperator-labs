@@ -555,7 +555,7 @@ function Bookmarks() //{{{
                 if (engine.alias != newAlias)
                     engine.alias = newAlias;
 
-                searchEngines.push([engine.alias, engine.description, engine.iconURI.spec]);
+                searchEngines.push([engine.alias, engine.description, engine.iconURI && engine.iconURI.spec]);
             }
 
             return searchEngines;
