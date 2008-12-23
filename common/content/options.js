@@ -743,8 +743,8 @@ function Options() //{{{
             serial: function () [
                 {
                     command: this.name,
-                    literalArg: opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
-                                                      : opt.name + "=" + opt.value
+                    arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                                                      : opt.name + "=" + opt.value]
                 }
                 for (opt in options)
                 if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & options.OPTION_SCOPE_GLOBAL))
