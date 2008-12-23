@@ -59,7 +59,6 @@ function Bookmarks() //{{{
     const historyService   = PlacesUtils.history;
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
-    const searchService    = service.browserSearch;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
@@ -533,7 +532,7 @@ function Bookmarks() //{{{
         getSearchEngines: function getSearchEngines()
         {
             let searchEngines = [];
-            let firefoxEngines = searchService.getVisibleEngines({});
+            let firefoxEngines = services.get("browserSearch").getVisibleEngines({});
             for (let [,engine] in Iterator(firefoxEngines))
             {
                 let alias = engine.alias;
@@ -563,10 +562,9 @@ function Bookmarks() //{{{
 
         getSuggestions: function getSuggestions(engineName, query, callback)
         {
-            let ss = service.browserSearch;
             const responseType = "application/x-suggestions+json";
 
-            let engine = ss.getEngineByAlias(engineName);
+            let engine = services.get("browserSearch").getEngineByAlias(engineName);
             if (engine && engine.supportsResponseType(responseType))
                 var queryURI = engine.getSubmission(query, responseType).uri.spec;
             if (!queryURI)
@@ -574,11 +572,10 @@ function Bookmarks() //{{{
 
             function process(resp)
             {
-                const json = service.json;
                 let results = [];
                 try
                 {
-                    results = json.decode(resp.responseText)[1];
+                    results = services.get("json").decode(resp.responseText)[1];
                     results = [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
                 }
                 catch (e) {}

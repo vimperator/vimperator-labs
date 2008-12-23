@@ -102,8 +102,8 @@ function Tabs() //{{{
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
 
-        let tabState = service["sessionStore"].getTabState(from);
-        service["sessionStore"].setTabState(to, tabState);
+        let tabState = services.get("sessionStore").getTabState(from);
+        services.get("sessionStore").setTabState(to, tabState);
     }
 
     // hide tabs initially
@@ -743,7 +743,7 @@ function Tabs() //{{{
 
         get closedTabs()
         {
-            return service["json"].decode(service["sessionStore"].getClosedTabData(window));
+            return services.get("json").decode(services.get("sessionStore").getClosedTabData(window));
         },
 
         list: function (filter)
@@ -970,7 +970,7 @@ function Tabs() //{{{
                 tab = getBrowser().mTabContainer.selectedItem;
 
             window.open();
-            let win = service["windowMediator"].getMostRecentWindow("navigator:browser");
+            let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);
             this.remove(tab, 1, false, 1);

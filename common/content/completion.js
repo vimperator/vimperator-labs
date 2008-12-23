@@ -1551,7 +1551,7 @@ function Completion() //{{{
 
         location: function location(context)
         {
-            if (!service["autoCompleteSearch"])
+            if (!services.get("autoCompleteSearch"))
                 return
             context.anchored = false;
             context.title = ["Smart Completions"];
@@ -1567,8 +1567,8 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            service["autoCompleteSearch"].stopSearch();
-            service["autoCompleteSearch"].startSearch(context.filter, "", context.result, {
+            services.get("autoCompleteSearch").stopSearch();
+            services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result)
                 {
                     context.result = result;
@@ -1651,9 +1651,7 @@ function Completion() //{{{
             context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = Cc["@mozilla.org/preferences-service;1"]
-                                  .getService(Ci.nsIPrefBranch)
-                                  .getChildList("", { value: 0 });
+            context.completions = services.get("pref").getChildList("", { value: 0 });
         },
 
         search: function search(context, noSuggest)
@@ -1704,7 +1702,7 @@ function Completion() //{{{
 
             let completions = [];
             engineList.forEach(function (name) {
-                let engine = service["browserSearch"].getEngineByAlias(name);
+                let engine = services.get("browserSearch").getEngineByAlias(name);
                 if (!engine)
                     return;
                 let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
@@ -1727,7 +1725,7 @@ function Completion() //{{{
             context.title = ["Shell Command", "Path"];
             context.generate = function ()
             {
-                let dirNames = service["environment"].get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
+                let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
                 for (let [,dirName] in Iterator(dirNames))

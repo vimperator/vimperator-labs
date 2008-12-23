@@ -304,8 +304,6 @@ function Options() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-
     const SAVED = "liberator.saved.";
 
     const optionHash = {};
@@ -332,27 +330,27 @@ function Options() //{{{
                 prefContexts[prefContexts.length - 1][name] = val;
         }
 
-        let type = prefService.getPrefType(name);
+        let type = services.get("pref").getPrefType(name);
         switch (typeof value)
         {
             case "string":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_STRING)
-                    prefService.setCharPref(name, value);
-                else if (type == prefService.PREF_INT)
+                if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING)
+                    services.get("pref").setCharPref(name, value);
+                else if (type == Ci.nsIPrefBranch.PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "number":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_INT)
-                    prefService.setIntPref(name, value);
+                if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_INT)
+                    services.get("pref").setIntPref(name, value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
                 break;
             case "boolean":
-                if (type == prefService.PREF_INVALID || type == prefService.PREF_BOOL)
-                    prefService.setBoolPref(name, value);
-                else if (type == prefService.PREF_INT)
+                if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_BOOL)
+                    services.get("pref").setBoolPref(name, value);
+                else if (type == Ci.nsIPrefBranch.PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
                     liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
@@ -368,22 +366,22 @@ function Options() //{{{
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
-        let branch = defaultBranch ? prefService.getDefaultBranch("") : prefService;
-        let type = prefService.getPrefType(name);
+        let branch = defaultBranch ? services.get("pref").getDefaultBranch("") : services.get("pref");
+        let type = services.get("pref").getPrefType(name);
         try
         {
             switch (type)
             {
-                case prefService.PREF_STRING:
+                case Ci.nsIPrefBranch.PREF_STRING:
                     let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
-                    if (!prefService.prefIsLocked(name) && !prefService.prefHasUserValue(name) &&
-                        /^chrome:\/\/.+\/locale\/.+\.properties/.test(value))
+                    if (!services.get("pref").prefIsLocked(name) && !services.get("pref").prefHasUserValue(name) &&
+                        RegExp("chrome://.+/locale/.+\\.properties").test(value))
                             value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
                     return value;
-                case prefService.PREF_INT:
+                case Ci.nsIPrefBranch.PREF_INT:
                     return branch.getIntPref(name);
-                case prefService.PREF_BOOL:
+                case Ci.nsIPrefBranch.PREF_BOOL:
                     return branch.getBoolPref(name);
                 default:
                     return defaultValue;
@@ -788,8 +786,9 @@ function Options() //{{{
     {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
-                [function () prefService.getChildList("", { value: 0 })
-                                            .map(function (pref) [pref, ""])]);
+                [function () services.get("pref")
+                                     .getChildList("", { value: 0 })
+                                     .map(function (pref) [pref, ""])]);
     });
 
     return {
@@ -890,12 +889,12 @@ function Options() //{{{
             if (!filter)
                 filter = "";
 
-            let prefArray = prefService.getChildList("", { value: 0 });
+            let prefArray = services.get("pref").getChildList("", { value: 0 });
             prefArray.sort();
             let prefs = function () {
-                for each (let pref in prefArray)
+                for (let [,pref] in Iterator(prefArray))
                 {
-                    let userValue = prefService.prefHasUserValue(pref);
+                    let userValue = services.get("pref").prefHasUserValue(pref);
                     if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
                         continue;
 
@@ -990,7 +989,7 @@ function Options() //{{{
         {
             try
             {
-                return prefService.clearUserPref(name);
+                return services.get("pref").clearUserPref(name);
             }
             catch (e)
             {
@@ -1001,7 +1000,7 @@ function Options() //{{{
         // this works only for booleans
         invertPref: function (name)
         {
-            if (prefService.getPrefType(name) == prefService.PREF_BOOL)
+            if (services.get("pref").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
                 this.setPref(name, !this.getPref(name));
             else
                 liberator.echoerr("E488: Trailing characters: " + name + "!");

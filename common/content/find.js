@@ -138,7 +138,7 @@ function Search() //{{{
     var highlightObj = {
         search: function (aWord, matchCase)
         {
-            var finder = service.getFind();
+            var finder = services.create("find");
             if (matchCase !== undefined)
                 finder.caseSensitive = matchCase;
 

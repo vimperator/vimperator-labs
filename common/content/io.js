@@ -69,7 +69,7 @@ function IO() //{{{
     const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
     const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
-    var processDir = service["directory"].get("CurWorkD", Ci.nsIFile);
+    var processDir = services.get("directory").get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
     var oldcwd = null;
 
@@ -77,7 +77,7 @@ function IO() //{{{
     var scriptNames = [];
 
     // default option values
-    var cdpath = "," + (service["environment"].get("CDPATH").replace(/[:;]/g, ",") || ",");
+    var cdpath = "," + (services.get("environment").get("CDPATH").replace(/[:;]/g, ",") || ",");
     var shell, shellcmdflag;
 
     if (WINDOWS)
@@ -89,7 +89,7 @@ function IO() //{{{
     }
     else
     {
-        shell = service["environment"].get("SHELL") || "sh";
+        shell = services.get("environment").get("SHELL") || "sh";
         shellcmdflag = "-c";
     }
 
@@ -132,7 +132,7 @@ function IO() //{{{
     {
         try
         {
-            service.getFile().initWithPath(path);
+            services.create("file").initWithPath(path);
             return true;
         }
         catch (e)
@@ -480,7 +480,7 @@ function IO() //{{{
         // also expands relative paths
         getFile: function (path, noCheckPWD)
         {
-            let file = service.getFile();
+            let file = services.create("file");
 
             if (/file:\/\//.test(path))
             {
@@ -521,7 +521,7 @@ function IO() //{{{
                     break;
             }
 
-            let file = service["directory"].get("TmpD", Ci.nsIFile);
+            let file = services.get("directory").get("TmpD", Ci.nsIFile);
             file.append(tmpName);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
@@ -627,7 +627,7 @@ function IO() //{{{
             }
             else
             {
-                let dirs = service["environment"].get("PATH").split(WINDOWS ? ";" : ":");
+                let dirs = services.get("environment").get("PATH").split(WINDOWS ? ";" : ":");
                 // Windows tries the cwd first TODO: desirable?
                 if (WINDOWS)
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
@@ -645,7 +645,7 @@ lookup:
                         // automatically try to add the executable path extensions on windows
                         if (WINDOWS)
                         {
-                            let extensions = service["environment"].get("PATHEXT").split(";");
+                            let extensions = services.get("environment").get("PATHEXT").split(";");
                             for (let [,extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
@@ -664,7 +664,7 @@ lookup:
                 return -1;
             }
 
-            let process = service.getProcess();
+            let process = services.create("process");
 
             process.init(file);
             process.run(blocking, args, args.length);
@@ -922,7 +922,7 @@ lookup:
 
 }; //}}}
 
-IO.__defineGetter__("runtimePath", function () service["environment"].get(config.name.toUpperCase() + "_RUNTIME") ||
+IO.__defineGetter__("runtimePath", function () services.get("environment").get(config.name.toUpperCase() + "_RUNTIME") ||
         "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase());
 
 IO.expandPath = function (path, relative)
@@ -939,7 +939,7 @@ IO.expandPath = function (path, relative)
     function expand(path) path.replace(
         !WINDOWS ? /\$(\w+)\b|\${(\w+)}/g
                  : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
-        function (m, n1, n2, n3) service["environment"].get(n1 || n2 || n3) || m
+        function (m, n1, n2, n3) services.get("environment").get(n1 || n2 || n3) || m
     );
     path = expand(path);
 
@@ -947,12 +947,12 @@ IO.expandPath = function (path, relative)
     if (!relative && (WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
     {
         // Try $HOME first, on all systems
-        let home = service["environment"].get("HOME");
+        let home = services.get("environment").get("HOME");
 
         // Windows has its own ideosyncratic $HOME variables.
         if (!home && WINDOWS)
-            home = service["environment"].get("USERPROFILE") ||
-                   service["environment"].get("HOMEDRIVE") + service["environment"].get("HOMEPATH");
+            home = services.get("environment").get("USERPROFILE") ||
+                   services.get("environment").get("HOMEDRIVE") + services.get("environment").get("HOMEPATH");
 
         path = home + path.substr(1);
     }
