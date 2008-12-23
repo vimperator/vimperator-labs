@@ -1644,8 +1644,9 @@ function Events() //{{{
         prefObserver: {
             register: function ()
             {
-                this._branch = service["pref"].getBranch("") // better way to monitor all changes?
-                                              .QueryInterface(Ci.nsIPrefBranch2);
+                const prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
+                this._branch = prefService.getBranch(""); // better way to monitor all changes?
+                this._branch.QueryInterface(Ci.nsIPrefBranch2);
                 this._branch.addObserver("", this, false);
             },
 

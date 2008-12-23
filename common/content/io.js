@@ -67,6 +67,7 @@ function IO() //{{{
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
     const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
+    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
     var processDir = service["directory"].get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
@@ -777,7 +778,7 @@ lookup:
                 liberator.echomsg("sourcing " + filename.quote(), 2);
 
                 let str = ioManager.readFile(file);
-                let uri = service["io"].newFileURI(file);
+                let uri = ioService.newFileURI(file);
 
                 // handle pure javascript files specially
                 if (/\.js$/.test(filename))

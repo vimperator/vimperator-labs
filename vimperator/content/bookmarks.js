@@ -60,7 +60,6 @@ function Bookmarks() //{{{
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
     const searchService    = service.browserSearch;
-    const ioService        = service.io;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
@@ -91,7 +90,7 @@ function Bookmarks() //{{{
 
         function loadBookmark(node)
         {
-            let uri = ioService.newURI(node.uri, null, null);
+            let uri = util.newURI(node.uri);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
 
@@ -199,7 +198,7 @@ function Bookmarks() //{{{
                 if (bookmark)
                 {
                     if (property == "tags")
-                        value = taggingService.getTagsForURI(ioService.newURI(bookmark.url, null, null), {});
+                        value = taggingService.getTagsForURI(util.newURI(bookmark.url), {});
                     if (property in bookmark)
                         bookmark[property] = value;
                     storage.fireEvent(name, "change", itemId);
@@ -220,7 +219,7 @@ function Bookmarks() //{{{
     {
         try
         {
-            return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
+            return faviconService.getFaviconImageForPage(util.newURI(uri)).spec;
         }
         catch (e)
         {
@@ -487,7 +486,7 @@ function Bookmarks() //{{{
         {
             try
             {
-                var uri = ioService.newURI(url, null, null);
+                var uri = util.newURI(url);
                 return (bookmarksService.getBookmarkedURIFor(uri) != null);
             }
             catch (e)
@@ -505,7 +504,7 @@ function Bookmarks() //{{{
             var i = 0;
             try
             {
-                var uri = ioService.newURI(url, null, null);
+                var uri = util.newURI(url);
                 var count = {};
                 var bmarks = bookmarksService.getBookmarkIdsForURI(uri, count);
 

@@ -1053,7 +1053,8 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            service["console"].logStringMessage(config.name.toLowerCase() + ": " + msg);
+            const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs

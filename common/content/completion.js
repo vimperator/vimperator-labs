@@ -1651,7 +1651,9 @@ function Completion() //{{{
             context.anchored = false;
             context.title = ["Firefox Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = service["pref"].getChildList("", { value: 0 });
+            context.completions = Cc["@mozilla.org/preferences-service;1"]
+                                  .getService(Ci.nsIPrefBranch)
+                                  .getChildList("", { value: 0 });
         },
 
         search: function search(context, noSuggest)

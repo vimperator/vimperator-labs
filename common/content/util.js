@@ -335,6 +335,12 @@ const util = { //{{{
         return ary;
     },
 
+    newURI: function (url)
+    {
+        const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        return ioService.newURI(url, null, null);
+    },
+
     // if color = true it uses HTML markup to color certain items
     objectToString: function objectToString(object, color)
     {
