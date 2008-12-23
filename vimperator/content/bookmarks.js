@@ -93,8 +93,11 @@ function Bookmarks() //{{{
             let uri = util.newURI(node.uri);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
+            let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
-            return bookmarks.push(new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId));
+            bookmarks.push(bmark);
+
+            return bmark;
         }
 
         function readBookmark(id)
