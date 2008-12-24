@@ -1143,7 +1143,7 @@ function Events() //{{{
                 }
 
                 urlbar = document.getElementById("urlbar");
-                if (focus == null && urlbar && urlbar.inputField == lastFocus)
+                if (elem == null && urlbar && urlbar.inputField == lastFocus)
                     liberator.threadYield(true);
 
                 if (liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.MESSAGE | modes.VISUAL))
