@@ -463,7 +463,7 @@ function Tabs() //{{{
             "Switch to a buffer",
             function (args)
             {
-                let special = args.special;
+                let special = args.bang;
                 let count   = args.count;
                 let arg     = args.literalArg;
 
