@@ -941,7 +941,8 @@ IO.expandPath = function (path, relative)
     path = expand(path);
 
     // expand ~
-    if (!relative && (WINDOWS ? /^~(?:$|[\\\/])/ : /^~(?:$|\/)/).test(path))
+    // Yuck.
+    if (!relative && RegExp("~(?:$|[/" + util.escapeRegex(IO.PATH_SEP) + "])").test(path))
     {
         // Try $HOME first, on all systems
         let home = services.get("environment").get("HOME");
