@@ -102,8 +102,8 @@ function Tabs() //{{{
         if (!from)
             from = getBrowser().mTabContainer.selectedItem;
 
-        let tabState = service["sessionStore"].getTabState(from);
-        service["sessionStore"].setTabState(to, tabState);
+        let tabState = services.get("sessionStore").getTabState(from);
+        services.get("sessionStore").setTabState(to, tabState);
     }
 
     // hide tabs initially
@@ -123,7 +123,7 @@ function Tabs() //{{{
                 let tabStrip = tabs.tabStrip;
 
                 if (!tabStrip)
-                    return;
+                    return options['showtabline']; // XXX
 
                 if (value == 0)
                 {
@@ -463,7 +463,7 @@ function Tabs() //{{{
             "Switch to a buffer",
             function (args)
             {
-                let special = args.special;
+                let special = args.bang;
                 let count   = args.count;
                 let arg     = args.literalArg;
 
@@ -689,10 +689,14 @@ function Tabs() //{{{
 
         get tabStrip()
         {
+            let tabStrip = null;
+
             if (config.hostApplication == "Firefox")
-                return getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+                tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
             else if (config.hostApplication == "Thunderbird")
-                return getBrowser().mStrip;
+                tabStrip = getBrowser().mStrip;
+
+            return tabStrip;
         },
 
         // @returns the index of the currently selected tab starting with 0
@@ -739,7 +743,7 @@ function Tabs() //{{{
 
         get closedTabs()
         {
-            return service["json"].decode(service["sessionStore"].getClosedTabData(window));
+            return services.get("json").decode(services.get("sessionStore").getClosedTabData(window));
         },
 
         list: function (filter)
@@ -966,7 +970,7 @@ function Tabs() //{{{
                 tab = getBrowser().mTabContainer.selectedItem;
 
             window.open();
-            let win = service["windowMediator"].getMostRecentWindow("navigator:browser");
+            let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
 
             copyTab(win.getBrowser().mCurrentTab, tab);
             this.remove(tab, 1, false, 1);

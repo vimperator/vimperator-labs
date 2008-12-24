@@ -311,11 +311,22 @@ var storage = {
 
     addObserver: function addObserver(key, callback, ref)
     {
+        if (ref)
+        {
+            if (!ref.liberatorStorageRefs)
+                ref.liberatorStorageRefs = [];
+            ref.liberatorStorageRefs.push(callback);
+            var callbackRef = Cu.getWeakReference(callback);
+        }
+        else
+        {
+            callbackRef = { get: function () callback };
+        }
         this.removeDeadObservers();
         if (!(key in observers))
             observers[key] = [];
-        if (observers[key].indexOf(callback) == -1)
-            observers[key].push({ ref: ref && Cu.getWeakReference(ref), callback: callback });
+        if (!observers[key].some(function (o) o.callback.get() == callback))
+            observers[key].push({ ref: ref && Cu.getWeakReference(ref), callback: callbackRef });
     },
 
     removeObserver: function (key, callback)
@@ -323,7 +334,7 @@ var storage = {
         this.removeDeadObservers();
         if (!(key in observers))
             return;
-        observers[key] = observers[key].filter(function (elem) elem.callback != callback);
+        observers[key] = observers[key].filter(function (elem) elem.callback.get() != callback);
         if (observers[key].length == 0)
             delete obsevers[key];
     },
@@ -332,18 +343,20 @@ var storage = {
     {
         for (let [key, ary] in Iterator(observers))
         {
-            observers[key] = ary = ary.filter(function (o) !o.ref || o.ref.get());
+            observers[key] = ary = ary.filter(function (o) o.callback.get() && (!o.ref || o.ref.get() && o.ref.get().liberatorStorageRefs))
             if (!ary.length)
                 delete observers[key];
         }
     },
+
+    get observers() observers,
 
     fireEvent: function fireEvent(key, event, arg)
     {
         this.removeDeadObservers();
         // Safe, since we have our own Array object here.
         for each (let observer in observers[key])
-            observer.callback(key, event, arg);
+            observer.callback.get()(key, event, arg);
         timers[key].tell();
     },
 

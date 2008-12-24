@@ -28,11 +28,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const plugins = {};
@@ -684,18 +679,18 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
-        newThread: function () service["threadManager"].newThread(0),
+        newThread: function () services.get("threadManager").newThread(0),
 
         callAsync: function (thread, self, func)
         {
-            hread = thread || service["threadManager"].newThread(0);
-            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 2)), thread.DISPATCH_NORMAL);
+            thread = thread || services.get("threadManager").newThread(0);
+            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 3)), thread.DISPATCH_NORMAL);
         },
 
         // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
         callFunctionInThread: function (thread, func)
         {
-            thread = thread || service["threadManager"].newThread(0);
+            thread = thread || services.get("threadManager").newThread(0);
 
             // DISPATCH_SYNC is necessary, otherwise strange things will happen
             thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
@@ -767,7 +762,7 @@ const liberator = (function () //{{{
 
         loadScript: function (uri, context)
         {
-            service["subscriptLoader"].loadSubScript(uri, context);
+            services.get("subscriptLoader").loadSubScript(uri, context);
         },
 
         eval: function (str, context)
@@ -861,7 +856,7 @@ const liberator = (function () //{{{
         },
 
         // Execute an Ex command like str=":zoom 300"
-        execute: function (str, modifiers)
+        execute: function (str, modifiers, silent)
         {
             // skip comments and blank lines
             if (/^\s*("|$)/.test(str))
@@ -893,7 +888,8 @@ const liberator = (function () //{{{
 
             if (err)
                 return liberator.echoerr(err);
-            commandline.command = str.replace(/^\s*:\s*/, "");
+            if (!silent)
+                commandline.command = str.replace(/^\s*:\s*/, "");
             command.execute(args, special, count, modifiers);
         },
 
@@ -901,7 +897,7 @@ const liberator = (function () //{{{
         // if clearFocusedElement, also blur a focused link
         focusContent: function (clearFocusedElement)
         {
-            if (window != service["windowWatcher"].activeWindow)
+            if (window != services.get("windowWatcher").activeWindow)
                 return;
 
             let elem = config.mainWidget || window.content;
@@ -934,7 +930,7 @@ const liberator = (function () //{{{
 
         hasExtension: function (name)
         {
-            let extensions = service["extensionManager"].getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+            let extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
 
             return extensions.some(function (e) e.name == name);
         },
@@ -950,7 +946,7 @@ const liberator = (function () //{{{
             {
                 if (item[0] == topic)
                     return format(item);
-                else if (partialMatch == -1 && item[0].indexOf(topic) > -1)
+                else if (!partialMatch && item[0].indexOf(topic) > -1)
                 {
                     partialMatch = item;
                 }
@@ -1053,7 +1049,8 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            service["console"].logStringMessage(config.name.toLowerCase() + ": " + msg);
+            const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
         // open one or more URLs
@@ -1111,8 +1108,8 @@ const liberator = (function () //{{{
 
                     case liberator.NEW_WINDOW:
                         window.open();
-                        service["windowMediator"].getMostRecentWindow("navigator:browser")
-                                                 .loadURI(url, null, postdata);
+                        services.get("windowMediator").getMostRecentWindow("navigator:browser")
+                                .loadURI(url, null, postdata);
                         break;
 
                     default:
@@ -1153,7 +1150,7 @@ const liberator = (function () //{{{
                 options.setPref("browser.startup.page", 1); // start with default homepage session
 
             if (force)
-                service["appStartup"].quit(Ci.nsIAppStartup.eForceQuit);
+                services.get("appStartup").quit(Ci.nsIAppStartup.eForceQuit);
             else
                 window.goQuitApplication();
         },
@@ -1183,24 +1180,24 @@ const liberator = (function () //{{{
         {
             // notify all windows that an application quit has been requested.
             var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-            service["observer"].notifyObservers(cancelQuit, "quit-application-requested", null);
+            services.get("observer").notifyObservers(cancelQuit, "quit-application-requested", null);
 
             // something aborted the quit process.
             if (cancelQuit.data)
                 return;
 
             // notify all windows that an application quit has been granted.
-            service["observer"].notifyObservers(null, "quit-application-granted", null);
+            services.get("observer").notifyObservers(null, "quit-application-granted", null);
 
             // enumerate all windows and call shutdown handlers
-            let windows = service["windowMediator"].getEnumerator(null);
+            let windows = services.get("windowMediator").getEnumerator(null);
             while (windows.hasMoreElements())
             {
                 let win = windows.getNext();
                 if (("tryToClose" in win) && !win.tryToClose())
                     return;
             }
-            service["appStartup"].quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
+            services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
         },
 
         // TODO: move to {muttator,vimperator,...}.js
@@ -1227,10 +1224,10 @@ const liberator = (function () //{{{
 
             try
             {
-                let infoPath = service.getFile();
+                let infoPath = services.create("file");
                 infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
                 infoPath.append("info");
-                infoPath.append(service["profile"].selectedProfile.name);
+                infoPath.append(services.get("profile").selectedProfile.name);
                 storage.infoPath = infoPath;
             }
             catch (e)
@@ -1279,7 +1276,7 @@ const liberator = (function () //{{{
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                let init = service["environment"].get(config.name.toUpperCase() + "_INIT");
+                let init = services.get("environment").get(config.name.toUpperCase() + "_INIT");
                 if (init)
                     liberator.execute(init);
                 else
@@ -1336,7 +1333,7 @@ const liberator = (function () //{{{
 
         sleep: function (delay)
         {
-            let mainThread = service["threadManager"].mainThread;
+            let mainThread = services.get("threadManager").mainThread;
 
             let end = Date.now() + delay;
             while (Date.now() < end)
@@ -1346,8 +1343,8 @@ const liberator = (function () //{{{
 
         callInMainThread: function (callback, self)
         {
-            let mainThread = service["threadManager"].mainThread;
-            if (!service["threadManager"].isMainThread)
+            let mainThread = services.get("threadManager").mainThread;
+            if (!services.get("threadManager").isMainThread)
                 mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
             else
                 callback.call(self);
@@ -1355,7 +1352,7 @@ const liberator = (function () //{{{
 
         threadYield: function (flush, interruptable)
         {
-            let mainThread = service["threadManager"].mainThread;
+            let mainThread = services.get("threadManager").mainThread;
             liberator.interrupted = false;
             do
             {
@@ -1395,7 +1392,7 @@ const liberator = (function () //{{{
         get windows()
         {
             let windows = [];
-            let enumerator = service["windowMediator"].getEnumerator("navigator:browser");
+            let enumerator = services.get("windowMediator").getEnumerator("navigator:browser");
             while (enumerator.hasMoreElements())
                 windows.push(enumerator.getNext());
 

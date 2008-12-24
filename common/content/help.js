@@ -5,7 +5,7 @@ const win = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
 const liberator = win.liberator;
 
 let page = liberator.findHelp(decodeURIComponent(document.location.search.substr(1)));
-let url = "chrome://liberator/locale/" + page;
+let url = page ? "chrome://liberator/locale/" + page : content.history.previous;
 
 win.getBrowser().loadURIWithFlags(url, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY, null, null, null);
 

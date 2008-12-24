@@ -752,8 +752,8 @@ function Buffer() //{{{
         {
             try
             {
-                var cacheEntryDescriptor = service["cache"].createSession(proto, 0, true)
-                                                           .openCacheEntry(cacheKey, ACCESS_READ, false);
+                var cacheEntryDescriptor = services.get("cache").createSession(proto, 0, true)
+                                                   .openCacheEntry(cacheKey, ACCESS_READ, false);
                 break;
             }
             catch (e) {}
@@ -1009,7 +1009,7 @@ function Buffer() //{{{
             if (elemTagName == "frame" || elemTagName == "iframe")
             {
                 elem.contentWindow.focus();
-                return false;
+                return;
             }
 
             elem.focus();
@@ -1110,7 +1110,7 @@ function Buffer() //{{{
             if (localName == "frame" || localName == "iframe") // broken?
             {
                 elem.contentWindow.focus();
-                return false;
+                return;
             }
             else if (localName == "area") // for imagemap
             {

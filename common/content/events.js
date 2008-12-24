@@ -1143,7 +1143,7 @@ function Events() //{{{
                 }
 
                 urlbar = document.getElementById("urlbar");
-                if (focus == null && urlbar && urlbar.inputField == lastFocus)
+                if (elem == null && urlbar && urlbar.inputField == lastFocus)
                     liberator.threadYield(true);
 
                 if (liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.MESSAGE | modes.VISUAL))
@@ -1644,8 +1644,8 @@ function Events() //{{{
         prefObserver: {
             register: function ()
             {
-                this._branch = service["pref"].getBranch("") // better way to monitor all changes?
-                                              .QueryInterface(Ci.nsIPrefBranch2);
+                // better way to monitor all changes?
+                this._branch = services.get("pref").getBranch("").QueryInterface(Ci.nsIPrefBranch2);
                 this._branch.addObserver("", this, false);
             },
 

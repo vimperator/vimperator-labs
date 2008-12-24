@@ -127,26 +127,38 @@ const config = { //{{{
 
     init: function ()
     {
-        // TODO: support 'nrformats'?
+        // TODO: support 'nrformats'? -> probably not worth it --mst
         function incrementURL(count)
         {
             let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
-
             if (!matches)
             {
                 liberator.beep();
                 return;
             }
 
-            [, pre, number, post] = matches;
+            let [, pre, number, post] = matches;
             let newNumber = parseInt(number, 10) + count;
+            let newNumberStr = String(newNumber > 0 ? newNumber : 0);
+            if (number.match(/^0/)) // add 0009<C-a> should become 0010
+            {
+                while (newNumberStr.length < number.length)
+                    newNumberStr = "0" + newNumberStr;
+            }
 
-            liberator.open(pre + (newNumber > 0 ? newNumber : 0) + post);
+            liberator.open(pre + newNumberStr + post);
         }
 
         // load Vimperator specific modules
         // FIXME: Why aren't these listed in config.scripts?
-        // FIXME: Why isn't this automatic?
+        // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
+        //      Something like:
+        //          liberator.addModule("search", function Search() { ...
+        //      for all modules, or something similar. For modules which
+        //      require other modules, well, there's addObserver("load_foo",
+        //      or we could just make sure that they're all sourced in order.
+        //      The scripts could even just instantiate them themselves.
+        //        --Kris
         liberator.loadModule("search",     Search);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
@@ -162,7 +174,7 @@ const config = { //{{{
         let img = Image();
         img.src = "chrome://vimperator/content/vimperator.png";
         img.onload = function () {
-            styles.addSheet("logo", "chrome://liberator/locale/*",
+            styles.addSheet(true, "logo", "chrome://liberator/locale/*",
                 ".vimperator-logo {" + <>
                      display:    inline-block;
                      background: url({img.src});
@@ -418,13 +430,15 @@ const config = { //{{{
             {
                 setter: function (value)
                 {
-                    service.io.offline = !value;
-                    gPrefService.setBoolPref("browser.offline", service.io.offline);
+                    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService2);
+                    ioService.offline = !value;
+                    gPrefService.setBoolPref("browser.offline", ioService.offline);
                     return value;
                 },
                 getter: function ()
                 {
-                    return service.io.offline;
+                    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService2);
+                    return ioService.offline;
                 }
             });
 

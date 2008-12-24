@@ -121,6 +121,7 @@ const util = { //{{{
      * Returns a shallow copy of <b>obj</b>.
      *
      * @param {Object} obj
+     * @returns {Object}
      */
     cloneObject: function cloneObject(obj)
     {
@@ -333,6 +334,12 @@ const util = { //{{{
         for (let i in Iterator(obj))
             ary.push(fn(i));
         return ary;
+    },
+
+    newURI: function (url)
+    {
+        const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        return ioService.newURI(url, null, null);
     },
 
     // if color = true it uses HTML markup to color certain items

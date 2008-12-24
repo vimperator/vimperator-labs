@@ -28,26 +28,26 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
-if (liberator.options.getPref("extensions.vimperator.commandline_cmd_history"))
-{
-    // Try to import older command line history, quick marks, etc.
-    liberator.registerObserver("load_options", function () {
-        let store = liberator.storage["history-command"];
-        let pref  = liberator.options.getPref("extensions.vimperator.commandline_cmd_history");
-        for (let [k, v] in Iterator(pref.split("\n")))
-            store.push(v);
+// Try to import older command line history, quick marks, etc.
+liberator.registerObserver("load_options", function () {
+    if (!options.getPref("extensions.vimperator.commandline_cmd_history"))
+        return;
 
-        store = liberator.storage["quickmarks"];
-        pref = liberator.options.getPref("extensions.vimperator.quickmarks")
-                        .split("\n");
-        while (pref.length > 0)
-            store.set(pref.shift(), pref.shift());
+    let store = storage["history-command"];
+    let pref  = options.getPref("extensions.vimperator.commandline_cmd_history");
+    for (let [k, v] in Iterator(pref.split("\n")))
+        store.push(v);
 
-        liberator.options.resetPref("extensions.vimperator.commandline_cmd_history");
-        liberator.options.resetPref("extensions.vimperator.commandline_search_history");
-        liberator.options.resetPref("extensions.vimperator.quickmarks");
-    });
-}
+    store = storage["quickmarks"];
+    pref = options.getPref("extensions.vimperator.quickmarks")
+                    .split("\n");
+    while (pref.length > 0)
+        store.set(pref.shift(), pref.shift());
+
+    options.resetPref("extensions.vimperator.commandline_cmd_history");
+    options.resetPref("extensions.vimperator.commandline_search_history");
+    options.resetPref("extensions.vimperator.quickmarks");
+});
 
 // also includes methods for dealing with keywords and search engines
 function Bookmarks() //{{{
@@ -59,8 +59,6 @@ function Bookmarks() //{{{
     const historyService   = PlacesUtils.history;
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
-    const searchService    = service.browserSearch;
-    const ioService        = service.io;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
@@ -77,8 +75,8 @@ function Bookmarks() //{{{
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
         const sleep = liberator.sleep;
 
-        var bookmarks = [];
-        var self = this;
+        let bookmarks = [];
+        let self = this;
 
         this.__defineGetter__("name",  function () name);
         this.__defineGetter__("store", function () store);
@@ -91,11 +89,14 @@ function Bookmarks() //{{{
 
         function loadBookmark(node)
         {
-            let uri = ioService.newURI(node.uri, null, null);
+            let uri = util.newURI(node.uri);
             let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
             let tags = taggingService.getTagsForURI(uri, {}) || [];
+            let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
-            return bookmarks.push(new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId));
+            bookmarks.push(bmark);
+
+            return bmark;
         }
 
         function readBookmark(id)
@@ -109,7 +110,7 @@ function Bookmarks() //{{{
 
         function deleteBookmark(id)
         {
-            var length = bookmarks.length;
+            let length = bookmarks.length;
             bookmarks = bookmarks.filter(function (item) item.id != id);
             return bookmarks.length < length;
         }
@@ -195,11 +196,11 @@ function Bookmarks() //{{{
                 if (isAnnotation)
                     return;
                 // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
-                var bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
+                let bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
                 if (bookmark)
                 {
                     if (property == "tags")
-                        value = taggingService.getTagsForURI(ioService.newURI(bookmark.url, null, null), {});
+                        value = taggingService.getTagsForURI(util.newURI(bookmark.url), {});
                     if (property in bookmark)
                         bookmark[property] = value;
                     storage.fireEvent(name, "change", itemId);
@@ -220,7 +221,7 @@ function Bookmarks() //{{{
     {
         try
         {
-            return faviconService.getFaviconImageForPage(ioService.newURI(uri, null, null)).spec;
+            return faviconService.getFaviconImageForPage(util.newURI(uri)).spec;
         }
         catch (e)
         {
@@ -277,7 +278,7 @@ function Bookmarks() //{{{
         "Open a prompt to bookmark the current URL",
         function ()
         {
-            var title = "";
+            let title = "";
             if (buffer.title != buffer.URL)
                 title = " -title=\"" + buffer.title + "\"";
             commandline.open(":", "bmark " + buffer.URL + title, modes.EX);
@@ -295,7 +296,7 @@ function Bookmarks() //{{{
         "Show jumplist",
         function ()
         {
-            var sh = window.getWebNavigation().sessionHistory;
+            let sh = window.getWebNavigation().sessionHistory;
 
             let entries = [sh.getEntryAtIndex(i, false) for (i in util.range(0, sh.count))];
             let list = template.jumps(sh.index, entries);
@@ -338,10 +339,10 @@ function Bookmarks() //{{{
         "Add a bookmark",
         function (args)
         {
-            var url = args.length == 0 ? buffer.URL : args[0];
-            var title = args["-title"] || (args.length == 0 ? buffer.title : null);
-            var keyword = args["-keyword"] || null;
-            var tags =    args["-tags"] || [];
+            let url = args.length == 0 ? buffer.URL : args[0];
+            let title = args["-title"] || (args.length == 0 ? buffer.title : null);
+            let keyword = args["-keyword"] || null;
+            let tags =    args["-tags"] || [];
 
             if (bookmarks.add(false, title, url, keyword, tags, args.bang))
             {
@@ -427,7 +428,7 @@ function Bookmarks() //{{{
         {
             try
             {
-                var uri = util.createURI(url);
+                let uri = util.createURI(url);
                 if (!force)
                 {
                     for (let bmark in cache)
@@ -467,15 +468,15 @@ function Bookmarks() //{{{
             if (!url)
                 return;
 
-            var count = this.remove(url);
+            let count = this.remove(url);
             if (count > 0)
             {
                 commandline.echo("Removed bookmark: " + url, commandline.HL_NORMAL, commandline.FORCE_SINGLELINE);
             }
             else
             {
-                var title = buffer.title || url;
-                var extra = "";
+                let title = buffer.title || url;
+                let extra = "";
                 if (title != url)
                     extra = " (" + title + ")";
                 this.add(true, title, url);
@@ -487,7 +488,7 @@ function Bookmarks() //{{{
         {
             try
             {
-                var uri = ioService.newURI(url, null, null);
+                let uri = util.newURI(url);
                 return (bookmarksService.getBookmarkedURIFor(uri) != null);
             }
             catch (e)
@@ -502,12 +503,12 @@ function Bookmarks() //{{{
             if (!url)
                 return 0;
 
-            var i = 0;
+            let i = 0;
             try
             {
-                var uri = ioService.newURI(url, null, null);
+                let uri = util.newURI(url);
                 var count = {};
-                var bmarks = bookmarksService.getBookmarkIdsForURI(uri, count);
+                let bmarks = bookmarksService.getBookmarkIdsForURI(uri, count);
 
                 for (; i < bmarks.length; i++)
                     bookmarksService.removeItem(bmarks[i]);
@@ -530,18 +531,18 @@ function Bookmarks() //{{{
         // also ensures that each search engine has a Vimperator-friendly alias
         getSearchEngines: function getSearchEngines()
         {
-            var searchEngines = [];
-            var firefoxEngines = searchService.getVisibleEngines({});
+            let searchEngines = [];
+            let firefoxEngines = services.get("browserSearch").getVisibleEngines({});
             for (let [,engine] in Iterator(firefoxEngines))
             {
-                var alias = engine.alias;
+                let alias = engine.alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))
                     alias = engine.name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
                 if (!alias)
                     alias = "search"; // for search engines which we can't find a suitable alias
 
                 // make sure we can use search engines which would have the same alias (add numbers at the end)
-                var newAlias = alias;
+                let newAlias = alias;
                 for (let j = 1; j <= 10; j++) // <=10 is intentional
                 {
                     if (!searchEngines.some(function (item) item[0] == newAlias))
@@ -553,7 +554,7 @@ function Bookmarks() //{{{
                 if (engine.alias != newAlias)
                     engine.alias = newAlias;
 
-                searchEngines.push([engine.alias, engine.description, engine.iconURI.spec]);
+                searchEngines.push([engine.alias, engine.description, engine.iconURI && engine.iconURI.spec]);
             }
 
             return searchEngines;
@@ -561,10 +562,9 @@ function Bookmarks() //{{{
 
         getSuggestions: function getSuggestions(engineName, query, callback)
         {
-            let ss = service.browserSearch;
             const responseType = "application/x-suggestions+json";
 
-            let engine = ss.getEngineByAlias(engineName);
+            let engine = services.get("browserSearch").getEngineByAlias(engineName);
             if (engine && engine.supportsResponseType(responseType))
                 var queryURI = engine.getSubmission(query, responseType).uri.spec;
             if (!queryURI)
@@ -572,11 +572,10 @@ function Bookmarks() //{{{
 
             function process(resp)
             {
-                const json = service.json;
                 let results = [];
                 try
                 {
-                    results = json.decode(resp.responseText)[1];
+                    results = services.get("json").decode(resp.responseText)[1];
                     results = [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
                 }
                 catch (e) {}
@@ -604,9 +603,9 @@ function Bookmarks() //{{{
         //          if the search also requires a postData, [url, postData] is returned
         getSearchURL: function getSearchURL(text, useDefsearch)
         {
-            var url = null;
-            var aPostDataRef = {};
-            var searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
+            let url = null;
+            let aPostDataRef = {};
+            let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
@@ -703,7 +702,7 @@ function History() //{{{
             {
                 if (args)
                 {
-                    var sh = window.getWebNavigation().sessionHistory;
+                    let sh = window.getWebNavigation().sessionHistory;
                     for (let i = sh.index - 1; i >= 0; i--)
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
@@ -749,7 +748,7 @@ function History() //{{{
             {
                 if (args)
                 {
-                    var sh = window.getWebNavigation().sessionHistory;
+                    let sh = window.getWebNavigation().sessionHistory;
                     for (let i in util.range(sh.index + 1, sh.count))
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == args)
@@ -962,7 +961,7 @@ function QuickMarks() //{{{
         "Mark a URL with a letter for quick access",
         function (args)
         {
-            var matches = args.string.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
+            let matches = args.string.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
             if (!matches)
                 liberator.echoerr("E488: Trailing characters");
             else if (!matches[2])
@@ -985,7 +984,7 @@ function QuickMarks() //{{{
                 return;
             }
 
-            var filter = args.replace(/[^a-zA-Z0-9]/g, "");
+            let filter = args.replace(/[^a-zA-Z0-9]/g, "");
             quickmarks.list(filter);
         });
 
@@ -1003,7 +1002,7 @@ function QuickMarks() //{{{
 
         remove: function remove(filter)
         {
-            var pattern = RegExp("[" + filter.replace(/\s+/g, "") + "]");
+            let pattern = RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
             for (let [qmark,] in qmarks)
             {
@@ -1019,7 +1018,7 @@ function QuickMarks() //{{{
 
         jumpTo: function jumpTo(qmark, where)
         {
-            var url = qmarks.get(qmark);
+            let url = qmarks.get(qmark);
 
             if (url)
                 liberator.open(url, where);
@@ -1029,11 +1028,11 @@ function QuickMarks() //{{{
 
         list: function list(filter)
         {
-            var marks = [key for ([key, val] in qmarks)];
+            let marks = [key for ([key, val] in qmarks)];
             // This was a lot nicer without the lambda...
-            var lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
-            var uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();
-            var numberMarks    = marks.filter(function (x) /[0-9]/.test(x)).sort();
+            let lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
+            let uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();
+            let numberMarks    = marks.filter(function (x) /[0-9]/.test(x)).sort();
 
             marks = Array.concat(lowercaseMarks, uppercaseMarks, numberMarks);
 

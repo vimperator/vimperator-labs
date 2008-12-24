@@ -149,7 +149,7 @@ Command.prototype = {
      *     executed with a trailing !.
      * @param {number} count @deprecated Whether this command was
      *     executed a leading count.
-     * @param modifiers Any modifiers to be passed to 
+     * @param modifiers Any modifiers to be passed to
      *     {@link action}
      */
     execute: function (args, bang, count, modifiers)
@@ -856,7 +856,7 @@ function Commands() //{{{
                             return completer.apply(this, Array.slice(arguments));
                         }
                     }
-                    else 
+                    else
                     {
                         completeFunc = function () completion[completeOptionMap[completeOpt]].apply(this, Array.slice(arguments));
                     }
@@ -923,7 +923,8 @@ function Commands() //{{{
                 [["-bang"], commandManager.OPTION_NOARG],
                 [["-count"], commandManager.OPTION_NOARG],
                 [["-complete"], commandManager.OPTION_STRING,
-                     function (arg) arg in completeOptionMap || /custom,\w+/.test(arg)]
+                     function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
+                     function (context) [[k, ''] for ([k, v] in Iterator(completeOptionMap))]]
             ],
             literal: 1,
             serial: function () [
