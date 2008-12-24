@@ -944,7 +944,7 @@ IO.expandPath = function (path, relative)
     path = expand(path);
 
     // expand ~
-    if (!relative && (WINDOWS ? /^~(?:$|\\)/ : /^~(?:$|\/)/).test(path))
+    if (!relative && (WINDOWS ? /^~(?:$|[\\\/])/ : /^~(?:$|\/)/).test(path))
     {
         // Try $HOME first, on all systems
         let home = services.get("environment").get("HOME");
@@ -961,9 +961,10 @@ IO.expandPath = function (path, relative)
     // after, but doesn't document it. Is this just a bug? --Kris
     path = expand(path);
 
-    // FIXME: Should we be doing this here? I think it should be done
-    // by the arg parser or nowhere. --Kris
-    return path.replace("\\ ", " ", "g");
+    if (WINDOWS)
+        path = path.replace("/", "\\", "g");
+
+    return path;
 };
 
 // vim: set fdm=marker sw=4 ts=4 et:

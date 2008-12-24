@@ -1225,6 +1225,7 @@ const liberator = (function () //{{{
             try
             {
                 let infoPath = services.create("file");
+                liberator.dump("'rtp': " + IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
                 infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
                 infoPath.append("info");
                 infoPath.append(services.get("profile").selectedProfile.name);
