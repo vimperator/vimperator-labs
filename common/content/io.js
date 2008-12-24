@@ -104,12 +104,7 @@ function IO() //{{{
                        .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
     }
 
-    function replacePathSep(path)
-    {
-        if (WINDOWS)
-            return path.replace("/", "\\");
-        return path;
-    }
+    function replacePathSep(path) path.replace("/", IO.PATH_SEP, "g");
 
     function joinPaths(head, tail)
     {
@@ -272,7 +267,7 @@ function IO() //{{{
         function (args)
         {
             // TODO: "E172: Only one file name allowed"
-            let filename = args[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
+            let filename = args[0] || io.getRCFile(null, true).path;
             let file = io.getFile(filename);
 
             if (file.exists() && !args.bang)
@@ -404,8 +399,6 @@ function IO() //{{{
 
         sourcing: null,
 
-        pathSeparator: WINDOWS ? "\\" : "/",
-
         expandPath: IO.expandPath,
 
         // TODO: there seems to be no way, short of a new component, to change
@@ -456,7 +449,7 @@ function IO() //{{{
             return dirs;
         },
 
-        getRCFile: function (dir)
+        getRCFile: function (dir, always)
         {
             dir = dir || "~";
 
@@ -470,8 +463,9 @@ function IO() //{{{
                 return rcFile1;
             else if (rcFile2.exists() && rcFile2.isFile())
                 return rcFile2;
-            else
-                return null;
+            else if (always)
+                return rcFile1;
+            return null;
         },
 
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
@@ -921,15 +915,19 @@ lookup:
 
 }; //}}}
 
-IO.__defineGetter__("runtimePath", function () service["environment"].get(config.name.toUpperCase() + "_RUNTIME") ||
+IO.PATH_SEP = (function () {
+    let file = services.create("file");
+    file.append("foo");
+    return file.path[0];
+})();
+
+IO.__defineGetter__("runtimePath", function () services.get("environment").get(config.name.toUpperCase() + "_RUNTIME") ||
         "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase());
 
 IO.expandPath = function (path, relative)
 {
     // TODO: proper pathname separator translation like Vim - this should be done elsewhere
     const WINDOWS = liberator.has("Win32");
-    if (WINDOWS)
-        path = path.replace("/", "\\", "g");
 
     // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
     // TODO: Vim does not expand variables set to an empty string (and documents it).
@@ -959,10 +957,7 @@ IO.expandPath = function (path, relative)
     // TODO: Vim expands paths twice, once before checking for ~, once
     // after, but doesn't document it. Is this just a bug? --Kris
     path = expand(path);
-
-    // FIXME: Should we be doing this here? I think it should be done
-    // by the arg parser or nowhere. --Kris
-    return path.replace("\\ ", " ", "g");
+    return path.replace("/", IO.PATH_SEP, "g");
 };
 
 // vim: set fdm=marker sw=4 ts=4 et:
