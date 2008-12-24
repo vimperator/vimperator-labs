@@ -61,6 +61,9 @@ function Bookmarks() //{{{
     const taggingService   = PlacesUtils.tagging;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
+    // XXX for strange firefox bug :(
+    taggingService.getTagsForURI(makeURI('http://mysterious.bug'), {});
+
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");
     Bookmark.defaultValue("icon", function () getFavicon(this.url));
