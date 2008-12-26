@@ -804,7 +804,7 @@ lookup:
                 {
                     let heredoc = "";
                     let heredocEnd = null; // the string which ends the heredoc
-                    let lines = str.split("\n");
+                    let lines = str.split(/\r\n|[\r\n]/);
 
                     for (let [i, line] in Iterator(lines))
                     {
