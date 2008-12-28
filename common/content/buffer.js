@@ -1457,7 +1457,7 @@ function Marks() //{{{
         return name + ", " + mark.location +
                 ", (" + Math.round(mark.position.x * 100) +
                 "%, " + Math.round(mark.position.y * 100) + "%)" +
-                (('tab' in mark) ? ", tab: " + tabs.index(mark.tab) : "");
+                (("tab" in mark) ? ", tab: " + tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)
