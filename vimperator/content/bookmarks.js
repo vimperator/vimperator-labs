@@ -419,7 +419,7 @@ function Bookmarks() //{{{
         get format() ({
             anchored: false,
             title: ["URL", "Info"],
-            keys: { text: "url", description: "title", icon: "icon", extra: "extra" },
+            keys: { text: "url", description: "title", icon: "icon", extra: "extra", tags: "tags" },
             process: [template.icon, template.bookmarkDescription]
         }),
 
