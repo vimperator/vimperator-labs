@@ -62,7 +62,12 @@ function Bookmarks() //{{{
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
     // XXX for strange firefox bug :(
-    taggingService.getTagsForURI(makeURI('http://mysterious.bug'), {});
+    // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
+    //     nsresult: "0x8000ffff (NS_ERROR_UNEXPECTED)"
+    //     location: "JS frame :: file://~firefox/components/nsTaggingService.js :: anonymous :: line 89"
+    //     data: no]                                                                                                                                                 
+    // Source file: file://~firefox/components/nsTaggingService.js 
+    taggingService.getTagsForURI(window.makeURI("http://mysterious.bug"), {});
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");

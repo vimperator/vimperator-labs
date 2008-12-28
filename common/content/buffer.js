@@ -569,12 +569,9 @@ function Buffer() //{{{
                 let file = io.getFile(filename);
 
                 if (file.exists() && !args.bang)
-                {
-                    liberator.echoerr("E13: File exists (add ! to override)");
-                    return;
-                }
+                    return void liberator.echoerr("E13: File exists (add ! to override)");
 
-                chosenData = { file: file, uri: makeURI(doc.location.href, doc.characterSet) };
+                chosenData = { file: file, uri: window.makeURI(doc.location.href, doc.characterSet) };
             }
 
             // if browser.download.useDownloadDir = false then the "Save As"
