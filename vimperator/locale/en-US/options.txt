@@ -253,7 +253,7 @@ raw [[arg]].
 ____
 
 
-|\'editor'| |i_<Ctrl-i>|
+|\'editor'| |<C-i>|
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
