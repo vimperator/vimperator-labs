@@ -65,16 +65,16 @@ function Bookmarks() //{{{
     // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
     //     nsresult: "0x8000ffff (NS_ERROR_UNEXPECTED)"
     //     location: "JS frame :: file://~firefox/components/nsTaggingService.js :: anonymous :: line 89"
-    //     data: no]                                                                                                                                                 
-    // Source file: file://~firefox/components/nsTaggingService.js 
+    //     data: no]
+    // Source file: file://~firefox/components/nsTaggingService.js
     taggingService.getTagsForURI(window.makeURI("http://mysterious.bug"), {});
 
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");
     Bookmark.defaultValue("icon", function () getFavicon(this.url));
     Bookmark.prototype.__defineGetter__("extra", function () [
-                            ['keyword', this.keyword,         "Keyword"],
-                            ['tags',    this.tags.join(', '), "Tag"]
+                            ["keyword", this.keyword,         "Keyword"],
+                            ["tags",    this.tags.join(", "), "Tag"]
                         ].filter(function (item) item[1]));
 
     const storage = modules.storage;

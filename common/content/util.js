@@ -452,8 +452,8 @@ const util = { //{{{
 
         try
         {
-            const clipboard = Cc['@mozilla.org/widget/clipboard;1'].getService(Ci.nsIClipboard);
-            const transferable = Cc['@mozilla.org/widget/transferable;1'].createInstance(Ci.nsITransferable);
+            const clipboard = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
+            const transferable = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
 
             transferable.addDataFlavor("text/unicode");
 

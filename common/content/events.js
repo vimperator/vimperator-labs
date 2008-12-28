@@ -298,7 +298,7 @@ function Events() //{{{
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
-    var macros = storage.newMap('macros', true);
+    var macros = storage.newMap("macros", true);
 
     var currentMacro = "";
     var lastMacro = "";
