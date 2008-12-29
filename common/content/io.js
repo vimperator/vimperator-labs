@@ -949,7 +949,7 @@ IO.expandPath = function (path, relative)
         // Try $HOME first, on all systems
         let home = services.get("environment").get("HOME");
 
-        // Windows has its own ideosyncratic $HOME variables.
+        // Windows has its own idiosyncratic $HOME variables.
         if (!home && WINDOWS)
             home = services.get("environment").get("USERPROFILE") ||
                    services.get("environment").get("HOMEDRIVE") + services.get("environment").get("HOMEPATH");
