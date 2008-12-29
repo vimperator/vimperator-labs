@@ -1338,6 +1338,7 @@ function Completion() //{{{
             context.completions = config.autocommands;
         },
 
+        // TODO: shouldn't these app-specific completers be moved to config.js? --djk
         bookmark: function bookmark(context, tags, extra)
         {
             context.title = ["Bookmark", "Title"];

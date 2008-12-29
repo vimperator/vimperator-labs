@@ -805,7 +805,7 @@ function Events() //{{{
             {
                 if (lastMacro.length == 1)
                     // TODO: ignore this like Vim?
-                    liberator.echoerr("Exxx: Register " + lastMacro + " not set");
+                    liberator.echoerr("Exxx: Register '" + lastMacro + "' not set");
                 else
                     liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
             }
