@@ -209,8 +209,9 @@ Define when tabs are automatically activated. Available items:
 ____
 
 
+|$CDPATH|
 |\'cd'| |\'cdpath'|
-||'cdpath' 'cd'|| string (default: black)
+||'cdpath' 'cd'|| string (default: equivalent to $CDPATH or ",,")
 ____
 List of directories searched when executing the :cd command. This is only used
 for relative paths, if an absolute path is specified then the option is
