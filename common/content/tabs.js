@@ -44,12 +44,12 @@ function Tabs() //{{{
             {
                 if (!tabmail)
                 {
-                    tabmail = document.getElementById('tabmail');
-                    tabmail.__defineGetter__('mTabContainer', function () this.tabContainer);
-                    tabmail.__defineGetter__('mTabs', function () this.tabContainer.childNodes);
-                    tabmail.__defineGetter__('mCurrentTab', function () this.tabContainer.selectedItem);
-                    tabmail.__defineGetter__('mStrip', function () this.tabStrip);
-                    tabmail.__defineGetter__('browsers', function () [browser for (browser in Iterator(this.mTabs))] );
+                    tabmail = document.getElementById("tabmail");
+                    tabmail.__defineGetter__("mTabContainer", function () this.tabContainer);
+                    tabmail.__defineGetter__("mTabs", function () this.tabContainer.childNodes);
+                    tabmail.__defineGetter__("mCurrentTab", function () this.tabContainer.selectedItem);
+                    tabmail.__defineGetter__("mStrip", function () this.tabStrip);
+                    tabmail.__defineGetter__("browsers", function () [browser for (browser in Iterator(this.mTabs))] );
                 }
                 return tabmail;
             };
@@ -123,7 +123,7 @@ function Tabs() //{{{
                 let tabStrip = tabs.tabStrip;
 
                 if (!tabStrip)
-                    return options['showtabline']; // XXX
+                    return options["showtabline"]; // XXX
 
                 if (value == 0)
                 {

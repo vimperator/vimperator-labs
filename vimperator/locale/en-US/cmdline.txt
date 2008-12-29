@@ -66,7 +66,7 @@ section:Command-line{nbsp}completion[cmdline-completion]
 ||<Tab>||
 ________________________________________________________________________________
 Complete the word in front of the cursor according to the behavior specified in
-'wildmode'.  If 'wildmode' contains "list" and there are multiple matches then
+'wildmode'. If 'wildmode' contains "list" and there are multiple matches then
 the completion menu window is opened.
 ________________________________________________________________________________
 

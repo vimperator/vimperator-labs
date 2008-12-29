@@ -6,7 +6,7 @@ HEADER
 ||:ha[rdcopy][!]||
 ________________________________________________________________________________
 Print current document. Open a GUI dialog where you can select the printer,
-number of copies, orientation, etc.  When used with [!], the dialog is skipped
+number of copies, orientation, etc. When used with [!], the dialog is skipped
 and the default printer used.
 ________________________________________________________________________________
 

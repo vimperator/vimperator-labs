@@ -8,7 +8,7 @@ http://www.methods.co.nz/asciidoc/index.html[asciidoc] version 8.x or
 newer. The are placed in the _src/locale/en-US/_ directory and compiled with
 _make doc_. Please refer to the
 http://www.methods.co.nz/asciidoc/userguide.html[asciidoc documentation] above
-for details.  Usually you can just write text as is, and mostly it will be
+for details. Usually you can just write text as is, and mostly it will be
 interpreted correctly. The only difficult part is to write special sections
 like for help::help[various.html#online-help].
 
@@ -53,10 +53,11 @@ Some notes about the code above:
 - The actual help code for this command is embedded in at least 4 underscores
   (_). This generates a quoteblock and indents the text so it is more clear
   that it belongs to the command.
-- Wrap things in *$$[c]$$* and they are drawn like a :command. Also *$$[o]$$*
-  and *$$[m]$$* are available to show options and mappings.
-- Any string within \{...\} and $$[arg]$$, $$[url]$$, $$[count]$$ and $$[!]$$ are
-  automatically drawn in a blue color.
+- Wrap things in *$$[c]$$* and they are drawn like a :command. Also *$$[o]$$*,
+  *$$[m]$$* and *$$[a]$$* are available to markup options, mappings, and
+  arguments.
+- As a convenience, any string within \{...\} and $$[count]$$ and $$[!]$$ are
+  automatically marked up as an argument.
 
 There are also some additional asciidoc commands specifically for writing
 Vimperator documentation:

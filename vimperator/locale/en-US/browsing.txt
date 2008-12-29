@@ -30,7 +30,7 @@ ________________________________________________________________________________
 section:Opening{nbsp}web{nbsp}pages[opening]
 
 |o| |:o| |:open|
-||:o[pen][!] [arg1], [arg2], ...|| +
+||:o[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
 ||o||
 ________________________________________________________________________________
 Open one or more URLs in the current tab.
@@ -65,7 +65,7 @@ ________________________________________________________________________________
 
 
 |t| |:t| |:tabopen| |:tabnew| |:tabe| |:tabedit|
-||:tabopen[!] [arg1], [arg2], ...|| +
+||:tabopen[!] [a][arg1][a], [a][arg2][a], ...|| +
 ||t||
 ________________________________________________________________________________
 Just like [c]:open[c], but opens the resulting web page(s)
@@ -100,7 +100,7 @@ ________________________________________________________________________________
 
 
 |:winopen| |:wopen| |:winedit|
-||:wino[pen][!] [arg1], [arg2], ...|| +
+||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
 ________________________________________________________________________________
 Just like help::open[browsing.html#opening], but opens the resulting web page(s)
 in a new window.
@@ -274,11 +274,10 @@ ________________________________________________________________________________
 section:Writing[writing,save-file]
 
 |:w| |:write| |:sav| |:saveas| +
-||:sav[eas][!] [file]||
+||:sav[eas][!] [a][file][a]||
 ________________________________________________________________________________
-Save current web page to disk. If [file] is omitted, save to the page's
-default filename. Existing documents will only be overwritten if [!] is
-given.
+Save current web page to disk. If [a][file][a] is omitted, save to the page's
+default filename. Existing documents will only be overwritten if [!] is given.
 ________________________________________________________________________________
 
 section:Quitting[quitting,save-session]

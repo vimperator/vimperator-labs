@@ -57,18 +57,18 @@ ________________________________________________________________________________
 
 
 |:doautoa| |:doautoall|
-||:doautoa[ll] {event} [url]|| +
+||:doautoa[ll] {event} [a][url][a]|| +
 ________________________________________________________________________________
-Apply the autocommands matching the specified URL to all buffers. If no [url]
-is specified use the current URL.
+Apply the autocommands matching the specified URL to all buffers. If no
+[a][url][a] is specified use the current URL.
 ________________________________________________________________________________
 
 
 |:do| |:doautocmd|
-||:do[autocmd] {event} [url]|| +
+||:do[autocmd] {event} [a][url][a]|| +
 ________________________________________________________________________________
 Apply the autocommands matching the specified URL to the current buffer. If no
-[url] is specified use the current URL.
+[a][url][a] is specified use the current URL.
 ________________________________________________________________________________
 
 section:Examples[autocmd-examples]

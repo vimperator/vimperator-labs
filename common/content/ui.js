@@ -95,7 +95,7 @@ function CommandLine() //{{{
             let str = this.input.value;
             if (/^\s*$/.test(str))
                 return;
-            this.store.mutate('filter', function (line) line != str);
+            this.store.mutate("filter", function (line) line != str);
             this.store.push(str);
             this.store.truncate(options["history"], true);
         },

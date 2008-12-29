@@ -9,3 +9,4 @@ let url = page ? "chrome://liberator/locale/" + page : content.history.previous;
 
 win.getBrowser().loadURIWithFlags(url, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY, null, null, null);
 
+// vim: set fdm=marker sw=4 ts=4 et:

@@ -15,7 +15,7 @@ Vimperator supports a number of different marks:
 section:Bookmarks[bookmarks]
 
 |a| |:bma| |:bmark|
-||:bma[rk][!] [-title=title] [-keyword=kw] [-tags=tag1,tag2] [url]|| +
+||:bma[rk][!] [a][-title=title][a] [a][-keyword=kw][a] [a][-tags=tag1,tag2][a] [a][url][a]|| +
 ||a||
 ____________________________________________________________________________
 Add a bookmark. +
@@ -27,12 +27,12 @@ The following options are interpreted:
 - -keyword=keyword (short option: -k)
 
 If [!] is present, a new bookmark is always added. Otherwise, the first
-bookmark matching [url] is updated.
+bookmark matching [a][url][a] is updated.
 
 When creating a new bookmark, if [a][-title][a] isn't given, either the web
-page's title or URL is used. You can omit the optional [url] argument, so just
-do [c]:bmark[c] to bookmark the currently loaded web page with a default title
-and without any tags.
+page's title or URL is used. You can omit the optional [a][url][a] argument, so
+just do [c]:bmark[c] to bookmark the currently loaded web page with a default
+title and without any tags.
 ____________________________________________________________________________
 
 
@@ -47,10 +47,11 @@ ________________________________________________________________________________
 
 
 |:bmarks|
-||:bmarks[!] [filter]|| +
+||:bmarks[!] [a][filter][a]|| +
 ________________________________________________________________________________
 List or open multiple bookmarks. Open the message window at the bottom of the
-screen with all bookmarks which match [filter] either in the title or URL.
+screen with all bookmarks which match [a][filter][a] either in the title or
+URL.
 
 The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
 opens all the found bookmarks in new tabs.
@@ -62,10 +63,10 @@ ________________________________________________________________________________
 
 
 |:delbm| |:delbmarks|
-||:delbm[arks] [url]|| +
+||:delbm[arks] [a][url][a]|| +
 ________________________________________________________________________________
-Delete a bookmark. Deletes *all* bookmarks which match the [url].
-If omitted, [url] defaults to the URL of the current buffer. Use [m]<Tab>[m]
+Delete a bookmark. Deletes *all* bookmarks which match the [a][url][a]. If
+omitted, [a][url][a] defaults to the URL of the current buffer. Use [m]<Tab>[m]
 key on a string to complete the URL which you want to delete.
 
 The following options WILL be interpreted in the future:
@@ -94,40 +95,40 @@ ________________________________________________________________________________
 |<M-Left>| |<A-Left>| |H| +
 ||[count]H||
 ________________________________________________________________________________
-Go back in the browser history. Count is supported: [m]3H[m] goes back 3 steps.
+Go back in the browser history. If [count] is specified go back [count] pages.
 ________________________________________________________________________________
 
 
 |<M-Right>| |<A-Right>| |L| +
 ||[count]L||
 ________________________________________________________________________________
-Go forward in the browser history. Count is supported: [m]3L[m] goes forward 3 steps.
+Go forward in the browser history. If [count] is specified go forward [count]
+pages.
 ________________________________________________________________________________
 
 
 |:ba| |:back|
-||:[count]ba[ck][!] [url]|| +
+||:[count]ba[ck][!] [a][url][a]|| +
 ________________________________________________________________________________
-Go back in the browser history. Count is supported, [c]:3back[c] goes back 3
-pages in the browser history. +
+Go back in the browser history. If [count] is specified go back [count] pages. +
 The special version [c]:back![c] goes to the beginning of the browser history.
 ________________________________________________________________________________
 
 
 |:fw| |:fo| |:forward|
-||:[count]fo[rward][!] [url]|| +
+||:[count]fo[rward][!] [a][url][a]|| +
 ________________________________________________________________________________
-Go forward in the browser history. Count is supported, [c]:3forward[c] goes
-forward 3 pages in the browser history. The special version [c]:forward![c]
-goes to the end of the browser history.
+Go forward in the browser history. If [count] is specified go forward [count]
+pages. +
+The special version [c]:forward![c] goes to the end of the browser history.
 ________________________________________________________________________________
 
 
 |:hs| |:hist| |:history|
-||:hist[ory][!] [filter]|| +
+||:hist[ory][!] [a][filter][a]|| +
 ________________________________________________________________________________
-Show recently visited URLs. Open the message window at the bottom of the
-screen with all history items which match [filter] either in the title or URL.
+Show recently visited URLs. Open the message window at the bottom of the screen
+with all history items which match [a][filter][a] either in the title or URL.
 
 The special version [c]:history![c] works the same as [c]:history[c] except
 it opens all the found items in new tabs.
@@ -183,7 +184,7 @@ ________________________________________________________________________________
 
 
 |:qma| |:qmark|
-||:qma[rk] {a-zA-Z0-9} [url]|| +
+||:qma[rk] {a-zA-Z0-9} [a][url][a]|| +
 ________________________________________________________________________________
 Mark a URL with a letter for quick access. You can also mark whole groups like this: +
 [c]:qmark f \http://forum1.com, \http://forum2.com, imdb some artist[c]
@@ -191,9 +192,10 @@ ________________________________________________________________________________
 
 
 |:qmarks|
-||:qmarks [arg]||
+||:qmarks [a][arg][a]||
 ________________________________________________________________________________
-Show all QuickMarks. If [arg] is specified then limit the list to those QuickMarks mentioned.
+Show all QuickMarks. If [a][arg][a] is specified then limit the list to those
+QuickMarks mentioned.
 ________________________________________________________________________________
 
 section:Local{nbsp}marks[localmarks]
@@ -237,9 +239,10 @@ ________________________________________________________________________________
 
 
 |:marks| +
-||:marks [arg]||
+||:marks [a][arg][a]||
 ________________________________________________________________________________
-Show all location marks of current web page. If [arg] is specified then limit the list to those marks mentioned.
+Show all location marks of current web page. If [a][arg][a] is specified then
+limit the list to those marks mentioned.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

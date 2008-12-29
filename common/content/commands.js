@@ -924,7 +924,7 @@ function Commands() //{{{
                 [["-count"], commandManager.OPTION_NOARG],
                 [["-complete"], commandManager.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
-                     function (context) [[k, ''] for ([k, v] in Iterator(completeOptionMap))]]
+                     function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
             ],
             literal: 1,
             serial: function () [

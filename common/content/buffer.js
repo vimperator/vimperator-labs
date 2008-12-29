@@ -32,7 +32,7 @@ const Point = new Struct("x", "y");
 
 /**
  * A class to manage the primary web content buffer. The name comes
- * from vim's term, 'buffer', which signifies instances of open
+ * from Vim's term, 'buffer', which signifies instances of open
  * files.
  * @instance buffer
  */
@@ -1428,8 +1428,8 @@ function Marks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = storage.newMap('local-marks', true);
-    var urlMarks = storage.newMap('url-marks', true);
+    var localMarks = storage.newMap("local-marks", true);
+    var urlMarks = storage.newMap("url-marks", true);
 
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");
@@ -1457,7 +1457,7 @@ function Marks() //{{{
         return name + ", " + mark.location +
                 ", (" + Math.round(mark.position.x * 100) +
                 "%, " + Math.round(mark.position.y * 100) + "%)" +
-                (('tab' in mark) ? ", tab: " + tabs.index(mark.tab) : "");
+                (("tab" in mark) ? ", tab: " + tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)

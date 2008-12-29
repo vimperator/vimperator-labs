@@ -25,3 +25,4 @@ document.addEventListener("click", function (event) {
         elem.href = "chrome://liberator/content/help.xul?" + encodeURIComponent(tag);
 }, true);
 
+// vim: set fdm=marker sw=4 ts=4 et:

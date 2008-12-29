@@ -1113,6 +1113,7 @@ const liberator = (function () //{{{
                         break;
 
                     default:
+                        // FIXME: should this really be a user-visible error? --djk
                         liberator.echoerr("Exxx: Invalid 'where' directive in liberator.open(...)");
                         return false;
                 }
