@@ -72,8 +72,8 @@ Highlights.prototype.CSS = <![CDATA[
     Question    color: green; background: white; font-weight: bold;
 
     StatusLine       color: white; background: black;
-    StatusLineBroken color: black; background: #FF6060; /* light-red */
-    StatusLineSecure color: black; background: #B0FF00; /* light-green */
+    StatusLineBroken color: black; background: #FF6060 /* light-red */
+    StatusLineSecure color: black; background: #B0FF00 /* light-green */
 
     TabClose
     TabIcon
@@ -259,7 +259,7 @@ function Styles(name, store, serial)
                       '@namespace liberator "' + NS.uri + '";\n';
     const Sheet = new Struct("name", "sites", "css", "ref");
 
-    let cssUri = function (css) "chrome-data:text/css," + encodeURI(css);
+    let cssUri = function (css) "chrome-data:text/css," + window.encodeURI(css);
 
     let userSheets = [];
     let systemSheets = [];
