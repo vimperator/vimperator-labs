@@ -700,7 +700,7 @@ function History() //{{{
         "Go back in the browser history",
         function (args)
         {
-            args = args.string;
+            let url = args.literalArg;
 
             if (args.bang)
             {
@@ -708,12 +708,12 @@ function History() //{{{
             }
             else
             {
-                if (args)
+                if (url)
                 {
                     let sh = window.getWebNavigation().sessionHistory;
-                    for (let i = sh.index - 1; i >= 0; i--)
+                    for (let i in util.range(sh.index, 0, true))
                     {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
                         {
                             window.getWebNavigation().gotoIndex(i);
                             return;
@@ -723,7 +723,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(args.count > 0 ? -1 * args.count : -1);
+                    history.stepTo(-Math.max(args.count, 1));
                 }
             }
         },
@@ -746,7 +746,7 @@ function History() //{{{
         "Go forward in the browser history",
         function (args)
         {
-            args = args.string;
+            let url = args.literalArg;
 
             if (args.bang)
             {
@@ -754,12 +754,12 @@ function History() //{{{
             }
             else
             {
-                if (args)
+                if (url)
                 {
                     let sh = window.getWebNavigation().sessionHistory;
                     for (let i in util.range(sh.index + 1, sh.count))
                     {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
                         {
                             window.getWebNavigation().gotoIndex(i);
                             return;
@@ -769,7 +769,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(args.count > 0 ? args.count : 1);
+                    history.stepTo(Math.max(args.count, 1));
                 }
             }
         },
@@ -845,31 +845,30 @@ function History() //{{{
             if (index >= 0 && index < window.getWebNavigation().sessionHistory.count)
                 window.getWebNavigation().gotoIndex(index);
             else
-                liberator.beep();
+                liberator.beep(); // XXX: really wanted?
         },
 
         goToStart: function goToStart()
         {
             let index = window.getWebNavigation().sessionHistory.index;
-            if (index == 0)
-            {
-                liberator.beep(); // XXX: really wanted?
-                return;
-            }
 
-            window.getWebNavigation().gotoIndex(0);
+            if (index > 0)
+                window.getWebNavigation().gotoIndex(0);
+            else
+                liberator.beep(); // XXX: really wanted?
+
         },
 
         goToEnd: function goToEnd()
         {
-            let index = window.getWebNavigation().sessionHistory.index;
-            if (index == window.getWebNavigation().sessionHistory.count - 1)
-            {
-                liberator.beep();
-                return;
-            }
+            let sh = window.getWebNavigation().sessionHistory;
+            let max = sh.count - 1;
 
-            window.getWebNavigation().gotoIndex(max);
+            if (sh.index < max)
+                window.getWebNavigation().gotoIndex(max);
+            else
+                liberator.beep(); // XXX: really wanted?
+
         },
 
         // if openItems is true, open the matching history items in tabs rather than display
