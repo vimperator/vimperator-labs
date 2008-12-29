@@ -10,6 +10,7 @@ the following is successfully located, it is executed, and no further
 locations are tried.
 
 |$VIMPERATOR_INIT|
+
 1. _$VIMPERATOR_INIT_ - May contain a single ex command, usually
 	[c]:source {file}[c].
 2. [a]\~/_vimperatorrc[a] - Windows only. If this file exists, its contents
