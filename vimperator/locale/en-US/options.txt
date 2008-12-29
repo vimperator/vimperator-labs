@@ -630,7 +630,7 @@ ____
 ____
 Flag passed to shell when executing :! and :run commands.
 
-E.g. bash -c gvim
+E.g. "bash -c gvim"
 ____
 
 
