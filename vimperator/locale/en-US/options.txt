@@ -619,14 +619,14 @@ ____
 
 
 |\'shell'| |\'sh'|
-||'shell' 'sh'|| string (default: "-c", Win32: "/c")
+||'shell' 'sh'|| string (default: $SHELL or "sh", Win32: "cmd.exe")
 ____
 Shell to use for executing :! and :run commands.
 ____
 
 
 |\'shellcmdflag'| |\'shcf'|
-||'shellcmdflag' 'shcf'|| string (default: $SHELL or "sh", Win32: "cmd.exe")
+||'shellcmdflag' 'shcf'|| string (default: "-c", Win32: "/c")
 ____
 Flag passed to shell when executing :! and :run commands.
 
