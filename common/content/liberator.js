@@ -1235,8 +1235,6 @@ const liberator = (function () //{{{
                 liberator.reportError(e);
             }
 
-            liberator.triggerObserver("load");
-
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
             loadModule("options",      Options);
@@ -1253,6 +1251,8 @@ const liberator = (function () //{{{
             // add options/mappings/commands which are only valid in this particular extension
             if (config.init)
                 config.init();
+
+            liberator.triggerObserver("load");
 
             liberator.log("All modules loaded", 3);
 

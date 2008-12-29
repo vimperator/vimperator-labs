@@ -178,11 +178,14 @@ function Highlights(name, store, serial)
 
         let css = newStyle.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
-        css = style.selector + " { " + css + " }";
+        if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css))
+        {
+            css = style.selector + " { " + css + " }";
 
-        let error = styles.addSheet(true, style.selector, style.filter, css);
-        if (error)
-            return error;
+            let error = styles.addSheet(true, style.selector, style.filter, css);
+            if (error)
+                return error;
+        }
         style.value = newStyle;
         highlight[style.class] = style;
     };
