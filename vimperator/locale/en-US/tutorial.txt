@@ -11,14 +11,14 @@ section:Quick-start{nbsp}tutorial[tutorial]
 
 If you've started using Vimperator from scratch (i.e., without any
 customization), you should be looking at this help page in a relatively
-bare-looking window.  The menubar, navigation bar, and bookmark bars are
-hidden.  In case you missed the notice in the help:Introduction[intro.html],
-you can regain these by issuing the command
+bare-looking window. The menubar, navigation bar, and bookmark bars are hidden.
+In case you missed the notice in the help:Introduction[intro.html], you can
+regain these by issuing the command
 
   :set go+=mTb<CR>
 
 where [m]<CR>[m] represents pressing the <Enter> or <Return> key.
-If you're a veteran Vim user, this may look familiar.  It should.
+If you're a veteran Vim user, this may look familiar. It should.
 
 However, in this author's opinion, the best way to get familiar with
 Vimperator is to leave these disabled for now. (The above action can be
@@ -27,29 +27,29 @@ reversed with [c]:set go=<CR>[c])  You can look at the entry for
 
 section:Vimperator's{nbsp}modal{nbsp}interface[modal]
 
-Vimperator's power, like Vim's, comes from it's modal interface.  Keys have
-different meanings depending on which mode the browser is in.  Vimperator has
+Vimperator's power, like Vim's, comes from it's modal interface. Keys have
+different meanings depending on which mode the browser is in. Vimperator has
 several modes, but the 2 most important are ``normal'' mode and
 ``command-line'' mode.
 
-When Vimperator starts, it is in normal mode by default.  This is probably
-where you will spend the majority of your time.
+When Vimperator starts, it is in normal mode by default. This is probably where
+you will spend the majority of your time.
 
 The other core mode of Vimperator, command-line mode, can be entered from
-normal mode by typing a \':' (colon).  You will frequently see Vimperator
+normal mode by typing a \':' (colon). You will frequently see Vimperator
 commands start with a \':', indicating that what follows is a command.
 
-To return to normal mode command-line mode, type [m]<Esc>[m].  Pressing
+To return to normal mode command-line mode, type [m]<Esc>[m]. Pressing
 [m]<Esc>[m] will also return you to normal mode from most other modes in
 Vimperator.
 
 section:Getting{nbsp}help[getting-help]
 
-Vim is a great editor but it's not much of a web browser.  So even seasoned
-Vim users will probably have to look at Vimperator documentation sooner or
-later.  Most of the documentation for Vimperator's features are easily found
-using the [c]:help[c] command.  For example, you can find help on the
-[c]:help[c] command by typing
+Vim is a great editor but it's not much of a web browser. So even seasoned Vim
+users will probably have to look at Vimperator documentation sooner or later.
+Most of the documentation for Vimperator's features are easily found using the
+[c]:help[c] command. For example, you can find help on the [c]:help[c] command
+by typing
 
   :help :help<CR>
 
@@ -71,7 +71,7 @@ section:Mouseless[living-mouseless]
 
 The efficiency of Vimperator, as with the legendary editor it was inspired by,
 relies on the user being able to keep his fingers on the keyboard where they
-can do the most good.  While there are some areas where the mouse is clearly
+can do the most good. While there are some areas where the mouse is clearly
 superior at, such as GUI design or some games, Vimperator acts on the
 assumption that the web browser doesn't have to be one of those.
 
@@ -114,10 +114,10 @@ Vimmers.
   * [m]d[m] --
     close the active tab (delete the buffer)
 
-To open a web page in a new tab, use the [c]:tabopen {url}[c].  To open a URL
-in the current tab, use [c]:open[c]. The normal mode
-mappings [m]t[m] and [m]o[m], respectively, map to these commands, so the
-following pairs sequences are equivalent:
+To open a web page in a new tab, use the [c]:tabopen {url}[c]. To open a URL in
+the current tab, use [c]:open[c]. The normal mode mappings [m]t[m] and [m]o[m],
+respectively, map to these commands, so the following pairs sequences are
+equivalent:
 
   :open my.webmail.com<CR>
   omy.webmail.com<CR>
@@ -127,39 +127,39 @@ following pairs sequences are equivalent:
 
 section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints-tutorial]
 
-So now you can navigate around in Vimperator.  But wait... how do you *open* a
+So now you can navigate around in Vimperator. But wait... how do you *open* a
 page or tab linked in a web page?  How do you ``click'' on all those links
 without your tailed friend?
 
-The answer is ``hints''.  Activating hints displays a number next to every
-link Vimperator can find.  To follow the link, simply type the number
-corresponding to the hint, a white number inside a red square by default.
+The answer is ``hints''. Activating hints displays a number next to every link
+Vimperator can find. To follow the link, simply type the number corresponding
+to the hint, a white number inside a red square by default.
 
 For text links, there's an additional shortcut; you can type some text
 contained in the link and Vimperator will search all the links it can find and
-only hint the matching links, further narrowing down the list.  If the text
-you type uniquely identifies any given link, Vimperator will follow that link
+only hint the matching links, further narrowing down the list. If the text you
+type uniquely identifies any given link, Vimperator will follow that link
 immediately without any further user input.
 
 Whichever way you choose to indicate your target link, once Vimperator has
 highlighted the link you want, simply hit [m]<Enter>[m] to open it.
 
 The most common hint mode is called help:QuickHint{nbsp}mode[various.html,f].
-To activate QuickHint mode, press either [m]f[m] or [m]F[m].  The lower-case
+To activate QuickHint mode, press either [m]f[m] or [m]F[m]. The lower-case
 [m]f[m] will open the resulting link in the current tab, while the upper-case
 [m]F[m] will open it in a new tab.
 
 To test it, try this link: http://vimperator.org/[Vimperator Homepage].
 Activate QuickHint mode with [m]f[m] or [m]F[m] to highlight all currently
-visible links.  Then start typing the text of the link.  The link should be
-uniquely identified soon, and Vimperator will open it.  Once you're done,
+visible links. Then start typing the text of the link. The link should be
+uniquely identified soon, and Vimperator will open it. Once you're done,
 remember to use [m]<C-o>[m] (``History Back'') or [m]d[m] (``Delete Buffer'')
 to return here, depending on which key you used to activate QuickHint mode.
 
 section:Common{nbsp}issues[common-issues]
 
 Say you get half-way done typing in a new URL, only to remember that you've
-already got that page open in the previous tab.  Your command-line might look
+already got that page open in the previous tab. Your command-line might look
 something like this:
 
   :open my.partial.url/fooba
@@ -171,10 +171,9 @@ following:
 
 section:Saving{nbsp}for{nbsp}posterity{nbsp}-{nbsp}vimperatorrc[vimperatorrc]
 
-Once you get Vimperator set up with your desired options, maps, and
-commands, you'll probably want them to be available the next time you
-open Vimperator.  Continuing the Vim theme, this is done with a
-vimperatorrc file.
+Once you get Vimperator set up with your desired options, maps, and commands,
+you'll probably want them to be available the next time you open Vimperator.
+Continuing the Vim theme, this is done with a vimperatorrc file.
 
 To save your current settings and allow them to be loaded automatically
 next time you start Vimperator, issue the [c]:mkv[c] command.
@@ -195,27 +194,27 @@ Vimperator supports all of Vim's classic methods of exiting.
 
 section:Where{nbsp}did{nbsp}Firefox{nbsp}go?[whither-firefox]
 
-You might feel pretty disoriented now. Don't worry.  This is still Firefox
-underneath.  Here are some ways Vimperator allows Firefox to shine through.
-See the [c]:help[c] for these commands and mappings for more information on
-how to make the best use of them.
+You might feel pretty disoriented now. Don't worry. This is still Firefox
+underneath. Here are some ways Vimperator allows Firefox to shine through. See
+the [c]:help[c] for these commands and mappings for more information on how to
+make the best use of them.
 
   * [c]:dialog[c] --
     To access some of Firefox's many dialog windows, you can use the
-    [c]:dialog[c] command.  See [c]:help :dialog[c].
+    [c]:dialog[c] command. See [c]:help :dialog[c].
   * [c]:bmarks[c] --
     Vimperator provides a new interface to bookmarks, but they're still your
-    standard Firefox bookmarks under the hood.  [c]:bmark[c] will add a new
+    standard Firefox bookmarks under the hood. [c]:bmark[c] will add a new
     bookmark, while [c]:bmarks[c] will list the bookmarks currently defined.
   * [c]:history[c] --
-    It's exactly what it sounds like.  This command will display a colorized,
+    It's exactly what it sounds like. This command will display a colorized,
     scrollable and clickable list of the locations in Vimperator's history.
   * [c]:emenu[c] --
     Access the Firefox menus through the Vimperator command-line.
 
 
-Feel free to explore at this point.  If you use the [c]:tabopen[c] command,
-remember to use the [m]gt[m]/[m]gT[m] mappings to get back to this page.  If
+Feel free to explore at this point. If you use the [c]:tabopen[c] command,
+remember to use the [m]gt[m]/[m]gT[m] mappings to get back to this page. If
 using the [c]:open[c] command, use the history keys (e.g., [m]H[m]) to return.
 If you get hopelessly lost, just type [c]:help<CR>[c] and click the
 ``Tutorial'' link to return.
@@ -228,7 +227,7 @@ section:Get{nbsp}me{nbsp}out{nbsp}of{nbsp}here![removal]
 
 If you've given it a fair shot and determined ... TODO
 
-The Vimperator way to do this is with the command [c]:addons[c].  Issuing this
+The Vimperator way to do this is with the command [c]:addons[c]. Issuing this
 command brings up the Firefox Add-ons dialog window; you can then remove it as
 normal, selecting Vimperator from the list and clicking (yes, clicking)
 *Uninstall*.
@@ -239,16 +238,16 @@ as above, with [c]:set go+=m[c], and select *Add-ons* from the *Tools* menu.
 
 section:I'm{nbsp}interested...but{nbsp}lost![support]
 
-Vimperator has an energetic and growing user base.  If you've run into a
-problem that you can't seem to solve with Vimperator, or if you think you might
-have found a bug, please let us know!  There is support available on the
+Vimperator has an energetic and growing user base. If you've run into a problem
+that you can't seem to solve with Vimperator, or if you think you might have
+found a bug, please let us know!  There is support available on the
 http://vimperator.cutup.org/index.php?title=Main_Page[wiki], or in the
 #vimperator IRC channel on http://freenode.net/[freenode].
 
 If you have any feature requests or (even better) offers to help, we'd love to
-hear from you as well.  Developers work on Vimperator whenever possible, but
-we are neither infinite nor omnipotent; please bear with us.  If you can't
-wait for us to get around to it, rest assured patches are welcome!  See
-the help:Developer[developer.html] page for more information.
+hear from you as well. Developers work on Vimperator whenever possible, but we
+are neither infinite nor omnipotent; please bear with us. If you can't wait for
+us to get around to it, rest assured patches are welcome! See the
+help:Developer[developer.html] page for more information.
 
 // vim: set syntax=asciidoc:

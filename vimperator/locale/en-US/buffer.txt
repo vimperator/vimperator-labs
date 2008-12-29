@@ -10,7 +10,7 @@ section:Buffer{nbsp}information[buffer-information]
 |<C-g>| +
 ||<C-g>||
 ________________________________________________________________________________
-Print the current file name.  Also shows some additional file information like
+Print the current file name. Also shows some additional file information like
 file size or the last modified date.
 ________________________________________________________________________________
 
@@ -47,10 +47,10 @@ ________________________________________________________________________________
 
 
 |:vie| |:viewsource|
-||:vie[wsource][!] [url]|| +
+||:vie[wsource][!] [a][url][a]|| +
 ________________________________________________________________________________
-View source code of current document.  If [url] is specified then view the
-source of that document.  When [!] is given, it is opened with the external
+View source code of current document. If [a][url][a] is specified then view the
+source of that document. When [!] is given, it is opened with the external
 editor.
 ________________________________________________________________________________
 
@@ -306,12 +306,12 @@ ________________________________________________________________________________
 
 
 |:zo| |:zoom|
-||:zo[om][!] [value]|| +
+||:zo[om][!] [a][value][a]|| +
 ||:zo[om][!] +{value} | -{value}|| +
 ________________________________________________________________________________
-Set zoom value of current web page. [value] can be an absolute value between 30
-and 300% or a relative value if prefixed with "-" or "+". If [value] is
-omitted, zoom is reset to 100%.
+Set zoom value of current web page. [a][value][a] can be an absolute value
+between 30 and 300% or a relative value if prefixed with "-" or "+". If
+[a][value][a] is omitted, zoom is reset to 100%.
 
 Normally this command operates on the text zoom, if used with [!] it operates
 on full zoom.
@@ -339,14 +339,14 @@ ________________________________________________________________________________
 
 section:Alternate{nbsp}style{nbsp}sheets[alternate-stylesheet]
 
-Page authors may specify alternate style sheets for an HTML document.  Users
-can then switch between these various style sheets, selecting their favorite.
+Page authors may specify alternate style sheets for an HTML document. Users can
+then switch between these various style sheets, selecting their favorite.
 
 |:pagest| |:pagestyle|
-||:pagest[yle] [stylesheet]|| +
+||:pagest[yle] [a][stylesheet][a]|| +
 ________________________________________________________________________________
-Select the author style sheet to apply.  If [stylesheet] is not specified the
-page's default style sheet is used.
+Select the author style sheet to apply. If [a][stylesheet][a] is not specified
+the page's default style sheet is used.
 
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________

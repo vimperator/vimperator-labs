@@ -8,10 +8,9 @@ INTRO TO BE WRITTEN...
 ||:ec[ho] {expr}||
 ________________________________________________________________________________
 Echo the expression. Useful for showing informational messages. Multiple lines
-can be separated by \n.  {expr} can either be a quoted string, or any
-expression which can be fed to eval() like 4+5. You can also view the source
-code of objects and functions if the return value of {expr} is an object or
-function.
+can be separated by \n. {expr} can either be a quoted string, or any expression
+which can be fed to eval() like 4+5. You can also view the source code of
+objects and functions if the return value of {expr} is an object or function.
 ________________________________________________________________________________
 
 

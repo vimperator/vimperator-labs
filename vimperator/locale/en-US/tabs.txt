@@ -9,11 +9,11 @@ result many buffer and tab commands are interchangeable.
 section:Listing{nbsp}tabs[listing-tabs]
 
 |B| |:tabs| |:ls| |:files| |:buffers|
-||:buffers [filter]|| +
+||:buffers [a][filter][a]|| +
 ||B||
 ________________________________________________________________________________
-Show a list of buffers (=tabs) matching [filter]. Without [filter] list all
-tabs.
+Show a list of buffers (=tabs) matching [a][filter][a]. Without [a][filter][a]
+list all tabs.
 ________________________________________________________________________________
 
 section:Opening{nbsp}tabs[opening-tabs]
@@ -174,16 +174,16 @@ ________________________________________________________________________________
 section:Closing{nbsp}tabs[closing-tabs]
 
 |d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
-||:[count]bd[elete][!] [arg]|| +
+||:[count]bd[elete][!] [a][arg][a]|| +
 ||[count]d||
 ________________________________________________________________________________
 Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
 and the one to the right is selected. Afterwards, the tab to the right of the
 deleted one is selected.
 
-When used with [arg], remove all tabs which contain [arg] in the hostname.
-[!] forces this command to also search for [arg] in the full URL and also
-the title of the tab. Use with care.
+When used with [a][arg][a], remove all tabs which contain [a][arg][a] in the
+hostname. [!] forces this command to also search for [a][arg][a] in the full
+URL and also the title of the tab. Use with care.
 ________________________________________________________________________________
 
 
@@ -195,11 +195,11 @@ ________________________________________________________________________________
 
 
 |u| |:u| |:undo|
-||:[count]u[ndo] [url]|| +
+||:[count]u[ndo] [a][url][a]|| +
 ||[count]u||
 ________________________________________________________________________________
 Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab. With [url] restores the tab matching the URL.
+[count]th last tab. With [a][url][a] restores the tab matching the URL.
 ________________________________________________________________________________
 
 

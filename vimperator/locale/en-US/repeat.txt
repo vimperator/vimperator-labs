@@ -16,10 +16,10 @@ ____________________________________________________________________________
 
 
 |:macros|
-||:mac[ros] [args]|| +
+||:mac[ros] [a][pat][a]|| +
 ________________________________________________________________________________
-List recorded macros matching the optional regular expression [args]. If no
-regexp is given, list all macros.
+List recorded macros matching the optional regular expression [a][pat][a]. If
+no regexp is given, list all macros.
 ________________________________________________________________________________
 
 

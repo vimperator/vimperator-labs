@@ -34,11 +34,12 @@ _%HOMEDRIVE%%HOMEPATH%_.
 section:Saving{nbsp}settings[save-settings]
 
 |:mkv| |:mkvimperatorrc|
-||:mkv[imperatorrc][!] [file]|| +
+||:mkv[imperatorrc][!] [a][file][a]|| +
 ________________________________________________________________________________
-Write current key mappings and changed options to [file]. If no [file] is
-specified then _~/.vimperatorrc_ is written unless this file already exists. The
-special version [c]:mkvimperatorrc![c] will overwrite [file] if it exists.
+Write current key mappings and changed options to [a][file][a]. If no
+[a][file][a] is specified then _~/.vimperatorrc_ is written unless this file
+already exists. The special version [c]:mkvimperatorrc![c] will overwrite
+[a][file][a] if it exists.
 
 Warning: this differs from Vim's behavior which defaults to writing the file
 in the current directory.

@@ -5,8 +5,8 @@ Key mappings, abbreviations, and user-defined commands.
 section:Key{nbsp}mapping[key-mapping,mapping,macro]
 
 The key mapping commands can be used to either redefine the standard key
-bindings or define new ones.  A mapping consists of a key, or sequence of keys,
-which are translated to a string of characters.  Example:
+bindings or define new ones. A mapping consists of a key, or sequence of keys,
+which are translated to a string of characters. Example:
 
   :map <F2> :echo new Date().toDateString()<CR>
 
@@ -20,7 +20,7 @@ Command-line modes.
 |<Nop>| +
 ||<Nop>||
 ________________________________________________________________________________
-Do nothing.  This command is useful for disabling a specific mapping.  [c]:map
+Do nothing. This command is useful for disabling a specific mapping. [c]:map
 <C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
 ________________________________________________________________________________
 
@@ -28,9 +28,9 @@ ________________________________________________________________________________
 |<CR>| |map_return| +
 ||<CR>||
 ________________________________________________________________________________
-Expand to a line terminator in a key mapping.  An Ex command in the {rhs} of a
+Expand to a line terminator in a key mapping. An Ex command in the {rhs} of a
 mapping requires a a line terminator after it so that it is executed when the
-mapping is expanded.  [m]<CR>[m] should be used for this purpose.
+mapping is expanded. [m]<CR>[m] should be used for this purpose.
 ________________________________________________________________________________
 
 

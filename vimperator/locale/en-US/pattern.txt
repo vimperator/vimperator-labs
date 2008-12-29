@@ -3,9 +3,9 @@ HEADER
 |text-search-commands| +
 
 Vimperator provides a Vim-like interface to Firefox's standard text search
-functionality.  There is no support for using regular expressions in search
-commands as Firefox does not provide native regexp support.  It is unlikely
-that this will ever be available.
+functionality. There is no support for using regular expressions in search
+commands as Firefox does not provide native regexp support. It is unlikely that
+this will ever be available.
 
 |/| +
 ||/\\{pattern\\}[/]<CR>|| +
@@ -13,7 +13,7 @@ ________________________________________________________________________________
 Search forward for the first occurrence of {pattern}.
 
 If "\c" appears anywhere in the pattern the whole pattern is handled as though
-'ignorecase' is on. "\C" forces case-sensitive matching for the whole pattern.  +
+'ignorecase' is on. "\C" forces case-sensitive matching for the whole pattern. +
 If "\l" appears in the pattern only the text of links is searched for a
 match as though 'linksearch' is on. "\L" forces the entire page to be searched
 for a match.
