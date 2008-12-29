@@ -10,11 +10,12 @@ the following is successfully located, it is executed, and no further
 locations are tried.
 
 |$VIMPERATOR_INIT|
-1. _$VIMPERATOR_INIT_ - May contain a single ex command, usually
+
+1. _$VIMPERATOR_INIT_ -- May contain a single ex command, usually
 	[c]:source {file}[c].
-2. [a]\~/_vimperatorrc[a] - Windows only. If this file exists, its contents
+2. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
 	are executed.
-3. [a]\~/.vimperatorrc[a] - If this file exists, its contents are executed.
+3. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are executed.
 
 If 'exrc' is set then any RC file in the current directory is also sourced.
 
@@ -27,8 +28,8 @@ Plugins will not be sourced if 'noloadplugins' is set.
 
 The user's \'$HOME'(~) directory is determined as follows:
 
-* Unix and Mac - _$HOME_ is used.
-* Windows - if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
+* Unix and Mac -- _$HOME_ is used.
+* Windows -- if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
 _%HOMEDRIVE%%HOMEPATH%_.
 
 section:Saving{nbsp}settings[save-settings]

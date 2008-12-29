@@ -3,7 +3,7 @@ HEADER
 |tabs| +
 
 Tabs are used to be able to view many web pages at the same time. Each tab
-contains exactly one buffer - multiple buffers per tab are not supported. As a
+contains exactly one buffer -- multiple buffers per tab are not supported. As a
 result many buffer and tab commands are interchangeable.
 
 section:Listing{nbsp}tabs[listing-tabs]

@@ -224,11 +224,11 @@ ________________________________________________________________________________
 
 section:Zooming[zooming,zoom]
 
-The zooming commands are dependent on two properties - a zoom range and a
+The zooming commands are dependent on two properties -- a zoom range and a
 series of levels within that range.
 
 The absolute value of the page zoom is limited to a value within the configured
-zoom range (default: 30% - 300%). The zoom levels are used by
+zoom range (default: 30%--300%). The zoom levels are used by
 [m]zi[m]/[m]zo[m], and similar commands, to change the zoom value in steps. The
 default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
 170%, 200%, 240%, 300%.
