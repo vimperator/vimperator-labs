@@ -63,7 +63,7 @@ ________________________________________________________________________________
 ||[count]gt||
 ________________________________________________________________________________
 Go to the next tab. Cycles to the first tab, when the last is selected. +
-Count is supported: [m]3gt[m] goes to the third tab.
+If [count] is specified go to the [count]th tab.
 ________________________________________________________________________________
 
 
@@ -71,7 +71,7 @@ ________________________________________________________________________________
 ||[count]gT||
 ________________________________________________________________________________
 Go {count} pages back. Wraps around from the first tab to the last tab. +
-Count is supported: [m]3gT[m] goes three tabs back.
+If [count] is specified go back [count] tabs.
 ________________________________________________________________________________
 
 
@@ -177,9 +177,8 @@ section:Closing{nbsp}tabs[closing-tabs]
 ||:[count]bd[elete][!] [a][arg][a]|| +
 ||[count]d||
 ________________________________________________________________________________
-Delete current buffer (=tab). Count is supported, [c]:2bd[c] removes two tabs
-and the one to the right is selected. Afterwards, the tab to the right of the
-deleted one is selected.
+Delete current buffer (=tab). If [count] is specified then [count] tabs are
+removed. Afterwards, the tab to the right of the deleted tab(s) is selected.
 
 When used with [a][arg][a], remove all tabs which contain [a][arg][a] in the
 hostname. [!] forces this command to also search for [a][arg][a] in the full

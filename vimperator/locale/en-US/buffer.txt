@@ -97,24 +97,29 @@ ________________________________________________________________________________
 |<Left>| |h| +
 ||[count]h||
 ________________________________________________________________________________
-Scroll document to the left. Count is supported: [m]10h[m] will move 10 times as much to the left. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+Scroll document to the left. If [count] is specified then move [count] times as
+much to the left. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
+set).
 ________________________________________________________________________________
 
 
 |<C-e>| |<Down>| |j| +
 ||[count]j||
 ________________________________________________________________________________
-Scroll document down. Count is supported: [m]10j[m] will move 10 times as much down. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+Scroll document down. If [count] is specified then move [count] times as much
+down. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
+set).
 ________________________________________________________________________________
 
 
 |<C-y>| |<Up>| |k| +
 ||[count]k||
 ________________________________________________________________________________
-Scroll document up. Count is supported: [m]10k[m] will move 10 times as much up. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+Scroll document up. If [count] is specified then move [count] times as much up. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
+set).
 ________________________________________________________________________________
 
 
@@ -139,8 +144,10 @@ ________________________________________________________________________________
 |<Right>| |l| +
 ||[count]l||
 ________________________________________________________________________________
-Scroll document to the right. Count is supported: [m]10l[m] will move 10 times as much to the right. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is set).
+Scroll document to the right. If [count] is specified then move [count] times
+as much to the right. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
+set).
 ________________________________________________________________________________
 
 

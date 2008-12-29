@@ -95,22 +95,22 @@ ________________________________________________________________________________
 |<M-Left>| |<A-Left>| |H| +
 ||[count]H||
 ________________________________________________________________________________
-Go back in the browser history. Count is supported: [m]3H[m] goes back 3 steps.
+Go back in the browser history. If [count] is specified go back [count] pages.
 ________________________________________________________________________________
 
 
 |<M-Right>| |<A-Right>| |L| +
 ||[count]L||
 ________________________________________________________________________________
-Go forward in the browser history. Count is supported: [m]3L[m] goes forward 3 steps.
+Go forward in the browser history. If [count] is specified go forward [count]
+pages.
 ________________________________________________________________________________
 
 
 |:ba| |:back|
 ||:[count]ba[ck][!] [a][url][a]|| +
 ________________________________________________________________________________
-Go back in the browser history. Count is supported, [c]:3back[c] goes back 3
-pages in the browser history. +
+Go back in the browser history. If [count] is specified go back [count] pages. +
 The special version [c]:back![c] goes to the beginning of the browser history.
 ________________________________________________________________________________
 
@@ -118,9 +118,9 @@ ________________________________________________________________________________
 |:fw| |:fo| |:forward|
 ||:[count]fo[rward][!] [a][url][a]|| +
 ________________________________________________________________________________
-Go forward in the browser history. Count is supported, [c]:3forward[c] goes
-forward 3 pages in the browser history. The special version [c]:forward![c]
-goes to the end of the browser history.
+Go forward in the browser history. If [count] is specified go forward [count]
+pages. +
+The special version [c]:forward![c] goes to the end of the browser history.
 ________________________________________________________________________________
 
 
