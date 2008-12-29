@@ -1494,7 +1494,7 @@ function ItemList(id) //{{{
         minHeight = Math.max(minHeight, divNodes.completions.getBoundingClientRect().bottom);
         container.height = minHeight;
         if (container.collapsed)
-            div.style.minWidth = undefined;
+            div.style.minWidth = "";
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
     }
