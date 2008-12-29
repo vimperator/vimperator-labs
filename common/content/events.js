@@ -38,7 +38,6 @@ function AutoCommands() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var store = [];
-    var lastFocus = null;
 
     function matchAutoCmd(autoCmd, event, regex)
     {
@@ -294,6 +293,8 @@ function Events() //{{{
     const input = liberator.input;
 
     var fullscreen = window.fullScreen;
+
+    var lastFocus = null;
 
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings

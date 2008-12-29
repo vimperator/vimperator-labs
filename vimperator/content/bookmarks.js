@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // Try to import older command line history, quick marks, etc.
-liberator.registerObserver("load_options", function () {
+liberator.registerObserver("load", function () {
     if (!options.getPref("extensions.vimperator.commandline_cmd_history"))
         return;
 
