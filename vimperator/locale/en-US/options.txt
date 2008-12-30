@@ -211,7 +211,7 @@ ____
 
 |$CDPATH|
 |\'cd'| |\'cdpath'|
-||'cdpath' 'cd'|| string (default: equivalent to \'$CDPATH' or ",,")
+||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
 List of directories searched when executing the :cd command. This is only used
 for relative paths, if an absolute path is specified then the option is
@@ -595,7 +595,7 @@ ____
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
 ____
-(default: \'$VIMPERATOR_RUNTIME' or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+(default: _$VIMPERATOR_RUNTIME_ or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
 
 List of directories searched for runtime files: +
 macros/ +
@@ -619,7 +619,7 @@ ____
 
 
 |\'shell'| |\'sh'|
-||'shell' 'sh'|| string (default: $SHELL or "sh", Win32: "cmd.exe")
+||'shell' 'sh'|| string (default: _$SHELL_ or "sh", Win32: "cmd.exe")
 ____
 Shell to use for executing :! and :run commands.
 ____

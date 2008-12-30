@@ -178,7 +178,7 @@ Continuing the Vim theme, this is done with a vimperatorrc file.
 To save your current settings and allow them to be loaded automatically
 next time you start Vimperator, issue the [c]:mkv[c] command.
 
-This will create the file *$HOME/.vimperatorrc* containing your settings.
+This will create the file *_$HOME_/.vimperatorrc* containing your settings.
 It is a simple text file, just like a vimrc file and can be easily
 edited to suit your preferences.
 

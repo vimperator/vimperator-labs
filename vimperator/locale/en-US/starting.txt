@@ -26,7 +26,7 @@ loaded.
 
 Plugins will not be sourced if 'noloadplugins' is set.
 
-The user's \'$HOME'(~) directory is determined as follows:
+The user's ~ (i.e., "home") directory is determined as follows:
 
 * Unix and Mac -- _$HOME_ is used.
 * Windows -- if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
