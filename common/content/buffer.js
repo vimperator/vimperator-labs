@@ -678,7 +678,7 @@ function Buffer() //{{{
 
             if (!isFeed)
             {
-                let type = data.type && data.type.toLowerCase();
+                var type = data.type && data.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
                 isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
