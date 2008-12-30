@@ -550,11 +550,12 @@ function IO() //{{{
                     array.push(entry.QueryInterface(Ci.nsIFile));
                 }
                 if (sort)
-                    return array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
+                    array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
                 return array;
             }
             else
                 return []; // XXX: or should it throw an error, probably yes?
+                           //  Yes --djk
         },
 
         // file is either a full pathname or an instance of file instanceof nsILocalFile

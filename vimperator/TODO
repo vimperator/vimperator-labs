@@ -22,7 +22,6 @@ BUGS:
 
 (recent CVS regressions):
 - visual caret mode is broken
-- BookmarkAdd is fired once for each bookmark periodically i.e. not in response to adding a bookmark
 
 FEATURES:
 9 finish :help TODOs
@@ -37,6 +36,7 @@ FEATURES:
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
   quick searches in the RC file.
   Why not just add a bookmark? --Kris
+8 allow for multiple ex commands separated with |
 7 adaptive learning for tab-completions
   (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
@@ -53,9 +53,8 @@ FEATURES:
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
-6 allow for multiple ex commands separated with |
 6 check/correct spellings in insert mode with some mappings
-6 add more autocommands (TabClose, TabOpen, TabChanged, DownloadPre/Post any more?)
+6 add more autocommands (TabClose, TabOpen, TabChanged any more?)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
