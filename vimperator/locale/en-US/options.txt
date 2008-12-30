@@ -604,6 +604,9 @@ plugin/ +
 Example: [c]:set runtimepath=\~/myvimperator,\~/.vimperator[c] +
 This will search for plugins in both "\~/myvimperator/plugin" and
 "\~/.vimperator/plugin"
+
+On startup, if the environment variable _$VIMPERATOR_RUNTIME_ does not
+exist, Vimperator will set it to match this value.
 ____
 
 

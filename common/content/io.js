@@ -922,8 +922,14 @@ lookup:
 
 }; //}}}
 
-IO.__defineGetter__("runtimePath", function () services.get("environment").get(config.name.toUpperCase() + "_RUNTIME") ||
-        "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase());
+IO.__defineGetter__("runtimePath", function () {
+        let getrtp = services.get("environment").get(config.name.toUpperCase() + "_RUNTIME");
+        if( ! getrtp )
+        {
+            getrtp = "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase();
+            services.get("environment").set(config.name.toUpperCase() + "_RUNTIME", getrtp);
+        }
+        return getrtp; });
 
 IO.expandPath = function (path, relative)
 {
