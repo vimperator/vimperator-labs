@@ -988,46 +988,50 @@ const liberator = (function () //{{{
 
         loadPlugins: function ()
         {
-            // FIXME: largely duplicated for loading macros
-            try
+            function sourceDirectory(dir)
             {
-                let dirs = io.getRuntimeDirectories("plugin");
-
-                if (dirs.length == 0)
+                if (!dir.isReadable())
                 {
-                    liberator.log("No user plugin directory found", 3);
+                    liberator.echoerr("E484: Can't open file " + dir.path);
                     return;
                 }
-                for (let [,dir] in Iterator(dirs))
-                {
-                    // TODO: search plugins/**/* for plugins
-                    liberator.echomsg('Searching for "plugin/*.{js,vimp}" in ' + dir.path.quote(), 2);
 
-                    liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-
-                    let files = io.readDirectory(dir.path, true);
-
-                    files.forEach(function (file) {
-                        if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+                io.readDirectory(dir.path, true).forEach(function (file) {
+                    if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                    {
+                        try
                         {
-                            try
-                            {
-                                io.source(file.path, false);
-                                liberator.pluginFiles[file.path] = true;
-                            }
-                            catch (e)
-                            {
-                                liberator.reportError(e);
-                            }
+                            io.source(file.path, false);
+                            liberator.pluginFiles[file.path] = true;
                         }
-                    });
-                }
+                        catch (e)
+                        {
+                            liberator.reportError(e);
+                        }
+                    }
+                    else if (file.isDirectory())
+                    {
+                        sourceDirectory(file);
+                    }
+                });
             }
-            catch (e)
+
+            let dirs = io.getRuntimeDirectories("plugin");
+
+            if (dirs.length == 0)
             {
-                // thrown if directory does not exist
-                liberator.log("Error sourcing plugin directory: " + e, 9);
+                liberator.log("No user plugin directory found", 3);
+                return;
             }
+
+            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in '
+                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",").quote(), 2);
+
+            dirs.forEach(function (dir) {
+                liberator.echomsg("Searching for " + (dir.path + "/**/*.{js,vimp}").quote(), 3);
+                sourceDirectory(dir);
+            });
         },
 
         // logs a message to the javascript error console

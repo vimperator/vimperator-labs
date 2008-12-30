@@ -588,7 +588,6 @@ function Events() //{{{
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
     setTimeout (function () {
-        // FIXME: largely duplicated for loading plugins
         try
         {
             let dirs = io.getRuntimeDirectories("macros");
