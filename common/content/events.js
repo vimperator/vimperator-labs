@@ -458,14 +458,14 @@ function Events() //{{{
 
     function isFormElemFocused()
     {
-        let elt = window.document.commandDispatcher.focusedElement;
-        if (elt == null)
+        let elem = window.document.commandDispatcher.focusedElement;
+        if (elem == null)
             return false;
 
         try
-        { // sometimes the elt doesn't have .localName
-            let tagname = elt.localName.toLowerCase();
-            let type = elt.type.toLowerCase();
+        { // sometimes the elem doesn't have .localName
+            let tagname = elem.localName.toLowerCase();
+            let type = elem.type.toLowerCase();
 
             if ((tagname == "input" && (type != "image")) ||
                     tagname == "textarea" ||

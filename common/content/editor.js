@@ -557,9 +557,9 @@ function Editor() //{{{
 
         unselectText: function ()
         {
-            let elt = window.document.commandDispatcher.focusedElement;
-            if (elt && elt.selectionEnd)
-                elt.selectionEnd = elt.selectionStart;
+            let elem = window.document.commandDispatcher.focusedElement;
+            if (elem && elem.selectionEnd)
+                elem.selectionEnd = elem.selectionStart;
         },
 
         selectedText: function ()
@@ -570,20 +570,20 @@ function Editor() //{{{
 
         pasteClipboard: function ()
         {
-            let elt = window.document.commandDispatcher.focusedElement;
+            let elem = window.document.commandDispatcher.focusedElement;
 
-            if (elt.setSelectionRange && util.readFromClipboard())
+            if (elem.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
-                let rangeStart = elt.selectionStart; // caret position
-                let rangeEnd = elt.selectionEnd;
-                let tempStr1 = elt.value.substring(0, rangeStart);
+                let rangeStart = elem.selectionStart; // caret position
+                let rangeEnd = elem.selectionEnd;
+                let tempStr1 = elem.value.substring(0, rangeStart);
                 let tempStr2 = util.readFromClipboard();
-                let tempStr3 = elt.value.substring(rangeEnd);
-                elt.value = tempStr1 + tempStr2 + tempStr3;
-                elt.selectionStart = rangeStart + tempStr2.length;
-                elt.selectionEnd = elt.selectionStart;
+                let tempStr3 = elem.value.substring(rangeEnd);
+                elem.value = tempStr1 + tempStr2 + tempStr3;
+                elem.selectionStart = rangeStart + tempStr2.length;
+                elem.selectionEnd = elem.selectionStart;
             }
         },
 
