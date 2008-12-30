@@ -22,6 +22,11 @@ BUGS:
 
 (recent CVS regressions):
 - visual caret mode is broken
+- the message system is a bit of a debacle at the moment but I'm not sure how
+  it's supposed to work. MST, can you spec it when you have some time?
+  E.g. :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
+  Obviously I think it should but I'm not sure if it's a bug or not in your
+  view, thanks. --djk
 
 FEATURES:
 9 finish :help TODOs
