@@ -677,9 +677,9 @@ function Tabs() //{{{
             return store.options;
         },
 
-        getLocalStore: function (tab)
+        getLocalStore: function (tabIndex)
         {
-            let tab = this.getTab(tab);
+            let tab = this.getTab(tabIndex);
             if (!tab.liberatorStore)
                 tab.liberatorStore = {};
             return tab.liberatorStore;
@@ -737,8 +737,8 @@ function Tabs() //{{{
         {
             if (index != undefined)
                 return getBrowser().mTabs[index];
-
-            return getBrowser().mCurrentTab;
+            else
+                return getBrowser().mCurrentTab;
         },
 
         get closedTabs()
