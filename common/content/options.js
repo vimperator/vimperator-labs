@@ -991,14 +991,14 @@ function Options() //{{{
 
         setPref: function (name, value)
         {
-            return storePreference(name, value);
+            storePreference(name, value);
         },
 
         resetPref: function (name)
         {
             try
             {
-                return services.get("pref").clearUserPref(name);
+                services.get("pref").clearUserPref(name);
             }
             catch (e)
             {
