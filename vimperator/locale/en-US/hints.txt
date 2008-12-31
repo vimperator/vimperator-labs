@@ -46,7 +46,7 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 * [m]s[m] to save its destination
 * [m]o[m] to open its location in the current tab
 * [m]t[m] to open its location in a new tab
-* [m]b[m] like [m]t[m] but inverts the option whether the tab is activated
+* [m]b[m] to open its location in a new background tab
 * [m]O[m] to open its location in an [c]:open[c] query
 * [m]T[m] to open its location in a [c]:tabopen[c] query
 * [m]v[m] to view its destination source
@@ -57,6 +57,9 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
+
+Note: the behavior of [m];t[m] and [m];b[m] is inverted if the
+\'browser.tabs.loadInBackground' preference is set to false.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

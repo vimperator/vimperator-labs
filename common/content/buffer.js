@@ -1121,7 +1121,7 @@ function Buffer() //{{{
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
                     ctrlKey = true;
-                    shiftKey = (where == liberator.NEW_BACKGROUND_TAB);
+                    shiftKey = (where != liberator.NEW_BACKGROUND_TAB);
                     break;
                 case liberator.NEW_WINDOW:
                     shiftKey = true;
