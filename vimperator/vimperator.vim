@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2008 Dec 07
+" Last Change:      2008 Dec 31
 
 if exists("b:current_syntax")
   finish
@@ -43,7 +43,7 @@ syn keyword vimperatorAutoEvent BookmarkAdd DOMLoad LocationChange PageLoadPre P
 syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperatorAutoEvent
 
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
-    \ end="$" keepend oneline contains=vimperatorOption,vimperatorComment,vimperatorString
+    \ end="$" keepend oneline contains=vimperatorOption,vimperatorString
 
 syn keyword vimperatorOption activate act alfc albc cdpath cd complete cpt defsearch ds editor extendedhinttags eht eventignore ei
     \ followhints fh guioptions go helpfile hf hintmatching hm hs hinttags ht hinttimeout hto history hi laststatus ls lbc lfc
