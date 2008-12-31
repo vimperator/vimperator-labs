@@ -272,7 +272,7 @@ function AutoCommands() //{{{
                     }
                     else
                     {
-                        liberator.execute(commands.replaceTokens(autoCmd.command, args));
+                        liberator.execute(commands.replaceTokens(autoCmd.command, args),null,true);
                     }
                 }
             }
