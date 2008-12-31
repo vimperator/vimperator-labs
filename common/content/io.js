@@ -924,13 +924,15 @@ lookup:
 }; //}}}
 
 IO.__defineGetter__("runtimePath", function () {
-        let getrtp = services.get("environment").get(config.name.toUpperCase() + "_RUNTIME");
-        if( ! getrtp )
-        {
-            getrtp = "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase();
-            services.get("environment").set(config.name.toUpperCase() + "_RUNTIME", getrtp);
-        }
-        return getrtp; });
+    const rtpvar = config.name.toUpperCase() + "_RUNTIME";
+    let rtp = services.get("environment").get(rtpvar);
+    if (!rtp)
+    {
+        rtp = "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase();
+        services.get("environment").set(rtpvar, rtp);
+    }
+    return rtp;
+});
 
 IO.expandPath = function (path, relative)
 {
