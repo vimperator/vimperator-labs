@@ -37,12 +37,12 @@ function AutoCommands() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const AutoCommand = new Struct("event", "pattern", "command");
     var store = [];
 
     function matchAutoCmd(autoCmd, event, regex)
     {
-        return (!event || autoCmd.event == event) &&
-               (!regex || autoCmd.pattern.source == regex);
+        return (!event || autoCmd.event == event) && (!regex || autoCmd.pattern.source == regex);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -71,6 +71,7 @@ function AutoCommands() //{{{
         {
             let [event, regex, cmd] = args;
             let events = null;
+
             if (event)
             {
                 // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
@@ -95,6 +96,7 @@ function AutoCommands() //{{{
             {
                 if (event == "*")
                     event = null;
+
                 if (args.bang)
                 {
                     // TODO: "*" only appears to work in Vim when there is a {group} specified
@@ -187,8 +189,9 @@ function AutoCommands() //{{{
                 events = events.split(",");
                 liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
-            events.forEach(function (event)
-                store.push({ event: event, pattern: RegExp(regex), command: cmd }));
+            events.forEach(function (event) {
+                store.push(new AutoCommand(event, RegExp(regex), cmd));
+            });
         },
 
         get: function (event, regex)
