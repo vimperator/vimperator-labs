@@ -770,7 +770,6 @@ function Options() //{{{
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
             for (let [,name] in args)
             {
-                let name = args[i];
                 let reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
