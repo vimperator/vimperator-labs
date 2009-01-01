@@ -809,7 +809,7 @@ function Editor() //{{{
             }
 
             args.push(path);
-            liberator.callFunctionInThread(null, io.run, args.shift(), args, true);
+            liberator.callFunctionInThread(null, io.run, io.expandPath(args.shift()), args, true);
         },
 
         // TODO: clean up with 2 functions for textboxes and currentEditor?
