@@ -1294,7 +1294,7 @@ function Buffer() //{{{
          */
         shiftFrameFocus: function (count, forward)
         {
-            if (!window.content.document instanceof HTMLDocument)
+            if (!(window.content.document instanceof HTMLDocument))
                 return;
 
             count = Math.max(count, 1);
