@@ -616,7 +616,7 @@ const util = { //{{{
      */
     stringToURLArray: function stringToURLArray(str)
     {
-        let urls = str.split(RegExp("\s*" + options["urlseparator"] + "\s*"));
+        let urls = str.split(RegExp("\\s*" + options["urlseparator"] + "\\s*"));
 
         return urls.map(function (url) {
             try
