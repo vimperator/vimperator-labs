@@ -83,7 +83,7 @@ const liberator = (function () //{{{
         }
     }
 
-    // Only general options are added here, which are valid for all vimperator like extensions
+    // Only general options are added here, which are valid for all Vimperator like extensions
     registerObserver("load_options", function ()
     {
         options.add(["errorbells", "eb"],
@@ -364,7 +364,7 @@ const liberator = (function () //{{{
             "Run a JavaScript command through eval()",
             function (args)
             {
-                if (args.bang) // open javascript console
+                if (args.bang) // open JavaScript console
                 {
                     liberator.open("chrome://global/content/console.xul",
                         (options["newtab"] && options.get("newtab").has("all", "javascript"))
@@ -1034,7 +1034,7 @@ const liberator = (function () //{{{
             });
         },
 
-        // logs a message to the javascript error console
+        // logs a message to the JavaScript error console
         // if msg is an object, it is beautified
         // TODO: add proper level constants
         log: function (msg, level)

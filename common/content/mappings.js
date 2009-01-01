@@ -283,7 +283,7 @@ function Mappings() //{{{
 
     // FIXME:
     Mappings.flags = {
-        ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to firefox
+        ALLOW_EVENT_ROUTING: 1 << 0, // if set, return true inside the map command to pass the event further to Firefox
         MOTION:              1 << 1,
         COUNT:               1 << 2,
         ARGUMENT:            1 << 3

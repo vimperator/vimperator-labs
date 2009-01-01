@@ -108,7 +108,7 @@ function Search() //{{{
         // strip case-sensitive modifiers
         pattern = pattern.replace(/(\\)?\\[cC]/g, function ($0, $1) { return $1 ? $0 : ""; });
 
-        // remove any modifer escape \
+        // remove any modifier escape \
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
         searchString = pattern;
@@ -440,7 +440,7 @@ function Search() //{{{
             // TODO: code to reposition the document to the place before search started
         },
 
-        // FIXME: thunderbird incompatible
+        // FIXME: Thunderbird incompatible
         // this is not dependent on the value of 'hlsearch'
         highlight: function (text)
         {

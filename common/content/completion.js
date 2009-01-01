@@ -66,7 +66,8 @@ function CompletionContext(editor, name, offset) //{{{
             self.contexts[name] = this;
 
         /**
-         * @property {CompletionContext} This context's parent. {null} when this is a top-level context.
+         * @property {CompletionContext} This context's parent. {null} when
+         *     this is a top-level context.
          */
         self.parent = parent;
 
@@ -82,7 +83,7 @@ function CompletionContext(editor, name, offset) //{{{
 
         /**
          * @property {boolean} Specifies that this context is not finished
-         *      generating results.
+         *     generating results.
          * @default false
          */
         self.incomplete = false;
@@ -141,7 +142,7 @@ function CompletionContext(editor, name, offset) //{{{
         }];
         /**
          * @property {boolean} Specifies whether this context results must
-         *     match the filter at the begining of the string.
+         *     match the filter at the beginning of the string.
          * @default true
          */
         this.anchored = true;
@@ -159,7 +160,7 @@ function CompletionContext(editor, name, offset) //{{{
          */
         this.keys = { text: 0, description: 1, icon: "icon" };
         /**
-         * @property {number} This context's offset from the begining of
+         * @property {number} This context's offset from the beginning of
          *     {@link #editor}'s value.
          */
         this.offset = offset || 0;
@@ -653,7 +654,7 @@ CompletionContext.prototype = {
     /**
      * Wait for all subcontexts to complete.
      *
-     * @param {boolean} interruptable When true, the call may be interrupted
+     * @param {boolean} interruptible When true, the call may be interrupted
      *    via <C-c>. In this case, "Interrupted" may be thrown.
      * @param {number} timeout The maximum time, in milliseconds, to wait.
      */
@@ -1073,7 +1074,7 @@ function Completion() //{{{
                     compl = function (context, obj)
                     {
                         context.process = [null, function highlight(item, v) template.highlight(v, true)];
-                        // Sort in a logical fasion for object keys:
+                        // Sort in a logical fashion for object keys:
                         //  Numbers are sorted as numbers, rather than strings, and appear first.
                         //  Constants are unsorted, and appear before other non-null strings.
                         //  Other strings are sorted in the default manner.
@@ -1142,12 +1143,12 @@ function Completion() //{{{
                      *  [-3]: base statement
                      */
 
-                    // Yes. If the [ starts at the begining of a logical
+                    // Yes. If the [ starts at the beginning of a logical
                     // statement, we're in an array literal, and we're done.
                      if (get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
                         return;
 
-                    // Begining of the statement upto the opening [
+                    // Beginning of the statement upto the opening [
                     let obj = getObj(-3, get(-2)[OFFSET]);
 
                     return complete.call(this, obj, getKey(), null, string, last);
@@ -1628,9 +1629,8 @@ function Completion() //{{{
             let completions = completer(context);
             if (!completions)
                 return;
-            /* Not vim compatible, but is a significant enough improvement
-             * that it's worth breaking compatibility.
-             */
+            // Not Vim compatible, but is a significant enough improvement
+            // that it's worth breaking compatibility.
             if (newValues instanceof Array)
             {
                 completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);

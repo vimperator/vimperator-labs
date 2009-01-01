@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 /** @scope modules */
 
 /**
- * A class representing EX commands. Instances are created by
+ * A class representing Ex commands. Instances are created by
  * the {@link Commands} class.
  *
  * @private
@@ -86,7 +86,7 @@ function Command(specs, description, action, extraInfo) //{{{
     /** @property {string[]} All of this command's long names, e.g., "command" */
     this.longNames  = expandedSpecs.longNames;
 
-    /** @property {string} The command's cannonical name. */
+    /** @property {string} The command's canonical name. */
     this.name        = this.longNames[0];
     /** @property {string[]} All of this command's long and short names. */
     this.names       = expandedSpecs.names; // return all command name aliases
@@ -189,6 +189,7 @@ Command.prototype = {
      * Returns whether this command may be invoked via <b>name</b>.
      *
      * @param {string} name
+     * @returns {boolean}
      */
     hasName: function (name)
     {
@@ -214,7 +215,7 @@ Command.prototype = {
      *     purposes.
      * @param {Object} extra Extra keys to be spliced into the
      *     returned Args object.
-     * @returns Args
+     * @returns {Args}
      * @see Commands#parseArgs
      */
     parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra)
@@ -769,7 +770,7 @@ function Commands() //{{{
         {
             return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)
             {
-                if (token == "lt") // Don't quote, as in vim (but, why so in vim? You'd think people wouldn't say <q-lt> if they didn't want it)
+                if (token == "lt") // Don't quote, as in Vim (but, why so in Vim? You'd think people wouldn't say <q-lt> if they didn't want it)
                     return "<";
                 let res = tokens[token];
                 if (res == undefined) // Ignore anything undefined

@@ -61,7 +61,7 @@ function Bookmarks() //{{{
     const taggingService   = PlacesUtils.tagging;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
-    // XXX for strange firefox bug :(
+    // XXX for strange Firefox bug :(
     // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
     //     nsresult: "0x8000ffff (NS_ERROR_UNEXPECTED)"
     //     location: "JS frame :: file://~firefox/components/nsTaggingService.js :: anonymous :: line 89"

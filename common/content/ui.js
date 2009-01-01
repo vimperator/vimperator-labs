@@ -925,7 +925,7 @@ function CommandLine() //{{{
             liberator.triggerCallback("change", currentExtendedMode, cmd);
         },
 
-        // normally used when pressing esc, does not execute a command
+        // normally used when pressing <Esc>, does not execute a command
         close: function close()
         {
             let mode = currentExtendedMode;
@@ -963,7 +963,7 @@ function CommandLine() //{{{
             commandlineWidget.collapsed = true;
         },
 
-        // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
+        // liberator.echo uses different order of flags as it omits the highlight group, change v.commandline.echo argument order? --mst
         echo: function echo(str, highlightGroup, flags)
         {
             if (silent)
@@ -1287,7 +1287,7 @@ function CommandLine() //{{{
                     }
                     break;
 
-                // let firefox handle those to select table cells or show a context menu
+                // let Firefox handle those to select table cells or show a context menu
                 case "<C-LeftMouse>":
                 case "<RightMouse>":
                 case "<C-S-LeftMouse>":
@@ -1446,9 +1446,9 @@ function CommandLine() //{{{
 /**
  * The list which is used for the completion box (and QuickFix window in future)
  *
- * @param id: the id of the the XUL <iframe> which we want to fill
- *            it MUST be inside a <vbox> (or any other html element,
- *            because otherwise setting the height does not work properly
+ * @param {string} id The id of the XUL <iframe> which we want to fill it
+ *     MUST be inside a <vbox> (or any other html element, because otherwise
+ *     setting the height does not work properly
  */
 function ItemList(id) //{{{
 {
@@ -1539,10 +1539,10 @@ function ItemList(id) //{{{
     }
 
     /**
-     * uses the entries in "items" to fill the listbox
-     * does incremental filling to speed up things
+     * Uses the entries in "items" to fill the listbox and
+     * does incremental filling to speed up things.
      *
-     * @param offset: start at this index and show maxItems
+     * @param {number} offset Start at this index and show maxItems
      */
     function fill(offset)
     {
@@ -1660,7 +1660,7 @@ function ItemList(id) //{{{
         // select index, refill list if necessary
         selectItem: function selectItem(index)
         {
-            //if (container.collapsed) // fixme
+            //if (container.collapsed) // FIXME
             //    return;
 
             //let now = Date.now();
@@ -1783,7 +1783,7 @@ function StatusLine() //{{{
             this.updateBufferPosition();
         },
 
-        // if "url" is ommited, build a usable string for the URL
+        // if "url" is omitted, build a usable string for the URL
         updateUrl: function updateUrl(url)
         {
             if (typeof url == "string")
@@ -1794,7 +1794,7 @@ function StatusLine() //{{{
 
             url = buffer.URL;
 
-            // make it even more vim-like
+            // make it even more Vim-like
             if (url == "about:blank")
             {
                 if (!buffer.title)

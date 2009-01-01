@@ -31,7 +31,7 @@ const config = { //{{{
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
 
-    /*** optional options, there are checked for existance and a fallback provided  ***/
+    /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: { guioptions: "frb" },
 

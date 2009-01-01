@@ -509,7 +509,7 @@ function IO() //{{{
             switch (EXTENSION_NAME)
             {
                 case "muttator":
-                    tmpName = "mutt-ator-mail"; // to allow vim to :set ft=mail automatically
+                    tmpName = "mutt-ator-mail"; // to allow Vim to :set ft=mail automatically
                     break;
                 case "vimperator":
                     try
@@ -629,7 +629,7 @@ function IO() //{{{
             else
             {
                 let dirs = services.get("environment").get("PATH").split(WINDOWS ? ";" : ":");
-                // Windows tries the cwd first TODO: desirable?
+                // Windows tries the CWD first TODO: desirable?
                 if (WINDOWS)
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
 
@@ -748,7 +748,7 @@ lookup:
             return found;
         },
 
-        // files which end in .js are sourced as pure javascript files,
+        // files which end in .js are sourced as pure JavaScript files,
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
@@ -781,7 +781,7 @@ lookup:
                 let str = ioManager.readFile(file);
                 let uri = ioService.newFileURI(file);
 
-                // handle pure javascript files specially
+                // handle pure JavaScript files specially
                 if (/\.js$/.test(filename))
                 {
                     try

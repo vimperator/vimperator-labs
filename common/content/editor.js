@@ -709,7 +709,7 @@ function Editor() //{{{
 
         // This function will move/select up to given "pos"
         // Simple setSelectionRange() would be better, but we want to maintain the correct
-        // order of selectionStart/End (a firefox bug always makes selectionStart <= selectionEnd)
+        // order of selectionStart/End (a Firefox bug always makes selectionStart <= selectionEnd)
         // Use only for small movements!
         moveToPosition: function (pos, forward, select)
         {
@@ -900,7 +900,7 @@ function Editor() //{{{
         //
         // if filter == ! remove all and add it as only END
         //
-        // variant 1: rhs matches anywere in loop
+        // variant 1: rhs matches anywhere in loop
         //
         //          1 mod matches anywhere in loop
         //                  a) simple replace and
@@ -913,7 +913,7 @@ function Editor() //{{{
         //                 (b) a ! is there. do nothing END)
         //
         // variant 2: rhs matches *no*were in loop and filter is c or i
-        //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
+        //            every kind of current combo is possible to 1 {c,i,!} or two {c and i}
         //
         //          1 mod is ! split into two i + c END
         //          1 not !: opposite mode (first), add/change 'second' and END

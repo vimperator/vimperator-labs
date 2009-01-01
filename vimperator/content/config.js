@@ -31,7 +31,7 @@ const config = { //{{{
     name: "Vimperator",
     hostApplication: "Firefox",
 
-    /*** optional options, there are checked for existance and a fallback provided  ***/
+    /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
     defaults: { guioptions: "rb" },
 

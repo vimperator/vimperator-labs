@@ -578,10 +578,10 @@ function Options() //{{{
     }
 
     //
-    // firefox preferences which need to be changed to work well with vimperator
+    // Firefox preferences which need to be changed to work well with Vimperator
     //
 
-    // work around firefox popup blocker
+    // work around Firefox popup blocker
     // TODO: Make this work like safeSetPref
     var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
     if (!/keypress/.test(popupAllowedEvents))
@@ -601,7 +601,7 @@ function Options() //{{{
         // TODO: move to buffer.js
         // we have our own typeahead find implementation
         options.safeSetPref("accessibility.typeaheadfind.autostart", false);
-        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in firefox
+        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in Firefox
     });
 
     // start with saved session

@@ -528,7 +528,7 @@ function Events() //{{{
             {
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
-                // is not triggered there (firefox bug?)
+                // is not triggered there (Firefox bug?)
                 setTimeout(statusline.updateUrl, 10);
                 return;
             }
@@ -836,7 +836,7 @@ function Events() //{{{
         },
 
         // This method pushes keys into the event queue from liberator
-        // it is similar to vim's feedkeys() method, but cannot cope with
+        // it is similar to Vim's feedkeys() method, but cannot cope with
         // 2 partially-fed strings, you have to feed one parsable string
         //
         // @param keys: a string like "2<C-f>" to pass
@@ -1081,10 +1081,10 @@ function Events() //{{{
             return ret;
         },
 
-        // argument "event" is delibarately not used, as i don't seem to have
+        // argument "event" is deliberately not used, as i don't seem to have
         // access to the real focus target
         //
-        // the ugly wantsModeReset is needed, because firefox generates a massive
+        // the ugly wantsModeReset is needed, because Firefox generates a massive
         // amount of focus changes for things like <C-v><C-k> (focusing the search field)
         onFocusChange: function (event)
         {
@@ -1131,7 +1131,7 @@ function Events() //{{{
 
                 if (config.name == "Muttator")
                 {
-                    // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
+                    // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
                     if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
                     {
                         if (config.isComposeWindow)
@@ -1337,7 +1337,7 @@ function Events() //{{{
                 return false;
             }
 
-            // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+            // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
             if ((config.name == "Vimperator" && liberator.mode == modes.NORMAL)
@@ -1376,7 +1376,7 @@ function Events() //{{{
                         return false;
                     }
 
-                    // others are left to generate the 'input' event or handled by firefox
+                    // others are left to generate the 'input' event or handled by Firefox
                     return;
                 }
             }
@@ -1506,7 +1506,7 @@ function Events() //{{{
 
                 if (key != "<Esc>" && key != "<C-[>")
                 {
-                    // allow key to be passed to firefox if we can't handle it
+                    // allow key to be passed to Firefox if we can't handle it
                     stop = false;
 
                     if (liberator.mode == modes.COMMAND_LINE)

@@ -47,7 +47,7 @@ function Hints() //{{{
     var hintNumber = 0;  // only the numerical part of the hint
     var usedTabKey = false; // when we used <Tab> to select an element
     var prevInput = "";    // record previous user input type, "text" || "number"
-    var extendedhintCount;  // for the count arugument of Mode#action (extended hint only)
+    var extendedhintCount;  // for the count argument of Mode#action (extended hint only)
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var pageHints = [];
@@ -340,7 +340,7 @@ function Hints() //{{{
         removeHints(timeout);
 
         if (timeout == 0)
-            // force a possible mode change, based on wheter an input field has focus
+            // force a possible mode change, based on whether an input field has focus
             events.onFocusChange();
         setTimeout(function () {
             if (modes.extended & modes.HINTS)

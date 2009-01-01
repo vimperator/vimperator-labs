@@ -129,7 +129,7 @@ Highlights.prototype.CSS = <![CDATA[
 
 /**
  * A class to manage highlighting rules. The parameters are the
- * standard paramaters for any {@link Storage} object.
+ * standard parameters for any {@link Storage} object.
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
@@ -192,6 +192,8 @@ function Highlights(name, store, serial)
 
     /**
      * Gets a CSS selector given a highlight group.
+     *
+     * @param {string} class
      */
     this.selector = function (class)
     {
@@ -238,7 +240,7 @@ function Highlights(name, store, serial)
 /**
  * Manages named and unnamed user stylesheets, which apply to both
  * chrome and content pages. The parameters are the standard
- * paramaters for any {@link Storage} object.
+ * parameters for any {@link Storage} object.
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
@@ -337,6 +339,12 @@ function Styles(name, store, serial)
     /**
      * Find sheets matching the parameters. See {@link #addSheet}
      * for parameters.
+     *
+     * @param {boolean} system
+     * @param {string} name
+     * @param {string} filter
+     * @param {string} css
+     * @param {number} index
      */
     this.findSheets = function (system, name, filter, css, index)
     {
@@ -361,6 +369,12 @@ function Styles(name, store, serial)
      * In cases where <b>filter</b> is supplied, the given filters
      * are removed from matching sheets. If any remain, the sheet is
      * left in place.
+     *
+     * @param {boolean} system
+     * @param {string} name
+     * @param {string} filter
+     * @param {string} css
+     * @param {number} index
      */
     this.removeSheet = function (system, name, filter, css, index)
     {
@@ -407,7 +421,7 @@ function Styles(name, store, serial)
     /**
      * Register a user stylesheet at the given URI.
      *
-     * @param {string} uri The UrI of the sheet to register.
+     * @param {string} uri The URI of the sheet to register.
      * @param {boolean} reload Whether to reload any sheets that are
      *     already registered.
      */
@@ -422,6 +436,8 @@ function Styles(name, store, serial)
 
     /**
      * Unregister a sheet at the given URI.
+     *
+     * @param {string} uri The URI of the sheet to unregister.
      */
     this.unregisterSheet = function (uri)
     {
@@ -433,6 +449,8 @@ function Styles(name, store, serial)
     // FIXME
     /**
      * Register an agent stylesheet.
+     *
+     * @param {string} uri The URI of the sheet to register.
      * @deprecated
      */
     this.registerAgentSheet = function (uri)
@@ -444,6 +462,8 @@ function Styles(name, store, serial)
 
     /**
      * Unregister an agent stylesheet.
+     *
+     * @param {string} uri The URI of the sheet to unregister.
      * @deprecated
      */
     this.unregisterAgentSheet = function (uri)
@@ -516,7 +536,6 @@ liberator.registerObserver("load_completion", function ()
 
 liberator.registerObserver("load_commands", function ()
 {
-    // TODO: :colo default needs :hi clear
     commands.add(["colo[rscheme]"],
         "Load a color scheme",
         function (args)
