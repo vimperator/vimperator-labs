@@ -449,7 +449,7 @@ const liberator = (function () //{{{
                         let each, eachUnits, totalUnits;
                         let total = 0;
 
-                        for (let i in util.interruptableRange(0, count, 500))
+                        for (let i in util.interruptibleRange(0, count, 500))
                         {
                             let now = Date.now();
                             method();

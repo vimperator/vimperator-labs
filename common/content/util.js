@@ -551,7 +551,7 @@ const util = { //{{{
      * @param {number} time The time in milliseconds between thread yields.
      * @returns {Iterator(Object)}
      */
-    interruptableRange: function interruptableRange(start, end, time)
+    interruptibleRange: function interruptibleRange(start, end, time)
     {
         let endTime = Date.now() + time;
         while (start < end)
