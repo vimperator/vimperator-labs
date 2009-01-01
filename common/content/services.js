@@ -15,7 +15,7 @@ const Cu = Components.utils;
 
 /**
  * Cached XPCOM services and instances.
- * 
+ *
  * @constructor
  */
 function Services()

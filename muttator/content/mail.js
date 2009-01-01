@@ -890,12 +890,13 @@ function Mail() //{{{
             return false;
         },
 
-        /*
-         * general-purpose method to find messages
-         * @param validatorFunc(msg): return true/false whether msg should be selected or not
-         * @param canWrap: when true, wraps around folders
-         * @param openThreads: should we open closed threads?
-         * @param reverse: change direction of searching
+        /**
+         * General-purpose method to find messages
+         *
+         * @param {function} validatorFunc(msg): return true/false whether msg should be selected or not
+         * @param {boolean} canWrap: when true, wraps around folders
+         * @param {boolean} openThreads: should we open closed threads?
+         * @param {boolean} reverse: change direction of searching
          */
         selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
         {

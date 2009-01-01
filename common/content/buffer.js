@@ -42,7 +42,7 @@ function Buffer() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    /* FIXME: This doesn't belong here. */
+    // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "main-window";
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 

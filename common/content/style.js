@@ -246,10 +246,9 @@ function Highlights(name, store, serial)
  */
 function Styles(name, store, serial)
 {
-    /* Can't reference liberator or Components inside Styles --
-     * they're members of the window object, which disappear
-     * with this window.
-     */
+    // Can't reference liberator or Components inside Styles --
+    // they're members of the window object, which disappear
+    // with this window.
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;

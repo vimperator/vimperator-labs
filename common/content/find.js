@@ -469,7 +469,6 @@ function Search() //{{{
             // highlighted
             getBrowser().fastFind.collapseSelection();
         }
-
     };
     //}}}
 }; //}}}

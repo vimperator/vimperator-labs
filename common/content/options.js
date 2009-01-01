@@ -867,7 +867,7 @@ function Options() //{{{
                         isDefault: opt.value == opt.defaultValue,
                         name:      opt.name,
                         default:   opt.defaultValue,
-                        pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0", // Unicode nonbreaking space.
                         value:     <></>
                     };
 
@@ -915,7 +915,7 @@ function Options() //{{{
                         default:   loadPreference(pref, null, true),
                         value:     <>={template.highlight(value, true, 100)}</>,
                         name:      pref,
-                        pre:       "\u00a0\u00a0" /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0" // Unicode nonbreaking space.
                     };
 
                     yield option;

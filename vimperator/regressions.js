@@ -28,9 +28,9 @@ var singlelineOutput = document.getElementById("liberator-commandline-command")
 // previous command
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// A series of ex commands or mappings, each with a
+// A series of Ex commands or mappings, each with a
 // function checking whether the command succeeded
-// If the string starts with a ":" it is executed as an ex command, otherwise as a mapping
+// If the string starts with a ":" it is executed as an Ex command, otherwise as a mapping
 // You can also mix commands mappings
 let tests = [
     { cmds: [":!dir"],
@@ -56,7 +56,7 @@ let tests = [
     // testing tab behavior
 ];
 
-// these functions highly depend on the liberator API, so use ex command tests whenever possible
+// these functions highly depend on the liberator API, so use Ex command tests whenever possible
 let functions = [
     function () { return bookmarks.get("").length > 0 }, // will fail for people without bookmarks :( Might want to add one before
     function () { return history.get("").length > 0 }
@@ -120,7 +120,7 @@ commands.addUserCommand(["regr[essions]"],
         // TODO: count (better even range) support to just run test 34 of 102
         // TODO: bang support to either: a) run commands like deleting bookmarks which
         //       should only be done in a clean profile or b) run functions and not
-        //       just ex command tests; Yet to be decided
+        //       just Ex command tests; Yet to be decided
 
         let updateOutputHeight = null;
         function init()

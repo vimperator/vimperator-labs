@@ -1057,16 +1057,21 @@ const liberator = (function () //{{{
             consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
-        // open one or more URLs
-        //
-        // @param urls: either a string or an array of urls
-        //              The array can look like this:
-        //              ["url1", "url2", "url3", ...] or:
-        //              [["url1", postdata1], ["url2", postdata2], ...]
-        // @param where: if ommited, CURRENT_TAB is assumed
-        //                  but NEW_TAB is set when liberator.forceNewTab is true.
-        // @param force: Don't prompt whether to open more than 20 tabs.
-        // @returns true when load was initiated, or false on error
+        /**
+         * Opens one or more URLs. Returns true when load was initiated, or
+         * false on error.
+         *
+         * @param {FIXME} urls Either a URL string or an array of URLs.
+         *     The array can look like this:
+         *       ["url1", "url2", "url3", ...]
+         *     or:
+         *       [["url1", postdata1], ["url2", postdata2], ...]
+         * @param {number} where If ommited, CURRENT_TAB is assumed but NEW_TAB
+         *     is set when liberator.forceNewTab is true.
+         * @param {boolean} force Don't prompt whether to open more than 20
+         *     tabs.
+         * @returns {boolean}
+         */
         open: function (urls, where, force)
         {
             // convert the string to an array of converted URLs

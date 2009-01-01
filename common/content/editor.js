@@ -217,7 +217,7 @@ function Editor() //{{{
 
     var myModes = [modes.INSERT, modes.COMMAND_LINE];
 
-    /*             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA */
+    //             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA
     addMovementMap(["k", "<Up>"],                true,  "lineMove", false,      "cmd_linePrevious", selectPreviousLine);
     addMovementMap(["j", "<Down>", "<Return>"],  true,  "lineMove", true,       "cmd_lineNext",     selectNextLine);
     addMovementMap(["h", "<Left>", "<BS>"],      true,  "characterMove", false, "cmd_charPrevious", "cmd_selectCharPrevious");

@@ -28,14 +28,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
+// Do NOT create instances of this class yourself, use the helper method
+// commands.add() instead
 /**
  * A class representing Ex commands. Instances are created by
  * the {@link Commands} class.
  *
  * @private
  */
-// Do NOT create instances of this class yourself, use the helper method
-// commands.add() instead
 function Command(specs, description, action, extraInfo) //{{{
 {
     if (!specs || !action)
@@ -112,7 +112,7 @@ function Command(specs, description, action, extraInfo) //{{{
      * arguments begin. For instance, with a value of 2, all arguments
      * starting with the third are parsed as a single string, with all
      * quoting characters passed literally. This is especially useful for
-     * commands which take key mappings or ex command lines as
+     * commands which take key mappings or Ex command lines as
      * arguments.
      */
     this.literal     = extraInfo.literal == null ? null : extraInfo.literal;
@@ -133,7 +133,7 @@ function Command(specs, description, action, extraInfo) //{{{
     this.isUserCommand   = extraInfo.isUserCommand || false;
     /**
      * @property {string} For commands defined via :command, contains
-     * the EX command line to be executed upon invocation.
+     * the Ex command line to be executed upon invocation.
      */
     this.replacementText = extraInfo.replacementText || null;
 };

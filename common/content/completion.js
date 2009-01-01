@@ -683,10 +683,10 @@ function Completion() //{{{
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
-        let top = [];  /* The element on the top of the stack. */
-        let last = ""; /* The last opening char pushed onto the stack. */
-        let lastNonwhite = ""; /* Last non-whitespace character we saw. */
-        let lastChar = "";     /* Last character we saw, used for \ escaping quotes. */
+        let top = [];  // The element on the top of the stack.
+        let last = ""; // The last opening char pushed onto the stack.
+        let lastNonwhite = ""; // Last non-whitespace character we saw.
+        let lastChar = "";     // Last character we saw, used for \ escaping quotes.
         let compl = [];
         let str = "";
 
@@ -733,11 +733,10 @@ function Completion() //{{{
             return iterator;
         }
 
-        /* Search the object for strings starting with @key.
-         * If @last is defined, key is a quoted string, it's
-         * wrapped in @last after @offset characters are sliced
-         * off of it and it's quoted.
-         */
+        // Search the object for strings starting with @key.
+        // If @last is defined, key is a quoted string, it's
+        // wrapped in @last after @offset characters are sliced
+        // off of it and it's quoted.
         this.objectKeys = function objectKeys(obj)
         {
             // Things we can dereference
@@ -809,11 +808,10 @@ function Completion() //{{{
             }
         }
 
-        /* Get an element from the stack. If @n is negative,
-         * count from the top of the stack, otherwise, the bottom.
-         * If @m is provided, return the @mth value of element @o
-         * of the stack entey at @n.
-         */
+        // Get an element from the stack. If @n is negative,
+        // count from the top of the stack, otherwise, the bottom.
+        // If @m is provided, return the @mth value of element @o
+        // of the stack entey at @n.
         let get = function get(n, m, o)
         {
             let a = stack[n >= 0 ? n : stack.length + n];
@@ -827,7 +825,7 @@ function Completion() //{{{
         function buildStack(filter)
         {
             let self = this;
-            /* Push and pop the stack, maintaining references to 'top' and 'last'. */
+            // Push and pop the stack, maintaining references to 'top' and 'last'.
             let push = function push(arg)
             {
                 top = [i, arg, [i], [], [], [], []];
@@ -855,7 +853,7 @@ function Completion() //{{{
                 return ret;
             }
 
-            let i = 0, c = "";     /* Current index and character, respectively. */
+            let i = 0, c = "";     // Current index and character, respectively.
 
             // Reuse the old stack.
             if (str && filter.substr(0, str.length) == str)
@@ -871,11 +869,10 @@ function Completion() //{{{
                 push("#root");
             }
 
-            /* Build a parse stack, discarding entries as opening characters
-             * match closing characters. The stack is walked from the top entry
-             * and down as many levels as it takes us to figure out what it is
-             * that we're completing.
-             */
+            // Build a parse stack, discarding entries as opening characters
+            // match closing characters. The stack is walked from the top entry
+            // and down as many levels as it takes us to figure out what it is
+            // that we're completing.
             str = filter;
             let length = str.length;
             for (; i < length; lastChar = c, i++)
@@ -907,7 +904,7 @@ function Completion() //{{{
                     switch (c)
                     {
                         case "(":
-                            /* Function call, or if/while/for/... */
+                            // Function call, or if/while/for/...
                             if (/[\w$]/.test(lastNonwhite))
                             {
                                 functions.push(i);
@@ -928,7 +925,7 @@ function Completion() //{{{
                             break;
                         case ")": pop("("); break;
                         case "]": pop("["); break;
-                        case "}": pop("{"); /* Fallthrough */
+                        case "}": pop("{"); // Fallthrough
                         case ";":
                             top[FULL_STATEMENTS].push(i);
                             break;
@@ -973,7 +970,7 @@ function Completion() //{{{
             this.context.getCache("eval", Object);
             this.context.getCache("evalContext", function () ({ __proto__: userContext }));
 
-            /* Okay, have parse stack. Figure out what we're completing. */
+            // Okay, have parse stack. Figure out what we're completing.
 
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
@@ -1040,7 +1037,7 @@ function Completion() //{{{
                 cacheKey = null;
                 let obj = [[cache.evalContext, "Local Variables"], [userContext, "Global Variables"],
                            [modules, "modules"], [window, "window"]]; // Default objects;
-                /* Is this an object dereference? */
+                // Is this an object dereference?
                 if (dot < statement) // No.
                     dot = statement - 1;
                 else // Yes. Set the object to the string before the dot.
@@ -1113,11 +1110,11 @@ function Completion() //{{{
             // Otherwise, do nothing.
             if (last == "'" || last == '"')
             {
-                /*
-                 * str = "foo[bar + 'baz"
-                 * obj = "foo"
-                 * key = "bar + ''"
-                 */
+                //
+                // str = "foo[bar + 'baz"
+                // obj = "foo"
+                // key = "bar + ''"
+                //
 
                 // The top of the stack is the sting we're completing.
                 // Wrap it in its delimiters and eval it to process escape sequences.
@@ -1134,14 +1131,13 @@ function Completion() //{{{
                     return this.eval(key);
                 }
 
-                /* Is this an object accessor? */
+                // Is this an object accessor?
                 if (get(-2)[CHAR] == "[") // Are we inside of []?
                 {
-                    /* Stack:
-                     *  [-1]: "...
-                     *  [-2]: [...
-                     *  [-3]: base statement
-                     */
+                    // Stack:
+                    //  [-1]: "...
+                    //  [-2]: [...
+                    //  [-3]: base statement
 
                     // Yes. If the [ starts at the beginning of a logical
                     // statement, we're in an array literal, and we're done.
@@ -1157,11 +1153,10 @@ function Completion() //{{{
                 // Is this a function call?
                 if (get(-2)[CHAR] == "(")
                 {
-                    /* Stack:
-                     *  [-1]: "...
-                     *  [-2]: (...
-                     *  [-3]: base statement
-                     */
+                    // Stack:
+                    //  [-1]: "...
+                    //  [-2]: (...
+                    //  [-3]: base statement
 
                     // Does the opening "(" mark a function call?
                     if (get(-3, 0, FUNCTIONS) != get(-2)[OFFSET])
@@ -1210,15 +1205,15 @@ function Completion() //{{{
                 return;
             }
 
-            /*
-             * str = "foo.bar.baz"
-             * obj = "foo.bar"
-             * key = "baz"
-             *
-             * str = "foo"
-             * obj = [modules, window]
-             * key = "foo"
-             */
+            //
+            // str = "foo.bar.baz"
+            // obj = "foo.bar"
+            // key = "baz"
+            //
+            // str = "foo"
+            // obj = [modules, window]
+            // key = "foo"
+            //
 
             let [offset, obj, key] = getObjKey(-1);
 
@@ -1231,7 +1226,7 @@ function Completion() //{{{
             }
 
             if (!/^(?:[a-zA-Z_$][\w$]*)?$/.test(key))
-                return; /* Not a word. Forget it. Can this even happen? */
+                return; // Not a word. Forget it. Can this even happen?
 
             try
             { // FIXME

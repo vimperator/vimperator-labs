@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-/*
+/**
  * This class is used for prompting of user input and echoing of messages
  *
  * it consists of a prompt and command field
@@ -560,11 +560,10 @@ function CommandLine() //{{{
 
         liberator.triggerObserver("echoMultiline", str, highlightGroup);
 
-        /* If it's already XML, assume it knows what it's doing.
-         * Otherwise, white space is significant.
-         * The problem elsewhere is that E4X tends to insert new lines
-         * after interpolated data.
-         */
+        // If it's already XML, assume it knows what it's doing.
+        // Otherwise, white space is significant.
+        // The problem elsewhere is that E4X tends to insert new lines
+        // after interpolated data.
         XML.ignoreWhitespace = typeof str != "xml";
         lastMowOutput = <div class="ex-command-output" style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>;
         let output = util.xmlToDom(lastMowOutput, doc);

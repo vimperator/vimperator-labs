@@ -182,6 +182,16 @@ function AutoCommands() //{{{
 
         __iterator__: function () util.Array.iterator(store),
 
+        /**
+         * Adds a new autocommand. <b>cmd</b> will be executed when one of the
+         * specified <b>events</b> occurs and the URL of the applicable buffer
+         * matches <b>regex</b>.
+         *
+         * @param {Array} events The array of event names for which this
+         *     autocommand should be executed.
+         * @param {string} regex The URL pattern to match against the buffer URL
+         * @param {string} cmd The Ex command to run
+         */
         add: function (events, regex, cmd)
         {
             if (typeof events == "string")
@@ -194,16 +204,38 @@ function AutoCommands() //{{{
             });
         },
 
+        /**
+         * Returns all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         * @returns {AutoCommand[]}
+         */
         get: function (event, regex)
         {
             return store.filter(function (autoCmd) matchAutoCmd(autoCmd, event, regex));
         },
 
+        /**
+         * Deletes all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         */
         remove: function (event, regex)
         {
             store = store.filter(function (autoCmd) !matchAutoCmd(autoCmd, event, regex));
         },
 
+        /**
+         * Lists all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         */
         list: function (event, regex)
         {
             let cmds = {};
@@ -239,6 +271,14 @@ function AutoCommands() //{{{
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Triggers the execution of all autocommands registered for
+         * <b>event</b>. A map of <b>args</b> is passed to each autocommand
+         * when it is being executed.
+         *
+         * @param {string} event The event to fire.
+         * @param {Object} args The args to pass to each autocommand.
+         */
         trigger: function (event, args)
         {
             if (options.get("eventignore").has("all", event))
@@ -835,12 +875,18 @@ function Events() //{{{
             }
         },
 
-        // This method pushes keys into the event queue from liberator
-        // it is similar to Vim's feedkeys() method, but cannot cope with
-        // 2 partially-fed strings, you have to feed one parsable string
-        //
-        // @param keys: a string like "2<C-f>" to pass
-        //              if you want < to be taken literally, prepend it with a \\
+        /**
+         * Pushes keys into the event queue from liberator it is similar to
+         * Vim's feedkeys() method, but cannot cope with 2 partially-fed
+         * strings, you have to feed one parsable string.
+         * 
+         * @param {string} keys A string like "2<C-f>" to pass if you want "<"
+         *     to be taken literally, prepend it with a "\\".
+         * @param {boolean} noremap Allow recursive mappings.
+         * @param {boolean} silent Whether the command should be echoed to the
+         *     command-line.
+         * @returns {boolean}
+         */
         feedkeys: function (keys, noremap, silent)
         {
             let doc = window.document;
