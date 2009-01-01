@@ -393,7 +393,8 @@ function Options() //{{{
         }
     }
 
-    function setAction (args, modifiers) {
+    function setAction(args, modifiers)
+    {
         let bang = args.bang;
         if (!args.length)
             args[0] = "";
@@ -516,7 +517,7 @@ function Options() //{{{
         }
     }
 
-    function setCompleter (context, args, modifiers)
+    function setCompleter(context, args, modifiers)
     {
         let filter = context.filter;
 
