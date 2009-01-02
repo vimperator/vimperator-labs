@@ -5,33 +5,35 @@ be documented here.
 
 section:Initialization[initialization,startup]
 
-At startup Vimperator can perform user initialization commands. When one of
-the following is successfully located, it is executed, and no further
-locations are tried.
+At startup, Vimperator completes the following tasks in order.
 
+1. Vimperator can perform user initialization commands. When
+one of the following is successfully located, it is executed, and no
+further locations are tried.
 |$VIMPERATOR_INIT|
 
-1. _$VIMPERATOR_INIT_ -- May contain a single ex command, usually
-	[c]:source {file}[c].
-2. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
+  a. _$VIMPERATOR_INIT_ -- May contain a single ex command (e.g.,
+                           "[c]:source {file}[c]").
+  b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
 	are executed.
-3. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are executed.
+  c. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are executed.
 
-If 'exrc' is set then any RC file in the current directory is also sourced.
+2. If 'exrc' is set, then any RC file in the current directory is also sourced.
 
-The plugin directory can be in any of the directories in 'runtimepath'.
-
-All directories in 'runtimepath' are searched for a "plugin" subdirectory and
-all are loaded. For each plugin directory all *.\{js,vimp} files (including
-those in further subdirectories) are sourced alphabetically.
-
-Plugins will not be sourced if 'noloadplugins' is set.
+3. All directories in 'runtimepath' are searched for a "plugin"
+subdirectory and all yet unloaded plugins are loaded. For each plugin
+directory, all *.\{js,vimp} files (including those in further
+subdirectories) are sourced alphabetically. No plugins will be sourced
+if 'noloadplugins' is set. Any particular plugin will not be loaded if
+it has already been loaded (e.g., by an earlier [c]:loadplugins[c]
+command).
 
 The user's ~ (i.e., "home") directory is determined as follows:
 
-* Unix and Mac -- _$HOME_ is used.
-* Windows -- if _%HOME%_ is set then this is used, otherwise _%USERPROFILE%_ or finally
-_%HOMEDRIVE%%HOMEPATH%_.
+* On Unix and Mac, the environment variable  _$HOME_ is used.
+* On Windows, Vimperator checks for the existence of _%HOME%_, then
+_%USERPROFILE%_, and then _%HOMEDRIVE%%HOMEPATH%_. It uses the first one
+it finds.
 
 section:Saving{nbsp}settings[save-settings]
 

@@ -470,7 +470,10 @@ ____
 |\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
 ||'loadplugins' 'lpl'|| boolean (default on)
 ____
-Load plugin scripts when starting up.
+Load plugin scripts when starting up. When on, yet unloaded plugins are
+automatically loaded after the vimperatorrc file has been sourced. To
+load plugins earlier, use the [c]:loadplugins[c] command within the
+vimperatorrc.
 ____
 
 
