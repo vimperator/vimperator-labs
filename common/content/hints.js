@@ -73,7 +73,6 @@ function Hints() //{{{
         t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
         w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Follow hint sequence in tabs",        hintSequenceElement),
         O: Mode("Preselect hint in an :open query",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
         T: Mode("Preselect hint in a :tabopen query",  function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
         W: Mode("Preselect hint in a :winopen query",  function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
@@ -82,21 +81,6 @@ function Hints() //{{{
         y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
         Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
     };
-
-    // Implement ';F' hint sequences. This function handles on element of the hint sequence.
-    function hintSequenceElement(elem)
-    {
-        // Want to always open sequence hints in background
-        // (remember: NEW_BACKGROUND_TAB and NEW_TAB semantics assume
-        //            that loadInBackground=true)
-        if( options.getPref("browser.tabs.loadInBackground") )
-            buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
-        else
-            buffer.followLink(elem, liberator.NEW_TAB);
-
-        // Move to next element in sequence
-        hints.show("F");
-    }
 
     // reset all important variables
     function reset()
