@@ -87,7 +87,7 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
 
-Note: the behavior of [m];t[m] and [m];b[m] is inverted if the
+Note: The behavior of [m];t[m] and [m];b[m] is inverted if the
 \'browser.tabs.loadInBackground' preference is set to false.
 ________________________________________________________________________________
 
