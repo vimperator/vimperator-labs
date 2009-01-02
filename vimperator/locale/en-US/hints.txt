@@ -88,7 +88,7 @@ Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
 
 Note: The behavior of [m];t[m] and [m];b[m] is inverted if the
-\'browser.tabs.loadInBackground' preference is set to false.
+\'browser.tabs.loadInBackground' Firefox preference is set to false.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:
