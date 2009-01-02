@@ -72,6 +72,9 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 |;v|
 * [m]v[m] to view its destination source
 
+|;V|
+* [m]V[m] to view its destination source in the external editor
+
 |;w|
 * [m]w[m] to open its destination in a new window
 
