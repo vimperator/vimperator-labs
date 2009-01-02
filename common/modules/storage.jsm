@@ -57,7 +57,7 @@ function Timer(minInterval, maxInterval, callback)
     };
     this.tell = function (arg)
     {
-        if (arg !== undefined)
+        if (arguments.length > 0)
             this.arg = arg;
 
         let now = Date.now();

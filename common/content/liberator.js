@@ -1414,6 +1414,21 @@ const liberator = (function () //{{{
 
 window.liberator = liberator;
 
+// FIXME: Ugly, etc.
+window.addEventListener("liberatorHelpLink", function (event) {
+        let elem = event.target;
+        liberator.dump(String(elem));
+        if (/^(option|mapping|command)$/.test(elem.className))
+            var tag = elem.textContent.replace(/\s.*/, "");
+        if (elem.className == "command")
+            tag = tag.replace(/\[.*?\]/g, "");
+        if (tag)
+            var page = liberator.findHelp(tag);
+        if (page)
+            elem.href = "chrome://liberator/locale/" + page;
+    },
+    true, true);
+
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);
 window.addEventListener("unload", liberator.shutdown, false);
