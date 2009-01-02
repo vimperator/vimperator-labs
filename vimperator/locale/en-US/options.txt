@@ -185,7 +185,7 @@ preferences.
 ________________________________________________________________________________
 
 
-|:set-!|
+|:set!| |:set-!|
 ||:se[t]! {preference}={value}|| +
 ________________________________________________________________________________
 Change any Firefox {preference} (those in the about:config window). You can also
