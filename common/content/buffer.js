@@ -330,7 +330,7 @@ function Buffer() //{{{
                     "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
                 );
 
-                for (match in matches)
+                for (let match in matches)
                 {
                     let computedStyle = util.computedStyle(match);
                     if (computedStyle.visibility != "hidden" && computedStyle.display != "none")
@@ -339,11 +339,7 @@ function Buffer() //{{{
 
                 if (elements.length > 0)
                 {
-                    if (count > elements.length)
-                        count = elements.length;
-                    else if (count < 1)
-                        count = 1;
-
+                    count = Math.min(Math.max(count, 1), elements.length);
                     elements[count - 1].focus();
                 }
                 else
