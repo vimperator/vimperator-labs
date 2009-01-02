@@ -5,7 +5,7 @@ HEADER
 INTRO TO BE WRITTEN...
 
 |f| +
-||f\\{hint\\}||
+||#f#{hint}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
 'hinttags' XPath query) is assigned a unique number. You can now either type
@@ -20,7 +20,7 @@ ________________________________________________________________________________
 
 
 |F| +
-||F\\{hint\\}||
+||#F#{hint}||
 ________________________________________________________________________________
 Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
 (activated with [m]f[m]) but opens the link in a new tab.
@@ -30,7 +30,7 @@ ________________________________________________________________________________
 |extended-hints| +
 
 |;| +
-||;\\{mode\\}\\{hint\\}||
+||#;#{mode}{empty}{hint}||
 ________________________________________________________________________________
 Start an extended hint mode. ExtendedHint mode is useful, since in this mode
 you can yank link locations, open them in a new window or save images. If
