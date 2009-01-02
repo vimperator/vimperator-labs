@@ -39,20 +39,49 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 
 {mode} can be either one of: +
 
+|;;|
 * [m];[m] to focus a link and hover it with the mouse
+
+|;?|
 * [m]?[m] to show information about the element (incomplete)
+
+|;a|
 * [m]a[m] to save its destination (prompting for save location)
+
+|;f|
 * [m]f[m] to focus a frame
+
+|;s|
 * [m]s[m] to save its destination
+
+|;o|
 * [m]o[m] to open its location in the current tab
+
+|;t|
 * [m]t[m] to open its location in a new tab
+
+|;b|
 * [m]b[m] to open its location in a new background tab
+
+|;O|
 * [m]O[m] to open its location in an [c]:open[c] query
+
+|;T|
 * [m]T[m] to open its location in a [c]:tabopen[c] query
+
+|;v|
 * [m]v[m] to view its destination source
+
+|;w|
 * [m]w[m] to open its destination in a new window
+
+|;W|
 * [m]W[m] to open its location in a [c]:winopen[c] query
+
+|;y|
 * [m]y[m] to yank its destination location
+
+|;Y|
 * [m]Y[m] to yank its text description
 
 Hintable elements for all extended hint modes can be set in the
