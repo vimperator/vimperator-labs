@@ -42,6 +42,14 @@ FEATURES:
   :open foo
 9 use the storage module for autocommands
 8 support 'activate' in buffer.followLink?
+  Leave this to the bookmarks.tabs.loadInBackground. Hint activation
+  should be nearly equivalent to the corresponding mouse motion, and that
+  mouse movement would be governed by the FF pref. However, :tabopen is
+  something Vimp specific, and so it needs a specific setting (i.e.,
+  activate). OTOH, I think it would be better if ";t" *always* opens a
+  new foreground tab and ";b" *always* opensa  new background tab. So "F"
+  should be the only hint mode that changes based on loadInBackground.
+  --Ted
 8 add support for filename special characters such as %
 8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
@@ -67,6 +75,8 @@ FEATURES:
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
+  Here, unlike Vim, y and "*y would be equivalent. That is, the pasteboard would
+  always be the default register. --Ted
 6 check/correct spellings in insert mode with some mappings
 6 add more autocommands (TabClose, TabOpen, TabChanged any more?)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
