@@ -48,6 +48,7 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 * |;t| [m]t[m] to open its location in a new tab
 * |;b| [m]b[m] to open its location in a new background tab
 * |;w| [m]w[m] to open its destination in a new window
+* |;F| [m]F[m] to follow a sequence of [m]<CR>[m]-delimited hints in background tabs
 * |;O| [m]O[m] to preselect its location in an [c]:open[c] query
 * |;T| [m]T[m] to preselect its location in a [c]:tabopen[c] query
 * |;W| [m]W[m] to preselect its location in a [c]:winopen[c] query
