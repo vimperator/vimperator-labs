@@ -608,12 +608,8 @@ const liberator = (function () //{{{
         // services.get("profile").selectedProfile.name is not rightness.
         // If default profile Firefox runs without arguments,
         // then selectedProfile returns last selected profile! (not current one!)
-        profileName: (function () {
-            let WINDOWS = getPlatformFeature() === "Win32";
-            let directoryService = Cc['@mozilla.org/file/directory_service;1'].getService(Ci.nsIProperties);
-            let profilePath = directoryService.get('ProfD', Ci.nsIFile).path;
-            return profilePath.replace(WINDOWS ? /^.*[\\]/ : /^.*[\/]/, '').replace(/^.+?\./, '');
-        })(),
+        profileName: Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties)
+                        .get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
 
         // TODO: move to events.js?
         input: {
