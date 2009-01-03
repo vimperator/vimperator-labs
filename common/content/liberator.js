@@ -57,11 +57,14 @@ const liberator = (function () //{{{
         run: function () { this.func.apply(this.self, this.args); }
     };
 
-    var callbacks = [];
-    var observers = [];
+    const callbacks = {};
+    const observers = {};
+
     function registerObserver(type, callback)
     {
-        observers.push([type, callback]);
+        if (!(type in observers))
+            observers[type] = [];
+        observers[type].push(callback);
     }
 
     let nError = 0;
@@ -628,19 +631,15 @@ const liberator = (function () //{{{
         //  TODO: move to ui.js?
         registerCallback: function (type, mode, func)
         {
-            // TODO: check if callback is already registered
-            callbacks.push([type, mode, func]);
+            if (!(type in callbacks))
+                callbacks[type] = {};
+            callbacks[type][mode] = func;
         },
 
         triggerCallback: function (type, mode, data)
         {
-            // liberator.dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
-            for (let i = 0; i < callbacks.length; i++)
-            {
-                let [thistype, thismode, thisfunc] = callbacks[i];
-                if (mode == thismode && type == thistype)
-                    return thisfunc.call(this, data);
-            }
+            if (callbacks[type] && callbacks[type][mode])
+                return callbacks[type][mode].call(this, data);
             return false;
         },
 
@@ -648,16 +647,14 @@ const liberator = (function () //{{{
 
         unregisterObserver: function (type, callback)
         {
-            observers = observers.filter(function ([t, c]) t != type || c != callback);
+            if (type in observers)
+                observers[type] = observers[type].filter(function (c) c != callback);
         },
 
         triggerObserver: function (type)
         {
-            for (let [,[thistype, callback]] in Iterator(observers))
-            {
-                if (thistype == type)
-                    callback.apply(null, Array.slice(arguments, 1));
-            }
+            for (let [,fn] in Iterator(observers[type] || []))
+                fn.apply(null, Array.slice(arguments, 1));
         },
 
         beep: function ()
