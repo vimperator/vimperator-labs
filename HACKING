@@ -1,0 +1,26 @@
+== Coding Style ==
+In gerneral: Just look at other source code!
+We try to be quite consistent, but of course, that's not always possible.
+
+=== The most important style issues are: ===
+* Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use vim,
+  this should be taken care of automatically by the modeline.
+
+* Use " for enclosing strings instead of ', unless using ' avoids escaping of lots of "
+  Example: alert("foo") instead of alert('foo');
+
+* Exactly one space after if/for/while/etc. and after a comma, but none after a parenthesis
+  or after a function call:
+      for (pre, contition, post)
+  but:
+      alert("bla");
+
+* Opening curly brackets { must be on a new line, unless it is used in a closure:
+      myFunction ()
+      {
+          return;
+      }
+  but:
+      setTimeout(function () {
+          ...
+      });
