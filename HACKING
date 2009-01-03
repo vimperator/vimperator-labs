@@ -24,3 +24,9 @@ We try to be quite consistent, but of course, that's not always possible.
       setTimeout(function () {
           ...
       });
+
+* Prefer // over /* */ comments (exceptions for big comments are usually ok)
+  Right: if (HACK) // TODO: remove hack
+  Wrong: if (HACK) /* TODO: remove hack */
+
+* Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
