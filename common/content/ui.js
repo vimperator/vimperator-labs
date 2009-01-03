@@ -363,12 +363,14 @@ function CommandLine() //{{{
             if (this.context.waitingForTab || this.wildIndex == -1)
                 this.complete(true, true);
 
-            if (this.items.length == 0)
+            // Would prefer to only do this check when no completion
+            // is available, but there are complications.
+            if (this.items.length == 0 || this.context.incomplete)
             {
                 // No items. Wait for any unfinished completers.
                 let end = Date.now() + 5000;
-                while (this.context.incomplete && this.items.length == 0 && Date.now() < end)
-                    liberator.threadYield();
+                while (this.context.incomplete && /* this.items.length == 0 && */ Date.now() < end)
+                    liberator.threadYield(true, true);
 
                 if (this.items.length == 0)
                     return liberator.beep();
