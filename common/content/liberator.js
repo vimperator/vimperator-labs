@@ -608,11 +608,10 @@ const liberator = (function () //{{{
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
-        // services.get("profile").selectedProfile.name is not rightness.
+        // NOTE: services.get("profile").selectedProfile.name is not rightness.
         // If default profile Firefox runs without arguments,
         // then selectedProfile returns last selected profile! (not current one!)
-        profileName: Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties)
-                        .get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
+        profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
 
         // TODO: move to events.js?
         input: {
