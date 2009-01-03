@@ -148,7 +148,7 @@ Command.prototype = {
      * @param {boolean} bang @deprecated Whether this command was
      *     executed with a trailing !.
      * @param {number} count @deprecated Whether this command was
-     *     executed a leading count.
+     *     executed with a leading count.
      * @param modifiers Any modifiers to be passed to
      *     {@link action}
      */
@@ -718,27 +718,18 @@ function Commands() //{{{
             return args;
         },
 
-        // return [null, null, null, null, heredoc_tag || false];
-        //        [count, cmd, special, args] = match;
-        parseCommand: function (str, tag)
+        parseCommand: function (str)
         {
             // remove comments
             str.replace(/\s*".*$/, "");
 
-            if (tag) // we already have a multiline heredoc construct
-            {
-                if (str == tag)
-                    return [null, null, null, null, false];
-                else
-                    return [null, null, null, str, tag];
-            }
-
-            // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
+            // 0 - count, 1 - cmd, 2 - special, 3 - args
             let matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
             //var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
             if (!matches)
-                return [null, null, null, null, null];
-            let [, count, cmd, special, args, heredoc] = matches;
+                return [null, null, null, null];
+
+            let [, count, cmd, special, args] = matches;
 
             // parse count
             if (count)
@@ -746,14 +737,7 @@ function Commands() //{{{
             else
                 count = this.COUNT_NONE;
 
-            if (args)
-            {
-                tag = args.match(/<<\s*(\w+)\s*$/);
-                if (tag && tag[1])
-                    heredoc = tag[1];
-            }
-
-            return [count, cmd, !!special, args || "", heredoc];
+            return [count, cmd, !!special, args || ""];
         },
 
         get complQuote() complQuote,
