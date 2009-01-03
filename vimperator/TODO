@@ -26,6 +26,14 @@ BUGS:
   E.g. :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
   Obviously I think it should but I'm not sure if it's a bug or not in your
   view, thanks. --djk
+  The spec is easy: echomsg() is used for informational purposes, and should therefore
+  never need user interaction. Therefore: If the MOW is open, print the message there,
+  but never open the MOW for an echomsg(). --mst
+- While the old :open foo<tab> was broken/annoying, so is the one after 02-01-2008, as
+  I am often waiting ~20sec or more after doing :open not-cached-things<tab>.
+  We should probably just abort searching after 5 secs if we already have found some entries.
+- :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
+  plugin or a vimp issue.
 
 FEATURES:
 9 finish :help TODOs
@@ -41,9 +49,10 @@ FEATURES:
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
   quick searches in the RC file.
   Why not just add a bookmark? --Kris
+  This would require performance tests, how fast it is to add 20 keywords that way, as we need
+  to search all existing bookmarks to see if the keyword is already defined, and then just update
+  that bookmark. --mst
 8 allow for multiple ex commands separated with |
-7 adaptive learning for tab-completions
-  (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
 7 use ctrl-n/p in insert mode for word completion
 7 implement QuickFix window based on ItemList
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currently does not use a per tab jumplist)
@@ -72,8 +81,6 @@ FEATURES:
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
-4 y and Y could maybe changed to, but probably not: Y, yy and yl=yank location, ys=yank selection,
-  yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 A format for 'guitablabel' and 'statusline' 
 3 add a command-line window (:help cmdline-window in Vim). 

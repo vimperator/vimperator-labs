@@ -7,8 +7,7 @@
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
       value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
       to use 'h' in 'complete'.
-    * IMPORTANT: AlwaysHint modes were removed as they didn't make too
-      much sense with the new hint system
+    * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
       not using the args parser explicitly.  The old string value is now
