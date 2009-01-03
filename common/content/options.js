@@ -1026,7 +1026,7 @@ function Options() //{{{
                 storePreference(k, v);
         },
 
-        temporaryContext: function (fn, self)
+        withContext: function (fn, self)
         {
             try
             {

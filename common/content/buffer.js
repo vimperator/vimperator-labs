@@ -482,7 +482,7 @@ function Buffer() //{{{
             if (arg && (liberator.has("Win32") || arg[0] != ">"))
                 return liberator.echoerr("E488: Trailing characters");
 
-            options.temporaryContext(function () {
+            options.withContext(function () {
                 if (arg)
                 {
                     options.setPref("print.print_to_file", "true");

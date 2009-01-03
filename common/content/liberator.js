@@ -1109,10 +1109,10 @@ const liberator = (function () //{{{
                         if (!liberator.has("tabs"))
                             return open(urls, liberator.NEW_WINDOW);
 
-                        let tab = getBrowser().addTab(url, null, null, postdata);
-
-                        if (where == liberator.NEW_TAB)
-                            getBrowser().selectedTab = tab;
+                        options.withContext(function () {
+                            options.setPref("browser.tabs.loadInBackground", true);
+                            getBrowser().loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                        });
                         break;
 
                     case liberator.NEW_WINDOW:
