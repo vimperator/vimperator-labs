@@ -605,6 +605,16 @@ const liberator = (function () //{{{
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
+        // services.get("profile").selectedProfile.name is not rightness.
+        // If default profile Firefox runs without arguments,
+        // then selectedProfile returns last selected profile! (not current one!)
+        profileName: (function () {
+            let WINDOWS = getPlatformFeature() === "Win32";
+            let directoryService = Cc['@mozilla.org/file/directory_service;1'].getService(Ci.nsIProperties);
+            let profilePath = directoryService.get('ProfD', Ci.nsIFile).path;
+            return profilePath.replace(WINDOWS ? /^.*[\\]/ : /^.*[\/]/, '').replace(/^.+?\./, '');
+        })(),
+
         // TODO: move to events.js?
         input: {
             buffer: "",                // partial command storage
@@ -1237,7 +1247,7 @@ const liberator = (function () //{{{
                 let infoPath = services.create("file");
                 infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
                 infoPath.append("info");
-                infoPath.append(services.get("profile").selectedProfile.name);
+                infoPath.append(liberator.profileName);
                 storage.infoPath = infoPath;
             }
             catch (e)
