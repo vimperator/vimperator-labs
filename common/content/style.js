@@ -238,7 +238,7 @@ function Highlights(name, store, serial)
 }
 
 /**
- * Manages named and unnamed user stylesheets, which apply to both
+ * Manages named and unnamed user style sheets, which apply to both
  * chrome and content pages. The parameters are the standard
  * parameters for any {@link Storage} object.
  *
@@ -274,12 +274,12 @@ function Styles(name, store, serial)
     this.__defineGetter__("userNames", function () Iterator(userNames));
 
     /**
-     * Add a new stylesheet.
+     * Add a new style sheet.
      *
      * @param {boolean} system Declares whether this is a system or
      *     user sheet. System sheets are used internally by
      *     @liberator.
-     * @param {string} name The name given to the stylesheet by
+     * @param {string} name The name given to the style sheet by
      *     which it may be later referenced.
      * @param {string} filter The sites to which this sheet will
      *     apply. Can be a domain name or a URL. Any URL ending in
@@ -364,7 +364,7 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Remove a stylesheet. See {@link #addSheet} for parameters.
+     * Remove a style sheet. See {@link #addSheet} for parameters.
      * In cases where <b>filter</b> is supplied, the given filters
      * are removed from matching sheets. If any remain, the sheet is
      * left in place.
@@ -418,7 +418,7 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Register a user stylesheet at the given URI.
+     * Register a user style sheet at the given URI.
      *
      * @param {string} uri The URI of the sheet to register.
      * @param {boolean} reload Whether to reload any sheets that are
@@ -447,7 +447,7 @@ function Styles(name, store, serial)
 
     // FIXME
     /**
-     * Register an agent stylesheet.
+     * Register an agent style sheet.
      *
      * @param {string} uri The URI of the sheet to register.
      * @deprecated
@@ -460,7 +460,7 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Unregister an agent stylesheet.
+     * Unregister an agent style sheet.
      *
      * @param {string} uri The URI of the sheet to unregister.
      * @deprecated
@@ -618,7 +618,7 @@ liberator.registerObserver("load_commands", function ()
         });
 
     commands.add(["dels[tyle]"],
-        "Remove a user stylesheet",
+        "Remove a user style sheet",
         function (args)
         {
             styles.removeSheet(false, args["-name"], args[0], args.literalArg, args["-index"]);

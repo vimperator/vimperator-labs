@@ -810,8 +810,8 @@ function Buffer() //{{{
     return {
 
         /**
-         * @property {Array} The alternative stylesheets for the current
-         *     buffer. Only returns stylesheets for the 'screen' media type.
+         * @property {Array} The alternative style sheets for the current
+         *     buffer. Only returns style sheets for the 'screen' media type.
          */
         get alternateStyleSheets()
         {
