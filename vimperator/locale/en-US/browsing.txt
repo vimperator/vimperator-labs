@@ -68,7 +68,7 @@ ________________________________________________________________________________
 ||:tabopen[!] [a][arg1][a], [a][arg2][a], ...|| +
 ||t||
 ________________________________________________________________________________
-Just like [c]:open[c], but opens the resulting web page(s)
+Just like [c]:tabopen[c], but opens the resulting web page(s)
 in a new tab. When used with [!], the 'tabopen' value of the 'activate' option
 is negated.
 ________________________________________________________________________________
