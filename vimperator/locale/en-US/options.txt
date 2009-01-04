@@ -26,7 +26,7 @@ Show all options. Show all options.
 ____
 
 |E518| |E519|
-||:se[t] {option}*||
+||:se[t] {option}?||
 ____
 Show value of {option}.
 ____
