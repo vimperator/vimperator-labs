@@ -1,19 +1,27 @@
 == Coding Style ==
+<<<<<<< HEAD:HACKING
 In general: Just look at other source code!
+=======
+
+In general: Just look at the existing source code!
+>>>>>>> Add a couple of points to the style guide.:HACKING
 We try to be quite consistent, but of course, that's not always possible.
 
 === The most important style issues are: ===
-* Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use vim,
+
+* Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use Vim,
   this should be taken care of automatically by the modeline.
+
+* No trailing whitespace.
 
 * Use " for enclosing strings instead of ', unless using ' avoids escaping of lots of "
   Example: alert("foo") instead of alert('foo');
 
-* Exactly one space after if/for/while/etc. and after a comma, but none after a parenthesis
-  or after a function call:
+* Exactly one space after if/for/while/catch etc. and after a comma, but none
+  after a parenthesis or after a function call:
       for (pre, condition, post)
   but:
-      alert("bla");
+      alert("foo");
 
 * Opening curly brackets { must be on a new line, unless it is used in a closure:
       myFunction ()
@@ -25,12 +33,25 @@ We try to be quite consistent, but of course, that's not always possible.
           ...
       });
 
-* Prefer // over /* */ comments (exceptions for big comments are usually ok)
+* Anonymous function definitions should be formatted with a space after the
+  keyword "function". Example: function () {}, not function() {}.
+
+* Prefer the use of let over var i.e. only use var when required.
+
+* Reuse common local variable names E.g. "elem" is generally used for element,
+  "win" for windows etc.
+
+* Prefer // over /* */ comments (exceptions for big comments are usually OK)
   Right: if (HACK) // TODO: remove hack
   Wrong: if (HACK) /* TODO: remove hack */
+  Documentation comment blocks use /** ... */
+
+* Only wrap lines if it makes the code obviously clearer. Lines longer than 132
+  characters should probably be broken up rather than wrapped anyway.
 
 * Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
 
+<<<<<<< HEAD:HACKING
 == TESTING/OPTIMIZATION ==
 
 TODO: Add some information here about testing/validation/etc.
@@ -38,3 +59,5 @@ Information about how/when to use :regressions might be nice.
 Additionally, maybe there should be some benchmark information here --
 something to let a developer know what's "too" slow...? Or general
 guidelines about optimization?
+=======
+>>>>>>> Add a couple of points to the style guide.:HACKING
