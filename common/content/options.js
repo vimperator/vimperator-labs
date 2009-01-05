@@ -125,7 +125,7 @@ Option.prototype = {
             aValue = this.globalvalue;
 
         if (this.getter)
-            this.getter.call(this, aValue);
+            return this.getter.call(this, aValue);
 
         return aValue;
     },
