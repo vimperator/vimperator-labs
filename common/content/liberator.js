@@ -602,6 +602,7 @@ const liberator = (function () //{{{
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,
         NEW_WINDOW: 4,
+        NEW_BACKGROUND_WIN_TAB: 6,
 
         forceNewTab: false,
 
@@ -1123,6 +1124,17 @@ const liberator = (function () //{{{
                                 .loadURI(url, null, postdata);
                         break;
 
+                    case liberator.NEW_BACKGROUND_WIN_TAB:
+                        if (!liberator.has("tabs"))
+                            return open(urls, liberator.NEW_WINDOW);
+
+                        options.withContext(function () {
+                            options.setPref("browser.tabs.loadInBackground", true);
+                            services.get("windowMediator").getMostRecentWindow("navigator:browser")
+                                    .getBrowser().loadOneTab(url, null, null, postdata, true);
+                        });
+                        break;
+
                     default:
                         throw Error("Invalid 'where' directive in liberator.open(...)");
                 }
@@ -1136,7 +1148,10 @@ const liberator = (function () //{{{
             for (let [i, url] in Iterator(urls))
             {
                 open(url, where);
-                where = liberator.NEW_BACKGROUND_TAB;
+                if( liberator.NEW_WINDOW == where || liberator.NEW_BACKGROUND_WIN_TAB == where )
+                    where = liberator.NEW_BACKGROUND_WIN_TAB;
+                else
+                    where = liberator.NEW_BACKGROUND_TAB;
             }
 
             return true;
