@@ -36,6 +36,8 @@ ________________________________________________________________________________
 Open one or more URLs in the current tab.
 Multiple URLs can be separated with 'urlseparator' (default: ", " Note that the
 space after the comma is required.")
+The first URL is opened in the current tab, and all other URLs are
+opened in new tabs.
 Each token is analyzed and in this order:
 
 . Opened as a local file if it is an existing relative or absolute filename.
@@ -68,16 +70,15 @@ ________________________________________________________________________________
 ||:tabopen[!] [a][arg1][a], [a][arg2][a], ...|| +
 ||t||
 ________________________________________________________________________________
-Just like [c]:open[c], but opens the resulting web page(s)
-in a new tab. When used with [!], the 'tabopen' value of the 'activate' option
-is negated.
+Just like [c]:open[c], but also uses a new tab for the first URL. When
+used with [!], the 'tabopen' value of the 'activate' option is negated.
 ________________________________________________________________________________
 
 
 |T| +
 ||T||
 ________________________________________________________________________________
-Open one or more URLs in a new tab, based on current location. Works like
+Open one or more URLs in a new tab based on current location. Works like
 [m]t[m], but preselects current URL in the [c]:tabopen[c] query.
 ________________________________________________________________________________
 
@@ -94,7 +95,7 @@ ________________________________________________________________________________
 |O| +
 ||O||
 ________________________________________________________________________________
-Open one or more URLs in the current tab, based on current location. Works
+Open one or more URLs in the current tab based on current location. Works
 like [m]o[m], but preselects current URL in the [c]:open[c] query.
 ________________________________________________________________________________
 
