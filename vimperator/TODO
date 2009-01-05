@@ -96,5 +96,6 @@ FEATURES:
 3 add a command-line window (:help cmdline-window in Vim). 
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
+1 Add information to liberator/HACKING file about testing and optimization
 - many other ideas are listed in the wiki
 
