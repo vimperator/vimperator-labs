@@ -588,14 +588,14 @@ function Mail() //{{{
             if (mail.currentFolder.isServer)
                 return liberator.beep();
 
-            mail.currentFolder.markAllMessagesRead();
+            mail.currentFolder.markAllMessagesRead(msgWindow);
         });
 
     mappings.add(myModes, ["<C-t>"],
         "Mark all messages as read",
         function ()
         {
-            mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(); });
+            mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(msgWindow); });
         });
 
     // DISPLAY OPTIONS
