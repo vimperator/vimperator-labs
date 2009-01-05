@@ -1,5 +1,5 @@
 == Coding Style ==
-In gerneral: Just look at other source code!
+In general: Just look at other source code!
 We try to be quite consistent, but of course, that's not always possible.
 
 === The most important style issues are: ===
@@ -11,7 +11,7 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Exactly one space after if/for/while/etc. and after a comma, but none after a parenthesis
   or after a function call:
-      for (pre, contition, post)
+      for (pre, condition, post)
   but:
       alert("bla");
 
