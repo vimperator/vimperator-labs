@@ -1092,8 +1092,9 @@ function Events() //{{{
             if (buffer.loaded == 1)
                 return true;
 
+            const maxWaitTime = 25;
             let start = Date.now();
-            let end = start + 25000; // maximum time to wait - TODO: add option
+            let end = start + (maxWaitTime * 1000); // maximum time to wait - TODO: add option
             let now;
             while (now = Date.now(), now < end)
             {
@@ -1110,14 +1111,14 @@ function Events() //{{{
                     break;
                 }
                 else
-                    liberator.echomsg("Waiting for page to load...");
+                    liberator.echo("Waiting for page to load...", commandline.DISALLOW_MULTILINE);
             }
             modes.show();
 
             // TODO: allow macros to be continued when page does not fully load with an option
             let ret = (buffer.loaded == 1);
             if (!ret)
-                liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+                liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
             liberator.dump("done waiting: " + ret);
 
             // sometimes the input widget had focus when replaying a macro
