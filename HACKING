@@ -1,10 +1,6 @@
 == Coding Style ==
-<<<<<<< HEAD:HACKING
-In general: Just look at other source code!
-=======
 
 In general: Just look at the existing source code!
->>>>>>> Add a couple of points to the style guide.:HACKING
 We try to be quite consistent, but of course, that's not always possible.
 
 === The most important style issues are: ===
@@ -51,7 +47,6 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
 
-<<<<<<< HEAD:HACKING
 == TESTING/OPTIMIZATION ==
 
 TODO: Add some information here about testing/validation/etc.
@@ -59,5 +54,3 @@ Information about how/when to use :regressions might be nice.
 Additionally, maybe there should be some benchmark information here --
 something to let a developer know what's "too" slow...? Or general
 guidelines about optimization?
-=======
->>>>>>> Add a couple of points to the style guide.:HACKING
