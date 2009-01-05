@@ -434,8 +434,7 @@ const util = { //{{{
     // FIXME: createURI needed too?
     newURI: function (uri)
     {
-        const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-        return ioService.newURI(uri, null, null);
+        return services.get("io").newURI(uri, null, null);
     },
 
     /**

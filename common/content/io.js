@@ -66,8 +66,8 @@ function IO() //{{{
     const WINDOWS = liberator.has("Win32");
     const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
 
-    const downloadManager    = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
-    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const downloadManager = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
+    const ioService = services.get("io");
 
     var processDir = services.get("directory").get("CurWorkD", Ci.nsIFile);
     var cwd = processDir;
