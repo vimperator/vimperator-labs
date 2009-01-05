@@ -102,8 +102,7 @@ ________________________________________________________________________________
 |:winopen| |:wopen| |:winedit|
 ||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
 ________________________________________________________________________________
-Just like help::open[browsing.html#opening], but opens the resulting web page(s)
-in a new window.
+Just like [c]:tabopen[c], but opens the resulting web page(s) in a new window.
 ________________________________________________________________________________
 
 
