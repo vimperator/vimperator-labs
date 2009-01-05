@@ -252,7 +252,6 @@ function Styles(name, store, serial)
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;
-    const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
     const ios = services.get("io");
     const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
     const namespace = '@namespace html "' + XHTML + '";\n' +
