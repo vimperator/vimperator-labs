@@ -438,7 +438,7 @@ const config = { //{{{
                 getter: function ()
                 {
                     const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService2);
-                    return ioService.offline;
+                    return !ioService.offline;
                 }
             });
 
