@@ -34,6 +34,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
+// XXX: does not belong here
 function Timer(minInterval, maxInterval, callback)
 {
     let timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);

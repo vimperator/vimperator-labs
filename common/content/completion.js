@@ -113,6 +113,12 @@ function CompletionContext(editor, name, offset) //{{{
         this.compare = function (a, b) String.localeCompare(a.text, b.text);
 
         /**
+         * @property {function} This function is called when we close
+         *     a completion window with Esc or Ctrl-c. Usually this callback
+         *     is only needed for long, asynchronous completions
+         */
+        this.cancelFunc = null;
+        /**
          * @property {function} The function used to filter the results.
          * @default Selects all results which match every predicate in the
          *     {@link #filters} array.
@@ -151,7 +157,7 @@ function CompletionContext(editor, name, offset) //{{{
          *    Names are assigned when a context is forked, with its specified
          *    name appended, after a '/', to its parent's name.
          */
-        this.contexts = { name: this };
+        this.contexts = { "/": this };
         /**
          * @property {Object} A mapping of keys, for {@link #getKey}. Given
          *      { key: value }, getKey(item, key) will return values as such:
@@ -1549,13 +1555,15 @@ function Completion() //{{{
         location: function location(context)
         {
             if (!services.get("autoCompleteSearch"))
-                return
+                return;
+
             context.anchored = false;
             context.title = ["Smart Completions"];
             context.keys.icon = 2;
             context.incomplete = true;
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
+            context.cancelFunc = function () services.get("autoCompleteSearch").stopSearch();
             context.compare = null;
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;

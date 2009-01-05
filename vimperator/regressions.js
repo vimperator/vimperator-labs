@@ -181,7 +181,7 @@ commands.addUserCommand(["regr[essions]"],
                     }
                 };
 
-                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+                commandline.echo("Running test " + currentTest + " of " + totalTests + ": " + testDescription, "Filter", commandline.APPEND_TO_MESSAGES);
                 resetEnvironment();
                 if ("init" in test)
                     test.init();
@@ -206,7 +206,7 @@ commands.addUserCommand(["regr[essions]"],
                 if (args.count >= 1 && currentTest != args.count)
                     continue;
 
-                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
+                commandline.echo("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80), "Filter", commandline.APPEND_TO_MESSAGES);
                 resetEnvironment();
 
                 if (!func())

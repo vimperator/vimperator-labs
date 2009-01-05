@@ -936,6 +936,7 @@ function CommandLine() //{{{
             if (history)
                 history.save();
 
+            this.resetCompletions(); // cancels any asynchronous completion still going on, must be before completions = null
             completions = null;
             history = null;
 
@@ -1075,7 +1076,7 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                this.resetCompletions();
+                //this.resetCompletions(); -> already handled by "keypress" below (hopefully), so don't do it twice
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
@@ -1432,8 +1433,15 @@ function CommandLine() //{{{
         resetCompletions: function resetCompletions()
         {
             autocompleteTimer.reset();
+
+            // liberator.dump("Resetting completions...");
             if (completions)
             {
+                // if any child context has a cancelFunc, call it
+                for (let [, context] in Iterator(completions.context.top.contexts))
+                    if (context.cancelFunc)
+                        context.cancelFunc();
+
                 completions.wildIndex = -1;
                 completions.previewClear();
             }
