@@ -18,6 +18,7 @@ var skipTests = [":bmarks", "gg"];
 // Put definitions here which might change due to internal liberator refactoring
 /////////////////////////////////////////////////////////////////////////////////////////
 
+var doc; // document where we output status messages
 var multilineOutput  = document.getElementById("liberator-multiline-output")
 var singlelineOutput = document.getElementById("liberator-commandline-command")
 
@@ -31,7 +32,7 @@ var singlelineOutput = document.getElementById("liberator-commandline-command")
 // A series of Ex commands or mappings, each with a
 // function checking whether the command succeeded
 // If the string starts with a ":" it is executed as an Ex command, otherwise as a mapping
-// You can also mix commands mappings
+// You can also mix commands and mappings
 let tests = [
     { cmds: [":!dir"],
       verify: function () getMultilineOutput().length > 10 },
@@ -45,6 +46,8 @@ let tests = [
       verify: function () getSinglelineOutput() == "test" },
     { cmds: [":qmark V http://test.vimperator.org", ":qmarks"],
       verify: function () getMultilineOutput().indexOf("test.vimperator.org") >= 0 },
+    { cmds: [":javascript liberator.echo('test', commandline.FORCE_MULTILINE)"],
+      verify: function () getMultilineOutput() == "test" },
     // { cmds: [":echomsg \"testmsg\""],
     //   verify: function () getOutput() == "testmsg" },
     // { cmds: [":echoerr \"testerr\""],
@@ -89,15 +92,14 @@ function getBufferPosition()
              y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
 };
 
-    // TODO: need to find a way to wait for page load
 function getLocation() window.content.document.location.href;
 
-var doc;
 
 function echoLine(str, group)
 {
     if (!doc)
         return;
+
     doc.body.appendChild(util.xmlToDom(
             <div highlight={group} style="border: 1px solid gray; white-space: pre; height: 1.5em; line-height: 1.5em;">{str}</div>,
             doc));
@@ -106,6 +108,7 @@ function echoMulti(str, group)
 {
     if (!doc)
         return;
+
     doc.body.appendChild(util.xmlToDom(<div class="ex-command-output"
                 style="white-space: nowrap; border: 1px solid black; min-height: 1.5em;"
                 highlight={group}>{template.maybeXML(str)}</div>,
@@ -126,7 +129,7 @@ commands.addUserCommand(["regr[essions]"],
         function init()
         {
             liberator.registerObserver("echoLine", echoLine);
-            liberator.registerObserver("echoMulti", echoMulti);
+            liberator.registerObserver("echoMultiline", echoMulti);
             liberator.open("chrome://liberator/content/buffer.xhtml", liberator.NEW_TAB);
             events.waitForPageLoad();
             doc = content.document;
@@ -144,7 +147,7 @@ commands.addUserCommand(["regr[essions]"],
         function cleanup()
         {
             liberator.unregisterObserver("echoLine", echoLine);
-            liberator.unregisterObserver("echoMulti", echoMulti);
+            liberator.unregisterObserver("echoMultiline", echoMulti);
             commandline.updateOutputHeight = updateOutputHeight;
         }
 
@@ -187,7 +190,7 @@ commands.addUserCommand(["regr[essions]"],
                     if (cmd[0] == ":")
                         liberator.execute(cmd);
                     else
-                         events.feedkeys(cmd);
+                        events.feedkeys(cmd);
                 });
 
                 if (!test.verify())
