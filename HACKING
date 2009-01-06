@@ -33,6 +33,8 @@ We try to be quite consistent, but of course, that's not always possible.
   keyword "function". Example: function () {}, not function() {}.
 
 * Prefer the use of let over var i.e. only use var when required.
+  For more details, see
+  https://developer.mozilla.org/en/New_in_JavaScript_1.7#Block_scope_with_let
 
 * Reuse common local variable names E.g. "elem" is generally used for element,
   "win" for windows etc.
@@ -47,7 +49,7 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
 
-== TESTING/OPTIMIZATION ==
+== Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
 Information about how/when to use :regressions might be nice.
