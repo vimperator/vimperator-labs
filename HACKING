@@ -85,6 +85,19 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
 
+* Use Iterators, Array#forEach, or for (let i = 0; i < ary.length; i++)
+  to iterate over arrays. for (let i in ary) and for each (let i in ary)
+  include members in an Array.prototype, which some extensions alter.
+  Right:
+    for (let [,elem] in Iterator(ary))
+    for (let [k, v] in Iterator(obj))
+    ary.forEach(function (elem) { ...
+  Wrong:
+    for each (let elem in ary)
+
+  The exceptions to this rule are for objects with __iterator__ set,
+  and for XML objects (see README.E4X).
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
