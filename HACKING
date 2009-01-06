@@ -32,7 +32,7 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Exactly one space after if/for/while/catch etc. and after a comma, but none
   after a parenthesis or after a function call:
-      for (pre; contition; post)
+      for (pre; condition; post)
   but:
       alert("foo");
 
