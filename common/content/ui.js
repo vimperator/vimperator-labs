@@ -1438,10 +1438,7 @@ function CommandLine() //{{{
             // liberator.dump("Resetting completions...");
             if (completions)
             {
-                // if any child context has a cancelFunc, call it
-                for (let [, context] in Iterator(completions.context.top.contexts))
-                    if (context.cancelFunc)
-                        context.cancelFunc();
+                completions.context.cancelAll();
 
                 completions.wildIndex = -1;
                 completions.previewClear();

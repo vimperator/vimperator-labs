@@ -117,7 +117,7 @@ function CompletionContext(editor, name, offset) //{{{
          *     a completion window with Esc or Ctrl-c. Usually this callback
          *     is only needed for long, asynchronous completions
          */
-        this.cancelFunc = null;
+        this.cancel = null;
         /**
          * @property {function} The function used to filter the results.
          * @default Selects all results which match every predicate in the
@@ -526,6 +526,15 @@ CompletionContext.prototype = {
             this._filter = this._filter.substr(count);
     },
 
+    cancelAll: function ()
+    {
+        for (let [,context] in Iterator(this.contextList))
+        {
+            if (context.cancel)
+                context.cancel();
+        }
+    },
+
     /**
      * Gets a key from {@link #cache}, setting it to <b>defVal</b> if it
      * doesn't already exists.
@@ -628,6 +637,8 @@ CompletionContext.prototype = {
         // Not ideal.
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
+
+        this.cancelAll();
 
         this.contextList = [];
         this.offset = 0;
@@ -1563,7 +1574,7 @@ function Completion() //{{{
             context.incomplete = true;
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
-            context.cancelFunc = function () services.get("autoCompleteSearch").stopSearch();
+            context.cancel = function () services.get("autoCompleteSearch").stopSearch();
             context.compare = null;
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
