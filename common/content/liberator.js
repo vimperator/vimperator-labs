@@ -602,7 +602,6 @@ const liberator = (function () //{{{
         NEW_TAB: 2,
         NEW_BACKGROUND_TAB: 3,
         NEW_WINDOW: 4,
-        NEW_BACKGROUND_WIN_TAB: 6,
 
         forceNewTab: false,
 
@@ -1094,6 +1093,8 @@ const liberator = (function () //{{{
             if (urls.length == 0)
                 return false;
 
+            let browser = window.getBrowser();
+
             function open(urls, where)
             {
                 let url = Array.concat(urls)[0];
@@ -1103,7 +1104,7 @@ const liberator = (function () //{{{
                 switch (where)
                 {
                     case liberator.CURRENT_TAB:
-                        getBrowser().loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
+                        browser.loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
                         break;
 
                     case liberator.NEW_BACKGROUND_TAB:
@@ -1113,25 +1114,15 @@ const liberator = (function () //{{{
 
                         options.withContext(function () {
                             options.setPref("browser.tabs.loadInBackground", true);
-                            getBrowser().loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                            browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
                         });
                         break;
 
                     case liberator.NEW_WINDOW:
                         window.open();
-                        services.get("windowMediator").getMostRecentWindow("navigator:browser")
-                                .loadURI(url, null, postdata);
-                        break;
-
-                    case liberator.NEW_BACKGROUND_WIN_TAB:
-                        if (!liberator.has("tabs"))
-                            return open(urls, liberator.NEW_WINDOW);
-
-                        options.withContext(function () {
-                            options.setPref("browser.tabs.loadInBackground", true);
-                            services.get("windowMediator").getMostRecentWindow("navigator:browser")
-                                    .getBrowser().loadOneTab(url, null, null, postdata, true);
-                        });
+                        let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
+                        win.loadURI(url, null, postdata);
+                        browser = win.getBrowser();
                         break;
 
                     default:
@@ -1144,13 +1135,10 @@ const liberator = (function () //{{{
             else if (!where)
                 where = liberator.CURRENT_TAB;
 
-            for (let [i, url] in Iterator(urls))
+            for (let [,url] in Iterator(urls))
             {
                 open(url, where);
-                if( liberator.NEW_WINDOW == where || liberator.NEW_BACKGROUND_WIN_TAB == where )
-                    where = liberator.NEW_BACKGROUND_WIN_TAB;
-                else
-                    where = liberator.NEW_BACKGROUND_TAB;
+                where = liberator.NEW_BACKGROUND_TAB;
             }
 
             return true;

@@ -638,8 +638,6 @@ CompletionContext.prototype = {
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
 
-        this.cancelAll();
-
         this.contextList = [];
         this.offset = 0;
         this.process = [];
@@ -648,6 +646,8 @@ CompletionContext.prototype = {
         this.title = ["Completions"];
         this.updateAsync = false;
         this.waitingForTab = false;
+
+        this.cancelAll();
 
         if (this.editor)
         {
