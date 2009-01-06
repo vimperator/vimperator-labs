@@ -371,9 +371,13 @@ function Editor() //{{{
         { flags: Mappings.flags.COUNT });
 
     // visual mode
-    mappings.add([modes.CARET, modes.TEXTAREA, modes.VISUAL],
+    mappings.add([modes.CARET, modes.TEXTAREA],
         ["v"], "Start visual mode",
         function (count) { modes.set(modes.VISUAL, liberator.mode); });
+
+    mappings.add([modes.VISUAL],
+        ["v"], "End visual mode",
+        function (count) { events.onEscape() });
 
     mappings.add([modes.TEXTAREA],
         ["V"], "Start visual line mode",
