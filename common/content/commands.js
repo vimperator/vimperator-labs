@@ -307,7 +307,7 @@ function Commands() //{{{
         completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
     });
 
-    var commandManager = {
+    const self = {
 
         // FIXME: remove later, when our option handler is better
         OPTION_ANY:    0, // can be given no argument or an argument of any type,
@@ -796,7 +796,7 @@ function Commands() //{{{
 
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
     // specified - useful?
-    commandManager.add(["com[mand]"],
+    self.add(["com[mand]"],
         "List and define commands",
         function (args)
         {
@@ -903,11 +903,11 @@ function Commands() //{{{
             bang: true,
             completer: function (context) completion.userCommand(context),
             options: [
-                [["-nargs"], commandManager.OPTION_STRING,
+                [["-nargs"], self.OPTION_STRING,
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
-                [["-bang"], commandManager.OPTION_NOARG],
-                [["-count"], commandManager.OPTION_NOARG],
-                [["-complete"], commandManager.OPTION_STRING,
+                [["-bang"], self.OPTION_NOARG],
+                [["-count"], self.OPTION_NOARG],
+                [["-complete"], self.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
                      function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
             ],
@@ -930,7 +930,7 @@ function Commands() //{{{
             ]
         });
 
-    commandManager.add(["comc[lear]"],
+    self.add(["comc[lear]"],
         "Delete all user-defined commands",
         function ()
         {
@@ -938,7 +938,7 @@ function Commands() //{{{
         },
         { argCount: "0" });
 
-    commandManager.add(["delc[ommand]"],
+    self.add(["delc[ommand]"],
         "Delete the specified user-defined command",
         function (args)
         {
@@ -956,7 +956,7 @@ function Commands() //{{{
 
     //}}}
 
-    return commandManager;
+    return self;
 
 }; //}}}
 
