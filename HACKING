@@ -1,3 +1,20 @@
+= Hacking =
+
+If you've taken to hacking Vimperator source code, we hope that you'll share
+your changes. In case you do, please keep the following in mind, and we'll be
+happy to accept your patches.
+
+== Documentation ==
+
+First of all, all new features and all user-visible changes to existing
+features need to be documented. That means editing the appropriate help files
+and adding a NEWS enty where appropriate. When editing the NEWS file, you
+should add your change to the top of the list of changes. If your change
+alters an interface (key binding, command) and is likely to cause trouble,
+prefix it with 'IMPORTANT:', otherwise, place it below the other 'IMPORTANT'
+entries. If you're not sure if your change merits a news entry, or if it's
+important, please ask.
+
 == Coding Style ==
 
 In general: Just look at the existing source code!
@@ -15,19 +32,38 @@ We try to be quite consistent, but of course, that's not always possible.
 
 * Exactly one space after if/for/while/catch etc. and after a comma, but none
   after a parenthesis or after a function call:
-      for (pre, condition, post)
+      for (pre; contition; post)
   but:
       alert("foo");
 
 * Opening curly brackets { must be on a new line, unless it is used in a closure:
-      myFunction ()
+      function myFunction ()
       {
-          return;
+	  if (foo)
+          {
+              baz = false;
+              return bar;
+          }
+          else
+          {
+              return baz;
+          }
       }
   but:
       setTimeout(function () {
           ...
       });
+
+* No braces for one-line conditional statements:
+  Right:
+     if (foo)
+         frob();
+     else
+         unfrob();
+
+* Prefer lambda-style functions where suitable:
+  Right: list.filter(function (elem) elem.good != elem.BAD);
+  Wrong: list.filter(function (elem) { return elem.good != elem.BAD });
 
 * Anonymous function definitions should be formatted with a space after the
   keyword "function". Example: function () {}, not function() {}.
@@ -56,3 +92,4 @@ Information about how/when to use :regressions might be nice.
 Additionally, maybe there should be some benchmark information here --
 something to let a developer know what's "too" slow...? Or general
 guidelines about optimization?
+

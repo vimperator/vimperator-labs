@@ -359,6 +359,7 @@ function CommandLine() //{{{
 
         tab: function tab(reverse)
         {
+            autocompleteTimer.flush();
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
                 this.complete(true, true);
