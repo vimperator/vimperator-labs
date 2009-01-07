@@ -155,7 +155,9 @@ function CompletionContext(editor, name, offset) //{{{
         /**
          * @property {Object} A map of all contexts, keyed on their names.
          *    Names are assigned when a context is forked, with its specified
-         *    name appended, after a '/', to its parent's name.
+         *    name appended, after a '/', to its parent's name. May
+         *    contain inactive contexts. For active contexts, see
+         *    {@link #contextList}.
          */
         this.contexts = { "/": this };
         /**
@@ -528,9 +530,7 @@ CompletionContext.prototype = {
 
     cancelAll: function ()
     {
-        // Kris: contextList gives undefined. And why do we have contexts and contextList?
-        // I am not too much of a fan of a huge API for classes
-        for (let [,context] in Iterator(this.top.contexts))
+        for (let [,context] in Iterator(this.contextList))
         {
             if (context.cancel)
                 context.cancel();
@@ -640,6 +640,11 @@ CompletionContext.prototype = {
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
 
+        /**
+         * @property {[CompletionContext]} A list of active
+         *     completion contexts, in the order in which they were
+         *     instantiated.
+         */
         this.contextList = [];
         this.offset = 0;
         this.process = [];
@@ -1265,7 +1270,7 @@ function Completion() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    let self = {
+    const self = {
 
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
@@ -1578,7 +1583,6 @@ function Completion() //{{{
             context.filterFunc = null;
             context.cancel = function () services.get("autoCompleteSearch").stopSearch();
             context.compare = null;
-            // TODO: shouldn't this timer be deleted by context.cancel?
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
@@ -1586,28 +1590,16 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            context.generate = function () {
-                let minItems = context.minItems || 1;
-                services.get("autoCompleteSearch").stopSearch();
-                services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
-                    onSearchResult: function (search, result)
-                    {
-                        context.result = result;
-                        timer.tell(result);
-                        if (result.searchResult <= result.RESULT_SUCCESS)
-                            timer.flush();
-                    }
-                });
-
-                let end = Date.now() + 5000;
-                while (context.incomplete && context.completions.length < minItems && Date.now() < end)
-                    liberator.threadYield(false, true);
-
-                // context.message = "More results..."; // very very strange, if I enable this line, completions don't work;
-                services.get("autoCompleteSearch").stopSearch();
-
-                return context.completions;
-            }
+            services.get("autoCompleteSearch").stopSearch();
+            services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
+                onSearchResult: function onSearchResult(search, result)
+                {
+                    context.result = result;
+                    timer.tell(result);
+                    if (result.searchResult <= result.RESULT_SUCCESS)
+                        timer.flush();
+                }
+            });
         },
 
         macro: function macro(context)

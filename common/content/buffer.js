@@ -1082,12 +1082,12 @@ function Buffer() //{{{
                 return false;
             }
 
-            let retVal = followFrame(window.content);
-            if (!retVal)
-                // only loop through frames if the main content didnt match
-                retVal = Array.some(window.content.frames, followFrame);
+            let ret = followFrame(window.content);
+            if (!ret)
+                // only loop through frames if the main content didn't match
+                ret = Array.some(window.content.frames, followFrame);
 
-            if (!retVal)
+            if (!ret)
                 liberator.beep();
         },
 

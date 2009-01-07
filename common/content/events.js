@@ -612,7 +612,7 @@ function Events() //{{{
         {
             try
             {
-                eventManager[method](event);
+                self[method](event);
             }
             catch (e)
             {
@@ -758,7 +758,7 @@ function Events() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var eventManager = {
+    const self = {
 
         feedingKeys: false,
 
@@ -1014,7 +1014,7 @@ function Events() //{{{
             if (event.metaKey)
                 modifier += "M-";
 
-            if (event.type == "keypress")
+            if (/^key/.test(event.type))
             {
                 if (event.charCode == 0)
                 {
@@ -1723,7 +1723,7 @@ function Events() //{{{
         }
     }; //}}}
 
-    window.XULBrowserWindow = eventManager.progressListener;
+    window.XULBrowserWindow = self.progressListener;
     window.QueryInterface(Ci.nsIInterfaceRequestor)
         .getInterface(Ci.nsIWebNavigation)
         .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
@@ -1732,21 +1732,21 @@ function Events() //{{{
         .XULBrowserWindow = window.XULBrowserWindow;
     try
     {
-        getBrowser().addProgressListener(eventManager.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+        getBrowser().addProgressListener(self.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
     }
     catch (e) {}
 
-    eventManager.prefObserver.register();
+    self.prefObserver.register();
     liberator.registerObserver("shutdown", function () {
-            eventManager.destroy();
-            eventManager.prefObserver.unregister();
+            self.destroy();
+            self.prefObserver.unregister();
     });
 
     window.addEventListener("keypress", wrapListener("onKeyPress"),    true);
     window.addEventListener("keydown",  wrapListener("onKeyUpOrDown"), true);
     window.addEventListener("keyup",    wrapListener("onKeyUpOrDown"), true);
 
-    return eventManager;
+    return self;
 
 }; //}}}
 

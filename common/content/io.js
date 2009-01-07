@@ -114,10 +114,10 @@ function IO() //{{{
 
     function joinPaths(head, tail)
     {
-        let path = ioManager.getFile(head);
+        let path = self.getFile(head);
         try
         {
-            path.appendRelativePath(ioManager.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
+            path.appendRelativePath(self.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
             if (path.exists() && path.normalize)
                 path.normalize();
         }
@@ -385,14 +385,14 @@ function IO() //{{{
 
     liberator.registerObserver("load_completion", function ()
     {
-        completion.setFunctionCompleter([ioManager.getFile, ioManager.expandPath],
+        completion.setFunctionCompleter([self.getFile, self.expandPath],
             [function (context, obj, args) {
                 context.quote[2] = "";
                 completion.file(context, true);
             }]);
     });
 
-    var ioManager = {
+    const self = {
 
         MODE_RDONLY: 0x01,
         MODE_WRONLY: 0x02,
@@ -413,7 +413,7 @@ function IO() //{{{
         // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
         getCurrentDirectory: function ()
         {
-            let dir = ioManager.getFile(cwd.path);
+            let dir = self.getFile(cwd.path);
 
             // NOTE: the directory could have been deleted underneath us so
             // fallback to Firefox's CWD
@@ -433,7 +433,7 @@ function IO() //{{{
             }
             else
             {
-                let dir = ioManager.getFile(newdir);
+                let dir = self.getFile(newdir);
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
@@ -444,7 +444,7 @@ function IO() //{{{
                 [cwd, oldcwd] = [dir, this.getCurrentDirectory()];
             }
 
-            return ioManager.getCurrentDirectory();
+            return self.getCurrentDirectory();
         },
 
         getRuntimeDirectories: function (specialDirectory)
@@ -489,10 +489,10 @@ function IO() //{{{
             }
             else
             {
-                let expandedPath = ioManager.expandPath(path);
+                let expandedPath = self.expandPath(path);
 
                 if (!isAbsolutePath(expandedPath) && !noCheckPWD)
-                    file = joinPaths(ioManager.getCurrentDirectory().path, expandedPath);
+                    file = joinPaths(self.getCurrentDirectory().path, expandedPath);
                 else
                     file.initWithPath(expandedPath);
             }
@@ -536,7 +536,7 @@ function IO() //{{{
         readDirectory: function (file, sort)
         {
             if (typeof file == "string")
-                file = ioManager.getFile(file);
+                file = self.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
@@ -567,7 +567,7 @@ function IO() //{{{
 
             let toCharset = "UTF-8";
             if (typeof file == "string")
-                file = ioManager.getFile(file);
+                file = self.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
@@ -595,14 +595,14 @@ function IO() //{{{
 
             let charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
             if (typeof file == "string")
-                file = ioManager.getFile(file);
+                file = self.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (mode == ">>")
-                mode = ioManager.MODE_WRONLY | ioManager.MODE_CREATE | ioManager.MODE_APPEND;
+                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_APPEND;
             else if (!mode || mode == ">")
-                mode = ioManager.MODE_WRONLY | ioManager.MODE_CREATE | ioManager.MODE_TRUNCATE;
+                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_TRUNCATE;
 
             if (!perms)
                 perms = 0644;
@@ -624,7 +624,7 @@ function IO() //{{{
 
             if (isAbsolutePath(program))
             {
-                file = ioManager.getFile(program, true);
+                file = self.getFile(program, true);
             }
             else
             {
@@ -701,9 +701,9 @@ lookup:
                 }
 
                 if (res > 0) // FIXME: Is this really right? Shouldn't we always show both?
-                    var output = ioManager.readFile(stderr) + "\nshell returned " + res;
+                    var output = self.readFile(stderr) + "\nshell returned " + res;
                 else
-                    output = ioManager.readFile(stdout);
+                    output = self.readFile(stdout);
 
                 // if there is only one \n at the end, chop it off
                 if (output && output.indexOf("\n") == output.length - 1)
@@ -752,11 +752,11 @@ lookup:
         // no need (actually forbidden) to add: js <<EOF ... EOF around those files
         source: function (filename, silent)
         {
-            let wasSourcing = ioManager.sourcing;
+            let wasSourcing = self.sourcing;
             try
             {
-                var file = ioManager.getFile(filename);
-                ioManager.sourcing = {
+                var file = self.getFile(filename);
+                self.sourcing = {
                     file: file.path,
                     line: 0
                 };
@@ -778,7 +778,7 @@ lookup:
 
                 liberator.echomsg("sourcing " + filename.quote(), 2);
 
-                let str = ioManager.readFile(file);
+                let str = self.readFile(file);
                 let uri = ioService.newFileURI(file);
 
                 // handle pure JavaScript files specially
@@ -824,7 +824,7 @@ lookup:
                         }
                         else
                         {
-                            ioManager.sourcing.line = i + 1;
+                            self.sourcing.line = i + 1;
                             // skip line comments and blank lines
                             line = line.replace(/\r$/, "");
 
@@ -899,7 +899,7 @@ lookup:
             }
             finally
             {
-                ioManager.sourcing = wasSourcing;
+                self.sourcing = wasSourcing;
             }
         },
 
@@ -919,7 +919,7 @@ lookup:
         }
     }; //}}}
 
-    return ioManager;
+    return self;
 
 }; //}}}
 
