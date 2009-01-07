@@ -110,6 +110,12 @@ We try to be quite consistent, but of course, that's not always possible.
     new Function(code)
     Date() // Right if you want a string-representation of the date
 
+  NOTE by mst: That one is debateable, actually I like the "new" as one
+  immediately sees that a new object of a class is created which is not
+  so obvious by var x = CompletionContext(); which could also mean that
+  CompletionContext() could return a cached object. What's thesnowdog's
+  opinion and why do you, Kris, think it's better/cleaner?
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
