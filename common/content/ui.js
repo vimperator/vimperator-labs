@@ -380,7 +380,7 @@ function CommandLine() //{{{
             {
                 // Wait for contexts to complete if necessary.
                 // FIXME: Need to make idx relative to individual contexts.
-                let list = this.context.contextList.reverse();
+                let list = this.context.contextList;
                 if (idx == -2)
                     list = list.slice().reverse();
                 let n = 0;
