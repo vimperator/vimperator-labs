@@ -39,7 +39,7 @@ We try to be quite consistent, but of course, that's not always possible.
 * Opening curly brackets { must be on a new line, unless it is used in a closure:
       function myFunction ()
       {
-	  if (foo)
+          if (foo)
           {
               baz = false;
               return bar;
