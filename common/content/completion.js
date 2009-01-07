@@ -1270,7 +1270,7 @@ function Completion() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    let self = {
+    const self = {
 
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
