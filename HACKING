@@ -117,3 +117,10 @@ Additionally, maybe there should be some benchmark information here --
 something to let a developer know what's "too" slow...? Or general
 guidelines about optimization?
 
+== Source Code Management ==
+
+TODO: Document the existence of remote branches and discuss when and how
+      to push to them. At least provide an index so that devs know where
+      to look if an old branch needs to be maintained or a feature needs
+      to be added to a new branch. Keep in mind that git is not the most
+      intuitive SCM.

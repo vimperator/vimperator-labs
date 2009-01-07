@@ -97,6 +97,7 @@ FEATURES:
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
 1 Add information to liberator/HACKING file about testing and optimization
+1 Document remote branches in liberator/HACKING
 1 Reformat liberator/HACKING so that git diff can find sections and report changes @ somewhere
 - many other ideas are listed in the wiki
 
