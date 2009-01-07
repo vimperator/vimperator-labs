@@ -8,7 +8,7 @@ happy to accept your patches.
 
 First of all, all new features and all user-visible changes to existing
 features need to be documented. That means editing the appropriate help files
-and adding a NEWS enty where appropriate. When editing the NEWS file, you
+and adding a NEWS entry where appropriate. When editing the NEWS file, you
 should add your change to the top of the list of changes. If your change
 alters an interface (key binding, command) and is likely to cause trouble,
 prefix it with 'IMPORTANT:', otherwise, place it below the other 'IMPORTANT'
@@ -116,8 +116,10 @@ We try to be quite consistent, but of course, that's not always possible.
   CompletionContext() could return a cached object. What's thesnowdog's
   opinion and why do you, Kris, think it's better/cleaner?
 
-  I don't think it's better/cleaner, it just seemed to be a concensus.
+  I don't think it's better/cleaner, it just seemed to be a consensus.
     --Kris
+
+  I don't like unnecessary use of 'new', I don't like 'new'. --djk
 
 == Testing/Optimization ==
 
