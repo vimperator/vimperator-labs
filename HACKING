@@ -137,4 +137,4 @@ TODO: Document the existence of remote branches and discuss when and how
       to be added to a new branch. Keep in mind that git is not the most
       intuitive SCM.
 
-# vim: set fdm=marker sw=4 ts=4 et ai:
+# vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:
