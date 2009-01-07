@@ -336,7 +336,7 @@ function CommandLine() //{{{
                     else
                         idx = this.selected + 1;
                     break;
-                case this.RESET:
+                case this.RESET: // TODO: never used for now
                     idx = null;
                     break;
                 default:
@@ -360,22 +360,37 @@ function CommandLine() //{{{
         tab: function tab(reverse)
         {
             autocompleteTimer.flush();
+
             // Check if we need to run the completer.
+            let numElementsNeeded;
+            if (this.selected == null)
+                numElementsNeeded = reverse ? 100000 : 1; // better way to specify give me all items than setting to a very large number?
+            else
+                numElementsNeeded = reverse ? this.selected : this.selected + 2; // this.selected is zero-based
+
             if (this.context.waitingForTab || this.wildIndex == -1)
-                this.complete(true, true);
-
-            // Would prefer to only do this check when no completion
-            // is available, but there are complications.
-            if (this.items.length == 0 || this.context.incomplete)
             {
-                // No items. Wait for any unfinished completers.
-                let end = Date.now() + 5000;
-                while (this.context.incomplete && /* this.items.length == 0 && */ Date.now() < end)
-                    liberator.threadYield(true, true);
-
-                if (this.items.length == 0)
-                    return liberator.beep();
+                this.complete(true, true);
             }
+            else if (this.context.incomplete && numElementsNeeded > this.items.length)
+            {
+                for (let [, context] in Iterator(this.context.contexts))
+                {
+                    if (context.incomplete && context.generate)
+                    {
+                        // regenerate twice as many items as needed, as regenerating
+                        // to often looks visually bad
+                        context.minItems = numElementsNeeded * 2; // TODO: document minItems, or find a better way
+                        context.regenerate = true;
+                        context._generate(); // HACK
+                    }
+                    if (this.items.length >= numElementsNeeded)
+                        break;
+                }
+            }
+
+            if (this.items.length == 0)
+                return liberator.beep();
 
             switch (this.wildtype.replace(/.*:/, ""))
             {
@@ -1435,11 +1450,9 @@ function CommandLine() //{{{
         {
             autocompleteTimer.reset();
 
-            // liberator.dump("Resetting completions...");
             if (completions)
             {
                 completions.context.cancelAll();
-
                 completions.wildIndex = -1;
                 completions.previewClear();
             }

@@ -528,7 +528,9 @@ CompletionContext.prototype = {
 
     cancelAll: function ()
     {
-        for (let [,context] in Iterator(this.contextList))
+        // Kris: contextList gives undefined. And why do we have contexts and contextList?
+        // I am not too much of a fan of a huge API for classes
+        for (let [,context] in Iterator(this.top.contexts))
         {
             if (context.cancel)
                 context.cancel();
@@ -1576,6 +1578,7 @@ function Completion() //{{{
             context.filterFunc = null;
             context.cancel = function () services.get("autoCompleteSearch").stopSearch();
             context.compare = null;
+            // TODO: shouldn't this timer be deleted by context.cancel?
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
@@ -1583,16 +1586,28 @@ function Completion() //{{{
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            services.get("autoCompleteSearch").stopSearch();
-            services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
-                onSearchResult: function onSearchResult(search, result)
-                {
-                    context.result = result;
-                    timer.tell(result);
-                    if (result.searchResult <= result.RESULT_SUCCESS)
-                        timer.flush();
-                }
-            });
+            context.generate = function () {
+                let minItems = context.minItems || 1;
+                services.get("autoCompleteSearch").stopSearch();
+                services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
+                    onSearchResult: function (search, result)
+                    {
+                        context.result = result;
+                        timer.tell(result);
+                        if (result.searchResult <= result.RESULT_SUCCESS)
+                            timer.flush();
+                    }
+                });
+
+                let end = Date.now() + 5000;
+                while (context.incomplete && context.completions.length < minItems && Date.now() < end)
+                    liberator.threadYield(false, true);
+
+                // context.message = "More results..."; // very very strange, if I enable this line, completions don't work;
+                services.get("autoCompleteSearch").stopSearch();
+
+                return context.completions;
+            }
         },
 
         macro: function macro(context)

@@ -1362,6 +1362,7 @@ const liberator = (function () //{{{
                 callback.call(self);
         },
 
+        // TODO: interruptable not used?
         threadYield: function (flush, interruptable)
         {
             let mainThread = services.get("threadManager").mainThread;
