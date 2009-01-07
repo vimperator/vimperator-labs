@@ -137,12 +137,4 @@ TODO: Document the existence of remote branches and discuss when and how
       to be added to a new branch. Keep in mind that git is not the most
       intuitive SCM.
 
-    I don't agree. git is about as intuitive as any other SCM, but,
-    regardless, it's by far one of the most popular. There are
-    countless git walkthroughs, FAQs, tips pages (not to mention 'git
-    help') that I don't see the need to duplicate them here. As for
-    branches, 'git branch' should be sufficient, and, if not, there's
-    a list on gitweb.
-      --Kris
-
 # vim: set fdm=marker sw=4 ts=4 et ai:
