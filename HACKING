@@ -23,7 +23,8 @@ We try to be quite consistent, but of course, that's not always possible.
 === The most important style issues are: ===
 
 * Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use Vim,
-  this should be taken care of automatically by the modeline.
+  this should be taken care of automatically by the modeline (like the
+  one below).
 
 * No trailing whitespace.
 
@@ -127,4 +128,4 @@ TODO: Document the existence of remote branches and discuss when and how
 
 
 
-<!-- vim: set fdm=marker sw=4 ts=4 et: -->
+<!-- vim: set fdm=marker sw=4 ts=4 et ai: -->
