@@ -1014,7 +1014,7 @@ function Events() //{{{
             if (event.metaKey)
                 modifier += "M-";
 
-            if (event.type == "keypress")
+            if (/^key/.test(event.type))
             {
                 if (event.charCode == 0)
                 {

@@ -85,6 +85,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
                 <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                 <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                     oninput="liberator.modules.commandline.onEvent(event);"
+                    onkeyup="liberator.modules.commandline.onEvent(event);"
                     onfocus="liberator.modules.commandline.onEvent(event);"
                     onblur="liberator.modules.commandline.onEvent(event);"/>
             </hbox>

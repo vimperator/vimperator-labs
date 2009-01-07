@@ -352,7 +352,7 @@ function CommandLine() //{{{
             {
                 case this.UP:
                     if (this.selected == null)
-                        idx = this.items.length - 1;
+                        idx = -2
                     else
                         idx = this.selected - 1;
                     break;
@@ -369,8 +369,8 @@ function CommandLine() //{{{
                     idx = Math.max(0, Math.min(this.items.length - 1, idx));
                     break;
             }
-            this.itemList.selectItem(idx);
-            if (idx < 0 || idx >= this.items.length || idx == null)
+
+            if (idx == -1 || this.items.length && idx >= this.items.length || idx == null)
             {
                 // Wrapped. Start again.
                 this.selected = null;
@@ -378,9 +378,32 @@ function CommandLine() //{{{
             }
             else
             {
+                // Wait for contexts to complete if necessary.
+                // FIXME: Need to make idx relative to individual contexts.
+                let list = this.context.contextList.reverse();
+                if (idx == -2)
+                    list = list.slice().reverse();
+                let n = 0;
+                for (let [,context] in Iterator(list))
+                {
+                    function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
+                    while (context.incomplete && !done())
+                        liberator.threadYield(true, true);
+                    if (done())
+                        break;
+                    n += context.items.length;
+                }
+
+                // See previous FIXME. This will break if new items in
+                // a previous context come in.
+                if (idx < 0)
+                    idx = this.items.length - 1;
+
                 this.selected = idx;
                 this.completion = this.items[idx].text;
             }
+
+            this.itemList.selectItem(idx);
         },
 
         tab: function tab(reverse)
@@ -389,19 +412,6 @@ function CommandLine() //{{{
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
                 this.complete(true, true);
-
-            // Would prefer to only do this check when no completion
-            // is available, but there are complications.
-            if (this.items.length == 0 || this.context.incomplete)
-            {
-                // No items. Wait for any unfinished completers.
-                let end = Date.now() + 5000;
-                while (this.context.incomplete && /* this.items.length == 0 && */ Date.now() < end)
-                    liberator.threadYield(true, true);
-
-                if (this.items.length == 0)
-                    return liberator.beep();
-            }
 
             switch (this.wildtype.replace(/.*:/, ""))
             {
@@ -420,6 +430,9 @@ function CommandLine() //{{{
                     this.select(reverse ? this.UP : this.DOWN)
                     break;
             }
+
+            if (this.items.length == 0)
+                return void liberator.beep();
 
             if (this.type.list)
                 completionList.show();
@@ -1276,6 +1289,7 @@ function CommandLine() //{{{
             }
             else if (event.type == "keyup")
             {
+                let key = events.toString(event);
                 if (key == "<Tab>" || key == "<S-Tab>")
                     tabTimer.flush();
             }
@@ -1608,7 +1622,6 @@ function CommandLine() //{{{
             if (completions)
             {
                 completions.context.cancelAll();
-
                 completions.wildIndex = -1;
                 completions.previewClear();
             }

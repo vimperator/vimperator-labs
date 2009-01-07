@@ -155,7 +155,9 @@ function CompletionContext(editor, name, offset) //{{{
         /**
          * @property {Object} A map of all contexts, keyed on their names.
          *    Names are assigned when a context is forked, with its specified
-         *    name appended, after a '/', to its parent's name.
+         *    name appended, after a '/', to its parent's name. May
+         *    contain inactive contexts. For active contexts, see
+         *    {@link #contextList}.
          */
         this.contexts = { "/": this };
         /**
@@ -638,6 +640,11 @@ CompletionContext.prototype = {
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
 
+        /**
+         * @property {[CompletionContext]} A list of active
+         *     completion contexts, in the order in which they were
+         *     instantiated.
+         */
         this.contextList = [];
         this.offset = 0;
         this.process = [];
