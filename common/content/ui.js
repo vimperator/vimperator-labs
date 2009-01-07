@@ -388,7 +388,30 @@ function CommandLine() //{{{
                 {
                     function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
                     while (context.incomplete && !done())
-                        liberator.threadYield(true, true);
+                    {
+                        // threadYield(true, true) would be better, but it does not return on my
+                        // machine until all awesomebar completions were reported, making
+                        // :open foo<tab> nearly unusable, if the first 2 foo-completions would
+                        // be there fast, but it takes up to 20 sec to find more foo-completions
+                        //
+                        // The strange thing is, I tested the 2009-01-07 nightly at work in Windows
+                        // and it seemed to work perfectly there. Will have to see if it's a
+                        // hardware (dual core there, vs. P4 at home) issue or an OS issue.
+                        //
+                        // While I *really* prefer this solution over my hack
+                        // when it works, we can't have a nearly-defect :open
+                        // prompt when releasing vimp 2.0, even not just on certain
+                        // computers, as :open is probably the most often used ex-command
+                        // in vimperator
+                        //
+                        // liberator.threadYield(false, true); is just a temporary measure as
+                        // it has other problems (hitting tab often in a row), until we find the
+                        // source of the problem (which we hopefully do, as I really don't want to
+                        // have to revert to my hack when better solutions exist)
+                        liberator.dump("before yielding");
+                        liberator.threadYield(false, true);
+                        liberator.dump("after yielding");
+                    }
                     if (done())
                         break;
                     n += context.items.length;
