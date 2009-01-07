@@ -124,3 +124,7 @@ TODO: Document the existence of remote branches and discuss when and how
       to look if an old branch needs to be maintained or a feature needs
       to be added to a new branch. Keep in mind that git is not the most
       intuitive SCM.
+
+
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->
