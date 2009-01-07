@@ -121,6 +121,8 @@ We try to be quite consistent, but of course, that's not always possible.
 
   I don't like unnecessary use of 'new', I don't like 'new'. --djk
 
+  There is semantic value to using "new." It's good CBSE. --Ted
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
