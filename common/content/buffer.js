@@ -1651,7 +1651,21 @@ function Marks() //{{{
 
             marks.remove(args, special);
         },
-        { bang: true });
+        {
+            bang: true,
+            completer: function (context)
+            {
+                let marks = getSortedMarks();
+
+                function markinfo( m )
+                {
+                    return Math.round(m.position.x * 100) + "% " + Math.round(m.position.y * 100) + "% " + m.location;
+                }
+
+                context.title = ["Mark", "Line/Column/File"];
+                context.completions = [[mark[0], markinfo(mark[1])] for each (mark in marks)];
+            }
+        });
 
     commands.add(["ma[rk]"],
         "Mark current location within the web page",
