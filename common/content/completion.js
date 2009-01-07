@@ -66,7 +66,8 @@ function CompletionContext(editor, name, offset) //{{{
             self.contexts[name] = this;
 
         /**
-         * @property {CompletionContext} This context's parent. {null} when this is a top-level context.
+         * @property {CompletionContext} This context's parent. {null} when
+         *     this is a top-level context.
          */
         self.parent = parent;
 
@@ -82,7 +83,7 @@ function CompletionContext(editor, name, offset) //{{{
 
         /**
          * @property {boolean} Specifies that this context is not finished
-         *      generating results.
+         *     generating results.
          * @default false
          */
         self.incomplete = false;
@@ -111,6 +112,12 @@ function CompletionContext(editor, name, offset) //{{{
             this.editor = editor;
         this.compare = function (a, b) String.localeCompare(a.text, b.text);
 
+        /**
+         * @property {function} This function is called when we close
+         *     a completion window with Esc or Ctrl-c. Usually this callback
+         *     is only needed for long, asynchronous completions
+         */
+        this.cancel = null;
         /**
          * @property {function} The function used to filter the results.
          * @default Selects all results which match every predicate in the
@@ -141,16 +148,18 @@ function CompletionContext(editor, name, offset) //{{{
         }];
         /**
          * @property {boolean} Specifies whether this context results must
-         *     match the filter at the begining of the string.
+         *     match the filter at the beginning of the string.
          * @default true
          */
         this.anchored = true;
         /**
          * @property {Object} A map of all contexts, keyed on their names.
          *    Names are assigned when a context is forked, with its specified
-         *    name appended, after a '/', to its parent's name.
+         *    name appended, after a '/', to its parent's name. May
+         *    contain inactive contexts. For active contexts, see
+         *    {@link #contextList}.
          */
-        this.contexts = { name: this };
+        this.contexts = { "/": this };
         /**
          * @property {Object} A mapping of keys, for {@link #getKey}. Given
          *      { key: value }, getKey(item, key) will return values as such:
@@ -159,7 +168,7 @@ function CompletionContext(editor, name, offset) //{{{
          */
         this.keys = { text: 0, description: 1, icon: "icon" };
         /**
-         * @property {number} This context's offset from the begining of
+         * @property {number} This context's offset from the beginning of
          *     {@link #editor}'s value.
          */
         this.offset = offset || 0;
@@ -519,6 +528,15 @@ CompletionContext.prototype = {
             this._filter = this._filter.substr(count);
     },
 
+    cancelAll: function ()
+    {
+        for (let [,context] in Iterator(this.contextList))
+        {
+            if (context.cancel)
+                context.cancel();
+        }
+    },
+
     /**
      * Gets a key from {@link #cache}, setting it to <b>defVal</b> if it
      * doesn't already exists.
@@ -622,6 +640,11 @@ CompletionContext.prototype = {
         for (let type in this.selectionTypes)
             this.highlight(0, 0, type);
 
+        /**
+         * @property {[CompletionContext]} A list of active
+         *     completion contexts, in the order in which they were
+         *     instantiated.
+         */
         this.contextList = [];
         this.offset = 0;
         this.process = [];
@@ -630,6 +653,8 @@ CompletionContext.prototype = {
         this.title = ["Completions"];
         this.updateAsync = false;
         this.waitingForTab = false;
+
+        this.cancelAll();
 
         if (this.editor)
         {
@@ -653,7 +678,7 @@ CompletionContext.prototype = {
     /**
      * Wait for all subcontexts to complete.
      *
-     * @param {boolean} interruptable When true, the call may be interrupted
+     * @param {boolean} interruptible When true, the call may be interrupted
      *    via <C-c>. In this case, "Interrupted" may be thrown.
      * @param {number} timeout The maximum time, in milliseconds, to wait.
      */
@@ -682,10 +707,10 @@ function Completion() //{{{
         const OFFSET = 0, CHAR = 1, STATEMENTS = 2, DOTS = 3, FULL_STATEMENTS = 4, COMMA = 5, FUNCTIONS = 6;
         let stack = [];
         let functions = [];
-        let top = [];  /* The element on the top of the stack. */
-        let last = ""; /* The last opening char pushed onto the stack. */
-        let lastNonwhite = ""; /* Last non-whitespace character we saw. */
-        let lastChar = "";     /* Last character we saw, used for \ escaping quotes. */
+        let top = [];  // The element on the top of the stack.
+        let last = ""; // The last opening char pushed onto the stack.
+        let lastNonwhite = ""; // Last non-whitespace character we saw.
+        let lastChar = "";     // Last character we saw, used for \ escaping quotes.
         let compl = [];
         let str = "";
 
@@ -732,11 +757,10 @@ function Completion() //{{{
             return iterator;
         }
 
-        /* Search the object for strings starting with @key.
-         * If @last is defined, key is a quoted string, it's
-         * wrapped in @last after @offset characters are sliced
-         * off of it and it's quoted.
-         */
+        // Search the object for strings starting with @key.
+        // If @last is defined, key is a quoted string, it's
+        // wrapped in @last after @offset characters are sliced
+        // off of it and it's quoted.
         this.objectKeys = function objectKeys(obj)
         {
             // Things we can dereference
@@ -808,11 +832,10 @@ function Completion() //{{{
             }
         }
 
-        /* Get an element from the stack. If @n is negative,
-         * count from the top of the stack, otherwise, the bottom.
-         * If @m is provided, return the @mth value of element @o
-         * of the stack entey at @n.
-         */
+        // Get an element from the stack. If @n is negative,
+        // count from the top of the stack, otherwise, the bottom.
+        // If @m is provided, return the @mth value of element @o
+        // of the stack entey at @n.
         let get = function get(n, m, o)
         {
             let a = stack[n >= 0 ? n : stack.length + n];
@@ -826,7 +849,7 @@ function Completion() //{{{
         function buildStack(filter)
         {
             let self = this;
-            /* Push and pop the stack, maintaining references to 'top' and 'last'. */
+            // Push and pop the stack, maintaining references to 'top' and 'last'.
             let push = function push(arg)
             {
                 top = [i, arg, [i], [], [], [], []];
@@ -854,7 +877,7 @@ function Completion() //{{{
                 return ret;
             }
 
-            let i = 0, c = "";     /* Current index and character, respectively. */
+            let i = 0, c = "";     // Current index and character, respectively.
 
             // Reuse the old stack.
             if (str && filter.substr(0, str.length) == str)
@@ -870,11 +893,10 @@ function Completion() //{{{
                 push("#root");
             }
 
-            /* Build a parse stack, discarding entries as opening characters
-             * match closing characters. The stack is walked from the top entry
-             * and down as many levels as it takes us to figure out what it is
-             * that we're completing.
-             */
+            // Build a parse stack, discarding entries as opening characters
+            // match closing characters. The stack is walked from the top entry
+            // and down as many levels as it takes us to figure out what it is
+            // that we're completing.
             str = filter;
             let length = str.length;
             for (; i < length; lastChar = c, i++)
@@ -906,7 +928,7 @@ function Completion() //{{{
                     switch (c)
                     {
                         case "(":
-                            /* Function call, or if/while/for/... */
+                            // Function call, or if/while/for/...
                             if (/[\w$]/.test(lastNonwhite))
                             {
                                 functions.push(i);
@@ -927,7 +949,7 @@ function Completion() //{{{
                             break;
                         case ")": pop("("); break;
                         case "]": pop("["); break;
-                        case "}": pop("{"); /* Fallthrough */
+                        case "}": pop("{"); // Fallthrough
                         case ";":
                             top[FULL_STATEMENTS].push(i);
                             break;
@@ -972,7 +994,7 @@ function Completion() //{{{
             this.context.getCache("eval", Object);
             this.context.getCache("evalContext", function () ({ __proto__: userContext }));
 
-            /* Okay, have parse stack. Figure out what we're completing. */
+            // Okay, have parse stack. Figure out what we're completing.
 
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
@@ -1039,7 +1061,7 @@ function Completion() //{{{
                 cacheKey = null;
                 let obj = [[cache.evalContext, "Local Variables"], [userContext, "Global Variables"],
                            [modules, "modules"], [window, "window"]]; // Default objects;
-                /* Is this an object dereference? */
+                // Is this an object dereference?
                 if (dot < statement) // No.
                     dot = statement - 1;
                 else // Yes. Set the object to the string before the dot.
@@ -1073,7 +1095,7 @@ function Completion() //{{{
                     compl = function (context, obj)
                     {
                         context.process = [null, function highlight(item, v) template.highlight(v, true)];
-                        // Sort in a logical fasion for object keys:
+                        // Sort in a logical fashion for object keys:
                         //  Numbers are sorted as numbers, rather than strings, and appear first.
                         //  Constants are unsorted, and appear before other non-null strings.
                         //  Other strings are sorted in the default manner.
@@ -1112,11 +1134,11 @@ function Completion() //{{{
             // Otherwise, do nothing.
             if (last == "'" || last == '"')
             {
-                /*
-                 * str = "foo[bar + 'baz"
-                 * obj = "foo"
-                 * key = "bar + ''"
-                 */
+                //
+                // str = "foo[bar + 'baz"
+                // obj = "foo"
+                // key = "bar + ''"
+                //
 
                 // The top of the stack is the sting we're completing.
                 // Wrap it in its delimiters and eval it to process escape sequences.
@@ -1133,21 +1155,20 @@ function Completion() //{{{
                     return this.eval(key);
                 }
 
-                /* Is this an object accessor? */
+                // Is this an object accessor?
                 if (get(-2)[CHAR] == "[") // Are we inside of []?
                 {
-                    /* Stack:
-                     *  [-1]: "...
-                     *  [-2]: [...
-                     *  [-3]: base statement
-                     */
+                    // Stack:
+                    //  [-1]: "...
+                    //  [-2]: [...
+                    //  [-3]: base statement
 
-                    // Yes. If the [ starts at the begining of a logical
+                    // Yes. If the [ starts at the beginning of a logical
                     // statement, we're in an array literal, and we're done.
                      if (get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
                         return;
 
-                    // Begining of the statement upto the opening [
+                    // Beginning of the statement upto the opening [
                     let obj = getObj(-3, get(-2)[OFFSET]);
 
                     return complete.call(this, obj, getKey(), null, string, last);
@@ -1156,11 +1177,10 @@ function Completion() //{{{
                 // Is this a function call?
                 if (get(-2)[CHAR] == "(")
                 {
-                    /* Stack:
-                     *  [-1]: "...
-                     *  [-2]: (...
-                     *  [-3]: base statement
-                     */
+                    // Stack:
+                    //  [-1]: "...
+                    //  [-2]: (...
+                    //  [-3]: base statement
 
                     // Does the opening "(" mark a function call?
                     if (get(-3, 0, FUNCTIONS) != get(-2)[OFFSET])
@@ -1209,15 +1229,15 @@ function Completion() //{{{
                 return;
             }
 
-            /*
-             * str = "foo.bar.baz"
-             * obj = "foo.bar"
-             * key = "baz"
-             *
-             * str = "foo"
-             * obj = [modules, window]
-             * key = "foo"
-             */
+            //
+            // str = "foo.bar.baz"
+            // obj = "foo.bar"
+            // key = "baz"
+            //
+            // str = "foo"
+            // obj = [modules, window]
+            // key = "foo"
+            //
 
             let [offset, obj, key] = getObjKey(-1);
 
@@ -1230,7 +1250,7 @@ function Completion() //{{{
             }
 
             if (!/^(?:[a-zA-Z_$][\w$]*)?$/.test(key))
-                return; /* Not a word. Forget it. Can this even happen? */
+                return; // Not a word. Forget it. Can this even happen?
 
             try
             { // FIXME
@@ -1250,7 +1270,7 @@ function Completion() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    let self = {
+    const self = {
 
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
@@ -1338,6 +1358,7 @@ function Completion() //{{{
             context.completions = config.autocommands;
         },
 
+        // TODO: shouldn't these app-specific completers be moved to config.js? --djk
         bookmark: function bookmark(context, tags, extra)
         {
             context.title = ["Bookmark", "Title"];
@@ -1552,13 +1573,15 @@ function Completion() //{{{
         location: function location(context)
         {
             if (!services.get("autoCompleteSearch"))
-                return
+                return;
+
             context.anchored = false;
             context.title = ["Smart Completions"];
             context.keys.icon = 2;
             context.incomplete = true;
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
+            context.cancel = function () services.get("autoCompleteSearch").stopSearch();
             context.compare = null;
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
@@ -1627,9 +1650,8 @@ function Completion() //{{{
             let completions = completer(context);
             if (!completions)
                 return;
-            /* Not vim compatible, but is a significant enough improvement
-             * that it's worth breaking compatibility.
-             */
+            // Not Vim compatible, but is a significant enough improvement
+            // that it's worth breaking compatibility.
             if (newValues instanceof Array)
             {
                 completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);

@@ -2,3 +2,7 @@
 */locale/*/*.html
 */chrome
 *~
+.*.swp
+.*.swo
+.swp
+.DS_Store

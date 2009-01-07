@@ -3,7 +3,6 @@ Priority list:
 
 BUGS:
 - add window resize support to hints
-- can't reverse tab through the vimperator toolbar
 - searching backwards incrementally does not work i.e. with 'incsearch' set
 - http://msdn2.microsoft.com/en-us/library/ms535258.aspx does not scroll with j/k/etc.
   same for http://forum.mootools.net/topic.php?id=3458 and
@@ -22,7 +21,19 @@ BUGS:
 
 (recent CVS regressions):
 - visual caret mode is broken
-- BookmarkAdd is fired once for each bookmark periodically i.e. not in response to adding a bookmark
+- the message system is a bit of a debacle at the moment but I'm not sure how
+  it's supposed to work. MST, can you spec it when you have some time?
+  E.g. :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
+  Obviously I think it should but I'm not sure if it's a bug or not in your
+  view, thanks. --djk
+  The spec is easy: echomsg() is used for informational purposes, and should therefore
+  never need user interaction. Therefore: If the MOW is open, print the message there,
+  but never open the MOW for an echomsg(). --mst
+- While the old :open foo<tab> was broken/annoying, so is the one after 02-01-2008, as
+  I am often waiting ~20sec or more after doing :open not-cached-things<tab>.
+  We should probably just abort searching after 5 secs if we already have found some entries.
+- :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
+  plugin or a vimp issue.
 
 FEATURES:
 9 finish :help TODOs
@@ -30,6 +41,15 @@ FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 use the storage module for autocommands
+8 support 'activate' in buffer.followLink?
+  Leave this to the bookmarks.tabs.loadInBackground. Hint activation
+  should be nearly equivalent to the corresponding mouse motion, and that
+  mouse movement would be governed by the FF pref. However, :tabopen is
+  something Vimp specific, and so it needs a specific setting (i.e.,
+  activate). OTOH, I think it would be better if ";t" *always* opens a
+  new foreground tab and ";b" *always* opensa  new background tab. So "F"
+  should be the only hint mode that changes based on loadInBackground.
+  --Ted
 8 add support for filename special characters such as %
 8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
@@ -37,8 +57,10 @@ FEATURES:
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
   quick searches in the RC file.
   Why not just add a bookmark? --Kris
-7 adaptive learning for tab-completions
-  (https://bugzilla.mozilla.org/show_bug.cgi?id=395739 could help)
+  This would require performance tests, how fast it is to add 20 keywords that way, as we need
+  to search all existing bookmarks to see if the keyword is already defined, and then just update
+  that bookmark. --mst
+8 allow for multiple ex commands separated with |
 7 use ctrl-n/p in insert mode for word completion
 7 implement QuickFix window based on ItemList
 7 [ctrl-o/i] to Go back to a Previous Position (done partly, however currently does not use a per tab jumplist)
@@ -53,9 +75,10 @@ FEATURES:
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
-6 allow for multiple ex commands separated with |
+  Here, unlike Vim, y and "*y would be equivalent. That is, the pasteboard would
+  always be the default register. --Ted
 6 check/correct spellings in insert mode with some mappings
-6 add more autocommands (TabClose, TabOpen, TabChanged, DownloadPre/Post any more?)
+6 add more autocommands (TabClose, TabOpen, TabChanged any more?)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 use '' to jump between marks like vim
@@ -68,12 +91,13 @@ FEATURES:
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
-4 y and Y could maybe changed to, but probably not: Y, yy and yl=yank location, ys=yank selection,
-  yd=yank domain name, yt=yank title, yw=yank current word, yf=yank filename, (other things to yank?)
 4 } { should jump to the next paragraph of the page (maybe impossible)
 3 A format for 'guitablabel' and 'statusline' 
 3 add a command-line window (:help cmdline-window in Vim). 
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
+1 Add information to liberator/HACKING file about testing and optimization
+1 Document remote branches in liberator/HACKING
+1 Reformat liberator/HACKING so that git diff can find sections and report changes @ somewhere
 - many other ideas are listed in the wiki
 

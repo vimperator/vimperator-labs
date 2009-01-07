@@ -259,7 +259,7 @@ section:Options[option-index]
 ||'cdpath'|| List of directories searched when executing :cd +
 ||'complete'|| Items which are completed at the :[tab]open prompt +
 ||'defsearch'|| Set the default search engine +
-||'disabledcssheets'|| Set disabled CSS stylesheets +
+||'disabledcssheets'|| Set disabled CSS style sheets +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +

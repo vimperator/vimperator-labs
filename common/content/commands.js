@@ -28,14 +28,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
+// Do NOT create instances of this class yourself, use the helper method
+// commands.add() instead
 /**
- * A class representing EX commands. Instances are created by
+ * A class representing Ex commands. Instances are created by
  * the {@link Commands} class.
  *
  * @private
  */
-// Do NOT create instances of this class yourself, use the helper method
-// commands.add() instead
 function Command(specs, description, action, extraInfo) //{{{
 {
     if (!specs || !action)
@@ -86,7 +86,7 @@ function Command(specs, description, action, extraInfo) //{{{
     /** @property {string[]} All of this command's long names, e.g., "command" */
     this.longNames  = expandedSpecs.longNames;
 
-    /** @property {string} The command's cannonical name. */
+    /** @property {string} The command's canonical name. */
     this.name        = this.longNames[0];
     /** @property {string[]} All of this command's long and short names. */
     this.names       = expandedSpecs.names; // return all command name aliases
@@ -112,7 +112,7 @@ function Command(specs, description, action, extraInfo) //{{{
      * arguments begin. For instance, with a value of 2, all arguments
      * starting with the third are parsed as a single string, with all
      * quoting characters passed literally. This is especially useful for
-     * commands which take key mappings or ex command lines as
+     * commands which take key mappings or Ex command lines as
      * arguments.
      */
     this.literal     = extraInfo.literal == null ? null : extraInfo.literal;
@@ -133,7 +133,7 @@ function Command(specs, description, action, extraInfo) //{{{
     this.isUserCommand   = extraInfo.isUserCommand || false;
     /**
      * @property {string} For commands defined via :command, contains
-     * the EX command line to be executed upon invocation.
+     * the Ex command line to be executed upon invocation.
      */
     this.replacementText = extraInfo.replacementText || null;
 };
@@ -148,7 +148,7 @@ Command.prototype = {
      * @param {boolean} bang @deprecated Whether this command was
      *     executed with a trailing !.
      * @param {number} count @deprecated Whether this command was
-     *     executed a leading count.
+     *     executed with a leading count.
      * @param modifiers Any modifiers to be passed to
      *     {@link action}
      */
@@ -189,6 +189,7 @@ Command.prototype = {
      * Returns whether this command may be invoked via <b>name</b>.
      *
      * @param {string} name
+     * @returns {boolean}
      */
     hasName: function (name)
     {
@@ -214,7 +215,7 @@ Command.prototype = {
      *     purposes.
      * @param {Object} extra Extra keys to be spliced into the
      *     returned Args object.
-     * @returns Args
+     * @returns {Args}
      * @see Commands#parseArgs
      */
     parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra)
@@ -306,7 +307,7 @@ function Commands() //{{{
         completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
     });
 
-    var commandManager = {
+    const self = {
 
         // FIXME: remove later, when our option handler is better
         OPTION_ANY:    0, // can be given no argument or an argument of any type,
@@ -717,27 +718,18 @@ function Commands() //{{{
             return args;
         },
 
-        // return [null, null, null, null, heredoc_tag || false];
-        //        [count, cmd, special, args] = match;
-        parseCommand: function (str, tag)
+        parseCommand: function (str)
         {
             // remove comments
             str.replace(/\s*".*$/, "");
 
-            if (tag) // we already have a multiline heredoc construct
-            {
-                if (str == tag)
-                    return [null, null, null, null, false];
-                else
-                    return [null, null, null, str, tag];
-            }
-
-            // 0 - count, 1 - cmd, 2 - special, 3 - args, 4 - heredoc tag
+            // 0 - count, 1 - cmd, 2 - special, 3 - args
             let matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
             //var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
             if (!matches)
-                return [null, null, null, null, null];
-            let [, count, cmd, special, args, heredoc] = matches;
+                return [null, null, null, null];
+
+            let [, count, cmd, special, args] = matches;
 
             // parse count
             if (count)
@@ -745,14 +737,7 @@ function Commands() //{{{
             else
                 count = this.COUNT_NONE;
 
-            if (args)
-            {
-                tag = args.match(/<<\s*(\w+)\s*$/);
-                if (tag && tag[1])
-                    heredoc = tag[1];
-            }
-
-            return [count, cmd, !!special, args || "", heredoc];
+            return [count, cmd, !!special, args || ""];
         },
 
         get complQuote() complQuote,
@@ -769,7 +754,7 @@ function Commands() //{{{
         {
             return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)
             {
-                if (token == "lt") // Don't quote, as in vim (but, why so in vim? You'd think people wouldn't say <q-lt> if they didn't want it)
+                if (token == "lt") // Don't quote, as in Vim (but, why so in Vim? You'd think people wouldn't say <q-lt> if they didn't want it)
                     return "<";
                 let res = tokens[token];
                 if (res == undefined) // Ignore anything undefined
@@ -811,7 +796,7 @@ function Commands() //{{{
 
     // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
     // specified - useful?
-    commandManager.add(["com[mand]"],
+    self.add(["com[mand]"],
         "List and define commands",
         function (args)
         {
@@ -918,13 +903,13 @@ function Commands() //{{{
             bang: true,
             completer: function (context) completion.userCommand(context),
             options: [
-                [["-nargs"], commandManager.OPTION_STRING,
+                [["-nargs"], self.OPTION_STRING,
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
-                [["-bang"], commandManager.OPTION_NOARG],
-                [["-count"], commandManager.OPTION_NOARG],
-                [["-complete"], commandManager.OPTION_STRING,
+                [["-bang"], self.OPTION_NOARG],
+                [["-count"], self.OPTION_NOARG],
+                [["-complete"], self.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
-                     function (context) [[k, ''] for ([k, v] in Iterator(completeOptionMap))]]
+                     function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
             ],
             literal: 1,
             serial: function () [
@@ -945,7 +930,7 @@ function Commands() //{{{
             ]
         });
 
-    commandManager.add(["comc[lear]"],
+    self.add(["comc[lear]"],
         "Delete all user-defined commands",
         function ()
         {
@@ -953,7 +938,7 @@ function Commands() //{{{
         },
         { argCount: "0" });
 
-    commandManager.add(["delc[ommand]"],
+    self.add(["delc[ommand]"],
         "Delete the specified user-defined command",
         function (args)
         {
@@ -971,7 +956,7 @@ function Commands() //{{{
 
     //}}}
 
-    return commandManager;
+    return self;
 
 }; //}}}
 

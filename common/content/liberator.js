@@ -57,11 +57,14 @@ const liberator = (function () //{{{
         run: function () { this.func.apply(this.self, this.args); }
     };
 
-    var callbacks = [];
-    var observers = [];
+    const callbacks = {};
+    const observers = {};
+
     function registerObserver(type, callback)
     {
-        observers.push([type, callback]);
+        if (!(type in observers))
+            observers[type] = [];
+        observers[type].push(callback);
     }
 
     let nError = 0;
@@ -83,7 +86,7 @@ const liberator = (function () //{{{
         }
     }
 
-    // Only general options are added here, which are valid for all vimperator like extensions
+    // Only general options are added here, which are valid for all Vimperator like extensions
     registerObserver("load_options", function ()
     {
         options.add(["errorbells", "eb"],
@@ -364,7 +367,7 @@ const liberator = (function () //{{{
             "Run a JavaScript command through eval()",
             function (args)
             {
-                if (args.bang) // open javascript console
+                if (args.bang) // open JavaScript console
                 {
                     liberator.open("chrome://global/content/console.xul",
                         (options["newtab"] && options.get("newtab").has("all", "javascript"))
@@ -449,7 +452,7 @@ const liberator = (function () //{{{
                         let each, eachUnits, totalUnits;
                         let total = 0;
 
-                        for (let i in util.interruptableRange(0, count, 500))
+                        for (let i in util.interruptibleRange(0, count, 500))
                         {
                             let now = Date.now();
                             method();
@@ -605,6 +608,11 @@ const liberator = (function () //{{{
         // ###VERSION### and ###DATE### are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
+        // NOTE: services.get("profile").selectedProfile.name is not rightness.
+        // If default profile Firefox runs without arguments,
+        // then selectedProfile returns last selected profile! (not current one!)
+        profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
+
         // TODO: move to events.js?
         input: {
             buffer: "",                // partial command storage
@@ -622,19 +630,15 @@ const liberator = (function () //{{{
         //  TODO: move to ui.js?
         registerCallback: function (type, mode, func)
         {
-            // TODO: check if callback is already registered
-            callbacks.push([type, mode, func]);
+            if (!(type in callbacks))
+                callbacks[type] = {};
+            callbacks[type][mode] = func;
         },
 
         triggerCallback: function (type, mode, data)
         {
-            // liberator.dump("type: " + type + " mode: " + mode + "data: " + data + "\n");
-            for (let i = 0; i < callbacks.length; i++)
-            {
-                let [thistype, thismode, thisfunc] = callbacks[i];
-                if (mode == thismode && type == thistype)
-                    return thisfunc.call(this, data);
-            }
+            if (callbacks[type] && callbacks[type][mode])
+                return callbacks[type][mode].call(this, data);
             return false;
         },
 
@@ -642,16 +646,14 @@ const liberator = (function () //{{{
 
         unregisterObserver: function (type, callback)
         {
-            observers = observers.filter(function ([t, c]) t != type || c != callback);
+            if (type in observers)
+                observers[type] = observers[type].filter(function (c) c != callback);
         },
 
         triggerObserver: function (type)
         {
-            for (let [,[thistype, callback]] in Iterator(observers))
-            {
-                if (thistype == type)
-                    callback.apply(null, Array.slice(arguments, 1));
-            }
+            for (let [,fn] in Iterator(observers[type] || []))
+                fn.apply(null, Array.slice(arguments, 1));
         },
 
         beep: function ()
@@ -988,49 +990,53 @@ const liberator = (function () //{{{
 
         loadPlugins: function ()
         {
-            // FIXME: largely duplicated for loading macros
-            try
+            function sourceDirectory(dir)
             {
-                let dirs = io.getRuntimeDirectories("plugin");
-
-                if (dirs.length == 0)
+                if (!dir.isReadable())
                 {
-                    liberator.log("No user plugin directory found", 3);
+                    liberator.echoerr("E484: Can't open file " + dir.path);
                     return;
                 }
-                for (let [,dir] in Iterator(dirs))
-                {
-                    // TODO: search plugins/**/* for plugins
-                    liberator.echomsg('Searching for "plugin/*.{js,vimp}" in ' + dir.path.quote(), 2);
 
-                    liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-
-                    let files = io.readDirectory(dir.path, true);
-
-                    files.forEach(function (file) {
-                        if (!file.isDirectory() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+                io.readDirectory(dir.path, true).forEach(function (file) {
+                    if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
+                    {
+                        try
                         {
-                            try
-                            {
-                                io.source(file.path, false);
-                                liberator.pluginFiles[file.path] = true;
-                            }
-                            catch (e)
-                            {
-                                liberator.reportError(e);
-                            }
+                            io.source(file.path, false);
+                            liberator.pluginFiles[file.path] = true;
                         }
-                    });
-                }
+                        catch (e)
+                        {
+                            liberator.reportError(e);
+                        }
+                    }
+                    else if (file.isDirectory())
+                    {
+                        sourceDirectory(file);
+                    }
+                });
             }
-            catch (e)
+
+            let dirs = io.getRuntimeDirectories("plugin");
+
+            if (dirs.length == 0)
             {
-                // thrown if directory does not exist
-                liberator.log("Error sourcing plugin directory: " + e, 9);
+                liberator.log("No user plugin directory found", 3);
+                return;
             }
+
+            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in '
+                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",").quote(), 2);
+
+            dirs.forEach(function (dir) {
+                liberator.echomsg("Searching for " + (dir.path + "/**/*.{js,vimp}").quote(), 3);
+                sourceDirectory(dir);
+            });
         },
 
-        // logs a message to the javascript error console
+        // logs a message to the JavaScript error console
         // if msg is an object, it is beautified
         // TODO: add proper level constants
         log: function (msg, level)
@@ -1049,20 +1055,24 @@ const liberator = (function () //{{{
             if (typeof msg == "object")
                 msg = util.objectToString(msg, false);
 
-            const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-            consoleService.logStringMessage(config.name.toLowerCase() + ": " + msg);
+            services.get("console").logStringMessage(config.name.toLowerCase() + ": " + msg);
         },
 
-        // open one or more URLs
-        //
-        // @param urls: either a string or an array of urls
-        //              The array can look like this:
-        //              ["url1", "url2", "url3", ...] or:
-        //              [["url1", postdata1], ["url2", postdata2], ...]
-        // @param where: if ommited, CURRENT_TAB is assumed
-        //                  but NEW_TAB is set when liberator.forceNewTab is true.
-        // @param force: Don't prompt whether to open more than 20 tabs.
-        // @returns true when load was initiated, or false on error
+        /**
+         * Opens one or more URLs. Returns true when load was initiated, or
+         * false on error.
+         *
+         * @param {FIXME} urls Either a URL string or an array of URLs.
+         *     The array can look like this:
+         *       ["url1", "url2", "url3", ...]
+         *     or:
+         *       [["url1", postdata1], ["url2", postdata2], ...]
+         * @param {number} where If ommited, CURRENT_TAB is assumed but NEW_TAB
+         *     is set when liberator.forceNewTab is true.
+         * @param {boolean} force Don't prompt whether to open more than 20
+         *     tabs.
+         * @returns {boolean}
+         */
         open: function (urls, where, force)
         {
             // convert the string to an array of converted URLs
@@ -1083,6 +1093,8 @@ const liberator = (function () //{{{
             if (urls.length == 0)
                 return false;
 
+            let browser = window.getBrowser();
+
             function open(urls, where)
             {
                 let url = Array.concat(urls)[0];
@@ -1092,7 +1104,7 @@ const liberator = (function () //{{{
                 switch (where)
                 {
                     case liberator.CURRENT_TAB:
-                        getBrowser().loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
+                        browser.loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
                         break;
 
                     case liberator.NEW_BACKGROUND_TAB:
@@ -1100,21 +1112,21 @@ const liberator = (function () //{{{
                         if (!liberator.has("tabs"))
                             return open(urls, liberator.NEW_WINDOW);
 
-                        let tab = getBrowser().addTab(url, null, null, postdata);
-
-                        if (where == liberator.NEW_TAB)
-                            getBrowser().selectedTab = tab;
+                        options.withContext(function () {
+                            options.setPref("browser.tabs.loadInBackground", true);
+                            browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                        });
                         break;
 
                     case liberator.NEW_WINDOW:
                         window.open();
-                        services.get("windowMediator").getMostRecentWindow("navigator:browser")
-                                .loadURI(url, null, postdata);
+                        let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
+                        win.loadURI(url, null, postdata);
+                        browser = win.getBrowser();
                         break;
 
                     default:
-                        liberator.echoerr("Exxx: Invalid 'where' directive in liberator.open(...)");
-                        return false;
+                        throw Error("Invalid 'where' directive in liberator.open(...)");
                 }
             }
 
@@ -1123,7 +1135,7 @@ const liberator = (function () //{{{
             else if (!where)
                 where = liberator.CURRENT_TAB;
 
-            for (let [i, url] in Iterator(urls))
+            for (let [,url] in Iterator(urls))
             {
                 open(url, where);
                 where = liberator.NEW_BACKGROUND_TAB;
@@ -1227,15 +1239,13 @@ const liberator = (function () //{{{
                 let infoPath = services.create("file");
                 infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
                 infoPath.append("info");
-                infoPath.append(services.get("profile").selectedProfile.name);
+                infoPath.append(liberator.profileName);
                 storage.infoPath = infoPath;
             }
             catch (e)
             {
                 liberator.reportError(e);
             }
-
-            liberator.triggerObserver("load");
 
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
@@ -1253,6 +1263,8 @@ const liberator = (function () //{{{
             // add options/mappings/commands which are only valid in this particular extension
             if (config.init)
                 config.init();
+
+            liberator.triggerObserver("load");
 
             liberator.log("All modules loaded", 3);
 
@@ -1403,6 +1415,21 @@ const liberator = (function () //{{{
 })(); //}}}
 
 window.liberator = liberator;
+
+// FIXME: Ugly, etc.
+window.addEventListener("liberatorHelpLink", function (event) {
+        let elem = event.target;
+        liberator.dump(String(elem));
+        if (/^(option|mapping|command)$/.test(elem.className))
+            var tag = elem.textContent.replace(/\s.*/, "");
+        if (elem.className == "command")
+            tag = tag.replace(/\[.*?\]/g, "");
+        if (tag)
+            var page = liberator.findHelp(tag);
+        if (page)
+            elem.href = "chrome://liberator/locale/" + page;
+    },
+    true, true);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);

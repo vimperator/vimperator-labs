@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-/*
+/**
  * This class is used for prompting of user input and echoing of messages
  *
  * it consists of a prompt and command field
@@ -75,6 +75,12 @@ function CommandLine() //{{{
     var keepCommand = false;
     var lastEcho = null;
 
+    /**
+     * A class for managing the history of an inputField
+     *
+     * @param {Object} inputField
+     * @param {string} mode
+     */
     function History(inputField, mode)
     {
         if (!(this instanceof arguments.callee))
@@ -85,27 +91,42 @@ function CommandLine() //{{{
         this.reset();
     }
     History.prototype = {
+        /**
+         * Empties the history.
+         */
         reset: function ()
         {
             this.index = null;
         },
-
+        /**
+         * Permanently save the history
+         */
         save: function ()
         {
             let str = this.input.value;
             if (/^\s*$/.test(str))
                 return;
-            this.store.mutate('filter', function (line) line != str);
+            this.store.mutate("filter", function (line) line != str);
             this.store.push(str);
             this.store.truncate(options["history"], true);
         },
-
+        /**
+         * Set the current match to val
+         *
+         * @param {string} val
+         */
         replace: function (val)
         {
             this.input.value = val;
             liberator.triggerCallback("change", currentExtendedMode, val);
         },
 
+        /**
+         * move up or (if backward) down in the history
+         *
+         * @param {boolean} backward
+         * @param {boolean} matchCurrent XXX: what?
+         */
         select: function (backward, matchCurrent)
         {
             // always reset the tab completion if we use up/down keys
@@ -154,6 +175,11 @@ function CommandLine() //{{{
         }
     };
 
+    /**
+     * A class for tab completions on an input field
+     *
+     * @param {Object} input
+     */
     function Completions(input)
     {
         if (!(this instanceof arguments.callee))
@@ -326,7 +352,7 @@ function CommandLine() //{{{
             {
                 case this.UP:
                     if (this.selected == null)
-                        idx = this.items.length - 1;
+                        idx = -2
                     else
                         idx = this.selected - 1;
                     break;
@@ -343,8 +369,8 @@ function CommandLine() //{{{
                     idx = Math.max(0, Math.min(this.items.length - 1, idx));
                     break;
             }
-            this.itemList.selectItem(idx);
-            if (idx < 0 || idx >= this.items.length || idx == null)
+
+            if (idx == -1 || this.items.length && idx >= this.items.length || idx == null)
             {
                 // Wrapped. Start again.
                 this.selected = null;
@@ -352,27 +378,40 @@ function CommandLine() //{{{
             }
             else
             {
+                // Wait for contexts to complete if necessary.
+                // FIXME: Need to make idx relative to individual contexts.
+                let list = this.context.contextList.reverse();
+                if (idx == -2)
+                    list = list.slice().reverse();
+                let n = 0;
+                for (let [,context] in Iterator(list))
+                {
+                    function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
+                    while (context.incomplete && !done())
+                        liberator.threadYield(true, true);
+                    if (done())
+                        break;
+                    n += context.items.length;
+                }
+
+                // See previous FIXME. This will break if new items in
+                // a previous context come in.
+                if (idx < 0)
+                    idx = this.items.length - 1;
+
                 this.selected = idx;
                 this.completion = this.items[idx].text;
             }
+
+            this.itemList.selectItem(idx);
         },
 
         tab: function tab(reverse)
         {
+            autocompleteTimer.flush();
             // Check if we need to run the completer.
             if (this.context.waitingForTab || this.wildIndex == -1)
                 this.complete(true, true);
-
-            if (this.items.length == 0)
-            {
-                // No items. Wait for any unfinished completers.
-                let end = Date.now() + 5000;
-                while (this.context.incomplete && this.items.length == 0 && Date.now() < end)
-                    liberator.threadYield();
-
-                if (this.items.length == 0)
-                    return liberator.beep();
-            }
 
             switch (this.wildtype.replace(/.*:/, ""))
             {
@@ -391,6 +430,9 @@ function CommandLine() //{{{
                     this.select(reverse ? this.UP : this.DOWN)
                     break;
             }
+
+            if (this.items.length == 0)
+                return void liberator.beep();
 
             if (this.type.list)
                 completionList.show();
@@ -511,16 +553,28 @@ function CommandLine() //{{{
     var multilineRegexp = null;
     var multilineCallback = null;
 
+    /**
+     * @private - highlight the messageBox according to group
+     */
     function setHighlightGroup(group)
     {
         messageBox.setAttributeNS(NS.uri, "highlight", group);
     }
 
-    // Whether the command line must be open.
+    /**
+     * @private - Determines whether the command line should be visible.
+     *
+     * @return {boolean}
+     */
     function commandShown() modes.main == modes.COMMAND_LINE &&
             !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE));
 
-    // sets the prompt - for example, : or /
+    /**
+     * @private - set the prompt to val styled with highlightGroup
+     *
+     * @param {string} val
+     * @param {string} highlightGroup
+     */
     function setPrompt(val, highlightGroup)
     {
         promptWidget.value = val;
@@ -529,7 +583,11 @@ function CommandLine() //{{{
         promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
     }
 
-    // sets the command - e.g. 'tabopen', 'open http://example.com/'
+    /**
+     * @private - set the command to cmd and move the user's cursor to the end.
+     *
+     * @param {string} cmd
+     */
     function setCommand(cmd)
     {
         commandWidget.value = cmd;
@@ -537,6 +595,14 @@ function CommandLine() //{{{
         commandWidget.selectionEnd = cmd.length;
     }
 
+    /**
+     * @private - display a message styled with highlightGroup
+     * and, if forceSingle is true, ensure it takes only one line.
+     *
+     * @param {string} str
+     * @param {string} highlightGroup
+     * @param {boolean} forceSingle
+     */
     function echoLine(str, highlightGroup, forceSingle)
     {
         setHighlightGroup(highlightGroup);
@@ -552,7 +618,14 @@ function CommandLine() //{{{
             echoMultiline(<span highlight="Message">{str}</span>, highlightGroup);
     }
 
-    // TODO: resize upon a window resize
+    /**
+     * Display a multiline message, possible through a "more" like interface
+     *
+     * TODO: resize upon a window resize
+     *
+     * @param {string} str
+     * @param {string} highlightGroup
+     */
     function echoMultiline(str, highlightGroup)
     {
         let doc = multilineOutputWidget.contentDocument;
@@ -560,11 +633,10 @@ function CommandLine() //{{{
 
         liberator.triggerObserver("echoMultiline", str, highlightGroup);
 
-        /* If it's already XML, assume it knows what it's doing.
-         * Otherwise, white space is significant.
-         * The problem elsewhere is that E4X tends to insert new lines
-         * after interpolated data.
-         */
+        // If it's already XML, assume it knows what it's doing.
+        // Otherwise, white space is significant.
+        // The problem elsewhere is that E4X tends to insert new lines
+        // after interpolated data.
         XML.ignoreWhitespace = typeof str != "xml";
         lastMowOutput = <div class="ex-command-output" style="white-space: nowrap" highlight={highlightGroup}>{template.maybeXML(str)}</div>;
         let output = util.xmlToDom(lastMowOutput, doc);
@@ -598,6 +670,10 @@ function CommandLine() //{{{
         commandline.updateMorePrompt();
     }
 
+    /**
+     * @private - ensure that the Multiline input widget is the
+     * correct size.
+     */
     function autosizeMultilineInputWidget()
     {
         let lines = multilineInputWidget.value.split("\n").length - 1;
@@ -605,7 +681,16 @@ function CommandLine() //{{{
         multilineInputWidget.setAttribute("rows", Math.max(lines, 1));
     }
 
-    // used for the :echo[err] commands
+    /**
+     * @private - eval()s a javascript expression
+     * and returns a string suitable to be echo'd.
+     *
+     * If useColor is true, util.objectToString will
+     * colorize object output.
+     *
+     * @param {string} arg
+     * @param {boolean} useColor
+     */
     function echoArgumentToString(arg, useColor)
     {
         if (!arg)
@@ -885,6 +970,9 @@ function CommandLine() //{{{
                 storage.styles.removeSheet(true, "silent-mode");
         },
 
+        /**
+         * XXX: This function is not used!
+         */
         runSilently: function (fn, self)
         {
             let wasSilent = this.silent;
@@ -912,6 +1000,16 @@ function CommandLine() //{{{
 
         get message() messageBox.value,
 
+        /**
+         * Changes the command line to display the following prompt (usually ":")
+         * followed by the command, in the given mode. Valid modes are
+         * attributes of the "modes" variable, and modes.EX is probably
+         * a good choice.
+         *
+         * @param {string} prompt
+         * @param {string} cmd
+         * @param {number} mode
+         */
         open: function open(prompt, cmd, extendedMode)
         {
             // save the current prompts, we need it later if the command widget
@@ -936,7 +1034,11 @@ function CommandLine() //{{{
             liberator.triggerCallback("change", currentExtendedMode, cmd);
         },
 
-        // normally used when pressing esc, does not execute a command
+        /**
+         * Removes any input from the command line, without executing its
+         * contents. Removes any "More" windows or other such output.
+         * Pressing <ESC> in EX mode normally has this effect.
+         */
         close: function close()
         {
             let mode = currentExtendedMode;
@@ -946,6 +1048,7 @@ function CommandLine() //{{{
             if (history)
                 history.save();
 
+            this.resetCompletions(); // cancels any asynchronous completion still going on, must be before completions = null
             completions = null;
             history = null;
 
@@ -969,14 +1072,33 @@ function CommandLine() //{{{
             keepCommand = false;
         },
 
+
+        /**
+         * Hide any auto-completion/More-ing that is happening.
+         */
         hide: function hide()
         {
             commandlineWidget.collapsed = true;
         },
 
-        // liberator.echo uses different order of flags as it omits the hightlight group, change v.commandline.echo argument order? --mst
+        /**
+         * Output the given string onto the command line coloured
+         * using the rules according to highlightGroup. If not
+         * given higlightGroup defaults to commandline.HL_NORMAL
+         * and other possibe values are at commandline.HL_[A-Z]*.
+         *
+         * Flags can be any of:
+         *   commandline.APPEND_TO_MESSAGES (causes message to be added to the messagesHistory)
+         *   commandline.FORCE_SINGLELINE | commandline.DISALLOW_MULTILINE
+         *   commandline.FORCE_MULTILINE
+         *
+         * @param {string} str
+         * @param {string} highlightGroup
+         * @param {number} flags
+         */
         echo: function echo(str, highlightGroup, flags)
         {
+           // liberator.echo uses different order of flags as it omits the highlight group, change v.commandline.echo argument order? --mst
             if (silent)
                 return false;
 
@@ -1021,8 +1143,23 @@ function CommandLine() //{{{
             return true;
         },
 
-        // this will prompt the user for a string
-        // commandline.input("(s)ave or (o)pen the file?")
+        /**
+         * Prompt the user for a string and execute the given
+         * callback with that as the only argument on <CR>
+         * extra can have any of the following attributes:
+         *
+         *     onChange: A function to be called with the current input every time it changes
+         *     completer: A function called with a ?context? when the user tries to tabcomplete
+         *     promptHighlight: The HighlightGroup to use (default commandline.HL_QUESTION, others
+         *                      can be found at commandline.HL_[A-Z]*)
+         *
+         * This function sets the mode to modes.COMMAND_LINE, and thus popping the mode will
+         * stop further input from being waited for (useful for stopping onChange)
+         *
+         * @param {string} prompt
+         * @param {function(string)} callback
+         * @param {Object} extra
+         */
         input: function input(prompt, callback, extra)
         {
             extra = extra || {};
@@ -1042,8 +1179,14 @@ function CommandLine() //{{{
             completions = Completions(commandWidget.inputField);
         },
 
-        // reads a multi line input and returns the string once the last line matches
-        // @param untilRegexp
+        /**
+         * Get a multiline input from a user, up to but not including
+         * the line which matches the given regular expression. Then
+         * execute the callback with that string as a parameter.
+         *
+         * @param {RegExp} untilRegexp
+         * @param {function(string)} callbackFunc
+         */
         inputMultiline: function inputMultiline(untilRegexp, callbackFunc)
         {
             // Kludge.
@@ -1063,6 +1206,13 @@ function CommandLine() //{{{
             setTimeout(function () { multilineInputWidget.focus(); }, 10);
         },
 
+        /**
+         * Handle events, the come from liberator when liberator.mode = modes.COMMAND_LINE
+         * but also takes blur/focus/input events raw from #liberator-commandline-command
+         * in the XUL
+         *
+         * @param {Event} event
+         */
         onEvent: function onEvent(event)
         {
             let command = this.command;
@@ -1085,7 +1235,7 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                this.resetCompletions();
+                //this.resetCompletions(); -> already handled by "keypress" below (hopefully), so don't do it twice
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
@@ -1150,11 +1300,18 @@ function CommandLine() //{{{
             }
             else if (event.type == "keyup")
             {
+                let key = events.toString(event);
                 if (key == "<Tab>" || key == "<S-Tab>")
                     tabTimer.flush();
             }
         },
 
+        /**
+         * Multiline input events, they will come straight from
+         * #liberator-multiline-input in the XUL.
+         *
+         * @param {Event} event
+         */
         onMultilineInputEvent: function onMultilineInputEvent(event)
         {
             if (event.type == "keypress")
@@ -1189,8 +1346,16 @@ function CommandLine() //{{{
             return true;
         },
 
-        // FIXME: if 'more' is set and the MOW is not scrollable we should still
-        // allow a down motion after an up rather than closing
+        /**
+         * Handle events when we are in multiline output mode,
+         * these come from liberator when modes.extended & modes.MULTILINE_OUTPUT
+         * and also from #liberator-multiline-output in the XUL
+         *
+         * FIXME: if 'more' is set and the MOW is not scrollable we should still
+         * allow a down motion after an up rather than closing
+         *
+         * @param {Event} event
+         */
         onMultilineOutputEvent: function onMultilineOutputEvent(event)
         {
             let win = multilineOutputWidget.contentWindow;
@@ -1298,7 +1463,7 @@ function CommandLine() //{{{
                     }
                     break;
 
-                // let firefox handle those to select table cells or show a context menu
+                // let Firefox handle those to select table cells or show a context menu
                 case "<C-LeftMouse>":
                 case "<RightMouse>":
                 case "<C-S-LeftMouse>":
@@ -1400,6 +1565,15 @@ function CommandLine() //{{{
             }
         },
 
+        /**
+         * Refresh or remove the prompt that displays when in multiline mode.
+         * showHelp will cause the possible key-options to be displayed,
+         * force will cause a display of the default message even if it
+         * could be at the end of the output.
+         *
+         * @param {boolean} force
+         * @param {boolean} showHelp
+         */
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
             if (outputContainer.collapsed)
@@ -1417,6 +1591,14 @@ function CommandLine() //{{{
                 echoLine("Press ENTER or type command to continue", this.HL_QUESTION, true);
         },
 
+        /**
+         * Changes the height of the multilineOutputWidget to fit
+         * its contents, if <b>open</b> is true, it will cause the
+         * widget to uncollapse, if not it will leave the widget
+         * closed.
+         *
+         * @param {boolean} open
+         */
         updateOutputHeight: function updateOutputHeight(open)
         {
             if (!open && outputContainer.collapsed)
@@ -1439,11 +1621,18 @@ function CommandLine() //{{{
             outputContainer.collapsed = false;
         },
 
+        /**
+         * Disable any active completion functions by calling their cancelFunc's
+         * Will also remove the completions preview window.
+         */
         resetCompletions: function resetCompletions()
         {
             autocompleteTimer.reset();
+
+            // liberator.dump("Resetting completions...");
             if (completions)
             {
+                completions.context.cancelAll();
                 completions.wildIndex = -1;
                 completions.previewClear();
             }
@@ -1457,9 +1646,9 @@ function CommandLine() //{{{
 /**
  * The list which is used for the completion box (and QuickFix window in future)
  *
- * @param id: the id of the the XUL <iframe> which we want to fill
- *            it MUST be inside a <vbox> (or any other html element,
- *            because otherwise setting the height does not work properly
+ * @param {string} id The id of the XUL <iframe> which we want to fill it
+ *     MUST be inside a <vbox> (or any other html element, because otherwise
+ *     setting the height does not work properly
  */
 function ItemList(id) //{{{
 {
@@ -1505,7 +1694,7 @@ function ItemList(id) //{{{
         minHeight = Math.max(minHeight, divNodes.completions.getBoundingClientRect().bottom);
         container.height = minHeight;
         if (container.collapsed)
-            div.style.minWidth = undefined;
+            div.style.minWidth = "";
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
     }
@@ -1550,10 +1739,10 @@ function ItemList(id) //{{{
     }
 
     /**
-     * uses the entries in "items" to fill the listbox
-     * does incremental filling to speed up things
+     * Uses the entries in "items" to fill the listbox and
+     * does incremental filling to speed up things.
      *
-     * @param offset: start at this index and show maxItems
+     * @param {number} offset Start at this index and show maxItems
      */
     function fill(offset)
     {
@@ -1671,7 +1860,7 @@ function ItemList(id) //{{{
         // select index, refill list if necessary
         selectItem: function selectItem(index)
         {
-            //if (container.collapsed) // fixme
+            //if (container.collapsed) // FIXME
             //    return;
 
             //let now = Date.now();
@@ -1773,6 +1962,14 @@ function StatusLine() //{{{
 
     return {
 
+        /**
+         * Update the status bar to indicate how secure the website is
+         * secure => https:// with valid certificate
+         * broken => https:// with invalid certificate
+         * insecure => http://
+         *
+         * @param {'secure'|'broken'|'insecure'} type
+         */
         setClass: function setClass(type)
         {
             const highlightGroup = {
@@ -1794,7 +1991,14 @@ function StatusLine() //{{{
             this.updateBufferPosition();
         },
 
-        // if "url" is ommited, build a usable string for the URL
+        /**
+         * Update which URL is displayed on the status line,
+         * if url is omitted then buffer.URL is used instead and
+         * status icons [+-â¤] are updated to match whether one can
+         * go back/forwards in history/have bookmarked the page.
+         *
+         * @param {string} url
+         */
         updateUrl: function updateUrl(url)
         {
             if (typeof url == "string")
@@ -1805,7 +2009,7 @@ function StatusLine() //{{{
 
             url = buffer.URL;
 
-            // make it even more vim-like
+            // make it even more Vim-like
             if (url == "about:blank")
             {
                 if (!buffer.title)
@@ -1837,6 +2041,13 @@ function StatusLine() //{{{
             urlWidget.value = url;
         },
 
+        /**
+         * Set the contents of the status line's input buffer
+         * to the given string.
+         *
+         * Used for displaying partial key combinations in
+         * normal mode.
+         */
         updateInputBuffer: function updateInputBuffer(buffer)
         {
             if (!buffer || typeof buffer != "string")
@@ -1845,6 +2056,17 @@ function StatusLine() //{{{
             inputBufferWidget.value = buffer;
         },
 
+        /**
+         * Update the display of the progress bar.
+         * If the parameter is a string, it will be
+         * displayed literally. Otherwise it must be a number
+         * less than one.
+         * Negative numbers cause a "Loading..." status,
+         * Positive (< 1) numbers cause an arrow ==> of length
+         * proportional to the arrow.
+         *
+         * @param {string|number} progress
+         */
         updateProgress: function updateProgress(progress)
         {
             if (!progress)
@@ -1872,7 +2094,13 @@ function StatusLine() //{{{
             }
         },
 
-        // you can omit either of the 2 arguments
+        /**
+         * Display the correct tabcount (e.g. [1/5]) on the status bar.
+         * If either parameter is omitted, they will be calculated.
+         *
+         * @param {number} currentIndex
+         * @param {number} totalTabs
+         */
         updateTabCount: function updateTabCount(currentIndex, totalTabs)
         {
             if (!liberator.has("tabs"))
@@ -1897,7 +2125,16 @@ function StatusLine() //{{{
             tabCountWidget.value = "[" + currentIndex + "/" + totalTabs + "]";
         },
 
-        // percent is given between 0 and 1
+        /**
+         * Display the correct position on the status bar, if the
+         * percent parameter is omitted it will be calculated.
+         *
+         * Negative numbers are set to "All", Zero implies "Top"
+         * One or above is "Bot", and anything else is multiplied by
+         * a hundred and displayed as a percentage.
+         *
+         * @param {number} percent
+         */
         updateBufferPosition: function updateBufferPosition(percent)
         {
             if (!percent || typeof percent != "number")

@@ -588,14 +588,14 @@ function Mail() //{{{
             if (mail.currentFolder.isServer)
                 return liberator.beep();
 
-            mail.currentFolder.markAllMessagesRead();
+            mail.currentFolder.markAllMessagesRead(msgWindow);
         });
 
     mappings.add(myModes, ["<C-t>"],
         "Mark all messages as read",
         function ()
         {
-            mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(); });
+            mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(msgWindow); });
         });
 
     // DISPLAY OPTIONS
@@ -890,12 +890,13 @@ function Mail() //{{{
             return false;
         },
 
-        /*
-         * general-purpose method to find messages
-         * @param validatorFunc(msg): return true/false whether msg should be selected or not
-         * @param canWrap: when true, wraps around folders
-         * @param openThreads: should we open closed threads?
-         * @param reverse: change direction of searching
+        /**
+         * General-purpose method to find messages
+         *
+         * @param {function} validatorFunc(msg): return true/false whether msg should be selected or not
+         * @param {boolean} canWrap: when true, wraps around folders
+         * @param {boolean} openThreads: should we open closed threads?
+         * @param {boolean} reverse: change direction of searching
          */
         selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
         {

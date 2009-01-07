@@ -18,6 +18,7 @@ var skipTests = [":bmarks", "gg"];
 // Put definitions here which might change due to internal liberator refactoring
 /////////////////////////////////////////////////////////////////////////////////////////
 
+var doc; // document where we output status messages
 var multilineOutput  = document.getElementById("liberator-multiline-output")
 var singlelineOutput = document.getElementById("liberator-commandline-command")
 
@@ -28,10 +29,10 @@ var singlelineOutput = document.getElementById("liberator-commandline-command")
 // previous command
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// A series of ex commands or mappings, each with a
+// A series of Ex commands or mappings, each with a
 // function checking whether the command succeeded
-// If the string starts with a ":" it is executed as an ex command, otherwise as a mapping
-// You can also mix commands mappings
+// If the string starts with a ":" it is executed as an Ex command, otherwise as a mapping
+// You can also mix commands and mappings
 let tests = [
     { cmds: [":!dir"],
       verify: function () getMultilineOutput().length > 10 },
@@ -45,6 +46,8 @@ let tests = [
       verify: function () getSinglelineOutput() == "test" },
     { cmds: [":qmark V http://test.vimperator.org", ":qmarks"],
       verify: function () getMultilineOutput().indexOf("test.vimperator.org") >= 0 },
+    { cmds: [":javascript liberator.echo('test', commandline.FORCE_MULTILINE)"],
+      verify: function () getMultilineOutput() == "test" },
     // { cmds: [":echomsg \"testmsg\""],
     //   verify: function () getOutput() == "testmsg" },
     // { cmds: [":echoerr \"testerr\""],
@@ -56,7 +59,7 @@ let tests = [
     // testing tab behavior
 ];
 
-// these functions highly depend on the liberator API, so use ex command tests whenever possible
+// these functions highly depend on the liberator API, so use Ex command tests whenever possible
 let functions = [
     function () { return bookmarks.get("").length > 0 }, // will fail for people without bookmarks :( Might want to add one before
     function () { return history.get("").length > 0 }
@@ -64,7 +67,7 @@ let functions = [
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // functions below should be as generic as possible, and not require being rewritten
-// even after doing major vimperator refactoring
+// even after doing major Vimperator refactoring
 /////////////////////////////////////////////////////////////////////////////////////////
 
 function resetEnvironment()
@@ -89,15 +92,14 @@ function getBufferPosition()
              y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
 };
 
-    // TODO: need to find a way to wait for page load
 function getLocation() window.content.document.location.href;
 
-var doc;
 
 function echoLine(str, group)
 {
     if (!doc)
         return;
+
     doc.body.appendChild(util.xmlToDom(
             <div highlight={group} style="border: 1px solid gray; white-space: pre; height: 1.5em; line-height: 1.5em;">{str}</div>,
             doc));
@@ -106,6 +108,7 @@ function echoMulti(str, group)
 {
     if (!doc)
         return;
+
     doc.body.appendChild(util.xmlToDom(<div class="ex-command-output"
                 style="white-space: nowrap; border: 1px solid black; min-height: 1.5em;"
                 highlight={group}>{template.maybeXML(str)}</div>,
@@ -120,13 +123,13 @@ commands.addUserCommand(["regr[essions]"],
         // TODO: count (better even range) support to just run test 34 of 102
         // TODO: bang support to either: a) run commands like deleting bookmarks which
         //       should only be done in a clean profile or b) run functions and not
-        //       just ex command tests; Yet to be decided
+        //       just Ex command tests; Yet to be decided
 
         let updateOutputHeight = null;
         function init()
         {
             liberator.registerObserver("echoLine", echoLine);
-            liberator.registerObserver("echoMulti", echoMulti);
+            liberator.registerObserver("echoMultiline", echoMulti);
             liberator.open("chrome://liberator/content/buffer.xhtml", liberator.NEW_TAB);
             events.waitForPageLoad();
             doc = content.document;
@@ -144,7 +147,7 @@ commands.addUserCommand(["regr[essions]"],
         function cleanup()
         {
             liberator.unregisterObserver("echoLine", echoLine);
-            liberator.unregisterObserver("echoMulti", echoMulti);
+            liberator.unregisterObserver("echoMultiline", echoMulti);
             commandline.updateOutputHeight = updateOutputHeight;
         }
 
@@ -178,7 +181,7 @@ commands.addUserCommand(["regr[essions]"],
                     }
                 };
 
-                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+                commandline.echo("Running test " + currentTest + " of " + totalTests + ": " + testDescription, "Filter", commandline.APPEND_TO_MESSAGES);
                 resetEnvironment();
                 if ("init" in test)
                     test.init();
@@ -187,7 +190,7 @@ commands.addUserCommand(["regr[essions]"],
                     if (cmd[0] == ":")
                         liberator.execute(cmd);
                     else
-                         events.feedkeys(cmd);
+                        events.feedkeys(cmd);
                 });
 
                 if (!test.verify())
@@ -203,7 +206,7 @@ commands.addUserCommand(["regr[essions]"],
                 if (args.count >= 1 && currentTest != args.count)
                     continue;
 
-                liberator.echomsg("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80));
+                commandline.echo("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80), "Filter", commandline.APPEND_TO_MESSAGES);
                 resetEnvironment();
 
                 if (!func())

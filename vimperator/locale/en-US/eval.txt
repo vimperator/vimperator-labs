@@ -8,10 +8,9 @@ INTRO TO BE WRITTEN...
 ||:ec[ho] {expr}||
 ________________________________________________________________________________
 Echo the expression. Useful for showing informational messages. Multiple lines
-can be separated by \n.  {expr} can either be a quoted string, or any
-expression which can be fed to eval() like 4+5. You can also view the source
-code of objects and functions if the return value of {expr} is an object or
-function.
+can be separated by \n. {expr} can either be a quoted string, or any expression
+which can be fed to eval() like 4+5. You can also view the source code of
+objects and functions if the return value of {expr} is an object or function.
 ________________________________________________________________________________
 
 
@@ -43,8 +42,8 @@ ________________________________________________________________________________
 
 
 |:js| |:javas| |:javascript|
-||:javas[cript] \\{cmd\\}|| +
-||:javascript <<\\{endpattern\\}\n\\{script\\}\n\\{endpattern\\}|| +
+||:javas[cript] {cmd}|| +
+||:javascript <<{endpattern}\n{empty}{script}\n{empty}{endpattern} || +
 ||:javascript[!]||
 ________________________________________________________________________________
 Run any JavaScript command through eval(). Acts as a JavaScript interpreter by

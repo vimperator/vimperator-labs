@@ -31,7 +31,7 @@ const config = { //{{{
     name: "Vimperator",
     hostApplication: "Firefox",
 
-    /*** optional options, there are checked for existance and a fallback provided  ***/
+    /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
     defaults: { guioptions: "rb" },
 
@@ -430,16 +430,12 @@ const config = { //{{{
             {
                 setter: function (value)
                 {
-                    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService2);
+                    const ioService = services.get("io");
                     ioService.offline = !value;
                     gPrefService.setBoolPref("browser.offline", ioService.offline);
                     return value;
                 },
-                getter: function ()
-                {
-                    const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService2);
-                    return ioService.offline;
-                }
+                getter: function () !services.get("io").offline
             });
 
         options.add(["titlestring"],

@@ -7,7 +7,7 @@ const template = {
 
     map: function map(iter, fn, sep, interruptable)
     {
-        if (iter.length) /* Kludge? */
+        if (iter.length) // FIXME: Kludge?
             iter = util.Array.iterator(iter);
         let ret = <></>;
         let n = 0;
@@ -287,7 +287,7 @@ const template = {
 
     tabular: function tabular(headings, style, iter)
     {
-        /* This might be mind-bogglingly slow. We'll see. */
+        // TODO: This might be mind-bogglingly slow. We'll see.
         // <e4x>
         return this.commandOutput(
             <table>

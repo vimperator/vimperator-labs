@@ -32,7 +32,7 @@ const Point = new Struct("x", "y");
 
 /**
  * A class to manage the primary web content buffer. The name comes
- * from vim's term, 'buffer', which signifies instances of open
+ * from Vim's term, 'buffer', which signifies instances of open
  * files.
  * @instance buffer
  */
@@ -41,7 +41,8 @@ function Buffer() //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-    /* FIXME: This doesn't belong here. */
+
+    // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "main-window";
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
@@ -197,7 +198,7 @@ function Buffer() //{{{
         {
             if (mappings.repeat)
             {
-                for (let i in util.interruptableRange(0, Math.max(count, 1), 100))
+                for (let i in util.interruptibleRange(0, Math.max(count, 1), 100))
                     mappings.repeat();
             }
         },
@@ -330,7 +331,7 @@ function Buffer() //{{{
                     "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
                 );
 
-                for (match in matches)
+                for (let match in matches)
                 {
                     let computedStyle = util.computedStyle(match);
                     if (computedStyle.visibility != "hidden" && computedStyle.display != "none")
@@ -339,11 +340,7 @@ function Buffer() //{{{
 
                 if (elements.length > 0)
                 {
-                    if (count > elements.length)
-                        count = elements.length;
-                    else if (count < 1)
-                        count = 1;
-
+                    count = Math.min(Math.max(count, 1), elements.length);
                     elements[count - 1].focus();
                 }
                 else
@@ -482,7 +479,7 @@ function Buffer() //{{{
             if (arg && (liberator.has("Win32") || arg[0] != ">"))
                 return liberator.echoerr("E488: Trailing characters");
 
-            options.temporaryContext(function () {
+            options.withContext(function () {
                 if (arg)
                 {
                     options.setPref("print.print_to_file", "true");
@@ -570,12 +567,9 @@ function Buffer() //{{{
                 let file = io.getFile(filename);
 
                 if (file.exists() && !args.bang)
-                {
-                    liberator.echoerr("E13: File exists (add ! to override)");
-                    return;
-                }
+                    return void liberator.echoerr("E13: File exists (add ! to override)");
 
-                chosenData = { file: file, uri: makeURI(doc.location.href, doc.characterSet) };
+                chosenData = { file: file, uri: window.makeURI(doc.location.href, doc.characterSet) };
             }
 
             // if browser.download.useDownloadDir = false then the "Save As"
@@ -682,7 +676,7 @@ function Buffer() //{{{
 
             if (!isFeed)
             {
-                let type = data.type && data.type.toLowerCase();
+                var type = data.type && data.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
                 isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
@@ -817,8 +811,8 @@ function Buffer() //{{{
     return {
 
         /**
-         * The alternative stylesheets for the current buffer. Only
-         * returns stylesheets for the 'screen' media type.
+         * @property {Array} The alternative style sheets for the current
+         *     buffer. Only returns style sheets for the 'screen' media type.
          */
         get alternateStyleSheets()
         {
@@ -836,10 +830,11 @@ function Buffer() //{{{
         get pageInfo() pageInfo,
 
         /**
-         * Returns whether the buffer is loaded. Values may be:
-         *   0 - Loading.
-         *   1 - Fully loaded.
-         *   2 - Load failed.
+         * @property {number} A value indicating whether the buffer is loaded.
+         *     Values may be:
+         *         0 - Loading.
+         *         1 - Fully loaded.
+         *         2 - Load failed.
          */
         get loaded()
         {
@@ -854,8 +849,8 @@ function Buffer() //{{{
         },
 
         /**
-         * The last focused input field in the buffer. Used by the
-         * "gi" key binding.
+         * @property {Object} The last focused input field in the buffer. Used
+         *     by the "gi" key binding.
          */
         get lastInputField()
         {
@@ -870,21 +865,24 @@ function Buffer() //{{{
         },
 
         /**
-         * The current top-level document's URL.
+         * @property {string} The current top-level document's URL.
          */
         get URL()
         {
             return window.content.document.location.href;
         },
 
+        /**
+         * @property {number} The buffer's height in pixels.
+         */
         get pageHeight()
         {
             return window.content.innerHeight;
         },
 
         /**
-         * The current browser's text zoom level, as a percentage with
-         * 100 as 'normal'. Only affects text size.
+         * @property {number} The current browser's text zoom level, as a
+         *     percentage with 100 as 'normal'. Only affects text size.
          */
         get textZoom()
         {
@@ -896,9 +894,9 @@ function Buffer() //{{{
         },
 
         /**
-         * The current browser's text zoom level, as a percentage with
-         * 100 as 'normal'. Affects text size, as well as image size
-         * and block size.
+         * @property {number} The current browser's text zoom level, as a
+         *     percentage with 100 as 'normal'. Affects text size, as well as
+         *     image size and block size.
          */
         get fullZoom()
         {
@@ -910,7 +908,7 @@ function Buffer() //{{{
         },
 
         /**
-         * The current document's title.
+         * @property {string} The current document's title.
          */
         get title()
         {
@@ -918,6 +916,7 @@ function Buffer() //{{{
         },
 
         /**
+         * Adds a new section to the page information output.
          *
          * @param {string} option The section's value in 'pageinfo'.
          * @param {string} title The heading for this section's
@@ -972,6 +971,8 @@ function Buffer() //{{{
          * positioned in.
          *
          * NOTE: might change the selection
+         *
+         * @returns {string}
          */
         // FIXME: getSelection() doesn't always preserve line endings, see:
         // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
@@ -1026,9 +1027,8 @@ function Buffer() //{{{
         },
 
         /**
-         * Try to guess links the like of "next" and "prev". Though it
-         * has a singularly horrendous name, it turns out to be quite
-         * useful.
+         * Tries to guess links the like of "next" and "prev". Though it has a
+         * singularly horrendous name, it turns out to be quite useful.
          *
          * @param {string} rel The relationship to look for. Looks for
          *     links with matching @rel or @rev attributes, and,
@@ -1083,12 +1083,12 @@ function Buffer() //{{{
                 return false;
             }
 
-            let retVal = followFrame(window.content);
-            if (!retVal)
-                // only loop through frames if the main content didnt match
-                retVal = Array.some(window.content.frames, followFrame);
+            let ret = followFrame(window.content);
+            if (!ret)
+                // only loop through frames if the main content didn't match
+                ret = Array.some(window.content.frames, followFrame);
 
-            if (!retVal)
+            if (!ret)
                 liberator.beep();
         },
 
@@ -1125,7 +1125,7 @@ function Buffer() //{{{
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
                     ctrlKey = true;
-                    shiftKey = (where == liberator.NEW_BACKGROUND_TAB);
+                    shiftKey = (where != liberator.NEW_BACKGROUND_TAB);
                     break;
                 case liberator.NEW_WINDOW:
                     shiftKey = true;
@@ -1147,13 +1147,19 @@ function Buffer() //{{{
         },
 
         /**
-         * The current document's selection controller.
+         * @property {Object} The current document's selection controller.
          */
         get selectionController() getBrowser().docShell
                 .QueryInterface(Ci.nsIInterfaceRequestor)
                 .getInterface(Ci.nsISelectionDisplay)
                 .QueryInterface(Ci.nsISelectionController),
 
+        /**
+         * Saves a page link to disk.
+         *
+         * @param {Object} elem The page link to save.
+         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog
+         */
         saveLink: function (elem, skipPrompt)
         {
             let doc  = elem.ownerDocument;
@@ -1229,7 +1235,13 @@ function Buffer() //{{{
             win.scrollByPages(pages);
         },
 
-        scrollByScrollSize: function (count, direction)
+        /**
+         * Scrolls the buffer vertically <b>count</b> * 'scroll' rows.
+         *
+         * @param {number} count The multiple of 'scroll' lines to scroll.
+         * @param {number} direction The direction to scroll, down if 1 and up if -1.
+         */
+        scrollByScrollSize: function (count, direction) // XXX: boolean
         {
             if (count > 0)
                 options["scroll"] = count;
@@ -1244,7 +1256,9 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the current buffer vertically to <b>percentage</b>
+         * Scrolls the current buffer vertically to <b>percentage</b>.
+         *
+         * @param {number} percentage The page percentile to scroll the buffer to.
          */
         scrollToPercentile: function (percentage)
         {
@@ -1279,9 +1293,16 @@ function Buffer() //{{{
         },
 
         // TODO: allow callback for filtering out unwanted frames? User defined?
+        /**
+         * Shifts the focus to another frame within the buffer. Each buffer
+         * contains at least one frame.
+         *
+         * @param {number} count The number of frames to skip through.
+         * @param {boolean} forward The direction of motion.
+         */
         shiftFrameFocus: function (count, forward)
         {
-            if (!window.content.document instanceof HTMLDocument)
+            if (!(window.content.document instanceof HTMLDocument))
                 return;
 
             count = Math.max(count, 1);
@@ -1357,11 +1378,23 @@ function Buffer() //{{{
 
         // similar to pageInfo
         // TODO: print more useful information, just like the DOM inspector
+        /**
+         * Displays information about the specified element.
+         *
+         * @param {Object} elem
+         */
         showElementInfo: function (elem)
         {
             liberator.echo(<>Element:<br/>{util.objectToString(elem, true)}</>, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Displays information about the current buffer.
+         *
+         * @param {boolean} verbose Display more verbose information.
+         * @param {string} sections A string limiting the displayed sections.
+         * @default The value of 'pageinfo'.
+         */
         showPageInfo: function (verbose, sections)
         {
             // Ctrl-g single line output
@@ -1391,6 +1424,9 @@ function Buffer() //{{{
             liberator.echo(list, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Opens a viewer to inspect the source of the currently selected range.
+         */
         viewSelectionSource: function ()
         {
             // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
@@ -1411,6 +1447,15 @@ function Buffer() //{{{
                     docUrl, docCharset, reference, "selection");
         },
 
+        /**
+         * Opens a viewer to inspect the source of the current buffer or the
+         * specified <b>url</b>. Either the default viewer or the configured
+         * external editor is used.
+         *
+         * @param {string} url The URL of the source.
+         * @default The current buffer.
+         * @param {boolean} useExternalEditor View the source in the external editor.
+         */
         viewSource: function (url, useExternalEditor)
         {
             url = url || buffer.URL;
@@ -1421,11 +1466,23 @@ function Buffer() //{{{
                 liberator.open("view-source:" + url);
         },
 
+        /**
+         * Increases the zoom level of the current buffer.
+         *
+         * @param {number} steps The number of zoom levels to jump.
+         * @param {boolean} fullZoom Whether to use full zoom or text zoom.
+         */
         zoomIn: function (steps, fullZoom)
         {
             bumpZoomLevel(steps, fullZoom);
         },
 
+        /**
+         * Decreases the zoom level of the current buffer.
+         *
+         * @param {number} steps The number of zoom levels to jump.
+         * @param {boolean} fullZoom Whether to use full zoom or text zoom.
+         */
         zoomOut: function (steps, fullZoom)
         {
             bumpZoomLevel(-steps, fullZoom);
@@ -1443,8 +1500,8 @@ function Marks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = storage.newMap('local-marks', true);
-    var urlMarks = storage.newMap('url-marks', true);
+    var localMarks = storage.newMap("local-marks", true);
+    var urlMarks = storage.newMap("url-marks", true);
 
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");
@@ -1471,7 +1528,7 @@ function Marks() //{{{
         return name + ", " + mark.location +
                 ", (" + Math.round(mark.position.x * 100) +
                 "%, " + Math.round(mark.position.y * 100) + "%)" +
-                (('tab' in mark) ? ", tab: " + tabs.index(mark.tab) : "");
+                (("tab" in mark) ? ", tab: " + tabs.index(mark.tab) : "");
     }
 
     function removeLocalMark(mark)

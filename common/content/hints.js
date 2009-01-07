@@ -47,7 +47,7 @@ function Hints() //{{{
     var hintNumber = 0;  // only the numerical part of the hint
     var usedTabKey = false; // when we used <Tab> to select an element
     var prevInput = "";    // record previous user input type, "text" || "number"
-    var extendedhintCount;  // for the count arugument of Mode#action (extended hint only)
+    var extendedhintCount;  // for the count argument of Mode#action (extended hint only)
 
     // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
     var pageHints = [];
@@ -64,24 +64,42 @@ function Hints() //{{{
     Mode.defaultValue("tags", function () function () options.hinttags);
     function extended() options.extendedhinttags;
     const hintModes = {
-        ";": Mode("Focus hint",                    function (elem) buffer.focusElement(elem),                             extended),
-        a: Mode("Save hint with prompt",           function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                     function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
-        s: Mode("Save hint",                       function (elem) buffer.saveLink(elem, true)),
-        o: Mode("Follow hint",                     function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
-        t: Mode("Follow hint in a new tab",        function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
-        b: Mode("Follow hint in a background tab", function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
-        v: Mode("View hint source",                function (elem, loc) buffer.viewSource(loc, false),                    extended),
-        V: Mode("View hint source",                function (elem, loc) buffer.viewSource(loc, true),                     extended),
-        w: Mode("Follow hint in a new window",     function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-
-        "?": Mode("Show information for hint",     function (elem) buffer.showElementInfo(elem),                          extended),
-        O: Mode("Open location based on hint",     function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Open new tab based on hint",      function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Open new window based on hint",   function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
-        y: Mode("Yank hint location",              function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",           function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
+        ";": Mode("Focus hint",                        function (elem) buffer.focusElement(elem),                             extended),
+        "?": Mode("Show information for hint",         function (elem) buffer.showElementInfo(elem),                          extended),
+        s: Mode("Save hint",                           function (elem) buffer.saveLink(elem, true)),
+        a: Mode("Save hint with prompt",               function (elem) buffer.saveLink(elem, false)),
+        f: Mode("Focus frame",                         function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
+        o: Mode("Follow hint",                         function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
+        t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
+        b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
+        w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
+        F: Mode("Follow hint sequence in tabs",        hintSequenceElement),
+        O: Mode("Preselect hint in an :open query",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode("Preselect hint in a :tabopen query",  function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode("Preselect hint in a :winopen query",  function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        v: Mode("View hint source",                    function (elem, loc) buffer.viewSource(loc, false),                    extended),
+        V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
+        y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
+        Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
     };
+
+    // Used to open multiple hints
+    function hintSequenceElement(elem)
+    {
+        // Want to always open sequence hints in background
+        // (remember: NEW_BACKGROUND_TAB and NEW_TAB semantics assume
+        //            that loadInBackground=true)
+        if (options.getPref("browser.tabs.loadInBackground"))
+            buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
+        else
+            buffer.followLink(elem, liberator.NEW_TAB);
+
+        // Move to next element in sequence
+        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 
+        // showing them again, or is this short flash actually needed as a "usability
+        // feature"? --mst
+        hints.show("F");
+    }
 
     // reset all important variables
     function reset()
@@ -209,7 +227,7 @@ function Hints() //{{{
             let scrollY = doc.defaultView.scrollY;
 
         inner:
-            for (let i in (util.interruptableRange(start, end + 1, 500)))
+            for (let i in (util.interruptibleRange(start, end + 1, 500)))
             {
                 let hint = pageHints[i];
                 [elem, text, span, imgspan] = hint;
@@ -340,7 +358,7 @@ function Hints() //{{{
         removeHints(timeout);
 
         if (timeout == 0)
-            // force a possible mode change, based on wheter an input field has focus
+            // force a possible mode change, based on whether an input field has focus
             events.onFocusChange();
         setTimeout(function () {
             if (modes.extended & modes.HINTS)

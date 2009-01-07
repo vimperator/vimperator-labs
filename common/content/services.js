@@ -15,7 +15,7 @@ const Cu = Components.utils;
 
 /**
  * Cached XPCOM services and instances.
- * 
+ *
  * @constructor
  */
 function Services()
@@ -45,6 +45,7 @@ function Services()
         get: function (name) services[name],
         create: function (name) classes[name]()
     };
+
     self.add("appStartup",          "@mozilla.org/toolkit/app-startup;1",       Ci.nsIAppStartup);
     self.add("autoCompleteSearch",  "@mozilla.org/browser/global-history;2",    Ci.nsIAutoCompleteSearch);
     self.add("browserSearch",       "@mozilla.org/browser/search-service;1",    Ci.nsIBrowserSearchService);
@@ -55,7 +56,8 @@ function Services()
     self.add("extensionManager",    "@mozilla.org/extensions/manager;1",        Ci.nsIExtensionManager);
     self.add("json",                "@mozilla.org/dom/json;1",                  Ci.nsIJSON, "createInstance");
     self.add("observer",            "@mozilla.org/observer-service;1",          Ci.nsIObserverService);
-    self.add("pref",		    "@mozilla.org/preferences-service;1",       [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]);
+    self.add("io",                  "@mozilla.org/network/io-service;1",        Ci.nsIIOService);
+    self.add("pref",                "@mozilla.org/preferences-service;1",       [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]);
     self.add("profile",             "@mozilla.org/toolkit/profile-service;1",   Ci.nsIToolkitProfileService);
     self.add("sessionStore",        "@mozilla.org/browser/sessionstore;1",      Ci.nsISessionStore);
     self.add("subscriptLoader",     "@mozilla.org/moz/jssubscript-loader;1",    Ci.mozIJSSubScriptLoader);
@@ -63,11 +65,13 @@ function Services()
     self.add("windowMediator",      "@mozilla.org/appshell/window-mediator;1",  Ci.nsIWindowMediator);
     self.add("windowWatcher",       "@mozilla.org/embedcomp/window-watcher;1",  Ci.nsIWindowWatcher);
 
-    self.addClass("file",	"@mozilla.org/file/local;1",            Ci.nsILocalFile);
-    self.addClass("find",   	"@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
-    self.addClass("process",    "@mozilla.org/process/util;1",		Ci.nsIProcess);
+    self.addClass("file",       "@mozilla.org/file/local;1",            Ci.nsILocalFile);
+    self.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
+    self.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);
+
     return self;
 };
 
 var services = Services();
 
+// vim: set fdm=marker sw=4 ts=4 et:

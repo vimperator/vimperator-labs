@@ -5,7 +5,7 @@ HEADER
 INTRO TO BE WRITTEN...
 
 |f| +
-||f\\{hint\\}||
+||#f#{hint}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
 'hinttags' XPath query) is assigned a unique number. You can now either type
@@ -20,7 +20,7 @@ ________________________________________________________________________________
 
 
 |F| +
-||F\\{hint\\}||
+||#F#{hint}||
 ________________________________________________________________________________
 Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
 (activated with [m]f[m]) but opens the link in a new tab.
@@ -30,33 +30,38 @@ ________________________________________________________________________________
 |extended-hints| +
 
 |;| +
-||;\\{mode\\}\\{hint\\}||
+||#;#{mode}{empty}{hint}||
 ________________________________________________________________________________
 Start an extended hint mode. ExtendedHint mode is useful, since in this mode
 you can yank link locations, open them in a new window or save images. If
 you want to yank the location of hint [a]24[a], press [m];y[m] to start
 this hint mode. Then press [a]24[a] to copy the hint location.
 
-{mode} can be either one of: +
+{mode} can be one of: +
 
-* [m];[m] to focus a link and hover it with the mouse
-* [m]?[m] to show information about the element (incomplete)
-* [m]a[m] to save its destination (prompting for save location)
-* [m]f[m] to focus a frame
-* [m]s[m] to save its destination
-* [m]o[m] to open its location in the current tab
-* [m]t[m] to open its location in a new tab
-* [m]b[m] like [m]t[m] but inverts the option whether the tab is activated
-* [m]O[m] to open its location in an [c]:open[c] query
-* [m]T[m] to open its location in a [c]:tabopen[c] query
-* [m]v[m] to view its destination source
-* [m]w[m] to open its destination in a new window
-* [m]W[m] to open its location in a [c]:winopen[c] query
-* [m]y[m] to yank its destination location
-* [m]Y[m] to yank its text description
+* |;;| [m];[m] to focus a link and hover it with the mouse
+* |;?| [m]?[m] to show information about the element (incomplete)
+* |;s| [m]s[m] to save its destination
+* |;a| [m]a[m] to save its destination (prompting for save location)
+* |;f| [m]f[m] to focus a frame
+* |;o| [m]o[m] to open its location in the current tab
+* |;t| [m]t[m] to open its location in a new tab
+* |;b| [m]b[m] to open its location in a new background tab
+* |;w| [m]w[m] to open its destination in a new window
+* |;F| [m]F[m] to follow a sequence of [m]<CR>[m]-delimited hints in background tabs
+* |;O| [m]O[m] to preselect its location in an [c]:open[c] query
+* |;T| [m]T[m] to preselect its location in a [c]:tabopen[c] query
+* |;W| [m]W[m] to preselect its location in a [c]:winopen[c] query
+* |;v| [m]v[m] to view its destination source
+* |;V| [m]V[m] to view its destination source in the external editor
+* |;y| [m]y[m] to yank its destination location
+* |;Y| [m]Y[m] to yank its text description
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
+
+Note: The behavior of [m];t[m] and [m];b[m] is inverted if the
+\'browser.tabs.loadInBackground' Firefox preference is set to false.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

@@ -1,0 +1,148 @@
+= Hacking =
+
+If you've taken to hacking Vimperator source code, we hope that you'll share
+your changes. In case you do, please keep the following in mind, and we'll be
+happy to accept your patches.
+
+== Documentation ==
+
+First of all, all new features and all user-visible changes to existing
+features need to be documented. That means editing the appropriate help files
+and adding a NEWS entry where appropriate. When editing the NEWS file, you
+should add your change to the top of the list of changes. If your change
+alters an interface (key binding, command) and is likely to cause trouble,
+prefix it with 'IMPORTANT:', otherwise, place it below the other 'IMPORTANT'
+entries. If you're not sure if your change merits a news entry, or if it's
+important, please ask.
+
+== Coding Style ==
+
+In general: Just look at the existing source code!
+We try to be quite consistent, but of course, that's not always possible.
+
+=== The most important style issues are: ===
+
+* Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use Vim,
+  this should be taken care of automatically by the modeline (like the
+  one below).
+
+* No trailing whitespace.
+
+* Use " for enclosing strings instead of ', unless using ' avoids escaping of lots of "
+  Example: alert("foo") instead of alert('foo');
+
+* Exactly one space after if/for/while/catch etc. and after a comma, but none
+  after a parenthesis or after a function call:
+      for (pre; condition; post)
+  but:
+      alert("foo");
+
+* Opening curly brackets { must be on a new line, unless it is used in a closure:
+      function myFunction ()
+      {
+          if (foo)
+          {
+              baz = false;
+              return bar;
+          }
+          else
+          {
+              return baz;
+          }
+      }
+  but:
+      setTimeout(function () {
+          ...
+      });
+
+* No braces for one-line conditional statements:
+  Right:
+     if (foo)
+         frob();
+     else
+         unfrob();
+
+* Prefer lambda-style functions where suitable:
+  Right: list.filter(function (elem) elem.good != elem.BAD);
+  Wrong: list.filter(function (elem) { return elem.good != elem.BAD });
+
+* Anonymous function definitions should be formatted with a space after the
+  keyword "function". Example: function () {}, not function() {}.
+
+* Prefer the use of let over var i.e. only use var when required.
+  For more details, see
+  https://developer.mozilla.org/en/New_in_JavaScript_1.7#Block_scope_with_let
+
+* Reuse common local variable names E.g. "elem" is generally used for element,
+  "win" for windows etc.
+
+* Prefer // over /* */ comments (exceptions for big comments are usually OK)
+  Right: if (HACK) // TODO: remove hack
+  Wrong: if (HACK) /* TODO: remove hack */
+  Documentation comment blocks use /** ... */
+
+* Only wrap lines if it makes the code obviously clearer. Lines longer than 132
+  characters should probably be broken up rather than wrapped anyway.
+
+* Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
+
+* Use Iterators, Array#forEach, or for (let i = 0; i < ary.length; i++)
+  to iterate over arrays. for (let i in ary) and for each (let i in ary)
+  include members in an Array.prototype, which some extensions alter.
+  Right:
+    for (let [,elem] in Iterator(ary))
+    for (let [k, v] in Iterator(obj))
+    ary.forEach(function (elem) { ...
+  Wrong:
+    for each (let elem in ary)
+
+  The exceptions to this rule are for objects with __iterator__ set,
+  and for XML objects (see README.E4X).
+
+* Avoid using 'new' with constructors where possible, and use [] and
+  {} rather than new Array/new Object.
+  Right:
+    RegExp("^" + foo + "$")
+    Function(code)
+    new Date
+  Wrong:
+    new RegExp("^" + foo + "$")
+    new Function(code)
+    Date() // Right if you want a string-representation of the date
+
+  NOTE by mst: That one is debateable, actually I like the "new" as one
+  immediately sees that a new object of a class is created which is not
+  so obvious by var x = CompletionContext(); which could also mean that
+  CompletionContext() could return a cached object. What's thesnowdog's
+  opinion and why do you, Kris, think it's better/cleaner?
+
+  I don't think it's better/cleaner, it just seemed to be a consensus.
+    --Kris
+
+  I don't like unnecessary use of 'new', I don't like 'new'. --djk
+
+== Testing/Optimization ==
+
+TODO: Add some information here about testing/validation/etc.
+Information about how/when to use :regressions might be nice.
+Additionally, maybe there should be some benchmark information here --
+something to let a developer know what's "too" slow...? Or general
+guidelines about optimization?
+
+== Source Code Management ==
+
+TODO: Document the existence of remote branches and discuss when and how
+      to push to them. At least provide an index so that devs know where
+      to look if an old branch needs to be maintained or a feature needs
+      to be added to a new branch. Keep in mind that git is not the most
+      intuitive SCM.
+
+    I don't agree. git is about as intuitive as any other SCM, but,
+    regardless, it's by far one of the most popular. There are
+    countless git walkthroughs, FAQs, tips pages (not to mention 'git
+    help') that I don't see the need to duplicate them here. As for
+    branches, 'git branch' should be sufficient, and, if not, there's
+    a list on gitweb.
+      --Kris
+
+# vim: set fdm=marker sw=4 ts=4 et ai:

@@ -72,8 +72,8 @@ Highlights.prototype.CSS = <![CDATA[
     Question    color: green; background: white; font-weight: bold;
 
     StatusLine       color: white; background: black;
-    StatusLineBroken color: black; background: #FF6060; /* light-red */
-    StatusLineSecure color: black; background: #B0FF00; /* light-green */
+    StatusLineBroken color: black; background: #FF6060 /* light-red */
+    StatusLineSecure color: black; background: #B0FF00 /* light-green */
 
     TabClose
     TabIcon
@@ -129,7 +129,7 @@ Highlights.prototype.CSS = <![CDATA[
 
 /**
  * A class to manage highlighting rules. The parameters are the
- * standard paramaters for any {@link Storage} object.
+ * standard parameters for any {@link Storage} object.
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
@@ -178,17 +178,22 @@ function Highlights(name, store, serial)
 
         let css = newStyle.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
-        css = style.selector + " { " + css + " }";
+        if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css))
+        {
+            css = style.selector + " { " + css + " }";
 
-        let error = styles.addSheet(true, style.selector, style.filter, css);
-        if (error)
-            return error;
+            let error = styles.addSheet(true, style.selector, style.filter, css);
+            if (error)
+                return error;
+        }
         style.value = newStyle;
         highlight[style.class] = style;
     };
 
     /**
      * Gets a CSS selector given a highlight group.
+     *
+     * @param {string} class
      */
     this.selector = function (class)
     {
@@ -233,30 +238,28 @@ function Highlights(name, store, serial)
 }
 
 /**
- * Manages named and unnamed user stylesheets, which apply to both
+ * Manages named and unnamed user style sheets, which apply to both
  * chrome and content pages. The parameters are the standard
- * paramaters for any {@link Storage} object.
+ * parameters for any {@link Storage} object.
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
 function Styles(name, store, serial)
 {
-    /* Can't reference liberator or Components inside Styles --
-     * they're members of the window object, which disappear
-     * with this window.
-     */
+    // Can't reference liberator or Components inside Styles --
+    // they're members of the window object, which disappear
+    // with this window.
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;
-    const consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-    const ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    const ios = services.get("io");
     const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
     const namespace = '@namespace html "' + XHTML + '";\n' +
                       '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
     const Sheet = new Struct("name", "sites", "css", "ref");
 
-    let cssUri = function (css) "chrome-data:text/css," + encodeURI(css);
+    let cssUri = function (css) "chrome-data:text/css," + window.encodeURI(css);
 
     let userSheets = [];
     let systemSheets = [];
@@ -270,13 +273,12 @@ function Styles(name, store, serial)
     this.__defineGetter__("userNames", function () Iterator(userNames));
 
     /**
-     * Add a new stylesheet.
+     * Add a new style sheet.
      *
      * @param {boolean} system Declares whether this is a system or
      *     user sheet. System sheets are used internally by
      *     @liberator.
->>>>>>> master:common/content/style.js
-     * @param {string} name The name given to the stylesheet by
+     * @param {string} name The name given to the style sheet by
      *     which it may be later referenced.
      * @param {string} filter The sites to which this sheet will
      *     apply. Can be a domain name or a URL. Any URL ending in
@@ -335,6 +337,12 @@ function Styles(name, store, serial)
     /**
      * Find sheets matching the parameters. See {@link #addSheet}
      * for parameters.
+     *
+     * @param {boolean} system
+     * @param {string} name
+     * @param {string} filter
+     * @param {string} css
+     * @param {number} index
      */
     this.findSheets = function (system, name, filter, css, index)
     {
@@ -355,10 +363,16 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Remove a stylesheet. See {@link #addSheet} for parameters.
+     * Remove a style sheet. See {@link #addSheet} for parameters.
      * In cases where <b>filter</b> is supplied, the given filters
      * are removed from matching sheets. If any remain, the sheet is
      * left in place.
+     *
+     * @param {boolean} system
+     * @param {string} name
+     * @param {string} filter
+     * @param {string} css
+     * @param {number} index
      */
     this.removeSheet = function (system, name, filter, css, index)
     {
@@ -403,9 +417,9 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Register a user stylesheet at the given URI.
+     * Register a user style sheet at the given URI.
      *
-     * @param {string} uri The UrI of the sheet to register.
+     * @param {string} uri The URI of the sheet to register.
      * @param {boolean} reload Whether to reload any sheets that are
      *     already registered.
      */
@@ -420,6 +434,8 @@ function Styles(name, store, serial)
 
     /**
      * Unregister a sheet at the given URI.
+     *
+     * @param {string} uri The URI of the sheet to unregister.
      */
     this.unregisterSheet = function (uri)
     {
@@ -430,7 +446,9 @@ function Styles(name, store, serial)
 
     // FIXME
     /**
-     * Register an agent stylesheet.
+     * Register an agent style sheet.
+     *
+     * @param {string} uri The URI of the sheet to register.
      * @deprecated
      */
     this.registerAgentSheet = function (uri)
@@ -441,7 +459,9 @@ function Styles(name, store, serial)
     };
 
     /**
-     * Unregister an agent stylesheet.
+     * Unregister an agent style sheet.
+     *
+     * @param {string} uri The URI of the sheet to unregister.
      * @deprecated
      */
     this.unregisterAgentSheet = function (uri)
@@ -514,7 +534,6 @@ liberator.registerObserver("load_completion", function ()
 
 liberator.registerObserver("load_commands", function ()
 {
-    // TODO: :colo default needs :hi clear
     commands.add(["colo[rscheme]"],
         "Load a color scheme",
         function (args)
@@ -598,7 +617,7 @@ liberator.registerObserver("load_commands", function ()
         });
 
     commands.add(["dels[tyle]"],
-        "Remove a user stylesheet",
+        "Remove a user style sheet",
         function (args)
         {
             styles.removeSheet(false, args["-name"], args[0], args.literalArg, args["-index"]);

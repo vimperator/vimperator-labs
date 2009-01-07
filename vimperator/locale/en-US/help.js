@@ -16,12 +16,9 @@ window.addEventListener("message", function (event) {
 }, true);
 
 document.addEventListener("click", function (event) {
-    let elem = event.target;
-    if (/^(option|mapping|command)$/.test(elem.className))
-        var tag = elem.textContent.replace(/\s.*/, "");
-    if (elem.className == "command")
-        tag = tag.replace(/\[.*?\]/g, "");
-    if (tag)
-        elem.href = "chrome://liberator/content/help.xul?" + encodeURIComponent(tag);
+    let evt = document.createEvent("UIEvents");
+    evt.initEvent("liberatorHelpLink", true, true);
+    event.target.dispatchEvent(evt);
 }, true);
 
+// vim: set fdm=marker sw=4 ts=4 et:

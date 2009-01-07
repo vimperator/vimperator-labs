@@ -29,7 +29,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // Try to import older command line history, quick marks, etc.
-liberator.registerObserver("load_options", function () {
+liberator.registerObserver("load", function () {
     if (!options.getPref("extensions.vimperator.commandline_cmd_history"))
         return;
 
@@ -61,12 +61,20 @@ function Bookmarks() //{{{
     const taggingService   = PlacesUtils.tagging;
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
+    // XXX for strange Firefox bug :(
+    // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
+    //     nsresult: "0x8000ffff (NS_ERROR_UNEXPECTED)"
+    //     location: "JS frame :: file://~firefox/components/nsTaggingService.js :: anonymous :: line 89"
+    //     data: no]
+    // Source file: file://~firefox/components/nsTaggingService.js
+    taggingService.getTagsForURI(window.makeURI("http://mysterious.bug"), {});
+
     const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
     const Keyword = new Struct("keyword", "title", "icon", "url");
     Bookmark.defaultValue("icon", function () getFavicon(this.url));
     Bookmark.prototype.__defineGetter__("extra", function () [
-                            ['keyword', this.keyword,         "Keyword"],
-                            ['tags',    this.tags.join(', '), "Tag"]
+                            ["keyword", this.keyword,         "Keyword"],
+                            ["tags",    this.tags.join(", "), "Tag"]
                         ].filter(function (item) item[1]));
 
     const storage = modules.storage;
@@ -411,7 +419,7 @@ function Bookmarks() //{{{
         get format() ({
             anchored: false,
             title: ["URL", "Info"],
-            keys: { text: "url", description: "title", icon: "icon", extra: "extra" },
+            keys: { text: "url", description: "title", icon: "icon", extra: "extra", tags: "tags" },
             process: [template.icon, template.bookmarkDescription]
         }),
 
@@ -692,7 +700,7 @@ function History() //{{{
         "Go back in the browser history",
         function (args)
         {
-            args = args.string;
+            let url = args.literalArg;
 
             if (args.bang)
             {
@@ -700,12 +708,12 @@ function History() //{{{
             }
             else
             {
-                if (args)
+                if (url)
                 {
                     let sh = window.getWebNavigation().sessionHistory;
-                    for (let i = sh.index - 1; i >= 0; i--)
+                    for (let i in util.range(sh.index, 0, true))
                     {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
                         {
                             window.getWebNavigation().gotoIndex(i);
                             return;
@@ -715,7 +723,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(args.count > 0 ? -1 * args.count : -1);
+                    history.stepTo(-Math.max(args.count, 1));
                 }
             }
         },
@@ -738,7 +746,7 @@ function History() //{{{
         "Go forward in the browser history",
         function (args)
         {
-            args = args.string;
+            let url = args.literalArg;
 
             if (args.bang)
             {
@@ -746,12 +754,12 @@ function History() //{{{
             }
             else
             {
-                if (args)
+                if (url)
                 {
                     let sh = window.getWebNavigation().sessionHistory;
                     for (let i in util.range(sh.index + 1, sh.count))
                     {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == args)
+                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
                         {
                             window.getWebNavigation().gotoIndex(i);
                             return;
@@ -761,7 +769,7 @@ function History() //{{{
                 }
                 else
                 {
-                    history.stepTo(args.count > 0 ? args.count : 1);
+                    history.stepTo(Math.max(args.count, 1));
                 }
             }
         },
@@ -837,31 +845,30 @@ function History() //{{{
             if (index >= 0 && index < window.getWebNavigation().sessionHistory.count)
                 window.getWebNavigation().gotoIndex(index);
             else
-                liberator.beep();
+                liberator.beep(); // XXX: really wanted?
         },
 
         goToStart: function goToStart()
         {
             let index = window.getWebNavigation().sessionHistory.index;
-            if (index == 0)
-            {
-                liberator.beep(); // XXX: really wanted?
-                return;
-            }
 
-            window.getWebNavigation().gotoIndex(0);
+            if (index > 0)
+                window.getWebNavigation().gotoIndex(0);
+            else
+                liberator.beep(); // XXX: really wanted?
+
         },
 
         goToEnd: function goToEnd()
         {
-            let index = window.getWebNavigation().sessionHistory.index;
-            if (index == window.getWebNavigation().sessionHistory.count - 1)
-            {
-                liberator.beep();
-                return;
-            }
+            let sh = window.getWebNavigation().sessionHistory;
+            let max = sh.count - 1;
 
-            window.getWebNavigation().gotoIndex(max);
+            if (sh.index < max)
+                window.getWebNavigation().gotoIndex(max);
+            else
+                liberator.beep(); // XXX: really wanted?
+
         },
 
         // if openItems is true, open the matching history items in tabs rather than display

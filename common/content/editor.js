@@ -217,7 +217,7 @@ function Editor() //{{{
 
     var myModes = [modes.INSERT, modes.COMMAND_LINE];
 
-    /*             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA */
+    //             KEYS                          COUNT  CARET                   TEXTAREA            VISUAL_TEXTAREA
     addMovementMap(["k", "<Up>"],                true,  "lineMove", false,      "cmd_linePrevious", selectPreviousLine);
     addMovementMap(["j", "<Down>", "<Return>"],  true,  "lineMove", true,       "cmd_lineNext",     selectNextLine);
     addMovementMap(["h", "<Left>", "<BS>"],      true,  "characterMove", false, "cmd_charPrevious", "cmd_selectCharPrevious");
@@ -371,9 +371,13 @@ function Editor() //{{{
         { flags: Mappings.flags.COUNT });
 
     // visual mode
-    mappings.add([modes.CARET, modes.TEXTAREA, modes.VISUAL],
+    mappings.add([modes.CARET, modes.TEXTAREA],
         ["v"], "Start visual mode",
         function (count) { modes.set(modes.VISUAL, liberator.mode); });
+
+    mappings.add([modes.VISUAL],
+        ["v"], "End visual mode",
+        function (count) { events.onEscape() });
 
     mappings.add([modes.TEXTAREA],
         ["V"], "Start visual line mode",
@@ -557,9 +561,9 @@ function Editor() //{{{
 
         unselectText: function ()
         {
-            let elt = window.document.commandDispatcher.focusedElement;
-            if (elt && elt.selectionEnd)
-                elt.selectionEnd = elt.selectionStart;
+            let elem = window.document.commandDispatcher.focusedElement;
+            if (elem && elem.selectionEnd)
+                elem.selectionEnd = elem.selectionStart;
         },
 
         selectedText: function ()
@@ -570,20 +574,20 @@ function Editor() //{{{
 
         pasteClipboard: function ()
         {
-            let elt = window.document.commandDispatcher.focusedElement;
+            let elem = window.document.commandDispatcher.focusedElement;
 
-            if (elt.setSelectionRange && util.readFromClipboard())
+            if (elem.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
-                let rangeStart = elt.selectionStart; // caret position
-                let rangeEnd = elt.selectionEnd;
-                let tempStr1 = elt.value.substring(0, rangeStart);
+                let rangeStart = elem.selectionStart; // caret position
+                let rangeEnd = elem.selectionEnd;
+                let tempStr1 = elem.value.substring(0, rangeStart);
                 let tempStr2 = util.readFromClipboard();
-                let tempStr3 = elt.value.substring(rangeEnd);
-                elt.value = tempStr1 + tempStr2 + tempStr3;
-                elt.selectionStart = rangeStart + tempStr2.length;
-                elt.selectionEnd = elt.selectionStart;
+                let tempStr3 = elem.value.substring(rangeEnd);
+                elem.value = tempStr1 + tempStr2 + tempStr3;
+                elem.selectionStart = rangeStart + tempStr2.length;
+                elem.selectionEnd = elem.selectionStart;
             }
         },
 
@@ -709,7 +713,7 @@ function Editor() //{{{
 
         // This function will move/select up to given "pos"
         // Simple setSelectionRange() would be better, but we want to maintain the correct
-        // order of selectionStart/End (a firefox bug always makes selectionStart <= selectionEnd)
+        // order of selectionStart/End (a Firefox bug always makes selectionStart <= selectionEnd)
         // Use only for small movements!
         moveToPosition: function (pos, forward, select)
         {
@@ -809,7 +813,7 @@ function Editor() //{{{
             }
 
             args.push(path);
-            liberator.callFunctionInThread(null, io.run, args.shift(), args, true);
+            liberator.callFunctionInThread(null, io.run, io.expandPath(args.shift()), args, true);
         },
 
         // TODO: clean up with 2 functions for textboxes and currentEditor?
@@ -900,7 +904,7 @@ function Editor() //{{{
         //
         // if filter == ! remove all and add it as only END
         //
-        // variant 1: rhs matches anywere in loop
+        // variant 1: rhs matches anywhere in loop
         //
         //          1 mod matches anywhere in loop
         //                  a) simple replace and
@@ -913,7 +917,7 @@ function Editor() //{{{
         //                 (b) a ! is there. do nothing END)
         //
         // variant 2: rhs matches *no*were in loop and filter is c or i
-        //            everykind of current combo is possible to 1 {c,i,!} or two {c and i}
+        //            every kind of current combo is possible to 1 {c,i,!} or two {c and i}
         //
         //          1 mod is ! split into two i + c END
         //          1 not !: opposite mode (first), add/change 'second' and END

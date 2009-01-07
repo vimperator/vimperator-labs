@@ -57,15 +57,19 @@ const util = { //{{{
         },
 
         /**
-         * Flatten an array, such that all elements of the array are
+         * Flattens an array, such that all elements of the array are
          * joined into a single array:
          *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+         *
+         * @param {Array} ary
+         * @returns {Array}
          */
         flatten: function flatten(ary) Array.concat.apply([], ary),
 
         /**
          * Returns an Iterator for an array's values.
          *
+         * @param {Array} ary
          * @returns {Iterator(Object)}
          */
         iterator: function iterator(ary)
@@ -76,8 +80,9 @@ const util = { //{{{
         },
 
         /**
-         * Returns an Iterator for the arrays indices and values.
+         * Returns an Iterator for an array's indices and values.
          *
+         * @param {Array} ary
          * @returns {Iterator([{number}, {Object}])}
          */
         iterator2: function (ary)
@@ -94,6 +99,7 @@ const util = { //{{{
          *
          * @param {Array} ary
          * @param {boolean} unsorted
+         * @returns {Array}
          */
         uniq: function uniq(ary, unsorted)
         {
@@ -135,10 +141,10 @@ const util = { //{{{
 
     /**
      * Clips a string to a given length. If the input string is longer
-     * than <b>length</b>, an elipsis is appended.
+     * than <b>length</b>, an ellipsis is appended.
      *
-     * @param {string} str
-     * @param {number} length
+     * @param {string} str The string to truncate.
+     * @param {number} length The length of the returned string.
      * @returns {string}
      */
     clip: function clip(str, length)
@@ -169,6 +175,13 @@ const util = { //{{{
         return node.ownerDocument.defaultView.getComputedStyle(node, null);
     },
 
+    /**
+     * Copies a string to the system clipboard. If <b>verbose</b> is specified
+     * the copied string is also echoed to the command-line.
+     *
+     * @param {string} str
+     * @param {boolean} verbose
+     */
     copyToClipboard: function copyToClipboard(str, verbose)
     {
         const clipboardHelper = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper);
@@ -178,12 +191,26 @@ const util = { //{{{
             liberator.echo("Yanked " + str, commandline.FORCE_SINGLELINE);
     },
 
+    /**
+     * Converts any arbitrary string into an URI object.
+     *
+     * @param {string} str
+     * @returns {Object}
+     */
+    // FIXME: newURI needed too?
     createURI: function createURI(str)
     {
         const fixup = Cc["@mozilla.org/docshell/urifixup;1"].getService(Ci.nsIURIFixup);
         return fixup.createFixupURI(str, fixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
     },
 
+    /**
+     * Converts HTML special characters in <b>str</b> to the equivalent HTML
+     * entities.
+     *
+     * @param {string} str
+     * @returns {string}
+     */
     escapeHTML: function escapeHTML(str)
     {
         // XXX: the following code is _much_ slower than a simple .replace()
@@ -195,11 +222,26 @@ const util = { //{{{
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
+    /**
+     * Escapes Regular Expression special characters in <b>str</b>.
+     *
+     * @param {string} str
+     * @returns {string}
+     */
     escapeRegex: function escapeRegex(str)
     {
         return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
     },
 
+    /**
+     * Escapes quotes, newline and tab characters in <b>str</b>. The returned
+     * string is delimited by <b>delimiter</b> or " if <b>delimiter</b> is not
+     * specified.
+     *
+     * @param {string} str
+     * @param {string} delimiter
+     * @returns {string}
+     */
     escapeString: function escapeString(str, delimiter)
     {
         if (delimiter == undefined)
@@ -207,11 +249,20 @@ const util = { //{{{
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
-    formatBytes: function formatBytes(num, decimalPlaces, humanReadable)
+    /**
+     * Converts <b>bytes</b> to a pretty printed data size string.
+     *
+     * @param {number} bytes The number of bytes.
+     * @param {string} decimalPlaces The number of decimal places to use if
+     *     <b>humanReadable</b> is true.
+     * @param {boolean} humanReadable Use byte multiples.
+     * @returns {string}
+     */
+    formatBytes: function formatBytes(bytes, decimalPlaces, humanReadable)
     {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
         let unitIndex = 0;
-        let tmpNum = parseInt(num, 10) || 0;
+        let tmpNum = parseInt(bytes, 10) || 0;
         let strNum = [tmpNum + ""];
 
         if (humanReadable)
@@ -242,33 +293,40 @@ const util = { //{{{
         return strNum[0] + " " + unitVal[unitIndex];
     },
 
-    // generates an Asciidoc help entry, "command" can also be a mapping
-    generateHelp: function generateHelp(command, extraHelp)
+    /**
+     * Generates an Asciidoc help entry.
+     *
+     * @param {Object} obj A liberator <b>Command</b>, <b>Mapping</b> or
+     *     <b>Option</b> object
+     * @param {string} extraHelp Extra help text beyond the description.
+     * @returns {string}
+     */
+    generateHelp: function generateHelp(obj, extraHelp)
     {
         let start = "", end = "";
-        if (command instanceof liberator.Command)
+        if (obj instanceof Command)
             start = ":";
-        else if (command instanceof liberator.Option)
+        else if (obj instanceof Option)
             start = end = "'";
 
         let ret = "";
         let longHelp = false;
-        if ((command.help && command.description) && (command.help.length + command.description.length) > 50)
+        if ((obj.help && obj.description) && (obj.help.length + obj.description.length) > 50)
             longHelp = true;
 
         // the tags which are printed on the top right
-        for (let j = command.names.length - 1; j >= 0; j--)
-            ret += "|" + start + command.names[j] + end + "| ";
+        for (let j = obj.names.length - 1; j >= 0; j--)
+            ret += "|" + start + obj.names[j] + end + "| ";
 
         if (longHelp)
             ret += "+";
 
         ret += "\n";
 
-        // the usage information for the command
-        let usage = command.names[0];
-        if (command.specs) // for :commands
-            usage = command.specs[0];
+        // the usage information
+        let usage = obj.names[0];
+        if (obj.specs) // for :commands
+            usage = obj.specs[0];
 
         usage = usage.replace(/{/, "\\\\{").replace(/}/, "\\\\}");
         usage = usage.replace(/'/, "\\'").replace(/`/, "\\`");
@@ -279,9 +337,9 @@ const util = { //{{{
         ret += "\n________________________________________________________________________________\n";
 
         // the actual help text
-        if (command.description)
+        if (obj.description)
         {
-            ret += command.description + "."; // the help description
+            ret += obj.description + "."; // the help description
             if (extraHelp)
                 ret += " +\n" + extraHelp;
         }
@@ -294,6 +352,16 @@ const util = { //{{{
         return ret;
     },
 
+    /**
+     * Sends a synchronous HTTP request to <b>url</b> and returns the
+     * XMLHttpRequest object. If <b>callback</b> is specified the request is
+     * asynchronous and the <b>callback</b> is invoked with the object as its
+     * argument.
+     *
+     * @param {string} url
+     * @param {function} callback
+     * @returns {Object}
+     */
     httpGet: function httpGet(url, callback)
     {
         try
@@ -317,8 +385,21 @@ const util = { //{{{
         }
     },
 
+    /**
+     * The identity function.
+     *
+     * @param {Object} k
+     * @returns {Object}
+     */
     identity: function identity(k) k,
 
+    /**
+     * Returns the intersection of two rectangles.
+     *
+     * @param {Object} r1
+     * @param {Object} r2
+     * @returns {Object}
+     */
     intersection: function (r1, r2) ({
         get width()  this.right - this.left,
         get height() this.bottom - this.top,
@@ -328,6 +409,14 @@ const util = { //{{{
         bottom: Math.min(r1.bottom, r2.bottom)
     }),
 
+    /**
+     * Returns the array that results from applying <b>fn</b> to each property
+     * of <b>obj</b>.
+     *
+     * @param {Object} obj
+     * @param {function} fn
+     * @returns {Array}
+     */
     map: function map(obj, fn)
     {
         let ary = [];
@@ -336,20 +425,32 @@ const util = { //{{{
         return ary;
     },
 
-    newURI: function (url)
+    /**
+     * Converts a URI string into an URI object.
+     *
+     * @param {string} uri
+     * @returns {Object}
+     */
+    // FIXME: createURI needed too?
+    newURI: function (uri)
     {
-        const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-        return ioService.newURI(url, null, null);
+        return services.get("io").newURI(uri, null, null);
     },
 
-    // if color = true it uses HTML markup to color certain items
+    /**
+     * Pretty print a JavaScript object. Use HTML markup to color certain items
+     * if <b>color</b> is true.
+     *
+     * @param {Object} object The object to pretty print.
+     * @param {boolean} color Whether the output should be colored.
+     * @returns {string}
+     */
     objectToString: function objectToString(object, color)
     {
-        /* Use E4X literals so html is automatically quoted
-         * only when it's asked for. Noone wants to see &lt;
-         * on their console or :map :foo in their buffer
-         * when they expect :map <C-f> :foo.
-         */
+        // Use E4X literals so html is automatically quoted
+        // only when it's asked for. Noone wants to see &lt;
+        // on their console or :map :foo in their buffer
+        // when they expect :map <C-f> :foo.
         XML.prettyPrinting = false;
         XML.ignoreWhitespace = false;
 
@@ -417,6 +518,15 @@ const util = { //{{{
         return color ? string : [s for each (s in string)].join("");
     },
 
+    /**
+     * A generator that returns the values between <b>start</b> and <b>end</b>.
+     * If <b>reverse</b> is true then the values are returned in reverse order.
+     *
+     * @param {number} start The interval's start value.
+     * @param {number} end The interval's end value.
+     * @param {boolean} reverse Reverse the order in which the values are produced.
+     * @returns {Iterator(Object)}
+     */
     range: function range(start, end, reverse)
     {
         if (!reverse)
@@ -431,7 +541,16 @@ const util = { //{{{
         }
     },
 
-    interruptableRange: function interruptableRange(start, end, time)
+    /**
+     * An interruptible generator that returns all values between <b>start</b>
+     * and <b>end</b>. The thread yields every <b>time</b> milliseconds.
+     *
+     * @param {number} start The interval's start value.
+     * @param {number} end The interval's end value.
+     * @param {number} time The time in milliseconds between thread yields.
+     * @returns {Iterator(Object)}
+     */
+    interruptibleRange: function interruptibleRange(start, end, time)
     {
         let endTime = Date.now() + time;
         while (start < end)
@@ -445,15 +564,22 @@ const util = { //{{{
         }
     },
 
-    // same as Firefox's readFromClipboard function, but needed for apps like Thunderbird
+    /**
+     * Reads a string from the system clipboard.
+     *
+     * This is same as Firefox's readFromClipboard function, but is needed for
+     * apps like Thunderbird which do not provide it.
+     *
+     * @returns {string}
+     */
     readFromClipboard: function readFromClipboard()
     {
         let url;
 
         try
         {
-            const clipboard = Cc['@mozilla.org/widget/clipboard;1'].getService(Ci.nsIClipboard);
-            const transferable = Cc['@mozilla.org/widget/transferable;1'].createInstance(Ci.nsITransferable);
+            const clipboard = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
+            const transferable = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
 
             transferable.addDataFlavor("text/unicode");
 
@@ -478,11 +604,18 @@ const util = { //{{{
         return url;
     },
 
-    // takes a string like 'google bla, www.osnews.com'
-    // and returns an array ['www.google.com/search?q=bla', 'www.osnews.com']
+    /**
+     * Returns an array of URLs parsed from <b>str</b>.
+     *
+     * Given a string like 'google bla, www.osnews.com' return an array
+     * ['www.google.com/search?q=bla', 'www.osnews.com']
+     *
+     * @param {string} str
+     * @returns {Array}
+     */
     stringToURLArray: function stringToURLArray(str)
     {
-        let urls = str.split(RegExp("\s*" + options["urlseparator"] + "\s*"));
+        let urls = str.split(RegExp("\\s*" + options["urlseparator"] + "\\s*"));
 
         return urls.map(function (url) {
             try
@@ -525,6 +658,14 @@ const util = { //{{{
         });
     },
 
+    /**
+     * Converts an E4X XML literal to a DOM node.
+     *
+     * @param {Node} node
+     * @param {Document} doc
+     * @param {Object} nodes
+     * @returns {Node}
+     */
     xmlToDom: function xmlToDom(node, doc, nodes)
     {
         XML.prettyPrinting = false;

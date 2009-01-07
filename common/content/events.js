@@ -37,13 +37,12 @@ function AutoCommands() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const AutoCommand = new Struct("event", "pattern", "command");
     var store = [];
-    var lastFocus = null;
 
     function matchAutoCmd(autoCmd, event, regex)
     {
-        return (!event || autoCmd.event == event) &&
-               (!regex || autoCmd.pattern.source == regex);
+        return (!event || autoCmd.event == event) && (!regex || autoCmd.pattern.source == regex);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -72,6 +71,7 @@ function AutoCommands() //{{{
         {
             let [event, regex, cmd] = args;
             let events = null;
+
             if (event)
             {
                 // NOTE: event can only be a comma separated list for |:au {event} {pat} {cmd}|
@@ -96,6 +96,7 @@ function AutoCommands() //{{{
             {
                 if (event == "*")
                     event = null;
+
                 if (args.bang)
                 {
                     // TODO: "*" only appears to work in Vim when there is a {group} specified
@@ -181,6 +182,16 @@ function AutoCommands() //{{{
 
         __iterator__: function () util.Array.iterator(store),
 
+        /**
+         * Adds a new autocommand. <b>cmd</b> will be executed when one of the
+         * specified <b>events</b> occurs and the URL of the applicable buffer
+         * matches <b>regex</b>.
+         *
+         * @param {Array} events The array of event names for which this
+         *     autocommand should be executed.
+         * @param {string} regex The URL pattern to match against the buffer URL
+         * @param {string} cmd The Ex command to run
+         */
         add: function (events, regex, cmd)
         {
             if (typeof events == "string")
@@ -188,20 +199,43 @@ function AutoCommands() //{{{
                 events = events.split(",");
                 liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
             }
-            events.forEach(function (event)
-                store.push({ event: event, pattern: RegExp(regex), command: cmd }));
+            events.forEach(function (event) {
+                store.push(new AutoCommand(event, RegExp(regex), cmd));
+            });
         },
 
+        /**
+         * Returns all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         * @returns {AutoCommand[]}
+         */
         get: function (event, regex)
         {
             return store.filter(function (autoCmd) matchAutoCmd(autoCmd, event, regex));
         },
 
+        /**
+         * Deletes all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         */
         remove: function (event, regex)
         {
             store = store.filter(function (autoCmd) !matchAutoCmd(autoCmd, event, regex));
         },
 
+        /**
+         * Lists all autocommands with a matching <b>event</b> and
+         * <b>regex</b>.
+         *
+         * @param {string} event The event name filter.
+         * @param {string} regex The URL pattern filter.
+         */
         list: function (event, regex)
         {
             let cmds = {};
@@ -237,6 +271,14 @@ function AutoCommands() //{{{
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Triggers the execution of all autocommands registered for
+         * <b>event</b>. A map of <b>args</b> is passed to each autocommand
+         * when it is being executed.
+         *
+         * @param {string} event The event to fire.
+         * @param {Object} args The args to pass to each autocommand.
+         */
         trigger: function (event, args)
         {
             if (options.get("eventignore").has("all", event))
@@ -273,7 +315,7 @@ function AutoCommands() //{{{
                     }
                     else
                     {
-                        liberator.execute(commands.replaceTokens(autoCmd.command, args));
+                        liberator.execute(commands.replaceTokens(autoCmd.command, args), null, true);
                     }
                 }
             }
@@ -295,10 +337,12 @@ function Events() //{{{
 
     var fullscreen = window.fullScreen;
 
+    var lastFocus = null;
+
     var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
     var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
 
-    var macros = storage.newMap('macros', true);
+    var macros = storage.newMap("macros", true);
 
     var currentMacro = "";
     var lastMacro = "";
@@ -457,14 +501,14 @@ function Events() //{{{
 
     function isFormElemFocused()
     {
-        let elt = window.document.commandDispatcher.focusedElement;
-        if (elt == null)
+        let elem = window.document.commandDispatcher.focusedElement;
+        if (elem == null)
             return false;
 
         try
-        { // sometimes the elt doesn't have .localName
-            let tagname = elt.localName.toLowerCase();
-            let type = elt.type.toLowerCase();
+        { // sometimes the elem doesn't have .localName
+            let tagname = elem.localName.toLowerCase();
+            let type = elem.type.toLowerCase();
 
             if ((tagname == "input" && (type != "image")) ||
                     tagname == "textarea" ||
@@ -524,7 +568,7 @@ function Events() //{{{
             {
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
-                // is not triggered there (firefox bug?)
+                // is not triggered there (Firefox bug?)
                 setTimeout(statusline.updateUrl, 10);
                 return;
             }
@@ -568,7 +612,7 @@ function Events() //{{{
         {
             try
             {
-                eventManager[method](event);
+                self[method](event);
             }
             catch (e)
             {
@@ -587,7 +631,6 @@ function Events() //{{{
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
     setTimeout (function () {
-        // FIXME: largely duplicated for loading plugins
         try
         {
             let dirs = io.getRuntimeDirectories("macros");
@@ -715,7 +758,7 @@ function Events() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var eventManager = {
+    const self = {
 
         feedingKeys: false,
 
@@ -805,7 +848,7 @@ function Events() //{{{
             {
                 if (lastMacro.length == 1)
                     // TODO: ignore this like Vim?
-                    liberator.echoerr("Exxx: Register " + lastMacro + " not set");
+                    liberator.echoerr("Exxx: Register '" + lastMacro + "' not set");
                 else
                     liberator.echoerr("Exxx: Named macro '" + lastMacro + "' not set");
             }
@@ -832,12 +875,18 @@ function Events() //{{{
             }
         },
 
-        // This method pushes keys into the event queue from liberator
-        // it is similar to vim's feedkeys() method, but cannot cope with
-        // 2 partially-fed strings, you have to feed one parsable string
-        //
-        // @param keys: a string like "2<C-f>" to pass
-        //              if you want < to be taken literally, prepend it with a \\
+        /**
+         * Pushes keys into the event queue from liberator it is similar to
+         * Vim's feedkeys() method, but cannot cope with 2 partially-fed
+         * strings, you have to feed one parsable string.
+         * 
+         * @param {string} keys A string like "2<C-f>" to pass if you want "<"
+         *     to be taken literally, prepend it with a "\\".
+         * @param {boolean} noremap Allow recursive mappings.
+         * @param {boolean} silent Whether the command should be echoed to the
+         *     command-line.
+         * @returns {boolean}
+         */
         feedkeys: function (keys, noremap, silent)
         {
             let doc = window.document;
@@ -965,7 +1014,7 @@ function Events() //{{{
             if (event.metaKey)
                 modifier += "M-";
 
-            if (event.type == "keypress")
+            if (/^key/.test(event.type))
             {
                 if (event.charCode == 0)
                 {
@@ -1043,8 +1092,9 @@ function Events() //{{{
             if (buffer.loaded == 1)
                 return true;
 
+            const maxWaitTime = 25;
             let start = Date.now();
-            let end = start + 25000; // maximum time to wait - TODO: add option
+            let end = start + (maxWaitTime * 1000); // maximum time to wait - TODO: add option
             let now;
             while (now = Date.now(), now < end)
             {
@@ -1061,14 +1111,14 @@ function Events() //{{{
                     break;
                 }
                 else
-                    liberator.echomsg("Waiting for page to load...");
+                    liberator.echo("Waiting for page to load...", commandline.DISALLOW_MULTILINE);
             }
             modes.show();
 
             // TODO: allow macros to be continued when page does not fully load with an option
             let ret = (buffer.loaded == 1);
             if (!ret)
-                liberator.echoerr("Page did not load completely in " + ms + " milliseconds. Macro stopped.");
+                liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
             liberator.dump("done waiting: " + ret);
 
             // sometimes the input widget had focus when replaying a macro
@@ -1078,10 +1128,10 @@ function Events() //{{{
             return ret;
         },
 
-        // argument "event" is delibarately not used, as i don't seem to have
+        // argument "event" is deliberately not used, as i don't seem to have
         // access to the real focus target
         //
-        // the ugly wantsModeReset is needed, because firefox generates a massive
+        // the ugly wantsModeReset is needed, because Firefox generates a massive
         // amount of focus changes for things like <C-v><C-k> (focusing the search field)
         onFocusChange: function (event)
         {
@@ -1128,7 +1178,7 @@ function Events() //{{{
 
                 if (config.name == "Muttator")
                 {
-                    // we switch to -- MESSAGE -- mode for muttator, when the main HTML widget gets focus
+                    // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
                     if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
                     {
                         if (config.isComposeWindow)
@@ -1334,7 +1384,7 @@ function Events() //{{{
                 return false;
             }
 
-            // XXX: ugly hack for now pass certain keys to firefox as they are without beeping
+            // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
             if ((config.name == "Vimperator" && liberator.mode == modes.NORMAL)
@@ -1373,7 +1423,7 @@ function Events() //{{{
                         return false;
                     }
 
-                    // others are left to generate the 'input' event or handled by firefox
+                    // others are left to generate the 'input' event or handled by Firefox
                     return;
                 }
             }
@@ -1503,7 +1553,7 @@ function Events() //{{{
 
                 if (key != "<Esc>" && key != "<C-[>")
                 {
-                    // allow key to be passed to firefox if we can't handle it
+                    // allow key to be passed to Firefox if we can't handle it
                     stop = false;
 
                     if (liberator.mode == modes.COMMAND_LINE)
@@ -1673,7 +1723,7 @@ function Events() //{{{
         }
     }; //}}}
 
-    window.XULBrowserWindow = eventManager.progressListener;
+    window.XULBrowserWindow = self.progressListener;
     window.QueryInterface(Ci.nsIInterfaceRequestor)
         .getInterface(Ci.nsIWebNavigation)
         .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
@@ -1682,21 +1732,21 @@ function Events() //{{{
         .XULBrowserWindow = window.XULBrowserWindow;
     try
     {
-        getBrowser().addProgressListener(eventManager.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+        getBrowser().addProgressListener(self.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
     }
     catch (e) {}
 
-    eventManager.prefObserver.register();
+    self.prefObserver.register();
     liberator.registerObserver("shutdown", function () {
-            eventManager.destroy();
-            eventManager.prefObserver.unregister();
+            self.destroy();
+            self.prefObserver.unregister();
     });
 
     window.addEventListener("keypress", wrapListener("onKeyPress"),    true);
     window.addEventListener("keydown",  wrapListener("onKeyUpOrDown"), true);
     window.addEventListener("keyup",    wrapListener("onKeyUpOrDown"), true);
 
-    return eventManager;
+    return self;
 
 }; //}}}
 

@@ -125,7 +125,7 @@ Option.prototype = {
             aValue = this.globalvalue;
 
         if (this.getter)
-            this.getter.call(this, aValue);
+            return this.getter.call(this, aValue);
 
         return aValue;
     },
@@ -393,11 +393,196 @@ function Options() //{{{
         }
     }
 
+    function setAction(args, modifiers)
+    {
+        let bang = args.bang;
+        if (!args.length)
+            args[0] = "";
+
+        for (let [,arg] in args)
+        {
+            if (bang)
+            {
+                let onlyNonDefault = false;
+                let reset = false;
+                let invertBoolean = false;
+
+                if (args[0] == "")
+                {
+                    var name = "all";
+                    onlyNonDefault = true;
+                }
+                else
+                {
+                    var [matches, name, postfix, valueGiven, operator, value] =
+                    arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
+                    reset = (postfix == "&");
+                    invertBoolean = (postfix == "!");
+                }
+
+                if (name == "all" && reset)
+                    liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
+                else if (name == "all")
+                    options.listPrefs(onlyNonDefault, "");
+                else if (reset)
+                    options.resetPref(name);
+                else if (invertBoolean)
+                    options.invertPref(name);
+                else if (valueGiven)
+                {
+                    switch (value)
+                    {
+                        case undefined:
+                            value = "";
+                            break;
+                        case "true":
+                            value = true;
+                            break;
+                        case "false":
+                            value = false;
+                            break;
+                        default:
+                            if (/^\d+$/.test(value))
+                                value = parseInt(value, 10);
+                    }
+                    options.setPref(name, value);
+                }
+                else
+                {
+                    options.listPrefs(onlyNonDefault, name);
+                }
+                return;
+            }
+
+            let opt = options.parseOpt(arg, modifiers);
+            if (!opt)
+            {
+                liberator.echoerr("Error parsing :set command: " + arg);
+                return;
+            }
+
+            let option = opt.option;
+            if (option == null && !opt.all)
+            {
+                liberator.echoerr("No such option: " + opt.name);
+                return;
+            }
+
+            // reset a variable to its default value
+            if (opt.reset)
+            {
+                if (opt.all)
+                {
+                    for (let option in options)
+                        option.reset();
+                }
+                else
+                {
+                    option.reset();
+                }
+            }
+            // read access
+            else if (opt.get)
+            {
+                if (opt.all)
+                {
+                    options.list(opt.onlyNonDefault, opt.scope);
+                }
+                else
+                {
+                    if (option.type == "boolean")
+                        liberator.echo((opt.optionValue ? "  " : "no") + option.name);
+                    else
+                        liberator.echo("  " + option.name + "=" + opt.optionValue);
+                }
+            }
+            // write access
+            // NOTE: the behavior is generally Vim compatible but could be
+            // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
+            else
+            {
+                if (opt.option.type == "boolean")
+                {
+                    if (opt.valueGiven)
+                    {
+                        liberator.echoerr("E474: Invalid argument: " + arg);
+                        return;
+                    }
+                    opt.values = !opt.unsetBoolean;
+                }
+                let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
+                if (res)
+                    liberator.echoerr(res);
+            }
+        }
+    }
+
+    function setCompleter(context, args, modifiers)
+    {
+        let filter = context.filter;
+
+        if (args.bang) // list completions for about:config entries
+        {
+            if (filter[filter.length - 1] == "=")
+            {
+                context.advance(filter.length);
+                filter = filter.substr(0, filter.length - 1);
+                context.completions = [
+                        [loadPreference(filter, null, false), "Current Value"],
+                        [loadPreference(filter, null, true), "Default Value"]
+                ].filter(function ([k]) k != null);
+                return;
+            }
+
+            return completion.preference(context);
+        }
+
+        let opt = options.parseOpt(filter, modifiers);
+        let prefix = opt.prefix;
+
+        if (context.filter.indexOf("=") == -1)
+        {
+            if (prefix)
+                context.filters.push(function ({ item: opt }) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
+            return completion.option(context, opt.scope);
+        }
+        else if (prefix == "no")
+            return;
+
+        if (prefix)
+            context.advance(prefix.length);
+
+        let option = opt.option;
+        context.advance(context.filter.indexOf("=") + 1);
+
+        if (!option)
+        {
+            context.message = "No such option: " + opt.name;
+            context.highlight(0, name.length, "SPELLCHECK");
+        }
+
+        if (opt.get || opt.reset || !option || prefix)
+            return;
+
+        if (!opt.value)
+        {
+            context.fork("default", 0, this, function (context) {
+                context.title = ["Extra Completions"];
+                context.completions = [
+                        [option.value, "Current value"],
+                        [option.defaultValue, "Default value"]
+                ].filter(function (f) f[0] != "");
+            });
+        }
+
+        completion.optionValue(context, opt.name, opt.operator);
+    }
+
     //
-    // firefox preferences which need to be changed to work well with vimperator
+    // Firefox preferences which need to be changed to work well with Vimperator
     //
 
-    // work around firefox popup blocker
+    // work around Firefox popup blocker
     // TODO: Make this work like safeSetPref
     var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
     if (!/keypress/.test(popupAllowedEvents))
@@ -417,7 +602,7 @@ function Options() //{{{
         // TODO: move to buffer.js
         // we have our own typeahead find implementation
         options.safeSetPref("accessibility.typeaheadfind.autostart", false);
-        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in firefox
+        options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in Firefox
     });
 
     // start with saved session
@@ -521,14 +706,14 @@ function Options() //{{{
         "Set local option",
         function (args)
         {
-            commands.get("set").execute(args.string, args.bang, args.count, { scope: options.OPTION_SCOPE_LOCAL });
+            return setAction(args, { scope: options.OPTION_SCOPE_LOCAL });
         },
         {
             bang: true,
             count: true,
             completer: function (context, args)
             {
-                return commands.get("set").completer(context.filter, args.bang, args.count, { scope: options.OPTION_SCOPE_LOCAL });
+                return setCompleter(context, args, { scope: options.OPTION_SCOPE_LOCAL });
             },
             literal: 0
         }
@@ -538,14 +723,14 @@ function Options() //{{{
         "Set global option",
         function (args)
         {
-            commands.get("set").execute(args.string, args.bang, args.count, { scope: options.OPTION_SCOPE_GLOBAL });
+            return setAction(args, { scope: options.OPTION_SCOPE_GLOBAL });
         },
         {
             bang: true,
             count: true,
             completer: function (context, args)
             {
-                return commands.get("set").completer(context.filter, args.bang, args.count, { scope: options.OPTION_SCOPE_GLOBAL });
+                return setCompleter(context, args, { scope: options.OPTION_SCOPE_GLOBAL });
             },
             literal: 0
         }
@@ -553,190 +738,15 @@ function Options() //{{{
 
     commands.add(["se[t]"],
         "Set an option",
-        function (args, modifiers)
+        function (args)
         {
-            let bang = args.bang;
-            if (!args.length)
-                args[0] = "";
-
-            for (let [,arg] in args)
-            {
-                if (bang)
-                {
-                    let onlyNonDefault = false;
-                    let reset = false;
-                    let invertBoolean = false;
-
-                    if (args[0] == "")
-                    {
-                        var name = "all";
-                        onlyNonDefault = true;
-                    }
-                    else
-                    {
-                        var [matches, name, postfix, valueGiven, operator, value] =
-                        arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
-                        reset = (postfix == "&");
-                        invertBoolean = (postfix == "!");
-                    }
-
-                    if (name == "all" && reset)
-                        liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
-                    else if (name == "all")
-                        options.listPrefs(onlyNonDefault, "");
-                    else if (reset)
-                        options.resetPref(name);
-                    else if (invertBoolean)
-                        options.invertPref(name);
-                    else if (valueGiven)
-                    {
-                        switch (value)
-                        {
-                            case undefined:
-                                value = "";
-                                break;
-                            case "true":
-                                value = true;
-                                break;
-                            case "false":
-                                value = false;
-                                break;
-                            default:
-                                if (/^\d+$/.test(value))
-                                    value = parseInt(value, 10);
-                        }
-                        options.setPref(name, value);
-                    }
-                    else
-                    {
-                        options.listPrefs(onlyNonDefault, name);
-                    }
-                    return;
-                }
-
-                let opt = options.parseOpt(arg, modifiers);
-                if (!opt)
-                {
-                    liberator.echoerr("Error parsing :set command: " + arg);
-                    return;
-                }
-
-                let option = opt.option;
-                if (option == null && !opt.all)
-                {
-                    liberator.echoerr("No such option: " + opt.name);
-                    return;
-                }
-
-                // reset a variable to its default value
-                if (opt.reset)
-                {
-                    if (opt.all)
-                    {
-                        for (let option in options)
-                            option.reset();
-                    }
-                    else
-                    {
-                        option.reset();
-                    }
-                }
-                // read access
-                else if (opt.get)
-                {
-                    if (opt.all)
-                    {
-                        options.list(opt.onlyNonDefault, opt.scope);
-                    }
-                    else
-                    {
-                        if (option.type == "boolean")
-                            liberator.echo((opt.optionValue ? "  " : "no") + option.name);
-                        else
-                            liberator.echo("  " + option.name + "=" + opt.optionValue);
-                    }
-                }
-                // write access
-                // NOTE: the behavior is generally Vim compatible but could be
-                // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
-                else
-                {
-                    if (opt.option.type == "boolean")
-                    {
-                        if (opt.valueGiven)
-                        {
-                            liberator.echoerr("E474: Invalid argument: " + arg);
-                            return;
-                        }
-                        opt.values = !opt.unsetBoolean;
-                    }
-                    let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
-                    if (res)
-                        liberator.echoerr(res);
-                }
-            }
+            return setAction(args);
         },
         {
             bang: true,
-            completer: function (context, args, modifiers)
+            completer: function (context, args)
             {
-                let filter = context.filter;
-
-                if (args.bang) // list completions for about:config entries
-                {
-                    if (filter[filter.length - 1] == "=")
-                    {
-                        context.advance(filter.length);
-                        filter = filter.substr(0, filter.length - 1);
-                        context.completions = [
-                                [loadPreference(filter, null, false), "Current Value"],
-                                [loadPreference(filter, null, true), "Default Value"]
-                        ].filter(function ([k]) k != null);
-                        return;
-                    }
-
-                    return completion.preference(context);
-                }
-
-                let opt = options.parseOpt(filter, modifiers);
-                let prefix = opt.prefix;
-
-                if (context.filter.indexOf("=") == -1)
-                {
-                    if (prefix)
-                        context.filters.push(function ({ item: opt }) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
-                    return completion.option(context, opt.scope);
-                }
-                else if (prefix == "no")
-                    return;
-
-                if (prefix)
-                    context.advance(prefix.length);
-
-                let option = opt.option;
-                context.advance(context.filter.indexOf("=") + 1);
-
-                if (!option)
-                {
-                    context.message = "No such option: " + opt.name;
-                    context.highlight(0, name.length, "SPELLCHECK");
-                }
-
-                if (opt.get || opt.reset || !option || prefix)
-                    return;
-
-                if (!opt.value)
-                {
-                    context.fork("default", 0, this, function (context) {
-                        context.title = ["Extra Completions"];
-                        context.completions = [
-                                [option.value, "Current value"],
-                                [option.defaultValue, "Default value"]
-                        ].filter(function (f) f[0] != "");
-                    });
-                }
-
-                completion.optionValue(context, opt.name, opt.operator);
+                return setCompleter(context, args);
             },
             serial: function () [
                 {
@@ -760,7 +770,6 @@ function Options() //{{{
             //for (let i = 0, name = names[i]; i < length; name = names[++i])
             for (let [,name] in args)
             {
-                let name = args[i];
                 let reference = liberator.variableReference(name);
                 if (!reference[0])
                 {
@@ -857,7 +866,7 @@ function Options() //{{{
                         isDefault: opt.value == opt.defaultValue,
                         name:      opt.name,
                         default:   opt.defaultValue,
-                        pre:       "\u00a0\u00a0", /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0", // Unicode nonbreaking space.
                         value:     <></>
                     };
 
@@ -905,7 +914,7 @@ function Options() //{{{
                         default:   loadPreference(pref, null, true),
                         value:     <>={template.highlight(value, true, 100)}</>,
                         name:      pref,
-                        pre:       "\u00a0\u00a0" /* Unicode nonbreaking space. */
+                        pre:       "\u00a0\u00a0" // Unicode nonbreaking space.
                     };
 
                     yield option;
@@ -982,14 +991,14 @@ function Options() //{{{
 
         setPref: function (name, value)
         {
-            return storePreference(name, value);
+            storePreference(name, value);
         },
 
         resetPref: function (name)
         {
             try
             {
-                return services.get("pref").clearUserPref(name);
+                services.get("pref").clearUserPref(name);
             }
             catch (e)
             {
@@ -1017,7 +1026,7 @@ function Options() //{{{
                 storePreference(k, v);
         },
 
-        temporaryContext: function (fn, self)
+        withContext: function (fn, self)
         {
             try
             {
