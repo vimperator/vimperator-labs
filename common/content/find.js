@@ -436,7 +436,6 @@ function Search() //{{{
         // escape while typing a search
         searchCanceled: function ()
         {
-            this.clear();
             // TODO: code to reposition the document to the place before search started
         },
 
