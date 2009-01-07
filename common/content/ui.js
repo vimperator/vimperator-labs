@@ -394,6 +394,7 @@ function CommandLine() //{{{
             else
                 numElementsNeeded = reverse ? this.selected : this.selected + 2; // this.selected is zero-based
 
+
             if (this.context.waitingForTab || this.wildIndex == -1)
             {
                 this.complete(true, true);
