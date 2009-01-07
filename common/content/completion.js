@@ -1608,6 +1608,19 @@ function Completion() //{{{
             context.completions = [item for (item in events.getMacros())];
         },
 
+        mark: function mark(context)
+        {
+            function percent(i) Math.round(i * 100);
+
+            // FIXME: Line/Column doesn't make sense with %
+            context.title = ["Mark", "Line Column File"];
+            context.keys = {
+                text: 0,
+                description: function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location
+            };
+            context.completions = marks.all;
+        },
+
         menuItem: function menuItem(filter) commands.get("emenu").completer(filter), // XXX
 
         option: function option(context, scope)

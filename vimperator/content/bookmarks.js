@@ -967,7 +967,7 @@ function QuickMarks() //{{{
             completer: function (context)
             {
                 context.title = ["QuickMark", "URL"];
-                context.completions = [[key, val] for ([key, val] in qmarks)];
+                context.completions = qmarks;
             }
         });
 

@@ -1653,18 +1653,7 @@ function Marks() //{{{
         },
         {
             bang: true,
-            completer: function (context)
-            {
-                let marks = getSortedMarks();
-
-                function markinfo( m )
-                {
-                    return Math.round(m.position.x * 100) + "% " + Math.round(m.position.y * 100) + "% " + m.location;
-                }
-
-                context.title = ["Mark", "Line/Column/File"];
-                context.completions = [[mark[0], markinfo(mark[1])] for each (mark in marks)];
-            }
+            completer: function (context) completion.mark(context)
         });
 
     commands.add(["ma[rk]"],
@@ -1709,6 +1698,8 @@ function Marks() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        get all() getSortedMarks(),
 
         /**
          * Add a named mark for the current buffer, at its current position.
