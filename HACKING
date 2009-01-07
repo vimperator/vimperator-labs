@@ -129,6 +129,15 @@ We try to be quite consistent, but of course, that's not always possible.
   most of JS is a hack...
     --Kris
 
+  There is semantic value: With new you know for SURE it's calling the
+  constructor of a class, with CamelCase only you just ASSUME you do.
+  I am all about making code clearer also to new developers. And this
+  includes getting rid of as many assumptions as possible, by making
+  things explicit, when they don't hurt readability (and new doesn't 
+  for me). It's not so important, that i'll change all instances to
+  new immediately, but will probably do so over time, when I see it.
+    --mst
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
