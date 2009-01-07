@@ -98,19 +98,6 @@ FEATURES:
   have a look into the split browser extension
 1 Add information to liberator/HACKING file about testing and optimization
 1 Document remote branches in liberator/HACKING
-    I don't agree. git is about as intuitive as any other SCM, but,
-    regardless, it's by far one of the most popular. There are
-    countless git walkthroughs, FAQs, tips pages (not to mention 'git
-    help') that I don't see the need to duplicate them here. As for
-    branches, 'git branch' should be sufficient, and, if not, there's
-    a list on gitweb. --Kris
-        I wasn't trying to say that git was a problem (though other DVCS
-        have more accessible help systems; except for very complex
-        projects, I think Mercurial is a much more comfortable DVCS to
-        learn, use, and navigate). I was saying that it might be nice if
-        the remote branches (and related polices) were documented. Yes,
-        anyone can do a "git branch -r", but seeing that a branch exists
-        is not the same as understanding why it's there. --Ted
 1 Reformat liberator/HACKING so that git diff can find sections and report changes @ somewhere
 - many other ideas are listed in the wiki
 
