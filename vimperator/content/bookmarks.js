@@ -962,7 +962,14 @@ function QuickMarks() //{{{
             else
                 quickmarks.remove(args.string);
         },
-        { bang: true });
+        {
+            bang: true,
+            completer: function (context)
+            {
+                context.title = ["QuickMark", "URL"];
+                context.completions = [[key, val] for ([key, val] in qmarks)];
+            }
+        });
 
     commands.add(["qma[rk]"],
         "Mark a URL with a letter for quick access",
