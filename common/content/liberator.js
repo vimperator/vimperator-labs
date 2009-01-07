@@ -206,6 +206,34 @@ const liberator = (function () //{{{
             function () { liberator.quit(true); });
     });
 
+    // TODO: move this
+    function getMenuItems()
+    {
+        function addChildren(node, parent)
+        {
+            for (let [,item] in Iterator(node.childNodes))
+            {
+                if (item.childNodes.length == 0 && item.localName == "menuitem"
+                    && !/rdf:http:/.test(item.label)) // FIXME
+                {
+                    item.fullMenuPath = parent + item.label;
+                    items.push(item);
+                }
+                else
+                {
+                    let path = parent;
+                    if (item.localName == "menu")
+                        path += item.label + ".";
+                    addChildren(item, path);
+                }
+            }
+        }
+
+        let items = [];
+        addChildren(document.getElementById(config.guioptions["m"][1]), "");
+        return items;
+    }
+
     registerObserver("load_commands", function ()
     {
         commands.add(["addo[ns]"],
@@ -256,34 +284,6 @@ const liberator = (function () //{{{
                 completer: function (context, args) completion.dialog(context)
             });
 
-        // TODO: move this
-        function getMenuItems()
-        {
-            function addChildren(node, parent)
-            {
-                for (let [,item] in Iterator(node.childNodes))
-                {
-                    if (item.childNodes.length == 0 && item.localName == "menuitem"
-                        && !/rdf:http:/.test(item.label)) // FIXME
-                    {
-                        item.fullMenuPath = parent + item.label;
-                        items.push(item);
-                    }
-                    else
-                    {
-                        let path = parent;
-                        if (item.localName == "menu")
-                            path += item.label + ".";
-                        addChildren(item, path);
-                    }
-                }
-            }
-
-            let items = [];
-            addChildren(document.getElementById(config.guioptions["m"][1]), "");
-            return items;
-        }
-
         commands.add(["em[enu]"],
             "Execute the specified menu item from the command line",
             function (args)
@@ -305,13 +305,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "1",
-                // TODO: add this as a standard menu completion function
-                completer: function (context)
-                {
-                    context.title = ["Menu Path", "Label"];
-                    context.keys = { text: "fullMenuPath", description: "label" };
-                    context.completions = getMenuItems();
-                },
+                completer: function (context) completion.menuItem(context),
                 literal: 0
             });
 
@@ -596,6 +590,8 @@ const liberator = (function () //{{{
 
         get mode()      modes.main,
         set mode(value) modes.main = value,
+
+        get menuItems() getMenuItems(),
 
         // Global constants
         CURRENT_TAB: 1,
