@@ -86,13 +86,7 @@ function Hints() //{{{
     // Used to open multiple hints
     function hintSequenceElement(elem)
     {
-        // Want to always open sequence hints in background
-        // (remember: NEW_BACKGROUND_TAB and NEW_TAB semantics assume
-        //            that loadInBackground=true)
-        if (options.getPref("browser.tabs.loadInBackground"))
-            buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
-        else
-            buffer.followLink(elem, liberator.NEW_TAB);
+        buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
         // Move to next element in sequence
         // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 

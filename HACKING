@@ -138,6 +138,14 @@ We try to be quite consistent, but of course, that's not always possible.
   new immediately, but will probably do so over time, when I see it.
     --mst
 
+  Actually, you're not sure of anything. You can call new (function (a)
+  a.substr(2)), and you don't get a new object. The only difference is
+  that it's called with 'this' set. Given that it's uncouth to name a
+  non-constructor function in CamelCase, and that most internal
+  constructors don't require new (and some, like String, break when
+  you use it), it just seems superfluous and distracting.
+    --Kris
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
