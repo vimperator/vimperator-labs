@@ -27,7 +27,7 @@ AWK           = awk
 .PHONY: all help doc asciidoc check-asciidoc clean distclean
 all: doc
 
-doc: asciidoc
+doc: asciidoc t2t
 
 help:
 	@echo "${NAME} ${VERSION} build"
@@ -60,6 +60,8 @@ $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
 	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
 
 #### txt2tags
+
+t2t: $(T2T_FILES)
 
 $(T2T_FILES): %.xhtml: %.t2t $(BASE)/Makefile.doc $(T2T_DEPS)
 	@echo "T2T locale/$(THIS_LOCALE)/$@"
