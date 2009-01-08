@@ -915,7 +915,7 @@ function Events() //{{{
                     //if (keys[i] == "\\") // FIXME: support the escape key
                     if (keys[i] == "<" && !escapeKey) // start a complex key
                     {
-                        let [match, modifier, keyname] = keys.substr(i).match(/<([CSMA]-)*(.+?)>/i) || [];
+                        let [match, modifier, keyname] = keys.substr(i).match(/<((?:[CSMA]-)*)(.+?)>/i) || [];
                         if (keyname)
                         {
                             if (modifier) // check for modifiers
