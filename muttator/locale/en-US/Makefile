@@ -1,1 +1,1 @@
-../../../vimperator/locale/en-US/Makefile
+../../../common/Makefile.doc
