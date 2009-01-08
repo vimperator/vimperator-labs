@@ -8,11 +8,11 @@ THIS_LOCALE   = $(notdir $(shell pwd))
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
-ADC_DEPS      = asciidoc.conf
+ADC_DEPS      = $(wildcard asciidoc.conf)
 
 T2T_SRC_FILES = $(wildcard *.t2t)
 T2T_FILES     = $(T2T_SRC_FILES:%.t2t=%.xhtml)
-T2T_DEPS      = config.t2t
+T2T_DEPS      = $(wildcard config.t2t)
 
 DOC_FILES     = $(ADC_FILES) $(T2T_FILES)
 
@@ -47,6 +47,14 @@ distclean: clean
 	@echo "More cleanup..."
 	rm -f $(DOC_FILES)
 
+#### Makes single-file makes easier to type
+
+%: %.html %.t2t %.xhtml %.t2t ;
+
+%: %.html %.txt ;
+
+%: %.xhtml %.t2t ;
+
 #### asciidoc
 
 asciidoc: check-asciidoc $(ADC_FILES)
@@ -66,7 +74,3 @@ t2t: $(T2T_FILES)
 $(T2T_FILES): %.xhtml: %.t2t $(BASE)/Makefile.doc $(T2T_DEPS)
 	@echo "T2T locale/$(THIS_LOCALE)/$@"
 	txt2tags --quiet $<
-
-%.xhtml: %.t2t
-	@echo "T2T $@"
-	$(TXT2TAGS) --quiet $<
