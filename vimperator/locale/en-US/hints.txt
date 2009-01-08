@@ -22,8 +22,10 @@ ________________________________________________________________________________
 |F| +
 ||#F#{hint}||
 ________________________________________________________________________________
-Start QuickHint mode, but open link in a new tab. Like normal QuickHint mode
-(activated with [m]f[m]) but opens the link in a new tab.
+Start QuickHint mode, but open link in a new tab. Like normal QuickHint
+mode (activated with [m]f[m]) but opens the link in a new tab. The new
+tab will be loaded in background according to the
+\'browser.tabs.loadInBackground' Firefox preference.
 ________________________________________________________________________________
 
 
@@ -59,9 +61,6 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
-
-Note: The behavior of [m];t[m] and [m];b[m] is inverted if the
-\'browser.tabs.loadInBackground' Firefox preference is set to false.
 ________________________________________________________________________________
 
 // vim: set syntax=asciidoc:

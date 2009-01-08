@@ -1123,8 +1123,10 @@ function Buffer() //{{{
             {
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
+                    let invertLogic = !options.getPref("browser.tabs.loadInBackground");
+                    let backgroundDesired = (where == liberator.NEW_BACKGROUND_TAB);
                     ctrlKey = true;
-                    shiftKey = (where != liberator.NEW_BACKGROUND_TAB);
+                    shiftKey = invertLogic ? backgroundDesired : !backgroundDesired;
                     break;
                 case liberator.NEW_WINDOW:
                     shiftKey = true;
