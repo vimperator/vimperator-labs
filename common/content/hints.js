@@ -89,7 +89,7 @@ function Hints() //{{{
         buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
         // Move to next element in sequence
-        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 
+        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
         // showing them again, or is this short flash actually needed as a "usability
         // feature"? --mst
         hints.show("F");
@@ -593,6 +593,16 @@ function Hints() //{{{
         "Start QuickHint mode",
         function () { hints.show("o"); });
 
+    // At the moment, "F" calls
+    //    buffer.followLink(clicked_element, DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+    // It is not clear that it shouldn't be:
+    //    buffer.followLink(clicked_element, !DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+    // In fact, it might be nice if there was a "dual" to F (like H and
+    // gH, except that gF is already taken). --tpp
+    //
+    // Likewise, it might be nice to have a liberator.NEW_FOREGROUND_TAB
+    // and then make liberator.NEW_TAB always do what a Cntrl+Click
+    // does. --tpp
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
         function () { options.getPref("browser.tabs.loadInBackground") ? hints.show("b") : hints.show("t"); });
