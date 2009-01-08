@@ -1123,10 +1123,8 @@ function Buffer() //{{{
             {
                 case liberator.NEW_TAB:
                 case liberator.NEW_BACKGROUND_TAB:
-                    let invertLogic = !options.getPref("browser.tabs.loadInBackground");
-                    let backgroundDesired = (where == liberator.NEW_BACKGROUND_TAB);
                     ctrlKey = true;
-                    shiftKey = invertLogic ? backgroundDesired : !backgroundDesired;
+                    shiftKey = (where != liberator.NEW_BACKGROUND_TAB);
                     break;
                 case liberator.NEW_WINDOW:
                     shiftKey = true;
@@ -1140,10 +1138,13 @@ function Buffer() //{{{
             elem.focus();
 
             let evt = doc.createEvent("MouseEvents");
-            ["mousedown", "mouseup", "click"].forEach(function (event) {
-                evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
-                        ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
-                elem.dispatchEvent(evt);
+            options.withContext(function () {
+                options.setPref("browser.tabs.loadInBackground", true);
+                ["mousedown", "mouseup", "click"].forEach(function (event) {
+                    evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
+                            ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
+                    elem.dispatchEvent(evt);
+                });
             });
         },
 
