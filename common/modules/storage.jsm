@@ -80,10 +80,10 @@ function Timer(minInterval, maxInterval, callback)
     {
         timer.cancel();
         this.doneAt = 0;
-    }
+    };
     this.flush = function ()
     {
-        if (this.latest)
+        if (this.doneAt == -1)
             this.notify();
     };
 }
