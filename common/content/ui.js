@@ -493,13 +493,17 @@ function CommandLine() //{{{
     });
 
     var autocompleteTimer = new Timer(200, 500, function autocompleteTell(tabPressed) {
-        if (events.feedingKeys || !completions)
-            return;
-
-        completions.complete(true, false);
-        completions.itemList.show();
+        if (!events.feedingKeys && completions)
+        {
+            completions.complete(true, false);
+            completions.itemList.show();
+        }
     });
 
+    // This timer just prevents <Tab>s from queueing up when the
+    // system is under load (and, thus, giving us several minutes of
+    // the completion list scrolling). Multiple <Tab> presses are
+    // still processed normally, as the time is flushed on "keyup".
     var tabTimer = new Timer(0, 0, function tabTell(event) {
         if (completions)
             completions.tab(event.shiftKey);
@@ -870,7 +874,7 @@ function CommandLine() //{{{
 
     var myModes = [modes.COMMAND_LINE];
 
-    // TODO: move "<Esc>", "<C-[" here from mappings
+    // TODO: move "<Esc>", "<C-[>" here from mappings
     mappings.add(myModes,
         ["<C-c>"], "Focus content",
         function () { events.onEscape(); });
@@ -963,14 +967,14 @@ function CommandLine() //{{{
 
     return {
 
-        HL_NORMAL     : "Normal",
-        HL_ERRORMSG   : "ErrorMsg",
-        HL_MODEMSG    : "ModeMsg",
-        HL_MOREMSG    : "MoreMsg",
-        HL_QUESTION   : "Question",
-        HL_INFOMSG    : "InfoMsg",
-        HL_WARNINGMSG : "WarningMsg",
-        HL_LINENR     : "LineNr",
+        HL_NORMAL:     "Normal",
+        HL_ERRORMSG:   "ErrorMsg",
+        HL_MODEMSG:    "ModeMsg",
+        HL_MOREMSG:    "MoreMsg",
+        HL_QUESTION:   "Question",
+        HL_INFOMSG:    "InfoMsg",
+        HL_WARNINGMSG: "WarningMsg",
+        HL_LINENR:     "LineNr",
 
         FORCE_MULTILINE    : 1 << 0,
         FORCE_SINGLELINE   : 1 << 1,
@@ -1010,6 +1014,8 @@ function CommandLine() //{{{
         {
             try
             {
+                // The long path is because of complications with the
+                // completion preview.
                 return commandWidget.inputField.editor.rootElement.firstChild.textContent;
             }
             catch (e) {}
@@ -1068,7 +1074,7 @@ function CommandLine() //{{{
             if (history)
                 history.save();
 
-            this.resetCompletions(); // cancels any asynchronous completion still going on, must be before completions = null
+            this.resetCompletions(); // cancels any asynchronous completion still going on, must be before we set completions = null
             completions = null;
             history = null;
 
@@ -1124,7 +1130,7 @@ function CommandLine() //{{{
          */
         echo: function echo(str, highlightGroup, flags)
         {
-           // liberator.echo uses different order of flags as it omits the highlight group, change v.commandline.echo argument order? --mst
+            // liberator.echo uses different order of flags as it omits the highlight group, change commandline.echo argument order? --mst
             if (silent)
                 return false;
 
@@ -1374,11 +1380,10 @@ function CommandLine() //{{{
          * these come from liberator when modes.extended & modes.MULTILINE_OUTPUT
          * and also from #liberator-multiline-output in the XUL
          *
-         * FIXME: if 'more' is set and the MOW is not scrollable we should still
-         * allow a down motion after an up rather than closing
-         *
          * @param {Event} event
          */
+        // FIXME: if 'more' is set and the MOW is not scrollable we should still
+        // allow a down motion after an up rather than closing
         onMultilineOutputEvent: function onMultilineOutputEvent(event)
         {
             let win = multilineOutputWidget.contentWindow;
@@ -1589,13 +1594,13 @@ function CommandLine() //{{{
         },
 
         /**
-         * Refresh or remove the prompt that displays when in multiline mode.
-         * showHelp will cause the possible key-options to be displayed,
-         * force will cause a display of the default message even if it
-         * could be at the end of the output.
+         * Update or remove the multiline output widget's "MORE"
+         * prompt.
          *
-         * @param {boolean} force
-         * @param {boolean} showHelp
+         * @param {boolean} force If true, "-- More --" is shown
+         *     even if we're at the end of the output.
+         * @param {boolean} showHelp When true, show the valid key
+         *     sequences and what they do.
          */
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
@@ -1615,12 +1620,11 @@ function CommandLine() //{{{
         },
 
         /**
-         * Changes the height of the multilineOutputWidget to fit
-         * its contents, if <b>open</b> is true, it will cause the
-         * widget to uncollapse, if not it will leave the widget
-         * closed.
+         * Changes the height of the multilineOutputWidget to fit in
+         * the available space.
          *
-         * @param {boolean} open
+         * @param {boolean} open If true, the widget will be opened if
+         *     it's not already so.
          */
         updateOutputHeight: function updateOutputHeight(open)
         {
@@ -1644,13 +1648,8 @@ function CommandLine() //{{{
             outputContainer.collapsed = false;
         },
 
-        /**
-         * Disable any active completion functions by calling their cancelFunc's
-         * Will also remove the completions preview window.
-         */
         resetCompletions: function resetCompletions()
         {
-            // liberator.dump("Resetting completions...");
             if (completions)
             {
                 completions.context.cancelAll();
@@ -1665,11 +1664,12 @@ function CommandLine() //{{{
 }; //}}}
 
 /**
- * The list which is used for the completion box (and QuickFix window in future)
+ * The list which is used for the completion box (and QuickFix window
+ * in future).
  *
- * @param {string} id The id of the XUL <iframe> which we want to fill it
- *     MUST be inside a <vbox> (or any other html element, because otherwise
- *     setting the height does not work properly
+ * @param {string} id The id of the <iframe> which will display the
+ *     list. It must be in its own container element, whose height it
+ *     will update as necessary.
  */
 function ItemList(id) //{{{
 {
@@ -1689,8 +1689,11 @@ function ItemList(id) //{{{
     }
 
     function dom(xml, map) util.xmlToDom(xml, doc, map);
+
+    // Unused.
     function elemToString(elem) elem.nodeType == elem.TEXT_NODE ? elem.data :
         "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for ([i, a] in Iterator(elem.attributes))]).join(" ") + ">";
+
     var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
@@ -1982,9 +1985,10 @@ function StatusLine() //{{{
 
         /**
          * Update the status bar to indicate how secure the website is
-         * secure => https:// with valid certificate
-         * broken => https:// with invalid certificate
-         * insecure => http://
+         * secure -   Secure connection with valid certificate.
+         * broken -   Secure connection with invalid certificate, or
+         *            mixed content.
+         * insecure - Insecure connection.
          *
          * @param {'secure'|'broken'|'insecure'} type
          */
@@ -2010,12 +2014,12 @@ function StatusLine() //{{{
         },
 
         /**
-         * Update which URL is displayed on the status line,
-         * if url is omitted then buffer.URL is used instead and
-         * status icons [+-â¤] are updated to match whether one can
-         * go back/forwards in history/have bookmarked the page.
+         * Update the URL displayed in the status line. Also displays
+         * status icons, [+-♥], when there are next and previous pages
+         * in the current tab's history, and when the current URL is
+         * bookmarked, respectively.
          *
-         * @param {string} url
+         * @param {string} url The URL to display. @default buffer.URL
          */
         updateUrl: function updateUrl(url)
         {
@@ -2060,11 +2064,12 @@ function StatusLine() //{{{
         },
 
         /**
-         * Set the contents of the status line's input buffer
-         * to the given string.
+         * Set the contents of the status line's input buffer to the
+         * given string. Used primarilly when a key press requires
+         * further input before being processed, including mapping
+         * counts and arguments, along with multi-key mappings.
          *
-         * Used for displaying partial key combinations in
-         * normal mode.
+         * @param {string} buffer
          */
         updateInputBuffer: function updateInputBuffer(buffer)
         {
@@ -2075,15 +2080,14 @@ function StatusLine() //{{{
         },
 
         /**
-         * Update the display of the progress bar.
-         * If the parameter is a string, it will be
-         * displayed literally. Otherwise it must be a number
-         * less than one.
-         * Negative numbers cause a "Loading..." status,
-         * Positive (< 1) numbers cause an arrow ==> of length
-         * proportional to the arrow.
+         * Update the page load progress bar.
          *
-         * @param {string|number} progress
+         * @param {string|number} progress The current progress, as
+         *    follows:
+         *    A string          - Displayed literally.
+         *    A ratio 0 < n < 1 - Displayed as a progress bar.
+         *    A number n <= 0   - Displayed as a "Loading" message.
+         *    Any other number  - The progress is cleared.
          */
         updateProgress: function updateProgress(progress)
         {
@@ -2113,11 +2117,11 @@ function StatusLine() //{{{
         },
 
         /**
-         * Display the correct tabcount (e.g. [1/5]) on the status bar.
-         * If either parameter is omitted, they will be calculated.
+         * Display the correct tabcount (e.g., [1/5]) on the status bar.
          *
-         * @param {number} currentIndex
-         * @param {number} totalTabs
+         * @param {number} currentIndex The 1-based index of the
+         *     currently selected tab. @optional
+         * @param {number} totalTabs The total number of tabs. @optional
          */
         updateTabCount: function updateTabCount(currentIndex, totalTabs)
         {
@@ -2144,14 +2148,10 @@ function StatusLine() //{{{
         },
 
         /**
-         * Display the correct position on the status bar, if the
-         * percent parameter is omitted it will be calculated.
+         * Display the main content's vertical scroll position in the
+         * status bar.
          *
-         * Negative numbers are set to "All", Zero implies "Top"
-         * One or above is "Bot", and anything else is multiplied by
-         * a hundred and displayed as a percentage.
-         *
-         * @param {number} percent
+         * @param {number} percent The position, as a percentage. @optional
          */
         updateBufferPosition: function updateBufferPosition(percent)
         {
