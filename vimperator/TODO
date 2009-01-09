@@ -20,20 +20,9 @@ BUGS:
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
 
 (recent CVS regressions):
-- visual caret mode is broken
-- the message system is a bit of a debacle at the moment but I'm not sure how
-  it's supposed to work. MST, can you spec it when you have some time?
-  E.g. :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
-  Obviously I think it should but I'm not sure if it's a bug or not in your
-  view, thanks. --djk
-  The spec is easy: echomsg() is used for informational purposes, and should therefore
-  never need user interaction. Therefore: If the MOW is open, print the message there,
-  but never open the MOW for an echomsg(). --mst
-- While the old :open foo<tab> was broken/annoying, so is the one after 02-01-2008, as
-  I am often waiting ~20sec or more after doing :open not-cached-things<tab>.
-  We should probably just abort searching after 5 secs if we already have found some entries.
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
   plugin or a vimp issue.
+- completions does not beep anymore when none are available, try :jljlkjlkj<tab> 
 
 FEATURES:
 9 finish :help TODOs
