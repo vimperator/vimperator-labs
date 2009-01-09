@@ -73,10 +73,10 @@ function Hints() //{{{
         t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
         w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Follow hint sequence in tabs",        hintSequenceElement),
-        O: Mode("Preselect hint in an :open query",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Preselect hint in a :tabopen query",  function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Preselect hint in a :winopen query",  function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        F: Mode("Open multiple hints in tabs",         hintAction_F),
+        O: Mode(":open URL based on hint location",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode(":tabopen URL based on hint location", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode(":winopen URL based on hint location", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
         v: Mode("View hint source",                    function (elem, loc) buffer.viewSource(loc, false),                    extended),
         V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
         y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
@@ -84,12 +84,11 @@ function Hints() //{{{
     };
 
     // Used to open multiple hints
-    function hintSequenceElement(elem)
+    function hintAction_F(elem)
     {
         buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
-        // Move to next element in sequence
-        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
+        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 
         // showing them again, or is this short flash actually needed as a "usability
         // feature"? --mst
         hints.show("F");
@@ -574,10 +573,12 @@ function Hints() //{{{
         "How links are matched",
         "string", "contains",
         {
-            completer: function (filter)
-            {
-                return [[m, ""] for each (m in ["contains", "wordstartswith", "firstletters", "custom"])];
-            },
+            completer: function (context) [
+                ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
+                ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
+                ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
+                ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
+            ],
             validator: Option.validateCompleter
         });
 
@@ -605,7 +606,7 @@ function Hints() //{{{
     // does. --tpp
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { options.getPref("browser.tabs.loadInBackground") ? hints.show("b") : hints.show("t"); });
+        function () { hints.show(options.getPref("browser.tabs.loadInBackground") ? "b" : "t"); });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",

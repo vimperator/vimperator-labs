@@ -792,9 +792,9 @@ function History() //{{{
         function (args) { history.list(args.join(" "), args.bang, args["-max"] || 1000); },
         {
             bang: true,
-            completer: function (context) { context.quote = null, completion.history(context); },
-            options: [[["-max", "-m"], options.OPTION_INT]]
+            completer: function (context) { context.quote = null; completion.history(context); },
             // completer: function (filter) completion.history(filter)
+            options: [[["-max", "-m"], options.OPTION_INT]]
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}

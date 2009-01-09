@@ -156,7 +156,7 @@ function Buffer() //{{{
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
-            completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
+            completer: function (context) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
             validator: Option.validateCompleter
         });
 
@@ -169,7 +169,7 @@ function Buffer() //{{{
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            completer: function (filter) [
+            completer: function (context) [
                 ["0", "Don't show link destination"],
                 ["1", "Show the link in the status line"],
                 ["2", "Show the link in the command line"]
@@ -355,8 +355,7 @@ function Buffer() //{{{
         function ()
         {
             liberator.open(util.readFromClipboard(),
-                /\bpaste\b/.test(options["activate"]) ?
-                liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
+                liberator[options.get("activate").has("paste") ? "NEW_BACKGROUND_TAB" : "NEW_TAB"]);
         });
 
     mappings.add(myModes, ["p", "<MiddleMouse>"],

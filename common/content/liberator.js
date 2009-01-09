@@ -153,7 +153,7 @@ const liberator = (function () //{{{
                         group.setter(value);
                     return value;
                 },
-                completer: function (filter)
+                completer: function (context)
                 {
                     let opts = [v.opts for ([k, v] in Iterator(groups))];
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);

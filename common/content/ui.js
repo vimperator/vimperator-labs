@@ -122,10 +122,11 @@ function CommandLine() //{{{
         },
 
         /**
-         * move up or (if backward) down in the history
+         * Move forward or backward in history.
          *
-         * @param {boolean} backward
-         * @param {boolean} matchCurrent XXX: what?
+         * @param {boolean} backward Direction to move.
+         * @param {boolean} matchCurrent Search for matches starting
+         *      with the current input value.
          */
         select: function (backward, matchCurrent)
         {
@@ -590,7 +591,7 @@ function CommandLine() //{{{
     var multilineCallback = null;
 
     /**
-     * @private - highlight the messageBox according to group
+     * Highlight the messageBox according to group.
      */
     function setHighlightGroup(group)
     {
@@ -598,7 +599,7 @@ function CommandLine() //{{{
     }
 
     /**
-     * @private - Determines whether the command line should be visible.
+     * Determines whether the command line should be visible.
      *
      * @return {boolean}
      */
@@ -606,7 +607,7 @@ function CommandLine() //{{{
             !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE));
 
     /**
-     * @private - set the prompt to val styled with highlightGroup
+     * Set the command-line prompt.
      *
      * @param {string} val
      * @param {string} highlightGroup
@@ -620,7 +621,8 @@ function CommandLine() //{{{
     }
 
     /**
-     * @private - set the command to cmd and move the user's cursor to the end.
+     * Set the command-line input value. The caret is reset to the
+     * end of the line.
      *
      * @param {string} cmd
      */
@@ -632,12 +634,12 @@ function CommandLine() //{{{
     }
 
     /**
-     * @private - display a message styled with highlightGroup
-     * and, if forceSingle is true, ensure it takes only one line.
+     * Display a message in the command-line area.
      *
      * @param {string} str
      * @param {string} highlightGroup
-     * @param {boolean} forceSingle
+     * @param {boolean} forceSingle If provided, don't let over-long
+     *     messages move to the MOW.
      */
     function echoLine(str, highlightGroup, forceSingle)
     {
@@ -655,13 +657,12 @@ function CommandLine() //{{{
     }
 
     /**
-     * Display a multiline message, possible through a "more" like interface
-     *
-     * TODO: resize upon a window resize
+     * Display a multiline message.
      *
      * @param {string} str
      * @param {string} highlightGroup
      */
+    // TODO: resize upon a window resize
     function echoMultiline(str, highlightGroup)
     {
         let doc = multilineOutputWidget.contentDocument;
@@ -707,7 +708,7 @@ function CommandLine() //{{{
     }
 
     /**
-     * @private - ensure that the Multiline input widget is the
+     * Ensure that the Multiline input widget is the
      * correct size.
      */
     function autosizeMultilineInputWidget()
@@ -718,14 +719,12 @@ function CommandLine() //{{{
     }
 
     /**
-     * @private - eval()s a javascript expression
-     * and returns a string suitable to be echo'd.
-     *
-     * If useColor is true, util.objectToString will
-     * colorize object output.
+     * eval() a JavaScript expression and return a string suitable
+     * to be echoed.
      *
      * @param {string} arg
-     * @param {boolean} useColor
+     * @param {boolean} useColor When true, the result is a
+     *     highlighted XML object.
      */
     function echoArgumentToString(arg, useColor)
     {
@@ -793,7 +792,7 @@ function CommandLine() //{{{
         "Items which are completed at the :[tab]open prompt",
         "charlist", "sfl",
         {
-            completer: function completer(filter) [k for each (k in completion.urlCompleters)],
+            completer: function (context) [k for each (k in completion.urlCompleters)],
             validator: Option.validateCompleter
         });
 
@@ -832,18 +831,15 @@ function CommandLine() //{{{
         "Define how command line completion works",
         "stringlist", "list:full",
         {
-            completer: function completer(filter)
-            {
-                return [
-                    // Why do we need ""?
-                    ["",              "Complete only the first match"],
-                    ["full",          "Complete the next full match"],
-                    ["longest",       "Complete to longest common string"],
-                    ["list",          "If more than one match, list all matches"],
-                    ["list:full",     "List all and complete first match"],
-                    ["list:longest",  "List all and complete common string"]
-                ];
-            },
+            completer: function (context) [
+                // Why do we need ""?
+                ["",              "Complete only the first match"],
+                ["full",          "Complete the next full match"],
+                ["longest",       "Complete to longest common string"],
+                ["list",          "If more than one match, list all matches"],
+                ["list:full",     "List all and complete first match"],
+                ["list:longest",  "List all and complete common string"]
+            ],
             validator: Option.validateCompleter,
             checkHas: function (value, val)
             {
@@ -995,9 +991,6 @@ function CommandLine() //{{{
                 storage.styles.removeSheet(true, "silent-mode");
         },
 
-        /**
-         * XXX: This function is not used!
-         */
         runSilently: function (fn, self)
         {
             let wasSilent = this.silent;
@@ -1026,14 +1019,14 @@ function CommandLine() //{{{
         get message() messageBox.value,
 
         /**
-         * Changes the command line to display the following prompt (usually ":")
-         * followed by the command, in the given mode. Valid modes are
-         * attributes of the "modes" variable, and modes.EX is probably
-         * a good choice.
+         * Open the command line. The main mode is set to
+         * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
+         * Further, callbacks defined for <b>extendedMode</b> are
+         * triggered as appropriate (see {@link Liberator#registerCallback}).
          *
          * @param {string} prompt
          * @param {string} cmd
-         * @param {number} mode
+         * @param {number} extendedMode
          */
         open: function open(prompt, cmd, extendedMode)
         {
@@ -1060,9 +1053,10 @@ function CommandLine() //{{{
         },
 
         /**
-         * Removes any input from the command line, without executing its
-         * contents. Removes any "More" windows or other such output.
-         * Pressing <ESC> in EX mode normally has this effect.
+         * Closes the command line. This is ordinarilly triggered
+         * automatically by a mode change. Will not hide the command
+         * line immediately if called directly after a successful
+         * command, otherwise it will.
          */
         close: function close()
         {
@@ -1099,7 +1093,8 @@ function CommandLine() //{{{
 
 
         /**
-         * Hide any auto-completion/More-ing that is happening.
+         * Hides the command line, and shows any status messages that
+         * are under it.
          */
         hide: function hide()
         {
@@ -1107,19 +1102,24 @@ function CommandLine() //{{{
         },
 
         /**
-         * Output the given string onto the command line coloured
-         * using the rules according to highlightGroup. If not
-         * given higlightGroup defaults to commandline.HL_NORMAL
-         * and other possibe values are at commandline.HL_[A-Z]*.
-         *
-         * Flags can be any of:
-         *   commandline.APPEND_TO_MESSAGES (causes message to be added to the messagesHistory)
-         *   commandline.FORCE_SINGLELINE | commandline.DISALLOW_MULTILINE
-         *   commandline.FORCE_MULTILINE
+         * Output the given string onto the command line. With no
+         * flags, the message will be shown in the status line if it's
+         * short enough to fit, and contains no new lines, and isn't
+         * XML. Otherwise, it will be shown in the MOW.
          *
          * @param {string} str
-         * @param {string} highlightGroup
-         * @param {number} flags
+         * @param {string} highlightGroup The Highlight group for the
+         *     message. @default "Normal"
+         * @param {number} flags Changes the bahavior as follows:
+         *   commandline.APPEND_TO_MESSAGES - Causes message to be added to the messages
+         *          history, and shown by :messages.
+         *   commandline.FORCE_SINGLELINE   - Forbids the command from
+         *          being pushed to the MOW if it's too long or of
+         *          there are already status messages being shown.
+         *   commandline.DISALLOW_MULTILINE - Cancels the operation if
+         *          the MOW is already visible.
+         *   commandline.FORCE_MULTILINE    - Forces the message to
+         *          appear in the MOW.
          */
         echo: function echo(str, highlightGroup, flags)
         {
@@ -1169,21 +1169,15 @@ function CommandLine() //{{{
         },
 
         /**
-         * Prompt the user for a string and execute the given
-         * callback with that as the only argument on <CR>
-         * extra can have any of the following attributes:
+         * Prompt the user. Sets modes.main to COMMAND_LINE, which the
+         * user may pop at any time to close the prompt.
          *
-         *     onChange: A function to be called with the current input every time it changes
-         *     completer: A function called with a ?context? when the user tries to tabcomplete
-         *     promptHighlight: The HighlightGroup to use (default commandline.HL_QUESTION, others
-         *                      can be found at commandline.HL_[A-Z]*)
-         *
-         * This function sets the mode to modes.COMMAND_LINE, and thus popping the mode will
-         * stop further input from being waited for (useful for stopping onChange)
-         *
-         * @param {string} prompt
+         * @param {string} prompt The input prompt to use.
          * @param {function(string)} callback
-         * @param {Object} extra
+         * @param {object} extra
+         * @... {function} onChange - A function to be called with the current input every time it changes
+         * @... {function(CompletionContext)} completer - A completion function for the user's input.
+         * @... {string} promptHighlight - The HighlightGroup used for the prompt. @default "Question"
          */
         input: function input(prompt, callback, extra)
         {
@@ -1212,6 +1206,7 @@ function CommandLine() //{{{
          * @param {RegExp} untilRegexp
          * @param {function(string)} callbackFunc
          */
+        // FIXME: Buggy, especially when pasting. Shouldn't use a RegExp.
         inputMultiline: function inputMultiline(untilRegexp, callbackFunc)
         {
             // Kludge.
@@ -1232,11 +1227,13 @@ function CommandLine() //{{{
         },
 
         /**
-         * Handle events, the come from liberator when liberator.mode = modes.COMMAND_LINE
-         * but also takes blur/focus/input events raw from #liberator-commandline-command
-         * in the XUL
+         * Handles all command line events. All key events are passed
+         * here when COMMAND_LINE mode is active, as well as all
+         * input, keyup, focus, and blur events sent to the
+         * command-line XUL element.
          *
          * @param {Event} event
+         * @private
          */
         onEvent: function onEvent(event)
         {
@@ -1970,14 +1967,11 @@ function StatusLine() //{{{
 
                 return value;
             },
-            completer: function completer(filter)
-            {
-                return [
-                    ["0", "Never display status line"],
-                    ["1", "Display status line only if there are multiple windows"],
-                    ["2", "Always display status line"]
-                ];
-            },
+            completer: function completer(context) [
+                ["0", "Never display status line"],
+                ["1", "Display status line only if there are multiple windows"],
+                ["2", "Always display status line"]
+            ],
             validator: Option.validateCompleter
         });
 
