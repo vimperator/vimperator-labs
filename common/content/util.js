@@ -296,8 +296,8 @@ const util = { //{{{
     /**
      * Generates an Asciidoc help entry.
      *
-     * @param {Object} obj A liberator <b>Command</b>, <b>Mapping</b> or
-     *     <b>Option</b> object
+     * @param {Command|Mapping|Option} obj A liberator <b>Command</b>,
+     *     <b>Mapping</b> or <b>Option</b> object
      * @param {string} extraHelp Extra help text beyond the description.
      * @returns {string}
      */
@@ -360,7 +360,7 @@ const util = { //{{{
      *
      * @param {string} url
      * @param {function} callback
-     * @returns {Object}
+     * @returns {XMLHttpRequest}
      */
     httpGet: function httpGet(url, callback)
     {
@@ -426,10 +426,10 @@ const util = { //{{{
     },
 
     /**
-     * Converts a URI string into an URI object.
+     * Converts a URI string into a URI object.
      *
      * @param {string} uri
-     * @returns {Object}
+     * @returns {nsIURI}
      */
     // FIXME: createURI needed too?
     newURI: function (uri)
@@ -663,7 +663,8 @@ const util = { //{{{
      *
      * @param {Node} node
      * @param {Document} doc
-     * @param {Object} nodes
+     * @param {Object} nodes If present, nodes with the "key" attribute are
+     *     stored here, keyed to the value thereof.
      * @returns {Node}
      */
     xmlToDom: function xmlToDom(node, doc, nodes)

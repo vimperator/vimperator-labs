@@ -434,7 +434,7 @@ function CommandLine() //{{{
             this.itemList.selectItem(idx);
         },
 
-        ntab: 0,
+        tabs: [],
 
         tab: function tab(reverse)
         {
@@ -443,12 +443,13 @@ function CommandLine() //{{{
             if (this.context.waitingForTab || this.wildIndex == -1)
                 this.complete(true, true);
 
-            this.ntab++;
+            this.tabs.push(reverse);
             if (this.waiting)
                 return;
 
-            while (this.ntab--)
+            while (this.tabs.length)
             {
+                reverse = this.tabs.pop();
                 switch (this.wildtype.replace(/.*:/, ""))
                 {
                     case "":

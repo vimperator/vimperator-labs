@@ -847,7 +847,7 @@ function Buffer() //{{{
         },
 
         /**
-         * @property {Object} The last focused input field in the buffer. Used
+         * @property {Node} The last focused input field in the buffer. Used
          *     by the "gi" key binding.
          */
         get lastInputField()
@@ -1148,7 +1148,7 @@ function Buffer() //{{{
         },
 
         /**
-         * @property {Object} The current document's selection controller.
+         * @property {nsISelectionController} The current document's selection controller.
          */
         get selectionController() getBrowser().docShell
                 .QueryInterface(Ci.nsIInterfaceRequestor)
@@ -1158,7 +1158,7 @@ function Buffer() //{{{
         /**
          * Saves a page link to disk.
          *
-         * @param {Object} elem The page link to save.
+         * @param {HTMLAnchorElement} elem The page link to save.
          * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog
          */
         saveLink: function (elem, skipPrompt)
@@ -1371,7 +1371,7 @@ function Buffer() //{{{
         /**
          * Displays information about the specified element.
          *
-         * @param {Object} elem
+         * @param {Node} elem
          */
         showElementInfo: function (elem)
         {
