@@ -426,6 +426,8 @@ function CommandLine() //{{{
                 // a previous context come in.
                 if (idx < 0)
                     idx = this.items.length - 1;
+                if (this.items.length == 0)
+                    return;
 
                 this.selected = idx;
                 this.completion = this.items[idx].text;
@@ -449,7 +451,7 @@ function CommandLine() //{{{
 
             while (this.tabs.length)
             {
-                reverse = this.tabs.pop();
+                reverse = this.tabs.shift();
                 switch (this.wildtype.replace(/.*:/, ""))
                 {
                     case "":
