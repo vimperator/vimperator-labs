@@ -23,6 +23,11 @@ BUGS:
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
   plugin or a vimp issue.
 - completions does not beep anymore when none are available, try :jljlkjlkj<tab> 
+- visual caret mode is broken, requires a manual page focus first anyway or
+  else it chucks, I haven't investigated --djk
+- messages is still broken in several ways - needs testing.
+  => :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
+  => it often overwrites the open command-line while editing etc.
 
 FEATURES:
 9 finish :help TODOs
