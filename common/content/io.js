@@ -1041,27 +1041,27 @@ lookup:
 
             function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
 
-            return this.withTempFiles(function (stdin, stdout, stderr, cmd) {
+            return this.withTempFiles(function (stdin, stdout, cmd) {
                 if (input)
                     this.writeFile(stdin, input);
 
+                // TODO: implement 'shellredir'
                 if (WINDOWS)
                 {
-                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path + " < " + stdin.path;
+                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
                     var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
                 }
                 else
                 {
 
                     this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
-                            ["exec", ">" + escape(stdout.path), "2>" + escape(stderr.path), "<" + escape(stdin.path),
+                            ["exec", ">" + escape(stdout.path), "2>&1", "<" + escape(stdin.path),
                              escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
                     res = this.run("/bin/sh", ["-e", cmd.path], true);
                 }
 
-                // FIXME: Is this really right? Shouldn't we always show both?
                 if (res > 0)
-                    var output = self.readFile(stderr) + "\nshell returned " + res;
+                    var output = self.readFile(stdout) + "\nshell returned " + res;
                 else
                     output = self.readFile(stdout);
 
