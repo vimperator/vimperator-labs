@@ -358,7 +358,7 @@ function Commands() //{{{
 
             let str = args.literalArg;
             if (str)
-                res.push(/\n/.test(str) ? "<<EOF\n" + str + "EOF" : str);
+                res.push(/\n/.test(str) ? "<<EOF\n" + str.replace(/\n$/, "") + "\nEOF" : str);
             return res.join(" ");
         },
 
