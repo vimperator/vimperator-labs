@@ -1432,6 +1432,7 @@ function Completion() //{{{
         dialog: function dialog(context)
         {
             context.title = ["Dialog"];
+            context.anchored = false;
             context.completions = config.dialogs;
         },
 
