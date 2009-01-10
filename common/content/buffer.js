@@ -1159,7 +1159,7 @@ function Buffer() //{{{
          * Saves a page link to disk.
          *
          * @param {HTMLAnchorElement} elem The page link to save.
-         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog
+         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog.
          */
         saveLink: function (elem, skipPrompt)
         {

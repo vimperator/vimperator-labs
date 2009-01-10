@@ -80,6 +80,7 @@ We try to be quite consistent, but of course, that's not always possible.
   Right: if (HACK) // TODO: remove hack
   Wrong: if (HACK) /* TODO: remove hack */
   Documentation comment blocks use /** ... */
+  Wrap comment documentation comment lines at 80 characters.
 
 * Only wrap lines if it makes the code obviously clearer. Lines longer than 132
   characters should probably be broken up rather than wrapped anyway.

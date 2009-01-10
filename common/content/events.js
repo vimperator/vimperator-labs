@@ -189,8 +189,8 @@ function AutoCommands() //{{{
          *
          * @param {Array} events The array of event names for which this
          *     autocommand should be executed.
-         * @param {string} regex The URL pattern to match against the buffer URL
-         * @param {string} cmd The Ex command to run
+         * @param {string} regex The URL pattern to match against the buffer URL.
+         * @param {string} cmd The Ex command to run.
          */
         add: function (events, regex, cmd)
         {

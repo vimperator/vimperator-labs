@@ -150,7 +150,7 @@ Command.prototype = {
      * @param {number} count @deprecated Whether this command was
      *     executed with a leading count.
      * @param modifiers Any modifiers to be passed to
-     *     {@link action}
+     *     {@link #action}.
      */
     execute: function (args, bang, count, modifiers)
     {

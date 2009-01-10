@@ -359,7 +359,7 @@ const util = { //{{{
      * argument.
      *
      * @param {string} url
-     * @param {function} callback
+     * @param {function(XMLHttpRequest)} callback
      * @returns {XMLHttpRequest}
      */
     httpGet: function httpGet(url, callback)

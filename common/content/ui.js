@@ -29,10 +29,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
 /** @scope modules */
 
 /**
- * This class is used for prompting of user input and echoing of messages
+ * This class is used for prompting of user input and echoing of messages.
  *
- * it consists of a prompt and command field
- * be sure to only create objects of this class when the chrome is ready
+ * It consists of a prompt and command field be sure to only create objects of
+ * this class when the chrome is ready.
  */
 function CommandLine() //{{{
 {
@@ -76,7 +76,7 @@ function CommandLine() //{{{
     var lastEcho = null;
 
     /**
-     * A class for managing the history of an inputField
+     * A class for managing the history of an inputField.
      *
      * @param {Object} inputField
      * @param {string} mode
@@ -99,7 +99,7 @@ function CommandLine() //{{{
             this.index = null;
         },
         /**
-         * Permanently save the history
+         * Permanently save the history.
          */
         save: function ()
         {
@@ -111,7 +111,7 @@ function CommandLine() //{{{
             this.store.truncate(options["history"], true);
         },
         /**
-         * Set the current match to val
+         * Set the current match to val.
          *
          * @param {string} val
          */
@@ -177,7 +177,7 @@ function CommandLine() //{{{
     };
 
     /**
-     * A class for tab completions on an input field
+     * A class for tab completions on an input field.
      *
      * @param {Object} input
      */
@@ -597,7 +597,7 @@ function CommandLine() //{{{
     var multilineCallback = null;
 
     /**
-     * Highlight the messageBox according to group.
+     * Highlight the messageBox according to <b>group</b>.
      */
     function setHighlightGroup(group)
     {
@@ -605,7 +605,7 @@ function CommandLine() //{{{
     }
 
     /**
-     * Determines whether the command line should be visible.
+     * Determines whether the command-line should be visible.
      *
      * @return {boolean}
      */
@@ -714,8 +714,7 @@ function CommandLine() //{{{
     }
 
     /**
-     * Ensure that the Multiline input widget is the
-     * correct size.
+     * Ensure that the multiline input widget is the correct size.
      */
     function autosizeMultilineInputWidget()
     {
@@ -1027,7 +1026,7 @@ function CommandLine() //{{{
         get message() messageBox.value,
 
         /**
-         * Open the command line. The main mode is set to
+         * Open the command-line. The main mode is set to
          * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
          * Further, callbacks defined for <b>extendedMode</b> are
          * triggered as appropriate (see {@link Liberator#registerCallback}).
@@ -1061,10 +1060,9 @@ function CommandLine() //{{{
         },
 
         /**
-         * Closes the command line. This is ordinarilly triggered
-         * automatically by a mode change. Will not hide the command
-         * line immediately if called directly after a successful
-         * command, otherwise it will.
+         * Closes the command-line. This is ordinarily triggered automatically
+         * by a mode change. Will not hide the command-line immediately if
+         * called directly after a successful command, otherwise it will.
          */
         close: function close()
         {
@@ -1101,7 +1099,7 @@ function CommandLine() //{{{
 
 
         /**
-         * Hides the command line, and shows any status messages that
+         * Hides the command-line, and shows any status messages that
          * are under it.
          */
         hide: function hide()
@@ -1110,24 +1108,24 @@ function CommandLine() //{{{
         },
 
         /**
-         * Output the given string onto the command line. With no
-         * flags, the message will be shown in the status line if it's
-         * short enough to fit, and contains no new lines, and isn't
-         * XML. Otherwise, it will be shown in the MOW.
+         * Output the given string onto the command-line. With no flags, the
+         * message will be shown in the status line if it's short enough to
+         * fit, and contains no new lines, and isn't XML. Otherwise, it will be
+         * shown in the MOW.
          *
          * @param {string} str
          * @param {string} highlightGroup The Highlight group for the
          *     message. @default "Normal"
-         * @param {number} flags Changes the bahavior as follows:
-         *   commandline.APPEND_TO_MESSAGES - Causes message to be added to the messages
-         *          history, and shown by :messages.
-         *   commandline.FORCE_SINGLELINE   - Forbids the command from
-         *          being pushed to the MOW if it's too long or of
-         *          there are already status messages being shown.
-         *   commandline.DISALLOW_MULTILINE - Cancels the operation if
-         *          the MOW is already visible.
-         *   commandline.FORCE_MULTILINE    - Forces the message to
-         *          appear in the MOW.
+         * @param {number} flags Changes the behavior as follows:
+         *   commandline.APPEND_TO_MESSAGES - Causes message to be added to the
+         *          messages history, and shown by :messages.
+         *   commandline.FORCE_SINGLELINE   - Forbids the command from being
+         *          pushed to the MOW if it's too long or of there are already
+         *          status messages being shown.
+         *   commandline.DISALLOW_MULTILINE - Cancels the operation if the MOW
+         *          is already visible.
+         *   commandline.FORCE_MULTILINE    - Forces the message to appear in
+         *          the MOW.
          */
         echo: function echo(str, highlightGroup, flags)
         {
@@ -1177,15 +1175,18 @@ function CommandLine() //{{{
         },
 
         /**
-         * Prompt the user. Sets modes.main to COMMAND_LINE, which the
-         * user may pop at any time to close the prompt.
+         * Prompt the user. Sets modes.main to COMMAND_LINE, which the user may
+         * pop at any time to close the prompt.
          *
          * @param {string} prompt The input prompt to use.
          * @param {function(string)} callback
          * @param {object} extra
-         * @... {function} onChange - A function to be called with the current input every time it changes
-         * @... {function(CompletionContext)} completer - A completion function for the user's input.
-         * @... {string} promptHighlight - The HighlightGroup used for the prompt. @default "Question"
+         * @... {function} onChange - A function to be called with the current
+         *     input every time it changes.
+         * @... {function(CompletionContext)} completer - A completion function
+         *     for the user's input.
+         * @... {string} promptHighlight - The HighlightGroup used for the
+         *     prompt. @default "Question"
          */
         input: function input(prompt, callback, extra)
         {
@@ -1207,9 +1208,9 @@ function CommandLine() //{{{
         },
 
         /**
-         * Get a multiline input from a user, up to but not including
-         * the line which matches the given regular expression. Then
-         * execute the callback with that string as a parameter.
+         * Get a multiline input from a user, up to but not including the line
+         * which matches the given regular expression. Then execute the
+         * callback with that string as a parameter.
          *
          * @param {RegExp} untilRegexp
          * @param {function(string)} callbackFunc
@@ -1235,10 +1236,9 @@ function CommandLine() //{{{
         },
 
         /**
-         * Handles all command line events. All key events are passed
-         * here when COMMAND_LINE mode is active, as well as all
-         * input, keyup, focus, and blur events sent to the
-         * command-line XUL element.
+         * Handles all command-line events. All key events are passed here when
+         * COMMAND_LINE mode is active, as well as all input, keyup, focus, and
+         * blur events sent to the command-line XUL element.
          *
          * @param {Event} event
          * @private
@@ -1377,9 +1377,9 @@ function CommandLine() //{{{
         },
 
         /**
-         * Handle events when we are in multiline output mode,
-         * these come from liberator when modes.extended & modes.MULTILINE_OUTPUT
-         * and also from #liberator-multiline-output in the XUL
+         * Handle events when we are in multiline output mode, these come from
+         * liberator when modes.extended & modes.MULTILINE_OUTPUT and also from
+         * #liberator-multiline-output in the XUL.
          *
          * @param {Event} event
          */
@@ -1595,13 +1595,12 @@ function CommandLine() //{{{
         },
 
         /**
-         * Update or remove the multiline output widget's "MORE"
-         * prompt.
+         * Update or remove the multiline output widget's "MORE" prompt.
          *
-         * @param {boolean} force If true, "-- More --" is shown
-         *     even if we're at the end of the output.
-         * @param {boolean} showHelp When true, show the valid key
-         *     sequences and what they do.
+         * @param {boolean} force If true, "-- More --" is shown even if we're
+         *     at the end of the output.
+         * @param {boolean} showHelp When true, show the valid key sequences
+         *     and what they do.
          */
         updateMorePrompt: function updateMorePrompt(force, showHelp)
         {
@@ -1621,11 +1620,11 @@ function CommandLine() //{{{
         },
 
         /**
-         * Changes the height of the multilineOutputWidget to fit in
-         * the available space.
+         * Changes the height of the multilineOutputWidget to fit in the
+         * available space.
          *
-         * @param {boolean} open If true, the widget will be opened if
-         *     it's not already so.
+         * @param {boolean} open If true, the widget will be opened if it's not
+         *     already so.
          */
         updateOutputHeight: function updateOutputHeight(open)
         {
@@ -1665,12 +1664,12 @@ function CommandLine() //{{{
 }; //}}}
 
 /**
- * The list which is used for the completion box (and QuickFix window
- * in future).
+ * The list which is used for the completion box (and QuickFix window in
+ * future).
  *
- * @param {string} id The id of the <iframe> which will display the
- *     list. It must be in its own container element, whose height it
- *     will update as necessary.
+ * @param {string} id The id of the <iframe> which will display the list. It
+ *     must be in its own container element, whose height it will update as
+ *     necessary.
  */
 function ItemList(id) //{{{
 {
@@ -1764,10 +1763,10 @@ function ItemList(id) //{{{
     }
 
     /**
-     * Uses the entries in "items" to fill the listbox and
-     * does incremental filling to speed up things.
+     * Uses the entries in "items" to fill the listbox and does incremental
+     * filling to speed up things.
      *
-     * @param {number} offset Start at this index and show maxItems
+     * @param {number} offset Start at this index and show maxItems.
      */
     function fill(offset)
     {
@@ -1985,7 +1984,7 @@ function StatusLine() //{{{
     return {
 
         /**
-         * Update the status bar to indicate how secure the website is
+         * Update the status bar to indicate how secure the website is:
          * secure -   Secure connection with valid certificate.
          * broken -   Secure connection with invalid certificate, or
          *            mixed content.
@@ -2015,10 +2014,10 @@ function StatusLine() //{{{
         },
 
         /**
-         * Update the URL displayed in the status line. Also displays
-         * status icons, [+-♥], when there are next and previous pages
-         * in the current tab's history, and when the current URL is
-         * bookmarked, respectively.
+         * Update the URL displayed in the status line. Also displays status
+         * icons, [+-♥], when there are next and previous pages in the
+         * current tab's history, and when the current URL is bookmarked,
+         * respectively.
          *
          * @param {string} url The URL to display. @default buffer.URL
          */
@@ -2065,10 +2064,10 @@ function StatusLine() //{{{
         },
 
         /**
-         * Set the contents of the status line's input buffer to the
-         * given string. Used primarilly when a key press requires
-         * further input before being processed, including mapping
-         * counts and arguments, along with multi-key mappings.
+         * Set the contents of the status line's input buffer to the given
+         * string. Used primarily when a key press requires further input
+         * before being processed, including mapping counts and arguments,
+         * along with multi-key mappings.
          *
          * @param {string} buffer
          */
@@ -2083,8 +2082,7 @@ function StatusLine() //{{{
         /**
          * Update the page load progress bar.
          *
-         * @param {string|number} progress The current progress, as
-         *    follows:
+         * @param {string|number} progress The current progress, as follows:
          *    A string          - Displayed literally.
          *    A ratio 0 < n < 1 - Displayed as a progress bar.
          *    A number n <= 0   - Displayed as a "Loading" message.
@@ -2149,8 +2147,8 @@ function StatusLine() //{{{
         },
 
         /**
-         * Display the main content's vertical scroll position in the
-         * status bar.
+         * Display the main content's vertical scroll position in the status
+         * bar.
          *
          * @param {number} percent The position, as a percentage. @optional
          */

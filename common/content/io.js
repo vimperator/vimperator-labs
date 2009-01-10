@@ -55,6 +55,7 @@ Script.prototype = plugins;
 
 // TODO: why are we passing around strings rather than file objects?
 /**
+ * Provides a basic interface to common system I/O operations.
  * @instance io
  */
 function IO() //{{{
@@ -394,23 +395,99 @@ function IO() //{{{
 
     const self = {
 
+        /**
+         * @property {number} Open for reading only.
+         * @final
+         */
         MODE_RDONLY: 0x01,
+
+        /**
+         * @property {number} Open for writing only.
+         * @final
+         */
         MODE_WRONLY: 0x02,
+
+        /**
+         * @property {number} Open for reading and writing.
+         * @final
+         */
         MODE_RDWR: 0x04,
+
+        /**
+         * @property {number} If the file does not exist, the file is created.
+         *     If the file exists, this flag has no effect.
+         * @final
+         */
         MODE_CREATE: 0x08,
+
+        /**
+         * @property {number} The file pointer is set to the end of the file
+         *     prior to each write.
+         * @final
+         */
         MODE_APPEND: 0x10,
+
+        /**
+         * @property {number} If the file exists, its length is truncated to 0.
+         * @final
+         */
         MODE_TRUNCATE: 0x20,
+
+        /**
+         * @property {number} If set, each write will wait for both the file
+         *     data and file status to be physically updated.
+         * @final
+         */
         MODE_SYNC: 0x40,
+
+        /**
+         * @property {number} With MODE_CREATE, if the file does not exist, the
+         *     file is created. If the file already exists, no action and NULL
+         *     is returned.
+         * @final
+         */
         MODE_EXCL: 0x80,
 
+        /**
+         * @property {Object} The current file sourcing context. As a file is
+         *     being sourced the 'file' and 'line' properties of this context
+         *     object are updated appropriately.
+         */
         sourcing: null,
 
+        /**
+         * @property {string} The OS's path separator.
+         */
         pathSeparator: WINDOWS ? "\\" : "/",
 
+        /**
+         * Expands "~" and environment variables in <b>path</b>.
+         *
+         * "~" is expanded to to the value of $HOME. On Windows if this is not
+         * set then the following are tried in order:
+         *   $USERPROFILE
+         *   ${HOMDRIVE}$HOMEPATH
+         *
+         * The variable notation is $VAR (terminated by a non-word character)
+         * or ${VAR}. %VAR% is also supported on Windows.
+         *
+         * @param {string} path The unexpanded path string.
+         * @param {boolean} relative Whether the path is relative or absolute.
+         * @returns {string}
+         */
         expandPath: IO.expandPath,
 
         // TODO: there seems to be no way, short of a new component, to change
         // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
+        /**
+         * Returns the current working directory.
+         *
+         * It's not possible to change the real CWD of Firefox so this state is
+         * maintained internally. External commands run via {@link #system} are
+         * executed in this directory.
+         *
+         * @returns {nsIFile}
+         */
         getCurrentDirectory: function ()
         {
             let dir = self.getFile(cwd.path);
@@ -423,17 +500,23 @@ function IO() //{{{
                 return processDir;
         },
 
-        setCurrentDirectory: function (newdir)
+        /**
+         * Sets the current working directory.
+         *
+         * @param {string} newDir The new CWD. This may be a relative or
+         *     absolute path and is expanded by (@link #expandPath).
+         */
+        setCurrentDirectory: function (newDir)
         {
-            newdir = newdir || "~";
+            newDir = newDir || "~";
 
-            if (newdir == "-")
+            if (newDir == "-")
             {
                 [cwd, oldcwd] = [oldcwd, this.getCurrentDirectory()];
             }
             else
             {
-                let dir = self.getFile(newdir);
+                let dir = self.getFile(newDir);
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
@@ -447,16 +530,28 @@ function IO() //{{{
             return self.getCurrentDirectory();
         },
 
-        getRuntimeDirectories: function (specialDirectory)
+        /**
+         * Returns all directories named <b>name<b/> in 'runtimepath'.
+         *
+         * @param {string} name
+         * @returns {nsIFile[])
+         */
+        getRuntimeDirectories: function (name)
         {
             let dirs = getPathsFromPathList(options["runtimepath"]);
 
-            dirs = dirs.map(function (dir) joinPaths(dir, specialDirectory))
+            dirs = dirs.map(function (dir) joinPaths(dir, name))
                        .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
 
             return dirs;
         },
 
+        /**
+         * Returns the first user RC file found in <b>dir</b>.
+         *
+         * @param {string} dir The directory to search.
+         * @default $HOME.
+         */
         getRCFile: function (dir)
         {
             dir = dir || "~";
@@ -478,6 +573,14 @@ function IO() //{{{
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
         // caller must check with .exists() if the returned file really exists
         // also expands relative paths
+        /**
+         * Returns an nsIFile object for <b>path</b>, which is expanded
+         * according to {@link #expandPath}.
+         *
+         * @param {string} path The path used to create the file object.
+         * @param {boolean} noCheckPWD Whether to allow a relative path.
+         * @returns {nsIFile}
+         */
         getFile: function (path, noCheckPWD)
         {
             let file = services.create("file");
@@ -501,7 +604,11 @@ function IO() //{{{
         },
 
         // TODO: make secure
-        // returns a nsILocalFile or null if it could not be created
+        /**
+         * Creates a temporary file.
+         *
+         * @returns {nsIFile}
+         */
         createTempFile: function ()
         {
             let tmpName = EXTENSION_NAME + ".tmp";
@@ -532,17 +639,25 @@ function IO() //{{{
 
         },
 
-        // file is either a full pathname or an instance of file instanceof nsILocalFile
-        readDirectory: function (file, sort)
+        /**
+         * Returns the list of files in <b>dir</b>.
+         *
+         * @param {nsIFile|string} dir The directory to read, either a full
+         *     pathname or an instance of nsIFile.
+         * @param {boolean} sort Whether to sort the returned directory
+         *     entries.
+         * @returns {nsIFile[]}
+         */
+        readDirectory: function (dir, sort)
         {
-            if (typeof file == "string")
-                file = self.getFile(file);
-            else if (!(file instanceof Ci.nsILocalFile))
+            if (typeof dir == "string")
+                dir = self.getFile(dir);
+            else if (!(dir instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
-            if (file.isDirectory())
+            if (dir.isDirectory())
             {
-                let entries = file.directoryEntries;
+                let entries = dir.directoryEntries;
                 let array = [];
                 while (entries.hasMoreElements())
                 {
@@ -558,8 +673,13 @@ function IO() //{{{
                            //  Yes --djk
         },
 
-        // file is either a full pathname or an instance of file instanceof nsILocalFile
-        // reads a file in "text" mode and returns the string
+        /**
+         * Reads a file in "text" mode and returns the content as a string.
+         *
+         * @param {nsIFile|string} file The file to read, either a full
+         *     pathname or an instance of nsIFile.
+         * @returns {string}
+         */
         readFile: function (file)
         {
             let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
@@ -585,9 +705,30 @@ function IO() //{{{
             return buffer;
         },
 
-        // file is either a full pathname or an instance of file instanceof nsILocalFile
-        // default permission = 0644, only used when creating a new file, does not change permissions if the file exists
-        // mode can be ">" or ">>" in addition to the normal MODE_* flags
+        /**
+         * Writes the string <b>buf</b> to a file.
+         *
+         * @param {nsIFile|string} file The file to write, either a full
+         *     pathname or an instance of nsIFile.
+         * @param {string} buf The file content.
+         * @param {string|number} mode The file access mode, a bitwise OR of
+         *     the following flags:
+         *       (@link #MODE_RDONLY):   0x01
+         *       (@link #MODE_WRONLY):   0x02
+         *       (@link #MODE_RDWR):     0x04
+         *       (@link #MODE_CREATE):   0x08
+         *       (@link #MODE_APPEND):   0x10
+         *       (@link #MODE_TRUNCATE): 0x20
+         *       (@link #MODE_SYNC):     0x40
+         *     Alternatively, the following abbreviations may be used:
+         *       ">"  is equivalent to (@link #MODE_WRONLY) | (@link #MODE_CREATE) | (@link #MODE_TRUNCATE)
+         *       ">>" is equivalent to (@link #MODE_WRONLY) | (@link #MODE_CREATE) | (@link #MODE_APPEND)
+         * @default ">"
+         * @param {number} perms The file mode bits of the created file. This
+         *     is only used when creating a new file and does not change
+         *     permissions if the file exists.
+         * @default 0644 
+         */
         writeFile: function (file, buf, mode, perms)
         {
             let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
@@ -615,6 +756,13 @@ function IO() //{{{
             ofstream.close();
         },
 
+        /**
+         * Runs an external program.
+         *
+         * @param {string} program The program to run.
+         * @param {string[]} args An array of arguments to pass to <b>program</b>.
+         * @param {boolean} blocking Whether to wait until the process terminates.
+         */
         run: function (program, args, blocking)
         {
             args = args || [];
@@ -673,47 +821,17 @@ lookup:
             return process.exitValue;
         },
 
-        // when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is fixed
-        // is fixed, should use that instead of a tmpfile
-        system: function (command, input)
-        {
-            liberator.echomsg("Calling shell to execute: " + command, 4);
-
-            function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
-
-            return this.withTempFiles(function (stdin, stdout, stderr, cmd) {
-
-                if (input)
-                    this.writeFile(stdin, input);
-
-                if (WINDOWS)
-                {
-                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path + " < " + stdin.path;
-                    var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
-                }
-                else
-                {
-
-                    this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
-                            ["exec", ">" + escape(stdout.path), "2>" + escape(stderr.path), "<" + escape(stdin.path),
-                             escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
-                    res = this.run("/bin/sh", ["-e", cmd.path], true);
-                }
-
-                if (res > 0) // FIXME: Is this really right? Shouldn't we always show both?
-                    var output = self.readFile(stderr) + "\nshell returned " + res;
-                else
-                    output = self.readFile(stdout);
-
-                // if there is only one \n at the end, chop it off
-                if (output && output.indexOf("\n") == output.length - 1)
-                    output = output.substr(0, output.length - 1);
-
-                return output;
-            }) || "";
-        },
-
         // FIXME: multiple paths?
+        /**
+         * Sources files found in 'runtimepath'. For each relative path in
+         * <b>paths</b> each directory in 'runtimepath' is searched and if a
+         * matching file is found it is sourced. Only the first file found (per
+         * specified path) is sourced unless <b>all</b> is specified, then
+         * all found files are sourced.
+         *
+         * @param {string[]} paths An array of relative paths to source.
+         * @param {boolean} all Whether all found files should be sourced.
+         */
         sourceFromRuntimePath: function (paths, all)
         {
             let dirs = getPathsFromPathList(options["runtimepath"]);
@@ -748,8 +866,12 @@ lookup:
             return found;
         },
 
-        // files which end in .js are sourced as pure JavaScript files,
-        // no need (actually forbidden) to add: js <<EOF ... EOF around those files
+        /**
+         * Reads Ex commands, JavaScript or CSS from <b>filename</b>.
+         *
+         * @param {string} filename The name of the file to source.
+         * @param {boolean} silent Whether errors should be reported.
+         */
         source: function (filename, silent)
         {
             let wasSourcing = self.sourcing;
@@ -903,11 +1025,68 @@ lookup:
             }
         },
 
+        // TODO: when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is
+        // fixed is fixed, should use that instead of a tmpfile
+        /**
+         * Runs <b>command</b> in a subshell and returns the output in a
+         * string. The shell used is that specified by the 'shell' option.
+         *
+         * @param {string} command The command to run.
+         * @param {string} input Any input to be provided to the command on stdin.
+         * @returns {string}
+         */
+        system: function (command, input)
+        {
+            liberator.echomsg("Calling shell to execute: " + command, 4);
+
+            function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
+
+            return this.withTempFiles(function (stdin, stdout, stderr, cmd) {
+                if (input)
+                    this.writeFile(stdin, input);
+
+                if (WINDOWS)
+                {
+                    command = "cd /D " + cwd.path + " && " + command + " > " + stdout.path + " 2> " + stderr.path + " < " + stdin.path;
+                    var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
+                }
+                else
+                {
+
+                    this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
+                            ["exec", ">" + escape(stdout.path), "2>" + escape(stderr.path), "<" + escape(stdin.path),
+                             escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
+                    res = this.run("/bin/sh", ["-e", cmd.path], true);
+                }
+
+                // FIXME: Is this really right? Shouldn't we always show both?
+                if (res > 0)
+                    var output = self.readFile(stderr) + "\nshell returned " + res;
+                else
+                    output = self.readFile(stdout);
+
+                // if there is only one \n at the end, chop it off
+                if (output && output.indexOf("\n") == output.length - 1)
+                    output = output.substr(0, output.length - 1);
+
+                return output;
+            }) || "";
+        },
+
+        /**
+         * Creates a temporary file context for executing external commands.
+         * <b>fn</b> is called with a temp file, created with
+         * {@link #createTempFile}, as each argument.
+         * 
+         * @param {function} fn The fn to execute.
+         * @param {Object} self The calling object used when executing fn.
+         */
         withTempFiles: function (fn, self)
         {
             let args = util.map(util.range(0, fn.length), this.createTempFile);
             if (!args.every(util.identity))
                 return false;
+
             try
             {
                 return fn.apply(self || this, args);
@@ -923,6 +1102,10 @@ lookup:
 
 }; //}}}
 
+/**
+ * @property {string} The value of the $VIMPERATOR_RUNTIME environment
+ *     variable.
+ */
 IO.__defineGetter__("runtimePath", function () {
     const rtpvar = config.name.toUpperCase() + "_RUNTIME";
     let rtp = services.get("environment").get(rtpvar);
