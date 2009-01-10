@@ -40,7 +40,7 @@ function Script(file)
         return self;
     }
     plugins.contexts[file.path] = this;
-    this.NAME = file.leafName.replace(/\..*/, "").replace(/-([a-z])/, function (_0, _1) _1.toUpperCase());
+    this.NAME = file.leafName.replace(/\..*/, "").replace(/-([a-z])/g, function (m, n1) n1.toUpperCase());
     this.PATH = file.path;
     this.__context__ = this;
 
@@ -48,7 +48,7 @@ function Script(file)
     for (let [,dir] in Iterator(io.getRuntimeDirectories("plugin")))
     {
         if (dir.contains(file, false))
-            plugins[name] = this.NAME;
+            plugins[this.NAME] = this;
     }
 }
 Script.prototype = plugins;
