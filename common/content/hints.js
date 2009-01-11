@@ -88,7 +88,7 @@ function Hints() //{{{
     {
         buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
-        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 
+        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
         // showing them again, or is this short flash actually needed as a "usability
         // feature"? --mst
         hints.show("F");

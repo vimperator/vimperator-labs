@@ -1388,7 +1388,6 @@ function Completion() //{{{
                         { process.call(this, item, text) }
                     </>];
 
-
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
                 let indicator = " ";
                 if (i == tabs.index())

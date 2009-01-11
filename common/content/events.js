@@ -630,7 +630,7 @@ function Events() //{{{
 
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
-    setTimeout (function () {
+    setTimeout(function () {
         try
         {
             let dirs = io.getRuntimeDirectories("macros");
@@ -879,7 +879,7 @@ function Events() //{{{
          * Pushes keys into the event queue from liberator it is similar to
          * Vim's feedkeys() method, but cannot cope with 2 partially-fed
          * strings, you have to feed one parsable string.
-         * 
+         *
          * @param {string} keys A string like "2<C-f>" to pass if you want "<"
          *     to be taken literally, prepend it with a "\\".
          * @param {boolean} noremap Allow recursive mappings.

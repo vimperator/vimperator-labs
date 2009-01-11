@@ -727,7 +727,7 @@ function IO() //{{{
          * @param {number} perms The file mode bits of the created file. This
          *     is only used when creating a new file and does not change
          *     permissions if the file exists.
-         * @default 0644 
+         * @default 0644
          */
         writeFile: function (file, buf, mode, perms)
         {

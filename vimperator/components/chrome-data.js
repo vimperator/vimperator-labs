@@ -47,8 +47,8 @@ ChromeData.prototype = {
     defaultPort: -1,
     allowPort: function (port, scheme) false,
     protocolFlags: nsIProtocolHandler.URI_NORELATIVE
-		 | nsIProtocolHandler.URI_NOAUTH
-		 | nsIProtocolHandler.URI_IS_UI_RESOURCE,
+         | nsIProtocolHandler.URI_NOAUTH
+         | nsIProtocolHandler.URI_IS_UI_RESOURCE,
 
     newURI: function (spec, charset, baseURI)
     {

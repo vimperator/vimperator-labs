@@ -685,7 +685,6 @@ function CommandLine() //{{{
         let output = util.xmlToDom(lastMowOutput, doc);
         XML.ignoreWhitespace = true;
 
-
         // FIXME: need to make sure an open MOW is closed when commands
         //        that don't generate output are executed
         if (outputContainer.collapsed)
@@ -988,7 +987,8 @@ function CommandLine() //{{{
         get mode() (modes.extended == modes.EX) ? "cmd" : "search",
 
         get silent() silent,
-        set silent(val) {
+        set silent(val)
+        {
             silent = val;
             if (silent)
                 storage.styles.addSheet(true, "silent-mode", "chrome://*", "#liberator-commandline > * { opacity: 0 }");
@@ -1097,7 +1097,6 @@ function CommandLine() //{{{
             }
             keepCommand = false;
         },
-
 
         /**
          * Hides the command-line, and shows any status messages that

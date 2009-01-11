@@ -94,7 +94,6 @@ function getBufferPosition()
 
 function getLocation() window.content.document.location.href;
 
-
 function echoLine(str, group)
 {
     if (!doc)

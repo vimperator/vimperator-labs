@@ -247,7 +247,8 @@ const modes = (function () //{{{
         set isReplaying(value) { isReplaying = value; this.show(); },
 
         get main() main,
-        set main(value) {
+        set main(value)
+        {
             if (value != main)
                 handleModeChange(main, value);
 
