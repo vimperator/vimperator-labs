@@ -617,6 +617,7 @@ function Tabs() //{{{
                 argCount: "?",
                 completer: function (context)
                 {
+                    context.anchored = false;
                     context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
                     context.completions = tabs.closedTabs;
                 },
