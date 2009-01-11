@@ -843,7 +843,7 @@ function Commands() //{{{
                     }
                     else
                     {
-                        completeFunc = function () completion[completeOptionMap[completeOpt]].apply(this, Array.slice(arguments));
+                        completeFunc = completion[completeOptionMap[completeOpt]];
                     }
                 }
 
@@ -854,11 +854,7 @@ function Commands() //{{{
                                     argCount: nargsOpt,
                                     bang: bangOpt,
                                     count: countOpt,
-                                    completer: function (context, args)
-                                    {
-                                        if (completeFunc)
-                                            return completeFunc(context, args)
-                                    },
+                                    completer: completeFunc,
                                     replacementText: args.literalArg
                                 }, args.bang);
 
@@ -870,8 +866,7 @@ function Commands() //{{{
                 function completerToString(completer)
                 {
                     if (completer)
-                        return [k for ([k, v] in Iterator(completeOptionMap))
-                                  if (v == completer.name)][0] || "custom";
+                        return [k for ([k, v] in Iterator(completeOptionMap)) if (completer == completion[v])][0] || "custom";
                     else
                         return "";
                 }
@@ -907,6 +902,7 @@ function Commands() //{{{
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
                 [["-bang"], self.OPTION_NOARG],
                 [["-count"], self.OPTION_NOARG],
+                // TODO: "E180: invalid complete value: " + arg
                 [["-complete"], self.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
                      function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
