@@ -79,8 +79,9 @@ We try to be quite consistent, but of course, that's not always possible.
 * Prefer // over /* */ comments (exceptions for big comments are usually OK)
   Right: if (HACK) // TODO: remove hack
   Wrong: if (HACK) /* TODO: remove hack */
-  Documentation comment blocks use /** ... */
-  Wrap comment documentation comment lines at 80 characters.
+
+* Documentation comment blocks use /** ... */ Wrap these lines at 80
+  characters.
 
 * Only wrap lines if it makes the code obviously clearer. Lines longer than 132
   characters should probably be broken up rather than wrapped anyway.
@@ -192,4 +193,4 @@ TODO: Document the existence of remote branches and discuss when and how
 
             Sure, I agree. --djk
 
-# vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:
+// vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:
