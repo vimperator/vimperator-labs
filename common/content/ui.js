@@ -43,7 +43,7 @@ function CommandLine() //{{{
     storage.newArray("history-search", true);
     storage.newArray("history-command", true);
 
-    var messageHistory = {
+    var messageHistory = { // {{{
         _messages: [],
         get messages()
         {
@@ -68,7 +68,7 @@ function CommandLine() //{{{
 
             this._messages.push(message);
         }
-    };
+    }; // }}}
     var lastMowOutput = null;
 
     var silent = false;
@@ -78,10 +78,10 @@ function CommandLine() //{{{
     /**
      * A class for managing the history of an inputField.
      *
-     * @param {Object} inputField
-     * @param {string} mode
+     * @param {HTMLInputElement} inputField
+     * @param {string} mode The mode for which we need history.
      */
-    function History(inputField, mode)
+    function History(inputField, mode) // {{{
     {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(inputField, mode);
@@ -92,14 +92,15 @@ function CommandLine() //{{{
     }
     History.prototype = {
         /**
-         * Empties the history.
+         * Reset the history index to the first entry.
          */
         reset: function ()
         {
             this.index = null;
         },
         /**
-         * Permanently save the history.
+         * Save the last entry to the permanent store. All duplicate entries
+         * are removed and the list is truncated, if necessary.
          */
         save: function ()
         {
@@ -111,9 +112,9 @@ function CommandLine() //{{{
             this.store.truncate(options["history"], true);
         },
         /**
-         * Set the current match to val.
+         * Replace the current input field value.
          *
-         * @param {string} val
+         * @param {string} val The new value.
          */
         replace: function (val)
         {
@@ -174,14 +175,14 @@ function CommandLine() //{{{
                 }
             }
         }
-    };
+    }; // }}}
 
     /**
      * A class for tab completions on an input field.
      *
      * @param {Object} input
      */
-    function Completions(input)
+    function Completions(input) // {{{
     {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(input);
@@ -482,7 +483,7 @@ function CommandLine() //{{{
             if (this.items.length == 0)
                 liberator.beep();
         }
-    }
+    }; // }}}
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// TIMERS //////////////////////////////////////////////////

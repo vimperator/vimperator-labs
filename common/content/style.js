@@ -1,5 +1,5 @@
 /***** BEGIN LICENSE BLOCK ***** {{{
- ©2008 Kris Maglione <maglione.k at Gmail>
+ ©2008-2009 Kris Maglione <maglione.k at Gmail>
  Distributable under the terms of the MIT license, which allows
  for sublicensing under any compatible license, including the MPL,
  GPL, and MPL. Anyone who changes this file is welcome to relicense
