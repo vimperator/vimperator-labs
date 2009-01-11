@@ -1621,6 +1621,7 @@ function Completion() //{{{
         menuItem: function menuItem(context)
         {
             context.title = ["Menu Path", "Label"];
+            context.anchored = false;
             context.keys = { text: "fullMenuPath", description: "label" };
             context.completions = liberator.menuItems;
         },
