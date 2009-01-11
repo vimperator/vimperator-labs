@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+(c) 2006-2009: Martin Stubenschrott <stubenschrott@gmx.net>
     Code based on venkman
 
 Alternatively, the contents of this file may be used under the terms of
