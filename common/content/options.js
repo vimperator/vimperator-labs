@@ -1015,17 +1015,38 @@ function Options() //{{{
                 liberator.echoerr("E488: Trailing characters: " + name + "!");
         },
 
+        /**
+         * Pushes a new preference context onto the context stack.
+         *
+         * @see #withContext
+         */
         pushContext: function ()
         {
             prefContexts.push({});
         },
 
+        /**
+         * Pops the top preference context from the stack.
+         *
+         * @see #withContext
+         */
         popContext: function ()
         {
             for (let [k, v] in Iterator(prefContexts.pop()))
                 storePreference(k, v);
         },
 
+        /**
+         * Executes <b>fn</b> with a new preference context. When <b>fn</b>
+         * returns, the context is popped and any preferences set via
+         * {@link #setPref} or {@link #invertPref} are restored to their
+         * previous values.
+         *
+         * @param {function} fn The function to call.
+         * @param {object} fn The 'this' object with which to call <b>fn</b>
+         * @see #pushContext
+         * @see #popContext
+         */
         withContext: function (fn, self)
         {
             try

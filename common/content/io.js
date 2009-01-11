@@ -504,7 +504,7 @@ function IO() //{{{
          * Sets the current working directory.
          *
          * @param {string} newDir The new CWD. This may be a relative or
-         *     absolute path and is expanded by (@link #expandPath).
+         *     absolute path and is expanded by {@link #expandPath}.
          */
         setCurrentDirectory: function (newDir)
         {
@@ -713,16 +713,16 @@ function IO() //{{{
          * @param {string} buf The file content.
          * @param {string|number} mode The file access mode, a bitwise OR of
          *     the following flags:
-         *       (@link #MODE_RDONLY):   0x01
-         *       (@link #MODE_WRONLY):   0x02
-         *       (@link #MODE_RDWR):     0x04
-         *       (@link #MODE_CREATE):   0x08
-         *       (@link #MODE_APPEND):   0x10
-         *       (@link #MODE_TRUNCATE): 0x20
-         *       (@link #MODE_SYNC):     0x40
+         *       {@link #MODE_RDONLY}:   0x01
+         *       {@link #MODE_WRONLY}:   0x02
+         *       {@link #MODE_RDWR}:     0x04
+         *       {@link #MODE_CREATE}:   0x08
+         *       {@link #MODE_APPEND}:   0x10
+         *       {@link #MODE_TRUNCATE}: 0x20
+         *       {@link #MODE_SYNC}:     0x40
          *     Alternatively, the following abbreviations may be used:
-         *       ">"  is equivalent to (@link #MODE_WRONLY) | (@link #MODE_CREATE) | (@link #MODE_TRUNCATE)
-         *       ">>" is equivalent to (@link #MODE_WRONLY) | (@link #MODE_CREATE) | (@link #MODE_APPEND)
+         *       ">"  is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_TRUNCATE}
+         *       ">>" is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_APPEND}
          * @default ">"
          * @param {number} perms The file mode bits of the created file. This
          *     is only used when creating a new file and does not change
@@ -1053,20 +1053,17 @@ lookup:
                 }
                 else
                 {
-
                     this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
                             ["exec", ">" + escape(stdout.path), "2>&1", "<" + escape(stdin.path),
                              escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
                     res = this.run("/bin/sh", ["-e", cmd.path], true);
                 }
 
+                let output = self.readFile(stdout);
                 if (res > 0)
-                    var output = self.readFile(stdout) + "\nshell returned " + res;
-                else
-                    output = self.readFile(stdout);
-
+                    output += "\nshell returned " + res;
                 // if there is only one \n at the end, chop it off
-                if (output && output.indexOf("\n") == output.length - 1)
+                else if (output && output.indexOf("\n") == output.length - 1)
                     output = output.substr(0, output.length - 1);
 
                 return output;
@@ -1076,10 +1073,13 @@ lookup:
         /**
          * Creates a temporary file context for executing external commands.
          * <b>fn</b> is called with a temp file, created with
-         * {@link #createTempFile}, as each argument.
+         * {@link #createTempFile}, for each explicit argument. Ensures that
+         * all files are removed when <b>fn</b> returns.
          * 
-         * @param {function} fn The fn to execute.
-         * @param {Object} self The calling object used when executing fn.
+         * @param {function} fn The function to execute.
+         * @param {Object} self The 'this' object used when executing fn.
+         * @return {boolean} false if temp files couldn't be created,
+         *     otherwise, the return value of <b>fn</b>.
          */
         withTempFiles: function (fn, self)
         {

@@ -1596,6 +1596,13 @@ function CommandLine() //{{{
             }
         },
 
+        getSpaceNeeded: function getSpaceNeeded()
+        {
+            let rect = commandlineWidget.getBoundingClientRect();
+            let offset = rect.bottom - window.innerHeight;
+            return Math.max(0, offset);
+        },
+
         /**
          * Update or remove the multiline output widget's "MORE" prompt.
          *
@@ -1635,13 +1642,13 @@ function CommandLine() //{{{
 
             let doc = multilineOutputWidget.contentDocument;
 
-            // The container needs to be collapsed for this calculation to work.
-            outputContainer.collapsed = true;
             let availableHeight = 250;
             try
             {
                 availableHeight = getBrowser().mPanelContainer ?
                     getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
+                if (!outputContainer.collapsed)
+                    availableHeight += outputContainer.height;
             }
             catch (e) {}
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
@@ -1723,6 +1730,7 @@ function ItemList(id) //{{{
             div.style.minWidth = "";
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
+        container.height -= commandline.getSpaceNeeded();
     }
 
     function getCompletion(index) completionElements.snapshotItem(index - startIndex);
