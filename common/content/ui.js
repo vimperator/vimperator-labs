@@ -497,7 +497,7 @@ function CommandLine() //{{{
     });
 
     var autocompleteTimer = new Timer(200, 500, function autocompleteTell(tabPressed) {
-        if (!events.feedingKeys && completions)
+        if (!events.feedingKeys && completions && options.get("wildoptions").has("auto"))
         {
             completions.complete(true, false);
             completions.itemList.show();
@@ -517,10 +517,7 @@ function CommandLine() //{{{
     ////////////////////// CALLBACKS ///////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // callback for prompt mode
-    var promptSubmitCallback = null;
-    var promptChangeCallback = null;
-    var promptCompleter = null;
+    var input = {};
 
     liberator.registerCallback("submit", modes.EX, function (command) {
         liberator.execute(command);
@@ -529,28 +526,28 @@ function CommandLine() //{{{
         context.fork("ex", 0, completion, "ex");
     });
     liberator.registerCallback("change", modes.EX, function (command) {
-        if (options.get("wildoptions").has("auto"))
-            autocompleteTimer.tell(false);
+        autocompleteTimer.tell(false);
     });
 
     liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
     liberator.registerCallback("change", modes.PROMPT, function (str) {
-        liberator.triggerCallback("change", modes.EX, str);
-        if (promptChangeCallback)
-            return promptChangeCallback.call(commandline, str);
+        if (input.complete)
+            autocompleteTimer.tell(false);
+        if (input.change)
+            return input.change.call(commandline, str);
     });
     liberator.registerCallback("complete", modes.PROMPT, function (context) {
-        if (promptCompleter)
-            context.fork("input", 0, commandline, promptCompleter);
+        if (input.complete)
+            context.fork("input", 0, commandline, input.complete);
     });
 
     function closePrompt(value)
     {
-        let callback = promptSubmitCallback;
-        promptSubmitCallback = null;
+        let callback = input.submit;
+        input = {};
         if (callback)
-            callback.call(commandline, value == null ? commandline.command : value);
+            callback.call(commandline, value != null ? value : commandline.command);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1059,7 +1056,8 @@ function CommandLine() //{{{
             completions = Completions(commandWidget.inputField);
 
             // open the completion list automatically if wanted
-            liberator.triggerCallback("change", currentExtendedMode, cmd);
+            if (cmd.length)
+                liberator.triggerCallback("change", currentExtendedMode, cmd);
         },
 
         /**
@@ -1191,13 +1189,15 @@ function CommandLine() //{{{
          * @... {string} promptHighlight - The HighlightGroup used for the
          *     prompt. @default "Question"
          */
-        input: function input(prompt, callback, extra)
+        input: function _input(prompt, callback, extra)
         {
             extra = extra || {};
 
-            promptSubmitCallback = callback;
-            promptChangeCallback = extra.onChange;
-            promptCompleter = extra.completer;
+            input = {
+                submit: callback,
+                change: extra.onChange,
+                complete: extra.completer,
+            };
 
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
             currentExtendedMode = modes.PROMPT;
@@ -1731,7 +1731,7 @@ function ItemList(id) //{{{
             div.style.minWidth = "";
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
-        container.height -= commandline.getSpaceNeeded();
+        setTimeout(function () { container.height -= commandline.getSpaceNeeded() }, 0)
     }
 
     function getCompletion(index) completionElements.snapshotItem(index - startIndex);
@@ -1752,6 +1752,7 @@ function ItemList(id) //{{{
                 </div>
             </div>, divNodes);
         doc.body.replaceChild(div, doc.body.firstChild);
+        div.scrollIntoView(true);
 
         items.contextList.forEach(function init_eachContext(context) {
             delete context.cache.nodes;
@@ -1771,6 +1772,8 @@ function ItemList(id) //{{{
                 </div>, context.cache.nodes);
             divNodes.completions.appendChild(context.cache.nodes.root);
         });
+
+        setTimeout(function () { autoSize(); }, 0);
     }
 
     /**
@@ -1855,7 +1858,6 @@ function ItemList(id) //{{{
 
         completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem']", doc);
 
-        autoSize();
         return true;
     }
 
@@ -1931,7 +1933,10 @@ function ItemList(id) //{{{
                 getCompletion(sel).removeAttribute("selected");
             fill(newOffset);
             if (index >= 0)
+            {
                 getCompletion(index).setAttribute("selected", "true");
+                getCompletion(index).scrollIntoView(false);
+            }
 
             //if (index == 0)
             //    this.start = now;
