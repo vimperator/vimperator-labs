@@ -316,7 +316,7 @@ Completion can be enabled by specifying one of the following arguments to the
 *sidebar*        sidebar panels
 *url*            URLs
 *usercommand*    user commands
-*custom,{func}*  custom completion, provided by {func} 
+*custom,{func}*  custom completion, provided by {func}
 --------------------------------------------------------------------------------
 
 |E467| |E468| |:command-completion-custom| +

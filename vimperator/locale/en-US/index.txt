@@ -197,7 +197,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:mapclear|| Remove all mappings +
 ||:mark|| Mark current location within the web page +
 ||:marks|| Show all location marks of current web page +
-||:messages|| Display previously given messages + 
+||:messages|| Display previously given messages +
 ||:mkvimperatorrc|| Write current key mappings and changed options to the config file +
 ||:nohlsearch|| Remove the search highlighting +
 ||:noremap|| Map a key sequence without remapping keys +

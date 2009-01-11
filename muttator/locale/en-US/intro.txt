@@ -13,11 +13,11 @@ text editor. It has similar key bindings, and you could call it a modal
 mail client, as key bindings differ according to which mode you are in.
 
 |warning| +
-Warning: 
-To provide the most authentic Vim experience, the Thunderbird menubar and toolbar were hidden. + 
-If you really need them, type: [c]:set guioptions+=mT[c] to get them back. + 
+Warning:
+To provide the most authentic Vim experience, the Thunderbird menubar and toolbar were hidden. +
+If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
 If you don't like Muttator at all, you can uninstall it by typing
-[c]:addons[c] and remove/disable it. + 
+[c]:addons[c] and remove/disable it. +
 If you like it, but can't remember the shortcuts, press [m]F1[m] or
 [c]:help[c] to get this help window back.
 

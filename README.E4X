@@ -95,7 +95,7 @@ usage you'll see herein:
   </foo>
 
   // Adding a quux attribute to the root
-> xml.@quux = "foo"   
+> xml.@quux = "foo"
   foo
 > xml
   <foo bar="baz" baz="qux" quux="foo">

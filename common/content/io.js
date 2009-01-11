@@ -1075,7 +1075,7 @@ lookup:
          * <b>fn</b> is called with a temp file, created with
          * {@link #createTempFile}, for each explicit argument. Ensures that
          * all files are removed when <b>fn</b> returns.
-         * 
+         *
          * @param {function} fn The function to execute.
          * @param {Object} self The 'this' object used when executing fn.
          * @return {boolean} false if temp files couldn't be created,

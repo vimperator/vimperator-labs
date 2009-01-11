@@ -93,7 +93,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }
 
 /* Applied to completion buffer, MOW, browser window */
-@-moz-document 
+@-moz-document
     url-prefix(chrome://) {
 
 .liberator-container > * {
