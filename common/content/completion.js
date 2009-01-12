@@ -159,8 +159,7 @@ function CompletionContext(editor, name, offset) //{{{
          *    contain inactive contexts. For active contexts, see
          *    {@link #contextList}.
          */
-        //this.contexts = { "/": this };
-        this.contexts = { name: this };
+        this.contexts = { "": this };
         /**
          * @property {Object} A mapping of keys, for {@link #getKey}. Given
          *      { key: value }, getKey(item, key) will return values as such:
