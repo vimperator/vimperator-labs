@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
 const plugins = {};
 plugins.__proto__ = modules;
