@@ -78,7 +78,6 @@ ${RDF}: ${RDF_IN} Makefile
 clean:
 	@echo "Cleanup..."
 	rm -f ${JAR} ${XPI}
-	find . -name '*~' -exec rm -f {} \;
 
 distclean: clean
 	@echo "More cleanup..."

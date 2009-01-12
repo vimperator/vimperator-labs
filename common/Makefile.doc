@@ -41,7 +41,6 @@ help:
 
 clean:
 	@echo "Cleanup..."
-	find . -name '*~' -exec rm -f {} \;
 
 distclean: clean
 	@echo "More cleanup..."
