@@ -1405,8 +1405,8 @@ function CommandLine() //{{{
                 {
                     event.preventDefault();
                     let target = event.button == 0 ? liberator.CURRENT_TAB : liberator.NEW_TAB;
-                    if (event.target.href == "#")
-                        liberator.open(String(event.target), target);
+                    if (event.target.getAttribute("href") == "#")
+                        liberator.open(event.target.textContent, target);
                     else
                         liberator.open(event.target.href, target);
                 }
