@@ -39,7 +39,7 @@ ASCIIDOC = asciidoc
 
 #### rules
 
-.PHONY: all help info doc jar xpi install clean distclean tildetidy $(JAR)
+.PHONY: all help info doc jar xpi install clean distclean $(JAR)
 all: help
 
 help:
@@ -84,10 +84,6 @@ distclean: clean
 	@echo "More cleanup..."
 	@set -e; for locale in $(LOCALES); do $(MAKE) -C clean; doc; done
 	rm -rf ${BUILD_DIR}
-
-tildetidy:
-	@echo "Removing vim backup files..."
-	find . -name '*~' -exec rm -fv {} \;
 
 #### xpi
 
