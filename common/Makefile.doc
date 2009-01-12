@@ -24,7 +24,7 @@ AWK           = awk
 
 #### rules
 
-.PHONY: all help doc asciidoc check-asciidoc clean distclean
+.PHONY: all help doc asciidoc check-asciidoc clean distclean tildetidy
 all: doc
 
 doc: asciidoc t2t
@@ -46,6 +46,10 @@ clean:
 distclean: clean
 	@echo "More cleanup..."
 	rm -f $(DOC_FILES)
+
+tildetidy:
+	@echo "Removing vim backup files..."
+	find . -name '*~' -exec rm -fv {} \;
 
 #### Makes single-file makes easier to type
 
