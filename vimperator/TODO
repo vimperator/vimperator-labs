@@ -30,6 +30,7 @@ BUGS:
   => it often overwrites the open command-line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
+- MOW is broken for multiple commands when open E.g. :ls | ls
 
 FEATURES:
 9 finish :help TODOs
