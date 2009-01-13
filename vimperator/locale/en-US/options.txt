@@ -601,6 +601,7 @@ ____
 (default: _$VIMPERATOR_RUNTIME_ or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
 
 List of directories searched for runtime files: +
+colors/ +
 macros/ +
 plugin/ +
 
