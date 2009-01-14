@@ -22,7 +22,6 @@ BUGS:
 (recent CVS regressions):
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
   plugin or a vimp issue.
-- completions does not beep anymore when none are available, try :jljlkjlkj<tab>
 - visual caret mode is broken, requires a manual page focus first anyway or
   else it chucks, I haven't investigated --djk
 - messages is still broken in several ways - needs testing.
@@ -31,6 +30,9 @@ BUGS:
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
 - MOW is broken for multiple commands when open E.g. :ls | ls
+- completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
+  and even if it is not totally off, i had it jump by one pixel when wrapping around.
+  If that's unfixable, i propose reverting the new completion height stuff.
 
 FEATURES:
 9 finish :help TODOs
