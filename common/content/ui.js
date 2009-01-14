@@ -1648,7 +1648,7 @@ function CommandLine() //{{{
                 availableHeight = getBrowser().mPanelContainer ?
                     getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
                 if (!outputContainer.collapsed)
-                    availableHeight += outputContainer.height;
+                    availableHeight += parseFloat(outputContainer.height);
             }
             catch (e) {}
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
