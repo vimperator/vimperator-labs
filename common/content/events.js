@@ -769,8 +769,11 @@ function Events() //{{{
             // removeEventListeners() to avoid mem leaks
             liberator.dump("TODO: remove all eventlisteners");
 
-            if (typeof getBrowser != "undefined")
+            try
+            {
                 getBrowser().removeProgressListener(this.progressListener);
+            }
+            catch (e) {}
 
             window.removeEventListener("popupshown", enterPopupMode, true);
             window.removeEventListener("popuphidden", exitPopupMode, true);

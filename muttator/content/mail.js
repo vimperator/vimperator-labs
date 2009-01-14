@@ -89,9 +89,9 @@ function Mail() //{{{
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
-    function getFolderCompletions(filter)
+    function getFolderCompletions(context)
     {
-        let folders = mail.getFolders(filter);
+        let folders = mail.getFolders(context.filter);
         context.completions = folders.map(function (folder)
                 [folder.server.prettyName + ": " + folder.name,
                  "Unread: " + folder.getNumUnread(false)]);
