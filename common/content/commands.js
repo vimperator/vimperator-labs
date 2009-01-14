@@ -233,15 +233,6 @@ function Commands() //{{{
 
     var exCommands = [];
 
-    function parseBool(arg)
-    {
-        if (arg == "true" || arg == "1" || arg == "on")
-            return true;
-        if (arg == "false" || arg == "0" || arg == "off")
-            return false;
-        return NaN;
-    }
-
     const QUOTE_STYLE = "vimperator";
 
     const quoteMap = {
@@ -264,16 +255,24 @@ function Commands() //{{{
         "":  quote("",  "\\\\ ")
     };
 
+    function parseBool(arg)
+    {
+        if (/^(true|1|on)$/i.test(arg))
+            return true;
+        if (/^(false|0|off)$/i.test(arg))
+            return false;
+        return NaN;
+    }
     const ArgType = new Struct("description", "parse");
     const argTypes = [
         null,
-        ["no arg",  function (arg) !arg],
-        ["boolean", parseBool],
-        ["string",  function (val) val],
-        ["int",     parseInt],
-        ["float",   parseFloat],
-        ["list",    function (arg) arg && arg.split(/\s*,\s*/)]
-    ].map(function (x) x && ArgType.apply(null, x));
+        ArgType("no arg",  function (arg) !arg || null),
+        ArgType("boolean", parseBool),
+        ArgType("string",  function (val) val),
+        ArgType("int",     parseInt),
+        ArgType("float",   parseFloat),
+        ArgType("list",    function (arg) arg && arg.split(/\s*,\s*/))
+    ];
 
     function addCommand(command, isUserCommand, replace)
     {

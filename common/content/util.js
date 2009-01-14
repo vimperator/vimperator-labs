@@ -611,7 +611,7 @@ const util = { //{{{
      * ['www.google.com/search?q=bla', 'www.osnews.com']
      *
      * @param {string} str
-     * @returns {Array}
+     * @returns {string[]}
      */
     stringToURLArray: function stringToURLArray(str)
     {
@@ -623,7 +623,7 @@ const util = { //{{{
                 // Try to find a matching file.
                 let file = io.getFile(url);
                 if (file.exists() && file.isReadable())
-                    return file.path;
+                    return services.get("io").newFileURI(file).spec;
             }
             catch (e) {}
 
@@ -638,14 +638,13 @@ const util = { //{{{
 
             // Ok, not a valid proto. If it looks like URL-ish (foo.com/bar),
             // let Gecko figure it out.
-            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w.]+:\d+(?:\/|$)/.test(url))
+            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w-.]+:\d+(?:\/|$)/.test(url))
                 return url;
 
             // TODO: it would be clearer if the appropriate call to
             // getSearchURL was made based on whether or not the first word was
             // indeed an SE alias rather than seeing if getSearchURL can
-            // process the call usefully and trying again if it fails - much
-            // like the comments below ;-)
+            // process the call usefully and trying again if it fails
 
             // check for a search engine match in the string, then try to
             // search for the whole string in the default engine
