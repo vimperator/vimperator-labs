@@ -923,6 +923,23 @@ function Editor() //{{{
         //          1 not !: opposite mode (first), add/change 'second' and END
         //          1 not !: same mode (first), overwrite first this END
         //
+        // TODO: I don't like these funky filters, I am a funky filter hater. --djk
+        //     : make this a separate object
+        //     : use Struct for individual abbreviations
+        //     : rename "filter" arg "mode"
+        /**
+         * Adds a new abbreviation. Abbreviations consist of a LHS (the text
+         * that is replaced when the abbreviation is expanded) and a RHS (the
+         * replacement text).
+         *
+         * @param {string} filter The mode filter. This specifies the modes in
+         *     which this abbreviation is available. Either:
+         *       "c" - applies in command-line mode
+         *       "i" - applies in insert mode
+         *       "!" - applies in both command-line and insert modes
+         * @param {string} lhs The LHS of the abbreviation.
+         * @param {string} rhs The RHS of the abbreviation.
+         */
         addAbbreviation: function (filter, lhs, rhs)
         {
             if (!abbreviations[lhs])
@@ -980,7 +997,12 @@ function Editor() //{{{
                 abbreviations[lhs][0] = [filter, rhs];
         },
 
-        expandAbbreviation: function (filter) // try to find an candidate and replace accordingly
+        /**
+         * Expands an abbreviation in the currently active textbox.
+         *
+         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         */
+        expandAbbreviation: function (filter)
         {
             let textbox   = getEditor();
             if (!textbox)
@@ -1012,15 +1034,29 @@ function Editor() //{{{
             return true;
         },
 
-        // filter is i, c or "!" (insert or command abbreviations or both)
-        // ! -> list all, on c or i ! matches too
+        /**
+         * Returns all abbreviations matching <b>filter</b> and <b>lhs</b>.
+         *
+         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} lhs The LHS of the abbreviation.
+         *     (@see #addAbbreviation)
+         * @returns {Array} The matching abbreviations [mode, lhs, rhs]
+         */
         getAbbreviations: function (filter, lhs)
         {
+            // ! -> list all, on c or i ! matches too
             let searchFilter = (filter == "!") ? "!ci" : filter + "!";
             return list = [[mode, left, right] for ([left, [mode, right]] in abbrevs())
                               if (searchFilter.indexOf(mode) >= 0 && left.indexOf(lhs || "") == 0)];
         },
 
+        /**
+         * Lists all abbreviations matching <b>filter</b> and <b>lhs</b>.
+         *
+         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} lhs The LHS of the abbreviation.
+         *     (@see #addAbbreviation)
+         */
         listAbbreviations: function (filter, lhs)
         {
             let list = this.getAbbreviations(filter, lhs);
@@ -1042,6 +1078,13 @@ function Editor() //{{{
             }
         },
 
+        /**
+         * Deletes all abbreviations matching <b>filter</b> and <b>lhs</b>.
+         *
+         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} lhs The LHS of the abbreviation.
+         *     (@see #addAbbreviation)
+         */
         removeAbbreviation: function (filter, lhs)
         {
             if (!lhs)
@@ -1088,23 +1131,17 @@ function Editor() //{{{
             return false;
         },
 
+        /**
+         * Removes all abbreviations matching <b>filter</b>.
+         *
+         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         */
         removeAllAbbreviations: function (filter)
         {
-            if (filter == "!")
-            {
-                abbreviations = {};
-            }
-            else
-            {
-                for (let lhs in abbreviations)
-                {
-                    for (let i = 0; i < abbreviations[lhs].length; i++)
-                    {
-                        if (abbreviations[lhs][i][0] == "!" || abbreviations[lhs][i][0] == filter)
-                            this.removeAbbreviation(filter, lhs);
-                    }
-                }
-            }
+            let searchFilter = (filter == "!") ? "!ci" : filter + "!";
+            for ([lhs, [mode, rhs]] in abbrevs())
+                if (searchFilter.indexOf(mode) >= 0)
+                    this.removeAbbreviation(filter, lhs);
         }
         //}}}
     };
