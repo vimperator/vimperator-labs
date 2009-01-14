@@ -207,7 +207,8 @@ function Buffer() //{{{
         "Start caret mode",
         function ()
         {
-            // setting this option triggers an observer which takes care of the mode setting
+            // setting this option notifies an observer which takes care of the
+            // mode setting
             options.setPref("accessibility.browsewithcaret", true);
         });
 

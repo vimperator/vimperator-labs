@@ -162,20 +162,17 @@ Environment variables are expanded for path options like 'cdpath' and
 'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
 character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
 
-section:Setting{nbsp}Firefox{nbsp}options[firefox-options]
+section:Setting{nbsp}Firefox{nbsp}options[firefox-options,preferences]
 
-Most Firefox options are not touched/overridden by Vimperator. In order to set
-any of these preferences use either of the following:
+Firefox options can be viewed and set with the following commands:
 
 |:prefs| |:preferences|
 ||:pref[erences]||
 ________________________________________________________________________________
-Show Browser Preferences +
-You can change the browser preferences from this dialog. Be aware that not
-all Firefox preferences work, because Vimperator overrides some key
-bindings and changes Firefox's GUI.
+Show the Firefox preferences dialog. You can change the browser preferences
+from this dialog. Be aware that not all Firefox preferences work, because
+Vimperator overrides some key bindings and changes Firefox's GUI.
 ________________________________________________________________________________
-
 
 |:prefs!| |:preferences!|
 ||:pref[erences]!||
@@ -184,13 +181,25 @@ Opens about:config in the current tab where you can change advanced Firefox
 preferences.
 ________________________________________________________________________________
 
-
 |:set!| |:set-!|
 ||:se[t]! {preference}={value}|| +
 ________________________________________________________________________________
 Change any Firefox {preference} (those in the about:config window). You can also
 reset/delete those preferences with [c]:set! {preference}&[c].
 ________________________________________________________________________________
+
+|overridden-preferences| +
+
+Vimperator sets several Firefox preferences at startup. If this is undesirable,
+they can be changed to a different value in your RC file using
+[c]:set! {preference}={value}[c]
+
+The following preferences are set:
+
+* browser.startup.page
+* dom.popup_allowed_events
+
+// TODO: others?
 
 section:List{nbsp}of{nbsp}options[list-options]
 
