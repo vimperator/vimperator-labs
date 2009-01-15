@@ -14,8 +14,9 @@ At startup, Vimperator completes the following tasks in order.
   .. |$VIMPERATOR_INIT| _$VIMPERATOR_INIT_ -- May contain a single ex
                                                 command (e.g.,
                                                 "[c]:source {file}[c]").
-  .. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its 
-                               contents are executed.
+  .. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its
+			       contents are executed and
+			       _$MY_VIMPERATORRC_ set to its path.
   .. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are 
                                executed.
 

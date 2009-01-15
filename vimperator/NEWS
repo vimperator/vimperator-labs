@@ -22,7 +22,7 @@
     * IMPORTANT: $VIMPERATOR_HOME is no longer used.
 
     * Added ~/.vimperator/info/{profile}/, similar to viminfo
-    * added $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT
+    * add $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT and $MY_VIMPERATORRC
     * :hardcopy now supports output redirection to a file on Unix and MacUnix
     * add ";f" extended hint mode to focus a frame
     * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.
