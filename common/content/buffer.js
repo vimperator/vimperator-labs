@@ -985,6 +985,7 @@ function Buffer() //{{{
                 selController.wordMove(false, false);
                 selController.wordMove(true, true);
                 selController.setCaretEnabled(caretmode);
+                return String.match(selection, /\w*/)[0];
             }
             let range = selection.getRangeAt(0);
             if (util.computedStyle(range.startContainer).whiteSpace == "pre"
