@@ -734,7 +734,7 @@ function History() //{{{
             {
                 let sh = window.getWebNavigation().sessionHistory;
 
-                context.anchor = false;
+                context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, true))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
             },
@@ -780,7 +780,7 @@ function History() //{{{
             {
                 let sh = window.getWebNavigation().sessionHistory;
 
-                context.anchor = false;
+                context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index + 1, sh.count))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
             },

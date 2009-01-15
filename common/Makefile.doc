@@ -5,10 +5,11 @@
 BASE          = ../../../common
 
 THIS_LOCALE   = $(notdir $(shell pwd))
+THIS_LANG     = $(firstword $(subst -, ,$(THIS_LOCALE)))
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
-ADC_DEPS      = $(wildcard asciidoc.conf)
+ADC_DEPS      = $(wildcard asciidoc.conf lang-$(THIS_LANG).conf)
 
 T2T_SRC_FILES = $(wildcard *.t2t)
 T2T_FILES     = $(T2T_SRC_FILES:%.t2t=%.xhtml)
@@ -64,7 +65,7 @@ check-asciidoc:
 
 $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
 	@echo "DOC locale/$(THIS_LOCALE)/$@"
-	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
+	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(THIS_LANG) -a doctitle="$(shell basename $@)" -o $@ $<
 
 #### txt2tags
 

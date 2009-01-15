@@ -1139,7 +1139,7 @@ function Editor() //{{{
         removeAllAbbreviations: function (filter)
         {
             let searchFilter = (filter == "!") ? "!ci" : filter + "!";
-            for ([lhs, [mode, rhs]] in abbrevs())
+            for (let [lhs, [mode, rhs]] in abbrevs())
                 if (searchFilter.indexOf(mode) >= 0)
                     this.removeAbbreviation(filter, lhs);
         }
