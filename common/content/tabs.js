@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -140,14 +140,11 @@ function Tabs() //{{{
 
                 return value;
             },
-            completer: function (filter)
-            {
-                return [
-                    ["0", "Never show tab bar"],
-                    ["1", "Show tab bar only if more than one tab is open"],
-                    ["2", "Always show tab bar"]
-                ];
-            },
+            completer: function (context) [
+                ["0", "Never show tab bar"],
+                ["1", "Show tab bar only if more than one tab is open"],
+                ["2", "Always show tab bar"]
+            ],
             validator: Option.validateCompleter
         });
 
@@ -157,15 +154,12 @@ function Tabs() //{{{
             "Define when tabs are automatically activated",
             "stringlist", "homepage,quickmark,tabopen,paste",
             {
-                completer: function (filter)
-                {
-                    return [
-                        ["homepage", "gH mapping"],
-                        ["quickmark", "go and gn mappings"],
-                        ["tabopen", ":tabopen[!] command"],
-                        ["paste", "P and gP mappings"]
-                    ];
-                },
+                completer: function (context) [
+                    ["homepage", "gH mapping"],
+                    ["quickmark", "go and gn mappings"],
+                    ["tabopen", ":tabopen[!] command"],
+                    ["paste", "P and gP mappings"]
+                ],
                 validator: Option.validateCompleter
             });
 
@@ -173,17 +167,14 @@ function Tabs() //{{{
             "Define which commands should output in a new tab by default",
             "stringlist", "",
             {
-                completer: function (filter)
-                {
-                    return [
-                        ["all", "All commands"],
-                        ["addons", ":addo[ns] command"],
-                        ["downloads", ":downl[oads] command"],
-                        ["help", ":h[elp] command"],
-                        ["javascript", ":javascript! or :js! command"],
-                        ["prefs", ":pref[erences]! or :prefs! command"]
-                    ];
-                },
+                completer: function (context) [
+                    ["all", "All commands"],
+                    ["addons", ":addo[ns] command"],
+                    ["downloads", ":downl[oads] command"],
+                    ["help", ":h[elp] command"],
+                    ["javascript", ":javascript! or :js! command"],
+                    ["prefs", ":pref[erences]! or :prefs! command"]
+                ],
                 validator: Option.validateCompleter
             });
 
@@ -204,16 +195,13 @@ function Tabs() //{{{
 
                     return value;
                 },
-                completer: function (filter)
-                {
-                    return [
-                        ["0", "Force to open in the current tab"],
-                        ["1", "Always open in a new tab"],
-                        ["2", "Open in a new window if it has a specific requested size (default in Firefox)"],
-                        ["3", "Always open in a new window"],
-                        ["4", "Open in the same tab unless it has a specific requested size"]
-                    ];
-                },
+                completer: function (context) [
+                    ["0", "Force to open in the current tab"],
+                    ["1", "Always open in a new tab"],
+                    ["2", "Open in a new window if it has a specific requested size (default in Firefox)"],
+                    ["3", "Always open in a new window"],
+                    ["4", "Open in the same tab unless it has a specific requested size"]
+                ],
                 validator: Option.validateCompleter
             });
         let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
@@ -629,6 +617,7 @@ function Tabs() //{{{
                 argCount: "?",
                 completer: function (context)
                 {
+                    context.anchored = false;
                     context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
                     context.completions = tabs.closedTabs;
                 },

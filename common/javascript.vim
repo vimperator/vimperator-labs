@@ -3,14 +3,14 @@
 " Maintainer:   Yi Zhao (ZHAOYI) <zzlinux AT hotmail DOT com>
 " Last Change:  May 17, 2007
 " Version:      0.7.5
-" Changes:      1, Get the vimdiff problem fixed finally. 
+" Changes:      1, Get the vimdiff problem fixed finally.
 "                Matthew Gallant reported the problem and test the fix. ;)
 "               2, Follow the suggestioin from Ingo Karkat.
-"                The 'foldtext' and 'foldlevel' settings should only be 
-"                changed if the file being edited is pure JavaScript, 
+"                The 'foldtext' and 'foldlevel' settings should only be
+"                changed if the file being edited is pure JavaScript,
 "                not if JavaScript syntax is embedded inside other syntaxes.
-"               3, Remove function FT_JavaScriptDoc(). 
-"                Since VIM do the better than me. 
+"               3, Remove function FT_JavaScriptDoc().
+"                Since VIM do the better than me.
 "
 " TODO:
 "  - Add the HTML syntax inside the JSDoc
@@ -152,7 +152,7 @@ endif "DOM/HTML/CSS
 syntax cluster javaScriptAll       contains=javaScriptComment,javaScriptLineComment,javaScriptDocComment,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptLabel,javaScriptSource,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptStatement,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javascriptE4X,javascriptCSS,javascriptCDATA
 syntax region  javaScriptBracket   matchgroup=javaScriptBracket transparent start="\[" end="\]" contains=@javaScriptAll,javaScriptParensErrB,javaScriptParensErrC,javaScriptBracket,javaScriptParen,javaScriptBlock,@htmlPreproc
 syntax region  javaScriptParen     matchgroup=javaScriptParen   transparent start="("  end=")"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrC,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc
-syntax region  javaScriptBlock     matchgroup=javaScriptBlock   transparent start="{"  end="}"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrB,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc 
+syntax region  javaScriptBlock     matchgroup=javaScriptBlock   transparent start="{"  end="}"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrB,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc
 
 syntax region  javascriptCDATA	matchgroup=javascriptCDATA start="<\!\[CDATA\[" end="\]\]>" keepend contains=javascriptCSS
 syntax region  javascriptCSS	matchgroup=javascriptCSSDelimiter start="<css>" end="</css>" contains=@cssTop
@@ -270,12 +270,12 @@ let b:did_indent = 1
 setlocal indentexpr=GetJsIndent()
 setlocal indentkeys=0{,0},0),:,!^F,O,e,=*/
 " Clean CR when the file is in Unix format
-if &fileformat == "unix" 
+if &fileformat == "unix"
     silent! %s/\r$//g
 endif
 " Only define the functions once per Vim session.
 "if exists("*GetJsIndent")
-"    finish 
+"    finish
 "endif
 "function! GetJsIndent()
 "    let pnum = prevnonblank(v:lnum - 1)
@@ -285,15 +285,15 @@ endif
 "    let line = getline(v:lnum)
 "    let pline = getline(pnum)
 "    let ind = indent(pnum)
-"    
+"
 "    if pline =~ '{\s*$\|[\s*$\|(\s*$'
 "	let ind = ind + &sw
 "    endif
-"    
+"
 "    if pline =~ ';\s*$' && line =~ '^\s*}'
 "        let ind = ind - &sw
 "    endif
-"    
+"
 "    if pline =~ '\s*]\s*$' && line =~ '^\s*),\s*$'
 "      let ind = ind - &sw
 "    endif
@@ -301,27 +301,27 @@ endif
 "    if pline =~ '\s*]\s*$' && line =~ '^\s*}\s*$'
 "      let ind = ind - &sw
 "    endif
-"    
+"
 "    if line =~ '^\s*});\s*$\|^\s*);\s*$' && pline !~ ';\s*$'
 "      let ind = ind - &sw
 "    endif
-"    
+"
 "    if line =~ '^\s*})' && pline =~ '\s*,\s*$'
 "      let ind = ind - &sw
 "    endif
-"    
+"
 "    if line =~ '^\s*}();\s*$' && pline =~ '^\s*}\s*$'
 "      let ind = ind - &sw
 "    endif
 "
-"    if line =~ '^\s*}),\s*$' 
+"    if line =~ '^\s*}),\s*$'
 "      let ind = ind - &sw
 "    endif
 "
 "    if pline =~ '^\s*}\s*$' && line =~ '),\s*$'
 "       let ind = ind - &sw
 "    endif
-"   
+"
 "    if pline =~ '^\s*for\s*' && line =~ ')\s*$'
 "       let ind = ind + &sw
 "    endif

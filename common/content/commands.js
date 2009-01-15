@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -150,7 +150,7 @@ Command.prototype = {
      * @param {number} count @deprecated Whether this command was
      *     executed with a leading count.
      * @param modifiers Any modifiers to be passed to
-     *     {@link action}
+     *     {@link #action}.
      */
     execute: function (args, bang, count, modifiers)
     {
@@ -233,15 +233,6 @@ function Commands() //{{{
 
     var exCommands = [];
 
-    function parseBool(arg)
-    {
-        if (arg == "true" || arg == "1" || arg == "on")
-            return true;
-        if (arg == "false" || arg == "0" || arg == "off")
-            return false;
-        return NaN;
-    }
-
     const QUOTE_STYLE = "vimperator";
 
     const quoteMap = {
@@ -264,16 +255,24 @@ function Commands() //{{{
         "":  quote("",  "\\\\ ")
     };
 
+    function parseBool(arg)
+    {
+        if (/^(true|1|on)$/i.test(arg))
+            return true;
+        if (/^(false|0|off)$/i.test(arg))
+            return false;
+        return NaN;
+    }
     const ArgType = new Struct("description", "parse");
     const argTypes = [
         null,
-        ["no arg",  function (arg) !arg],
-        ["boolean", parseBool],
-        ["string",  function (val) val],
-        ["int",     parseInt],
-        ["float",   parseFloat],
-        ["list",    function (arg) arg && arg.split(/\s*,\s*/)]
-    ].map(function (x) x && ArgType.apply(null, x));
+        ArgType("no arg",  function (arg) !arg || null),
+        ArgType("boolean", parseBool),
+        ArgType("string",  function (val) val),
+        ArgType("int",     parseInt),
+        ArgType("float",   parseFloat),
+        ArgType("list",    function (arg) arg && arg.split(/\s*,\s*/))
+    ];
 
     function addCommand(command, isUserCommand, replace)
     {
@@ -358,7 +357,7 @@ function Commands() //{{{
 
             let str = args.literalArg;
             if (str)
-                res.push(/\n/.test(str) ? "<<EOF\n" + str + "EOF" : str);
+                res.push(/\n/.test(str) ? "<<EOF\n" + str.replace(/\n$/, "") + "\nEOF" : str);
             return res.join(" ");
         },
 
@@ -843,7 +842,7 @@ function Commands() //{{{
                     }
                     else
                     {
-                        completeFunc = function () completion[completeOptionMap[completeOpt]].apply(this, Array.slice(arguments));
+                        completeFunc = completion[completeOptionMap[completeOpt]];
                     }
                 }
 
@@ -854,11 +853,7 @@ function Commands() //{{{
                                     argCount: nargsOpt,
                                     bang: bangOpt,
                                     count: countOpt,
-                                    completer: function (context, args)
-                                    {
-                                        if (completeFunc)
-                                            return completeFunc(context, args)
-                                    },
+                                    completer: completeFunc,
                                     replacementText: args.literalArg
                                 }, args.bang);
 
@@ -870,8 +865,7 @@ function Commands() //{{{
                 function completerToString(completer)
                 {
                     if (completer)
-                        return [k for ([k, v] in Iterator(completeOptionMap))
-                                  if (v == completer.name)][0] || "custom";
+                        return [k for ([k, v] in Iterator(completeOptionMap)) if (completer == completion[v])][0] || "custom";
                     else
                         return "";
                 }
@@ -907,6 +901,7 @@ function Commands() //{{{
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
                 [["-bang"], self.OPTION_NOARG],
                 [["-count"], self.OPTION_NOARG],
+                // TODO: "E180: invalid complete value: " + arg
                 [["-complete"], self.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
                      function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]

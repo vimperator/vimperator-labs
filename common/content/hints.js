@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -73,10 +73,10 @@ function Hints() //{{{
         t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
         w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Follow hint sequence in tabs",        hintSequenceElement),
-        O: Mode("Preselect hint in an :open query",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Preselect hint in a :tabopen query",  function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Preselect hint in a :winopen query",  function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        F: Mode("Open multiple hints in tabs",         hintAction_F),
+        O: Mode(":open URL based on hint location",    function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode(":tabopen URL based on hint location", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode(":winopen URL based on hint location", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
         v: Mode("View hint source",                    function (elem, loc) buffer.viewSource(loc, false),                    extended),
         V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
         y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
@@ -84,18 +84,11 @@ function Hints() //{{{
     };
 
     // Used to open multiple hints
-    function hintSequenceElement(elem)
+    function hintAction_F(elem)
     {
-        // Want to always open sequence hints in background
-        // (remember: NEW_BACKGROUND_TAB and NEW_TAB semantics assume
-        //            that loadInBackground=true)
-        if (options.getPref("browser.tabs.loadInBackground"))
-            buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
-        else
-            buffer.followLink(elem, liberator.NEW_TAB);
+        buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
-        // Move to next element in sequence
-        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than 
+        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
         // showing them again, or is this short flash actually needed as a "usability
         // feature"? --mst
         hints.show("F");
@@ -580,10 +573,12 @@ function Hints() //{{{
         "How links are matched",
         "string", "contains",
         {
-            completer: function (filter)
-            {
-                return [[m, ""] for each (m in ["contains", "wordstartswith", "firstletters", "custom"])];
-            },
+            completer: function (context) [
+                ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
+                ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
+                ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
+                ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
+            ],
             validator: Option.validateCompleter
         });
 
@@ -599,9 +594,19 @@ function Hints() //{{{
         "Start QuickHint mode",
         function () { hints.show("o"); });
 
+    // At the moment, "F" calls
+    //    buffer.followLink(clicked_element, DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+    // It is not clear that it shouldn't be:
+    //    buffer.followLink(clicked_element, !DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+    // In fact, it might be nice if there was a "dual" to F (like H and
+    // gH, except that gF is already taken). --tpp
+    //
+    // Likewise, it might be nice to have a liberator.NEW_FOREGROUND_TAB
+    // and then make liberator.NEW_TAB always do what a Cntrl+Click
+    // does. --tpp
     mappings.add(myModes, ["F"],
         "Start QuickHint mode, but open link in a new tab",
-        function () { hints.show("t"); });
+        function () { hints.show(options.getPref("browser.tabs.loadInBackground") ? "b" : "t"); });
 
     mappings.add(myModes, [";"],
         "Start an extended hint mode",

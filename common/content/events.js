@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -189,8 +189,8 @@ function AutoCommands() //{{{
          *
          * @param {Array} events The array of event names for which this
          *     autocommand should be executed.
-         * @param {string} regex The URL pattern to match against the buffer URL
-         * @param {string} cmd The Ex command to run
+         * @param {string} regex The URL pattern to match against the buffer URL.
+         * @param {string} cmd The Ex command to run.
          */
         add: function (events, regex, cmd)
         {
@@ -630,7 +630,7 @@ function Events() //{{{
 
     // load all macros inside ~/.vimperator/macros/
     // setTimeout needed since io. is loaded after events.
-    setTimeout (function () {
+    setTimeout(function () {
         try
         {
             let dirs = io.getRuntimeDirectories("macros");
@@ -769,8 +769,11 @@ function Events() //{{{
             // removeEventListeners() to avoid mem leaks
             liberator.dump("TODO: remove all eventlisteners");
 
-            if (typeof getBrowser != "undefined")
+            try
+            {
                 getBrowser().removeProgressListener(this.progressListener);
+            }
+            catch (e) {}
 
             window.removeEventListener("popupshown", enterPopupMode, true);
             window.removeEventListener("popuphidden", exitPopupMode, true);
@@ -879,7 +882,7 @@ function Events() //{{{
          * Pushes keys into the event queue from liberator it is similar to
          * Vim's feedkeys() method, but cannot cope with 2 partially-fed
          * strings, you have to feed one parsable string.
-         * 
+         *
          * @param {string} keys A string like "2<C-f>" to pass if you want "<"
          *     to be taken literally, prepend it with a "\\".
          * @param {boolean} noremap Allow recursive mappings.
@@ -915,7 +918,7 @@ function Events() //{{{
                     //if (keys[i] == "\\") // FIXME: support the escape key
                     if (keys[i] == "<" && !escapeKey) // start a complex key
                     {
-                        let [match, modifier, keyname] = keys.substr(i).match(/<([CSMA]-)*(.+?)>/i) || [];
+                        let [match, modifier, keyname] = keys.substr(i).match(/<((?:[CSMA]-)*)(.+?)>/i) || [];
                         if (keyname)
                         {
                             if (modifier) // check for modifiers

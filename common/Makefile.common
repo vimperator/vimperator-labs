@@ -5,8 +5,8 @@ OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 BASE	      = $(TOP)/../common
 
-DOC_SRC_FILES = $(wildcard locale/*/*.txt)
-DOC_FILES     = ${DOC_SRC_FILES:%.txt=%.html}
+DOC_SRC_FILES = $(wildcard locale/*/*.txt) $(wildcard locale/*/*.t2t)
+LOCALES       = $(wildcard locale/*)
 
 MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
 
@@ -63,8 +63,6 @@ info:
 	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
 	@echo    "xpi files           ${XPI_FILES}"
 
-.PHONY: check-asciidoc
-doc: check-asciidoc ${DOC_FILES}
 xpi: ${XPI}
 jar: ${JAR}
 
@@ -80,11 +78,10 @@ ${RDF}: ${RDF_IN} Makefile
 clean:
 	@echo "Cleanup..."
 	rm -f ${JAR} ${XPI}
-	find . -name '*~' -exec rm -f {} \;
 
 distclean: clean
 	@echo "More cleanup..."
-	rm -f ${DOC_FILES}
+	@set -e; for locale in $(LOCALES); do $(MAKE) -C clean; doc; done
 	rm -rf ${BUILD_DIR}
 
 #### xpi
@@ -103,21 +100,7 @@ $(JAR): doc
 	$(MAKE_JAR) "$(JAR)" "$(JAR_BASES)" "$(JAR_DIRS)" "$(JAR_TEXTS)" "$(JAR_BINS)" "$(JAR_FILES)"
 	@echo "SUCCESS: $@"
 
-#### doc
+#### doc (see Makefile.doc)
 
-check-asciidoc:
-	@asciidoc --version | awk '{ exit $$2 !~ /^8\.2\./ }' || \
-		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
-
-${DOC_FILES}: %.html: %.txt $(BASE)/Makefile.common locale/en-US/asciidoc.conf
-	@echo "DOC $@"
-	${ASCIIDOC} --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
-
-T2T = $(wildcard locale/*/*.t2t)
-t2t: $(T2T:%.t2t=%.xhtml)
-$(T2T:%.t2t=%.xhtml): locale/en-US/config.t2t
-
-%.xhtml: %.t2t
-	@echo "T2T $@"
-	txt2tags --quiet $<
-
+doc:
+	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale doc; done

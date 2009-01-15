@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -159,7 +159,7 @@ function CompletionContext(editor, name, offset) //{{{
          *    contain inactive contexts. For active contexts, see
          *    {@link #contextList}.
          */
-        this.contexts = { "/": this };
+        this.contexts = { "": this };
         /**
          * @property {Object} A mapping of keys, for {@link #getKey}. Given
          *      { key: value }, getKey(item, key) will return values as such:
@@ -285,7 +285,7 @@ CompletionContext.prototype = {
     set completions(items)
     {
         // Accept a generator
-        if (!(items instanceof Array))
+        if (!("length" in items))
             items = [x for (x in Iterator(items))];
         delete this.cache.filtered;
         delete this.cache.filter;
@@ -1388,7 +1388,6 @@ function Completion() //{{{
                         { process.call(this, item, text) }
                     </>];
 
-
             context.completions = util.map(tabs.browsers, function ([i, browser]) {
                 let indicator = " ";
                 if (i == tabs.index())
@@ -1608,7 +1607,23 @@ function Completion() //{{{
             context.completions = [item for (item in events.getMacros())];
         },
 
-        menuItem: function menuItem(filter) commands.get("emenu").completer(filter), // XXX
+        mark: function mark(context)
+        {
+            function percent(i) Math.round(i * 100);
+
+            // FIXME: Line/Column doesn't make sense with %
+            context.title = ["Mark", "Line Column File"];
+            context.keys.description = function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
+            context.completions = marks.all;
+        },
+
+        menuItem: function menuItem(context)
+        {
+            context.title = ["Menu Path", "Label"];
+            context.anchored = false;
+            context.keys = { text: "fullMenuPath", description: "label" };
+            context.completions = liberator.menuItems;
+        },
 
         option: function option(context, scope)
         {

@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -157,7 +157,7 @@ function Buffer() //{{{
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
-            completer: function (filter) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
+            completer: function (context) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
             validator: Option.validateCompleter
         });
 
@@ -170,7 +170,7 @@ function Buffer() //{{{
         "Show the destination of the link under the cursor in the status bar",
         "number", 1,
         {
-            completer: function (filter) [
+            completer: function (context) [
                 ["0", "Don't show link destination"],
                 ["1", "Show the link in the status line"],
                 ["2", "Show the link in the command line"]
@@ -356,8 +356,7 @@ function Buffer() //{{{
         function ()
         {
             liberator.open(util.readFromClipboard(),
-                /\bpaste\b/.test(options["activate"]) ?
-                liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB);
+                liberator[options.get("activate").has("paste") ? "NEW_BACKGROUND_TAB" : "NEW_TAB"]);
         });
 
     mappings.add(myModes, ["p", "<MiddleMouse>"],
@@ -849,7 +848,7 @@ function Buffer() //{{{
         },
 
         /**
-         * @property {Object} The last focused input field in the buffer. Used
+         * @property {Node} The last focused input field in the buffer. Used
          *     by the "gi" key binding.
          */
         get lastInputField()
@@ -987,6 +986,7 @@ function Buffer() //{{{
                 selController.wordMove(false, false);
                 selController.wordMove(true, true);
                 selController.setCaretEnabled(caretmode);
+                return String.match(selection, /\w*/)[0];
             }
             let range = selection.getRangeAt(0);
             if (util.computedStyle(range.startContainer).whiteSpace == "pre"
@@ -1139,15 +1139,18 @@ function Buffer() //{{{
             elem.focus();
 
             let evt = doc.createEvent("MouseEvents");
-            ["mousedown", "mouseup", "click"].forEach(function (event) {
-                evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
-                        ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
-                elem.dispatchEvent(evt);
+            options.withContext(function () {
+                options.setPref("browser.tabs.loadInBackground", true);
+                ["mousedown", "mouseup", "click"].forEach(function (event) {
+                    evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
+                            ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
+                    elem.dispatchEvent(evt);
+                });
             });
         },
 
         /**
-         * @property {Object} The current document's selection controller.
+         * @property {nsISelectionController} The current document's selection controller.
          */
         get selectionController() getBrowser().docShell
                 .QueryInterface(Ci.nsIInterfaceRequestor)
@@ -1157,8 +1160,8 @@ function Buffer() //{{{
         /**
          * Saves a page link to disk.
          *
-         * @param {Object} elem The page link to save.
-         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog
+         * @param {HTMLAnchorElement} elem The page link to save.
+         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog.
          */
         saveLink: function (elem, skipPrompt)
         {
@@ -1381,7 +1384,7 @@ function Buffer() //{{{
         /**
          * Displays information about the specified element.
          *
-         * @param {Object} elem
+         * @param {Node} elem
          */
         showElementInfo: function (elem)
         {
@@ -1662,7 +1665,10 @@ function Marks() //{{{
 
             marks.remove(args, special);
         },
-        { bang: true });
+        {
+            bang: true,
+            completer: function (context) completion.mark(context)
+        });
 
     commands.add(["ma[rk]"],
         "Mark current location within the web page",
@@ -1706,6 +1712,8 @@ function Marks() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        get all() getSortedMarks(),
 
         /**
          * Add a named mark for the current buffer, at its current position.

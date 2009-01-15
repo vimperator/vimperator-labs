@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -28,7 +28,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
 const plugins = {};
 plugins.__proto__ = modules;
@@ -153,7 +153,7 @@ const liberator = (function () //{{{
                         group.setter(value);
                     return value;
                 },
-                completer: function (filter)
+                completer: function (context)
                 {
                     let opts = [v.opts for ([k, v] in Iterator(groups))];
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
@@ -206,6 +206,34 @@ const liberator = (function () //{{{
             function () { liberator.quit(true); });
     });
 
+    // TODO: move this
+    function getMenuItems()
+    {
+        function addChildren(node, parent)
+        {
+            for (let [,item] in Iterator(node.childNodes))
+            {
+                if (item.childNodes.length == 0 && item.localName == "menuitem"
+                    && !/rdf:http:/.test(item.label)) // FIXME
+                {
+                    item.fullMenuPath = parent + item.label;
+                    items.push(item);
+                }
+                else
+                {
+                    let path = parent;
+                    if (item.localName == "menu")
+                        path += item.label + ".";
+                    addChildren(item, path);
+                }
+            }
+        }
+
+        let items = [];
+        addChildren(document.getElementById(config.guioptions["m"][1]), "");
+        return items;
+    }
+
     registerObserver("load_commands", function ()
     {
         commands.add(["addo[ns]"],
@@ -256,34 +284,6 @@ const liberator = (function () //{{{
                 completer: function (context, args) completion.dialog(context)
             });
 
-        // TODO: move this
-        function getMenuItems()
-        {
-            function addChildren(node, parent)
-            {
-                for (let [,item] in Iterator(node.childNodes))
-                {
-                    if (item.childNodes.length == 0 && item.localName == "menuitem"
-                        && !/rdf:http:/.test(item.label)) // FIXME
-                    {
-                        item.fullMenuPath = parent + item.label;
-                        items.push(item);
-                    }
-                    else
-                    {
-                        let path = parent;
-                        if (item.localName == "menu")
-                            path += item.label + ".";
-                        addChildren(item, path);
-                    }
-                }
-            }
-
-            let items = [];
-            addChildren(document.getElementById(config.guioptions["m"][1]), "");
-            return items;
-        }
-
         commands.add(["em[enu]"],
             "Execute the specified menu item from the command line",
             function (args)
@@ -305,13 +305,7 @@ const liberator = (function () //{{{
             },
             {
                 argCount: "1",
-                // TODO: add this as a standard menu completion function
-                completer: function (context)
-                {
-                    context.title = ["Menu Path", "Label"];
-                    context.keys = { text: "fullMenuPath", description: "label" };
-                    context.completions = getMenuItems();
-                },
+                completer: function (context) completion.menuItem(context),
                 literal: 0
             });
 
@@ -597,6 +591,8 @@ const liberator = (function () //{{{
         get mode()      modes.main,
         set mode(value) modes.main = value,
 
+        get menuItems() getMenuItems(),
+
         // Global constants
         CURRENT_TAB: 1,
         NEW_TAB: 2,
@@ -652,8 +648,9 @@ const liberator = (function () //{{{
 
         triggerObserver: function (type)
         {
+            let args = Array.slice(arguments, 1);
             for (let [,fn] in Iterator(observers[type] || []))
-                fn.apply(null, Array.slice(arguments, 1));
+                fn.apply(null, args);
         },
 
         beep: function ()

@@ -79,7 +79,9 @@ We try to be quite consistent, but of course, that's not always possible.
 * Prefer // over /* */ comments (exceptions for big comments are usually OK)
   Right: if (HACK) // TODO: remove hack
   Wrong: if (HACK) /* TODO: remove hack */
-  Documentation comment blocks use /** ... */
+
+* Documentation comment blocks use /** ... */ Wrap these lines at 80
+  characters.
 
 * Only wrap lines if it makes the code obviously clearer. Lines longer than 132
   characters should probably be broken up rather than wrapped anyway.
@@ -121,6 +123,43 @@ We try to be quite consistent, but of course, that's not always possible.
 
   I don't like unnecessary use of 'new', I don't like 'new'. --djk
 
+  There is semantic value to using "new." It's good CBSE. --Ted
+
+  There's no semantic value. It's reasonable to infer that any function
+  named in CamelCase is a constructor. That's the case with all such
+  internal functions. As far as I'm concerned, 'new' is a hack. Actually,
+  most of JS is a hack...
+    --Kris
+
+      What he said. Although, I would have said "a pretty nifty language
+      with some regrettable design decisions" now that I'm in therapy.
+      --djk
+
+  There is semantic value: With new you know for SURE it's calling the
+  constructor of a class, with CamelCase only you just ASSUME you do.
+  I am all about making code clearer also to new developers. And this
+  includes getting rid of as many assumptions as possible, by making
+  things explicit, when they don't hurt readability (and new doesn't
+  for me). It's not so important, that i'll change all instances to
+  new immediately, but will probably do so over time, when I see it.
+    --mst
+
+      JavaScript doesn't have classes... What about all the other
+      'constructor' functions such as Commands? And I think it does hurt
+      readability because it's pointless.
+      Anyway, if it's important enough to change it should all be
+      changed at once. I've removed most of these sorts of
+      inconsistencies and I wouldn't like to see them reintroduced.
+      --djk
+
+  Actually, you're not sure of anything. You can call new (function (a)
+  a.substr(2)), and you don't get a new object. The only difference is
+  that it's called with 'this' set. Given that it's uncouth to name a
+  non-constructor function in CamelCase, and that most internal
+  constructors don't require new (and some, like String, break when
+  you use it), it just seems superfluous and distracting.
+    --Kris
+
 == Testing/Optimization ==
 
 TODO: Add some information here about testing/validation/etc.
@@ -142,7 +181,16 @@ TODO: Document the existence of remote branches and discuss when and how
     countless git walkthroughs, FAQs, tips pages (not to mention 'git
     help') that I don't see the need to duplicate them here. As for
     branches, 'git branch' should be sufficient, and, if not, there's
-    a list on gitweb.
-      --Kris
+    a list on gitweb. --Kris
 
-# vim: set fdm=marker sw=4 ts=4 et ai:
+        I wasn't trying to say that git was a problem (though other DVCS
+        have more accessible help systems; except for very complex
+        projects, I think Mercurial is a much more comfortable DVCS to
+        learn, use, and navigate). I was saying that it might be nice if
+        the remote branches (and related polices) were documented. Yes,
+        anyone can do a "git branch -r", but seeing that a branch exists
+        is not the same as understanding why it's there. --Ted
+
+            Sure, I agree. --djk
+
+// vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:

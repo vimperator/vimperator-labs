@@ -1,0 +1,75 @@
+# Symlink me to locale/*/Makefile
+
+#### configuration
+
+BASE          = ../../../common
+
+THIS_LOCALE   = $(notdir $(shell pwd))
+
+ADC_SRC_FILES = $(wildcard *.txt)
+ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
+ADC_DEPS      = $(wildcard asciidoc.conf)
+
+T2T_SRC_FILES = $(wildcard *.t2t)
+T2T_FILES     = $(T2T_SRC_FILES:%.t2t=%.xhtml)
+T2T_DEPS      = $(wildcard config.t2t)
+
+DOC_FILES     = $(ADC_FILES) $(T2T_FILES)
+
+ASCIIDOC      = asciidoc
+TXT2TAGS      = txt2tags
+AWK           = awk
+
+.SILENT:
+
+#### rules
+
+.PHONY: all help doc asciidoc check-asciidoc clean distclean
+all: doc
+
+doc: asciidoc t2t
+
+help:
+	@echo "${NAME} ${VERSION} build"
+	@echo
+	@echo "  make help      - display this help"
+	@echo "  make doc       - build doc files"
+	@echo "  make asciidoc  - build asciidoc'd files only"
+	@echo "  make t2t       - build txt2tags'd files only"
+	@echo "  make clean     - clean up"
+	@echo "  make distclean - clean up more"
+
+clean:
+	@echo "Cleanup..."
+
+distclean: clean
+	@echo "More cleanup..."
+	rm -f $(DOC_FILES)
+
+#### Makes single-file makes easier to type
+
+%: %.html %.t2t %.xhtml %.t2t ;
+
+%: %.html %.txt ;
+
+%: %.xhtml %.t2t ;
+
+#### asciidoc
+
+asciidoc: check-asciidoc $(ADC_FILES)
+
+check-asciidoc:
+	@$(ASCIIDOC) --version | $(AWK) '{ exit $$2 !~ /^8\.2\./ }' || \
+		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
+
+$(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
+	@echo "DOC locale/$(THIS_LOCALE)/$@"
+	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a doctitle="$(shell basename $@)" -o $@ $<
+
+#### txt2tags
+
+t2t: $(T2T_FILES)
+
+$(T2T_FILES): %.xhtml: %.t2t $(BASE)/Makefile.doc $(T2T_DEPS)
+	@echo "T2T locale/$(THIS_LOCALE)/$@"
+	txt2tags --quiet $<

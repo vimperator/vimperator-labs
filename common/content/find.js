@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -123,8 +123,8 @@ function Search() //{{{
      *
      *   The Initial Developer of the Original Code is
      *   Netscape Communications Corporation.
-     *   Portions created by the Initial Developer are Copyright (C) 2003
-     *   the Initial Developer. All Rights Reserved.
+     *   Portions created by the Initial Developer are Copyright (c) 2003
+     *   by the Initial Developer. All Rights Reserved.
      *
      *   Contributor(s):
      *       Blake Ross <blake@cs.stanford.edu> (Original Author)
@@ -436,7 +436,6 @@ function Search() //{{{
         // escape while typing a search
         searchCanceled: function ()
         {
-            this.clear();
             // TODO: code to reposition the document to the place before search started
         },
 

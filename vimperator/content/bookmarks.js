@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -792,9 +792,9 @@ function History() //{{{
         function (args) { history.list(args.join(" "), args.bang, args["-max"] || 1000); },
         {
             bang: true,
-            completer: function (context) { context.quote = null, completion.history(context); },
-            options: [[["-max", "-m"], options.OPTION_INT]]
+            completer: function (context) { context.quote = null; completion.history(context); },
             // completer: function (filter) completion.history(filter)
+            options: [[["-max", "-m"], options.OPTION_INT]]
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -962,7 +962,14 @@ function QuickMarks() //{{{
             else
                 quickmarks.remove(args.string);
         },
-        { bang: true });
+        {
+            bang: true,
+            completer: function (context)
+            {
+                context.title = ["QuickMark", "URL"];
+                context.completions = qmarks;
+            }
+        });
 
     commands.add(["qma[rk]"],
         "Mark a URL with a letter for quick access",

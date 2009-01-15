@@ -7,28 +7,28 @@ section:Initialization[initialization,startup]
 
 At startup, Vimperator completes the following tasks in order.
 
-. Vimperator can perform user initialization commands. When
+1. Vimperator can perform user initialization commands. When
   one of the following is successfully located, it is executed, and no
   further locations are tried.
 
-  .. |$VIMPERATOR_INIT| _$VIMPERATOR_INIT_ -- May contain a single ex
+  a. |$VIMPERATOR_INIT| _$VIMPERATOR_INIT_ -- May contain a single ex
                                                 command (e.g.,
                                                 "[c]:source {file}[c]").
-  .. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its
+  b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its
 			       contents are executed and
 			       _$MY_VIMPERATORRC_ set to its path.
-  .. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are 
+  c. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are 
                                executed.
 
-. If 'exrc' is set, then any RC file in the current directory is also sourced.
+2. If 'exrc' is set, then any RC file in the current directory is also sourced.
 
-. All directories in 'runtimepath' are searched for a "plugin"
-  subdirectory and all yet unloaded plugins are loaded. For each
-  plugin directory, all *.\{js,vimp} files (including those in further
-  subdirectories) are sourced alphabetically. No plugins will be sourced
-  if 'noloadplugins' is set. Any particular plugin will not be loaded
-  if it has already been loaded (e.g., by an earlier [c]:loadplugins[c]
-  command).
+3. All directories in 'runtimepath' are searched for a "plugin"
+subdirectory and all yet unloaded plugins are loaded. For each
+plugin directory, all *.\{js,vimp} files (including those in further
+subdirectories) are sourced alphabetically. No plugins will be sourced
+if 'noloadplugins' is set. Any particular plugin will not be loaded
+if it has already been loaded (e.g., by an earlier [c]:loadplugins[c]
+command).
 
 The user's ~ (i.e., "home") directory is determined as follows:
 

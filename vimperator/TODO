@@ -20,20 +20,19 @@ BUGS:
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
 
 (recent CVS regressions):
-- visual caret mode is broken
-- the message system is a bit of a debacle at the moment but I'm not sure how
-  it's supposed to work. MST, can you spec it when you have some time?
-  E.g. :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
-  Obviously I think it should but I'm not sure if it's a bug or not in your
-  view, thanks. --djk
-  The spec is easy: echomsg() is used for informational purposes, and should therefore
-  never need user interaction. Therefore: If the MOW is open, print the message there,
-  but never open the MOW for an echomsg(). --mst
-- While the old :open foo<tab> was broken/annoying, so is the one after 02-01-2008, as
-  I am often waiting ~20sec or more after doing :open not-cached-things<tab>.
-  We should probably just abort searching after 5 secs if we already have found some entries.
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
   plugin or a vimp issue.
+- visual caret mode is broken, requires a manual page focus first anyway or
+  else it chucks, I haven't investigated --djk
+- messages is still broken in several ways - needs testing.
+  => :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
+  => it often overwrites the open command-line while editing etc.
+- <tags> and <keyword> autocmd 'keywords' are not available when adding a
+  bookmark - they're being set after the observer triggers the autocmd event.
+- MOW is broken for multiple commands when open E.g. :ls | ls
+- completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
+  and even if it is not totally off, i had it jump by one pixel when wrapping around.
+  If that's unfixable, i propose reverting the new completion height stuff.
 
 FEATURES:
 9 finish :help TODOs
@@ -86,14 +85,14 @@ FEATURES:
 6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
 6 Command :tags for getting a list of used tags
 6 ;?<hint> should show more information
-5 when looking at a zoomed out image (because it's large), zi should zoom in 
+5 when looking at a zoomed out image (because it's large), zi should zoom in
   maybe with this? : http://mxr.mozilla.org/seamonkey/source/content/html/document/public/nsIImageDocument.idl
 5 make a command to search within google search results
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
 4 } { should jump to the next paragraph of the page (maybe impossible)
-3 A format for 'guitablabel' and 'statusline' 
-3 add a command-line window (:help cmdline-window in Vim). 
+3 A format for 'guitablabel' and 'statusline'
+3 add a command-line window (:help cmdline-window in Vim).
 3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
   have a look into the split browser extension
 1 Add information to liberator/HACKING file about testing and optimization

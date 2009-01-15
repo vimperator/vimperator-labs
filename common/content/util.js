@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -296,8 +296,8 @@ const util = { //{{{
     /**
      * Generates an Asciidoc help entry.
      *
-     * @param {Object} obj A liberator <b>Command</b>, <b>Mapping</b> or
-     *     <b>Option</b> object
+     * @param {Command|Mapping|Option} obj A liberator <b>Command</b>,
+     *     <b>Mapping</b> or <b>Option</b> object
      * @param {string} extraHelp Extra help text beyond the description.
      * @returns {string}
      */
@@ -359,8 +359,8 @@ const util = { //{{{
      * argument.
      *
      * @param {string} url
-     * @param {function} callback
-     * @returns {Object}
+     * @param {function(XMLHttpRequest)} callback
+     * @returns {XMLHttpRequest}
      */
     httpGet: function httpGet(url, callback)
     {
@@ -426,10 +426,10 @@ const util = { //{{{
     },
 
     /**
-     * Converts a URI string into an URI object.
+     * Converts a URI string into a URI object.
      *
      * @param {string} uri
-     * @returns {Object}
+     * @returns {nsIURI}
      */
     // FIXME: createURI needed too?
     newURI: function (uri)
@@ -611,7 +611,7 @@ const util = { //{{{
      * ['www.google.com/search?q=bla', 'www.osnews.com']
      *
      * @param {string} str
-     * @returns {Array}
+     * @returns {string[]}
      */
     stringToURLArray: function stringToURLArray(str)
     {
@@ -623,7 +623,7 @@ const util = { //{{{
                 // Try to find a matching file.
                 let file = io.getFile(url);
                 if (file.exists() && file.isReadable())
-                    return file.path;
+                    return services.get("io").newFileURI(file).spec;
             }
             catch (e) {}
 
@@ -638,14 +638,13 @@ const util = { //{{{
 
             // Ok, not a valid proto. If it looks like URL-ish (foo.com/bar),
             // let Gecko figure it out.
-            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w.]+:\d+(?:\/|$)/.test(url))
+            if (/[.]/.test(url) && !/\s/.test(url) || /^[\w-.]+:\d+(?:\/|$)/.test(url))
                 return url;
 
             // TODO: it would be clearer if the appropriate call to
             // getSearchURL was made based on whether or not the first word was
             // indeed an SE alias rather than seeing if getSearchURL can
-            // process the call usefully and trying again if it fails - much
-            // like the comments below ;-)
+            // process the call usefully and trying again if it fails
 
             // check for a search engine match in the string, then try to
             // search for the whole string in the default engine
@@ -663,7 +662,8 @@ const util = { //{{{
      *
      * @param {Node} node
      * @param {Document} doc
-     * @param {Object} nodes
+     * @param {Object} nodes If present, nodes with the "key" attribute are
+     *     stored here, keyed to the value thereof.
      * @returns {Node}
      */
     xmlToDom: function xmlToDom(node, doc, nodes)
@@ -686,9 +686,6 @@ const util = { //{{{
     }
 }; //}}}
 
-// Struct is really slow, AT LEAST 5 times slower than using structs or simple Objects
-// main reason is the function ConStructor(), which i couldn't get faster.
-// Maybe it's a TraceMonkey problem, for now don't use it for anything which must be fast (like bookmarks or history)
 function Struct()
 {
     let self = this instanceof Struct ? this : new Struct();

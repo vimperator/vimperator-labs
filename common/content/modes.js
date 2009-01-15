@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2006-2008: Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -113,8 +113,7 @@ const modes = (function () //{{{
         if (newMode == modes.NORMAL)
         {
             // disable caret mode when we want to switch to normal mode
-            let value = options.getPref("accessibility.browsewithcaret", false);
-            if (value)
+            if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
             statusline.updateUrl();
@@ -171,7 +170,7 @@ const modes = (function () //{{{
 
         // helper function to set both modes in one go
         // if silent == true, you also need to take care of the mode handling changes yourself
-        set: function (mainMode, extendedMode, silent)
+        set: function (mainMode, extendedMode, silent, stack)
         {
             silent = (silent || main == mainMode && extended == extendedMode);
             // if a main mode is set, the extended is always cleared
@@ -187,6 +186,7 @@ const modes = (function () //{{{
                 if (main != oldMain)
                     handleModeChange(oldMain, mainMode, oldExtended);
             }
+            liberator.triggerObserver("modeChange", [oldMain, oldExtended], [main, extended], stack);
 
             if (!silent)
                 this.show();
@@ -195,18 +195,19 @@ const modes = (function () //{{{
         push: function (mainMode, extendedMode, silent)
         {
             modeStack.push([main, extended]);
-            this.set(mainMode, extendedMode, silent);
+            this.set(mainMode, extendedMode, silent, { push: modeStack[modeStack.length - 1] });
         },
 
         pop: function (silent)
         {
             let a = modeStack.pop();
             if (a)
-                this.set(a[0], a[1], silent);
+                this.set(a[0], a[1], silent, { pop: a });
             else
                 this.reset(silent);
         },
 
+        // TODO: Deprecate this in favor of addMode? --Kris
         setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
             // TODO this.plugin[id]... ('id' maybe submode or what..)
@@ -247,18 +248,10 @@ const modes = (function () //{{{
         set isReplaying(value) { isReplaying = value; this.show(); },
 
         get main() main,
-        set main(value) {
-            if (value != main)
-                handleModeChange(main, value);
-
-            main = value;
-            // setting the main mode always resets any extended mode
-            extended = modes.NONE;
-            this.show();
-        },
+        set main(value) { this.set(value); },
 
         get extended() extended,
-        set extended(value) { extended = value; this.show(); }
+        set extended(value) { this.set(null, value) }
 
     };
 
@@ -285,7 +278,6 @@ const modes = (function () //{{{
     self.addMode("SEARCH_BACKWARD", true);
     self.addMode("MENU", true); // a popupmenu is active
     self.addMode("LINE", true); // linewise visual mode
-    self.addMode("RECORDING", true);
     self.addMode("PROMPT", true);
 
     return self;

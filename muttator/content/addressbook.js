@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-(c) 2008: Christian Dietrich <stettberger@dokucode.de>
+Copyright (c) 2008 by Christian Dietrich <stettberger@dokucode.de>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
