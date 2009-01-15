@@ -207,7 +207,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:pageinfo|| Show various page information +
 ||:pagestyle|| Select the author style sheet to apply +
 ||:play|| Replay a recorded macro +
-||:preferences|| Show Firefox preferences +
+||:preferences|| Show Firefox preferences dialog +
 ||:pwd|| Print the current directory name +
 ||:qmark|| Mark a URL with a letter for quick access +
 ||:qmarks|| Show all QuickMarks +

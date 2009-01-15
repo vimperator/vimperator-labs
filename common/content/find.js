@@ -37,6 +37,7 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : 'linksearch' searches should highlight link matches only
 //     : changing any search settings should also update the search state including highlighting
 //     : incremental searches shouldn't permanently update search modifiers
+//     : normalise the use of "search" vs "find" and rename callbacks
 
 // make sure you only create this object when the "liberator" object is ready
 /**
@@ -320,8 +321,13 @@ function Search() //{{{
 
     return {
 
-        // Called when the search dialog is asked for
-        // If you omit "mode", it will default to forward searching
+        /**
+         * Called when the search dialog is requested.
+         *
+         * @param {number} mode The search mode, either modes.SEARCH_FORWARD or
+         *     modes.SEARCH_BACKWARD.
+         * @default modes.SEARCH_FORWARD
+         */
         openSearchDialog: function (mode)
         {
             if (mode == modes.SEARCH_BACKWARD)
@@ -338,14 +344,17 @@ function Search() //{{{
             // TODO: focus the top of the currently visible screen
         },
 
-        // Finds text in a page
         // TODO: backwards seems impossible i fear :(
-        find: function (str, backwards)
+        /**
+         * Searches the current buffer for <b>str</b>.
+         *
+         * @param {string} str The string to find.
+         */
+        find: function (str)
         {
             let fastFind = getBrowser().fastFind;
 
             processUserPattern(str);
-
             fastFind.caseSensitive = caseSensitive;
             found = fastFind.find(searchString, linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
@@ -355,10 +364,16 @@ function Search() //{{{
             return found;
         },
 
-        // Called when the current search needs to be repeated
+        /**
+         * Searches the current buffer again for the most recently used search
+         * string.
+         *
+         * @param {boolean} reverse Whether to search forwards or backwards.
+         * @default false
+         */
         findAgain: function (reverse)
         {
-            // this hack is needed to make n/N work with the correct string, if
+            // This hack is needed to make n/N work with the correct string, if
             // we typed /foo<esc> after the original search.  Since searchString is
             // readonly we have to call find() again to update it.
             if (getBrowser().fastFind.searchString != lastSearchString)
@@ -393,15 +408,27 @@ function Search() //{{{
             }
         },
 
-        // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
+        /**
+         * Called when the user types a key in the search dialog. Triggers a
+         * search attempt if 'incsearch' is set.
+         *
+         * @param {string} command The search string.
+         */
         searchKeyPressed: function (command)
         {
             if (options["incsearch"])
                 this.find(command, backwards);
         },
 
-        // Called when the enter key is pressed to trigger a search
-        // use forcedBackward if you call this function directly
+        /**
+         * Called when the <Enter> key is pressed to trigger a search.
+         *
+         * @param {string} command The search string.
+         * @param {boolean} forcedBackward Whether to search forwards or
+         *     backwards. This overrides the direction set in
+         *     (@link #openSearchDialog).
+         * @default false
+         */
         searchSubmitted: function (command, forcedBackward)
         {
             if (typeof forcedBackward === "boolean")
@@ -432,16 +459,22 @@ function Search() //{{{
             modes.reset();
         },
 
-        // Called when the search is canceled - for example if someone presses
-        // escape while typing a search
+        /**
+         * Called when the search is canceled. For example, if someone presses
+         * <Esc> while typing a search.
+         */
         searchCanceled: function ()
         {
             // TODO: code to reposition the document to the place before search started
         },
 
         // FIXME: Thunderbird incompatible
-        // this is not dependent on the value of 'hlsearch'
-        highlight: function (text)
+        /**
+         * Highlights all occurances of <b>str</b> in the buffer.
+         *
+         * @param str The string to highlight.
+         */
+        highlight: function (str)
         {
             if (config.name == "Muttator")
                 return;
@@ -450,10 +483,10 @@ function Search() //{{{
             if (highlightObj.getSpans(content.document).snapshotLength > 0)
                 return;
 
-            if (!text)
-                text = lastSearchString;
+            if (!str)
+                str = lastSearchString;
 
-            highlightObj.highlightDoc(window.content, text);
+            highlightObj.highlightDoc(window.content, str);
 
             // recreate selection since _highlightDoc collapses the selection backwards
             getBrowser().fastFind.findAgain(false, linksOnly);
@@ -461,8 +494,12 @@ function Search() //{{{
             // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [type="simple"])
         },
 
+        /**
+         * Clears all search highlighting.
+         */
         clear: function ()
         {
+            // FIXME: moves the selection
             highlightObj.highlightDoc(window.content);
             // need to manually collapse the selection if the document is not
             // highlighted
