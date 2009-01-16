@@ -179,7 +179,8 @@ section:Abbreviations[abbreviations]
 ________________________________________________________________________________
 Abbreviate a key sequence. Abbreviate {lhs} to {rhs}. If only {lhs} is given,
 list all abbreviations that start with {lhs}. List all abbreviations, if no
-arguments are given.
+arguments are given. To prevent ambiguity, the {lhs} cannot contain
+quotes (' or ") or spaces.
 ________________________________________________________________________________
 
 

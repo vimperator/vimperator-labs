@@ -164,7 +164,7 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
-                let matches = args.string.match(/^([^\s"']*)\s*(.*)/);
+                let matches = args.string.match(/^\s*([^\s"']*)(?:\s*$|\s+(.*))/);
                 if (! matches)
                 {
                     liberator.echoerr("E474: Invalid argument");
