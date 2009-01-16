@@ -6,6 +6,9 @@ BASE          = ../../../common
 
 THIS_LOCALE   = $(notdir $(shell pwd))
 THIS_LANG     = $(firstword $(subst -, ,$(THIS_LOCALE)))
+ifneq ($(strip $(shell echo -n $(THIS_LANG) | wc -c)),2)
+THIS_LANG     = en
+endif
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
