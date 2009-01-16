@@ -166,7 +166,15 @@ function Editor() //{{{
             {
                 let [lhs, rhs] = args;
                 if (rhs)
+                {
+                    if (lhs.match(/\W/))
+                    {
+                        liberator.echoerr("E474: Invalid argument");
+                        return false;
+                    }
+
                     editor.addAbbreviation(mode, lhs, rhs);
+                }
                 else
                     editor.listAbbreviations(mode, lhs || "");
             },
