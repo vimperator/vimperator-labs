@@ -164,12 +164,13 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
-                let [lhs, rhs] = args;
-                if (lhs && lhs.match(/[\s"']/))
+                let matches = args.string.match(/^([^\s"']*)\s*(.*)/);
+                if (! matches)
                 {
                     liberator.echoerr("E474: Invalid argument");
                     return false;
                 }
+                let [,lhs,rhs] = matches;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
                 else
