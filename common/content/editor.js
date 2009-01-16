@@ -165,7 +165,7 @@ function Editor() //{{{
             function (args)
             {
                 let [lhs, rhs] = args;
-                if (lhs && lhs.match(/\W/))
+                if (lhs && lhs.match(/[\s"']/))
                 {
                     liberator.echoerr("E474: Invalid argument");
                     return false;
@@ -1015,7 +1015,7 @@ function Editor() //{{{
             let text      = textbox.value;
             let currStart = textbox.selectionStart;
             let currEnd   = textbox.selectionEnd;
-            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\w+)$/m, "$2"); // get last word \b word boundary
+            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?([^\s"']+)$/m, "$2"); // get last word \b word boundary
             if (!foundWord)
                 return true;
 
