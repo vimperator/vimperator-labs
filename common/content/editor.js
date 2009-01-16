@@ -1010,7 +1010,7 @@ function Editor() //{{{
             let text      = textbox.value;
             let currStart = textbox.selectionStart;
             let currEnd   = textbox.selectionEnd;
-            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
+            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\w+)$/m, "$2"); // get last word \b word boundary
             if (!foundWord)
                 return true;
 
