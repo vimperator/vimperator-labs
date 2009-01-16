@@ -835,7 +835,7 @@ function Completion() //{{{
         // Get an element from the stack. If @n is negative,
         // count from the top of the stack, otherwise, the bottom.
         // If @m is provided, return the @mth value of element @o
-        // of the stack entey at @n.
+        // of the stack entry at @n.
         let get = function get(n, m, o)
         {
             let a = stack[n >= 0 ? n : stack.length + n];
