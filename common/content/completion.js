@@ -1553,6 +1553,9 @@ function Completion() //{{{
             }
         },
 
+        // XXX
+        highlightGroup: function highlightGroup(context, args) commands.get("highlight").completer(context, args),
+
         history: function _history(context, maxItems)
         {
             context.format = history.format;
