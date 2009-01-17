@@ -826,4 +826,4 @@ A regexp which defines the word separators which are used for the
 the text of a link.
 ____
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

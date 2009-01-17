@@ -57,4 +57,4 @@ ________________________________________________________________________________
 Force the browser to restart. Useful when installing extensions.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

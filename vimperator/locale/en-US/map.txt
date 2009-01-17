@@ -410,4 +410,4 @@ Add a :Google command to search via google:
 
 // TODO: add decent examples
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

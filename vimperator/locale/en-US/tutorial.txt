@@ -250,4 +250,4 @@ are neither infinite nor omnipotent; please bear with us. If you can't wait for
 us to get around to it, rest assured patches are welcome! See the
 help:Developer[developer.html] page for more information.
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:
