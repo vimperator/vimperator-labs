@@ -165,7 +165,7 @@ function Editor() //{{{
             function (args)
             {
                 let [lhs, rhs] = args;
-                if (lhs.match(/\W/))
+                if (lhs && lhs.match(/\W/))
                 {
                     liberator.echoerr("E474: Invalid argument");
                     return false;
