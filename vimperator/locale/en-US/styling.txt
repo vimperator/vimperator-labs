@@ -50,10 +50,10 @@ Valid groups are:
 *Keyword*          A bookmark keyword for a URL
 *LineNr*           The line number of an error
 *Message*
-*ModeMsg*          The mode indicator in the command-line
+*ModeMsg*          The mode indicator in the command line
 *MoreMsg*          The indicator that there is more text to view
 *NonText*
-*Normal*           Normal text in the command-line
+*Normal*           Normal text in the command line
 *Null*             A JavaScript Null object
 *Number*           A JavaScript Number object
 *Object*           A JavaScript Object
