@@ -177,7 +177,7 @@ const util = { //{{{
 
     /**
      * Copies a string to the system clipboard. If <b>verbose</b> is specified
-     * the copied string is also echoed to the command-line.
+     * the copied string is also echoed to the command line.
      *
      * @param {string} str
      * @param {boolean} verbose

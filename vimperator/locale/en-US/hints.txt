@@ -63,4 +63,4 @@ Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

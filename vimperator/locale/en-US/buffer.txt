@@ -358,4 +358,4 @@ the page's default style sheet is used.
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc fdm=marker:
+// vim: set syntax=asciidoc filetype=asciidoc fdm=marker:

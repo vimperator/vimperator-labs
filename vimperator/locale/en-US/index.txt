@@ -128,8 +128,8 @@ section:Command-line{nbsp}editing[ex-edit-index]
 
 ||<C-]>|| Expand a command-line abbreviation +
 
-||<Up>|| Recall the previous command-line from the history list which matches the current command-line +
-||<Down>|| Recall the next command-line from the history list which matches the current command-line +
+||<Up>|| Recall the previous command line from the history list which matches the current command line +
+||<Down>|| Recall the next command line from the history list which matches the current command line +
 
 ||<Tab>|| Complete the word in front of the cursor according to the behavior specified in 'wildmode' +
 ||<S-Tab>|| Complete the previous full match when 'wildmode' contains "full" +
@@ -172,7 +172,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:echo|| Echo the expression +
 ||:echoerr|| Echo the expression as an error message +
 ||:echomsg|| Echo the expression as an informational message +
-||:emenu|| Execute the specified menu item from the command-line +
+||:emenu|| Execute the specified menu item from the command line +
 ||:execute|| Execute the argument as an Ex command +
 ||:exusage|| List all Ex commands with a short description +
 ||:finish|| Stop sourcing a script file +
@@ -295,7 +295,7 @@ section:Options[option-index]
 ||'scroll'|| Number of lines to scroll with and commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
 ||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
-||'showmode'|| Show the current mode in the command-line +
+||'showmode'|| Show the current mode in the command line +
 ||'showstatuslinks'|| Show the destination of the link under the cursor in the status bar +
 ||'showtabline'|| Control when to show the tab bar of opened web pages +
 ||'smartcase'|| Override the 'ignorecase' option if the pattern contains uppercase characters +
@@ -311,4 +311,4 @@ section:Options[option-index]
 ||'wildoptions'|| Change how command-line completion is done +
 ||'wordseparators'|| How words are split for hintmatching +
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

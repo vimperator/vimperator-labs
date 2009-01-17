@@ -19,7 +19,7 @@ ____
 ||:norm[al][!] {commands}|| +
 ________________________________________________________________________________
 Execute Normal mode commands {commands}. This makes it possible to execute
-Normal mode commands typed on the command-line. {commands} is executed like it
+Normal mode commands typed on the command line. {commands} is executed like it
 is typed. If the [!] is given, mappings will not be used. {commands} should be
 a complete command. {commands} cannot start with a space. Put a 1 (one) before
 it, 1 space is one space.
@@ -94,8 +94,8 @@ section:Uncategorized{nbsp}help[uncategorized]
 |<C-[>| |<Esc>| +
 ||<Esc>||
 ________________________________________________________________________________
-Focus content. Exits any command-line or hint mode and returns to browser
-mode. Also focuses the web page, in case a form field has focus and eats
+Focus content. Exits command-line or hint mode and returns to browser
+mode. Also focuses the web page in case a form field has focus and eats
 our key presses.
 ________________________________________________________________________________
 
@@ -115,4 +115,4 @@ ________________________________________________________________________________
 //Close preview window on bottom of screen.
 //________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

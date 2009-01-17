@@ -887,7 +887,7 @@ function Events() //{{{
          *     to be taken literally, prepend it with a "\\".
          * @param {boolean} noremap Allow recursive mappings.
          * @param {boolean} silent Whether the command should be echoed to the
-         *     command-line.
+         *     command line.
          * @returns {boolean}
          */
         feedkeys: function (keys, noremap, silent)

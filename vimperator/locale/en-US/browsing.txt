@@ -41,18 +41,18 @@ opened in new tabs.
 Each token is analyzed and in this order:
 
 1. Opened as a local file if it is an existing relative or absolute filename.
-   - [c]:open /etc/fstab[c] shows the file system table.
-   - [c]:open ../other/foo.html[c] in your home directory opens
+   * [c]:open /etc/fstab[c] shows the file system table.
+   * [c]:open ../other/foo.html[c] in your home directory opens
 	 [a]/home/other/foo.html[a]
-2. Opened with the specified search engine if the token looks like a search
+ . Opened with the specified search engine if the token looks like a search
    string and the first word is the name of a search engine ([c]:open wikipedia
    linus torvalds[c] opens the Wikipedia entry for linus torvalds). The short
    name of a search engine is automatically guessed from its name. If you want
    to set a custom name, you can change it with [c]:dialog searchengines[c].
-3. Opened with the default search engine or keyword (specified with the
+ . Opened with the default search engine or keyword (specified with the
    'defsearch' option) if the first word is no search engine ([c]:open linus
    torvalds[c] opens a Google search for linux torvalds).
-4. Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
+ . Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
    www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
    background tab).
 
@@ -346,4 +346,4 @@ ________________________________________________________________________________
 Print the current directory name.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

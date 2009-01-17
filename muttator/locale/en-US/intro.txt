@@ -99,4 +99,4 @@ on irc.freenode.net or check the Wiki for frequently asked questions. Make
 sure, you have read the TODO file first, as I am aware of many things which
 can be improved when I find time for it or get patches.
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

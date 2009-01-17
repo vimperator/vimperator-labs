@@ -26,7 +26,7 @@ BUGS:
   else it chucks, I haven't investigated --djk
 - messages is still broken in several ways - needs testing.
   => :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
-  => it often overwrites the open command-line while editing etc.
+  => it often overwrites the open command line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
 - MOW is broken for multiple commands when open E.g. :ls | ls

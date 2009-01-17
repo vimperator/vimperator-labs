@@ -10,7 +10,7 @@ and the sidebar.
 |:emenu| +
 ||:emenu {menu}||
 ________________________________________________________________________________
-Execute {menu} from the command-line. This command provides command-line access
+Execute {menu} from the command line. This command provides command-line access
 to all menu items available from the main Firefox menubar. {menu} is a
 hierarchical path to the menu item with each submenu separated by a period.
 E.g. [c]:emenu File.Open File...[c]
@@ -87,4 +87,4 @@ standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
 also available in the sidebar.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

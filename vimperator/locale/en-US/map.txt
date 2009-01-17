@@ -10,7 +10,7 @@ which are translated to a string of characters. Example:
 
   :map <F2> :echo new Date().toDateString()<CR>
 
-will echo the current date to the command-line when [m]<F2>[m] is pressed.
+will echo the current date to the command line when [m]<F2>[m] is pressed.
 
 There are separate key mapping tables for each of the Normal, Insert,
 Command-line modes.
@@ -143,9 +143,9 @@ ________________________________________________________________________________
 
 |:map-<silent>| +
 ________________________________________________________________________________
-When the first argument to one of the mapping commands is <silent>, {rhs}
-is not echoed to the command-line, nor, for that matter, is anything else
-until the command has completed.
+When the first argument to one of the mapping commands is <silent>,
+{rhs} is not echoed to the command line, nor, for that matter, anything
+else until the command has completed.
 ________________________________________________________________________________
 
 
@@ -373,7 +373,7 @@ and <bang> will be available in the argument.
 Replacement text
 
 The replacement text {rep} is scanned for escape sequences and these are
-replaced with values from the user entered command-line. The resulting string
+replaced with values from the user-entered command line. The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:
@@ -410,4 +410,4 @@ Add a :Google command to search via google:
 
 // TODO: add decent examples
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

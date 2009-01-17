@@ -19,4 +19,4 @@ Redisplay the last command output. Only the most recent command's output is
 available.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

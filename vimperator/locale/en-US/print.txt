@@ -30,4 +30,4 @@ and
 
 respectively.
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

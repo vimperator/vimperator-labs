@@ -585,7 +585,7 @@ ____
 //____
 //Default height for preview window
 //
-//Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
+//Value must be between 1 and 50. If the value is too high, completions may cover the command line. Close the preview window with :pclose.
 //Note: Option currently disabled
 //____
 
@@ -650,7 +650,7 @@ ____
 |\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
 ||'showmode' 'smd'|| boolean (default: on)
 ____
-Show the current mode in the command-line.
+Show the current mode in the command line.
 ____
 
 
@@ -663,7 +663,7 @@ Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Po
 .---`--------------------------------------
 *0* Don't show link destination
 *1* Show the link in the status line
-*2* Show the link in the command-line
+*2* Show the link in the command line
 -------------------------------------------
 
 ____
@@ -826,4 +826,4 @@ A regexp which defines the word separators which are used for the
 the text of a link.
 ____
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:

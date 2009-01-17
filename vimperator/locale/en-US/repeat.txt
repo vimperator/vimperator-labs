@@ -142,4 +142,4 @@ Use the special version with [!] if you just want to run any command multiple
 times without showing profiling statistics.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set syntax=asciidoc filetype=asciidoc:
