@@ -198,6 +198,8 @@ The following preferences are set:
 
 * browser.startup.page
 * dom.popup_allowed_events
+* accessibility.typeaheadfind.autostart
+* accessibility.typeaheadfind
 
 // TODO: others?
 
