@@ -198,6 +198,8 @@ The following preferences are set:
 
 * browser.startup.page
 * dom.popup_allowed_events
+* accessibility.typeaheadfind.autostart
+* accessibility.typeaheadfind
 
 // TODO: others?
 
@@ -826,4 +828,4 @@ A regexp which defines the word separators which are used for the
 the text of a link.
 ____
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

@@ -346,4 +346,4 @@ ________________________________________________________________________________
 Print the current directory name.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

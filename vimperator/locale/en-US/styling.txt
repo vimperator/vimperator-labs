@@ -118,4 +118,4 @@ style for [c]www.google.com,mozilla.org[c], will result in a style for
                  (short option: [c]-i[c])
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

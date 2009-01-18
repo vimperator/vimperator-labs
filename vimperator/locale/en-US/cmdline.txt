@@ -1,6 +1,6 @@
 HEADER
 
-|Command-line mode| |Command-line| +
+|Command-line-mode| |Command-line| +
 
 Command-line mode is used to enter Ex commands (":") and text search patterns
 ("/" and "?").
@@ -77,4 +77,4 @@ ________________________________________________________________________________
 Complete the previous full match when 'wildmode' contains "full".
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

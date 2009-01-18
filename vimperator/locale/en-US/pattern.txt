@@ -67,4 +67,4 @@ Remove the search highlighting. The document highlighting is turned back on
 when another search command is used or the 'hlsearch' option is set.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

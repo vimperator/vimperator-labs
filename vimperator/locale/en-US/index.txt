@@ -311,4 +311,4 @@ section:Options[option-index]
 ||'wildoptions'|| Change how command-line completion is done +
 ||'wordseparators'|| How words are split for hintmatching +
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

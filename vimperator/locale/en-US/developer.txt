@@ -85,4 +85,4 @@ Now you can copy the asciidoc text but always make sure it looks OK after
 you compile the help file with "make doc", as the auto-generation might
 not work correctly for all special cases.
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

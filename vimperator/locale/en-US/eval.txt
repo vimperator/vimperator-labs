@@ -81,4 +81,4 @@ Deletes the variable {name}. Several variable names can be given. When used
 with [!] no error message is output for non-existing variables.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

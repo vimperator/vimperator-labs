@@ -19,8 +19,8 @@ var skipTests = [":bmarks", "gg"];
 /////////////////////////////////////////////////////////////////////////////////////////
 
 var doc; // document where we output status messages
-var multilineOutput  = document.getElementById("liberator-multiline-output")
-var singlelineOutput = document.getElementById("liberator-commandline-command")
+var multilineOutput  = document.getElementById("liberator-multiline-output");
+var singlelineOutput = document.getElementById("liberator-message");
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // TESTS
@@ -37,9 +37,9 @@ let tests = [
     { cmds: [":!dir"],
       verify: function () getMultilineOutput().length > 10 },
     { cmds: [":abbr VIMP vimperator labs", ":abbr"],
-      verify: function () getMultilineOutput().indexOf("vimperator labs") >= 0 },
+      verify: function () getOutput().indexOf("vimperator labs") >= 0 },
     { cmds: [":unabbr VIMP", ":abbr"],
-      verify: function () getMultilineOutput().indexOf("vimperator labs") == -1 },
+      verify: function () getOutput().indexOf("vimperator labs") == -1 },
     { cmds: [":bmarks"],
       verify: function () getMultilineOutput().length > 100 },
     { cmds: [":echo \"test\""],
