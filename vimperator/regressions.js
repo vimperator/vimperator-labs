@@ -19,8 +19,8 @@ var skipTests = [":bmarks", "gg"];
 /////////////////////////////////////////////////////////////////////////////////////////
 
 var doc; // document where we output status messages
-var multilineOutput  = document.getElementById("liberator-multiline-output")
-var singlelineOutput = document.getElementById("liberator-commandline-command")
+var multilineOutput  = document.getElementById("liberator-multiline-output");
+var singlelineOutput = document.getElementById("liberator-message");
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // TESTS
