@@ -1565,7 +1565,7 @@ function Marks() //{{{
         }
     }
 
-    function isLocalMark(mark) /^['"a-z]$/.test(mark);
+    function isLocalMark(mark) /^['`a-z]$/.test(mark);
     function isURLMark(mark) /^[A-Z0-9]$/.test(mark);
 
     function localMarkIter()
