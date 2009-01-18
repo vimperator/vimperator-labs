@@ -77,4 +77,4 @@ ________________________________________________________________________________
 Complete the previous full match when 'wildmode' contains "full".
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

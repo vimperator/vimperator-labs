@@ -245,4 +245,4 @@ Show all location marks of current web page. If [a][arg][a] is specified then
 limit the list to those marks mentioned.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:

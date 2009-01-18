@@ -115,4 +115,4 @@ ________________________________________________________________________________
 //Close preview window on bottom of screen.
 //________________________________________________________________________________
 
-// vim: set syntax=asciidoc filetype=asciidoc:
+// vim: set filetype=asciidoc:
