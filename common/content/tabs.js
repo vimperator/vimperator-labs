@@ -629,7 +629,7 @@ function Tabs() //{{{
             "Undo closing of all closed tabs",
             function (args)
             {
-                for (let i in Itarator(tabs.closedTabs))
+                for (let i in Iterator(tabs.closedTabs))
                     window.undoCloseTab(0);
 
             },
