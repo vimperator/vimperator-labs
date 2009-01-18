@@ -1,6 +1,6 @@
 HEADER
 
-|Command-line mode| |Command-line| +
+|Command-line-mode| |Command-line| +
 
 Command-line mode is used to enter Ex commands (":") and text search patterns
 ("/" and "?").
