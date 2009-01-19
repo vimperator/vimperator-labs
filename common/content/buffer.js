@@ -68,7 +68,7 @@ function Buffer() //{{{
         ZoomManager.zoom = value / 100;
         if ("FullZoom" in window)
             FullZoom._applySettingToPref();
-        liberator.echo((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
+        liberator.echomsg((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
     }
 
     function bumpZoomLevel(steps, fullZoom)
