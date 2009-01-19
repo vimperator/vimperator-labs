@@ -255,17 +255,14 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
-||'autodetector'|| set auto detect character encoding +
 ||'cdpath'|| List of directories searched when executing :cd +
 ||'complete'|| Items which are completed at the :[tab]open prompt +
 ||'defsearch'|| Set the default search engine +
-||'disabledcssheets'|| Set disabled CSS style sheets +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
-||'fileencoding'|| set the charactor encoding for the current page +
 ||'focuscontent'|| Try to stay in normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in hint mode +
 ||'fullscreen'|| Show the current window fullscreen +
@@ -273,7 +270,7 @@ section:Options[option-index]
 ||'helpfile'|| Name of the main help file +
 ||'hintmatching'|| How links are matched +
 ||'hinttags'|| XPath string of hintable elements activated by [m]f[m] and [m]F[m] +
-||'hinttimeout'|| Automatically follow non unique numerical hint +
+||'hinttimeout'|| Timeout before automatically following a non-unique numerical hint +
 ||'history'|| Number of Ex commands and search patterns to store in the command-line history +
 ||'hlsearch'|| Highlight previous search pattern matches +
 ||'ignorecase'|| Ignore case in search patterns +
@@ -292,7 +289,7 @@ section:Options[option-index]
 ||'preload'|| Speed up first time history/bookmark completion +
 ||'previouspattern'|| Patterns to use when guessing the \'previous' page in a document sequence +
 ||'runtimepath'|| List of directories searched for runtime files +
-||'scroll'|| Number of lines to scroll with and commands +
+||'scroll'|| Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
 ||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
 ||'showmode'|| Show the current mode in the command line +

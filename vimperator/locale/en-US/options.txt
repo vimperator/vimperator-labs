@@ -406,10 +406,9 @@ ____
 |\'hto'| |\'hinttimeout'|
 ||'hinttimeout' 'hto'|| number (default: 0)
 ____
-Automatically follow non unique numerical hint after 'hinttimeout'
-milliseconds. +
-Set to 0 (the default) to only follow numeric hints after pressing
-[m]<Return>[m] or when the hint is unique.
+Timeout before automatically following a non-unique numerical hint. Set to 0
+(the default) to only follow numeric hints after pressing [m]<Return>[m] or
+when the hint is unique.
 ____
 
 
@@ -625,7 +624,7 @@ ____
 |\'scr'| |\'scroll'|
 ||'scroll' 'scr'|| number (default: 0)
 ____
-Number of lines to scroll with C-u and C-d commands.
+Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands.
 The number of lines scrolled defaults to half the window size.
 When a [count] is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
 used to set the value of 'scroll' and also used for the current command. The
