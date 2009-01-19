@@ -118,8 +118,13 @@ function IO() //{{{
         try
         {
             path.appendRelativePath(self.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
-            if (path.exists() && path.normalize)
-                path.normalize();
+            // TODO: This code breaks the external editor at least in ubuntu
+            // because /usr/bin/gvim becomes /usr/bin/vim.gnome normalized and for
+            // some strange reason it will start without a gui then (which is not
+            // optimal if you don't start firefox from a terminal ;)
+            // Why do we need this code?
+            // if (path.exists() && path.normalize)
+            //    path.normalize();
         }
         catch (e)
         {
