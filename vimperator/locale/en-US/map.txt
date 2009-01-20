@@ -178,13 +178,13 @@ words. An abbreviation can be one of three types that are defined by the
 types of constituent characters. Whitespace and quotes are non-keyword
 types, and all other characters are keyword types.
 
-. A "full-id" abbreviation consists entirely of characters that are not
+1. A "full-id" abbreviation consists entirely of characters that are not
 keyword characters (e.g., "teh", "msoft").
 
-. An "end-id" abbreviation ends in keyword character but otherwise
+2. An "end-id" abbreviation ends in keyword character but otherwise
 contains all non-keyword characters (e.g., "'i").
 
-. A "non-id" abbreviation ends in a non-keyword character but otherwise
+3. A "non-id" abbreviation ends in a non-keyword character but otherwise
 contains any non-whitespace character (e.g., "def'").
 
 Strings that cannot be abbreviations include "a'b" and "a b".
