@@ -4,6 +4,11 @@ HEADER
 
 This file contains a list of all available commands.
 
+section:Insert{nbsp}mode[insert-index]
+
+||<C-i>|| Launch the external editor +
+||<C-]>|| Expand an insert-mode abbreviation +
+
 section:Normal{nbsp}mode[normal-index]
 
 ||<C-^>|| Select the alternate tab or the [count]th tab +

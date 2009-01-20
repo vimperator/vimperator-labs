@@ -189,9 +189,9 @@ contains any non-whitespace character (e.g., "def'").
 
 Strings that cannot be abbreviations include "a'b" and "a b".
 
-An abbreviation is recognized when a space is typed after the
-abbreviation. There are no default abbreviations, and abbreviations are
-never recursive.
+An abbreviation is recognized when a space, quote character, or
+[m]<C-]>[m] is typed after the abbreviation. There are no default
+abbreviations, and abbreviations are never recursive.
 
 |:ab| |:abbreviate|
 ||:ab[breviate] {lhs} {rhs}|| +
@@ -199,8 +199,8 @@ never recursive.
 ||:ab[breviate]||
 ________________________________________________________________________________
 Abbreviate a key sequence. Abbreviate {lhs} to {rhs}. If only {lhs} is given,
-list all abbreviations that start with {lhs}. List all abbreviations, if no
-arguments are given.
+list all abbreviations that start with {lhs}. If no arguments are given,
+list all abbreviations.
 ________________________________________________________________________________
 
 

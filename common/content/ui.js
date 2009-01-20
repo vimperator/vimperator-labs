@@ -878,8 +878,15 @@ function CommandLine() //{{{
         ["<C-c>"], "Focus content",
         function () { events.onEscape(); });
 
+    // Any "non-keyword" character triggers abbreviation expansion
+    // TODO: Add "<CR>" and "<Tab>" to this list
+    //       At the moment, adding "<Tab>" breaks tab completion. Adding
+    //       "<CR>" has no effect.
+    // TODO: Make non-keyword recognition smarter so that there need not
+    //       be two lists of the same characters (one here and a regexp in
+    //       mappings.js)
     mappings.add(myModes,
-        ["<Space>"], "Expand command line abbreviation",
+        ["<Space>", '"', "'"], "Expand command line abbreviation",
         function ()
         {
             commandline.resetCompletions();
