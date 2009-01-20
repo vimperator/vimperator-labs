@@ -217,7 +217,7 @@ function Editor() //{{{
             },
             {
                 completer: function (context, args) completion.abbreviation(context, args, mode),
-                literal: 1,
+                literal: 0,
                 serial: function () [
                     {
                         command: this.name,
