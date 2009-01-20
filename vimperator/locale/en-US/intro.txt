@@ -51,6 +51,7 @@ section:Help{nbsp}topics[overview]
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
   like scrolling or copying text.
 - help:Command-line[cmdline.html]: Command-line editing.
+- help:Insert-mode[insert.html]: Insert-mode editing.
 - help:Options[options.html]: A description of all options.
 - help:Search{nbsp}commands[pattern.html]: Searching for text in the
   current buffer.
