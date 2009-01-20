@@ -219,7 +219,7 @@ ________________________________________________________________________________
 ||:ia[bbrev] {lhs}|| +
 ||:ia[bbrev]||
 ________________________________________________________________________________
-Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c], but
+Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c] but
 for Insert mode only.
 ________________________________________________________________________________
 
@@ -242,7 +242,7 @@ ________________________________________________________________________________
 |:iuna| |:iunabbrev|
 ||:iuna[bbrev] {lhs}|| +
 ________________________________________________________________________________
-Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c], but for
+Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c] but for
 Insert mode only.
 ________________________________________________________________________________
 

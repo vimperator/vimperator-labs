@@ -70,7 +70,7 @@ ________________________________________________________________________________
 ||:tabopen[!] [a][arg1][a], [a][arg2][a], ...|| +
 ||t||
 ________________________________________________________________________________
-Just like [c]:open[c], but also uses a new tab for the first URL. When
+Just like [c]:open[c] but also uses a new tab for the first URL. When
 used with [!], the 'tabopen' value of the 'activate' option is negated.
 ________________________________________________________________________________
 
@@ -79,7 +79,7 @@ ________________________________________________________________________________
 ||T||
 ________________________________________________________________________________
 Open one or more URLs in a new tab based on current location. Works like
-[m]t[m], but preselects current URL in the [c]:tabopen[c] query.
+[m]t[m] but preselects current URL in the [c]:tabopen[c] query.
 ________________________________________________________________________________
 
 
@@ -96,14 +96,14 @@ ________________________________________________________________________________
 ||O||
 ________________________________________________________________________________
 Open one or more URLs in the current tab based on current location. Works
-like [m]o[m], but preselects current URL in the [c]:open[c] query.
+like [m]o[m] but preselects current URL in the [c]:open[c] query.
 ________________________________________________________________________________
 
 
 |:winopen| |:wopen| |:winedit|
 ||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
 ________________________________________________________________________________
-Just like [c]:tabopen[c], but opens the resulting web page(s) in a new window.
+Just like [c]:tabopen[c] but opens the resulting web page(s) in a new window.
 ________________________________________________________________________________
 
 
@@ -121,7 +121,7 @@ ________________________________________________________________________________
 ||P||
 ________________________________________________________________________________
 Open (put) a URL based on the current clipboard contents in a new buffer. Works
-like [m]p[m], but opens a new tab. +
+like [m]p[m] but opens a new tab. +
 Whether the new buffer is activated, depends on the 'activate' option.
 ________________________________________________________________________________
 
@@ -130,7 +130,7 @@ ________________________________________________________________________________
 ||gP||
 ________________________________________________________________________________
 Open (put) a URL based on the current clipboard contents in a new buffer.
-Works like [m]P[m], but inverts the 'activate' option.
+Works like [m]P[m] but inverts the 'activate' option.
 ________________________________________________________________________________
 
 
