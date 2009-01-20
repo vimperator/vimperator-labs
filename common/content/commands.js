@@ -623,7 +623,7 @@ function Commands() //{{{
                                         }
                                     }
 
-                                    args[opt[0][0]] = arg; // always use the first name of the option
+                                    args[opt[0][0]] = opt[1] == this.OPTION_NOARG || arg; // always use the first name of the option
                                     i += optname.length + count;
                                     if (i == str.length)
                                         break outer;
