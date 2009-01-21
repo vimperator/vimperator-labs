@@ -42,7 +42,7 @@ AWK = awk
 
 TARGETS = all help info doc jar xpi install clean distclean $(JAR)
 $(TARGETS:%=\%.%):
-	echo "  MAKE" $* $(@:$*.%=%)
+	echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
 
 .PHONY: $(TARGETS)
@@ -74,24 +74,24 @@ jar: $(JAR)
 release: $(XPI) $(RDF)
 
 $(RDF): $(RDF_IN) Makefile
-	@echo "  Preparing release..."
+	@echo "Preparing release..."
 	$(SED) -e "s,###VERSION###,$(VERSION),g" \
 	           -e "s,###DATE###,$(BUILD_DATE),g" \
 	           < $< > $@
-	@echo "  SUCCESS: $@"
+	@echo "SUCCESS: $@"
 
 clean: $(LOCALES:%=%.clean)
-	@echo "  General $(NAME) cleanup..."
+	@echo "General $(NAME) cleanup..."
 	rm -f $(JAR) $(XPI)
 
 distclean: $(LOCALES:%=%.distclean) clean
-	@echo "  More $(NAME) cleanup..."
+	@echo "More $(NAME) cleanup..."
 	rm -rf $(BUILD_DIR)
 
 #### xpi
 
 $(XPI): $(JAR)
-	@echo "  Building XPI..."
+	@echo "Building XPI..."
 	mkdir -p $(XPI_PATH)
 	$(AWK) -v 'name=$(NAME)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
 	$(MAKE_JAR) "$(XPI)" "$(XPI_BASES)" "$(XPI_DIRS)" "$(XPI_TEXTS)" "$(XPI_BINS)" "$(XPI_FILES)"
@@ -100,9 +100,9 @@ $(XPI): $(JAR)
 #### jar
 
 $(JAR): doc
-	@echo "  Building JAR..."
+	@echo "Building JAR..."
 	$(MAKE_JAR) "$(JAR)" "$(JAR_BASES)" "$(JAR_DIRS)" "$(JAR_TEXTS)" "$(JAR_BINS)" "$(JAR_FILES)"
-	@echo "  SUCCESS: $@"
+	@echo "SUCCESS: $@"
 
 #### doc (see Makefile.doc)
 
