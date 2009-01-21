@@ -711,7 +711,7 @@ function History() //{{{
                 if (url)
                 {
                     let sh = window.getWebNavigation().sessionHistory;
-                    for (let i in util.range(sh.index, 0, true))
+                    for (let i in util.range(sh.index, 0, -1))
                     {
                         if (sh.getEntryAtIndex(i, false).URI.spec == url)
                         {
@@ -735,7 +735,7 @@ function History() //{{{
                 let sh = window.getWebNavigation().sessionHistory;
 
                 context.anchored = false;
-                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, true))];
+                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, -1))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
             },
             count: true,
@@ -1043,8 +1043,7 @@ function QuickMarks() //{{{
 
         list: function list(filter)
         {
-            let marks = [key for ([key, val] in qmarks)];
-            // This was a lot nicer without the lambda...
+            let marks = [k for ([k, v] in qmarks)];
             let lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
             let uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();
             let numberMarks    = marks.filter(function (x) /[0-9]/.test(x)).sort();

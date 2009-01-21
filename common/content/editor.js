@@ -204,7 +204,7 @@ function Editor() //{{{
             function (args)
             {
                 let matches = args.string.match(RegExp("^\\s*($|" + abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
-                if (! matches)
+                if (!matches)
                 {
                     liberator.echoerr("E474: Invalid argument");
                     return false;

@@ -5,7 +5,7 @@ OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 BASE	      = $(TOP)/../common
 
-DOC_SRC_FILES = $(wildcard locale/*/*.txt) $(wildcard locale/*/*.t2t)
+DOC_SRC_FILES = $(wildcard locale/*/*.txt)
 LOCALES       = $(wildcard locale/*)
 
 MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
@@ -16,7 +16,7 @@ JAR_DIRS      = content skin locale
 JAR_TEXTS     = js css dtd xml xul html xhtml
 JAR_BINS      = png
 
-JAR           = chrome/${NAME}.jar
+JAR           = chrome/$(NAME).jar
 
 XPI_BASES     = $(JAR_BASES) $(TOP)/..
 XPI_FILES     = install.rdf TODO AUTHORS Donators NEWS License.txt
@@ -24,14 +24,14 @@ XPI_DIRS      = modules components chrome
 XPI_TEXTS     = js jsm
 XPI_BINS      = jar
 
-XPI_NAME      = ${NAME}_${VERSION}
-XPI_PATH      = ../downloads/${XPI_NAME}
+XPI_NAME      = $(NAME)_$(VERSION)
+XPI_PATH      = ../downloads/$(XPI_NAME)
 XPI	      = $(XPI_PATH).xpi
 
 RDF           = ../downloads/update.rdf
-RDF_IN        = ${RDF}.in
+RDF_IN        = $(RDF).in
 
-BUILD_DIR     = build.${VERSION}.${OS}
+BUILD_DIR     = build.$(VERSION).$(OS)
 
 ASCIIDOC = asciidoc
 
@@ -39,17 +39,24 @@ ASCIIDOC = asciidoc
 
 #### rules
 
-.PHONY: all help info doc jar xpi install clean distclean $(JAR)
+TARGETS = all help info doc jar xpi install clean distclean $(JAR)
+$(TARGETS:%=\%.%):
+	echo MAKE $* $(@:$*.%=%)
+	$(MAKE) -C $* $(@:$*.%=%)
+
+$(TARGETS): %: $(LOCALES:%=%.%)
+
+.PHONY: $(TARGETS)
 all: help
 
 help:
-	@echo "${NAME} ${VERSION} build"
+	@echo "$(NAME) $(VERSION) build"
 	@echo
 	@echo "  make help      - display this help"
 	@echo "  make info      - show some info about the system"
 	@echo "  make doc       - build doc files"
-	@echo "  make jar       - build a JAR (${JAR})"
-	@echo "  make xpi       - build an XPI (${XPI_NAME})"
+	@echo "  make jar       - build a JAR ($(JAR))"
+	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
 	@echo "  make release   - updates update.rdf (this is not for you)"
 	@echo "  make clean     - clean up"
 	@echo "  make distclean - clean up more"
@@ -57,32 +64,30 @@ help:
 	@echo "running some commands with V=1 will show more build details"
 
 info:
-	@echo    "version             ${VERSION}"
-	@echo    "release file        ${XPI}"
-	@echo    "doc files           ${DOC_SRC_FILES}"
-	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
-	@echo    "xpi files           ${XPI_FILES}"
+	@echo "version             $(VERSION)"
+	@echo "release file        $(XPI)"
+	@echo "doc files           $(DOC_SRC_FILES)"
+	@echo "xpi files           $(XPI_FILES)"
 
-xpi: ${XPI}
-jar: ${JAR}
+xpi: $(XPI)
+jar: $(JAR)
 
-release: ${XPI} ${RDF}
+release: $(XPI) $(RDF)
 
-${RDF}: ${RDF_IN} Makefile
+$(RDF): $(RDF_IN) Makefile
 	@echo "Preparing release..."
-	${Q}${SED} -e "s,###VERSION###,${VERSION},g" \
-	           -e "s,###DATE###,${BUILD_DATE},g" \
+	$(SED) -e "s,###VERSION###,$(VERSION),g" \
+	           -e "s,###DATE###,$(BUILD_DATE),g" \
 	           < $< > $@
 	@echo "SUCCESS: $@"
 
 clean:
 	@echo "Cleanup..."
-	rm -f ${JAR} ${XPI}
+	rm -f $(JAR) $(XPI)
 
-distclean: clean
+distclean: clean $(LOCALES:%=%.distclean)
 	@echo "More cleanup..."
-	@set -e; for locale in $(LOCALES); do $(MAKE) -C clean; doc; done
-	rm -rf ${BUILD_DIR}
+	rm -rf $(BUILD_DIR)
 
 #### xpi
 
@@ -102,5 +107,5 @@ $(JAR): doc
 
 #### doc (see Makefile.doc)
 
-doc:
-	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale doc; done
+doc: $(LOCALES:%=%.doc) ;
+

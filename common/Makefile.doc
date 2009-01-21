@@ -2,26 +2,16 @@
 
 #### configuration
 
-BASE          = ../../../common
-
-THIS_LOCALE   = $(notdir $(shell pwd))
-THIS_LANG     = $(firstword $(subst -, ,$(THIS_LOCALE)))
-ifneq ($(strip $(shell echo -n $(THIS_LANG) | wc -c)),2)
-THIS_LANG     = en
-endif
+LOCALE   = $(shell basename `pwd`)
+LANG     = $(shell basename `pwd` | awk -F- '{ print ($$1 ~ /^..$$/) ? $$1 : "en" }')
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
-ADC_DEPS      = $(wildcard asciidoc.conf lang-$(THIS_LANG).conf)
-
-T2T_SRC_FILES = $(wildcard *.t2t)
-T2T_FILES     = $(T2T_SRC_FILES:%.t2t=%.xhtml)
-T2T_DEPS      = $(wildcard config.t2t)
+ADC_DEPS      = $(wildcard asciidoc.conf lang-$(LANG).conf)
 
 DOC_FILES     = $(ADC_FILES) $(T2T_FILES)
 
 ASCIIDOC      = asciidoc
-TXT2TAGS      = txt2tags
 AWK           = awk
 
 .SILENT:
@@ -31,15 +21,13 @@ AWK           = awk
 .PHONY: all help doc asciidoc check-asciidoc clean distclean
 all: doc
 
-doc: asciidoc t2t
+doc: asciidoc
 
 help:
-	@echo "${NAME} ${VERSION} build"
+	@echo "$(NAME) $(VERSION) build"
 	@echo
 	@echo "  make help      - display this help"
 	@echo "  make doc       - build doc files"
-	@echo "  make asciidoc  - build asciidoc'd files only"
-	@echo "  make t2t       - build txt2tags'd files only"
 	@echo "  make clean     - clean up"
 	@echo "  make distclean - clean up more"
 
@@ -52,11 +40,7 @@ distclean: clean
 
 #### Makes single-file makes easier to type
 
-%: %.html %.t2t %.xhtml %.t2t ;
-
 %: %.html %.txt ;
-
-%: %.xhtml %.t2t ;
 
 #### asciidoc
 
@@ -67,13 +51,6 @@ check-asciidoc:
 		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
 
 $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
-	@echo "DOC locale/$(THIS_LOCALE)/$@"
-	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(THIS_LANG) -a doctitle="$(shell basename $@)" -o $@ $<
+	@echo "DOC locale/$(LOCALE)/$@"
+	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(LANG) -a doctitle="$(shell basename $@)" -o $@ $<
 
-#### txt2tags
-
-t2t: $(T2T_FILES)
-
-$(T2T_FILES): %.xhtml: %.t2t $(BASE)/Makefile.doc $(T2T_DEPS)
-	@echo "T2T locale/$(THIS_LOCALE)/$@"
-	txt2tags --quiet $<

@@ -1064,7 +1064,7 @@ function Buffer() //{{{
                 let res = buffer.evaluateXPath(options["hinttags"], frame.document);
                 for (let [,regex] in Iterator(regexps))
                 {
-                    for (let i in util.range(res.snapshotLength, 0, true))
+                    for (let i in util.range(res.snapshotLength, 0, -1))
                     {
                         let elem = res.snapshotItem(i);
                         if (regex.test(elem.textContent))

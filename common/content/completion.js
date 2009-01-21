@@ -554,10 +554,10 @@ CompletionContext.prototype = {
     {
         let self = this;
         let items = this.items;
-        let reverse = start > end;
+        let step = start > end ? -1 : 1;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end ? end : items.length);
-        return util.map(util.range(start, end, reverse), function (i) items[i]);
+        return util.map(util.range(start, end, step), function (i) items[i]);
     },
 
     getRows: function getRows(start, end, doc)
@@ -565,10 +565,10 @@ CompletionContext.prototype = {
         let self = this;
         let items = this.items;
         let cache = this.cache.rows;
-        let reverse = start > end;
+        let step = start > end ? -1 : 1;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end != null ? end : items.length);
-        for (let i in util.range(start, end, reverse))
+        for (let i in util.range(start, end, step))
             yield [i, cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc)];
     },
 
