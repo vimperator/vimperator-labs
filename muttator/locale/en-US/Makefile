@@ -1,1 +1,2 @@
-../../../common/Makefile.doc
+BASE = ../../../common
+include $(BASE)/Makefile.doc

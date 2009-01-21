@@ -1,9 +1,9 @@
-# Symlink me to locale/*/Makefile
+# Symlink or me to (or include me from) locale/*/Makefile
 
 #### configuration
 
 LOCALE   = $(shell basename `pwd`)
-LANG     = $(shell basename `pwd` | awk -F- '{ print ($$1 ~ /^..$$/) ? $$1 : "en" }')
+LANG     = $(shell basename `pwd` | awk -F- '{ print ($$1 ~ /^[a-z]\{2\}$$/) ? $$1 : "en" }')
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
