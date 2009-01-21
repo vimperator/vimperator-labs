@@ -32,7 +32,7 @@ help:
 	@echo "  make distclean - clean up more"
 
 clean:
-	@echo "  Cleanup of $(LOCALE) documentation..."
+	@echo "    Cleanup of $(LOCALE) documentation..."
 
 distclean: clean
 	@echo "    More cleanup of $(LOCALE) documentation..."
@@ -51,6 +51,6 @@ check-asciidoc:
 		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
 
 $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
-	@echo "DOC locale/$(LOCALE)/$@"
+	@echo "    DOC locale/$(LOCALE)/$@"
 	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(LANG) -a doctitle="$(shell basename $@)" -o $@ $<
 
