@@ -579,7 +579,7 @@ CompletionContext.prototype = {
         let context = new CompletionContext(this, name, offset);
         this.contextList.push(context);
         if (completer)
-            return completer.apply(self || this, [context].concat(Array.slice(arguments, 4)));
+            return completer.apply(self || this, [context].concat(Array.slice(arguments, arguments.callee.length)));
         return context;
     },
 
@@ -835,7 +835,7 @@ function Completion() //{{{
         // Get an element from the stack. If @n is negative,
         // count from the top of the stack, otherwise, the bottom.
         // If @m is provided, return the @mth value of element @o
-        // of the stack entey at @n.
+        // of the stack entry at @n.
         let get = function get(n, m, o)
         {
             let a = stack[n >= 0 ? n : stack.length + n];
@@ -1553,6 +1553,9 @@ function Completion() //{{{
             }
         },
 
+        // XXX
+        highlightGroup: function highlightGroup(context, args) commands.get("highlight").completer(context, args),
+
         history: function _history(context, maxItems)
         {
             context.format = history.format;
@@ -1800,15 +1803,19 @@ function Completion() //{{{
                 context.advance(skip[0].length);
 
             // Will, and should, throw an error if !(c in opts)
-            Array.forEach(complete || options["complete"],
-                function (c) context.fork(c, 0, completion, completion.urlCompleters[c].completer));
+            Array.forEach(complete || options["complete"], function (c) {
+                let completer = completion.urlCompleters[c];
+                context.fork.apply(context, [c, 0, completion, completer.completer].concat(completer.args));
+            });
         },
 
         urlCompleters: {},
 
         addUrlCompleter: function addUrlCompleter(opt)
         {
-            this.urlCompleters[opt] = UrlCompleter.apply(null, Array.slice(arguments));
+            let completer = UrlCompleter.apply(null, Array.slice(arguments));
+            completer.args = Array.slice(arguments, completer.length);
+            this.urlCompleters[opt] = completer;
         },
 
         urls: function (context, tags)

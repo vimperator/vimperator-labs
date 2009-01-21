@@ -46,6 +46,45 @@ function Editor() //{{{
     // XXX: this strikes me as a rather odd ds; everyone's a critic --djk
     var abbreviations = {}; // abbreviations["lhr"][0]["{i,c,!}","rhs"]
 
+    // (summarized from Vim's ":help abbreviations")
+    //
+    // There are three types of abbreviations:
+    //
+    // full-id: Consists entirely of keyword characters.
+    //          ("foo", "g3", "-1")
+    //
+    // end-id: Ends in a keyword character, but all other
+    //         are not keyword characters.
+    //         ("#i", "..f", "$/7")
+    //
+    // non-id: Ends in a non-keyword character, but the
+    //         others can be of any type other than space
+    //         and tab.
+    //         ("def#", "4/7$")
+    //
+    // Example strings that cannot be abbreviations:
+    //         "a.b", "#def", "a b", "_$r"
+    //
+    // For now, a keyword character is anything except for \s, ", or '
+    // (i.e., whitespace and quotes). In Vim, a keyword character is
+    // specified by the 'iskeyword' setting and is a much less inclusive
+    // list.
+    //
+    // TODO: Make keyword definition closer to Vim's default keyword
+    //       definition (which differs across platforms).
+    //
+
+    let nonkw = "\\s\"'";
+    let keyword = "[^" + nonkw + "]";
+    let nonkeyword = "[" + nonkw + "]";
+
+    let full_id = keyword + "+";
+    let end_id = nonkeyword + "+" + keyword;
+    let non_id = "\\S*" + nonkeyword;
+
+    // Used in addAbbrevation and expandAbbreviation
+    var abbrevmatch = full_id + "|" + end_id + "|" + non_id;
+
     function getEditor()
     {
         return window.document.commandDispatcher.focusedElement;
@@ -164,7 +203,13 @@ function Editor() //{{{
             "Abbreviate a key sequence" + modeDescription,
             function (args)
             {
-                let [lhs, rhs] = args;
+                let matches = args.string.match(RegExp("^\\s*($|" + abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
+                if (! matches)
+                {
+                    liberator.echoerr("E474: Invalid argument");
+                    return false;
+                }
+                let [,lhs,rhs] = matches;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
                 else
@@ -172,7 +217,7 @@ function Editor() //{{{
             },
             {
                 completer: function (context, args) completion.abbreviation(context, args, mode),
-                literal: 1,
+                literal: 0,
                 serial: function () [
                     {
                         command: this.name,
@@ -1010,7 +1055,7 @@ function Editor() //{{{
             let text      = textbox.value;
             let currStart = textbox.selectionStart;
             let currEnd   = textbox.selectionEnd;
-            let foundWord = text.substring(0, currStart).replace(/^(.|\n)*?(\S+)$/m, "$2"); // get last word \b word boundary
+            let foundWord = text.substring(0, currStart).replace(RegExp("^(.|\\n)*?\\s*(" + abbrevmatch + ")$", "m"), "$2"); // get last word \b word boundary
             if (!foundWord)
                 return true;
 

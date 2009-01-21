@@ -159,12 +159,12 @@ to return here, depending on which key you used to activate QuickHint mode.
 section:Common{nbsp}issues[common-issues]
 
 Say you get half-way done typing in a new URL, only to remember that you've
-already got that page open in the previous tab. Your command-line might look
+already got that page open in the previous tab. Your command line might look
 something like this:
 
   :open my.partial.url/fooba
 
-You can exit the command-line and access the already loaded page with the
+You can exit the command line and access the already loaded page with the
 following:
 
   <Esc>gT
@@ -210,7 +210,7 @@ make the best use of them.
     It's exactly what it sounds like. This command will display a colorized,
     scrollable and clickable list of the locations in Vimperator's history.
   * [c]:emenu[c] --
-    Access the Firefox menus through the Vimperator command-line.
+    Access the Firefox menus through the Vimperator command line.
 
 
 Feel free to explore at this point. If you use the [c]:tabopen[c] command,
@@ -250,4 +250,4 @@ are neither infinite nor omnipotent; please bear with us. If you can't wait for
 us to get around to it, rest assured patches are welcome! See the
 help:Developer[developer.html] page for more information.
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

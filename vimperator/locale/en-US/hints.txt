@@ -51,9 +51,9 @@ this hint mode. Then press [a]24[a] to copy the hint location.
 * |;b| [m]b[m] to open its location in a new background tab
 * |;w| [m]w[m] to open its destination in a new window
 * |;F| [m]F[m] to follow a sequence of [m]<CR>[m]-delimited hints in background tabs
-* |;O| [m]O[m] to [c]:open[c] a URL based on hint location
-* |;T| [m]T[m] to [c]:tabopen[c] a URL based on its location
-* |;W| [m]W[m] to [c]:winopen[c] a URL based on its location
+* |;O| [m]O[m] to generate an [c]:open[c] with hint's URL (like [m]O[m])
+* |;T| [m]T[m] to generate a [c]:tabopen[c] with hint's URL (like [m]T[m])
+* |;W| [m]W[m] to generate a [c]:winopen[c] with hint's URL
 * |;v| [m]v[m] to view its destination source
 * |;V| [m]V[m] to view its destination source in the external editor
 * |;y| [m]y[m] to yank its destination location
@@ -63,4 +63,4 @@ Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

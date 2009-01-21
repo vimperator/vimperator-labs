@@ -59,13 +59,19 @@ but in the other direction.
 ________________________________________________________________________________
 
 
-|<C-PageDown>| |<C-Tab>| |<C-n>| |gt| +
+|gt| +
 ||[count]gt||
 ________________________________________________________________________________
 Go to the next tab. Cycles to the first tab, when the last is selected. +
 If [count] is specified go to the [count]th tab.
 ________________________________________________________________________________
 
+|<C-PageDown>| |<C-Tab>| |<C-n>| +
+||[count]<C-n>||
+________________________________________________________________________________
+Go to the next tab. Cycles to the first tab, when the last is selected. +
+If [count] is specified go to the [count]th next tab.
+________________________________________________________________________________
 
 |<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
 ||[count]gT||
@@ -209,4 +215,4 @@ Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
 after a browser restart.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

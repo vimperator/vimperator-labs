@@ -4,6 +4,11 @@ HEADER
 
 This file contains a list of all available commands.
 
+section:Insert{nbsp}mode[insert-index]
+
+||<C-i>|| Launch the external editor +
+||<C-]>|| Expand an insert-mode abbreviation +
+
 section:Normal{nbsp}mode[normal-index]
 
 ||<C-^>|| Select the alternate tab or the [count]th tab +
@@ -128,8 +133,8 @@ section:Command-line{nbsp}editing[ex-edit-index]
 
 ||<C-]>|| Expand a command-line abbreviation +
 
-||<Up>|| Recall the previous command-line from the history list which matches the current command-line +
-||<Down>|| Recall the next command-line from the history list which matches the current command-line +
+||<Up>|| Recall the previous command line from the history list which matches the current command line +
+||<Down>|| Recall the next command line from the history list which matches the current command line +
 
 ||<Tab>|| Complete the word in front of the cursor according to the behavior specified in 'wildmode' +
 ||<S-Tab>|| Complete the previous full match when 'wildmode' contains "full" +
@@ -172,7 +177,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||:echo|| Echo the expression +
 ||:echoerr|| Echo the expression as an error message +
 ||:echomsg|| Echo the expression as an informational message +
-||:emenu|| Execute the specified menu item from the command-line +
+||:emenu|| Execute the specified menu item from the command line +
 ||:execute|| Execute the argument as an Ex command +
 ||:exusage|| List all Ex commands with a short description +
 ||:finish|| Stop sourcing a script file +
@@ -255,17 +260,14 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
-||'autodetector'|| set auto detect character encoding +
 ||'cdpath'|| List of directories searched when executing :cd +
 ||'complete'|| Items which are completed at the :[tab]open prompt +
 ||'defsearch'|| Set the default search engine +
-||'disabledcssheets'|| Set disabled CSS style sheets +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
-||'fileencoding'|| set the charactor encoding for the current page +
 ||'focuscontent'|| Try to stay in normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in hint mode +
 ||'fullscreen'|| Show the current window fullscreen +
@@ -273,7 +275,7 @@ section:Options[option-index]
 ||'helpfile'|| Name of the main help file +
 ||'hintmatching'|| How links are matched +
 ||'hinttags'|| XPath string of hintable elements activated by [m]f[m] and [m]F[m] +
-||'hinttimeout'|| Automatically follow non unique numerical hint +
+||'hinttimeout'|| Timeout before automatically following a non-unique numerical hint +
 ||'history'|| Number of Ex commands and search patterns to store in the command-line history +
 ||'hlsearch'|| Highlight previous search pattern matches +
 ||'ignorecase'|| Ignore case in search patterns +
@@ -292,10 +294,10 @@ section:Options[option-index]
 ||'preload'|| Speed up first time history/bookmark completion +
 ||'previouspattern'|| Patterns to use when guessing the \'previous' page in a document sequence +
 ||'runtimepath'|| List of directories searched for runtime files +
-||'scroll'|| Number of lines to scroll with and commands +
+||'scroll'|| Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands +
 ||'shell'|| Shell to use for executing :! and :run commands +
 ||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
-||'showmode'|| Show the current mode in the command-line +
+||'showmode'|| Show the current mode in the command line +
 ||'showstatuslinks'|| Show the destination of the link under the cursor in the status bar +
 ||'showtabline'|| Control when to show the tab bar of opened web pages +
 ||'smartcase'|| Override the 'ignorecase' option if the pattern contains uppercase characters +
@@ -311,4 +313,4 @@ section:Options[option-index]
 ||'wildoptions'|| Change how command-line completion is done +
 ||'wordseparators'|| How words are split for hintmatching +
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

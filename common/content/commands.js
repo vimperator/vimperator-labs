@@ -463,7 +463,15 @@ function Commands() //{{{
         //     using literal etc
         parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra)
         {
-            function getNextArg(str) commands.parseArg(str);
+            function getNextArg(str)
+            {
+                let [count, arg, quote] = commands.parseArg(str);
+                if (quote == "\\" && !complete)
+                    return [,,,"Trailing \\"];
+                if (quote && !complete)
+                    return [,,,"E114: Missing quote: " + quote];
+                return [count, arg, quote];
+            }
 
             if (!options)
                 options = [];
@@ -555,9 +563,9 @@ function Commands() //{{{
                                 let sep = sub[optname.length];
                                 if (sep == "=" || /\s/.test(sep) && opt[1] != this.OPTION_NOARG)
                                 {
-                                    [count, arg, quote] = getNextArg(sub.substr(optname.length + 1));
-                                    if (quote == "\\" && !complete)
-                                        return liberator.echoerr("Trailing \\");
+                                    [count, arg, quote, error] = getNextArg(sub.substr(optname.length + 1));
+                                    if (error)
+                                        return liberator.echoerr(error);
 
                                     // if we add the argument to an option after a space, it MUST not be empty
                                     if (sep != "=" && !quote && arg.length == 0)
@@ -615,7 +623,7 @@ function Commands() //{{{
                                         }
                                     }
 
-                                    args[opt[0][0]] = arg; // always use the first name of the option
+                                    args[opt[0][0]] = opt[1] == this.OPTION_NOARG || arg; // always use the first name of the option
                                     i += optname.length + count;
                                     if (i == str.length)
                                         break outer;
@@ -646,9 +654,9 @@ function Commands() //{{{
                 }
 
                 // if not an option, treat this token as an argument
-                var [count, arg, quote] = getNextArg(sub);
-                if (quote == "\\" && !complete)
-                    return liberator.echoerr("Trailing \\");
+                let [count, arg, quote, error] = getNextArg(sub);
+                if (error)
+                    return liberator.echoerr(error);
 
                 if (complete)
                 {

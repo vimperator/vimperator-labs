@@ -605,7 +605,7 @@ function CommandLine() //{{{
     }
 
     /**
-     * Determines whether the command-line should be visible.
+     * Determines whether the command line should be visible.
      *
      * @return {boolean}
      */
@@ -878,8 +878,15 @@ function CommandLine() //{{{
         ["<C-c>"], "Focus content",
         function () { events.onEscape(); });
 
+    // Any "non-keyword" character triggers abbreviation expansion
+    // TODO: Add "<CR>" and "<Tab>" to this list
+    //       At the moment, adding "<Tab>" breaks tab completion. Adding
+    //       "<CR>" has no effect.
+    // TODO: Make non-keyword recognition smarter so that there need not
+    //       be two lists of the same characters (one here and a regexp in
+    //       mappings.js)
     mappings.add(myModes,
-        ["<Space>"], "Expand command line abbreviation",
+        ["<Space>", '"', "'"], "Expand command line abbreviation",
         function ()
         {
             commandline.resetCompletions();
@@ -1037,7 +1044,7 @@ function CommandLine() //{{{
         get message() messageBox.value,
 
         /**
-         * Open the command-line. The main mode is set to
+         * Open the command line. The main mode is set to
          * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
          * Further, callbacks defined for <b>extendedMode</b> are
          * triggered as appropriate (see {@link Liberator#registerCallback}).
@@ -1072,8 +1079,8 @@ function CommandLine() //{{{
         },
 
         /**
-         * Closes the command-line. This is ordinarily triggered automatically
-         * by a mode change. Will not hide the command-line immediately if
+         * Closes the command line. This is ordinarily triggered automatically
+         * by a mode change. Will not hide the command line immediately if
          * called directly after a successful command, otherwise it will.
          */
         close: function close()
@@ -1110,7 +1117,7 @@ function CommandLine() //{{{
         },
 
         /**
-         * Hides the command-line, and shows any status messages that
+         * Hides the command line, and shows any status messages that
          * are under it.
          */
         hide: function hide()
@@ -1119,7 +1126,7 @@ function CommandLine() //{{{
         },
 
         /**
-         * Output the given string onto the command-line. With no flags, the
+         * Output the given string onto the command line. With no flags, the
          * message will be shown in the status line if it's short enough to
          * fit, and contains no new lines, and isn't XML. Otherwise, it will be
          * shown in the MOW.

@@ -700,7 +700,11 @@ function Options() //{{{
                                                           " ";
                 liberator.echo(reference[1] + "\t\t" + prefix + value);
             }
-        });
+        },
+        {
+            literal: 0
+        }
+    );
 
     commands.add(["setl[ocal]"],
         "Set local option",

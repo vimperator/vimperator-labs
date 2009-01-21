@@ -223,9 +223,14 @@ function Tabs() //{{{
         "Go to the last tab",
         function (count) { tabs.select("$"); });
 
-    mappings.add([modes.NORMAL], ["gt", "<C-n>", "<C-Tab>", "<C-PageDown>"],
+    mappings.add([modes.NORMAL], ["gt"],
         "Go to the next tab",
-        function (count) { tabs.select(count > 0 ? count - 1: "+1", count > 0 ? false : true); },
+        function (count) { tabs.select(count > 0 ? count - 1 : "+1", count > 0 ? false : true); },
+        { flags: Mappings.flags.COUNT });
+
+    mappings.add([modes.NORMAL], ["<C-n>", "<C-Tab>", "<C-PageDown>"],
+        "Go to the next tab",
+        function (count) { tabs.select("+" + (count < 1 ? 1 : count), true); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
@@ -629,7 +634,7 @@ function Tabs() //{{{
             "Undo closing of all closed tabs",
             function (args)
             {
-                for (let i in Itarator(tabs.closedTabs))
+                for (let i in Iterator(tabs.closedTabs))
                     window.undoCloseTab(0);
 
             },

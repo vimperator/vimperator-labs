@@ -1,6 +1,6 @@
 HEADER
 
-|Command-line-mode| |Command-line| +
+|Command-line-mode| |Command-line| |mode-cmdline| +
 
 Command-line mode is used to enter Ex commands (":") and text search patterns
 ("/" and "?").
@@ -8,7 +8,7 @@ Command-line mode is used to enter Ex commands (":") and text search patterns
 |:| +
 ||:||
 ________________________________________________________________________________
-Start Command-line mode. In Command-line mode, you can perform extended
+Start command-line mode. In command-line mode, you can perform extended
 commands, which may require arguments.
 ________________________________________________________________________________
 
@@ -32,16 +32,16 @@ ________________________________________________________________________________
 |c_<Up>| +
 ||<Up>||
 ________________________________________________________________________________
-Recall the previous command-line from the history list which matches the
-current command-line.
+Recall the previous command line from the history list which matches the
+current command line.
 ________________________________________________________________________________
 
 
 |c_<Down>| +
 ||<Down>||
 ________________________________________________________________________________
-Recall the next command-line from the history list which matches the current
-command-line.
+Recall the next command line from the history list which matches the current
+command line.
 ________________________________________________________________________________
 
 
@@ -49,7 +49,7 @@ ________________________________________________________________________________
 ||<S-Up>|| +
 ||<PageUp>||
 ________________________________________________________________________________
-Recall the previous command-line from the history list.
+Recall the previous command line from the history list.
 ________________________________________________________________________________
 
 
@@ -57,7 +57,7 @@ ________________________________________________________________________________
 ||<S-Down>|| +
 ||<PageDown>||
 ________________________________________________________________________________
-Recall the next command-line from the history list.
+Recall the next command line from the history list.
 ________________________________________________________________________________
 
 section:Command-line{nbsp}completion[cmdline-completion]
@@ -77,4 +77,4 @@ ________________________________________________________________________________
 Complete the previous full match when 'wildmode' contains "full".
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

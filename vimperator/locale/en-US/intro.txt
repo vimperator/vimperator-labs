@@ -20,7 +20,7 @@ are hidden. +
 If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
 If you don't like Vimperator at all, you can uninstall it by typing
 [c]:addons[c] and remove/disable it. +
-If you like it, but can't remember the shortcuts, press [m]F1[m] or
+If you like it but can't remember the shortcuts, then press [m]F1[m] or
 [c]:help[c] to get this help window back.
 
 |author| |donation| +
@@ -51,6 +51,7 @@ section:Help{nbsp}topics[overview]
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
   like scrolling or copying text.
 - help:Command-line[cmdline.html]: Command-line editing.
+- help:Insert-mode[insert.html]: Insert-mode editing.
 - help:Options[options.html]: A description of all options.
 - help:Search{nbsp}commands[pattern.html]: Searching for text in the
   current buffer.
@@ -111,4 +112,4 @@ on irc.freenode.net or check the Wiki for frequently asked questions. Make
 sure, you have read the TODO file first, as I am aware of many things which
 can be improved when I find time for it or get patches.
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

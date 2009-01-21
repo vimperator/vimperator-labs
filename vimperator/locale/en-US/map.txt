@@ -10,7 +10,7 @@ which are translated to a string of characters. Example:
 
   :map <F2> :echo new Date().toDateString()<CR>
 
-will echo the current date to the command-line when [m]<F2>[m] is pressed.
+will echo the current date to the command line when [m]<F2>[m] is pressed.
 
 There are separate key mapping tables for each of the Normal, Insert,
 Command-line modes.
@@ -143,9 +143,9 @@ ________________________________________________________________________________
 
 |:map-<silent>| +
 ________________________________________________________________________________
-When the first argument to one of the mapping commands is <silent>, {rhs}
-is not echoed to the command-line, nor, for that matter, is anything else
-until the command has completed.
+When the first argument to one of the mapping commands is <silent>,
+{rhs} is not echoed to the command line, nor, for that matter, anything
+else until the command has completed.
 ________________________________________________________________________________
 
 
@@ -172,14 +172,35 @@ ________________________________________________________________________________
 
 section:Abbreviations[abbreviations]
 
+Vimperator can automatically replace words identified as abbreviations,
+which may be used to save typing or to correct commonly misspelled
+words. An abbreviation can be one of three types that are defined by the
+types of constituent characters. Whitespace and quotes are non-keyword
+types, and all other characters are keyword types.
+
+1. A "full-id" abbreviation consists entirely of characters that are not
+keyword characters (e.g., "teh", "msoft").
+
+2. An "end-id" abbreviation ends in keyword character but otherwise
+contains all non-keyword characters (e.g., "'i").
+
+3. A "non-id" abbreviation ends in a non-keyword character but otherwise
+contains any non-whitespace character (e.g., "def'").
+
+Strings that cannot be abbreviations include "a'b" and "a b".
+
+An abbreviation is recognized when a space, quote character, or
+[m]<C-]>[m] is typed after the abbreviation. There are no default
+abbreviations, and abbreviations are never recursive.
+
 |:ab| |:abbreviate|
 ||:ab[breviate] {lhs} {rhs}|| +
 ||:ab[breviate] {lhs}|| +
 ||:ab[breviate]||
 ________________________________________________________________________________
 Abbreviate a key sequence. Abbreviate {lhs} to {rhs}. If only {lhs} is given,
-list all abbreviations that start with {lhs}. List all abbreviations, if no
-arguments are given.
+list all abbreviations that start with {lhs}. If no arguments are given,
+list all abbreviations.
 ________________________________________________________________________________
 
 
@@ -198,7 +219,7 @@ ________________________________________________________________________________
 ||:ia[bbrev] {lhs}|| +
 ||:ia[bbrev]||
 ________________________________________________________________________________
-Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c], but
+Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c] but
 for Insert mode only.
 ________________________________________________________________________________
 
@@ -221,7 +242,7 @@ ________________________________________________________________________________
 |:iuna| |:iunabbrev|
 ||:iuna[bbrev] {lhs}|| +
 ________________________________________________________________________________
-Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c], but for
+Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c] but for
 Insert mode only.
 ________________________________________________________________________________
 
@@ -352,7 +373,7 @@ and <bang> will be available in the argument.
 Replacement text
 
 The replacement text {rep} is scanned for escape sequences and these are
-replaced with values from the user entered command-line. The resulting string
+replaced with values from the user-entered command line. The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:
@@ -389,4 +410,4 @@ Add a :Google command to search via google:
 
 // TODO: add decent examples
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

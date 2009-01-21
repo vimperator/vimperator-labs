@@ -132,8 +132,8 @@ ____
 ||:setl[ocal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but operates on local for current
-tab options only. See [c]:set[c] for details.
+The same as [c]:set[c] command, but it operates for current tab options
+only. See [c]:set[c] for details.
 ____
 
 |:setglobal| |:setg|
@@ -151,7 +151,7 @@ ____
 ||:setg[lobal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but operates on global options only.
+The same as [c]:set[c] command, but it operates on global options only.
 See [c]:set[c] for details.
 ____
 
@@ -198,6 +198,8 @@ The following preferences are set:
 
 * browser.startup.page
 * dom.popup_allowed_events
+* accessibility.typeaheadfind.autostart
+* accessibility.typeaheadfind
 
 // TODO: others?
 
@@ -365,7 +367,7 @@ Change the hint matching algorithm during hint mode. Possible values:
 `--------------------`-------------------------------------------------------------------------------------------------------------------------------
 *contains*           The typed characters are split on whitespace, and these character groups have to match anywhere inside the text of the link.
 *wordstartswith*     The typed characters are matched with the beginning of the first word (see 'wordseparators') in the link as long as possible. If no matches occur in the current word, then the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, then the characters are split on whitespace. These character groups are then matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.
-*firstletters*       Behaves like wordstartswith, but non matching words aren't overleaped.
+*firstletters*       Behaves like wordstartswith, but non-matching words aren't overleaped.
 *custom*             Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -404,10 +406,9 @@ ____
 |\'hto'| |\'hinttimeout'|
 ||'hinttimeout' 'hto'|| number (default: 0)
 ____
-Automatically follow non unique numerical hint after 'hinttimeout'
-milliseconds. +
-Set to 0 (the default) to only follow numeric hints after pressing
-[m]<Return>[m] or when the hint is unique.
+Timeout before automatically following a non-unique numerical hint. Set to 0
+(the default) to only follow numeric hints after pressing [m]<Return>[m] or
+when the hint is unique.
 ____
 
 
@@ -585,7 +586,7 @@ ____
 //____
 //Default height for preview window
 //
-//Value must be between 1 and 50. If the value is too high, completions may cover the command-line. Close the preview window with :pclose.
+//Value must be between 1 and 50. If the value is too high, completions may cover the command line. Close the preview window with :pclose.
 //Note: Option currently disabled
 //____
 
@@ -623,7 +624,7 @@ ____
 |\'scr'| |\'scroll'|
 ||'scroll' 'scr'|| number (default: 0)
 ____
-Number of lines to scroll with C-u and C-d commands.
+Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands.
 The number of lines scrolled defaults to half the window size.
 When a [count] is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
 used to set the value of 'scroll' and also used for the current command. The
@@ -650,7 +651,7 @@ ____
 |\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
 ||'showmode' 'smd'|| boolean (default: on)
 ____
-Show the current mode in the command-line.
+Show the current mode in the command line.
 ____
 
 
@@ -663,7 +664,7 @@ Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Po
 .---`--------------------------------------
 *0* Don't show link destination
 *1* Show the link in the status line
-*2* Show the link in the command-line
+*2* Show the link in the command line
 -------------------------------------------
 
 ____
@@ -826,4 +827,4 @@ A regexp which defines the word separators which are used for the
 the text of a link.
 ____
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

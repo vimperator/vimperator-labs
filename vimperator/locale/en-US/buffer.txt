@@ -326,9 +326,9 @@ ________________________________________________________________________________
 
 section:Copying{nbsp}text[copying,yanking]
 
-When running in X11 the text of the following commands is not only copied to
-the clipboard, but also put into the X11 selection, which can be pasted with
-the middle mouse button:
+When running in X11, the text of the following commands is not only
+copied to the clipboard but is also put into the X11 selection, which
+can be pasted with the middle mouse button:
 
 |y| +
 ||y||
@@ -358,4 +358,4 @@ the page's default style sheet is used.
 All author styling can be removed by setting the 'usermode' option.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc fdm=marker:
+// vim: set filetype=asciidoc fdm=marker:

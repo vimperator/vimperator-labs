@@ -17,7 +17,7 @@ ________________________________________________________________________________
 |:echoe| |:echoerr|
 ||:echoe[rr] {expr}|| +
 ________________________________________________________________________________
-Echo the expression as an error message. Just like [c]:ec[ho][c], but echoes
+Echo the expression as an error message. Just like [c]:ec[ho][c] but echoes
 the result highlighted as ErrorMsg and saves it to the message history.
 ________________________________________________________________________________
 
@@ -25,7 +25,7 @@ ________________________________________________________________________________
 |:echom| |:echomsg|
 ||:echom[sg] {expr}|| +
 ________________________________________________________________________________
-Echo the expression as an informational message. Just like [c]:ec[ho][c], but
+Echo the expression as an informational message. Just like [c]:ec[ho][c] but
 also saves the message in the message history.
 ________________________________________________________________________________
 
@@ -81,4 +81,4 @@ Deletes the variable {name}. Several variable names can be given. When used
 with [!] no error message is output for non-existing variables.
 ________________________________________________________________________________
 
-// vim: set syntax=asciidoc:
+// vim: set filetype=asciidoc:

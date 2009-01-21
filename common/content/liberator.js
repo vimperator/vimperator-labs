@@ -656,7 +656,7 @@ const liberator = (function () //{{{
 
         beep: function ()
         {
-            // FIXME: popups clear the command-line
+            // FIXME: popups clear the command line
             if (options["visualbell"])
             {
                 // flash the visual bell
@@ -745,7 +745,7 @@ const liberator = (function () //{{{
             // But it's _supposed_ to show the MOW on startup when there are
             // messages, surely?  As far as I'm concerned it essentially works
             // exactly as it should with the DISALLOW_MULTILINE flag removed.
-            // Sending N messages to the command-line in a row and having them
+            // Sending N messages to the command line in a row and having them
             // overwrite each other is completely broken. I also think many of
             // those messages like "Added quick mark" are plain silly but if
             // you don't like them you can set verbose=0, or use :silent when
