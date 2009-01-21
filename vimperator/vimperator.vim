@@ -2,6 +2,12 @@
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
 " Last Change:      2008 Dec 31
+"
+" To use this file, copy it to ~/.vim/syntax/vimperator.vim and create
+" ~/.vim/ftdetect/vimperator.vim with contents like:
+"
+" au BufNewFile,BufRead *.vimp setl filetype=vimperator
+" au BufNewFile,BufRead */{.,_}{vimperator,muttator}rc setl filetype=vimperator
 
 if exists("b:current_syntax")
   finish
