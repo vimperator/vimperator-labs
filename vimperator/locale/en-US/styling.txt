@@ -88,8 +88,7 @@ Valid groups are:
 Every invocation completely replaces the styling of any previous invocation,
 unless [-append] (short option: -a) is provided, in which case, {css} is
 appended to its current value. If {css} is not provided, any styles matching
-{group} are listed. If you want to set its default value, you can refer from
-complete list.
+{group} are listed.
 ________________________________________________________________________________
 
 |:highlight-clear| +
