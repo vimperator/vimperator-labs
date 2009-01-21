@@ -26,7 +26,7 @@ XPI_BINS      = jar
 
 XPI_NAME      = $(NAME)_$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
-XPI	      = $(XPI_PATH).xpi
+XPI	          = $(XPI_PATH).xpi
 
 RDF           = ../downloads/update.rdf
 RDF_IN        = $(RDF).in
@@ -44,7 +44,7 @@ $(TARGETS:%=\%.%):
 	echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
 
-$(TARGETS): %: $(LOCALES:%=%.%)
+#$(TARGETS): %: $(LOCALES:%=%.%)
 
 .PHONY: $(TARGETS)
 all: help
@@ -82,11 +82,13 @@ $(RDF): $(RDF_IN) Makefile
 	@echo "SUCCESS: $@"
 
 clean:
-	@echo "Cleanup..."
+	@echo "General $(NAME) cleanup..."
+	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale clean; done
 	rm -f $(JAR) $(XPI)
 
-distclean: clean $(LOCALES:%=%.distclean)
-	@echo "More cleanup..."
+distclean: clean
+	@echo "More $(NAME) cleanup..."
+	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale distclean; done
 	rm -rf $(BUILD_DIR)
 
 #### xpi
@@ -107,5 +109,5 @@ $(JAR): doc
 
 #### doc (see Makefile.doc)
 
-doc: $(LOCALES:%=%.doc) ;
-
+doc:
+	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale doc; done

@@ -32,10 +32,10 @@ help:
 	@echo "  make distclean - clean up more"
 
 clean:
-	@echo "Cleanup..."
+	@echo "  Cleanup of $(LOCALE) documentation..."
 
 distclean: clean
-	@echo "More cleanup..."
+	@echo "    More cleanup of $(LOCALE) documentation..."
 	rm -f $(DOC_FILES)
 
 #### Makes single-file makes easier to type
