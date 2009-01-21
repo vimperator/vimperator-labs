@@ -2,17 +2,17 @@
 
 #### configuration
 
+ASCIIDOC      = asciidoc
+AWK           = awk
+
 LOCALE   = $(shell basename `pwd`)
-LANG     = $(shell basename `pwd` | awk -F- '{ print ($$1 ~ /^[a-z]\{2\}$$/) ? $$1 : "en" }')
+LANG     = $(shell basename `pwd` | $(AWK) -F- '{ print ($$1 ~ /^[a-z]\{2\}$$/) ? $$1 : "en" }')
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
 ADC_DEPS      = $(wildcard asciidoc.conf lang-$(LANG).conf)
 
 DOC_FILES     = $(ADC_FILES) $(T2T_FILES)
-
-ASCIIDOC      = asciidoc
-AWK           = awk
 
 .SILENT:
 
