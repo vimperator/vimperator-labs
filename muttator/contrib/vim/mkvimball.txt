@@ -1,0 +1,2 @@
+syntax/muttator.vim
+ftdetect/muttator.vim
