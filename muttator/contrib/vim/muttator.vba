@@ -104,7 +104,6 @@ unlet s:cpo_save
 
 " vim: tw=130 et ts=4 sw=4:
 ftdetect/muttator.vim	[[[1
-3
-" Muttator
+2
 " TODO: what's the Muttator filename extension?
-au BufNewFile,BufRead *muttatororrc*,*.muttator set filetype=muttator
+au BufNewFile,BufRead *muttatorrc*,*.muttator set filetype=muttator
