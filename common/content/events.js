@@ -1033,6 +1033,37 @@ function Events() //{{{
                         }
                     }
                 }
+                // [Ctrl-Bug] special handling of mysterious <C-[>, <C-\\>, <C-]>, <C-^>, <C-_> bugs (OS/X)
+                //            (i.e., cntrl codes 27--31)
+                // ---
+                // For more information, see:
+                //     [*] Vimp FAQ: http://vimperator.org/trac/wiki/Vimperator/FAQ#WhydoesntC-workforEscMacOSX
+                //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/vimperator/2008-May/001548.html
+                //     [*] Mozilla bug 416227: event.charCode in keypress handler has unexpected values on Mac for Ctrl with chars in "[ ] _ \"
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=416227
+                //     [*] Mozilla bug 432951: Ctrl+'foo' doesn't seem same charCode as Meta+'foo' on Cocoa
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=432951
+                // ---
+                //
+                // The following fixes are only activated if liberator.has("MacUnix").
+                // Technically, they prevent mappings from <C-Esc> (and
+                // <C-C-]> if your fancy keyboard permits such things<?>), but
+                // these <C-control> mappings are probably pathological (<C-Esc>
+                // certainly is on Windows), and so it is probably
+                // harmless to remove the has("MacUnix") if desired.
+                //
+                else if (liberator.has("MacUnix") && event.ctrlKey)
+                {
+                    // [Ctrl-Bug 1/5] the <C-[> bug
+                    if(event.charCode == 27)
+                    {
+                        key = "Esc";
+                        modifier = modifier.replace('C-','');
+                    }
+                    // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
+                    else if (event.charCode >= 28 && event.charCode <= 31)
+                        key = String.fromCharCode(event.charCode + 64);
+                }
                 // special handling of the Space key
                 else if (event.charCode == 32)
                 {
