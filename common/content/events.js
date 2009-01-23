@@ -1052,7 +1052,7 @@ function Events() //{{{
                 // certainly is on Windows), and so it is probably
                 // harmless to remove the has("MacUnix") if desired.
                 //
-                else if (liberator.has("MacUnix") && event.ctrlKey)
+                else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31)
                 {
                     // [Ctrl-Bug 1/5] the <C-[> bug
                     if(event.charCode == 27)
@@ -1061,7 +1061,7 @@ function Events() //{{{
                         modifier = modifier.replace('C-','');
                     }
                     // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
-                    else if (event.charCode >= 28 && event.charCode <= 31)
+                    else
                         key = String.fromCharCode(event.charCode + 64);
                 }
                 // special handling of the Space key
