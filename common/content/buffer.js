@@ -1614,20 +1614,20 @@ function Marks() //{{{
         function (args)
         {
             let special = args.bang;
-            let args = args.string;
+            let argstring = args.string;
 
-            if (!special && !args)
+            if (!special && !argstring)
             {
                 liberator.echoerr("E471: Argument required");
                 return;
             }
-            if (special && args)
+            if (special && argstring)
             {
                 liberator.echoerr("E474: Invalid argument");
                 return;
             }
             let matches;
-            if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
+            if (matches = argstring.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
             {
                 // NOTE: this currently differs from Vim's behavior which
                 // deletes any valid marks in the arg list, up to the first
@@ -1636,7 +1636,7 @@ function Marks() //{{{
                 return;
             }
             // check for illegal ranges - only allow a-z A-Z 0-9
-            if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))
+            if (matches = argstring.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))
             {
                 for (let i = 0; i < matches.length; i++)
                 {
@@ -1647,13 +1647,13 @@ function Marks() //{{{
                         /[0-9]/.test(start) != /[0-9]/.test(end) ||
                         start > end)
                     {
-                        liberator.echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
+                        liberator.echoerr("E475: Invalid argument: " + argstring.match(matches[i] + ".*")[0]);
                         return;
                     }
                 }
             }
 
-            marks.remove(args, special);
+            marks.remove(argstring, special);
         },
         {
             bang: true,
