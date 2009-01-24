@@ -866,9 +866,16 @@ function Buffer() //{{{
         /**
          * @property {string} The current top-level document's URL.
          */
-        get URL()
+        get URL() window.content.location.href,
+
+        /**
+         * @property {string} The current top-level document's URL, sans any
+         *     fragment identifier.
+         */
+        get URI()
         {
-            return window.content.document.location.href;
+            let loc = window.content.location;
+            return loc.href.substr(0, loc.href.length - loc.hash.length);
         },
 
         /**
@@ -1450,7 +1457,7 @@ function Buffer() //{{{
          */
         viewSource: function (url, useExternalEditor)
         {
-            url = url || buffer.URL;
+            url = url || buffer.URI;
 
             if (useExternalEditor)
                 editor.editFileExternally(url);
