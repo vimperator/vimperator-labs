@@ -1614,7 +1614,7 @@ function Marks() //{{{
         function (args)
         {
             let special = args.bang;
-            let args = args.string;
+            args = args.string;
 
             if (!special && !args)
             {
