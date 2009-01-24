@@ -1054,15 +1054,15 @@ function Events() //{{{
                 //
                 else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31)
                 {
-                    // [Ctrl-Bug 1/5] the <C-[> bug
-                    if(event.charCode == 27)
+                    if(event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
                     {
                         key = "Esc";
-                        modifier = modifier.replace('C-','');
+                        modifier = modifier.replace("C-", "");
                     }
-                    // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
-                    else
+                    else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
+                    {
                         key = String.fromCharCode(event.charCode + 64);
+                    }
                 }
                 // special handling of the Space key
                 else if (event.charCode == 32)
