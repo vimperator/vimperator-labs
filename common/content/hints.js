@@ -510,8 +510,6 @@ function Hints() //{{{
 
             return function (linkText)
             {
-                liberator.dump(hintStrings);
-
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 

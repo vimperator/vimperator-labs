@@ -1120,7 +1120,7 @@ function Events() //{{{
 
         waitForPageLoad: function ()
         {
-            liberator.dump("start waiting in loaded state: " + buffer.loaded);
+            //liberator.dump("start waiting in loaded state: " + buffer.loaded);
             liberator.threadYield(true); // clear queue
 
             if (buffer.loaded == 1)
@@ -1133,8 +1133,8 @@ function Events() //{{{
             while (now = Date.now(), now < end)
             {
                 liberator.threadYield();
-                if ((now - start) % 1000 < 10)
-                    liberator.dump("waited: " + (now - start) + " ms");
+                //if ((now - start) % 1000 < 10)
+                //    liberator.dump("waited: " + (now - start) + " ms");
 
                 if (!events.feedingKeys)
                     return false;
@@ -1153,7 +1153,7 @@ function Events() //{{{
             let ret = (buffer.loaded == 1);
             if (!ret)
                 liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
-            liberator.dump("done waiting: " + ret);
+            //liberator.dump("done waiting: " + ret);
 
             // sometimes the input widget had focus when replaying a macro
             // maybe this call should be moved somewhere else?
@@ -1217,7 +1217,7 @@ function Events() //{{{
                     {
                         if (config.isComposeWindow)
                         {
-                            liberator.dump("Compose editor got focus");
+                            //liberator.dump("Compose editor got focus");
                             modes.set(modes.INSERT, modes.TEXTAREA);
                         }
                         else if (liberator.mode != modes.MESSAGE)

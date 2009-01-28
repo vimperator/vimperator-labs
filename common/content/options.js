@@ -203,9 +203,9 @@ Option.prototype = {
                 break;
 
             case "number":
-                let value = parseInt(values); // deduce radix
+                let value = Number(values); // deduce radix
 
-                if (isNaN(value))
+                if (isNaN(value) || value != parseInt(value))
                     return "E521: Number required";
 
                 switch (operator)

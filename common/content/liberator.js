@@ -1417,7 +1417,6 @@ window.liberator = liberator;
 // FIXME: Ugly, etc.
 window.addEventListener("liberatorHelpLink", function (event) {
         let elem = event.target;
-        liberator.dump(String(elem));
         if (/^(option|mapping|command)$/.test(elem.className))
             var tag = elem.textContent.replace(/\s.*/, "");
         if (elem.className == "command")
