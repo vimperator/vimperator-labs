@@ -29,10 +29,12 @@ BUGS:
   => it often overwrites the open command line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
-- MOW is broken for multiple commands when open E.g. :ls | ls
+- MOW rendering is broken for multiple commands when open E.g. :ls | ls
 - completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
   and even if it is not totally off, i had it jump by one pixel when wrapping around.
   If that's unfixable, i propose reverting the new completion height stuff.
+- Windows paths have escaped backslashes in messages - presumably due to
+  String#quote change.
 
 FEATURES:
 9 finish :help TODOs
