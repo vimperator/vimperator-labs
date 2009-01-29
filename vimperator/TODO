@@ -18,6 +18,12 @@ BUGS:
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
+- :pageinfo should at least fail gracefully on :help pages (now it throws
+  Error: Permission denied to call method XULControllers.getControllerForCommand)
+- "g<" fails without a trailing escape because both "g<" and "g<C-g>"
+  are mapped. Vimp should recognize "<C-g>" as an atom that should not
+  be matched literally. In fact, typing "g<C-g>" out literally is
+  equivalent to typing "g" and then <C-g>.
 
 (recent CVS regressions):
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
@@ -73,7 +79,7 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
-7 The output of the pageinfo-command sould contain the security-information of ssl-encrypted sites
+7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
