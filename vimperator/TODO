@@ -35,6 +35,8 @@ BUGS:
   If that's unfixable, i propose reverting the new completion height stuff.
 - Windows paths have escaped backslashes in messages - presumably due to
   String#quote change.
+- :messages is _very_ slow for message history of several thousand lines ->
+  Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 
 FEATURES:
 9 finish :help TODOs
