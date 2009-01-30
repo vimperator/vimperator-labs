@@ -220,6 +220,12 @@ function CompletionContext(editor, name, offset) //{{{
                              : item.item[key];
 }
 
+CompletionContext.Sort = {
+    number: function (a, b) parseInt(b) - parseInt(a) || String.localeCompare(a, b),
+
+    unsorted: null
+};
+
 CompletionContext.prototype = {
     // Temporary
     /**
@@ -1381,6 +1387,7 @@ function Completion() //{{{
             context.anchored = false;
             context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
+            context.compare = CompletionContext.Sort.number;
             let process = context.process[0];
             context.process = [function (item, text)
                     <>
@@ -1560,7 +1567,7 @@ function Completion() //{{{
         {
             context.format = history.format;
             context.title = ["History"]
-            context.compare = null;
+            context.compare = CompletionContext.Sort.unsorted;
             //context.background = true;
             if (context.maxItems == null)
                 context.maxItems = 100;
@@ -1584,7 +1591,7 @@ function Completion() //{{{
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
             context.cancel = function () services.get("autoCompleteSearch").stopSearch();
-            context.compare = null;
+            context.compare = CompletionContext.Sort.unsorted;
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
@@ -1716,7 +1723,7 @@ function Completion() //{{{
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
                     // context.background = true;
-                    context.compare = null;
+                    context.compare = CompletionContext.Sort.unsorted;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
 
@@ -1751,7 +1758,7 @@ function Completion() //{{{
                 let ctxt = context.fork(name, 0);
 
                 ctxt.title = [engine.description + " Suggestions"];
-                ctxt.compare = null;
+                ctxt.compare = CompletionContext.Sort.unsorted;
                 ctxt.incomplete = true;
                 bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
                     ctxt.incomplete = false;
