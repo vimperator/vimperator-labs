@@ -1758,7 +1758,7 @@ function ItemList(id) //{{{
                 </div>
             </div>, divNodes);
         doc.body.replaceChild(div, doc.body.firstChild);
-        div.scrollIntoView(true);
+        //div.scrollIntoView(true);
 
         items.contextList.forEach(function init_eachContext(context) {
             delete context.cache.nodes;
@@ -1941,7 +1941,7 @@ function ItemList(id) //{{{
             if (index >= 0)
             {
                 getCompletion(index).setAttribute("selected", "true");
-                getCompletion(index).scrollIntoView(false);
+                //getCompletion(index).scrollIntoView(false);
             }
 
             //if (index == 0)
