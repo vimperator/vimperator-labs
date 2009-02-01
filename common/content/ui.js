@@ -1274,8 +1274,8 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                liberator.dump("input: " + command);
-                this.resetCompletions(); // -> already handled by "keypress" below (hopefully), so don't do it twice
+                //liberator.dump("input: " + command);
+                this.resetCompletions();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
