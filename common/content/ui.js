@@ -1274,7 +1274,8 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                //this.resetCompletions(); -> already handled by "keypress" below (hopefully), so don't do it twice
+                liberator.dump("input: " + command);
+                this.resetCompletions(); // -> already handled by "keypress" below (hopefully), so don't do it twice
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
@@ -1322,7 +1323,7 @@ function CommandLine() //{{{
                 else if (key == "<BS>")
                 {
                     // reset the tab completion
-                    this.resetCompletions();
+                    //this.resetCompletions();
 
                     // and blur the command line if there is no text left
                     if (command.length == 0)
@@ -1333,7 +1334,7 @@ function CommandLine() //{{{
                 }
                 else // any other key
                 {
-                    this.resetCompletions();
+                    //this.resetCompletions();
                 }
                 return true; // allow this event to be handled by Firefox
             }
