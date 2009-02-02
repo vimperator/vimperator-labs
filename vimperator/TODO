@@ -18,8 +18,6 @@ BUGS:
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
-- :pageinfo should at least fail gracefully on :help pages (now it throws
-  Error: Permission denied to call method XULControllers.getControllerForCommand)
 - "g<" fails without a trailing escape because both "g<" and "g<C-g>"
   are mapped. Vimp should recognize "<C-g>" as an atom that should not
   be matched literally. In fact, typing "g<C-g>" out literally is
