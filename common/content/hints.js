@@ -425,7 +425,7 @@ function Hints() //{{{
                         let beyondLastWord = (nextWordIdx == words.length);
                         let charMatched = false;
                         if (beyondLastWord == false)
-                            charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping) 
+                            charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping)
 
                         if (charMatched)
                             return true;
