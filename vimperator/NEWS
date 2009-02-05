@@ -1,6 +1,7 @@
 2009-XX-XX:
     * version 2.1 (probably)
     * add :silent
+    * add $MY_VIMPERATORRC
 
 2008-XX-XX:
     * version 2.0 (probably)
@@ -27,7 +28,7 @@
 
     * [count]<C-n> now goes to the [count]th next tab rather than the [count]th tab.
     * add ~/.vimperator/info/{profile}/, similar to viminfo
-    * add $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT and $MY_VIMPERATORRC
+    * add $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT
     * :hardcopy now supports output redirection to a file on Unix and MacUnix
     * add ";f" extended hint mode to focus a frame
     * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.
