@@ -1662,7 +1662,8 @@ function Completion() //{{{
                         completer = function () [["true", ""], ["false", ""]];
                     break;
                 case "stringlist":
-                    len = newValues.pop().length;
+                    let target = newValues.pop();
+                    len = target ? target.length : 0;
                     break;
                 case "charlist":
                     len = 0;

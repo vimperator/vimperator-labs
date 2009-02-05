@@ -80,7 +80,7 @@ Option.prototype = {
     parseValues: function (value)
     {
         if (this.type == "stringlist")
-            return value.split(",");
+            return (value === "") ? [] : value.split(",");
         if (this.type == "charlist")
             return Array.slice(value);
         return value;
