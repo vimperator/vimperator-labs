@@ -9,5 +9,6 @@ $(TARGETS:%=\%.%):
 	echo MAKE $@
 	$(MAKE) -C $* $(@:$*.%=%)
 
-$(TARGETS): %: $(DIRS:%=%.%)
+$(TARGETS):
+	$(MAKE) $(DIRS:%=%.$@)
 
