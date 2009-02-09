@@ -6,8 +6,10 @@ Autocommands are a way to automatically execute code when certain events
 happen.
 
 |:au| |:autocmd| +
-||:au[tocmd]|| Execute commands automatically on events.
+||:au[tocmd]||
 ________________________________________________________________________________
+Execute commands automatically on events.
+
 [c]:au[tocmd][c] {event} {pat} {cmd}
 
 Add {cmd} to the list of commands Vimperator will execute on {event} for a URL matching {pat}:
