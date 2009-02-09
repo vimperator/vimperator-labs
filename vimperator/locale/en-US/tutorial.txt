@@ -142,7 +142,7 @@ type uniquely identifies any given link, Vimperator will follow that link
 immediately without any further user input.
 
 Whichever way you choose to indicate your target link, once Vimperator has
-highlighted the link you want, simply hit [m]<Enter>[m] to open it.
+highlighted the link you want, simply hit <Enter> to open it.
 
 The most common hint mode is called help:QuickHint{nbsp}mode[various.html,f].
 To activate QuickHint mode, press either [m]f[m] or [m]F[m]. The lower-case
