@@ -997,10 +997,9 @@ function CommandLine() //{{{
         set silent(val)
         {
             silent = val;
-            if (silent)
-                storage.styles.addSheet(true, "silent-mode", "chrome://*", "#liberator-commandline > * { opacity: 0 }");
-            else
-                storage.styles.removeSheet(true, "silent-mode");
+            Array.forEach(document.getElementById("liberator-commandline").childNodes, function (node) {
+                node.style.opacity = silent ? "0" : "";
+            });
         },
 
         runSilently: function (fn, self)

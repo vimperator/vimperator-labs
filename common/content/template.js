@@ -133,9 +133,9 @@ const template = {
     highlight: function highlight(arg, processStrings, clip)
     {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
-        let str = clip ? util.clip(String(arg), clip) : String(arg);
         try
         {
+            let str = clip ? util.clip(String(arg), clip) : String(arg);
             switch (arg == null ? "undefined" : typeof arg)
             {
                 case "number":

@@ -726,22 +726,22 @@ function Completion() //{{{
 
         this.completers = {};
 
+        // Some object members are only accessible as function calls
+        function getKey(obj, key)
+        {
+            try
+            {
+                return obj[key];
+            }
+            catch (e)
+            {
+                return undefined;
+            }
+        }
+
         this.iter = function iter(obj)
         {
-            let iterator = (function objIter()
-            {
-                for (let k in obj)
-                {
-                    // Some object members are only accessible as function calls
-                    try
-                    {
-                        yield [k, obj[k]];
-                        continue;
-                    }
-                    catch (e) {}
-                    yield [k, <>inaccessable</>]
-                }
-            })();
+            let iterator = ([k, getKey(obj, k)] for (k in obj));
             try
             {
                 // The point of 'for k in obj' is to get keys
@@ -781,21 +781,21 @@ function Completion() //{{{
             // available in the object itself.
             let orig = obj;
 
-            // v[0] in orig and orig[v[0]] catch different cases. XPCOM
-            // objects are problematic, to say the least.
             if (modules.isPrototypeOf(obj))
                 compl = [v for (v in Iterator(obj))];
             else
             {
-                if (obj.wrappedJSObject)
+                if (getKey(obj, 'wrappedJSObject'))
                     obj = obj.wrappedJSObject;
+                // v[0] in orig and orig[v[0]] catch different cases. XPCOM
+                // objects are problematic, to say the least.
                 compl = [v for (v in this.iter(obj))
-                    if ((typeof orig == "object" && v[0] in orig) || orig[v[0]] !== undefined)];
+                    if ((typeof orig == "object" && v[0] in orig) || getKey(orig, v[0]) !== undefined)];
             }
 
             // And if wrappedJSObject happens to be available,
             // return that, too.
-            if (orig.wrappedJSObject)
+            if (getKey(orig, 'wrappedJSObject'))
                 compl.push(["wrappedJSObject", obj]);
 
             // Add keys for sorting later.

@@ -672,6 +672,13 @@ const util = { //{{{
     xmlToDom: function xmlToDom(node, doc, nodes)
     {
         XML.prettyPrinting = false;
+        if (node.length() != 1)
+        {
+            let domnode = doc.createDocumentFragment();
+            for each (let child in node)
+                domnode.appendChild(arguments.callee(child, doc, nodes));
+            return domnode;
+        }
         switch (node.nodeKind())
         {
             case "text":

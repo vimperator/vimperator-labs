@@ -121,7 +121,7 @@ const liberator = (function () //{{{
                     let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
                     if (class.length)
-                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }");
+                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true);
                     else
                         styles.removeSheet(true, "scrollbar");
                     options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
