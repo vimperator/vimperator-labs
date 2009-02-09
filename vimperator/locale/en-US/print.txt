@@ -20,7 +20,8 @@ ________________________________________________________________________________
 
 section:Firefox{nbsp}printing{nbsp}dialogs[firefox-print-dialogs]
 
-The "Print Preview" and "Page Setup" dialogs can be opened via the :dialog command
+The "Print Preview" and "Page Setup" dialogs can be opened via the [c]:dialog[c]
+command
 
   :dialog printpreview
 

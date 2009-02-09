@@ -224,9 +224,9 @@ ____
 |\'cd'| |\'cdpath'|
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
-List of directories searched when executing the :cd command. This is only used
-for relative paths, if an absolute path is specified then the option is
-ignored.
+List of directories searched when executing the [c]:cd[c] command. This is
+only used for relative paths, if an absolute path is specified then the option
+is ignored.
 ____
 
 
@@ -635,14 +635,14 @@ ____
 |\'shell'| |\'sh'|
 ||'shell' 'sh'|| string (default: _$SHELL_ or "sh", Win32: "cmd.exe")
 ____
-Shell to use for executing :! and :run commands.
+Shell to use for executing [c]:![c] and [c]:run[c] commands.
 ____
 
 
 |\'shellcmdflag'| |\'shcf'|
 ||'shellcmdflag' 'shcf'|| string (default: "-c", Win32: "/c")
 ____
-Flag passed to shell when executing :! and :run commands.
+Flag passed to shell when executing [c]:![c] and [c]:run[c] commands.
 
 E.g. "bash -c gvim"
 ____
@@ -728,10 +728,10 @@ ____
 ||'urlseparator'|| string (default: ",\s")
 ____
 Set the separator regexp used to separate multiple URL args.  Multiple
-arguments can be specified for :open, and similar commands, using this regexp
-as the separator.  Using whitespace alone is not generally useful since it is
-often contained in a single argument.  E.g. [c]:open linus torvalds[c] should
-perform a single search for the key words "linus" and "torvalds"
+arguments can be specified for [c]:open[c], and similar commands, using this
+regexp as the separator.  Using whitespace alone is not generally useful since
+it is often contained in a single argument.  E.g. [c]:open linus torvalds[c]
+should perform a single search for the key words "linus" and "torvalds"
 ____
 
 

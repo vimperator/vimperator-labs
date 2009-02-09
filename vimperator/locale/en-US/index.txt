@@ -98,13 +98,13 @@ section:Normal{nbsp}mode[normal-index]
 ||g<|| Redisplay the last command output +
 ||g0|| Go to the first tab +
 ||g<C-g>|| Print file information +
-||gB|| Repeat last :buffer[!] command in reverse direction +
+||gB|| Repeat last [c]:buffer[!][c] command in reverse direction +
 ||gF|| View source with an external editor +
 ||gH|| Open homepage in a new tab +
 ||gP|| Open (put) a URL based on the current clipboard contents in a new buffer +
 ||gT|| Go to previous tab +
 ||gU|| Go to the root of the website +
-||gb|| Repeat last :buffer[!] command +
+||gb|| Repeat last [c]:buffer[!][c] command +
 ||gf|| View source +
 ||gg|| Go to the top of the document +
 ||gh|| Open homepage +
@@ -260,8 +260,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
-||'cdpath'|| List of directories searched when executing :cd +
-||'complete'|| Items which are completed at the :[tab]open prompt +
+||'cdpath'|| List of directories searched when executing [c]:cd[c] +
+||'complete'|| Items which are completed at the [c]:[tab]open prompt[c] +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
@@ -289,14 +289,14 @@ section:Options[option-index]
 ||'newtab'|| Define which commands should output in a new tab by default +
 ||'nextpattern'|| Patterns to use when guessing the \'next' page in a document sequence +
 ||'online'|| Set the \'work offline' option +
-||'pageinfo'|| Desired info on :pa[geinfo] +
+||'pageinfo'|| Desired info on [c]:pa[geinfo][c] +
 ||'popups'|| Where to show requested popup windows +
 ||'preload'|| Speed up first time history/bookmark completion +
 ||'previouspattern'|| Patterns to use when guessing the \'previous' page in a document sequence +
 ||'runtimepath'|| List of directories searched for runtime files +
 ||'scroll'|| Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands +
-||'shell'|| Shell to use for executing :! and :run commands +
-||'shellcmdflag'|| Flag passed to shell when executing :! and :run commands +
+||'shell'|| Shell to use for executing [c]:![c] and [c]:run[c] commands +
+||'shellcmdflag'|| Flag passed to shell when executing [c]:![c] and [c]:run[c] commands +
 ||'showmode'|| Show the current mode in the command line +
 ||'showstatuslinks'|| Show the destination of the link under the cursor in the status bar +
 ||'showtabline'|| Control when to show the tab bar of opened web pages +
