@@ -18,7 +18,7 @@ sourced.
 ________________________________________________________________________________
 
 |:hi| |:highlight| +
-||:hi[light] [-append] {group}[{selector}] [{css}]|| +
+||:hi[ghlight] [-append] {group}[{selector}] [{css}]|| +
 ________________________________________________________________________________
 Highlight {group} with {css}. Normally, {css} is checked for
 valid syntax before it's applied. Once you're certain it's
