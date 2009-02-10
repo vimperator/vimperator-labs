@@ -347,7 +347,7 @@ function Bookmarks() //{{{
         "Add a bookmark",
         function (args)
         {
-            let url = args.length == 0 ? buffer.URL : args[0];
+            let url = args.literalArg || buffer.URL;
             let title = args["-title"] || (args.length == 0 ? buffer.title : null);
             let keyword = args["-keyword"] || null;
             let tags =    args["-tags"] || [];
@@ -363,6 +363,7 @@ function Bookmarks() //{{{
         {
             argCount: "?",
             bang: true,
+            literal: 0,
             completer: function (context, args)
             {
                 if (!args.bang)
