@@ -3,10 +3,11 @@
 TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
-BASE	      = $(TOP)/../common
+BASE          = $(TOP)/../common
 
-DOC_SRC_FILES = $(wildcard locale/*/*.txt)
-LOCALES       = $(wildcard locale/*)
+LOCALEDIR     = locale
+DOC_SRC_FILES = $(wildcard $(LOCALEDIR)/*/*.txt)
+LOCALES       = $(foreach locale,$(wildcard $(LOCALEDIR)/*),$(word 2,$(subst /, ,$(locale))))
 
 MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
 
@@ -26,7 +27,7 @@ XPI_BINS      = jar
 
 XPI_NAME      = $(NAME)_$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
-XPI	          = $(XPI_PATH).xpi
+XPI           = $(XPI_PATH).xpi
 
 RDF           = ../downloads/update.rdf
 RDF_IN        = $(RDF).in
@@ -106,4 +107,4 @@ $(JAR): doc
 
 #### doc (see Makefile.doc)
 
-doc: $(LOCALES:%=%.doc) ;
+doc: $(foreach localetgt,$(LOCALES:%=%.doc),$(addprefix $(LOCALEDIR)/,$(localetgt))) ;
