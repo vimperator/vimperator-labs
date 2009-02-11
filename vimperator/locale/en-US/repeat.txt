@@ -99,7 +99,7 @@ Load all unloaded plugins immediately. Because plugins are automatically
 loaded after vimperatorrc is sourced, this command must be placed early
 in the vimperatorrc file if vimperatorrc also includes commands that are
 implemented by plugins. Additionally, this command allows for sourcing
-new plugins without restarting vimperator.
+new plugins without restarting Vimperator.
 ________________________________________________________________________________
 
 

@@ -108,11 +108,4 @@ cursor and can move around. If you want to select text in this mode, press
 [m]v[m] to start its Visual mode.
 ________________________________________________________________________________
 
-
-//|:pc| |:pclose| +
-//||:pc[lose]||
-//________________________________________________________________________________
-//Close preview window on bottom of screen.
-//________________________________________________________________________________
-
 // vim: set filetype=asciidoc:

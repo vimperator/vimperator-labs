@@ -3,7 +3,7 @@ HEADER
 |options| +
 
 Vimperator has a number of internal variables and switches which can be set to
-achieve special effects.  These options come in 5 forms:
+achieve special effects. These options come in 5 forms:
 `------------`-----------------------------------------
 *boolean*    can only be on or off
 *number*     has a numeric value
@@ -84,21 +84,17 @@ ____
 |:set+=|
 ||:se[t] {option}+={value} [...]|| +
 ____
-Add the {value} to a number option, or append the
-{value} to a string option.  When the option is a
-comma separated list, a comma is added, unless the
-value was empty.
-If the option is a list of flags, superfluous flags
-are removed.  When adding a flag that was already
-present the option value doesn't change.
+Add the {value} to a number option, or append the {value} to a string option.
+When the option is a comma separated list, a comma is added, unless the value
+was empty. If the option is a list of flags, superfluous flags are removed.
+When adding a flag that was already present the option value doesn't change.
 ____
 
 |:set^=|
 ||:se[t] {option}^={value} [...]|| +
 ____
-Multiply the {value} to a number option, or prepend
-the {value} to a string option.  When the option is a
-comma separated list, a comma is added, unless the
+Multiply the {value} to a number option, or prepend the {value} to a string
+option. When the option is a comma separated list, a comma is added, unless the
 value was empty.
 ____
 
@@ -106,15 +102,12 @@ ____
 ||:se[t] {option}-={value} [...]|| +
 
 ____
-Subtract the {value} from a number option, or remove
-the {value} from a string option, if it is there.
-If the {value} is not found in a string option, there
-is no error or warning.  When the option is a comma
-separated list, a comma is deleted, unless the option
-becomes empty.
-When the option is a list of flags, {value} must be
-exactly as they appear in the option.  Remove flags
-one by one to avoid problems.
+Subtract the {value} from a number option, or remove the {value} from a string
+option, if it is there. If the {value} is not found in a string option, there
+is no error or warning. When the option is a comma separated list, a comma is
+deleted, unless the option becomes empty. When the option is a list of flags,
+{value} must be exactly as they appear in the option. Remove flags one by one
+to avoid problems.
 ____
 
 |:setlocal| |:setl|
@@ -727,11 +720,11 @@ ____
 |\'urlseparator'|
 ||'urlseparator'|| string (default: ",\s")
 ____
-Set the separator regexp used to separate multiple URL args.  Multiple
-arguments can be specified for [c]:open[c], and similar commands, using this
-regexp as the separator.  Using whitespace alone is not generally useful since
-it is often contained in a single argument.  E.g. [c]:open linus torvalds[c]
-should perform a single search for the key words "linus" and "torvalds"
+Set the separator regexp used to separate multiple URL args. Multiple arguments
+can be specified for [c]:open[c], and similar commands, using this regexp as
+the separator. Using whitespace alone is not generally useful since it is often
+contained in a single argument. E.g. [c]:open linus torvalds[c] should perform
+a single search for the key words "linus" and "torvalds"
 ____
 
 
@@ -750,9 +743,9 @@ ____
 |\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
 ||'visualbell' 'vb'|| boolean (default: off)
 ____
-Use visual bell instead of beeping on errors.  The visual bell style is
-controlled by [c]:hi Bell[c].  If no bell is desired use [c]:set t_vb=[c] together with
-this option.
+Use visual bell instead of beeping on errors. The visual bell style is
+controlled by [c]:hi Bell[c]. If no bell is desired use [c]:set t_vb=[c]
+together with this option.
 ____
 
 

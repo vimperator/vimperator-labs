@@ -22,7 +22,7 @@ If you're a veteran Vim user, this may look familiar. It should.
 
 However, in this author's opinion, the best way to get familiar with
 Vimperator is to leave these disabled for now. (The above action can be
-reversed with [c]:set go=<CR>[c])  You can look at the entry for
+reversed with [c]:set go=<CR>[c]) You can look at the entry for
 [o]guioptions[o] in help:options[options.html] for more information on this.
 
 section:Vimperator's{nbsp}modal{nbsp}interface[modal]
@@ -128,7 +128,7 @@ equivalent:
 section:Some{nbsp}hints{nbsp}about{nbsp}surfing...[hints-tutorial]
 
 So now you can navigate around in Vimperator. But wait... how do you *open* a
-page or tab linked in a web page?  How do you ``click'' on all those links
+page or tab linked in a web page? How do you ``click'' on all those links
 without your tailed friend?
 
 The answer is ``hints''. Activating hints displays a number next to every link
@@ -240,7 +240,7 @@ section:I'm{nbsp}interested...but{nbsp}lost![support]
 
 Vimperator has an energetic and growing user base. If you've run into a problem
 that you can't seem to solve with Vimperator, or if you think you might have
-found a bug, please let us know!  There is support available on the
+found a bug, please let us know! There is support available on the
 http://vimperator.cutup.org/index.php?title=Main_Page[wiki], or in the
 #vimperator IRC channel on http://freenode.net/[freenode].
 
