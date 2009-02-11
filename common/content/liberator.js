@@ -601,7 +601,7 @@ const liberator = (function () //{{{
 
         forceNewTab: false,
 
-        // ###VERSION### and ###DATE### are replaced by the Makefile
+        // these VERSION and DATE tokens are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
         // NOTE: services.get("profile").selectedProfile.name is not rightness.
