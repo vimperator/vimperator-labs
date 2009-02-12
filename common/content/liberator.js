@@ -842,7 +842,7 @@ const liberator = (function () //{{{
             // Number
             else if (matches = string.match(/^(\d+)$/))
             {
-                return parseInt(match[1], 10);
+                return parseInt(matches[1], 10);
             }
 
             let reference = this.variableReference(string);
