@@ -42,6 +42,7 @@ BUGS:
 - :messages is _very_ slow for message history of several thousand lines ->
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 - :hardcopy! seems to be broken for me
+- MOW hinting is broken, perhaps this should be properly disabled for 2.0
 
 FEATURES:
 9 finish :help TODOs
