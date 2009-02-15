@@ -1,4 +1,4 @@
-# Symlink or me to (or include me from) locale/*/Makefile
+# Symlink me to (or include me from) locale/*/Makefile
 
 #### configuration
 
@@ -12,7 +12,7 @@ ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
 ADC_DEPS      = $(wildcard asciidoc.conf lang-$(LANG).conf)
 
-DOC_FILES     = $(ADC_FILES)
+DOC_FILES     = $(ADC_FILES) version.html
 
 .SILENT:
 
@@ -44,7 +44,7 @@ distclean: clean
 
 #### asciidoc
 
-asciidoc: check-asciidoc $(ADC_FILES)
+asciidoc: check-asciidoc $(DOC_FILES)
 
 check-asciidoc:
 	@$(ASCIIDOC) --version | $(AWK) '{ exit $$2 !~ /^8\.2\./ }' || \
@@ -54,3 +54,8 @@ $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
 	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(LANG) -a doctitle="$(shell basename $@)" -o $@ $<
 
+version.html: ../../NEWS $(BASE)/Makefile.doc $(ADC_DEPS)
+	@echo "DOC locale/$(LOCALE)/$@"
+	# NOTE: asciidoc doesn't source the conf file implicitly when processing stdin
+	sed -e '1i\HEADER' -e '/^[0-9]/d' -e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section:Version{nbsp}\1[version-\1]\
+/' ../../NEWS | ${ASCIIDOC} -f asciidoc.conf -a doctitle=version.html -o version.html -

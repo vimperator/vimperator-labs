@@ -50,8 +50,6 @@ FEATURES:
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
 9 use the storage module for autocommands
-9 the NEWS file should be more easily available for users, via :help news or something
-  at the moment you need to unzip the xpi or check the sources to view it, which isn't user friendly
 8 support 'activate' in buffer.followLink?
   Leave this to the bookmarks.tabs.loadInBackground. Hint activation
   should be nearly equivalent to the corresponding mouse motion, and that
