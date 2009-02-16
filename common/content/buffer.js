@@ -1050,7 +1050,12 @@ function Buffer() //{{{
 
             function followFrame(frame)
             {
-                function iter(elems) (e for ([i, e] in Iterator(elems)) if (e.rel.toLowerCase() == rel || e.rev.toLowerCase() == rel));
+                function iter(elems)
+                {
+                    for (let i = 0; i < elems.length; i++)
+                        if (elems[i].rel.toLowerCase() == rel || elems[i].rev.toLowerCase() == rel)
+                            yield elems[i];
+                }
 
                 // <link>s have higher priority than normal <a> hrefs
                 let elems = frame.document.getElementsByTagName("link");
