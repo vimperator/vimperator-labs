@@ -21,7 +21,7 @@ ________________________________________________________________________________
 Execute Normal mode commands {commands}. This makes it possible to execute
 Normal mode commands typed on the command line. {commands} is executed like it
 is typed. If the [!] is given, mappings will not be used. {commands} should be
-a complete command. {commands} cannot start with a space. Put a 1 (one) before
+a complete command. {commands} cannot start with a space. Put 1 space before
 it, 1 space is one space.
 ________________________________________________________________________________
 

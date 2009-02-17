@@ -12,7 +12,7 @@ which are translated to a string of characters. Example:
 
 will echo the current date to the command line when [m]<F2>[m] is pressed.
 
-There are separate key mapping tables for each of the Normal, Insert,
+There are separate key mapping tables for each of the Normal, Insert, and
 Command-line modes.
 
 |:map-special-chars| +
@@ -29,7 +29,7 @@ ________________________________________________________________________________
 ||<CR>||
 ________________________________________________________________________________
 Expand to a line terminator in a key mapping. An Ex command in the {rhs} of a
-mapping requires a a line terminator after it so that it is executed when the
+mapping requires a line terminator after it so that it is executed when the
 mapping is expanded. [m]<CR>[m] should be used for this purpose.
 ________________________________________________________________________________
 
@@ -57,7 +57,7 @@ ________________________________________________________________________________
 Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
 nested and recursive mappings.
 
-Warning: Mappings are NOT saved during sessions, make sure you put them in your
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
 ________________________________________________________________________________
 
@@ -70,7 +70,7 @@ ________________________________________________________________________________
 Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
 remapped, allowing for nested and recursive mappings.
 
-Warning: Mappings are NOT saved during sessions, make sure you put them in your
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
 ________________________________________________________________________________
 
@@ -80,10 +80,10 @@ ________________________________________________________________________________
 ||:imap {lhs}|| +
 ||:imap||
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in insert mode). The {rhs} is remapped,
+Map the key sequence {lhs} to {rhs} (in Insert mode). The {rhs} is remapped,
 allowing for nested and recursive mappings.
 
-Warning: Mappings are NOT saved during sessions, make sure you put them in your
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
 ________________________________________________________________________________
 
@@ -107,7 +107,7 @@ ________________________________________________________________________________
 |:imapc| |:imapclear| +
 ||:imapc[lear]||
 ________________________________________________________________________________
-Remove all mappings (in insert mode). All user-defined mappings which were set
+Remove all mappings (in Insert mode). All user-defined mappings which were set
 by [c]:imap[c] or [c]:inoremap[c] are cleared.
 ________________________________________________________________________________
 
@@ -136,7 +136,7 @@ ________________________________________________________________________________
 ||:ino[remap] {lhs}|| +
 ||:ino[remap]||
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in insert mode). No remapping of the
+Map the key sequence {lhs} to {rhs} (in Insert mode). No remapping of the
 {rhs} is performed.
 ________________________________________________________________________________
 
@@ -167,7 +167,7 @@ ________________________________________________________________________________
 |:iunm| |:iunmap| +
 ||:iunm[ap] {lhs}||
 ________________________________________________________________________________
-Remove the mapping of {lhs} (in insert mode).
+Remove the mapping of {lhs} (in Insert mode).
 ________________________________________________________________________________
 
 section:Abbreviations[abbreviations]
@@ -178,8 +178,8 @@ words. An abbreviation can be one of three types that are defined by the
 types of constituent characters. Whitespace and quotes are non-keyword
 types, and all other characters are keyword types.
 
-1. A "full-id" abbreviation consists entirely of characters that are not
-keyword characters (e.g., "teh", "msoft").
+1. A "full-id" abbreviation consists entirely of keyword characters 
+(e.g., "teh", "msoft").
 
 2. An "end-id" abbreviation ends in keyword character but otherwise
 contains all non-keyword characters (e.g., "'i").
@@ -304,7 +304,7 @@ The valid values are:
 *-nargs=1* One argument is allowed
 *-nargs=** Zero or more arguments are allowed
 *-nargs=?* Zero or one argument is allowed
-*-nargs=+* One or more argument is allowd
+*-nargs=+* One or more arguments are allowed
 --------------------------------------------------------------------------------
 
 |E180| |E181| |:command-complete| +
@@ -365,7 +365,7 @@ available for expansion as <count> in the argument.
 |:command-bang| +
 Special cases
 
-By default a user command does not have a special version. i.e. a version
+By default a user command does not have a special version, i.e. a version
 executed with the ! modifier. Providing the -bang attribute will enable this
 and <bang> will be available in the argument.
 
@@ -379,7 +379,7 @@ is then executed as an Ex command.
 The valid escape sequences are:
 `----------`--------------------------------------------------------------------
 *<args>*   The command arguments exactly as supplied
-*<count>*  Any supplied count E.g. 5
+*<count>*  Any supplied count, e.g. 5
 *<bang>*   ! if the command was executed with the ! modifier
 *<lt>*     A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
 --------------------------------------------------------------------------------

@@ -28,9 +28,9 @@ Available {events}:
 *DownloadPost*       Triggered when a download has completed
 *Fullscreen*         Triggered when the browser's fullscreen state changes
 *LocationChange*     Triggered when changing tabs or when navigating to a new location
-*PageLoadPre*        Triggered after a page load is initiated.
+*PageLoadPre*        Triggered after a page load is initiated
 *PageLoad*           Triggered when a page gets (re)loaded/opened
-*ShellCmdPost*       Triggered after executing a shell command with [c]:![c]{cmd}
+*ShellCmdPost*       Triggered after executing a shell command with [c]:![c]#{cmd}
 *VimperatorEnter*    Triggered after Firefox starts
 *VimperatorLeavePre* Triggered before exiting Firefox, just before destroying each module
 *VimperatorLeave*    Triggered before exiting Firefox
@@ -45,7 +45,7 @@ The following keywords are available where relevant:
 `--------------`----------------------------------------------
 *<url>*        The URL against which the event was selected.
 *<title>*      The page, bookmark or download title.
-*<tab>*        The index tab in which the event occurred.
+*<tab>*        The tab in which the event occurred.
 *<tags>*       The tags applied to <url>. Only for *BookmarkAdd*.
 *<keyword>*    The keywords applied to the bookmark. Only for *BookmarkAdd*.
 *<icon>*       The icon associated with <url>. Only for *BookmarkAdd*.

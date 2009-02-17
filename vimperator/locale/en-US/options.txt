@@ -22,7 +22,7 @@ ____
 
 ||:se[t] all||
 ____
-Show all options. Show all options.
+Show all options.
 ____
 
 |E518| |E519|
@@ -125,7 +125,7 @@ ____
 ||:setl[ocal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but it operates for current tab options
+The same as [c]:set[c] command, but operates on current tab options
 only. See [c]:set[c] for details.
 ____
 
@@ -144,7 +144,7 @@ ____
 ||:setg[lobal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but it operates on global options only.
+The same as [c]:set[c] command, but operates on global options only.
 See [c]:set[c] for details.
 ____
 
@@ -377,7 +377,7 @@ Change the behaviour of [m]<Return>[m] in hint mode. Possible values:
 *0*       Follow the first hint as soon as typed text uniquely identifies it.
 	  Follow the selected hint on [m]<Return>[m].
 *1*       Follow the selected hint on [m]<Return>[m].
-*2*       Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected.
+*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
 ---------------------------------------------------------------------
 
 ____
@@ -651,7 +651,7 @@ ____
 |\'ssli'| |\'showstatuslinks'|
 ||'showstatuslinks' 'ssli'|| number (default: 1)
 ____
-Show the destination of the link under the cursor in the status bar
+Show the destination of the link under the cursor in the status bar.
 Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Possible values:
 
 .---`--------------------------------------
@@ -689,7 +689,7 @@ ____
 ||'suggestengines' || stringlist (default: "google")
 ____
 Set the search engines which can be used for completion suggestions.
-Add "S" to the 'complete' option if you want use this feature.
+Add "S" to the 'complete' option if you want to use this feature.
 
 Warning: This feature could make tab-completion slower because it needs to
 wait for changes, so use it only if you have a fast internet connection.
@@ -744,8 +744,7 @@ ____
 ||'visualbell' 'vb'|| boolean (default: off)
 ____
 Use visual bell instead of beeping on errors. The visual bell style is
-controlled by [c]:hi Bell[c]. If no bell is desired use [c]:set t_vb=[c]
-together with this option.
+controlled by [c]:hi Bell[c].
 ____
 
 
@@ -776,7 +775,7 @@ ____
 |\'wim'| |\'wildmode'|
 ||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
-Define how command-line completion works.
+Defines how command-line completion works.
 It is a comma-separated list of parts, where each part specifies
 what to do for each consecutive use of the completion key.
 The first part specifies the behavior for the first use of the completion key,
@@ -788,7 +787,7 @@ These are the possible values for each part:
 "full"          Complete the next full match. After the last, the original string is used.
 "longest"       Complete till the longest common string.
 "list"          When more than one match, list all matches.
-"list:full"     When more than one match, list all matches and complete first match.
+"list:full"     When more than one match, list all matches and complete the first match.
 "list:longest"  When more than one match, list all matches and complete till the longest common string. \
                 When there is only a single match, it is fully completed regardless of the case.
 -----------------------------------------

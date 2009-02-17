@@ -3,7 +3,7 @@ HEADER
 |gui| +
 
 Although Vimperator offers the most frequently used Firefox functionality via
-Ex and normal-mode commands there may be times when directly accessing the GUI
+Ex and Normal mode commands there may be times when directly accessing the GUI
 is required. There are commands for accessing the menu system, standard dialogs
 and the sidebar.
 
