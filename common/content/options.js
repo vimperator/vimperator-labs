@@ -379,7 +379,6 @@ function Options() //{{{
                 case Ci.nsIPrefBranch.PREF_STRING:
                     let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
-                    //
                     if (!services.get("pref").prefIsLocked(name) && !services.get("pref").prefHasUserValue(name) &&
                         RegExp("chrome://.+/locale/.+\\.properties").test(value))
                             value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
