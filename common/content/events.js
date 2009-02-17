@@ -1054,7 +1054,7 @@ function Events() //{{{
                 //
                 else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31)
                 {
-                    if(event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
+                    if (event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
                     {
                         key = "Esc";
                         modifier = modifier.replace("C-", "");
