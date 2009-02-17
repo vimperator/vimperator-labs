@@ -335,7 +335,11 @@ function Options() //{{{
         {
             case "string":
                 if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING)
-                    services.get("pref").setCharPref(name, value);
+                {
+                    let supportString = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+                    supportString.data = value;
+                    services.get("pref").setComplexValue(name, Ci.nsISupportsString, supportString);
+                }
                 else if (type == Ci.nsIPrefBranch.PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else
@@ -375,6 +379,7 @@ function Options() //{{{
                 case Ci.nsIPrefBranch.PREF_STRING:
                     let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                     // try in case it's a localized string (will throw an exception if not)
+                    //
                     if (!services.get("pref").prefIsLocked(name) && !services.get("pref").prefHasUserValue(name) &&
                         RegExp("chrome://.+/locale/.+\\.properties").test(value))
                             value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
