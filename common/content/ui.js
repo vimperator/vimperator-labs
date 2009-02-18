@@ -529,7 +529,7 @@ function CommandLine() //{{{
         autocompleteTimer.tell(false);
     });
 
-    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
+    liberator.registerCallback("cancel", modes.PROMPT, cancelPrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
     liberator.registerCallback("change", modes.PROMPT, function (str) {
         if (input.complete)
@@ -541,6 +541,14 @@ function CommandLine() //{{{
         if (input.complete)
             context.fork("input", 0, commandline, input.complete);
     });
+
+    function cancelPrompt(value)
+    {
+        let callback = input.cancel;
+        input = {};
+        if (callback)
+            callback.call(commandline, value != null ? value : commandline.command);
+    }
 
     function closePrompt(value)
     {
@@ -1202,6 +1210,7 @@ function CommandLine() //{{{
                 submit: callback,
                 change: extra.onChange,
                 complete: extra.completer,
+                cancel: extra.onCancel,
             };
 
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
