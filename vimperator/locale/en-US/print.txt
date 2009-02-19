@@ -23,11 +23,11 @@ section:Firefox{nbsp}printing{nbsp}dialogs[firefox-print-dialogs]
 The "Print Preview" and "Page Setup" dialogs can be opened via the [c]:dialog[c]
 command
 
-  :dialog printpreview
+\{nbsp}[c]:dialog printpreview[c]
 
 and
 
-  :dialog printsetup
+\{nbsp}[c]:dialog printsetup[c]
 
 respectively.
 

@@ -54,12 +54,12 @@ ____
 ____
 For list options, toggle the specified values.
 
-If the option is a list, the given values are toggled. Given
-    :set opt=foo,bar
-Then,
-    :set opt!=foo,baz
-results in
-    opt=bar,baz
+If the option is a list, the given values are toggled. Given +
+\{nbsp}[c]:set opt=foo,bar[c] +
+then, +
+\{nbsp}[c]:set opt!=foo,baz[c] +
+results in +
+\{nbsp}opt=bar,baz
 ____
 
 |:set-default|
@@ -574,15 +574,6 @@ Vimperator maintains a cache to speed it up significantly on subsequent access.
 In order to also speed up first time access, it is cached at startup, if this option is set (recommended).
 ____
 
-
-//|\'pvh'| |\'previewheight'|
-//||'previewheight' 'pvh'|| number (default: 10)
-//____
-//Default height for preview window
-//
-//Value must be between 1 and 50. If the value is too high, completions may cover the command line. Close the preview window with :pclose.
-//Note: Option currently disabled
-//____
 
 |\'previouspattern'|
 ||'previouspattern'|| stringlist
