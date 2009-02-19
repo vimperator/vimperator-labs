@@ -498,7 +498,8 @@ ____
 
 Patterns to use when guessing the \'next' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions.
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
 ____
 
 
@@ -590,7 +591,8 @@ ____
 
 Patterns to use when guessing the \'previous' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions.
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
 ____
 
 
