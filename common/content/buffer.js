@@ -1079,13 +1079,7 @@ function Buffer() //{{{
                     for (let i in util.range(res.snapshotLength, 0, -1))
                     {
                         let elem = res.snapshotItem(i);
-                        if (regex.test(elem.textContent))
-                        {
-                            buffer.followLink(elem, liberator.CURRENT_TAB);
-                            return true;
-                        }
-                        // images with alt text being href
-                        if (Array.some(elem.childNodes, function (child) regex.test(child.alt)))
+                        if (regex.test(elem.textContent) || Array.some(elem.childNodes, function (child) regex.test(child.alt)))
                         {
                             buffer.followLink(elem, liberator.CURRENT_TAB);
                             return true;
