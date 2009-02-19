@@ -1,4 +1,4 @@
-Main developer/Project founder:
+﻿Main developer/Project founder:
   * Martin Stubenschrott (stubenschrott@gmx.net)
 
 Developers:
@@ -33,3 +33,4 @@ Patches (in no special order):
   * Raimon Grau Cuscó (document relationship navigation - ]], [[)
   * Ryan Zheng (ctrl-x/a support)
   * Dan Boger (:set online support)
+  * Štěpán Němec (help copy-editing and favicon support)

@@ -178,7 +178,7 @@ words. An abbreviation can be one of three types that are defined by the
 types of constituent characters. Whitespace and quotes are non-keyword
 types, and all other characters are keyword types.
 
-1. A "full-id" abbreviation consists entirely of keyword characters 
+1. A "full-id" abbreviation consists entirely of keyword characters
 (e.g., "teh", "msoft").
 
 2. An "end-id" abbreviation ends in keyword character but otherwise

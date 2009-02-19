@@ -86,7 +86,7 @@ ________________________________________________________________________________
 |:tabd| |:tabduplicate|
 ||:[count]tabd[uplicate][!]|| +
 ________________________________________________________________________________
-Duplicates current tab [count] times. Uses *tabopen* value of the 'activate' 
+Duplicates current tab [count] times. Uses *tabopen* value of the 'activate'
 option to determine if the last cloned tab should be activated. When used with
 [!], *tabopen* value is negated.
 ________________________________________________________________________________
