@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         Muttator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Jan 22
+" Last Change:      2009 Feb 19
 
 if exists("b:current_syntax")
   finish
@@ -46,7 +46,7 @@ syn region muttatorSet matchgroup=muttatorCommand start="\%(^\s*:\=\)\@<=\<\%(se
 syn keyword muttatorOption archivefolder cdpath cd complete cpt editor eventignore ei extendedhinttags eht followhints fh
     \ guioptions go helpfile hf hintmatching hm hinttags ht hinttimeout hto history hi laststatus ls layout messages msgs
     \ nextpattern pageinfo pa previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli
-    \ showtabline stal suggestengines t_vb urlseparator verbose vbs wildcase wic wildignore wig wildmode wim wildoptions wop
+    \ showtabline stal suggestengines urlseparator verbose vbs wildcase wic wildignore wig wildmode wim wildoptions wop
     \ wordseparators wsp
     \ contained nextgroup=muttatorSetMod
 
