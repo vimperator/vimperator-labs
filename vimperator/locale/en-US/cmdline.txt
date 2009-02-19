@@ -8,7 +8,7 @@ Command-line mode is used to enter Ex commands (":") and text search patterns
 |:| +
 ||:||
 ________________________________________________________________________________
-Start command-line mode. In command-line mode, you can perform extended
+Start Command-line mode. In Command-line mode, you can perform extended
 commands, which may require arguments.
 ________________________________________________________________________________
 
@@ -18,14 +18,14 @@ section:Command-line{nbsp}editing[cmdline-editing]
 |c_<C-c>| +
 ||<C-c>||
 ________________________________________________________________________________
-Quit command-line mode without executing.
+Quit Command-line mode without executing.
 ________________________________________________________________________________
 
 
 |c_<C-]>| +
 ||<C-]>||
 ________________________________________________________________________________
-Expand a command-line abbreviation.
+Expand a Command-line abbreviation.
 ________________________________________________________________________________
 
 

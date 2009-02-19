@@ -94,7 +94,7 @@ section:Uncategorized{nbsp}help[uncategorized]
 |<C-[>| |<Esc>| +
 ||<Esc>||
 ________________________________________________________________________________
-Focus content. Exits command-line or hint mode and returns to browser
+Focus content. Exits Command-line or Hints mode and returns to Normal
 mode. Also focuses the web page in case a form field has focus and eats
 our key presses.
 ________________________________________________________________________________
@@ -103,8 +103,8 @@ ________________________________________________________________________________
 |<Insert>| |i| +
 ||i||
 ________________________________________________________________________________
-Start caret mode. This mode resembles the Vim normal mode where you see a text
-cursor and can move around. If you want to select text in this mode, press
+Start caret mode. This mode resembles the Vim's Normal mode where you see a
+text cursor and can move around. If you want to select text in this mode, press
 [m]v[m] to start its Visual mode.
 ________________________________________________________________________________
 

@@ -308,7 +308,7 @@ ____
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____
 Focus the content after a page has loaded. This is useful, if you always
-want to stay in normal mode when browsing between web sites. When "on", it
+want to stay in Normal mode when browsing between web sites. When "on", it
 blurs any textbox which often is automatically focused on page load.
 If you usually like 'focuscontent' but sometimes you'd like to focus the
 first input field, you can use [m]gi[m] to jump to it.
@@ -355,7 +355,7 @@ ____
 ||'hintmatching' 'hm'|| string (default: contains)
 ____
 
-Change the hint matching algorithm during hint mode. Possible values:
+Change the hint matching algorithm during Hints mode. Possible values:
 
 `--------------------`-------------------------------------------------------------------------------------------------------------------------------
 *contains*           The typed characters are split on whitespace, and these character groups have to match anywhere inside the text of the link.
@@ -371,7 +371,7 @@ ____
 ||'followhints' 'fh'|| number (default: 0)
 ____
 
-Change the behaviour of [m]<Return>[m] in hint mode. Possible values:
+Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
 
 `---------`----------------------------------------------------------
 *0*       Follow the first hint as soon as typed text uniquely identifies it.

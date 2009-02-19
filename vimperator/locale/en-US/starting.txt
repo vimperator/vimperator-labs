@@ -12,7 +12,7 @@ one of the following is successfully located, it is executed, and no
 further locations are tried.
 
   a. |$VIMPERATOR_INIT|
-     _$VIMPERATOR_INIT_ -- May contain a single ex command (e.g.,
+     _$VIMPERATOR_INIT_ -- May contain a single Ex command (e.g.,
                            "[c]:source {file}[c]").
   b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
 	are executed.

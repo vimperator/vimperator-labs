@@ -7,7 +7,7 @@ This file contains a list of all available commands.
 section:Insert{nbsp}mode[insert-index]
 
 ||[m]<C-i>[m]|| Launch the external editor +
-||[m]<C-]>[m]|| Expand an insert-mode abbreviation +
+||[m]<C-]>[m]|| Expand an Insert-mode abbreviation +
 
 section:Normal{nbsp}mode[normal-index]
 
@@ -56,7 +56,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]d[m]|| Delete current buffer +
 ||[m]f[m]|| Start QuickHint mode +
 ||[m]h[m]|| Scroll document to the left +
-||[m]i[m]|| Start caret mode +
+||[m]i[m]|| Start Caret mode +
 ||[m]j[m]|| Scroll document down +
 ||[m]k[m]|| Scroll document up +
 ||[m]l[m]|| Scroll document to the right +
@@ -72,7 +72,7 @@ section:Normal{nbsp}mode[normal-index]
 
 ||[m];[m]|| Start an extended hint mode +
 
-||[m]:[m]|| Enter command-line mode +
+||[m]:[m]|| Enter Command-line mode +
 
 ||[m]~[m]|| Open home directory +
 
@@ -129,7 +129,7 @@ section:Normal{nbsp}mode[normal-index]
 
 section:Command-line{nbsp}editing[ex-edit-index]
 
-||[m]<C-c>[m]|| Quit command-line mode without executing +
+||[m]<C-c>[m]|| Quit Command-line mode without executing +
 
 ||[m]<C-]>[m]|| Expand a command-line abbreviation +
 
@@ -153,17 +153,17 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:bmarks[c]|| List or open multiple bookmarks +
 ||[c]:buffer[c]|| Switch to a buffer +
 ||[c]:buffers[c]|| Show a list of all buffers +
-||[c]:cabbrev[c]|| Abbreviate a key sequence in command-line mode +
-||[c]:cabclear[c]|| Remove all abbreviations in command-line mode +
+||[c]:cabbrev[c]|| Abbreviate a key sequence in Command-line mode +
+||[c]:cabclear[c]|| Remove all abbreviations in Command-line mode +
 ||[c]:cd[c]|| Change the current directory +
-||[c]:cmap[c]|| Map a key sequence in command-line mode +
-||[c]:cmapclear[c]|| Remove all mappings in command-line mode +
-||[c]:cnoremap[c]|| Map a key sequence without remapping keys in command-line mode +
+||[c]:cmap[c]|| Map a key sequence in Command-line mode +
+||[c]:cmapclear[c]|| Remove all mappings in Command-line mode +
+||[c]:cnoremap[c]|| Map a key sequence without remapping keys in Command-line mode +
 ||[c]:colorscheme[c]|| Load a color scheme +
 ||[c]:comclear[c]|| Delete all user-defined commands +
 ||[c]:command[c]|| List and define commands +
-||[c]:cunabbrev[c]|| Remove an abbreviation in command-line mode +
-||[c]:cunmap[c]|| Remove a mapping in command-line mode +
+||[c]:cunabbrev[c]|| Remove an abbreviation in Command-line mode +
+||[c]:cunmap[c]|| Remove a mapping in Command-line mode +
 ||[c]:delbmarks[c]|| Delete a bookmark +
 ||[c]:delcommand[c]|| Delete the specified user-defined command +
 ||[c]:delmacros[c]|| Delete macros +
@@ -186,13 +186,13 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:help[c]|| Display help +
 ||[c]:highlight[c]|| Style Vimperator +
 ||[c]:history[c]|| Show recently visited URLs +
-||[c]:iabbrev[c]|| Abbreviate a key sequence in insert mode +
-||[c]:iabclear[c]|| Remove all abbreviations in insert mode +
-||[c]:imap[c]|| Map a key sequence in insert mode +
-||[c]:imapclear[c]|| Remove all mappings in insert mode +
-||[c]:inoremap[c]|| Map a key sequence without remapping keys in insert mode +
-||[c]:iunabbrev[c]|| Remove an abbreviation in insert mode +
-||[c]:iunmap[c]|| Remove a mapping in insert mode +
+||[c]:iabbrev[c]|| Abbreviate a key sequence in Insert mode +
+||[c]:iabclear[c]|| Remove all abbreviations in Insert mode +
+||[c]:imap[c]|| Map a key sequence in Insert mode +
+||[c]:imapclear[c]|| Remove all mappings in Insert mode +
+||[c]:inoremap[c]|| Map a key sequence without remapping keys in Insert mode +
+||[c]:iunabbrev[c]|| Remove an abbreviation in Insert mode +
+||[c]:iunmap[c]|| Remove a mapping in Insert mode +
 ||[c]:javascript[c]|| Run a JavaScript command through eval() +
 ||[c]:jumps[c]|| Show jumplist +
 ||[c]:let[c]|| Set or list a variable +
@@ -268,8 +268,8 @@ section:Options[option-index]
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
-||'focuscontent'|| Try to stay in normal mode after loading a web page +
-||'followhints'|| Change the behaviour of [m]<Return>[m] in hint mode +
+||'focuscontent'|| Try to stay in Normal mode after loading a web page +
+||'followhints'|| Change the behaviour of [m]<Return>[m] in Hints mode +
 ||'fullscreen'|| Show the current window fullscreen +
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
 ||'helpfile'|| Name of the main help file +
