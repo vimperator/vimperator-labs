@@ -607,8 +607,12 @@ function Editor() //{{{
         unselectText: function ()
         {
             let elem = window.document.commandDispatcher.focusedElement;
-            if (elem && elem.selectionEnd)
-                elem.selectionEnd = elem.selectionStart;
+            // A error occurs if the element has been removed when "elem.selectionStart" is executed.
+            try {
+                if (elem && elem.selectionEnd)
+                    elem.selectionEnd = elem.selectionStart;
+            }
+            catch (e) {}
         },
 
         selectedText: function ()
