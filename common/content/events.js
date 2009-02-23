@@ -932,6 +932,8 @@ function Events() //{{{
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
+                                else if (shift)
+                                    keyname = keyname.toUpperCase();
                                 charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
