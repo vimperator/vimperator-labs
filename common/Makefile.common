@@ -81,11 +81,11 @@ $(RDF): $(RDF_IN) Makefile
 	           < $< > $@
 	@echo "SUCCESS: $@"
 
-clean: ${LOCALEDIR}/$(LOCALES:%=%.clean)
+clean: $(LOCALEDIR)/$(LOCALES:%=%.clean)
 	@echo "General $(NAME) cleanup..."
 	rm -f $(JAR) $(XPI)
 
-distclean: ${LOCALEDIR}/$(LOCALES:%=%.distclean) clean
+distclean: $(LOCALEDIR)/$(LOCALES:%=%.distclean) clean
 	@echo "More $(NAME) cleanup..."
 	rm -rf $(BUILD_DIR)
 
