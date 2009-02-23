@@ -371,10 +371,10 @@ const config = { //{{{
             "Open the sidebar window",
             function (args)
             {
-                let arg = args.literalArg;
+                let arg = args.literalArg.toLowerCase();
 
                 // focus if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == arg)
+                if (document.getElementById("sidebar-title").value.toLowerCase() == arg)
                 {
                     document.getElementById("sidebar-box").focus();
                     return;
@@ -384,7 +384,7 @@ const config = { //{{{
 
                 for (let [,panel] in Iterator(menu.childNodes))
                 {
-                    if (panel.label == arg)
+                    if (panel.label.toLowerCase() == arg)
                     {
                         panel.doCommand();
                         return;

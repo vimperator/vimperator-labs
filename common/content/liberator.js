@@ -255,7 +255,7 @@ const liberator = (function () //{{{
             "Open a " + config.name + " dialog",
             function (args)
             {
-                let arg = args[0];
+                let arg = args[0].toLowerCase();
 
                 try
                 {
