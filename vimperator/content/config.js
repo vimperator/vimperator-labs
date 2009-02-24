@@ -371,10 +371,11 @@ const config = { //{{{
             "Open the sidebar window",
             function (args)
             {
-                let arg = args.literalArg.toLowerCase();
+                let arg = args.literalArg;
+                function compare(a, b) util.compareIgnoreCase(a, b) == 0
 
                 // focus if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value.toLowerCase() == arg)
+                if (compare(document.getElementById("sidebar-title").value, arg))
                 {
                     document.getElementById("sidebar-box").focus();
                     return;
@@ -384,7 +385,7 @@ const config = { //{{{
 
                 for (let [,panel] in Iterator(menu.childNodes))
                 {
-                    if (panel.label.toLowerCase() == arg)
+                    if (compare(panel.label, arg))
                     {
                         panel.doCommand();
                         return;
@@ -395,7 +396,11 @@ const config = { //{{{
             },
             {
                 argCount: "1",
-                completer: function (context) completion.sidebar(context),
+                completer: function (context)
+                {
+                    context.ignoreCase = true;
+                    return completion.sidebar(context);
+                },
                 literal: 0
             });
 

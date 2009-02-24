@@ -255,7 +255,7 @@ const liberator = (function () //{{{
             "Open a " + config.name + " dialog",
             function (args)
             {
-                let arg = args[0].toLowerCase();
+                let arg = args[0];
 
                 try
                 {
@@ -264,7 +264,7 @@ const liberator = (function () //{{{
 
                     for (let [,dialog] in Iterator(dialogs))
                     {
-                        if (arg == dialog[0])
+                        if (util.compareIgnoreCase(arg, dialog[0]) == 0)
                         {
                             dialog[2]();
                             return;
@@ -281,7 +281,11 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (context, args) completion.dialog(context)
+                completer: function (context)
+                {
+                    context.ignoreCase = true;
+                    return completion.dialog(context);
+                }
             });
 
         commands.add(["em[enu]"],

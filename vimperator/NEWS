@@ -81,8 +81,8 @@
     * :qa! and :q! quit forcefully, as in vim
     * stop macro playback on <C-c>
     * :bmark now updates a bookmark, if possible. :bmark! adds a new one
+    * :dialog and :sidebar arguments are now case-insensitive
     * many bug fixes
-    * :dialog and :sidebar now doesn't care about case for arguments
 
 2008-08-16:
     * version 1.2
