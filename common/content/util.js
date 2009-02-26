@@ -519,25 +519,28 @@ const util = { //{{{
     },
 
     /**
-     * A generator that returns the values between <b>start</b> and <b>end</b>.
-     * If <b>reverse</b> is true then the values are returned in reverse order.
+     * A generator that returns the values between <b>start</b> and <b>end</b>,
+     * in <b>step</b> increments.
      *
      * @param {number} start The interval's start value.
      * @param {number} end The interval's end value.
-     * @param {boolean} reverse Reverse the order in which the values are produced.
+     * @param {boolean} step The value to step the range by. May be
+     *     negative. @default 1
      * @returns {Iterator(Object)}
      */
-    range: function range(start, end, reverse)
+    range: function range(start, end, step)
     {
-        if (!reverse)
+        if (!step)
+            step = 1;
+        if (step > 0)
         {
-            while (start < end)
-                yield start++;
+            for (; start < end; start += step)
+                yield start;
         }
         else
         {
             while (start > end)
-                yield --start;
+                yield start += step;
         }
     },
 
@@ -669,6 +672,13 @@ const util = { //{{{
     xmlToDom: function xmlToDom(node, doc, nodes)
     {
         XML.prettyPrinting = false;
+        if (node.length() != 1)
+        {
+            let domnode = doc.createDocumentFragment();
+            for each (let child in node)
+                domnode.appendChild(arguments.callee(child, doc, nodes));
+            return domnode;
+        }
         switch (node.nodeKind())
         {
             case "text":

@@ -204,7 +204,7 @@ function Editor() //{{{
             function (args)
             {
                 let matches = args.string.match(RegExp("^\\s*($|" + abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
-                if (! matches)
+                if (!matches)
                 {
                     liberator.echoerr("E474: Invalid argument");
                     return false;
@@ -607,8 +607,12 @@ function Editor() //{{{
         unselectText: function ()
         {
             let elem = window.document.commandDispatcher.focusedElement;
-            if (elem && elem.selectionEnd)
-                elem.selectionEnd = elem.selectionStart;
+            // A error occurs if the element has been removed when "elem.selectionStart" is executed.
+            try {
+                if (elem && elem.selectionEnd)
+                    elem.selectionEnd = elem.selectionStart;
+            }
+            catch (e) {}
         },
 
         selectedText: function ()

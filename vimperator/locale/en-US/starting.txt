@@ -8,17 +8,15 @@ section:Initialization[initialization,startup]
 At startup, Vimperator completes the following tasks in order.
 
 1. Vimperator can perform user initialization commands. When
-  one of the following is successfully located, it is executed, and no
-  further locations are tried.
+one of the following is successfully located, it is executed, and no
+further locations are tried.
 
-  a. |$VIMPERATOR_INIT| _$VIMPERATOR_INIT_ -- May contain a single ex
-                                                command (e.g.,
-                                                "[c]:source {file}[c]").
-  b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its
-			       contents are executed and
-			       _$MY_VIMPERATORRC_ set to its path.
-  c. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are 
-                               executed.
+  a. |$VIMPERATOR_INIT|
+     _$VIMPERATOR_INIT_ -- May contain a single Ex command (e.g.,
+                           "[c]:source {file}[c]").
+  b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
+	are executed and _$MY_VIMPERATORRC_ set to its path.
+  c. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are executed.
 
 2. If 'exrc' is set, then any RC file in the current directory is also sourced.
 

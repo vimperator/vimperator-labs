@@ -243,28 +243,28 @@ between 0 and 1, not as a percentage.
 |+| |zi| +
 ||[count]zi||
 ________________________________________________________________________________
-Enlarge text zoom of current web page. Mnemonic: zoom in
+Enlarge text zoom of current web page. Mnemonic: zoom in.
 ________________________________________________________________________________
 
 
 |zm| +
 ||[count]zm||
 ________________________________________________________________________________
-Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more
+Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more.
 ________________________________________________________________________________
 
 
 |-| |zo| +
 ||[count]zo||
 ________________________________________________________________________________
-Reduce text zoom of current web page. Mnemonic: zoom out
+Reduce text zoom of current web page. Mnemonic: zoom out.
 ________________________________________________________________________________
 
 
 |zr| +
 ||[count]zr||
 ________________________________________________________________________________
-Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce
+Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce.
 ________________________________________________________________________________
 
 
@@ -279,28 +279,28 @@ ________________________________________________________________________________
 |zI| +
 ||[count]zI||
 ________________________________________________________________________________
-Enlarge full zoom of current web page. Mnemonic: zoom in
+Enlarge full zoom of current web page. Mnemonic: zoom in.
 ________________________________________________________________________________
 
 
 |zM| +
 ||[count]zM||
 ________________________________________________________________________________
-Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more
+Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more.
 ________________________________________________________________________________
 
 
 |zO| +
 ||[count]zO||
 ________________________________________________________________________________
-Reduce full zoom of current web page. Mnemonic: zoom out
+Reduce full zoom of current web page. Mnemonic: zoom out.
 ________________________________________________________________________________
 
 
 |zR| +
 ||[count]zR||
 ________________________________________________________________________________
-Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce
+Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce.
 ________________________________________________________________________________
 
 

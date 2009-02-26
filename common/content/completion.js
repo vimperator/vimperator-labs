@@ -220,6 +220,12 @@ function CompletionContext(editor, name, offset) //{{{
                              : item.item[key];
 }
 
+CompletionContext.Sort = {
+    number: function (a, b) parseInt(b) - parseInt(a) || String.localeCompare(a, b),
+
+    unsorted: null
+};
+
 CompletionContext.prototype = {
     // Temporary
     /**
@@ -554,10 +560,10 @@ CompletionContext.prototype = {
     {
         let self = this;
         let items = this.items;
-        let reverse = start > end;
+        let step = start > end ? -1 : 1;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end ? end : items.length);
-        return util.map(util.range(start, end, reverse), function (i) items[i]);
+        return util.map(util.range(start, end, step), function (i) items[i]);
     },
 
     getRows: function getRows(start, end, doc)
@@ -565,10 +571,10 @@ CompletionContext.prototype = {
         let self = this;
         let items = this.items;
         let cache = this.cache.rows;
-        let reverse = start > end;
+        let step = start > end ? -1 : 1;
         start = Math.max(0, start || 0);
         end = Math.min(items.length, end != null ? end : items.length);
-        for (let i in util.range(start, end, reverse))
+        for (let i in util.range(start, end, step))
             yield [i, cache[i] = cache[i] || util.xmlToDom(self.createRow(items[i]), doc)];
     },
 
@@ -720,22 +726,22 @@ function Completion() //{{{
 
         this.completers = {};
 
+        // Some object members are only accessible as function calls
+        function getKey(obj, key)
+        {
+            try
+            {
+                return obj[key];
+            }
+            catch (e)
+            {
+                return undefined;
+            }
+        }
+
         this.iter = function iter(obj)
         {
-            let iterator = (function objIter()
-            {
-                for (let k in obj)
-                {
-                    // Some object members are only accessible as function calls
-                    try
-                    {
-                        yield [k, obj[k]];
-                        continue;
-                    }
-                    catch (e) {}
-                    yield [k, <>inaccessable</>]
-                }
-            })();
+            let iterator = ([k, getKey(obj, k)] for (k in obj));
             try
             {
                 // The point of 'for k in obj' is to get keys
@@ -775,21 +781,21 @@ function Completion() //{{{
             // available in the object itself.
             let orig = obj;
 
-            // v[0] in orig and orig[v[0]] catch different cases. XPCOM
-            // objects are problematic, to say the least.
             if (modules.isPrototypeOf(obj))
                 compl = [v for (v in Iterator(obj))];
             else
             {
-                if (obj.wrappedJSObject)
+                if (getKey(obj, 'wrappedJSObject'))
                     obj = obj.wrappedJSObject;
+                // v[0] in orig and orig[v[0]] catch different cases. XPCOM
+                // objects are problematic, to say the least.
                 compl = [v for (v in this.iter(obj))
-                    if ((typeof orig == "object" && v[0] in orig) || orig[v[0]] !== undefined)];
+                    if ((typeof orig == "object" && v[0] in orig) || getKey(orig, v[0]) !== undefined)];
             }
 
             // And if wrappedJSObject happens to be available,
             // return that, too.
-            if (orig.wrappedJSObject)
+            if (getKey(orig, 'wrappedJSObject'))
                 compl.push(["wrappedJSObject", obj]);
 
             // Add keys for sorting later.
@@ -1381,6 +1387,7 @@ function Completion() //{{{
             context.anchored = false;
             context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
+            context.compare = CompletionContext.Sort.number;
             let process = context.process[0];
             context.process = [function (item, text)
                     <>
@@ -1560,7 +1567,7 @@ function Completion() //{{{
         {
             context.format = history.format;
             context.title = ["History"]
-            context.compare = null;
+            context.compare = CompletionContext.Sort.unsorted;
             //context.background = true;
             if (context.maxItems == null)
                 context.maxItems = 100;
@@ -1584,7 +1591,7 @@ function Completion() //{{{
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
             context.cancel = function () services.get("autoCompleteSearch").stopSearch();
-            context.compare = null;
+            context.compare = CompletionContext.Sort.unsorted;
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
@@ -1655,7 +1662,8 @@ function Completion() //{{{
                         completer = function () [["true", ""], ["false", ""]];
                     break;
                 case "stringlist":
-                    len = newValues.pop().length;
+                    let target = newValues.pop();
+                    len = target ? target.length : 0;
                     break;
                 case "charlist":
                     len = 0;
@@ -1716,7 +1724,7 @@ function Completion() //{{{
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
                     // context.background = true;
-                    context.compare = null;
+                    context.compare = CompletionContext.Sort.unsorted;
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
 
@@ -1751,7 +1759,7 @@ function Completion() //{{{
                 let ctxt = context.fork(name, 0);
 
                 ctxt.title = [engine.description + " Suggestions"];
-                ctxt.compare = null;
+                ctxt.compare = CompletionContext.Sort.unsorted;
                 ctxt.incomplete = true;
                 bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
                     ctxt.incomplete = false;

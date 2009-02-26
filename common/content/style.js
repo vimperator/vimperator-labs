@@ -182,7 +182,7 @@ function Highlights(name, store, serial)
         {
             css = style.selector + " { " + css + " }";
 
-            let error = styles.addSheet(true, style.selector, style.filter, css);
+            let error = styles.addSheet(true, style.selector, style.filter, css, true);
             if (error)
                 return error;
         }
@@ -235,6 +235,7 @@ function Highlights(name, store, serial)
                 this.set(class);
         }
     };
+    this.reload();
 }
 
 /**
@@ -257,7 +258,7 @@ function Styles(name, store, serial)
     const namespace = '@namespace html "' + XHTML + '";\n' +
                       '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
-    const Sheet = new Struct("name", "sites", "css", "ref");
+    const Sheet = new Struct("name", "sites", "css", "ref", "agent");
 
     let cssUri = function (css) "chrome-data:text/css," + window.encodeURI(css);
 
@@ -285,7 +286,7 @@ function Styles(name, store, serial)
      *     "*" is matched as a prefix.
      * @param {string} css The CSS to be applied.
      */
-    this.addSheet = function (system, name, filter, css)
+    this.addSheet = function (system, name, filter, css, agent)
     {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
@@ -294,7 +295,7 @@ function Styles(name, store, serial)
 
         let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
         if (!sheet)
-            sheet = new Sheet(name, filter.split(",").filter(util.identity), css, null);
+            sheet = new Sheet(name, filter.split(",").filter(util.identity), css, null, agent);
 
         if (sheet.ref == null) // Not registered yet
         {
@@ -302,7 +303,8 @@ function Styles(name, store, serial)
             try
             {
                 this.registerSheet(cssUri(wrapCSS(sheet)));
-                this.registerAgentSheet(cssUri(wrapCSS(sheet)))
+                if (sheet.agent)
+                    this.registerAgentSheet(cssUri(wrapCSS(sheet)))
             }
             catch (e)
             {
@@ -410,7 +412,7 @@ function Styles(name, store, serial)
             {
                 let sites = sheet.sites.filter(function (f) f != filter);
                 if (sites.length)
-                    this.addSheet(system, name, sites.join(","), css);
+                    this.addSheet(system, name, sites.join(","), css, sheet.agent);
             }
         }
         return matches.length;
@@ -514,8 +516,11 @@ const styles = storage.newObject("styles", Styles, false);
  */
 const highlight = storage.newObject("highlight", Highlights, false);
 
-highlight.CSS = Highlights.prototype.CSS;
-highlight.reload();
+if (highlight.CSS != Highlights.prototype.CSS)
+{
+    highlight.CSS = Highlights.prototype.CSS;
+    highlight.reload();
+}
 
 liberator.triggerObserver("load_styles", "styles");
 liberator.triggerObserver("load_highlight", "highlight");

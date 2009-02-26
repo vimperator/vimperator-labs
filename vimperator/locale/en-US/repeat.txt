@@ -7,7 +7,7 @@ Vimperator can repeat a number of commands and record macros.
 section:Macros[macros,complex-repeat]
 
 |q|
-||q {0-9a-zA-Z}|| +
+||q{0-9a-zA-Z}|| +
 ____________________________________________________________________________
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
@@ -49,7 +49,7 @@ ____________________________________________________________________________
 
 
 |.|
-||[count].|
+||[count].||
 ____________________________________________________________________________
 Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
 does not apply solely to editing commands, mainly because Vimperator doesn't
@@ -99,12 +99,12 @@ Load all unloaded plugins immediately. Because plugins are automatically
 loaded after vimperatorrc is sourced, this command must be placed early
 in the vimperatorrc file if vimperatorrc also includes commands that are
 implemented by plugins. Additionally, this command allows for sourcing
-new plugins without restarting vimperator.
+new plugins without restarting Vimperator.
 ________________________________________________________________________________
 
 
 |:ru| |:runtime|
-||:runt[ime][!]| {file} ...|| +
+||:runt[ime][!] {file} ...|| +
 ________________________________________________________________________________
 Source the specified file from each directory in 'runtimepath'. Example: +
 [c]:runtime plugin/foobar.vimp[c] +

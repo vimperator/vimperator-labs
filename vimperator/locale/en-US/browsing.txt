@@ -35,7 +35,7 @@ section:Opening{nbsp}web{nbsp}pages[opening]
 ________________________________________________________________________________
 Open one or more URLs in the current tab.
 Multiple URLs can be separated with 'urlseparator' (default: ", " Note that the
-space after the comma is required.")
+space after the comma is required.)
 The first URL is opened in the current tab, and all other URLs are
 opened in new tabs.
 Each token is analyzed and in this order:
@@ -71,7 +71,7 @@ ________________________________________________________________________________
 ||t||
 ________________________________________________________________________________
 Just like [c]:open[c] but also uses a new tab for the first URL. When
-used with [!], the 'tabopen' value of the 'activate' option is negated.
+used with [!], the *tabopen* value of the 'activate' option is negated.
 ________________________________________________________________________________
 
 
@@ -86,9 +86,9 @@ ________________________________________________________________________________
 |:tabd| |:tabduplicate|
 ||:[count]tabd[uplicate][!]|| +
 ________________________________________________________________________________
-Duplicates current tab [count] times. Uses 'tabopen' value of the 'activate' to
-determine if last cloned tab should be activated. When used with [!], 'tabopen'
-value is negated.
+Duplicates current tab [count] times. Uses *tabopen* value of the 'activate'
+option to determine if the last cloned tab should be activated. When used with
+[!], *tabopen* value is negated.
 ________________________________________________________________________________
 
 
@@ -138,7 +138,7 @@ ________________________________________________________________________________
 ||[count]<C-x>||
 ________________________________________________________________________________
 Decrements the last number in URL by 1, or by [count] if given. Negative
-numbers are not supported, as this not generally useful, so the number cannot
+numbers are not supported, as this is not generally useful, so the number cannot
 be decremented past 0.
 ________________________________________________________________________________
 
@@ -160,22 +160,22 @@ ________________________________________________________________________________
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
-||:[count]ba[ck] {url}|| +
+||:[count]ba[ck] [url]|| +
 ||:ba[ck]!|| +
 ||CTRL-o||
 ________________________________________________________________________________
-Go [count] pages back in the browser history. If {url} is specified go back to
+Go [count] pages back in the browser history. If [url] is specified go back to
 the first matching URL. The special version [c]:back![c] goes to the beginning
 of the browser history.
 ________________________________________________________________________________
 
 
 |L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
-||:[count]fo[rward] {url}|| +
+||:[count]fo[rward] [url]|| +
 ||:fo[rward]!|| +
 ||CTRL-i||
 ________________________________________________________________________________
-Go [count] pages forward in the browser history. If {url} is specified go
+Go [count] pages forward in the browser history. If [url] is specified go
 forward to the first matching URL. The special version [c]:forward![c] goes to
 the end of the browser history.
 ________________________________________________________________________________
@@ -311,7 +311,7 @@ ________________________________________________________________________________
 ||:xa[ll]||
 ________________________________________________________________________________
 Save the session and quit. Quit Vimperator, no matter how many tabs/windows
-are open. The session is stored. [c]:wq[c] is different as in Vim, as it
+are open. The session is stored. [c]:wq[c] is different from Vim, as it
 closes the window instead of just one tab by popular demand. Complain on the
 mailing list, if you want to change that.
 ________________________________________________________________________________

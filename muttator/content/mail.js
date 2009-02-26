@@ -995,12 +995,13 @@ function Mail() //{{{
                     // TODO: find out why, and solve the problem
                     try
                     {
-                        var msgs = folder.getMessages(msgWindow);
+                        var msgs = folder.messages;
                     }
                     catch (e)
                     {
-                        liberator.dump("ERROR: " + folder.prettyName + " failed to getMessages\n");
-                        continue;
+                        var msgs = folder.getMessages(msgWindow); // for older thunderbirds
+                        liberator.dump("WARNING: " + folder.prettyName + " failed to getMessages, trying old API");
+                        //continue;
                     }
 
                     while (msgs.hasMoreElements())

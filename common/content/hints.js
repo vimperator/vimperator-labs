@@ -399,87 +399,51 @@ function Hints() //{{{
             let wordSplitRegex = RegExp(options["wordseparators"]);
 
             // What the **** does this do? --Kris
+            //
+            // This function matches hintStrings like 'hekho' to links like 'Hey Kris, how are you?' -> [HE]y [K]ris [HO]w are you   --Daniel
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
-                let charIdx         = 0;
-                let numMatchedWords = 0;
-                for (let [,word] in Iterator(words))
+                function charMatches(charIdx, chars, wordIdx, words, inWordIdx, allowWordOverleaping)
                 {
-                    if (word.length == 0)
-                        continue;
-
-                    let wcIdx = 0;
-                    // Check if the current word matches same characters as the previous word.
-                    // Each already matched word has matched at least one character.
-                    if (charIdx > numMatchedWords)
+                    let matches = (chars[charIdx] == words[wordIdx][inWordIdx]);
+                    if ((matches == false && allowWordOverleaping) || words[wordIdx].length == 0)
                     {
-                        let matchingStarted = false;
-                        for (let i in util.range(numMatchedWords, charIdx))
-                        {
-                            if (chars[i] == word[wcIdx])
-                            {
-                                matchingStarted = true;
-                                wcIdx++;
-                            }
-                            else if (matchingStarted)
-                            {
-                                wcIdx = 0;
-                                break;
-                            }
-                        }
+                        let nextWordIdx = wordIdx + 1;
+                        if (nextWordIdx == words.length)
+                            return false;
+
+                        return charMatches(charIdx, chars, nextWordIdx, words, 0, allowWordOverleaping);
                     }
 
-                    // the current word matches same characters as the previous word
-                    let prevCharIdx;
-                    if (wcIdx > 0)
+                    if (matches)
                     {
-                        prevCharIdx = charIdx;
-                        // now check if it matches additional characters
-                        for (; wcIdx < word.length && charIdx < chars.length; wcIdx++, charIdx++)
-                        {
-                            if (word[wcIdx] != chars[charIdx])
-                                break;
-                        }
+                        let nextCharIdx = charIdx + 1;
+                        if (nextCharIdx == chars.length)
+                            return true;
 
-                        // the word doesn't match additional characters, now check if the
-                        // already matched characters are equal to the next characters for matching,
-                        // if yes, then consume them
-                        if (prevCharIdx == charIdx)
-                        {
-                            for (let i = 0; i < wcIdx && charIdx < chars.length; i++, charIdx++)
-                            {
-                                if (word[i] != chars[charIdx])
-                                    break;
-                            }
-                        }
+                        let nextWordIdx = wordIdx + 1;
+                        let beyondLastWord = (nextWordIdx == words.length);
+                        let charMatched = false;
+                        if (beyondLastWord == false)
+                            charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping)
 
-                        numMatchedWords++;
-                    }
-                    // the current word doesn't match same characters as the previous word, just
-                    // try to match the next characters
-                    else
-                    {
-                        prevCharIdx = charIdx;
-                        for (let i = 0; i < word.length && charIdx < chars.length; i++, charIdx++)
-                        {
-                            if (word[i] != chars[charIdx])
-                                break;
-                        }
+                        if (charMatched)
+                            return true;
 
-                        if (prevCharIdx == charIdx)
+                        if (charMatched == false || beyondLastWord == true)
                         {
-                            if (!allowWordOverleaping)
+                            let nextInWordIdx = inWordIdx + 1;
+                            if (nextInWordIdx == words[wordIdx].length)
                                 return false;
+
+                            return charMatches(nextCharIdx, chars, wordIdx, words, nextInWordIdx, allowWordOverleaping);
                         }
-                        else
-                            numMatchedWords++;
                     }
 
-                    if (charIdx == chars.length)
-                        return true;
+                    return false;
                 }
 
-                return (charIdx == chars.length);
+                return charMatches(0, chars, 0, words, 0, allowWordOverleaping);
             }
 
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
@@ -510,8 +474,6 @@ function Hints() //{{{
 
             return function (linkText)
             {
-                liberator.dump(hintStrings);
-
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 
@@ -613,7 +575,7 @@ function Hints() //{{{
         function (count)
         {
             extendedhintCount = count;
-            commandline.input(";", function (arg) { setTimeout(function () hints.show(arg), 0); },
+            commandline.input(";", null,
                 {
                     promptHighlight: "Normal",
                     completer: function (context)
@@ -621,7 +583,8 @@ function Hints() //{{{
                         context.compare = function () 0;
                         context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
                     },
-                    onChange: function () { modes.pop() }
+                    onChange: function () { modes.pop() },
+                    onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); },
                 });
         }, { flags: Mappings.flags.COUNT });
 

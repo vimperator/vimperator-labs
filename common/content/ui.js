@@ -529,7 +529,7 @@ function CommandLine() //{{{
         autocompleteTimer.tell(false);
     });
 
-    liberator.registerCallback("cancel", modes.PROMPT, closePrompt);
+    liberator.registerCallback("cancel", modes.PROMPT, cancelPrompt);
     liberator.registerCallback("submit", modes.PROMPT, closePrompt);
     liberator.registerCallback("change", modes.PROMPT, function (str) {
         if (input.complete)
@@ -541,6 +541,14 @@ function CommandLine() //{{{
         if (input.complete)
             context.fork("input", 0, commandline, input.complete);
     });
+
+    function cancelPrompt(value)
+    {
+        let callback = input.cancel;
+        input = {};
+        if (callback)
+            callback.call(commandline, value != null ? value : commandline.command);
+    }
 
     function closePrompt(value)
     {
@@ -1008,10 +1016,9 @@ function CommandLine() //{{{
         set silent(val)
         {
             silent = val;
-            if (silent)
-                storage.styles.addSheet(true, "silent-mode", "chrome://*", "#liberator-commandline > * { opacity: 0 }");
-            else
-                storage.styles.removeSheet(true, "silent-mode");
+            Array.forEach(document.getElementById("liberator-commandline").childNodes, function (node) {
+                node.style.opacity = silent ? "0" : "";
+            });
         },
 
         runSilently: function (fn, self)
@@ -1214,6 +1221,7 @@ function CommandLine() //{{{
                 submit: callback,
                 change: extra.onChange,
                 complete: extra.completer,
+                cancel: extra.onCancel,
             };
 
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
@@ -1285,7 +1293,8 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                //this.resetCompletions(); -> already handled by "keypress" below (hopefully), so don't do it twice
+                //liberator.dump("input: " + command);
+                this.resetCompletions();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
@@ -1333,7 +1342,7 @@ function CommandLine() //{{{
                 else if (key == "<BS>")
                 {
                     // reset the tab completion
-                    this.resetCompletions();
+                    //this.resetCompletions();
 
                     // and blur the command line if there is no text left
                     if (command.length == 0)
@@ -1344,7 +1353,7 @@ function CommandLine() //{{{
                 }
                 else // any other key
                 {
-                    this.resetCompletions();
+                    //this.resetCompletions();
                 }
                 return true; // allow this event to be handled by Firefox
             }
@@ -1769,7 +1778,7 @@ function ItemList(id) //{{{
                 </div>
             </div>, divNodes);
         doc.body.replaceChild(div, doc.body.firstChild);
-        div.scrollIntoView(true);
+        //div.scrollIntoView(true);
 
         items.contextList.forEach(function init_eachContext(context) {
             delete context.cache.nodes;
@@ -1952,7 +1961,7 @@ function ItemList(id) //{{{
             if (index >= 0)
             {
                 getCompletion(index).setAttribute("selected", "true");
-                getCompletion(index).scrollIntoView(false);
+                //getCompletion(index).scrollIntoView(false);
             }
 
             //if (index == 0)

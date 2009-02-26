@@ -18,6 +18,10 @@ BUGS:
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
 - http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
+- "g<" fails without a trailing escape because both "g<" and "g<C-g>"
+  are mapped. Vimp should recognize "<C-g>" as an atom that should not
+  be matched literally. In fact, typing "g<C-g>" out literally is
+  equivalent to typing "g" and then <C-g>.
 
 (recent CVS regressions):
 - :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
@@ -29,10 +33,16 @@ BUGS:
   => it often overwrites the open command line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
-- MOW is broken for multiple commands when open E.g. :ls | ls
+- MOW rendering is broken for multiple commands when open E.g. :ls | ls
 - completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
   and even if it is not totally off, i had it jump by one pixel when wrapping around.
   If that's unfixable, i propose reverting the new completion height stuff.
+- Windows paths have escaped backslashes in messages - presumably due to
+  String#quote change.
+- :messages is _very_ slow for message history of several thousand lines ->
+  Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
+- :hardcopy! seems to be broken for me
+- MOW hinting is broken, perhaps this should be properly disabled for 2.0
 
 FEATURES:
 9 finish :help TODOs
@@ -69,7 +79,7 @@ FEATURES:
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
-7 The output of the pageinfo-command sould contain the security-information of ssl-encrypted sites
+7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing

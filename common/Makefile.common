@@ -3,10 +3,11 @@
 TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
-BASE	      = $(TOP)/../common
+BASE          = $(TOP)/../common
 
-DOC_SRC_FILES = $(wildcard locale/*/*.txt) $(wildcard locale/*/*.t2t)
-LOCALES       = $(wildcard locale/*)
+LOCALEDIR     = locale
+DOC_SRC_FILES = $(wildcard $(LOCALEDIR)/*/*.txt)
+LOCALES       = $(foreach locale,$(wildcard $(LOCALEDIR)/*),$(word 2,$(subst /, ,$(locale))))
 
 MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
 
@@ -16,7 +17,7 @@ JAR_DIRS      = content skin locale
 JAR_TEXTS     = js css dtd xml xul html xhtml
 JAR_BINS      = png
 
-JAR           = chrome/${NAME}.jar
+JAR           = chrome/$(NAME).jar
 
 XPI_BASES     = $(JAR_BASES) $(TOP)/..
 XPI_FILES     = install.rdf TODO AUTHORS Donators NEWS License.txt
@@ -24,32 +25,38 @@ XPI_DIRS      = modules components chrome
 XPI_TEXTS     = js jsm
 XPI_BINS      = jar
 
-XPI_NAME      = ${NAME}_${VERSION}
-XPI_PATH      = ../downloads/${XPI_NAME}
-XPI	      = $(XPI_PATH).xpi
+XPI_NAME      = $(NAME)_$(VERSION)
+XPI_PATH      = ../downloads/$(XPI_NAME)
+XPI           = $(XPI_PATH).xpi
 
 RDF           = ../downloads/update.rdf
-RDF_IN        = ${RDF}.in
+RDF_IN        = $(RDF).in
 
-BUILD_DIR     = build.${VERSION}.${OS}
+BUILD_DIR     = build.$(VERSION).$(OS)
 
 ASCIIDOC = asciidoc
+AWK = awk
 
 .SILENT:
 
 #### rules
 
-.PHONY: all help info doc jar xpi install clean distclean $(JAR)
+TARGETS = all help info doc jar xpi install clean distclean $(JAR)
+$(TARGETS:%=\%.%):
+	echo MAKE $* $(@:$*.%=%)
+	$(MAKE) -C $* $(@:$*.%=%)
+
+.PHONY: $(TARGETS)
 all: help
 
 help:
-	@echo "${NAME} ${VERSION} build"
+	@echo "$(NAME) $(VERSION) build"
 	@echo
 	@echo "  make help      - display this help"
 	@echo "  make info      - show some info about the system"
 	@echo "  make doc       - build doc files"
-	@echo "  make jar       - build a JAR (${JAR})"
-	@echo "  make xpi       - build an XPI (${XPI_NAME})"
+	@echo "  make jar       - build a JAR ($(JAR))"
+	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
 	@echo "  make release   - updates update.rdf (this is not for you)"
 	@echo "  make clean     - clean up"
 	@echo "  make distclean - clean up more"
@@ -57,39 +64,37 @@ help:
 	@echo "running some commands with V=1 will show more build details"
 
 info:
-	@echo    "version             ${VERSION}"
-	@echo    "release file        ${XPI}"
-	@echo    "doc files           ${DOC_SRC_FILES}"
-	@echo -e "jar files           $(shell echo ${JAR_FILES} | sed 's/ /\\n                    /g' )"
-	@echo    "xpi files           ${XPI_FILES}"
+	@echo "version             $(VERSION)"
+	@echo "release file        $(XPI)"
+	@echo "doc files           $(DOC_SRC_FILES)"
+	@echo "xpi files           $(XPI_FILES)"
 
-xpi: ${XPI}
-jar: ${JAR}
+xpi: $(XPI)
+jar: $(JAR)
 
-release: ${XPI} ${RDF}
+release: $(XPI) $(RDF)
 
-${RDF}: ${RDF_IN} Makefile
+$(RDF): $(RDF_IN) Makefile
 	@echo "Preparing release..."
-	${Q}${SED} -e "s,###VERSION###,${VERSION},g" \
-	           -e "s,###DATE###,${BUILD_DATE},g" \
+	$(SED) -e "s,###VERSION###,$(VERSION),g" \
+	           -e "s,###DATE###,$(BUILD_DATE),g" \
 	           < $< > $@
 	@echo "SUCCESS: $@"
 
-clean:
-	@echo "Cleanup..."
-	rm -f ${JAR} ${XPI}
+clean: $(LOCALEDIR)/$(LOCALES:%=%.clean)
+	@echo "General $(NAME) cleanup..."
+	rm -f $(JAR) $(XPI)
 
-distclean: clean
-	@echo "More cleanup..."
-	@set -e; for locale in $(LOCALES); do $(MAKE) -C clean; doc; done
-	rm -rf ${BUILD_DIR}
+distclean: $(LOCALEDIR)/$(LOCALES:%=%.distclean) clean
+	@echo "More $(NAME) cleanup..."
+	rm -rf $(BUILD_DIR)
 
 #### xpi
 
 $(XPI): $(JAR)
 	@echo "Building XPI..."
 	mkdir -p $(XPI_PATH)
-	awk -v 'name=$(NAME)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
+	$(AWK) -v 'name=$(NAME)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
 	$(MAKE_JAR) "$(XPI)" "$(XPI_BASES)" "$(XPI_DIRS)" "$(XPI_TEXTS)" "$(XPI_BINS)" "$(XPI_FILES)"
 	@echo "SUCCESS: $@"
 
@@ -102,5 +107,4 @@ $(JAR): doc
 
 #### doc (see Makefile.doc)
 
-doc:
-	@set -e; for locale in $(LOCALES); do $(MAKE) -C $$locale doc; done
+doc: $(foreach localetgt,$(LOCALES:%=%.doc),$(addprefix $(LOCALEDIR)/,$(localetgt))) ;

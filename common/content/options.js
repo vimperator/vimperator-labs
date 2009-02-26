@@ -80,7 +80,7 @@ Option.prototype = {
     parseValues: function (value)
     {
         if (this.type == "stringlist")
-            return value.split(",");
+            return (value === "") ? [] : value.split(",");
         if (this.type == "charlist")
             return Array.slice(value);
         return value;
@@ -203,9 +203,9 @@ Option.prototype = {
                 break;
 
             case "number":
-                let value = parseInt(values); // deduce radix
+                let value = Number(values); // deduce radix
 
-                if (isNaN(value))
+                if (isNaN(value) || value != parseInt(value))
                     return "E521: Number required";
 
                 switch (operator)
@@ -335,7 +335,11 @@ function Options() //{{{
         {
             case "string":
                 if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING)
-                    services.get("pref").setCharPref(name, value);
+                {
+                    let supportString = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+                    supportString.data = value;
+                    services.get("pref").setComplexValue(name, Ci.nsISupportsString, supportString);
+                }
                 else if (type == Ci.nsIPrefBranch.PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else

@@ -932,6 +932,8 @@ function Events() //{{{
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
+                                else if (shift)
+                                    keyname = keyname.toUpperCase();
                                 charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
@@ -1033,6 +1035,37 @@ function Events() //{{{
                         }
                     }
                 }
+                // [Ctrl-Bug] special handling of mysterious <C-[>, <C-\\>, <C-]>, <C-^>, <C-_> bugs (OS/X)
+                //            (i.e., cntrl codes 27--31)
+                // ---
+                // For more information, see:
+                //     [*] Vimp FAQ: http://vimperator.org/trac/wiki/Vimperator/FAQ#WhydoesntC-workforEscMacOSX
+                //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/vimperator/2008-May/001548.html
+                //     [*] Mozilla bug 416227: event.charCode in keypress handler has unexpected values on Mac for Ctrl with chars in "[ ] _ \"
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=416227
+                //     [*] Mozilla bug 432951: Ctrl+'foo' doesn't seem same charCode as Meta+'foo' on Cocoa
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=432951
+                // ---
+                //
+                // The following fixes are only activated if liberator.has("MacUnix").
+                // Technically, they prevent mappings from <C-Esc> (and
+                // <C-C-]> if your fancy keyboard permits such things<?>), but
+                // these <C-control> mappings are probably pathological (<C-Esc>
+                // certainly is on Windows), and so it is probably
+                // harmless to remove the has("MacUnix") if desired.
+                //
+                else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31)
+                {
+                    if (event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
+                    {
+                        key = "Esc";
+                        modifier = modifier.replace("C-", "");
+                    }
+                    else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
+                    {
+                        key = String.fromCharCode(event.charCode + 64);
+                    }
+                }
                 // special handling of the Space key
                 else if (event.charCode == 32)
                 {
@@ -1089,7 +1122,7 @@ function Events() //{{{
 
         waitForPageLoad: function ()
         {
-            liberator.dump("start waiting in loaded state: " + buffer.loaded);
+            //liberator.dump("start waiting in loaded state: " + buffer.loaded);
             liberator.threadYield(true); // clear queue
 
             if (buffer.loaded == 1)
@@ -1102,8 +1135,8 @@ function Events() //{{{
             while (now = Date.now(), now < end)
             {
                 liberator.threadYield();
-                if ((now - start) % 1000 < 10)
-                    liberator.dump("waited: " + (now - start) + " ms");
+                //if ((now - start) % 1000 < 10)
+                //    liberator.dump("waited: " + (now - start) + " ms");
 
                 if (!events.feedingKeys)
                     return false;
@@ -1122,7 +1155,7 @@ function Events() //{{{
             let ret = (buffer.loaded == 1);
             if (!ret)
                 liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
-            liberator.dump("done waiting: " + ret);
+            //liberator.dump("done waiting: " + ret);
 
             // sometimes the input widget had focus when replaying a macro
             // maybe this call should be moved somewhere else?
@@ -1186,7 +1219,7 @@ function Events() //{{{
                     {
                         if (config.isComposeWindow)
                         {
-                            liberator.dump("Compose editor got focus");
+                            //liberator.dump("Compose editor got focus");
                             modes.set(modes.INSERT, modes.TEXTAREA);
                         }
                         else if (liberator.mode != modes.MESSAGE)

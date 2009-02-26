@@ -121,7 +121,7 @@ const liberator = (function () //{{{
                     let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
                     if (class.length)
-                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }");
+                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true);
                     else
                         styles.removeSheet(true, "scrollbar");
                     options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
@@ -264,7 +264,7 @@ const liberator = (function () //{{{
 
                     for (let [,dialog] in Iterator(dialogs))
                     {
-                        if (arg == dialog[0])
+                        if (util.compareIgnoreCase(arg, dialog[0]) == 0)
                         {
                             dialog[2]();
                             return;
@@ -281,7 +281,11 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (context, args) completion.dialog(context)
+                completer: function (context)
+                {
+                    context.ignoreCase = true;
+                    return completion.dialog(context);
+                }
             });
 
         commands.add(["em[enu]"],
@@ -601,7 +605,7 @@ const liberator = (function () //{{{
 
         forceNewTab: false,
 
-        // ###VERSION### and ###DATE### are replaced by the Makefile
+        // these VERSION and DATE tokens are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
         // NOTE: services.get("profile").selectedProfile.name is not rightness.
@@ -842,7 +846,7 @@ const liberator = (function () //{{{
             // Number
             else if (matches = string.match(/^(\d+)$/))
             {
-                return parseInt(match[1], 10);
+                return parseInt(matches[1], 10);
             }
 
             let reference = this.variableReference(string);
@@ -1422,7 +1426,6 @@ window.liberator = liberator;
 // FIXME: Ugly, etc.
 window.addEventListener("liberatorHelpLink", function (event) {
         let elem = event.target;
-        liberator.dump(String(elem));
         if (/^(option|mapping|command)$/.test(elem.className))
             var tag = elem.textContent.replace(/\s.*/, "");
         if (elem.className == "command")

@@ -573,7 +573,7 @@ function Commands() //{{{
 
                                     count++; // to compensate the "=" character
                                 }
-                                else if (!/\s/.test(sep)) // this isn't really an option as it has trailing characters, parse it as an argument
+                                else if (!/\s/.test(sep) && sep != undefined) // this isn't really an option as it has trailing characters, parse it as an argument
                                 {
                                     invalid = true;
                                 }

@@ -8,7 +8,7 @@ commands as Firefox does not provide native regexp support. It is unlikely that
 this will ever be available.
 
 |/| +
-||/\\{pattern\\}[/]<CR>|| +
+||/{pattern}[/]<CR>|| +
 ________________________________________________________________________________
 Search forward for the first occurrence of {pattern}.
 
