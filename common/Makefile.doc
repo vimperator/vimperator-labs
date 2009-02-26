@@ -57,5 +57,6 @@ $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
 version.html: ../../NEWS $(BASE)/Makefile.doc $(ADC_DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
 	# NOTE: asciidoc doesn't source the conf file implicitly when processing stdin
-	sed -e '1i\HEADER' -e '/^[0-9]/d' -e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section:Version{nbsp}\1[version-\1]\
+	sed -e '1i\
+HEADER' -e '/^[0-9]/d' -e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section:Version{nbsp}\1[version-\1]\
 /' ../../NEWS | ${ASCIIDOC} -f asciidoc.conf -a doctitle=version.html -o version.html -
