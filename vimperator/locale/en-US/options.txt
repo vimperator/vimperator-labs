@@ -738,6 +738,9 @@ ____
 ____
 Use visual bell instead of beeping on errors. The visual bell style is
 controlled by [c]:hi Bell[c].
+
+To disable both the audible and visual bells use [c]:set visualbell[c] and
+[c]:hi Bell display: none;[c]
 ____
 
 
