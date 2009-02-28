@@ -1210,7 +1210,7 @@ function CommandLine() //{{{
                 submit: callback,
                 change: extra.onChange,
                 complete: extra.completer,
-                cancel: extra.onCancel,
+                cancel: extra.onCancel
             };
 
             modes.push(modes.COMMAND_LINE, modes.PROMPT);
@@ -1710,7 +1710,7 @@ function ItemList(id) //{{{
     if (!iframe)
     {
         liberator.log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
-        return;
+        return; // XXX
     }
 
     function dom(xml, map) util.xmlToDom(xml, doc, map);
