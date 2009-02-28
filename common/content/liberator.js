@@ -1029,11 +1029,11 @@ const liberator = (function () //{{{
                 return;
             }
 
-            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in '
-                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",").quote(), 2);
+            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
+                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",") + '"', 2);
 
             dirs.forEach(function (dir) {
-                liberator.echomsg("Searching for " + (dir.path + "/**/*.{js,vimp}").quote(), 3);
+                liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
                 sourceDirectory(dir);
             });
         },

@@ -37,8 +37,6 @@ BUGS:
 - completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
   and even if it is not totally off, i had it jump by one pixel when wrapping around.
   If that's unfixable, i propose reverting the new completion height stuff.
-- Windows paths have escaped backslashes in messages - presumably due to
-  String#quote change.
 - :messages is _very_ slow for message history of several thousand lines ->
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 - :hardcopy! seems to be broken for me
