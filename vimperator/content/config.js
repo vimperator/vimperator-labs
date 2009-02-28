@@ -210,6 +210,14 @@ const config = { //{{{
             "Open one or more URLs in a new tab, based on current location",
             function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
 
+        mappings.add([modes.NORMAL], ["w"],
+            "Open one or more URLs in a new window",
+            function () { commandline.open(":", "winopen ", modes.EX); });
+
+        mappings.add([modes.NORMAL], ["W"],
+            "Open one or more URLs in a new window, based on current location",
+            function () { commandline.open(":", "winopen " + buffer.URL, modes.EX); });
+
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(count > 1 ? count : 1); },
