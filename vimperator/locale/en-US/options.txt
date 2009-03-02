@@ -233,11 +233,15 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
+*h* History
 *S* Suggest engines
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
 and then any available quick searches.
+
+Warning: Using *b* and *h* can make completion very slow if there are many
+items.
 ____
 
 
