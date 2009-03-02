@@ -17,7 +17,6 @@ BUGS:
 - insert abbreviations broken on <space>
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
-- http://cgiirc.blitzed.org?chan=%23debug is unusable after login in
 - "g<" fails without a trailing escape because both "g<" and "g<C-g>"
   are mapped. Vimp should recognize "<C-g>" as an atom that should not
   be matched literally. In fact, typing "g<C-g>" out literally is
@@ -33,14 +32,13 @@ BUGS:
   => it often overwrites the open command line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
-- MOW rendering is broken for multiple commands when open E.g. :ls | ls
-- completion height is broken, try :a<tab>....<tab>, when it wraps it's totally off.
-  and even if it is not totally off, i had it jump by one pixel when wrapping around.
-  If that's unfixable, i propose reverting the new completion height stuff.
+- MOW rendering is broken for multiple commands when open (E.g. :ls | ls) This
+  appears to be the result of using the Message class when appending multiline
+  output to an open MOW.
 - :messages is _very_ slow for message history of several thousand lines ->
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
-- :hardcopy! seems to be broken for me
-- some extended hint commands aren't working in the MOW (;; ;t ;b ;? ;F)
+- The MOW shouldn't close when executing hints and ;F isn't working.
+- URLs in :ls output are no longer hyperlinks
 
 FEATURES:
 9 finish :help TODOs

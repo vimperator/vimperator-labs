@@ -1412,24 +1412,52 @@ function CommandLine() //{{{
             let closeWindow = false;
             let passEvent = false;
 
-            function isScrollable() !win.scrollMaxY == 0;
-            function atEnd() win.scrollY / win.scrollMaxY >= 1;
+            let key = events.toString(event);
 
-            if (event.type == "click")
+            // TODO: Wouldn't multiple handlers be cleaner? --djk
+            if (event.type == "click" && event.target instanceof HTMLAnchorElement)
             {
-                if (event.target instanceof HTMLAnchorElement && event.button < 2)
+                function openLink(where)
                 {
                     event.preventDefault();
-                    let target = event.button == 0 ? liberator.CURRENT_TAB : liberator.NEW_TAB;
+                    // FIXME: Why is this needed? --djk
                     if (event.target.getAttribute("href") == "#")
-                        liberator.open(event.target.textContent, target);
+                        liberator.open(event.target.textContent, where);
                     else
-                        liberator.open(event.target.href, target);
+                        liberator.open(event.target.href, where);
                 }
+
+                switch (key)
+                {
+                    case "<LeftMouse>":
+                        // FIXME: the :ls output no longer wraps the buffer URL in an anchor element
+                        if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list")
+                        {
+                            event.preventDefault();
+                            tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                        }
+                        else
+                        {
+                            openLink(liberator.CURRENT_TAB);
+                        }
+                        break;
+                    case "<MiddleMouse>":
+                    case "<C-LeftMouse>":
+                    case "<C-M-LeftMouse>":
+                        openLink(liberator.NEW_BACKGROUND_TAB);
+                        break;
+                    case "<S-MiddleMouse>":
+                    case "<C-S-LeftMouse>":
+                    case "<C-M-S-LeftMouse>":
+                        openLink(liberator.NEW_TAB);
+                        break;
+                    case "<S-LeftMouse>":
+                        openLink(liberator.NEW_WINDOW);
+                        break;
+                }
+
                 return;
             }
-
-            let key = events.toString(event);
 
             if (startHints)
             {
@@ -1438,6 +1466,9 @@ function CommandLine() //{{{
                 hints.show(key, undefined, win);
                 return;
             }
+
+            function isScrollable() !win.scrollMaxY == 0;
+            function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
             switch (key)
             {
@@ -1488,34 +1519,6 @@ function CommandLine() //{{{
                     break;
 
                 // TODO: <LeftMouse> on the prompt line should scroll one page
-                case "<LeftMouse>":
-                    if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list")
-                    {
-                        tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
-                        closeWindow = true;
-                        break;
-                    }
-                    else if (event.originalTarget.localName.toLowerCase() == "a")
-                    {
-                        liberator.open(event.originalTarget.textContent);
-                        break;
-                    }
-                case "<A-LeftMouse>": // for those not owning a 3-button mouse
-                case "<MiddleMouse>":
-                    if (event.originalTarget.localName.toLowerCase() == "a")
-                    {
-                        let where = /\btabopen\b/.test(options["activate"]) ?
-                                    liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
-                        liberator.open(event.originalTarget.textContent, where);
-                    }
-                    break;
-
-                // let Firefox handle those to select table cells or show a context menu
-                case "<C-LeftMouse>":
-                case "<RightMouse>":
-                case "<C-S-LeftMouse>":
-                    break;
-
                 // page down
                 case "f":
                     if (options["more"] && isScrollable())
@@ -1606,7 +1609,7 @@ function CommandLine() //{{{
                 if (passEvent)
                     events.onKeyPress(event);
             }
-            else // set update the prompt string
+            else
             {
                 commandline.updateMorePrompt(showMorePrompt, showMoreHelpPrompt);
             }
