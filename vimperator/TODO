@@ -23,8 +23,6 @@ BUGS:
   equivalent to typing "g" and then <C-g>.
 
 (recent CVS regressions):
-- :set noflashblock seems broken (= :set fb? afterwards says "fb"), let's see if that's a
-  plugin or a vimp issue.
 - visual caret mode is broken, requires a manual page focus first anyway or
   else it chucks, I haven't investigated --djk
 - messages is still broken in several ways - needs testing.
