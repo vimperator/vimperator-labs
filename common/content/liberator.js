@@ -1428,7 +1428,11 @@ window.addEventListener("liberatorHelpLink", function (event) {
         if (tag)
             var page = liberator.findHelp(tag);
         if (page)
+        {
             elem.href = "chrome://liberator/locale/" + page;
+            if (buffer.URL.replace(/#.*/, "") == elem.href.replace(/#.*/, "")) // XXX
+                setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
+        }
     },
     true, true);
 
