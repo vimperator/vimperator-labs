@@ -209,7 +209,7 @@ ________________________________________________________________________________
 ||:ca[bbrev] {lhs}|| +
 ||:ca[bbrev]||
 ________________________________________________________________________________
-Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
+Abbreviate a key sequence for Command-line mode. Same as [c]:ab[breviate][c],
 but for Command-line mode only.
 ________________________________________________________________________________
 
