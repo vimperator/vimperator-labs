@@ -112,10 +112,13 @@ section:Features[features]
 
 section:Contact[contact]
 
-Please send comments/bug reports/patches to the mailing list, where I will
-properly answer any questions. You can also join the #vimperator IRC channel
-on irc.freenode.net or check the Wiki for frequently asked questions. Make
-sure, you have read the TODO file first, as I am aware of many things which
-can be improved when I find time for it or get patches.
+Please send comments/bug reports/patches to the mailing list, where we will
+properly answer any questions. You can also join the
++++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC channel
+on http://www.freenode.net/[Freenode] or check the
+http://vimperator.org/trac/wiki/Vimperator/Wiki[Wiki] for
+http://vimperator.org/trac/wiki/Vimperator/FAQ[frequently asked questions
+(FAQ)]. Make sure, you have read the TODO file first, as we are aware of many
+things which can be improved when we find time for it or receive patches.
 
 // vim: set filetype=asciidoc:
