@@ -1421,20 +1421,24 @@ window.liberator = liberator;
 // FIXME: Ugly, etc.
 window.addEventListener("liberatorHelpLink", function (event) {
         let elem = event.target;
+
         if (/^(option|mapping|command)$/.test(elem.className))
             var tag = elem.textContent.replace(/\s.*/, "");
+        if (/^(mapping|command)$/.test(elem.className))
+            tag = tag.replace(/^\d+/, "");
         if (elem.className == "command")
-            tag = tag.replace(/\[.*?\]/g, "");
+            tag = tag.replace(/\[.*?\]/g, "").replace(/!$/, "");
+
         if (tag)
             var page = liberator.findHelp(tag);
+
         if (page)
         {
             elem.href = "chrome://liberator/locale/" + page;
             if (buffer.URL.replace(/#.*/, "") == elem.href.replace(/#.*/, "")) // XXX
                 setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
         }
-    },
-    true, true);
+    }, true, true);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);
