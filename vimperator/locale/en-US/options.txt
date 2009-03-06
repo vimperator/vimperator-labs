@@ -189,10 +189,10 @@ they can be changed to a different value in your RC file using
 
 The following preferences are set:
 
-* browser.startup.page
-* dom.popup_allowed_events
-* accessibility.typeaheadfind.autostart
-* accessibility.typeaheadfind
+* http://kb.mozillazine.org/Browser.startup.page[browser.startup.page]
+* http://kb.mozillazine.org/Dom.popup_allowed_events[dom.popup_allowed_events]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart[accessibility.typeaheadfind.autostart]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind[accessibility.typeaheadfind]
 
 // TODO: others?
 
