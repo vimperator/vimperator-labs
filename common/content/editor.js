@@ -339,7 +339,7 @@ function Editor() //{{{
 
     mappings.add(myModes,
         ["<S-Insert>"], "Insert clipboard/selection",
-        function () { editor.pasteClipboard(); });
+        function () { editor.executeCommand("cmd_paste"); });
 
     mappings.add([modes.INSERT, modes.TEXTAREA, modes.COMPOSE],
         ["<C-i>"], "Edit text field with an external editor",
@@ -619,25 +619,6 @@ function Editor() //{{{
         {
             let text = getEditor().value;
             return text.substring(getEditor().selectionStart, getEditor().selectionEnd);
-        },
-
-        pasteClipboard: function ()
-        {
-            let elem = window.document.commandDispatcher.focusedElement;
-
-            if (elem.setSelectionRange && util.readFromClipboard())
-                // readFromClipboard would return 'undefined' if not checked
-                // dunno about .setSelectionRange
-            {
-                let rangeStart = elem.selectionStart; // caret position
-                let rangeEnd = elem.selectionEnd;
-                let tempStr1 = elem.value.substring(0, rangeStart);
-                let tempStr2 = util.readFromClipboard();
-                let tempStr3 = elem.value.substring(rangeEnd);
-                elem.value = tempStr1 + tempStr2 + tempStr3;
-                elem.selectionStart = rangeStart + tempStr2.length;
-                elem.selectionEnd = elem.selectionStart;
-            }
         },
 
         // count is optional, defaults to 1
