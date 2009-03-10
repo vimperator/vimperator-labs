@@ -58,6 +58,11 @@ function CommandLine() //{{{
 
         get length() this._messages.length,
 
+        clear: function clear()
+        {
+            this._messages = [];
+        },
+
         add: function add(message)
         {
             if (!message)
@@ -973,6 +978,11 @@ function CommandLine() //{{{
                 liberator.echo(list, commandline.FORCE_MULTILINE);
             }
         },
+        { argCount: "0" });
+
+    commands.add(["messc[lear]"],
+        "Clear the message history",
+        function () { messageHistory.clear(); },
         { argCount: "0" });
 
     commands.add(["sil[ent]"],

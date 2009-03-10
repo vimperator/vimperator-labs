@@ -4,6 +4,7 @@
     * add $MY_VIMPERATORRC
     * add ' and " local marks
     * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
+    * add :messclear
 
 2008-XX-XX:
     * version 2.0 (probably)
