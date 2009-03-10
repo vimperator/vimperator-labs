@@ -189,10 +189,10 @@ they can be changed to a different value in your RC file using
 
 The following preferences are set:
 
-* browser.startup.page
-* dom.popup_allowed_events
-* accessibility.typeaheadfind.autostart
-* accessibility.typeaheadfind
+* http://kb.mozillazine.org/Browser.startup.page[browser.startup.page]
+* http://kb.mozillazine.org/Dom.popup_allowed_events[dom.popup_allowed_events]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart[accessibility.typeaheadfind.autostart]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind[accessibility.typeaheadfind]
 
 // TODO: others?
 
@@ -233,11 +233,15 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
+*h* History
 *S* Suggest engines
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
 and then any available quick searches.
+
+Warning: Using *b* and *h* can make completion very slow if there are many
+items.
 ____
 
 
@@ -738,6 +742,9 @@ ____
 ____
 Use visual bell instead of beeping on errors. The visual bell style is
 controlled by [c]:hi Bell[c].
+
+To disable both the audible and visual bells use [c]:set visualbell[c] and
+[c]:hi Bell display: none;[c]
 ____
 
 

@@ -245,7 +245,7 @@ function IO() //{{{
 
                 if (!found)
                 {
-                    liberator.echoerr("E344: Can't find directory " + arg.quote() + " in cdpath\n"
+                    liberator.echoerr("E344: Can't find directory \"" + arg + "\" in cdpath\n"
                                     + "E472: Command failed");
                 }
             }
@@ -278,7 +278,7 @@ function IO() //{{{
 
             if (file.exists() && !args.bang)
             {
-                liberator.echoerr("E189: " + filename.quote() + " exists (add ! to override)");
+                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
                 return;
             }
 
@@ -297,7 +297,7 @@ function IO() //{{{
             }
             catch (e)
             {
-                liberator.echoerr("E190: Cannot open " + filename.quote() + " for writing");
+                liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
                 liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
             }
         },
@@ -514,7 +514,7 @@ function IO() //{{{
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
-                    liberator.echoerr("E344: Can't find directory " + dir.path.quote() + " in path");
+                    liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
                     return null;
                 }
 
@@ -835,7 +835,7 @@ lookup:
             let found = false;
 
             // FIXME: should use original arg string
-            liberator.echomsg("Searching for " + paths.join(" ").quote() + " in " + options["runtimepath"].quote(), 2);
+            liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
             for (let [,dir] in Iterator(dirs))
@@ -844,7 +844,7 @@ lookup:
                 {
                     let file = joinPaths(dir, path);
 
-                    liberator.echomsg("Searching for " + file.path.quote(), 3);
+                    liberator.echomsg("Searching for \"" + file.path + "\"", 3);
 
                     if (file.exists() && file.isFile() && file.isReadable())
                     {
@@ -858,7 +858,7 @@ lookup:
             }
 
             if (!found)
-                liberator.echomsg("not found in 'runtimepath': " + paths.join(" ").quote(), 1); // FIXME: should use original arg string
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
 
             return found;
         },
@@ -885,9 +885,9 @@ lookup:
                     if (!silent)
                     {
                         if (file.exists() && file.isDirectory())
-                            liberator.echomsg("Cannot source a directory: " + filename.quote(), 0);
+                            liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
                         else
-                            liberator.echomsg("could not source: " + filename.quote(), 1);
+                            liberator.echomsg("could not source: \"" + filename + "\"", 1);
 
                         liberator.echoerr("E484: Can't open file " + filename);
                     }
@@ -895,7 +895,7 @@ lookup:
                     return;
                 }
 
-                liberator.echomsg("sourcing " + filename.quote(), 2);
+                liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = self.readFile(file);
                 let uri = services.get("io").newFileURI(file);
@@ -1005,7 +1005,7 @@ lookup:
                 if (scriptNames.indexOf(file.path) == -1)
                     scriptNames.push(file.path);
 
-                liberator.echomsg("finished sourcing " + filename.quote(), 2);
+                liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
 
                 liberator.log("Sourced: " + filename, 3);
             }

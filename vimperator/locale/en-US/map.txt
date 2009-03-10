@@ -8,7 +8,7 @@ The key mapping commands can be used to either redefine the standard key
 bindings or define new ones. A mapping consists of a key, or sequence of keys,
 which are translated to a string of characters. Example:
 
-  :map <F2> :echo new Date().toDateString()<CR>
+\{nbsp}[c]:map <F2> :echo new Date().toDateString()<CR>[c]
 
 will echo the current date to the command line when [m]<F2>[m] is pressed.
 
@@ -209,7 +209,7 @@ ________________________________________________________________________________
 ||:ca[bbrev] {lhs}|| +
 ||:ca[bbrev]||
 ________________________________________________________________________________
-Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
+Abbreviate a key sequence for Command-line mode. Same as [c]:ab[breviate][c],
 but for Command-line mode only.
 ________________________________________________________________________________
 
@@ -406,7 +406,7 @@ section:Examples[command-examples]
 
 Add a :Google command to search via google:
 
-  :command -nargs=* Google open google <args>
+\{nbsp}[c]:command -nargs=* Google open google <args>[c]
 
 // TODO: add decent examples
 

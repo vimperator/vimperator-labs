@@ -658,7 +658,6 @@ CompletionContext.prototype = {
         this.tabPressed = false;
         this.title = ["Completions"];
         this.updateAsync = false;
-        this.waitingForTab = false;
 
         this.cancelAll();
 
@@ -677,7 +676,6 @@ CompletionContext.prototype = {
         for each (let context in this.contexts)
         {
             context.hasItems = false;
-            context.incomplete = false;
         }
     },
 
