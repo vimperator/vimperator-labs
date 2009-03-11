@@ -1375,8 +1375,11 @@ function Events() //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    if (lastMacro)
+                    if (modes.isReplaying)
+                    {
+                        modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
+                    }
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
