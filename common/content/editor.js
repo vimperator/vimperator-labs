@@ -623,6 +623,13 @@ function Editor() //{{{
 
         pasteClipboard: function ()
         {
+            if (liberator.has("Win32"))
+            {
+                this.executeCommand("cmd_paste");
+                return;
+            }
+
+            // FIXME: #93 (<s-insert> in the bottom of a long textarea bounces up)
             let elem = window.document.commandDispatcher.focusedElement;
 
             if (elem.setSelectionRange && util.readFromClipboard())
