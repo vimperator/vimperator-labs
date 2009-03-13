@@ -737,6 +737,7 @@ function History() //{{{
                 context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, -1))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.compare = CompletionContext.Sort.unsorted;
             },
             count: true,
             literal: 0
@@ -783,6 +784,7 @@ function History() //{{{
                 context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index + 1, sh.count))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.compare = CompletionContext.Sort.unsorted;
             },
             count: true,
             literal: 0

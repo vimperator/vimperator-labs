@@ -623,6 +623,7 @@ function Tabs() //{{{
                 completer: function (context)
                 {
                     context.anchored = false;
+                    context.compare = CompletionContext.Sort.unsorted;
                     context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
                     context.completions = tabs.closedTabs;
                 },

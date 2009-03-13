@@ -1273,19 +1273,16 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                //liberator.dump("input: " + command);
                 this.resetCompletions();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
+                let key = events.toString(event);
                 if (completions)
                     completions.previewClear();
                 if (!currentExtendedMode)
                     return true;
-
-                let key = events.toString(event);
-                //liberator.log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape

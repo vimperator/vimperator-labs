@@ -658,7 +658,11 @@ CompletionContext.prototype = {
         this.tabPressed = false;
         this.title = ["Completions"];
         this.updateAsync = false;
-        this.waitingForTab = false;
+        try
+        {
+            this.waitingForTab = false;
+        }
+        catch (e) {}
 
         this.cancelAll();
 
@@ -677,7 +681,11 @@ CompletionContext.prototype = {
         for each (let context in this.contexts)
         {
             context.hasItems = false;
-            context.incomplete = false;
+            try
+            {
+                context.incomplete = false;
+            }
+            catch (e) {}
         }
     },
 
@@ -685,8 +693,9 @@ CompletionContext.prototype = {
      * Wait for all subcontexts to complete.
      *
      * @param {boolean} interruptible When true, the call may be interrupted
-     *    via <C-c>. In this case, "Interrupted" may be thrown.
+     *    via <C-c>, in which case, "Interrupted" may be thrown.
      * @param {number} timeout The maximum time, in milliseconds, to wait.
+     *    If 0 or null, wait indefinately.
      */
     wait: function wait(interruptable, timeout)
     {

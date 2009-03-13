@@ -1695,7 +1695,7 @@ function Events() //{{{
             {
                 setTimeout(statusline.updateUrl, 100);
             },
-            setOverLink : function (link, b)
+            setOverLink: function (link, b)
             {
                 let ssli = options["showstatuslinks"];
                 if (link && ssli)
@@ -1759,11 +1759,12 @@ function Events() //{{{
 
     window.XULBrowserWindow = self.progressListener;
     window.QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIWebNavigation)
-        .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
-        .QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIXULWindow)
-        .XULBrowserWindow = window.XULBrowserWindow;
+          .getInterface(Ci.nsIWebNavigation)
+          .QueryInterface(Ci.nsIDocShellTreeItem)
+          .treeOwner
+          .QueryInterface(Ci.nsIInterfaceRequestor)
+          .getInterface(Ci.nsIXULWindow)
+          .XULBrowserWindow = self.progressListener;
     try
     {
         getBrowser().addProgressListener(self.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
