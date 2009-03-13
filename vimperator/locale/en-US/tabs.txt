@@ -101,7 +101,7 @@ buffer, it is selected. With [!] the next buffer matching the argument is
 selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
 
-If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
+If argument is [a]\#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
 
 If no argument is given the current buffer remains current.
 ________________________________________________________________________________
@@ -153,7 +153,7 @@ ________________________________________________________________________________
 ||:[count]bn[ext] [count]|| +
 ________________________________________________________________________________
 Switch to the next or [count]th tab. Cycles to the first tab when the last is
-selected and {count} is not specified.
+selected and [count] is not specified.
 ________________________________________________________________________________
 
 
@@ -203,8 +203,8 @@ ________________________________________________________________________________
 ||:[count]u[ndo] [a][url][a]|| +
 ||[count]u||
 ________________________________________________________________________________
-Undo closing of a tab. If a count is given, don't close the last but the
-[count]th last tab. With [a][url][a] restores the tab matching the URL.
+Undo closing of a tab. If a count is given, don't undo the last but the
+[count]th last closed tab. With [a][url][a] restores the tab matching the URL.
 ________________________________________________________________________________
 
 

@@ -2,13 +2,13 @@ HEADER
 
 |Command-line-mode| |Command-line| |mode-cmdline| +
 
-Command-line mode is used to enter Ex commands (":") and text search patterns
-("/" and "?").
+Command-line mode is used to enter Ex commands ("[m]:[m]") and text search patterns
+("[m]/[m]" and "[m]?[m]").
 
 |:| +
 ||:||
 ________________________________________________________________________________
-Start command-line mode. In command-line mode, you can perform extended
+Start Command-line mode. In Command-line mode, you can perform extended
 commands, which may require arguments.
 ________________________________________________________________________________
 
@@ -18,7 +18,7 @@ section:Command-line{nbsp}editing[cmdline-editing]
 |c_<C-c>| +
 ||<C-c>||
 ________________________________________________________________________________
-Quit command-line mode without executing.
+Quit Command-line mode without executing.
 ________________________________________________________________________________
 
 

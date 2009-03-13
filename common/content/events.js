@@ -639,7 +639,7 @@ function Events() //{{{
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    liberator.echomsg('Searching for "macros/*" in ' + dir.path.quote(), 2);
+                    liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
 
                     liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
@@ -932,6 +932,8 @@ function Events() //{{{
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
+                                else if (shift)
+                                    keyname = keyname.toUpperCase();
                                 charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
@@ -1054,7 +1056,7 @@ function Events() //{{{
                 //
                 else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31)
                 {
-                    if(event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
+                    if (event.charCode == 27) // [Ctrl-Bug 1/5] the <C-[> bug
                     {
                         key = "Esc";
                         modifier = modifier.replace("C-", "");
@@ -1373,8 +1375,11 @@ function Events() //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    if (lastMacro)
+                    if (modes.isReplaying)
+                    {
+                        modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
+                    }
                     event.preventDefault();
                     event.stopPropagation();
                     return true;

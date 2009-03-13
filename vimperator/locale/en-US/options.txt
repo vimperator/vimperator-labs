@@ -3,7 +3,7 @@ HEADER
 |options| +
 
 Vimperator has a number of internal variables and switches which can be set to
-achieve special effects.  These options come in 5 forms:
+achieve special effects. These options come in 5 forms:
 `------------`-----------------------------------------
 *boolean*    can only be on or off
 *number*     has a numeric value
@@ -22,7 +22,7 @@ ____
 
 ||:se[t] all||
 ____
-Show all options. Show all options.
+Show all options.
 ____
 
 |E518| |E519|
@@ -54,12 +54,12 @@ ____
 ____
 For list options, toggle the specified values.
 
-If the option is a list, the given values are toggled. Given
-    :set opt=foo,bar
-Then,
-    :set opt!=foo,baz
-results in
-    opt=bar,baz
+If the option is a list, the given values are toggled. Given +
+\{nbsp}[c]:set opt=foo,bar[c] +
+then, +
+\{nbsp}[c]:set opt!=foo,baz[c] +
+results in +
+\{nbsp}opt=bar,baz
 ____
 
 |:set-default|
@@ -84,21 +84,17 @@ ____
 |:set+=|
 ||:se[t] {option}+={value} [...]|| +
 ____
-Add the {value} to a number option, or append the
-{value} to a string option.  When the option is a
-comma separated list, a comma is added, unless the
-value was empty.
-If the option is a list of flags, superfluous flags
-are removed.  When adding a flag that was already
-present the option value doesn't change.
+Add the {value} to a number option, or append the {value} to a string option.
+When the option is a comma separated list, a comma is added, unless the value
+was empty. If the option is a list of flags, superfluous flags are removed.
+When adding a flag that was already present the option value doesn't change.
 ____
 
 |:set^=|
 ||:se[t] {option}^={value} [...]|| +
 ____
-Multiply the {value} to a number option, or prepend
-the {value} to a string option.  When the option is a
-comma separated list, a comma is added, unless the
+Multiply the {value} to a number option, or prepend the {value} to a string
+option. When the option is a comma separated list, a comma is added, unless the
 value was empty.
 ____
 
@@ -106,15 +102,12 @@ ____
 ||:se[t] {option}-={value} [...]|| +
 
 ____
-Subtract the {value} from a number option, or remove
-the {value} from a string option, if it is there.
-If the {value} is not found in a string option, there
-is no error or warning.  When the option is a comma
-separated list, a comma is deleted, unless the option
-becomes empty.
-When the option is a list of flags, {value} must be
-exactly as they appear in the option.  Remove flags
-one by one to avoid problems.
+Subtract the {value} from a number option, or remove the {value} from a string
+option, if it is there. If the {value} is not found in a string option, there
+is no error or warning. When the option is a comma separated list, a comma is
+deleted, unless the option becomes empty. When the option is a list of flags,
+{value} must be exactly as they appear in the option. Remove flags one by one
+to avoid problems.
 ____
 
 |:setlocal| |:setl|
@@ -132,7 +125,7 @@ ____
 ||:setl[ocal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but it operates for current tab options
+The same as [c]:set[c] command, but operates on current tab options
 only. See [c]:set[c] for details.
 ____
 
@@ -151,7 +144,7 @@ ____
 ||:setg[lobal] {option}-={value}|| +
 
 ____
-The same as [c]:set[c] command, but it operates on global options only.
+The same as [c]:set[c] command, but operates on global options only.
 See [c]:set[c] for details.
 ____
 
@@ -196,10 +189,10 @@ they can be changed to a different value in your RC file using
 
 The following preferences are set:
 
-* browser.startup.page
-* dom.popup_allowed_events
-* accessibility.typeaheadfind.autostart
-* accessibility.typeaheadfind
+* http://kb.mozillazine.org/Browser.startup.page[browser.startup.page]
+* http://kb.mozillazine.org/Dom.popup_allowed_events[dom.popup_allowed_events]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart[accessibility.typeaheadfind.autostart]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind[accessibility.typeaheadfind]
 
 // TODO: others?
 
@@ -240,11 +233,15 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
+*h* History
 *S* Suggest engines
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
 and then any available quick searches.
+
+Warning: Using *b* and *h* can make completion very slow if there are many
+items.
 ____
 
 
@@ -315,7 +312,7 @@ ____
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____
 Focus the content after a page has loaded. This is useful, if you always
-want to stay in normal mode when browsing between web sites. When "on", it
+want to stay in Normal mode when browsing between web sites. When "on", it
 blurs any textbox which often is automatically focused on page load.
 If you usually like 'focuscontent' but sometimes you'd like to focus the
 first input field, you can use [m]gi[m] to jump to it.
@@ -362,7 +359,7 @@ ____
 ||'hintmatching' 'hm'|| string (default: contains)
 ____
 
-Change the hint matching algorithm during hint mode. Possible values:
+Change the hint matching algorithm during Hints mode. Possible values:
 
 `--------------------`-------------------------------------------------------------------------------------------------------------------------------
 *contains*           The typed characters are split on whitespace, and these character groups have to match anywhere inside the text of the link.
@@ -378,13 +375,13 @@ ____
 ||'followhints' 'fh'|| number (default: 0)
 ____
 
-Change the behaviour of [m]<Return>[m] in hint mode. Possible values:
+Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
 
 `---------`----------------------------------------------------------
 *0*       Follow the first hint as soon as typed text uniquely identifies it.
 	  Follow the selected hint on [m]<Return>[m].
 *1*       Follow the selected hint on [m]<Return>[m].
-*2*       Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected.
+*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
 ---------------------------------------------------------------------
 
 ____
@@ -505,7 +502,8 @@ ____
 
 Patterns to use when guessing the \'next' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions.
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
 ____
 
 
@@ -581,15 +579,6 @@ In order to also speed up first time access, it is cached at startup, if this op
 ____
 
 
-//|\'pvh'| |\'previewheight'|
-//||'previewheight' 'pvh'|| number (default: 10)
-//____
-//Default height for preview window
-//
-//Value must be between 1 and 50. If the value is too high, completions may cover the command line. Close the preview window with :pclose.
-//Note: Option currently disabled
-//____
-
 |\'previouspattern'|
 ||'previouspattern'|| stringlist
 ____
@@ -597,7 +586,8 @@ ____
 
 Patterns to use when guessing the \'previous' page in a document sequence. Each
 pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions.
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
 ____
 
 
@@ -658,7 +648,7 @@ ____
 |\'ssli'| |\'showstatuslinks'|
 ||'showstatuslinks' 'ssli'|| number (default: 1)
 ____
-Show the destination of the link under the cursor in the status bar
+Show the destination of the link under the cursor in the status bar.
 Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Possible values:
 
 .---`--------------------------------------
@@ -696,7 +686,7 @@ ____
 ||'suggestengines' || stringlist (default: "google")
 ____
 Set the search engines which can be used for completion suggestions.
-Add "S" to the 'complete' option if you want use this feature.
+Add "S" to the 'complete' option if you want to use this feature.
 
 Warning: This feature could make tab-completion slower because it needs to
 wait for changes, so use it only if you have a fast internet connection.
@@ -727,11 +717,11 @@ ____
 |\'urlseparator'|
 ||'urlseparator'|| string (default: ",\s")
 ____
-Set the separator regexp used to separate multiple URL args.  Multiple
-arguments can be specified for [c]:open[c], and similar commands, using this
-regexp as the separator.  Using whitespace alone is not generally useful since
-it is often contained in a single argument.  E.g. [c]:open linus torvalds[c]
-should perform a single search for the key words "linus" and "torvalds"
+Set the separator regexp used to separate multiple URL args. Multiple arguments
+can be specified for [c]:open[c], and similar commands, using this regexp as
+the separator. Using whitespace alone is not generally useful since it is often
+contained in a single argument. E.g. [c]:open linus torvalds[c] should perform
+a single search for the key words "linus" and "torvalds"
 ____
 
 
@@ -750,9 +740,11 @@ ____
 |\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
 ||'visualbell' 'vb'|| boolean (default: off)
 ____
-Use visual bell instead of beeping on errors.  The visual bell style is
-controlled by [c]:hi Bell[c].  If no bell is desired use [c]:set t_vb=[c] together with
-this option.
+Use visual bell instead of beeping on errors. The visual bell style is
+controlled by [c]:hi Bell[c].
+
+To disable both the audible and visual bells use [c]:set visualbell[c] and
+[c]:hi Bell display: none;[c]
 ____
 
 
@@ -783,7 +775,7 @@ ____
 |\'wim'| |\'wildmode'|
 ||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
-Define how command-line completion works.
+Defines how command-line completion works.
 It is a comma-separated list of parts, where each part specifies
 what to do for each consecutive use of the completion key.
 The first part specifies the behavior for the first use of the completion key,
@@ -795,7 +787,7 @@ These are the possible values for each part:
 "full"          Complete the next full match. After the last, the original string is used.
 "longest"       Complete till the longest common string.
 "list"          When more than one match, list all matches.
-"list:full"     When more than one match, list all matches and complete first match.
+"list:full"     When more than one match, list all matches and complete the first match.
 "list:longest"  When more than one match, list all matches and complete till the longest common string. \
                 When there is only a single match, it is fully completed regardless of the case.
 -----------------------------------------

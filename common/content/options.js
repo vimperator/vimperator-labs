@@ -335,7 +335,11 @@ function Options() //{{{
         {
             case "string":
                 if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING)
-                    services.get("pref").setCharPref(name, value);
+                {
+                    let supportString = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+                    supportString.data = value;
+                    services.get("pref").setComplexValue(name, Ci.nsISupportsString, supportString);
+                }
                 else if (type == Ci.nsIPrefBranch.PREF_INT)
                     liberator.echoerr("E521: Number required after =: " + name + "=" + value);
                 else

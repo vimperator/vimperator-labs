@@ -264,7 +264,7 @@ const liberator = (function () //{{{
 
                     for (let [,dialog] in Iterator(dialogs))
                     {
-                        if (arg == dialog[0])
+                        if (util.compareIgnoreCase(arg, dialog[0]) == 0)
                         {
                             dialog[2]();
                             return;
@@ -281,7 +281,11 @@ const liberator = (function () //{{{
             {
                 argCount: "1",
                 bang: true,
-                completer: function (context, args) completion.dialog(context)
+                completer: function (context)
+                {
+                    context.ignoreCase = true;
+                    return completion.dialog(context);
+                }
             });
 
         commands.add(["em[enu]"],
@@ -601,7 +605,7 @@ const liberator = (function () //{{{
 
         forceNewTab: false,
 
-        // ###VERSION### and ###DATE### are replaced by the Makefile
+        // these VERSION and DATE tokens are replaced by the Makefile
         version: "###VERSION### (created: ###DATE###)",
 
         // NOTE: services.get("profile").selectedProfile.name is not rightness.
@@ -842,7 +846,7 @@ const liberator = (function () //{{{
             // Number
             else if (matches = string.match(/^(\d+)$/))
             {
-                return parseInt(match[1], 10);
+                return parseInt(matches[1], 10);
             }
 
             let reference = this.variableReference(string);
@@ -1025,11 +1029,11 @@ const liberator = (function () //{{{
                 return;
             }
 
-            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in '
-                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",").quote(), 2);
+            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
+                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",") + '"', 2);
 
             dirs.forEach(function (dir) {
-                liberator.echomsg("Searching for " + (dir.path + "/**/*.{js,vimp}").quote(), 3);
+                liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
                 sourceDirectory(dir);
             });
         },
@@ -1417,16 +1421,24 @@ window.liberator = liberator;
 // FIXME: Ugly, etc.
 window.addEventListener("liberatorHelpLink", function (event) {
         let elem = event.target;
+
         if (/^(option|mapping|command)$/.test(elem.className))
             var tag = elem.textContent.replace(/\s.*/, "");
+        if (/^(mapping|command)$/.test(elem.className))
+            tag = tag.replace(/^\d+/, "");
         if (elem.className == "command")
-            tag = tag.replace(/\[.*?\]/g, "");
+            tag = tag.replace(/\[.*?\]/g, "").replace(/!$/, "");
+
         if (tag)
             var page = liberator.findHelp(tag);
+
         if (page)
+        {
             elem.href = "chrome://liberator/locale/" + page;
-    },
-    true, true);
+            if (buffer.URL.replace(/#.*/, "") == elem.href.replace(/#.*/, "")) // XXX
+                setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
+        }
+    }, true, true);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);

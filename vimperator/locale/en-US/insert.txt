@@ -4,12 +4,12 @@ HEADER
 
 Insert mode is used to enter text in text boxes and text areas. When
 'insertmode' is set, focusing on a text area immediately switches to
-insert mode.
+Insert mode.
 
 |i| +
 ||i||
 ________________________________________________________________________________
-Starts insert mode in text areas when 'insertmode' is not set.
+Starts Insert mode in text areas when 'insertmode' is not set.
 ________________________________________________________________________________
 
 
@@ -24,7 +24,7 @@ ________________________________________________________________________________
 |i_<C-]>| +
 ||<C-]>||
 ________________________________________________________________________________
-Expand an insert-mode abbreviation.
+Expand an Insert-mode abbreviation.
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

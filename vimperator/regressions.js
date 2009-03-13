@@ -1,7 +1,7 @@
 // Script to find regressions
 //
 // It should use as few liberator methods as possible, but fall back to standard mozilla/DOM methods
-// The reason it, we don't want to find regressions in the regressions script, and it should survive
+// The reason is, we don't want to find regressions in the regressions script, and it should survive
 // massive changes in the internal liberator API, but just test for functionality of
 // user-visible commands/mappings
 //

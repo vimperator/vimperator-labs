@@ -577,7 +577,7 @@ const util = { //{{{
      */
     readFromClipboard: function readFromClipboard()
     {
-        let url;
+        let str;
 
         try
         {
@@ -599,12 +599,12 @@ const util = { //{{{
             if (data)
             {
                 data = data.value.QueryInterface(Ci.nsISupportsString);
-                url = data.data.substring(0, dataLen.value / 2);
+                str = data.data.substring(0, dataLen.value / 2);
             }
         }
         catch (e) {}
 
-        return url;
+        return str;
     },
 
     /**

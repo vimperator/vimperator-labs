@@ -34,10 +34,11 @@ ________________________________________________________________________________
 |;| +
 ||#;#{mode}{empty}{hint}||
 ________________________________________________________________________________
-Start an extended hint mode. ExtendedHint mode is useful, since in this mode
-you can yank link locations, open them in a new window or save images. If
-you want to yank the location of hint [a]24[a], press [m];y[m] to start
-this hint mode. Then press [a]24[a] to copy the hint location.
+Start an extended hint mode. ExtendedHint mode is useful for performing
+operations on hinted elements other than the default left mouse click. For
+example, you can yank link locations, open them in a new window or save images.
+If you want to yank the location of hint [a]24[a], press [m];y[m] to start this
+hint mode. Then press [a]24[a] to copy the hint location.
 
 {mode} can be one of: +
 

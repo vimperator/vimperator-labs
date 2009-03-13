@@ -1,4 +1,4 @@
-2008-XX-XX:
+2009-XX-XX:
     * version 2.0 (probably)
     * IMPORTANT: For compatibility with vim, guioptions=b has been renamed
       'B'. 'b' now represents the bottom scrollbar.
@@ -7,7 +7,7 @@
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
       value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
       to use 'h' in 'complete'.
-    * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly
+    * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly.
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
       not using the args parser explicitly.  The old string value is now
@@ -15,10 +15,10 @@
     * IMPORTANT: 'verbose' is now used for message levels. Logging is
       controlled by the extensions.liberator.loglevel preference.
     * IMPORTANT: :viusage and :exusage now jump to the help index, use the
-      special versions for the old behavior
+      special versions for the old behavior.
     * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
-      VimperatorLeave respectively
-    * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages
+      VimperatorLeave respectively.
+    * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages.
     * IMPORTANT: $VIMPERATOR_HOME is no longer used.
 
     * [count]<C-n> now goes to the [count]th next tab rather than the [count]th tab.
@@ -53,7 +53,7 @@
     * much improved completion support, including javascript, option, and search keyword
     * add <PageUp>/<S-Up> and <PageDown>/<S-Down> command-line mappings for
       selecting the previous and next history items
-    * remove 'hintstyle', 'hlsearchstyle' and 'visualbellstyle' - use
+    * remove 'hintstyle', 'hlsearchstyle', 't_vb' and 'visualbellstyle' - use
       :highlight {Hint,Search,Bell}
     * add :highlight
     * add :optionusage
@@ -81,6 +81,7 @@
     * :qa! and :q! quit forcefully, as in vim
     * stop macro playback on <C-c>
     * :bmark now updates a bookmark, if possible. :bmark! adds a new one
+    * :dialog and :sidebar arguments are now case-insensitive
     * many bug fixes
 
 2008-08-16:
@@ -146,7 +147,7 @@
 
 2008-05-14:
     * version 1.0
-    * THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
+    * IMPORTANT: THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
     * IMPORTANT: Major hints rewrite
       read up the new help for the f, F and ; commands for details
       removed the following hint options: 'hintchars' 'maxhints'
@@ -205,7 +206,7 @@
 
 2007-12-21:
     * version 0.5.3
-    * IMPORTANT! options are no longer automatically stored - use the
+    * IMPORTANT: options are no longer automatically stored - use the
       ~/.vimperatorrc file instead for persistent options
     * :tabnext and :tabprevious now accept an argument
     * the count to gT now specifies a relative tab motion like Vim
@@ -374,7 +375,7 @@
     * added 'n' and 'N' to repeat a search
     * many small bug fixes
 
-17/04/2007:
+2007-04-17:
     * version 0.3
     * added Ctrl-v support to pass one key to firefox (patch by Muthu Kannan)
     * also 'I' will go to 'ignorekeys' mode until esc is pressed, presenting a workaround
@@ -387,6 +388,6 @@
     * ability to use shift and ctrl with special keys like F1 in mappings
     * small documentation and other fixes
 
-11/04/2007:
+2007-04-11:
     * version 0.2
     * first public release
