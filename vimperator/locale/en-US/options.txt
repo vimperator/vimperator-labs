@@ -266,7 +266,7 @@ ____
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
-Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
+Sets the editor to run when [m]<C-i>[m] is pressed in Insert and TextArea
 modes.
 
 Warning: Vimperator will not behave correctly if the editor forks its own
