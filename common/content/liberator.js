@@ -1291,12 +1291,12 @@ const liberator = (function () //{{{
             setTimeout(function () {
 
                 let init = services.get("environment").get(config.name.toUpperCase() + "_INIT");
+                let rcFile = io.getRCFile("~");
+
                 if (init)
                     liberator.execute(init);
                 else
                 {
-                    let rcFile = io.getRCFile("~");
-
                     if (rcFile)
                         io.source(rcFile.path, true);
                     else
@@ -1306,7 +1306,7 @@ const liberator = (function () //{{{
                 if (options["exrc"])
                 {
                     let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
-                    if (localRCFile)
+                    if (localRCFile && !localRCFile.equals(rcFile))
                         io.source(localRCFile.path, true);
                 }
 
