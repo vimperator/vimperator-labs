@@ -555,6 +555,7 @@ function IO() //{{{
          *
          * @param {string} dir The directory to search.
          * @default $HOME.
+         * @returns {nsIFile} The RC file or null if none is found.
          */
         getRCFile: function (dir)
         {
