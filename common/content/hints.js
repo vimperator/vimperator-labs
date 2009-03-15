@@ -165,8 +165,76 @@ function Hints() //{{{
                 text = elem.textContent.toLowerCase();
 
             span = baseNodeAbsolute.cloneNode(true);
-            span.style.left = Math.max((rect.left + scrollX), scrollX) + "px";
-            span.style.top =  Math.max((rect.top  + scrollY), scrollY) + "px";
+
+            let leftpos = Math.max((rect.left + scrollX), scrollX);
+            let toppos =  Math.max((rect.top + scrollY), scrollY);
+
+            if (tagname == "area")
+            {
+                // TODO: Maybe put the following into a seperate function
+                try
+                {
+                    // Need to add the offset to the area element.
+                    // Always try to find the top-left point, as per vimperator default.
+                    let shape = elem.getAttribute("shape").toLowerCase();
+                    let coordstr = elem.getAttribute("coords");
+                    // Technically it should be only commas, but hey
+                    coordstr = coordstr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
+                    let coords = coordstr.split(",").map(Number);
+
+                    if ((shape == "rect" || shape == "rectangle") && coords.length == 4)
+                    {
+                        leftpos += coords[0];
+                        toppos += coords[1];
+                    }
+                    else if (shape == "circle" && coords.length == 3)
+                    {
+                        leftpos += coords[0] - coords[2] / Math.sqrt(2);
+                        toppos += coords[1] - coords[2] / Math.sqrt(2);
+                    }
+                    else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0)
+                    {
+                        let leftbound = Infinity;
+                        let topbound = Infinity;
+
+                        // First find the top-left corner of the bounding rectangle (offset from image topleft can be noticably suboptimal)
+                        for (let i = 0; i < coords.length; i += 2)
+                        {
+                            leftbound = Math.min(coords[i], leftbound);
+                            topbound = Math.min(coords[i+1], topbound);
+                        }
+
+                        let curtop = null;
+                        let curleft = null;
+                        let curdist = Infinity;
+
+                        // Then find the closest vertex. (we could generalise to nearest point on an edge, but I doubt there is a need)
+                        for (let i = 0; i < coords.length; i += 2)
+                        {
+                            let leftoffset = coords[i] - leftbound;
+                            let topoffset = coords[i+1] - topbound;
+                            let dist = Math.sqrt(leftoffset * leftoffset + topoffset * topoffset);
+                            if (dist < curdist)
+                            {
+                                curdist = dist;
+                                curleft = coords[i];
+                                curtop = coords[i+1];
+                            }
+                        }
+
+                        // If we found a satisfactory offset, let's use it.
+                        if (curdist < Infinity)
+                        {
+                            leftpos += curleft;
+                            toppos += curtop;
+                        }
+                    }
+                }
+                catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
+            }
+
+            span.style.left = leftpos + "px";
+            span.style.top =  toppos + "px";
             fragment.appendChild(span);
 
             pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
