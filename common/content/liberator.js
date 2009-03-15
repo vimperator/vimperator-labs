@@ -1225,7 +1225,12 @@ const liberator = (function () //{{{
             config.features.push(getPlatformFeature());
             config.defaults = config.defaults || {};
             config.guioptions = config.guioptions || {};
-            config.browserModes = config.browserModes || [modes.NORMAL];
+
+            // -> we can't use this, since config.browserModes might already be defined as a getter-only
+            // TODO: also change the other config.* defaults?
+            // config.browserModes = config.browserModes || [modes.NORMAL];
+            if (!config.browserModes)
+                 config.browserModes = [modes.NORMAL];
             config.mailModes = config.mailModes || [modes.NORMAL];
             // TODO: suitable defaults?
             //config.mainWidget
