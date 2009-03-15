@@ -636,6 +636,10 @@ function Editor() //{{{
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
+                // This is a hacky fix - but it works.
+                let curTop = elem.scrollTop;
+                let curLeft = elem.scrollLeft;
+
                 let rangeStart = elem.selectionStart; // caret position
                 let rangeEnd = elem.selectionEnd;
                 let tempStr1 = elem.value.substring(0, rangeStart);
@@ -644,6 +648,9 @@ function Editor() //{{{
                 elem.value = tempStr1 + tempStr2 + tempStr3;
                 elem.selectionStart = rangeStart + tempStr2.length;
                 elem.selectionEnd = elem.selectionStart;
+
+                elem.scrollTop = curTop;
+                elem.scrollLeft = curLeft;
             }
         },
 
