@@ -43,7 +43,7 @@ function Buffer() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // FIXME: This doesn't belong here.
-    let mainWindowID = config.mainWindowID || "mainplayer";
+    let mainWindowID = config.mainWindowID || "main-window";
 
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
