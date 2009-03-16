@@ -628,7 +628,7 @@ function Events() //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded() events.waitForPageLoad();
 
-    // load all macros inside ~/.xulmus/macros/
+    // load all macros
     // setTimeout needed since io. is loaded after events.
     setTimeout(function () {
         try
@@ -1037,8 +1037,8 @@ function Events() //{{{
                 //            (i.e., cntrl codes 27--31)
                 // ---
                 // For more information, see:
-                //     [*] Vimp FAQ: http://xulmus.org/trac/wiki/Xulmus/FAQ#WhydoesntC-workforEscMacOSX
-                //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/xulmus/2008-May/001548.html
+                //     [*] Vimp FAQ: http://vimperator.org/trac/wiki/Vimperator/FAQ#WhydoesntC-workforEscMacOSX
+                //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/vimperator/2008-May/001548.html
                 //     [*] Mozilla bug 416227: event.charCode in keypress handler has unexpected values on Mac for Ctrl with chars in "[ ] _ \"
                 //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=416227
                 //     [*] Mozilla bug 432951: Ctrl+'foo' doesn't seem same charCode as Meta+'foo' on Cocoa
@@ -1226,10 +1226,10 @@ function Events() //{{{
                     }
                 }
 
-                if(config.name == "Xulmus")
+                if (config.name == "Xulmus")
                 {
                     // Switch to -- PLAYER -- mode for Songbird Media Player.
-                    if(config.isPlayerWindow)
+                    if (config.isPlayerWindow)
                     {
                         liberator.mode = modes.PLAYER;
                     }
@@ -1437,7 +1437,6 @@ function Events() //{{{
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
             if (((config.name == "Xulmus"  || config.name == "Vimperator") && liberator.mode == modes.NORMAL || liberator.mode == modes.INSERT))
-                 
             {
                 if (key == "<Return>")
                     return false;

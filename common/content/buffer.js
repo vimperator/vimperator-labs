@@ -42,7 +42,7 @@ function Buffer() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-	// FIXME: This doesn't belong here.
+    // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "mainplayer";
 
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
@@ -215,12 +215,12 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["<C-c>"],
         "Stop loading",
-        function () 
+        function ()
         {
             if(config.name == "Xulmus")
                 getBrowser().mCurrentBrowser.stop();
             else
-             window.BrowserStop(); 
+             window.BrowserStop();
         });
 
     // scrolling
@@ -603,12 +603,12 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
-        function () 
-        { 
-            if(config.name == "Xulmus")
+        function ()
+        {
+            if (config.name == "Xulmus")
                 getBrowser().mCurrentBrowser.stop();
             else
-            window.BrowserStop(); 
+                window.BrowserStop();
         },
         { argCount: "0" });
 

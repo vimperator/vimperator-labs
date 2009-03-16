@@ -71,7 +71,7 @@ const liberator = (function () //{{{
     let nError = 0;
     function loadModule(name, func)
     {
-	let message = "Loading module " + name + "...";
+        let message = "Loading module " + name + "...";
         try
         {
             liberator.log(message, 0);
@@ -82,10 +82,10 @@ const liberator = (function () //{{{
         catch (e)
         {
             if (nError++ == 0)
-		liberator.dump("Error loading module - "+ name + "..");
-                liberator.dump(e);
-		liberator.dump(e.stack);
-		window.toJavaScriptConsole();
+                window.toJavaScriptConsole();
+            liberator.dump("Error loading module - "+ name + "..");
+            liberator.dump(e);
+            liberator.dump(e.stack);
             liberator.reportError(e);
         }
     }
@@ -1219,6 +1219,8 @@ const liberator = (function () //{{{
         startup: function ()
         {
             let start = Date.now();
+            liberator.log("Initializing liberator object...", 0);
+
             config.features = config.features || [];
             config.features.push(getPlatformFeature());
             config.defaults = config.defaults || {};
@@ -1227,7 +1229,7 @@ const liberator = (function () //{{{
             config.mailModes = config.mailModes || [modes.NORMAL];
             // TODO: suitable defaults?
             //config.mainWidget
-            //config.mainWindowID 
+            //config.mainWindowID
             //config.visualbellWindow
             //config.styleableChrome
             config.autocommands = config.autocommands || [];

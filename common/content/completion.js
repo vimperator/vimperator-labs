@@ -1381,7 +1381,7 @@ function Completion() //{{{
             completion.urls(context, tags);
         },
 
-        songCompletion: function songCompletion(context, args) 
+        songCompletion: function songCompletion(context, args)
         {
             if (args.completeArg == 0)
                 context.completions = getArtists();

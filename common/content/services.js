@@ -66,7 +66,7 @@ function Services()
     self.add("windowMediator",      "@mozilla.org/appshell/window-mediator;1",  Ci.nsIWindowMediator);
     self.add("windowWatcher",       "@mozilla.org/embedcomp/window-watcher;1",  Ci.nsIWindowWatcher);
     self.add("bookmarks",           "@mozilla.org/browser/nav-bookmarks-service;1", Ci.nsINavBookmarksService);
-    
+
     self.addClass("file",       "@mozilla.org/file/local;1",            Ci.nsILocalFile);
     self.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
     self.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);
