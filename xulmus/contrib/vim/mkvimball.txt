@@ -1,2 +1,2 @@
-syntax/vimperator.vim
-ftdetect/vimperator.vim
+syntax/xulmus.vim
+ftdetect/xulmus.vim

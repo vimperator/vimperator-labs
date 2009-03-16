@@ -16,6 +16,6 @@ hello = function(name)
 }
 EOF
 
-echo "vimperatorrc sourced"
+echo "xulmusrc sourced"
 
-" vim: ft=vimperator:
+" vim: ft=xulmus:
