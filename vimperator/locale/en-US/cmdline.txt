@@ -2,8 +2,8 @@ HEADER
 
 |Command-line-mode| |Command-line| |mode-cmdline| +
 
-Command-line mode is used to enter Ex commands (":") and text search patterns
-("/" and "?").
+Command-line mode is used to enter Ex commands ("[m]:[m]") and text search patterns
+("[m]/[m]" and "[m]?[m]").
 
 |:| +
 ||:||
@@ -25,7 +25,7 @@ ________________________________________________________________________________
 |c_<C-]>| +
 ||<C-]>||
 ________________________________________________________________________________
-Expand a Command-line abbreviation.
+Expand a command-line abbreviation.
 ________________________________________________________________________________
 
 

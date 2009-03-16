@@ -20,13 +20,17 @@ are hidden. +
 If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
 If you don't like Vimperator at all, you can uninstall it by typing
 [c]:addons[c] and remove/disable it. +
-If you like it but can't remember the shortcuts, then press [m]F1[m] or
+If you like it but can't remember the shortcuts, then press [m]<F1>[m] or
 [c]:help[c] to get this help window back.
 
 |author| |donation| +
-Vimperator was written by mailto:stubenschrott@gmx.net[Martin Stubenschrott].
-If you appreciate my work on Vimperator and want to encourage me working on it
-more, you can either send me greetings, patches or make a donation:
+Vimperator was initially written by mailto:stubenschrott@gmx.net[Martin
+Stubenschrott] but has found many other
+http://vimperator.org/trac/wiki/Vimperator/Authors[contributors] in the
+meanwhile. If you appreciate the work on Vimperator and want to encourage us
+working on it more, you can send us greetings, patches, or donations (thanks a
+lot to http://vimperator.org/trac/wiki/Vimperator/Donors[these people] who
+already did):
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 <!-- the PAYPAL code -->
@@ -37,9 +41,11 @@ more, you can either send me greetings, patches or make a donation:
 </fieldset></form>
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Of course as a believer in free open source software, only make a donation
-if you really like Vimperator and the money doesn't hurt -- otherwise just use
-it, recommend it and like it :)
+If you prefer getting some nice products for your money, you can also support
+us by buying some cool http://www.zazzle.com/maxauthority*[merchandise] like
+t-shirts or mugs. Of course, as we believe in free, open source software, only
+support us financially if you really like Vimperator and the money doesn't hurt
+- otherwise just use it, recommend it, and like it :)
 
 section:Help{nbsp}topics[overview]
 
@@ -94,7 +100,7 @@ section:Features[features]
   with support for Firefox keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
-* Marks support ([m]ma[m] to set mark a on a web page, [m]'a[m] to go there)
+* Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to go there)
 * QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
 * [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
@@ -106,10 +112,13 @@ section:Features[features]
 
 section:Contact[contact]
 
-Please send comments/bug reports/patches to the mailing list, where I will
-properly answer any questions. You can also join the #vimperator IRC channel
-on irc.freenode.net or check the Wiki for frequently asked questions. Make
-sure, you have read the TODO file first, as I am aware of many things which
-can be improved when I find time for it or get patches.
+Please send comments/bug reports/patches to the mailing list, where we will
+properly answer any questions. You can also join the
++++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC channel
+on http://www.freenode.net/[Freenode] or check the
+http://vimperator.org/trac/wiki/Vimperator/Wiki[Wiki] for
+http://vimperator.org/trac/wiki/Vimperator/FAQ[frequently asked questions
+(FAQ)]. Make sure, you have read the TODO file first, as we are aware of many
+things which can be improved when we find time for it or receive patches.
 
 // vim: set filetype=asciidoc:

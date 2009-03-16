@@ -639,7 +639,7 @@ function Events() //{{{
             {
                 for (let [,dir] in Iterator(dirs))
                 {
-                    liberator.echomsg('Searching for "macros/*" in ' + dir.path.quote(), 2);
+                    liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
 
                     liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
@@ -932,6 +932,8 @@ function Events() //{{{
                             {
                                 if (!ctrl && !alt && !shift && !meta)
                                     return false; // an invalid key like <a>
+                                else if (shift)
+                                    keyname = keyname.toUpperCase();
                                 charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
@@ -1388,8 +1390,11 @@ function Events() //{{{
                 if (key == "<C-c>" && !event.isMacro)
                 {
                     events.feedingKeys = false;
-                    if (lastMacro)
+                    if (modes.isReplaying)
+                    {
+                        modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
+                    }
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1709,7 +1714,7 @@ function Events() //{{{
             {
                 setTimeout(statusline.updateUrl, 100);
             },
-            setOverLink : function (link, b)
+            setOverLink: function (link, b)
             {
                 let ssli = options["showstatuslinks"];
                 if (link && ssli)
@@ -1773,11 +1778,12 @@ function Events() //{{{
 
     window.XULBrowserWindow = self.progressListener;
     window.QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIWebNavigation)
-        .QueryInterface(Ci.nsIDocShellTreeItem).treeOwner
-        .QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIXULWindow)
-        .XULBrowserWindow = window.XULBrowserWindow;
+          .getInterface(Ci.nsIWebNavigation)
+          .QueryInterface(Ci.nsIDocShellTreeItem)
+          .treeOwner
+          .QueryInterface(Ci.nsIInterfaceRequestor)
+          .getInterface(Ci.nsIXULWindow)
+          .XULBrowserWindow = self.progressListener;
     try
     {
         getBrowser().addProgressListener(self.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);

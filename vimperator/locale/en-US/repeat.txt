@@ -7,7 +7,7 @@ Vimperator can repeat a number of commands and record macros.
 section:Macros[macros,complex-repeat]
 
 |q|
-||q{0-9a-zA-Z}|| +
+||q\\{0-9a-zA-Z}|| +
 ____________________________________________________________________________
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).

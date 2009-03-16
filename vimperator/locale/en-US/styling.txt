@@ -105,7 +105,7 @@ ________________________________________________________________________________
 Add CSS styles to the browser or to web pages. {filter} is a comma
 separated list of URLs to match. URLs ending with *\** are matched as
 prefixes, URLs not containing any *:* or */* characters are
-matched as domains. If {name} (short option: [c]-n[c]) is provided, any
+matched as domains. If {name} (short option: *-n*) is provided, any
 existing style with the same name is overridden, and the style may later
 be deleted using {name}. If *-append* (short option: *-a*) is provided
 along with *-name*, {css} and {filter} are appended to its current
@@ -118,13 +118,12 @@ ________________________________________________________________________________
 ||:dels[tyle] [-name={name}] [-index={index}] [{filter}] [{css}]|| +
 ________________________________________________________________________________
 Delete any matching styles. If {filter} is provided, only matching elements of
-the filter are disabled. For instance, a filter [c]mozilla.org[c], given a
-style for [c]www.google.com,mozilla.org[c], will result in a style for
-[c]www.google.com[c]. The available options are:
+the filter are disabled. For instance, a filter [a]mozilla.org[a], given a
+style for [a]www.google.com,mozilla.org[a], will result in a style for
+[a]www.google.com[a]. The available options are:
 
- * [c]-name[c]:  The name provided to [c]:style[c] (short option:
-                 *-n*)
- * [c]-index[c]: For unnamed styles, the index listed by [c]:style[c]
+ * *-name*:  The name provided to [c]:style[c] (short option: *-n*)
+ * *-index*: For unnamed styles, the index listed by [c]:style[c]
                  (short option: *-i*)
 ________________________________________________________________________________
 

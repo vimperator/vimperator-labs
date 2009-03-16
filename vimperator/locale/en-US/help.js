@@ -6,7 +6,7 @@ function checkFragment()
         return;
     let elem = document.evaluate('//*[@class="tag" and text()="' + frag + '"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
     if (elem)
-        window.content.scrollTo(0, elem.getBoundingClientRect().top - 10); // 10px context
+        window.content.scrollTo(0, window.content.scrollY + elem.getBoundingClientRect().top - 10); // 10px context
 }
 
 document.addEventListener("load", checkFragment, true);
