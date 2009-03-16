@@ -109,7 +109,7 @@ function Player() // {{{
             sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0,Ci.sbIMediaItem)));
         },
         {
-            completer: function (context, args) completion.songCompletion(context, args)
+            completer: function (context, args) completion.song(context, args)
         });
 } // }}}
 
