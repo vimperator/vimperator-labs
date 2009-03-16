@@ -1201,6 +1201,8 @@ function CommandLine() //{{{
          *     for the user's input.
          * @... {string} promptHighlight - The HighlightGroup used for the
          *     prompt. @default "Question"
+         * @... {string} default - The initial value that will be returned
+         *     if the user presses <CR> straightaway. @default ""
          */
         input: function _input(prompt, callback, extra)
         {
