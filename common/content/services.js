@@ -48,6 +48,7 @@ function Services()
 
     self.add("appStartup",          "@mozilla.org/toolkit/app-startup;1",       Ci.nsIAppStartup);
     self.add("autoCompleteSearch",  "@mozilla.org/browser/global-history;2",    Ci.nsIAutoCompleteSearch);
+    //self.add("autoCompleteSearch",  "@mozilla.org/autocomplete/search;1?name=songbird-autocomplete",    Ci.nsIAutoCompleteSearch);
     self.add("browserSearch",       "@mozilla.org/browser/search-service;1",    Ci.nsIBrowserSearchService);
     self.add("cache",               "@mozilla.org/network/cache-service;1",     Ci.nsICacheService);
     self.add("console",             "@mozilla.org/consoleservice;1",            Ci.nsIConsoleService);
@@ -64,7 +65,8 @@ function Services()
     self.add("threadManager",       "@mozilla.org/thread-manager;1",            Ci.nsIThreadManager);
     self.add("windowMediator",      "@mozilla.org/appshell/window-mediator;1",  Ci.nsIWindowMediator);
     self.add("windowWatcher",       "@mozilla.org/embedcomp/window-watcher;1",  Ci.nsIWindowWatcher);
-
+    self.add("bookmarks",           "@mozilla.org/browser/nav-bookmarks-service;1", Ci.nsINavBookmarksService);
+    
     self.addClass("file",       "@mozilla.org/file/local;1",            Ci.nsILocalFile);
     self.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
     self.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);

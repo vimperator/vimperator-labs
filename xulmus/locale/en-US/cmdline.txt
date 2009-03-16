@@ -1,0 +1,80 @@
+HEADER
+
+|Command-line-mode| |Command-line| |mode-cmdline| +
+
+Command-line mode is used to enter Ex commands (":") and text search patterns
+("/" and "?").
+
+|:| +
+||:||
+________________________________________________________________________________
+Start Command-line mode. In Command-line mode, you can perform extended
+commands, which may require arguments.
+________________________________________________________________________________
+
+
+section:Command-line{nbsp}editing[cmdline-editing]
+
+|c_<C-c>| +
+||<C-c>||
+________________________________________________________________________________
+Quit Command-line mode without executing.
+________________________________________________________________________________
+
+
+|c_<C-]>| +
+||<C-]>||
+________________________________________________________________________________
+Expand a Command-line abbreviation.
+________________________________________________________________________________
+
+
+|c_<Up>| +
+||<Up>||
+________________________________________________________________________________
+Recall the previous command line from the history list which matches the
+current command line.
+________________________________________________________________________________
+
+
+|c_<Down>| +
+||<Down>||
+________________________________________________________________________________
+Recall the next command line from the history list which matches the current
+command line.
+________________________________________________________________________________
+
+
+|c_<S-Up>| |c_<PageUp>|
+||<S-Up>|| +
+||<PageUp>||
+________________________________________________________________________________
+Recall the previous command line from the history list.
+________________________________________________________________________________
+
+
+|c_<S-Down>| |c_<PageDown>|
+||<S-Down>|| +
+||<PageDown>||
+________________________________________________________________________________
+Recall the next command line from the history list.
+________________________________________________________________________________
+
+section:Command-line{nbsp}completion[cmdline-completion]
+
+|c_<Tab>| +
+||<Tab>||
+________________________________________________________________________________
+Complete the word in front of the cursor according to the behavior specified in
+'wildmode'. If 'wildmode' contains "list" and there are multiple matches then
+the completion menu window is opened.
+________________________________________________________________________________
+
+
+|c_<S-Tab>| +
+||<S-Tab>||
+________________________________________________________________________________
+Complete the previous full match when 'wildmode' contains "full".
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

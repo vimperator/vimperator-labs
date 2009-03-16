@@ -269,6 +269,7 @@ const modes = (function () //{{{
     self.addMode("MESSAGE"); // for now only used in Muttator when the message has focus
     self.addMode("COMPOSE");
     self.addMode("CUSTOM", false, function () plugins.mode);
+    self.addMode("PLAYER"); // Player mode for songbird
     // extended modes, can include multiple modes, and even main modes
     self.addMode("EX", true);
     self.addMode("HINTS", true);

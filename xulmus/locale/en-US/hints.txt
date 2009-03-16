@@ -1,0 +1,67 @@
+HEADER
+
+|quick-hints| |hints| +
+
+INTRO TO BE WRITTEN...
+
+|f| +
+||#f#{hint}||
+________________________________________________________________________________
+Start QuickHint mode. In QuickHint mode, every hintable item (according to the
+'hinttags' XPath query) is assigned a unique number. You can now either type
+this number or type any part of the URL which you want to follow, and it is
+followed as soon as it can be uniquely identified. Often it can be useful to
+combine these techniques to narrow down results with some letters, and then
+typing a single digit to make the match unique. Pressing [m]<Leader>[m]
+(defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode", where numbers
+are treated as normal text. +
+[m]<Esc>[m] stops this mode at any time.
+________________________________________________________________________________
+
+
+|F| +
+||#F#{hint}||
+________________________________________________________________________________
+Start QuickHint mode, but open link in a new tab. Like normal QuickHint
+mode (activated with [m]f[m]) but opens the link in a new tab. The new
+tab will be loaded in background according to the
+\'browser.tabs.loadInBackground' Firefox preference.
+________________________________________________________________________________
+
+
+|extended-hints| +
+
+|;| +
+||#;#{mode}{empty}{hint}||
+________________________________________________________________________________
+Start an extended hint mode. ExtendedHint mode is useful for performing
+operations on hinted elements other than the default left mouse click. For
+example, you can yank link locations, open them in a new window or save images.
+If you want to yank the location of hint [a]24[a], press [m];y[m] to start this
+hint mode. Then press [a]24[a] to copy the hint location.
+
+{mode} can be one of: +
+
+* |;;| [m];[m] to focus a link and hover it with the mouse
+* |;?| [m]?[m] to show information about the element (incomplete)
+* |;s| [m]s[m] to save its destination
+* |;a| [m]a[m] to save its destination (prompting for save location)
+* |;f| [m]f[m] to focus a frame
+* |;o| [m]o[m] to open its location in the current tab
+* |;t| [m]t[m] to open its location in a new tab
+* |;b| [m]b[m] to open its location in a new background tab
+* |;w| [m]w[m] to open its destination in a new window
+* |;F| [m]F[m] to follow a sequence of [m]<CR>[m]-delimited hints in background tabs
+* |;O| [m]O[m] to generate an [c]:open[c] with hint's URL (like [m]O[m])
+* |;T| [m]T[m] to generate a [c]:tabopen[c] with hint's URL (like [m]T[m])
+* |;W| [m]W[m] to generate a [c]:winopen[c] with hint's URL
+* |;v| [m]v[m] to view its destination source
+* |;V| [m]V[m] to view its destination source in the external editor
+* |;y| [m]y[m] to yank its destination location
+* |;Y| [m]Y[m] to yank its text description
+
+Hintable elements for all extended hint modes can be set in the
+'extendedhinttags' XPath string.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

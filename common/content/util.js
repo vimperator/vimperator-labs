@@ -170,7 +170,7 @@ const util = { //{{{
      */
     computedStyle: function computedStyle(node)
     {
-        while (node instanceof Text && node.parentNode)
+	while (node instanceof Text && node.parentNode)
             node = node.parentNode;
         return node.ownerDocument.defaultView.getComputedStyle(node, null);
     },

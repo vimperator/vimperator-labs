@@ -174,7 +174,9 @@ statusbarpanel {
 }
 
 #liberator-completions-content *,
-#liberator-multiline-output-content * {
+#liberator-multiline-output-content *,
+#liberator-commandline-prompt *,
+#liberator-commandline-command {
     font: inherit;
 }
 

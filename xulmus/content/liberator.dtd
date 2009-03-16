@@ -1,0 +1,6 @@
+
+<!ENTITY liberator.mainWindow "mainplayer">
+<!ENTITY liberator.name "xulmus">
+<!ENTITY liberator.statusBefore "statusbar-display">
+<!ENTITY liberator.statusAfter "">
+

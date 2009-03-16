@@ -568,7 +568,7 @@ function CommandLine() //{{{
 
     var startHints = false; // whether we're waiting to start hints mode
     var lastSubstring = "";
-
+   
     // the containing box for the promptWidget and commandWidget
     const commandlineWidget = document.getElementById("liberator-commandline");
     // the prompt for the current command, for example : or /. Can be blank
@@ -577,7 +577,7 @@ function CommandLine() //{{{
     const commandWidget = document.getElementById("liberator-commandline-command");
 
     const messageBox = document.getElementById("liberator-message");
-
+    
     commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
     messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
 

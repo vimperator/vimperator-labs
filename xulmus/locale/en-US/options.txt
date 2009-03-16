@@ -1,0 +1,815 @@
+HEADER
+
+|options| +
+
+Vimperator has a number of internal variables and switches which can be set to
+achieve special effects. These options come in 5 forms:
+`------------`-----------------------------------------
+*boolean*    can only be on or off
+*number*     has a numeric value
+*string*     has a string value
+*charlist*   like a string but with unique characters
+*stringlist* a comma-separated list of strings
+-------------------------------------------------------
+
+section:Setting{nbsp}options[set-option,E764]
+
+|:set| |:se| +
+||:se[t]||
+____
+Show all options that differ from their default value.
+____
+
+||:se[t] all||
+____
+Show all options.
+____
+
+|E518| |E519|
+||:se[t] {option}?||
+____
+Show value of {option}.
+____
+
+||:se[t] {option} [...]||
+____
+Toggle option: set, switch it on. +
+Number option: show value. +
+String option: show value.
+____
+
+||:se[t] no[a]{option}[a] [...]|| +
+____
+Toggle option: Reset, switch it off.
+____
+
+||:se[t] {option}! [...]|| +
+||:se[t] inv[a]{option}[a] [...]|| +
+____
+Toggle option: Invert value.
+____
+
+||:se[t] inv[a]{option}[a]={value} [...]|| +
+||:se[t] {option}!={value} [...]|| +
+____
+For list options, toggle the specified values.
+
+If the option is a list, the given values are toggled. Given +
+\{nbsp}[c]:set opt=foo,bar[c] +
+then, +
+\{nbsp}[c]:set opt!=foo,baz[c] +
+results in +
+\{nbsp}opt=bar,baz
+____
+
+|:set-default|
+||:se[t] {option}& [...]||
+____
+Reset option to its default value.
+____
+
+||:se[t] all&||
+____
+Set all options to their default value.
+____
+
+|:set-args| |E487| |E521|
+||:se[t] {option}={value} [...]|| +
+____
+Set string or number option to {value}. +
+For numeric options the value must be given in decimal.
+The old value can be inserted by typing [m]<Tab>[m].
+____
+
+|:set+=|
+||:se[t] {option}+={value} [...]|| +
+____
+Add the {value} to a number option, or append the {value} to a string option.
+When the option is a comma separated list, a comma is added, unless the value
+was empty. If the option is a list of flags, superfluous flags are removed.
+When adding a flag that was already present the option value doesn't change.
+____
+
+|:set^=|
+||:se[t] {option}^={value} [...]|| +
+____
+Multiply the {value} to a number option, or prepend the {value} to a string
+option. When the option is a comma separated list, a comma is added, unless the
+value was empty.
+____
+
+|:set-=|
+||:se[t] {option}-={value} [...]|| +
+
+____
+Subtract the {value} from a number option, or remove the {value} from a string
+option, if it is there. If the {value} is not found in a string option, there
+is no error or warning. When the option is a comma separated list, a comma is
+deleted, unless the option becomes empty. When the option is a list of flags,
+{value} must be exactly as they appear in the option. Remove flags one by one
+to avoid problems.
+____
+
+|:setlocal| |:setl|
+||:setl[ocal]|| +
+||:setl[ocal] all|| +
+||:setl[ocal] {option}?|| +
+||:setl[ocal] {option}|| +
+||:setl[ocal] no[a]{option}[a]|| +
+||:setl[ocal] inv[a]{option}[a]|| +
+||:setl[ocal] {option}&|| +
+||:setl[ocal] all&|| +
+||:setl[ocal] {option}={value}|| +
+||:setl[ocal] {option}+={value}|| +
+||:setl[ocal] {option}^={value}|| +
+||:setl[ocal] {option}-={value}|| +
+
+____
+The same as [c]:set[c] command, but operates on current tab options
+only. See [c]:set[c] for details.
+____
+
+|:setglobal| |:setg|
+||:setg[lobal]|| +
+||:setg[lobal] all|| +
+||:setg[lobal] {option}?|| +
+||:setg[lobal] {option}|| +
+||:setg[lobal] no[a]{option}[a]|| +
+||:setg[lobal] inv[a]{option}[a]|| +
+||:setg[lobal] {option}&|| +
+||:setg[lobal] all&|| +
+||:setg[lobal] {option}={value}|| +
+||:setg[lobal] {option}+={value}|| +
+||:setg[lobal] {option}^={value}|| +
+||:setg[lobal] {option}-={value}|| +
+
+____
+The same as [c]:set[c] command, but operates on global options only.
+See [c]:set[c] for details.
+____
+
+
+|expand-environment-var| |expand-env| |:set_env| +
+
+Environment variables are expanded for path options like 'cdpath' and
+'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
+character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
+
+section:Setting{nbsp}Firefox{nbsp}options[firefox-options,preferences]
+
+Firefox options can be viewed and set with the following commands:
+
+|:prefs| |:preferences|
+||:pref[erences]||
+________________________________________________________________________________
+Show the Firefox preferences dialog. You can change the browser preferences
+from this dialog. Be aware that not all Firefox preferences work, because
+Vimperator overrides some key bindings and changes Firefox's GUI.
+________________________________________________________________________________
+
+|:prefs!| |:preferences!|
+||:pref[erences]!||
+________________________________________________________________________________
+Opens about:config in the current tab where you can change advanced Firefox
+preferences.
+________________________________________________________________________________
+
+|:set!| |:set-!|
+||:se[t]! {preference}={value}|| +
+________________________________________________________________________________
+Change any Firefox {preference} (those in the about:config window). You can also
+reset/delete those preferences with [c]:set! {preference}&[c].
+________________________________________________________________________________
+
+|overridden-preferences| +
+
+Vimperator sets several Firefox preferences at startup. If this is undesirable,
+they can be changed to a different value in your RC file using
+[c]:set! {preference}={value}[c]
+
+The following preferences are set:
+
+* browser.startup.page
+* dom.popup_allowed_events
+* accessibility.typeaheadfind.autostart
+* accessibility.typeaheadfind
+
+// TODO: others?
+
+section:List{nbsp}of{nbsp}options[list-options]
+
+|\'act'| |\'activate'|
+||'activate' 'act'|| stringlist (default: "homepage,quickmark,tabopen,paste")
+____
+Define when tabs are automatically activated. Available items:
+
+`-----------`--------------------------------
+*homepage*  [m]gH[m] mapping
+*quickmark* [m]go[m] and [m]gn[m] mappings
+*tabopen*   [c]:tabopen[!][c] command
+*paste*     [m]P[m] and [m]gP[m] mappings
+---------------------------------------------
+
+____
+
+
+|$CDPATH|
+|\'cd'| |\'cdpath'|
+||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
+____
+List of directories searched when executing the [c]:cd[c] command. This is
+only used for relative paths, if an absolute path is specified then the option
+is ignored.
+____
+
+
+|\'cpt'| |\'complete'|
+||'complete' 'cpt'|| charlist (default: sfl)
+____
+Items which are completed at the [c]:[tab]open[c] prompt. Available items:
+
+`---`--------------------------------------------------------------------------------
+*s* Search engines and keyword URLs
+*f* Local files
+*l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
+*b* Bookmarks
+*S* Suggest engines
+-------------------------------------------------------------------------------------
+
+The order is important, so [c]:set complete=bs[c] would list bookmarks first,
+and then any available quick searches.
+____
+
+
+|\'ds'| |\'defsearch'|
+||'defsearch' 'ds'|| string (default: "google")
+____
+Sets the default search engine. The default search engine name is used in the
+[c]:[tab]open [arg][c] command if [a][arg][a] neither looks like a URL or like
+a specified search engine/keyword.
+
+This means, it you set 'defsearch' to "youtube", then [c]:open arnold
+schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
+schwarzenegger[c]. Therefore, you need to add a keyword or search engine
+"youtube" first.
+
+If 'defsearch' is empty, then Firefox will always attempt to open the
+raw [a][arg][a].
+____
+
+
+|\'editor'| |i_<C-i>|
+||'editor'|| string (default: "gvim -f")
+____
+Set the external text editor.
+Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
+modes.
+
+Warning: Vimperator will not behave correctly if the editor forks its own
+process, such as with gvim without the -f argument.
+____
+
+|\'noex'| |\'noexrc'| |\'ex'| |\'exrc'|
+||'exrc' 'ex'|| boolean (default: off)
+____
+Allow reading of an RC file in the current directory. This file is sourced in
+addition to, and after, your default RC file.
+____
+
+|\'eht'| |\'extendedhinttags'|
+||'extendedhinttags' 'eht'|| string
+____
+(default: +++//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
+@oncommand or @class='lk' or @role='link'] | //input[not(@type='hidden')] | //a
+| //area | //iframe | //textarea | //button | //select |
+//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe
+| //xhtml:textarea | //xhtml:button | //xhtml:select+++)
+
+The XPath string of hintable elements activated by [m];[m].
+____
+
+
+|\'noeb'| |\'noerrorbells'| |\'eb'| |\'errorbells'|
+||'errorbells' 'eb'|| boolean (default: off)
+____
+Ring the bell when an error message is displayed.
+____
+
+
+|\'ei'| |\'eventignore'|
+||'eventignore'|| stringlist (default: "")
+____
+A list of autocommand event names which should be ignored. If the list contains
+the value "all" then all events are ignored.
+____
+
+
+|\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
+||'focuscontent' 'fc'|| boolean (default: off)
+____
+Focus the content after a page has loaded. This is useful, if you always
+want to stay in Normal mode when browsing between web sites. When "on", it
+blurs any textbox which often is automatically focused on page load.
+If you usually like 'focuscontent' but sometimes you'd like to focus the
+first input field, you can use [m]gi[m] to jump to it.
+____
+
+
+|\'nofs'| |\'nofullscreen'| |\'fs'| |\'fullscreen'|
+||'fullscreen' 'fs'|| boolean (default: off)
+____
+Show the current window fullscreen. Also hide certain GUI elements like the
+statusline.
+____
+
+
+|\'go'| |\'guioptions'|
+||'guioptions' 'go'|| charlist (default: "")
+____
+Show or hide certain GUI elements like the menu or toolbar. Supported characters:
+
+`---`-----------
+*m* Menubar
+*T* Toolbar
+*B* Bookmark bar
+*n* Tab number
+*N* Tab number over image
+*b* Bottom scrollbar
+*r* Right scrollbar
+*l* Left scrollbar
+----------------
+
+You can also hide the tab bar with [c]:set showtabline=0[c].
+____
+
+
+|\'hf'| |\'helpfile'|
+||'helpfile' 'hf'|| string (default: "intro.html")
+____
+Name of the main help file. This is the tail component of the chrome URL as
+displayed in the status line when viewing the page.
+____
+
+
+|\'hm'| |\'hintmatching'|
+||'hintmatching' 'hm'|| string (default: contains)
+____
+
+Change the hint matching algorithm during Hints mode. Possible values:
+
+`--------------------`-------------------------------------------------------------------------------------------------------------------------------
+*contains*           The typed characters are split on whitespace, and these character groups have to match anywhere inside the text of the link.
+*wordstartswith*     The typed characters are matched with the beginning of the first word (see 'wordseparators') in the link as long as possible. If no matches occur in the current word, then the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, then the characters are split on whitespace. These character groups are then matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.
+*firstletters*       Behaves like wordstartswith, but non-matching words aren't overleaped.
+*custom*             Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+____
+
+
+|\'fh'| |\'followhints'|
+||'followhints' 'fh'|| number (default: 0)
+____
+
+Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
+
+`---------`----------------------------------------------------------
+*0*       Follow the first hint as soon as typed text uniquely identifies it.
+	  Follow the selected hint on [m]<Return>[m].
+*1*       Follow the selected hint on [m]<Return>[m].
+*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
+---------------------------------------------------------------------
+
+____
+
+
+|\'ht'| |\'hinttags'|
+||'hinttags' 'ht'|| string
+____
+(default: +++//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
+@oncommand or @class='lk' or @role='link'] | //input[not(@type='hidden')] | //a
+| //area | //iframe | //textarea | //button | //select |
+//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe
+| //xhtml:textarea | //xhtml:button | //xhtml:select+++)
+
+XPath string of hintable elements activated by [m]f[m] and [m]F[m]
+____
+
+
+|\'hto'| |\'hinttimeout'|
+||'hinttimeout' 'hto'|| number (default: 0)
+____
+Timeout before automatically following a non-unique numerical hint. Set to 0
+(the default) to only follow numeric hints after pressing [m]<Return>[m] or
+when the hint is unique.
+____
+
+
+|\'hi'| |\'history'|
+||'history' 'hi'|| number (default: 500)
+____
+Number of Ex commands and search patterns to store in the command-line history.
+____
+
+
+|\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'|
+||'hlsearch' 'hls'|| boolean (default: off)
+____
+Highlight previous search pattern matches
+____
+
+
+|\'noic'| |\'noignorecase'| |\'ic'| |\'ignorecase'|
+||'ignorecase' 'ic'|| boolean (default: on)
+____
+Ignore case in search patterns.
+____
+
+
+|\'nois'| |\'noincsearch'| |\'is'| |\'incsearch'|
+||'incsearch' 'is'|| boolean (default: on)
+____
+Show where the search pattern matches as it is typed.
+
+Note: Incremental searching currently only works in the forward direction.
+____
+
+
+|\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'|
+||'insertmode' 'im'|| boolean (default: on)
+____
+Use Insert mode as the default for text areas.
+Makes Vimperator work in a way that Insert mode is the default mode for text areas.
+Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.
+____
+
+
+|\'ls'| |\'laststatus'|
+||'laststatus' 'ls'|| number (default: 2)
+____
+Determines when the last window will have a status line. Possible values:
+
+`---`---------------------------------
+*0* Never
+*1* Only if there are multiple windows
+*2* Always
+--------------------------------------
+
+Note: laststatus=1 not implemented yet.
+____
+
+
+|\'nolks'| |\'nolinksearch'| |\'lks'| |\'linksearch'|
+||'linksearch' 'lks'|| boolean (default: off)
+____
+Limit the search to hyperlink text.
+This includes (X)HTML elements with an "href" atrribute and XLink "simple" links.
+____
+
+
+|\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
+||'loadplugins' 'lpl'|| boolean (default on)
+____
+Load plugin scripts when starting up. When on, yet unloaded plugins are
+automatically loaded after the vimperatorrc file has been sourced. To
+load plugins earlier, use the [c]:loadplugins[c] command within the
+vimperatorrc.
+____
+
+
+|\'msgs'| |\'messages'|
+||'messages' 'msgs'|| number (default: 100)
+____
+Number of messages to store in the message history.
+____
+
+
+|\'nomore'| |\'more'|
+||'more'|| boolean (default: on)
+____
+Pause the message list window when more than one screen of listings is displayed
+____
+
+
+|\'nextpattern'|
+||'nextpattern'|| stringlist
+____
+(default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
+
+Patterns to use when guessing the \'next' page in a document sequence. Each
+pattern, in order, is matched against all links in the page with the first
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
+____
+
+
+|\'newtab'|
+||'newtab'|| stringlist (default: "")
+____
+Define which Ex commands output the result in a new tab automatically. You can
+also use [c]:tab command[c] to manually output a command in a new tab.
+
+The possible values:
+`------------`---------------------------------------------
+*all*        All commands
+*addons*     [c]:addo[ns][c] command
+*downloads*  [c]:downl[oads][c] command
+*help*       [c]:h[elp][c] command
+*javascript* [c]:javascript![c] or [c]:js![c] command
+*prefs*      [c]:pref[erences]![c] or [c]:prefs![c] command
+-----------------------------------------------------------
+
+____
+
+
+|\'noonline'| |\'online'|
+||'online'|| boolean (default on)
+____
+Show and set the \'work offline' behavior.
+____
+
+
+|\'pageinfo' \'pa'|
+||'pageinfo' 'pa'||
+charlist (default: gfm)
+____
+Desired info on [c]:pa[geinfo][c]. Available items:
+
+.--------`----------------
+*g*      General info
+*f*      Feeds
+*m*      Meta tags
+--------------------------
+
+The order matters.
+____
+
+
+|\'pps'| |\'popups'|
+||'popups' 'pps'|| number (default: 1)
+____
+Define where to show requested popup windows.
+Does not apply to windows which are opened by middle clicking a link,
+they always open in a new tab. Possible values:
+
+.---`------------------------------------------------------------------------------------------------
+*0*  Force to open in the current tab (Warning: this can stop some web sites from working correctly!)
+*1*  Always open in a new tab
+*2*  Open in a new window if it has a specific requested size (default in Firefox)
+*3*  Always open in a new window
+*4*  Open in the same tab unless it has a specific requested size
+-----------------------------------------------------------------------------------------------------
+
+Note: This option does not change the popup blocker of Firefox in any way.
+____
+
+
+|\'nopreload'| |\'preload'|
+||'preload' 'nopreload'|| boolean (default: on)
+____
+Speed up first time history/bookmark completion
+
+History access can be quite slow for a large history.
+Vimperator maintains a cache to speed it up significantly on subsequent access.
+In order to also speed up first time access, it is cached at startup, if this option is set (recommended).
+____
+
+
+|\'previouspattern'|
+||'previouspattern'|| stringlist
+____
+(default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
+
+Patterns to use when guessing the \'previous' page in a document sequence. Each
+pattern, in order, is matched against all links in the page with the first
+match being used. The patterns are case insensitive regular expressions and the
+link elements are those defined by 'hinttags'.
+____
+
+
+|$VIMPERATOR_RUNTIME|
+|\'rtp'| |\'runtimepath'|
+||'runtimepath' 'rtp'|| stringlist
+____
+(default: _$VIMPERATOR_RUNTIME_ or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+
+List of directories searched for runtime files: +
+colors/ +
+macros/ +
+plugin/ +
+
+Example: [c]:set runtimepath=\~/myvimperator,\~/.vimperator[c] +
+This will search for plugins in both "\~/myvimperator/plugin" and
+"\~/.vimperator/plugin"
+
+On startup, if the environment variable _$VIMPERATOR_RUNTIME_ does not
+exist, Vimperator will set it to match this value.
+____
+
+
+|\'scr'| |\'scroll'|
+||'scroll' 'scr'|| number (default: 0)
+____
+Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands.
+The number of lines scrolled defaults to half the window size.
+When a [count] is specified to the [m]<C-u>[m] or [m]<C-d>[m] commands this is
+used to set the value of 'scroll' and also used for the current command. The
+value can be reset to half the window height with [c]:set scroll=0[c].
+____
+
+
+|\'shell'| |\'sh'|
+||'shell' 'sh'|| string (default: _$SHELL_ or "sh", Win32: "cmd.exe")
+____
+Shell to use for executing [c]:![c] and [c]:run[c] commands.
+____
+
+
+|\'shellcmdflag'| |\'shcf'|
+||'shellcmdflag' 'shcf'|| string (default: "-c", Win32: "/c")
+____
+Flag passed to shell when executing [c]:![c] and [c]:run[c] commands.
+
+E.g. "bash -c gvim"
+____
+
+
+|\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
+||'showmode' 'smd'|| boolean (default: on)
+____
+Show the current mode in the command line.
+____
+
+
+|\'ssli'| |\'showstatuslinks'|
+||'showstatuslinks' 'ssli'|| number (default: 1)
+____
+Show the destination of the link under the cursor in the status bar.
+Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Possible values:
+
+.---`--------------------------------------
+*0* Don't show link destination
+*1* Show the link in the status line
+*2* Show the link in the command line
+-------------------------------------------
+
+____
+
+
+|\'stal'| |\'showtabline'|
+||'showtabline' 'stal'|| number (default: 2)
+____
+Control when to show the tab bar of opened web pages. Possible values:
+
+.---`--------------------------------------
+*0* Never show tab bar
+*1* Show tab bar only if more than one tab is open
+*2* Always show tab bar
+-------------------------------------------
+
+____
+
+
+|\'noscs'| |\'nosmartcase'| |\'scs'| |\'smartcase'|
+||'smartcase' 'scs'|| boolean (default: on)
+____
+Override the 'ignorecase' option if the pattern contains uppercase characters.
+This is only used if the 'ignorecase' option is set.
+____
+
+
+|\'suggestengines'|
+||'suggestengines' || stringlist (default: "google")
+____
+Set the search engines which can be used for completion suggestions.
+Add "S" to the 'complete' option if you want to use this feature.
+
+Warning: This feature could make tab-completion slower because it needs to
+wait for changes, so use it only if you have a fast internet connection.
+____
+
+
+|\'titlestring'|
+||'titlestring'|| string (default: "Vimperator")
+____
+Change the title of the browser window.
+Vimperator changes the browser title from "Title of web page - Mozilla Firefox" to
+"Title of web page - Vimperator". +
+If you don't like that, you can restore it with:
+[c]:set titlestring=Mozilla\ Firefox[c].
+____
+
+
+|\'noum'| |\'nousermode'| |\'um'| |\'usermode'|
+||'usermode' 'um'|| boolean (default: off)
+____
+Show current website with a minimal style sheet to make it easily accessible.
+
+Note: this is a local option for now, a global value may be supported in the
+future.
+____
+
+
+|\'urlseparator'|
+||'urlseparator'|| string (default: ",\s")
+____
+Set the separator regexp used to separate multiple URL args. Multiple arguments
+can be specified for [c]:open[c], and similar commands, using this regexp as
+the separator. Using whitespace alone is not generally useful since it is often
+contained in a single argument. E.g. [c]:open linus torvalds[c] should perform
+a single search for the key words "linus" and "torvalds"
+____
+
+
+|\'verbose', \'vbs'|
+||'verbose' 'vbs'|| number (default: 1)
+____
+Define which info messages are displayed.
+When bigger than zero, Vimperator will give messages about what it is doing.
+These can be viewed at any time with the [c]:messages[c] command. The highest
+value is 15, being the most verbose mode.
+
+TODO: list levels and associated messages
+____
+
+
+|\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
+||'visualbell' 'vb'|| boolean (default: off)
+____
+Use visual bell instead of beeping on errors. The visual bell style is
+controlled by [c]:hi Bell[c].
+____
+
+
+|\'wildcase'| |\'wic'|
+||'wildcase' 'wic'|| string (default: "smart")
+____
+Defines how completions are matched with regard to character case.
+
+`---------------`------------------------
+"smart"		Case is significant when capital letters are typed
+"match"		Case is always significant
+"ignore"	Case is never significant
+-----------------------------------------
+
+____
+
+
+|\'wildignore'| |\'wig'|
+||'wildignore' 'wig'|| stringlist (default: "")
+____
+List of file patterns to ignore when completing files. E.g. to ignore object
+files and Vim swap files [c]:set wildignore=".*\.o,\..*\.s[a-z]\\{2}"[c]
+
+Note: Unlike Vim each pattern is a regexp rather than a glob.
+____
+
+
+|\'wim'| |\'wildmode'|
+||'wildmode' 'wim'|| stringlist (default: "list:full")
+____
+Defines how command-line completion works.
+It is a comma-separated list of parts, where each part specifies
+what to do for each consecutive use of the completion key.
+The first part specifies the behavior for the first use of the completion key,
+the second part for the second use, etc.
+
+These are the possible values for each part:
+`---------------`------------------------
+""              Complete only the first match.
+"full"          Complete the next full match. After the last, the original string is used.
+"longest"       Complete till the longest common string.
+"list"          When more than one match, list all matches.
+"list:full"     When more than one match, list all matches and complete the first match.
+"list:longest"  When more than one match, list all matches and complete till the longest common string. \
+                When there is only a single match, it is fully completed regardless of the case.
+-----------------------------------------
+
+____
+
+
+|\'wop'| |\'wildoptions'|
+||'wildoptions' 'wop'|| stringlist (default: "")
+____
+A list of words that change how command-line completion is done.
+
+Possible words:
+`--------`-------------------------------
+*auto*   Automatically show completions while you are typing.
+*sort*   Always sort the completion list, overriding the 'complete' option.
+-----------------------------------------
+
+____
+
+
+|\'wsp'| |\'wordseparators'| +
+||'wordseparators' 'wsp'|| string
+____
+(default: [\.,!\?:;/\\"\^\$%&?\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
+
+A regexp which defines the word separators which are used for the
+'hintmatching' types "wordstartswith" and "firstletters" to split the words in
+the text of a link.
+____
+
+// vim: set filetype=asciidoc:
