@@ -32,7 +32,7 @@ const config = { //{{{
     hostApplication: "Songbird",
     //mainWindowID: "mainplayer",
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "marks","history", "quickmarks", "session", "tabs", "windows", "player"],
+    features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
     defaults: { guioptions: "rb" },
 
     guioptions: {
@@ -49,15 +49,15 @@ const config = { //{{{
 
     styleableChrome: "chrome://gonzo/content/xul/mainplayer.xul",
 
-    autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
-                   ["ColorScheme",        "Triggered after a color scheme has been loaded"],
-                   ["DOMLoad",            "Triggered when a page's DOM content has fully loaded"],
-                   ["DownloadPost",       "Triggered when a download has completed"],
-                   ["Fullscreen",         "Triggered when the browser's fullscreen state changes"],
-                   ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],
-                   ["PageLoadPre",        "Triggered after a page load is initiated"],
-                   ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
-                   ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
+    autocommands: [["BookmarkAdd",    "Triggered after a page is bookmarked"],
+                   ["ColorScheme",    "Triggered after a color scheme has been loaded"],
+                   ["DOMLoad",        "Triggered when a page's DOM content has fully loaded"],
+                   ["DownloadPost",   "Triggered when a download has completed"],
+                   ["Fullscreen",     "Triggered when the browser's fullscreen state changes"],
+                   ["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["PageLoadPre",    "Triggered after a page load is initiated"],
+                   ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
+                   ["ShellCmdPost",   "Triggered after executing a shell command with :!cmd"],
                    ["XulmusEnter",    "Triggered after Xulmus starts"],
                    ["XulmusLeavePre", "Triggered before exiting Xulmus, just before destroying each module"],
                    ["XulmusLeave",    "Triggered before exiting Xulmus"]],
@@ -114,7 +114,7 @@ const config = { //{{{
         ["selectionsource",  "View selection source",
             function () { buffer.viewSelectionSource(); }]
     ],
-    
+
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
     //helpFiles: [ "intro.html" ],
@@ -123,7 +123,7 @@ const config = { //{{{
         "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",
         "marks.html", "repeat.html", "autocommands.html", "print.html",
         "gui.html", "styling.html", "message.html", "developer.html",
-        "various.html", "index.html", "version.html" 
+        "various.html", "index.html", "version.html"
     ], */
 
     scripts: [
@@ -134,9 +134,9 @@ const config = { //{{{
 
     init: function ()
     {
-        //Adding a mode for Player 
+        //Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
-        
+
        // var artistArray = getArtists();
 
         // TODO: support 'nrformats'? -> probably not worth it --mst
@@ -178,7 +178,7 @@ const config = { //{{{
         liberator.loadModule("marks",      Marks);
         liberator.loadModule("quickmarks", QuickMarks);
         liberator.loadModule("hints",      Hints);
-        // Load the Player module 
+        // Load the Player module
         liberator.loadModule("player",     Player);
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
@@ -222,7 +222,7 @@ const config = { //{{{
         mappings.add([modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
             function () { commandline.open(":", "tabopen ", modes.EX); });
-        
+
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
             function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
@@ -230,7 +230,7 @@ const config = { //{{{
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
             function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
-        
+
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(count > 1 ? count : 1); },
@@ -241,7 +241,6 @@ const config = { //{{{
             function (count) { incrementURL(-(count > 1 ? count : 1)); },
             { flags: Mappings.flags.COUNT });
 
-        
         mappings.add([modes.NORMAL], ["~"],
             "Open home directory",
             function () { liberator.open("~"); });
@@ -259,7 +258,6 @@ const config = { //{{{
                         liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
             });
 
-        
         mappings.add([modes.NORMAL], ["gu"],
             "Go to parent directory",
             function (count)
