@@ -4,8 +4,16 @@ var artists = getArtistsArray();
 
 function Player() // {{{
 {
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     mappings.add([modes.PLAYER],
         ["x"], "Play Track",
@@ -46,7 +54,7 @@ function Player() // {{{
         ["l"], "Play Media",
         function ()
         {
-            commandline.open(":","playmedia ", modes.EX);
+            commandline.open(":", "playmedia ", modes.EX);
         });
 
     mappings.add([modes.PLAYER],
@@ -80,6 +88,10 @@ function Player() // {{{
             }
         });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     commands.add(["playmedia"],
         "Play Media",
         function (args)
@@ -90,17 +102,20 @@ function Player() // {{{
             var mainView = library.createView();
             var sqncr = gMM.sequencer;
             var customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                            .createInstance(Ci.sbIMutablePropertyArray);
+                                  .createInstance(Ci.sbIMutablePropertyArray);
 
             //args
-            if (args.length == 1){
+            if (args.length == 1)
+            {
                 customProps.appendProperty(SBProperties.artistName,args[0].toString());
             }
-            else if (args.length == 2){
+            else if (args.length == 2)
+            {
                 customProps.appendProperty(SBProperties.artistName,args[0].toString());
                 customProps.appendProperty(SBProperties.albumName,args[1].toString());
             }
-            else if (args.length == 3){
+            else if (args.length == 3)
+            {
                 customProps.appendProperty(SBProperties.artistName,args[0].toString());
                 customProps.appendProperty(SBProperties.albumName,args[1].toString());
                 customProps.appendProperty(SBProperties.trackName,args[2].toString());
@@ -111,6 +126,12 @@ function Player() // {{{
         {
             completer: function (context, args) completion.song(context, args)
         });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    //}}}
 } // }}}
 
 function getArtists()
@@ -168,7 +189,7 @@ function getAlbums(artist)
         i++;
     }
 
-    return removeDuplicateElement(albumArray);
+    return util.Array.uniq(albumArray);
 }
 
 function getTracks(artist,album)
@@ -176,7 +197,7 @@ function getTracks(artist,album)
     var list = LibraryUtils.mainLibrary;
     var tracksArray = [];
     var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-    .createInstance(Ci.sbIMutablePropertyArray);
+                 .createInstance(Ci.sbIMutablePropertyArray);
     var i = 0;
 
     pa.appendProperty(SBProperties.artistName,artist.toString());
@@ -190,22 +211,6 @@ function getTracks(artist,album)
     }
 
     return tracksArray;
-}
-
-
-function removeDuplicateElement(arrayName)
-{
-    var newArray = new Array();
-    label:for (var i = 0; i < arrayName.length; i++)
-    {
-        for (var j = 0; j < newArray.length; j++)
-        {
-            if (newArray[j].toString() == arrayName[i].toString())
-                continue label;
-        }
-        newArray[newArray.length] = arrayName[i];
-    }
-    return newArray;
 }
 
 // vim: set fdm=marker sw=4 ts=4 et:
