@@ -30,7 +30,7 @@ do
     (
         set -e
         cd $base
-	[ ${jar##*.} = jar ] && stage="$stage/${base##*/}"
+        [ ${jar##*.} = jar ] && stage="$stage/${base##*/}"
         for dir in $dirs
         do
             for f in $(getfiles "$bin" "$dir")
@@ -51,6 +51,8 @@ do
     )
 done
 
-(cd $stage; zip -r "$top/$jar" *)
+cd $stage
+zip -r "$top/$jar" *
+cd -
 rm -rf "$stage"
 

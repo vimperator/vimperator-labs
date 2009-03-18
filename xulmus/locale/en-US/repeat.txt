@@ -1,0 +1,145 @@
+HEADER
+
+|repeat| +
+
+Vimperator can repeat a number of commands and record macros.
+
+section:Macros[macros,complex-repeat]
+
+|q|
+||q{0-9a-zA-Z}|| +
+____________________________________________________________________________
+Record a key sequence into a macro.
+Available macros are {0-9a-zA-Z} (uppercase to append).
+Type [m]q[m] to stop recording.
+____________________________________________________________________________
+
+
+|:macros|
+||:mac[ros] [a][pat][a]|| +
+________________________________________________________________________________
+List recorded macros matching the optional regular expression [a][pat][a]. If
+no regexp is given, list all macros.
+________________________________________________________________________________
+
+
+|:delmac| |:delmacros|
+||:delmac[ros] {args}|| +
+||:delmac[ros]!||
+________________________________________________________________________________
+Delete recorded macros matching the regular expression {args}. If [!] is given
+all macros are deleted.
+________________________________________________________________________________
+
+
+|@| |:play|
+||:pl[ay] {arg}|| +
+||[count]@{arg}||
+____________________________________________________________________________
+Plays the contents of macro with name {arg} [count] times. The [m]@[m] mapping
+only accepts {0-9a-z} as {arg}.
+____________________________________________________________________________
+
+
+|@@|
+||[count]@@||
+____________________________________________________________________________
+Replay the last executed macro [count] times.
+____________________________________________________________________________
+
+
+|.|
+||[count].||
+____________________________________________________________________________
+Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
+does not apply solely to editing commands, mainly because Vimperator doesn't
+have them.
+____________________________________________________________________________
+
+
+section:Using{nbsp}scripts[using-scripts]
+
+|:so| |:source|
+||:so[urce][!] {file}|| +
+________________________________________________________________________________
+Read Ex commands, JavaScript, or CSS from {file}. You can either source files
+which mostly contain Ex commands like [c]map < gt[c] and put JavaScript code
+within a:
+
+--------------------------------------------------------------------------------
+js <<EOF
+hello = function () {
+  alert("Hello world");
+}
+EOF
+--------------------------------------------------------------------------------
+Or you can alternatively source a file which ends in _.js_. These files are
+automatically sourced as pure JavaScript files.
+
+Note: In both cases you must add functions to the global window object like
+shown above, functions written as:
+--------------------------------------------------------------------------------
+function hello2() {
+  alert("Hello world");
+}
+--------------------------------------------------------------------------------
+are only available within the scope of the script.
+
+The _.vimperatorrc_ file in your home directory and any files in
+_\~/.vimperator/plugin/_ are always sourced at startup. \~ is supported as a
+shortcut for the _$HOME_ directory. If [!] is specified, errors are not
+printed.
+________________________________________________________________________________
+
+
+|:lpl| |:loadplugins|
+||:loadplugins|| +
+________________________________________________________________________________
+Load all unloaded plugins immediately. Because plugins are automatically
+loaded after vimperatorrc is sourced, this command must be placed early
+in the vimperatorrc file if vimperatorrc also includes commands that are
+implemented by plugins. Additionally, this command allows for sourcing
+new plugins without restarting Vimperator.
+________________________________________________________________________________
+
+
+|:ru| |:runtime|
+||:runt[ime][!] {file} ...|| +
+________________________________________________________________________________
+Source the specified file from each directory in 'runtimepath'. Example: +
+[c]:runtime plugin/foobar.vimp[c] +
+Only the first found file is sourced. When [!] is given, all found files are
+sourced.
+________________________________________________________________________________
+
+
+|:scrip| |:scriptnames|
+||:scrip[tnames]|| +
+________________________________________________________________________________
+List all sourced script names, in the order they were first sourced.
+________________________________________________________________________________
+
+
+|:fini| |:finish|
+||:fini[sh]|| +
+________________________________________________________________________________
+Stop sourcing a script file. This can only be called from within a Vimperator
+script file.
+________________________________________________________________________________
+
+section:Profiling[profile,profiling]
+
+|:time|
+||:[count]time[!] {code|:command}|| +
+________________________________________________________________________________
+Profile a piece of code or a command. Run {code} [count] times (default 1)
+and returns the elapsed time. {code} is always passed to JavaScript's eval(),
+which might be slow, so take the results with a grain of salt.
+
+If {code} starts with a [c]:[c], it is executed as a Vimperator command.
+
+Use the special version with [!] if you just want to run any command multiple
+times without showing profiling statistics.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

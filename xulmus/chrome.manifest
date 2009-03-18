@@ -1,0 +1,24 @@
+# Songbird 
+content  xulmus               content/
+skin     xulmus classic/1.0   skin/
+locale   liberator  en-US locale/en-US/
+
+content  liberator             ../common/content/
+resource liberator             ../common/modules/
+skin     liberator classic/1.0 ../common/skin/
+
+override chrome://liberator/content/liberator.dtd chrome://xulmus/content/liberator.dtd
+override chrome://liberator/content/config.js	  chrome://xulmus/content/config.js
+
+overlay  chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://xulmus/content/xulmus.xul
+overlay  chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://liberator/content/liberator.xul
+
+
+#overlay  chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://xulmus/content/xulmus.xul
+#overlay  chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://liberator/content/liberator.xul
+
+#overlay  chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://xulmus/content/xulmus.xul
+#overlay  chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://liberator/content/liberator.xul
+
+#overlay windowtype:Songbird:Main chrome://liberator/content/liberator.xul
+#overlay windowtype:Songbird:Main chrome://xulmus/content/xulmus.xul

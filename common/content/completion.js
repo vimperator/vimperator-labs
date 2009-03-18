@@ -1390,6 +1390,16 @@ function Completion() //{{{
             completion.urls(context, tags);
         },
 
+        song: function song(context, args)
+        {
+            if (args.completeArg == 0)
+                context.completions = getArtists();
+            else if (args.completeArg == 1)
+                context.completions = getAlbums(args[0]);
+            else if (args.completeArg == 2)
+                context.completions = getTracks(args[0],args[1]);
+        },
+
         buffer: function buffer(context)
         {
             filter = context.filter.toLowerCase();

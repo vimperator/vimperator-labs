@@ -44,6 +44,7 @@ function Buffer() //{{{
 
     // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "main-window";
+
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
@@ -214,7 +215,13 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["<C-c>"],
         "Stop loading",
-        function () { window.BrowserStop(); });
+        function ()
+        {
+            if(config.name == "Xulmus")
+                getBrowser().mCurrentBrowser.stop();
+            else
+             window.BrowserStop();
+        });
 
     // scrolling
     mappings.add(myModes, ["j", "<Down>", "<C-e>"],
@@ -596,7 +603,13 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
-        function () { window.BrowserStop(); },
+        function ()
+        {
+            if (config.name == "Xulmus")
+                getBrowser().mCurrentBrowser.stop();
+            else
+                window.BrowserStop();
+        },
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],

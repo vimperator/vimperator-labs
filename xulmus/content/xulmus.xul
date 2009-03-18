@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://browser/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://xulmus/skin/xulmus.css" type="text/css"?>
+
+<overlay id="xulmus"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="http://home.netscape.com/NC-rdf#"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <menupopup id="viewSidebarMenu">
+        <menuitem observes="xulmus-viewAddonsSidebar" label="Add-ons" accesskey="A"/>
+        <menuitem observes="xulmus-viewConsoleSidebar" label="Console" accesskey="C"/>
+        <menuitem observes="xulmus-viewDownloadsSidebar" label="Downloads" accesskey="D"/>
+        <menuitem observes="xulmus-viewPreferencesSidebar" label="Preferences" accesskey="P"/>
+    </menupopup>
+
+    <broadcasterset id="mainBroadcasterSet">
+        <broadcaster id="xulmus-viewAddonsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/extensions/extensions.xul"
+            sidebartitle="Add-ons"
+            oncommand="toggleSidebar('xulmus-viewAddonsSidebar');"/>
+        <broadcaster id="xulmus-viewConsoleSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://global/content/console.xul"
+            sidebartitle="Console"
+            oncommand="toggleSidebar('xulmus-viewConsoleSidebar');"/>
+        <broadcaster id="xulmus-viewDownloadsSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="chrome://mozapps/content/downloads/downloads.xul"
+            sidebartitle="Downloads"
+            oncommand="toggleSidebar('xulmus-viewDownloadsSidebar');"/>
+        <broadcaster id="xulmus-viewPreferencesSidebar"
+            autoCheck="false"
+            type="checkbox"
+            group="sidebar"
+            sidebarurl="about:config"
+            sidebartitle="Preferences"
+            oncommand="toggleSidebar('xulmus-viewPreferencesSidebar');"/>
+    </broadcasterset>
+
+</overlay>
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->

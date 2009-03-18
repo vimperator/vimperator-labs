@@ -1,0 +1,106 @@
+" Vim syntax file
+" Language:         xulmus configuration file
+" Maintainer:       Doug Kearns <dougkearns@gmail.com>
+" Last Change:      2009 Mar 16
+
+" TODO: make this xulmus specific
+
+if exists("b:current_syntax")
+  finish
+endif
+
+let s:cpo_save = &cpo
+set cpo&vim
+
+syn include @javascriptTop syntax/javascript.vim
+unlet b:current_syntax
+
+syn include @cssTop syntax/css.vim
+unlet b:current_syntax
+
+syn match xulmusCommandStart "\%(^\s*:\=\)\@<=" nextgroup=xulmusCommand,xulmusAutoCmd
+
+syn keyword xulmusCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] ba[ck] bd[elete] beep bf[irst] bl[ast] bma[rk]
+    \ bmarks bn[ext] bp[revious] br[ewind] buffers bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cm[ap] cmapc[lear]
+    \ cno[remap] colo[rscheme] com[mand] comc[lear] cu[nmap] cuna[bbrev] delbm[arks] delc[ommand] delm[arks] delmac[ros]
+    \ delqm[arks] dels[tyle] dia[log] dl do[autocmd] doautoa[ll] downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute]
+    \ exu[sage] files fini[sh] fo[rward] fw h[elp] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear]
+    \ ino[remap] iu[nmap] iuna[bbrev] javas[cript] js ju[mps] let loadplugins lpl ls ma[rk] macros map mapc[lear] marks mes[sages]
+    \ mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen] optionu[sage] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences]
+    \ prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sav[eas] sb[ar]
+    \ sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal] sideb[ar] so[urce] st[op] sty[le] tN[ext] t[open] tab
+    \ tabN[ext] tabc[lose] tabd[uplicate] tabde[tach] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen
+    \ tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion]
+    \ vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
+    \ contained
+
+syn match xulmusCommand "!" contained
+
+syn keyword xulmusAutoCmd au[tocmd] contained nextgroup=xulmusAutoEventList skipwhite
+
+syn keyword xulmusAutoEvent BookmarkAdd DOMLoad LocationChange PageLoadPre PageLoad ShellCmdPost xulmusEnter
+    \ xulmusLeavePre xulmusLeave
+    \ contained
+
+syn match xulmusAutoEventList "\(\a\+,\)*\a\+" contained contains=xulmusAutoEvent
+
+syn region xulmusSet matchgroup=xulmusCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
+    \ end="$" keepend oneline contains=xulmusOption,xulmusString
+
+syn keyword xulmusOption activate act cdpath cd complete cpt defsearch ds editor eventignore ei extendedhinttags eht
+    \ followhints fh guioptions go helpfile hf hintmatching hm hinttags ht hinttimeout hto history hi laststatus ls messages msgs
+    \ newtab nextpattern pageinfo pa popups pps previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf
+    \ showstatuslinks ssli showtabline stal suggestengines titlestring urlseparator verbose vbs wildcase wic wildignore wig
+    \ wildmode wim wildoptions wop wordseparators wsp
+    \ contained nextgroup=xulmusSetMod
+
+" toggle options
+syn match xulmusOption "\<\%(no\|inv\)\=\%(errorbells\|eb\|exrc\|ex\|focuscontent\|fc\|fullscreen\|fs\|ignorecase\|ic\)\>!\="
+    \ contained nextgroup=xulmusSetMod
+syn match xulmusOption "\<\%(no\|inv\)\=\%(incsearch\|is\|insertmode\|im\|hlsearch\|hls\|linksearch\|lks\)\>!\="
+    \ contained nextgroup=xulmusSetMod
+syn match xulmusOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|preload\|showmode\|smd\|smartcase\|scs\)\>!\="
+    \ contained nextgroup=xulmusSetMod
+syn match xulmusOption "\<\%(no\|inv\)\=\%(online\|visualbell\|vb\|usermode\|um\)\>!\="
+    \ contained nextgroup=xulmusSetMod
+
+syn match xulmusSetMod "\%(\<[a-z_]\+\)\@<=&" contained
+
+syn region xulmusJavaScript start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=" end="$" contains=@javascriptTop keepend oneline
+syn region xulmusJavaScript matchgroup=xulmusJavascriptDelimiter
+    \ start="\%(^\s*\%(javascript\|js\)\s\+\)\@<=<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@javascriptTop fold
+
+let s:cssRegionStart = '\%(^\s*sty\%[le]!\=\s\+\%(-\%(n\|name\)\%(\s\+\|=\)\S\+\s\+\)\=[^-]\S\+\s\+\)\@<='
+execute 'syn region xulmusCss start="' . s:cssRegionStart . '" end="$" contains=@cssTop keepend oneline'
+execute 'syn region xulmusCss matchgroup=xulmusCssDelimiter'
+    \ 'start="' . s:cssRegionStart . '<<\s*\z(\h\w*\)"hs=s+2 end="^\z1$" contains=@cssTop fold'
+
+syn match xulmusNotation "<[0-9A-Za-z-]\+>"
+
+syn match   xulmusComment +".*$+ contains=xulmusTodo,@Spell
+syn keyword xulmusTodo FIXME NOTE TODO XXX contained
+
+syn region xulmusString start="\z(["']\)" end="\z1" skip="\\\\\|\\\z1" oneline
+
+syn match   xulmusLineComment +^\s*".*$+ contains=xulmusTodo,@Spell
+
+" NOTE: match vim.vim highlighting group names
+hi def link xulmusAutoCmd               xulmusCommand
+hi def link xulmusAutoEvent             Type
+hi def link xulmusCommand               Statement
+hi def link xulmusComment               Comment
+hi def link xulmusJavascriptDelimiter   Delimiter
+hi def link xulmusCssDelimiter          Delimiter
+hi def link xulmusNotation              Special
+hi def link xulmusLineComment           Comment
+hi def link xulmusOption                PreProc
+hi def link xulmusSetMod                xulmusOption
+hi def link xulmusString                String
+hi def link xulmusTodo                  Todo
+
+let b:current_syntax = "xulmus"
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
+
+" vim: tw=130 et ts=4 sw=4:

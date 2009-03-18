@@ -1,0 +1,88 @@
+HEADER
+
+section:Writing{nbsp}documentation[writing-docs,documentation]
+
+For every new feature, writing documentation is _mandatory_ for the patch to
+be accepted. The docs are written in
+http://www.methods.co.nz/asciidoc/index.html[asciidoc] version 8.2.x.
+They are placed in the _src/locale/en-US/_ directory and compiled with
+_make doc_. Please refer to the
+http://www.methods.co.nz/asciidoc/userguide.html[asciidoc documentation] above
+for details. Usually you can just write text as is, and mostly it will be
+interpreted correctly. The only difficult part is to write special sections
+like for help::help[various.html#online-help].
+
+----------------------------------------------------------------------------------
+|<F1>| |:help| |:h| |help|
+||:h[elp] {subject}|| +
+||<F1>||
+____________________________________________________________________________
+Open help window.
+The default section is shown unless {subject} is specified.
+If you need help for a specific topic, try [c]:help overview[c].
+____________________________________________________________________________
+----------------------------------------------------------------------------------
+
+is displayed as:
+
+++++++++++++++++++++++++++++++++++++++++
+<p><span class="hiddentag">&lt;F1&gt;</span> <span
+class="hiddentag">:help</span> <span class="hiddentag">:h</span> <span
+class="hiddentag">help</span>
+
+<div class="key">:h[elp] <span class="argument">&#123;subject&#125;</span></div><br />
+<div class="key">&lt;F1&gt;</div></p>
+<div class="quoteblock">
+<div class="quoteblock-content">
+<p>Open help window.
+The default section is shown unless <span class="argument">&#123;subject&#125;</span> is specified.
+If you need help for a specific topic, try <span class="command">:help overview</span>.</p>
+</div></div>
++++++++++++++++++++++++++++++++++++++++
+
+Some notes about the code above:
+
+- *$$|<F1>|$$* defines a _tag_. A tag is written at the right in magenta and let's
+  you jump to a topic with [c]:help <F1>[c]. Note that you must write it from
+  right to left, so in the above example $$|help|$$ will be the most left tag,
+  and $$|<F1>|$$ the most right one.
+- *$$||:h[elp] {subject}|| +$$* and *$$||<F1>||$$* define command or mapping
+  names and are printed on the left side. Note the + at the end of one
+  command, that indicates a new line. There is no general rule when a new line
+  is needed and when not, just try it out and see what looks better.
+- The actual help code for this command is embedded in at least 4 underscores
+  (_). This generates a quoteblock and indents the text so it is more clear
+  that it belongs to the command.
+- Wrap things in *$$[c]$$* and they are drawn like a :command. Also *$$[o]$$*,
+  *$$[m]$$* and *$$[a]$$* are available to markup options, mappings, and
+  arguments.
+- As a convenience, any string within \{...\} and $$[count]$$ and $$[!]$$ are
+  automatically marked up as an argument.
+
+There are also some additional asciidoc commands specifically for writing
+Vimperator documentation:
+
+- *$$section:Writing{nbsp}documentation[writing-docs,documentation]$$* Creates
+  a new section like _Writing Documentation_ in this help file with 2 tags.
+- *$$help:developer{nbsp}information[developer.html#documentation]$$* creates
+  a link with text _developer information_ to the tag _documentation_ in
+  the file _developer.html_.
+
+
+If you don't know in which file/section you should put some documentation, ask
+on the mailing list or on #vimperator. Usually help should be grouped together
+in logically connected subject areas like
+help:opening{nbsp}web{nbsp}pages[browsing.html#opening].
+
+section:Generating{nbsp}documentation[generating-docs]
+
+You can also autogenerate most of the asciidoc help after you have written a
+new command, mapping or option. For this, use:
+
+  :echo util.generateHelp(commands.get("addons"), "Extra text")
+
+Now you can copy the asciidoc text but always make sure it looks OK after
+you compile the help file with "make doc", as the auto-generation might
+not work correctly for all special cases.
+
+// vim: set filetype=asciidoc:

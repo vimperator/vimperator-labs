@@ -628,7 +628,7 @@ function Events() //{{{
     // return true when load successful, or false otherwise
     function waitForPageLoaded() events.waitForPageLoad();
 
-    // load all macros inside ~/.vimperator/macros/
+    // load all macros
     // setTimeout needed since io. is loaded after events.
     setTimeout(function () {
         try
@@ -678,16 +678,16 @@ function Events() //{{{
         function () { events.onEscape(); });
 
     // add the ":" mapping in all but insert mode mappings
-    mappings.add([modes.NORMAL, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
+    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
         [":"], "Enter command line mode",
         function () { commandline.open(":", "", modes.EX); });
 
     // focus events
-    mappings.add([modes.NORMAL, modes.VISUAL, modes.CARET],
+    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET],
         ["<Tab>"], "Advance keyboard focus",
         function () { document.commandDispatcher.advanceFocus(); });
 
-    mappings.add([modes.NORMAL, modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
+    mappings.add([modes.NORMAL, modes.PLAYER,modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
         ["<S-Tab>"], "Rewind keyboard focus",
         function () { document.commandDispatcher.rewindFocus(); });
 
@@ -704,12 +704,12 @@ function Events() //{{{
         function () { return; });
 
     // macros
-    mappings.add([modes.NORMAL, modes.MESSAGE],
+    mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
         ["q"], "Record a key sequence into a macro",
         function (arg) { events.startRecording(arg); },
         { flags: Mappings.flags.ARGUMENT });
 
-    mappings.add([modes.NORMAL, modes.MESSAGE],
+    mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
         ["@"], "Play a macro",
         function (count, arg)
         {
@@ -1228,6 +1228,21 @@ function Events() //{{{
                     }
                 }
 
+                if (config.name == "Xulmus")
+                {
+                    // Switch to -- PLAYER -- mode for Songbird Media Player.
+                    if (config.isPlayerWindow)
+                    {
+                        liberator.mode = modes.PLAYER;
+                    }
+                    else
+                    {
+                        liberator.mode =  modes.NORMAL;
+                    }
+                    return;
+                }
+
+
                 urlbar = document.getElementById("urlbar");
                 if (elem == null && urlbar && urlbar.inputField == lastFocus)
                     liberator.threadYield(true);
@@ -1426,8 +1441,7 @@ function Events() //{{{
             // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if ((config.name == "Vimperator" && liberator.mode == modes.NORMAL)
-                 || liberator.mode == modes.INSERT)
+            if (((config.name == "Xulmus"  || config.name == "Vimperator") && liberator.mode == modes.NORMAL || liberator.mode == modes.INSERT))
             {
                 if (key == "<Return>")
                     return false;
