@@ -36,7 +36,7 @@ const config = { //{{{
     defaults: { guioptions: "rb" },
 
     guioptions: {
-        m: ["Menubar",      ["toolbar-menubar"]],
+        m: ["Menubar",      ["main-menubar"]],
         T: ["Toolbar",      ["nav-bar"]],
         B: ["Bookmark bar", ["PersonalToolbar"]]
     },
