@@ -189,7 +189,7 @@ function getAlbums(artist)
         i++;
     }
 
-    return util.Array.uniq(albumArray);
+    return util.Array.uniq(albumArray.map(String));
 }
 
 function getTracks(artist,album)
