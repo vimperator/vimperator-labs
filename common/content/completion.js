@@ -1426,15 +1426,17 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(context)
         {
-            // TODO: use path for the description?
+            let colors = [];
+
             io.getRuntimeDirectories("colors").forEach(function (dir) {
-                context.fork(dir.path, 0, null, function (context) {
-                    context.filter = dir.path + io.pathSeparator + context.filter;
-                    completion.file(context);
-                    context.title = ["Color Scheme"];
-                    context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
+                io.readDirectory(dir).forEach(function (file) {
+                    if (/\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))
+                        colors.push(file);
                 });
             });
+
+            context.title = ["Color Scheme", "Runtime Path"];
+            context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([,c] in Iterator(colors))]
         },
 
         command: function command(context)
