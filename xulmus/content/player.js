@@ -51,10 +51,10 @@ function Player() // {{{
         });
 
     mappings.add([modes.PLAYER],
-        ["l"], "Play Media",
+        ["f"], "Filter Library",
         function ()
         {
-            commandline.open(":", "playmedia ", modes.EX);
+            commandline.open(":", "filter ", modes.EX);
         });
 
     mappings.add([modes.PLAYER],
@@ -88,12 +88,52 @@ function Player() // {{{
             }
         });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
+    mappings.add([modes.PLAYER],
+            ["h"], "Seek -10s",
+            function ()
+            {
+                if (gMM.playbackControl.position >= 10000)
+                    gMM.playbackControl.position = gMM.playbackControl.position - 10000;
+                else 
+                    gMM.playbackControl.position = 0;
+            });
+
+    mappings.add([modes.PLAYER],
+            ["l"], "Seek +10s",
+            function ()
+            {
+                if ((gMM.playbackControl.duration - gMM.playbackControl.position) >= 10000)
+                    gMM.playbackControl.position = gMM.playbackControl.position + 10000;
+                else
+                    gMM.playbackControl.position = gMM.playbackControl.duration;
+            });
+    
+    mappings.add([modes.PLAYER],
+            ["H"], "Seek -1m",
+            function ()
+            {
+                if (gMM.playbackControl.position >= 60000)
+                    gMM.playbackControl.position = gMM.playbackControl.position - 60000;
+                else 
+                    gMM.playbackControl.position = 0;
+            });
+
+    mappings.add([modes.PLAYER],
+            ["L"], "Seek +1m",
+            function ()
+            {
+                if ((gMM.playbackControl.duration - gMM.playbackControl.position) >= 60000)
+                    gMM.playbackControl.position = gMM.playbackControl.position + 60000;
+                else
+                    gMM.playbackControl.position = gMM.playbackControl.duration;
+            });
+
+    ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    commands.add(["playmedia"],
-        "Play Media",
+    commands.add(["f[ilter]"],
+        "Filter Tracks",
         function (args)
         {
             //Store the old view
@@ -105,20 +145,17 @@ function Player() // {{{
                                   .createInstance(Ci.sbIMutablePropertyArray);
 
             //args
-            if (args.length == 1)
+            switch (args.length)
             {
-                customProps.appendProperty(SBProperties.artistName,args[0].toString());
-            }
-            else if (args.length == 2)
-            {
-                customProps.appendProperty(SBProperties.artistName,args[0].toString());
-                customProps.appendProperty(SBProperties.albumName,args[1].toString());
-            }
-            else if (args.length == 3)
-            {
-                customProps.appendProperty(SBProperties.artistName,args[0].toString());
-                customProps.appendProperty(SBProperties.albumName,args[1].toString());
-                customProps.appendProperty(SBProperties.trackName,args[2].toString());
+                case 3:
+                    customProps.appendProperty(SBProperties.trackName,args[2].toString());
+                case 2:
+                    customProps.appendProperty(SBProperties.albumName,args[1].toString());
+                case 3:                                        
+                    customProps.appendProperty(SBProperties.artistName,args[0].toString());
+                    break;
+                default:
+                    break;
             }
 
             sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0,Ci.sbIMediaItem)));
@@ -127,7 +164,7 @@ function Player() // {{{
             completer: function (context, args) completion.song(context, args)
         });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
+    /////////////////////////////////////////////////////////////////////////////}} }
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -179,17 +216,29 @@ function getArtistsArray()
 function getAlbums(artist)
 {
     var list = LibraryUtils.mainLibrary;
-    var albumArray = [];
+    var albumArray = [], returnArray = [];
     var items = list.getItemsByProperty(SBProperties.artistName, artist).enumerate();
-    var i = 0;
+    var i = 0, j = 0;
+    
 
     while (items.hasMoreElements()) {
         album = items.getNext().getProperty(SBProperties.albumName);
         albumArray[i] = [album, album];
+
+        if (i == 0)
+        {
+            returnArray[j] = albumArray[i];
+            j++;
+        }
+        else if (albumArray[i-1].toString() != albumArray[i].toString())
+        {
+             returnArray[i] = albumArray[i];
+             j++;
+        }
         i++;
     }
 
-    return util.Array.uniq(albumArray.map(String));
+    return returnArray;
 }
 
 function getTracks(artist,album)
