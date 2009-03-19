@@ -151,7 +151,7 @@ function Player() // {{{
                     customProps.appendProperty(SBProperties.trackName,args[2].toString());
                 case 2:
                     customProps.appendProperty(SBProperties.albumName,args[1].toString());
-                case 3:                                        
+                case 1:
                     customProps.appendProperty(SBProperties.artistName,args[0].toString());
                     break;
                 default:
