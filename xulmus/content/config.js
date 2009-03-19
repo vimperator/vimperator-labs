@@ -117,7 +117,7 @@ const config = { //{{{
 
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
-    //helpFiles: [ "intro.html" ],
+    helpFiles: [ "player.html" ],
        /* "intro.html", "tutorial.html", "starting.html", "browsing.html",
         "buffer.html", "cmdline.html", "insert.html", "options.html",
         "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",
@@ -134,6 +134,8 @@ const config = { //{{{
 
     init: function ()
     {
+        options["helpfile"] = "player.html";
+
         //Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
 
