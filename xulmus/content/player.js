@@ -29,23 +29,23 @@ function Player() // {{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     mappings.add([modes.PLAYER],
-        ["x"], "Play Track",
+        ["x"], "Play track",
         function () { player.play(); });
 
     mappings.add([modes.PLAYER],
-        ["z"], "Previous Track",
+        ["z"], "Previous track",
         function () { player.previous(); });
 
     mappings.add([modes.PLAYER],
-        ["c"], "Pause/Unpause Track",
+        ["c"], "Pause/Unpause track",
         function () { player.togglePlayPause(); });
 
     mappings.add([modes.PLAYER],
-        ["b"], "Next Track",
+        ["b"], "Next track",
         function () { player.next(); });
 
     mappings.add([modes.PLAYER],
-        ["v"], "Stop Track",
+        ["v"], "Stop track",
         function () { player.stop(); });
 
     mappings.add([modes.PLAYER],
@@ -81,7 +81,7 @@ function Player() // {{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     commands.add(["f[ilter]"],
-        "Filter Tracks",
+        "Filter and play tracks",
         function (args)
         {
             //Store the old view
@@ -112,6 +112,27 @@ function Player() // {{{
             argCount: "+",
             completer: function (context, args) completion.song(context, args)
         });
+
+    // TODO: better of as a single command, or cmus compatible E.g. :player-next? --djk
+    commands.add(["playern[ext]"],
+        "Play next track",
+        function () { player.next(); });
+
+    commands.add(["playerpr[ev]"],
+        "Play previous track",
+        function () { player.previous(); });
+
+    commands.add(["players[top]"],
+        "Stop track",
+        function () { player.stop(); });
+
+    commands.add(["playerp[lay]"],
+        "Play track",
+        function () { player.play(); });
+
+    commands.add(["playerpa[use]"],
+        "Pause/unpause track",
+        function () { player.togglePlayPause(); });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
