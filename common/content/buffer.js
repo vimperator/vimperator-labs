@@ -1032,6 +1032,11 @@ function Buffer() //{{{
                 elem.contentWindow.focus();
                 return;
             }
+            else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            {
+                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                return;
+            }
 
             elem.focus();
 
@@ -1136,6 +1141,11 @@ function Buffer() //{{{
                 let coords = elem.getAttribute("coords").split(",");
                 offsetX = Number(coords[0]) + 1;
                 offsetY = Number(coords[1]) + 1;
+            }
+            else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            {
+                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                return;
             }
 
             let ctrlKey = false, shiftKey = false;
