@@ -7,16 +7,7 @@
     <em:name>xulmus@vimperator.org</em:name>
     <em:version>0.1</em:version>
     <em:creator>Prathyush Thota</em:creator>
-
-
-    <em:description>VIM for SongBird brothers.</em:description>
-
-
-
-
-
-
-
+    <em:description>Makes Songbird behave like Vim and CMus.</em:description>
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
@@ -24,35 +15,5 @@
         <em:maxVersion>1.1.0pre</em:maxVersion>
       </Description>
     </em:targetApplication>
-
-
-
-
-
-    <!-- Register a pane to be displayed below the service sidebar.
-         See http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Display_Panes -->
-    <songbird:displayPane>
-      <Description>
-        <songbird:contentTitle>xulmus</songbird:contentTitle>
-        <songbird:contentUrl>chrome://xulmus/content/pane.xul</songbird:contentUrl>
-        <songbird:contentIcon>chrome://xulmus/skin/pane-icon.png</songbird:contentIcon>
-        <songbird:defaultWidth>200</songbird:defaultWidth>
-        <songbird:defaultHeight>100</songbird:defaultHeight>
-        <songbird:suggestedContentGroups>servicepane</songbird:suggestedContentGroups>
-        <songbird:showOnInstall>true</songbird:showOnInstall>
-      </Description>
-    </songbird:displayPane>
-
-
-
-    <!-- Register a custom media page.
-         See http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Building_Media_Views -->
-    <songbird:mediaPage>
-      <Description>
-        <songbird:contentTitle>xulmus</songbird:contentTitle>
-        <songbird:contentUrl>chrome://xulmus/content/media-page.xul</songbird:contentUrl>
-      </Description>
-    </songbird:mediaPage>
-
   </Description>
 </RDF>
