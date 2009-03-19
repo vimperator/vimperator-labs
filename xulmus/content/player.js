@@ -16,12 +16,13 @@ function Player() // {{{
     function seek(interval, direction)
     {
         interval = interval * 1000;
-
+        
         let min = 0;
         let max = gMM.playbackControl.duration;
+
         let position = gMM.playbackControl.position + (direction ? interval : -interval);
 
-        gMM.playbackControl.position = Math.min(Math.max(position, min), max)
+        gMM.playbackControl.position = Math.min(Math.max(position, min), max);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -75,6 +76,14 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
         ["L"], "Seek +1m",
         function () { player.seekForward(60); });
+    
+    mappings.add([modes.PLAYER],
+         ["=","+"], "Increase Volume by 10%",
+         function () { player.increaseVolume(); });
+
+    mappings.add([modes.PLAYER],
+         ["-"], "Decrease Volume by 10%",
+         function () { player.decreaseVolume(); });
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -195,14 +204,29 @@ function Player() // {{{
 
         seekForward: function seekForward(interval)
         {
-            seek(interval, true);
+            if (gMM.playbackControl)
+                seek(interval, true);
         },
 
         seekBackward: function seekBackward(interval)
         {
-            seek(interval, false);
+            if (gMM.playbackControl)
+                seek(interval, false);
         },
 
+        //FIXME: 10% ?
+        increaseVolume: function increaseVolume()
+        {
+            gMM.volumeControl.volume = gMM.volumeControl.volume * 1.1;
+        },
+
+        decreaseVolume: function decreaseVolume()
+        {
+            if (gMM.volumeControl.volume == 0)
+                gMM.volumeControl.volume = 0.1;
+            else
+                gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
+        },           
     };
     //}}}
 } // }}}
