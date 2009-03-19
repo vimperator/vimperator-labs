@@ -11,122 +11,70 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
+    // FIXME: need to test that we're playing - why is gMM.playbackControl.status always null?
+    // interval (seconds)
+    function seek(interval, direction)
+    {
+        interval = interval * 1000;
+
+        let min = 0;
+        let max = gMM.playbackControl.duration;
+        let position = gMM.playbackControl.position + (direction ? interval : -interval);
+
+        gMM.playbackControl.position = Math.min(Math.max(position, min), max)
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     mappings.add([modes.PLAYER],
         ["x"], "Play Track",
-        function ()
-        {
-            gMM.sequencer.play();
-        });
+        function () { player.play(); });
 
     mappings.add([modes.PLAYER],
         ["z"], "Previous Track",
-        function ()
-        {
-            gSongbirdWindowController.doCommand("cmd_control_previous");
-        });
+        function () { player.previous(); });
 
     mappings.add([modes.PLAYER],
         ["c"], "Pause/Unpause Track",
-        function ()
-        {
-            gSongbirdWindowController.doCommand("cmd_control_playpause");
-        });
+        function () { player.togglePlayPause(); });
 
     mappings.add([modes.PLAYER],
         ["b"], "Next Track",
-        function ()
-        {
-            gSongbirdWindowController.doCommand("cmd_control_next");
-        });
+        function () { player.next(); });
 
     mappings.add([modes.PLAYER],
         ["v"], "Stop Track",
-        function ()
-        {
-            gMM.sequencer.stop();
-        });
+        function () { player.stop(); });
 
     mappings.add([modes.PLAYER],
         ["f"], "Filter Library",
-        function ()
-        {
-            commandline.open(":", "filter ", modes.EX);
-        });
+        function () { commandline.open(":", "filter ", modes.EX); });
 
     mappings.add([modes.PLAYER],
         ["s"], "Toggle Shuffle",
-        function ()
-        {
-            if (gMM.sequencer.mode != gMM.sequencer.MODE_SHUFFLE)
-                gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE;
-            else
-                gMM.sequencer.mode = gMM.sequencer.MODE_FORWARD;
-        });
+        function () { player.toggleShuffle(); });
 
     mappings.add([modes.PLAYER],
         ["r"], "Toggle Repeat",
-        function ()
-        {
-            switch (gMM.sequencer.repeatMode)
-            {
-                case gMM.sequencer.MODE_REPEAT_NONE:
-                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ONE;
-                    break;
-                case gMM.sequencer.MODE_REPEAT_ONE:
-                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ALL;
-                    break;
-                case gMM.sequencer.MODE_REPEAT_ALL:
-                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
-                    break;
-                default:
-                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
-                    break;
-            }
-        });
+        function () { player.toggleRepeat(); });
 
     mappings.add([modes.PLAYER],
-            ["h"], "Seek -10s",
-            function ()
-            {
-                if (gMM.playbackControl.position >= 10000)
-                    gMM.playbackControl.position = gMM.playbackControl.position - 10000;
-                else
-                    gMM.playbackControl.position = 0;
-            });
+        ["h"], "Seek -10s",
+        function () { player.seekBackward(10); });
 
     mappings.add([modes.PLAYER],
-            ["l"], "Seek +10s",
-            function ()
-            {
-                if ((gMM.playbackControl.duration - gMM.playbackControl.position) >= 10000)
-                    gMM.playbackControl.position = gMM.playbackControl.position + 10000;
-                else
-                    gMM.playbackControl.position = gMM.playbackControl.duration;
-            });
+        ["l"], "Seek +10s",
+        function () { player.seekForward(10); });
 
     mappings.add([modes.PLAYER],
-            ["H"], "Seek -1m",
-            function ()
-            {
-                if (gMM.playbackControl.position >= 60000)
-                    gMM.playbackControl.position = gMM.playbackControl.position - 60000;
-                else
-                    gMM.playbackControl.position = 0;
-            });
+        ["H"], "Seek -1m",
+        function () { player.seekBackward(60); });
 
     mappings.add([modes.PLAYER],
-            ["L"], "Seek +1m",
-            function ()
-            {
-                if ((gMM.playbackControl.duration - gMM.playbackControl.position) >= 60000)
-                    gMM.playbackControl.position = gMM.playbackControl.position + 60000;
-                else
-                    gMM.playbackControl.position = gMM.playbackControl.duration;
-            });
+        ["L"], "Seek +1m",
+        function () { player.seekForward(60); });
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -137,11 +85,11 @@ function Player() // {{{
         function (args)
         {
             //Store the old view
-            //var prev_view = gMM.status.view;
-            var library = LibraryUtils.mainLibrary;
-            var mainView = library.createView();
-            var sqncr = gMM.sequencer;
-            var customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+            //let prev_view = gMM.status.view;
+            let library = LibraryUtils.mainLibrary;
+            let mainView = library.createView();
+            let sqncr = gMM.sequencer;
+            let customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                                   .createInstance(Ci.sbIMutablePropertyArray);
 
             //args
@@ -164,10 +112,76 @@ function Player() // {{{
             completer: function (context, args) completion.song(context, args)
         });
 
-    /////////////////////////////////////////////////////////////////////////////}} }
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    return {
+
+        play: function play()
+        {
+            gMM.sequencer.play();
+        },
+
+        stop: function stop()
+        {
+            gMM.sequencer.stop();
+        },
+
+        next: function next()
+        {
+            gSongbirdWindowController.doCommand("cmd_control_next");
+        },
+
+        previous: function previous()
+        {
+            gSongbirdWindowController.doCommand("cmd_control_previous");
+        },
+
+        togglePlayPause: function togglePlayPause()
+        {
+            gSongbirdWindowController.doCommand("cmd_control_playpause");
+        },
+
+        toggleShuffle: function toggleShuffle()
+        {
+            if (gMM.sequencer.mode != gMM.sequencer.MODE_SHUFFLE)
+                gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE;
+            else
+                gMM.sequencer.mode = gMM.sequencer.MODE_FORWARD;
+        },
+
+        // FIXME: not really toggling - good enough for now.
+        toggleRepeat: function toggleRepeat()
+        {
+            switch (gMM.sequencer.repeatMode)
+            {
+                case gMM.sequencer.MODE_REPEAT_NONE:
+                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ONE;
+                    break;
+                case gMM.sequencer.MODE_REPEAT_ONE:
+                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ALL;
+                    break;
+                case gMM.sequencer.MODE_REPEAT_ALL:
+                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
+                    break;
+                default:
+                    gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
+                    break;
+            }
+        },
+
+        seekForward: function seekForward(interval)
+        {
+            seek(interval, true);
+        },
+
+        seekBackward: function seekBackward(interval)
+        {
+            seek(interval, false);
+        },
+
+    };
     //}}}
 } // }}}
 
