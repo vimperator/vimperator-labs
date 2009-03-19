@@ -94,7 +94,7 @@ function Player() // {{{
             {
                 if (gMM.playbackControl.position >= 10000)
                     gMM.playbackControl.position = gMM.playbackControl.position - 10000;
-                else 
+                else
                     gMM.playbackControl.position = 0;
             });
 
@@ -107,14 +107,14 @@ function Player() // {{{
                 else
                     gMM.playbackControl.position = gMM.playbackControl.duration;
             });
-    
+
     mappings.add([modes.PLAYER],
             ["H"], "Seek -1m",
             function ()
             {
                 if (gMM.playbackControl.position >= 60000)
                     gMM.playbackControl.position = gMM.playbackControl.position - 60000;
-                else 
+                else
                     gMM.playbackControl.position = 0;
             });
 
@@ -148,17 +148,17 @@ function Player() // {{{
             switch (args.length)
             {
                 case 3:
-                    customProps.appendProperty(SBProperties.trackName,args[2].toString());
+                    customProps.appendProperty(SBProperties.trackName, args[2].toString());
                 case 2:
-                    customProps.appendProperty(SBProperties.albumName,args[1].toString());
+                    customProps.appendProperty(SBProperties.albumName, args[1].toString());
                 case 1:
-                    customProps.appendProperty(SBProperties.artistName,args[0].toString());
+                    customProps.appendProperty(SBProperties.artistName, args[0].toString());
                     break;
                 default:
                     break;
             }
 
-            sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0,Ci.sbIMediaItem)));
+            sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0, Ci.sbIMediaItem)));
         },
         {
             completer: function (context, args) completion.song(context, args)
@@ -198,9 +198,10 @@ function getArtistsArray()
     var artistArray = [];
     var i = 0;
     // Count the number of media items for each distinct artist
-    while (artists.hasMore()) {
+    while (artists.hasMore())
+    {
         artist = artists.getNext();
-        artistArray[i] = [artist,artist];
+        artistArray[i] = [artist, artist];
         list.enumerateItemsByProperty(SBProperties.artistName,
             artist,
             listener,
@@ -219,9 +220,10 @@ function getAlbums(artist)
     var albumArray = [], returnArray = [];
     var items = list.getItemsByProperty(SBProperties.artistName, artist).enumerate();
     var i = 0, j = 0;
-    
 
-    while (items.hasMoreElements()) {
+
+    while (items.hasMoreElements())
+    {
         album = items.getNext().getProperty(SBProperties.albumName);
         albumArray[i] = [album, album];
 
@@ -241,7 +243,7 @@ function getAlbums(artist)
     return returnArray;
 }
 
-function getTracks(artist,album)
+function getTracks(artist, album)
 {
     var list = LibraryUtils.mainLibrary;
     var tracksArray = [];
@@ -249,11 +251,12 @@ function getTracks(artist,album)
                  .createInstance(Ci.sbIMutablePropertyArray);
     var i = 0;
 
-    pa.appendProperty(SBProperties.artistName,artist.toString());
-    pa.appendProperty(SBProperties.albumName,album.toString());
+    pa.appendProperty(SBProperties.artistName, artist.toString());
+    pa.appendProperty(SBProperties.albumName, album.toString());
     var items = list.getItemsByProperties(pa).enumerate();
 
-    while (items.hasMoreElements()) {
+    while (items.hasMoreElements())
+    {
         track = items.getNext().getProperty(SBProperties.trackName);
         tracksArray[i] = [track, track];
         i++;

@@ -1399,13 +1399,13 @@ function Completion() //{{{
             }
             else if (args.completeArg == 1)
             {
-                context.title = ["Albums by "+args[0]];
+                context.title = ["Albums by " + args[0]];
                 context.completions = getAlbums(args[0]);
             }
             else if (args.completeArg == 2)
             {
-                context.title = ["Tracks from "+args[1]+" by "+args[0]];
-                context.completions = getTracks(args[0],args[1]);
+                context.title = ["Tracks from " + args[1] + " by " + args[0]];
+                context.completions = getTracks(args[0], args[1]);
             }
         },
 
