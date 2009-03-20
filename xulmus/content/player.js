@@ -16,7 +16,7 @@ function Player() // {{{
     function seek(interval, direction)
     {
         interval = interval * 1000;
-        
+
         let min = 0;
         let max = gMM.playbackControl.duration;
 
@@ -63,22 +63,26 @@ function Player() // {{{
 
     mappings.add([modes.PLAYER],
         ["h"], "Seek -10s",
-        function () { player.seekBackward(10); });
+        function (count) { player.seekBackward(count * 10); },
+        { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["l"], "Seek +10s",
-        function () { player.seekForward(10); });
+        function (count) { player.seekForward(count * 10); },
+        { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["H"], "Seek -1m",
-        function () { player.seekBackward(60); });
+        function (count) { player.seekBackward(count * 60); },
+        { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["L"], "Seek +1m",
-        function () { player.seekForward(60); });
-    
+        function (count) { player.seekForward(count * 60); },
+        { flags: Mappings.flags.COUNT });
+
     mappings.add([modes.PLAYER],
-         ["=","+"], "Increase Volume by 10%",
+         ["=", "+"], "Increase Volume by 10%",
          function () { player.increaseVolume(); });
 
     mappings.add([modes.PLAYER],
@@ -226,7 +230,7 @@ function Player() // {{{
                 gMM.volumeControl.volume = 0.1;
             else
                 gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
-        },           
+        }
     };
     //}}}
 } // }}}
