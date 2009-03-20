@@ -182,6 +182,7 @@ const config = { //{{{
         liberator.loadModule("hints",      Hints);
         // Load the Player module
         liberator.loadModule("player",     Player);
+
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
@@ -489,8 +490,17 @@ const config = { //{{{
         options.add(["urlseparator"],
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");
+        //}}}
+
+        // TODO: mention this to SB devs, they seem keen to provide these
+        // functions to make porting from FF as simple as possible.
+        window.toJavaScriptConsole = function () {
+            toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+        }
+        window.BrowserStop = function () {
+            getBrowser().mCurrentBrowser.stop();
+        }
     }
-    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
