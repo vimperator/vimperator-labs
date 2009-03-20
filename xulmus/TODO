@@ -2,6 +2,7 @@ Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
 BUGS:
+- SB doesn't support tab-undo yet so :undo and "u" etc don't work
 
 FEATURES:
 9 / and ? possibly reusing "Jump to" functionality directly.

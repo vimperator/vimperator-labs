@@ -11,10 +11,13 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
-    // FIXME: need to test that we're playing - why is gMM.playbackControl.status always null?
+    // FIXME: need to test that we're playing - gMM.status.state
     // interval (seconds)
     function seek(interval, direction)
     {
+        if (!gMM.playbackControl)
+            return;
+
         interval = interval * 1000;
 
         let min = 0;
@@ -127,7 +130,15 @@ function Player() // {{{
             completer: function (context, args) completion.song(context, args)
         });
 
-    // TODO: better of as a single command, or cmus compatible E.g. :player-next? --djk
+    // TODO: better off as a single command, or cmus compatible E.g. :player-next? --djk
+    commands.add(["playerp[lay]"],
+        "Play track",
+        function () { player.play(); });
+
+    commands.add(["playerpa[use]"],
+        "Pause/unpause track",
+        function () { player.togglePlayPause(); });
+
     commands.add(["playern[ext]"],
         "Play next track",
         function () { player.next(); });
@@ -140,19 +151,39 @@ function Player() // {{{
         "Stop track",
         function () { player.stop(); });
 
-    commands.add(["playerp[lay]"],
-        "Play track",
-        function () { player.play(); });
+    commands.add(["vol[ume]"],
+        "Set the volume",
+        function (args)
+        {
+            let arg = args[0];
 
-    commands.add(["playerpa[use]"],
-        "Pause/unpause track",
-        function () { player.togglePlayPause(); });
+            if (!/^[+-]?\d+$/.test(arg))
+            {
+                liberator.echoerr("E488: Trailing characters");
+                return;
+            }
+
+            let level = parseInt(arg, 10) / 100;
+
+            if (/^[+-]/.test(arg))
+                level = player.volume + level;
+
+            player.volume = Math.min(Math.max(level, 0), 1);
+        },
+        { argCount: 1 });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     return {
+
+        // TODO: check bounds and round, 0 - 1 or 0 - 100?
+        get volume() gMM.volumeControl.volume,
+        set volume(value)
+        {
+            gMM.volumeControl.volume = value;
+        },
 
         play: function play()
         {
@@ -209,14 +240,12 @@ function Player() // {{{
 
         seekForward: function seekForward(interval)
         {
-            if (gMM.playbackControl)
-                seek(interval, true);
+            seek(interval, true);
         },
 
         seekBackward: function seekBackward(interval)
         {
-            if (gMM.playbackControl)
-                seek(interval, false);
+            seek(interval, false);
         },
 
         //FIXME: 10% ?

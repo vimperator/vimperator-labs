@@ -5,6 +5,8 @@ HEADER
 The following features apply to Player mode which is activated when the media
 tab has focus.
 
+section:Playing{nbsp}tracks[playing-tracks]
+
 |x| |:playerp| |:playerplay|
 ||:playerp[lay]|| +
 ||x||
@@ -57,6 +59,20 @@ ________________________________________________________________________________
 Toggle repeat mode.
 ________________________________________________________________________________
 
+section:Filtering{nbsp}the{nbsp}library[filter,filtering]
+
+|f| |:f| |:filter|
+||:f[ilter] [a][artist][a] [a]{album}[a] [a]{track}[a]|| +
+||f||
+________________________________________________________________________________
+Filter and play tracks. If only [a][artist][a] is specified then all tracks for
+that artist are played in album order. If {album} is also specified then all
+tracks for that album are played. A specific track can be specified with
+{track}.
+________________________________________________________________________________
+
+
+section:Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
 
 |h|
 ||h||
@@ -86,12 +102,15 @@ Seek -1m.
 ________________________________________________________________________________
 
 
+section:Adjusting{nbsp}the{nbsp}volume[volume]
+
 |+| |=|
 ||+|| +
 ||=||
 ________________________________________________________________________________
 Increase volume by 10%.
 ________________________________________________________________________________
+
 
 |-|
 ||-||
@@ -100,14 +119,12 @@ Decrease volume by 10%.
 ________________________________________________________________________________
 
 
-|f| |:f| |:filter|
-||:f[ilter] [a][artist][a] [a]{album}[a] [a]{track}[a]|| +
-||f||
+|:vol| |:volume|
+||:vol[ume][!] [a][value][a]|| +
+||:vol[ume][!] +{value} | -{value}|| +
 ________________________________________________________________________________
-Filter and play tracks. If only [a][artist][a] is specified then all tracks for
-that artist are played in album order. If {album} is also specified then all
-tracks for that album are played. A specific track can be specified with
-{track}.
+Set the player volume. [a][value][a] can be an absolute value between 0 and
+100% or a relative value if prefixed with "-" or "+".
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:
