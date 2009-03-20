@@ -63,22 +63,22 @@ function Player() // {{{
 
     mappings.add([modes.PLAYER],
         ["h"], "Seek -10s",
-        function (count) { player.seekBackward(count * 10); },
+        function (count) { player.seekBackward(Math.max(1, count) * 10); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["l"], "Seek +10s",
-        function (count) { player.seekForward(count * 10); },
+        function (count) { player.seekForward(Math.max(1, count) * 10); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["H"], "Seek -1m",
-        function (count) { player.seekBackward(count * 60); },
+        function (count) { player.seekBackward(Math.max(1, count) * 60); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["L"], "Seek +1m",
-        function (count) { player.seekForward(count * 60); },
+        function (count) { player.seekForward(Math.max(1, count) * 60); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
