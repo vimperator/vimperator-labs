@@ -93,6 +93,7 @@ function Player() // {{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    // TODO: presumably this will eventually just filter the library view like cmus? --djk
     commands.add(["f[ilter]"],
         "Filter and play tracks",
         function (args)
