@@ -39,6 +39,8 @@ BUGS:
 - URLs in :ls output are no longer hyperlinks
 
 FEATURES:
+9 change the extension ID to vimperator@vimperator.org rather than
+  vimperator@mozdev.org
 9 finish :help TODOs
 9 fix local options
 9 adaptive timeout for auto-completions, :set completions can be updated more often than
