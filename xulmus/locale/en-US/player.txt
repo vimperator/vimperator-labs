@@ -72,6 +72,15 @@ tracks for that album are played. A specific track can be specified with
 ________________________________________________________________________________
 
 
+|F| |:F| |:Filter|
+||:F[ilter] {keywords}|| + 
+||F||
+________________________________________________________________________________
+Filter and show the tracks as a view. The tracks are filtered by the {keywords}
+provided as arguments. This text search applies over the default filter properties, 
+namely: Genre, Artist, and Album.
+________________________________________________________________________________
+
 section:Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
 
 |h|
