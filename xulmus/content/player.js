@@ -28,6 +28,11 @@ function Player() // {{{
         gMM.playbackControl.position = Math.min(Math.max(position, min), max);
     }
 
+    function focusTrack(mediaItem)
+    {
+        SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -55,6 +60,10 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
         ["f"], "Filter Library",
         function () { commandline.open(":", "filter ", modes.EX); });
+    
+    mappings.add([modes.PLAYER],
+        ["F"], "Loads current view filtered by the keywords",
+        function () { commandline.open(":", "Filter ", modes.EX); });
 
     mappings.add([modes.PLAYER],
         ["s"], "Toggle Shuffle",
@@ -124,11 +133,33 @@ function Player() // {{{
             }
 
             sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0, Ci.sbIMediaItem)));
+            player.focusPlayingTrack();
         },
         {
             argCount: "+",
             completer: function (context, args) completion.song(context, args)
         });
+
+    commands.add(["F[ilter]"],
+            "Filter tracks based on keywords {artist/album/track}",
+            function (args)
+            {
+                let library = LibraryUtils.mainLibrary;
+                let myView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args.string);
+                if (myView.length == 0)
+                    liberator.echoerr("No Tracks matching the keywords");
+                else
+                {
+                     SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, myView,
+                         "chrome://songbird/content/mediapages/filtersPage.xul");
+                     //TODO: make this focusTrack work ?
+                     focusTrack(myView.getItemByIndex(0));               
+                }
+            },
+            {
+                argCount: "+",
+           //     completer: function (context, args) completion.tracks(context, args);
+            });
 
     // TODO: better off as a single command, or cmus compatible E.g. :player-next? --djk
     commands.add(["playerp[lay]"],
@@ -188,6 +219,7 @@ function Player() // {{{
         play: function play()
         {
             gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
+            focusTrack(gMM.sequencer.currentItem);    
         },
 
         stop: function stop()
@@ -208,6 +240,7 @@ function Player() // {{{
         togglePlayPause: function togglePlayPause()
         {
             gSongbirdWindowController.doCommand("cmd_control_playpause");
+            SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(gMM.sequencer.currentItem));
         },
 
         toggleShuffle: function toggleShuffle()
@@ -260,7 +293,45 @@ function Player() // {{{
                 gMM.volumeControl.volume = 0.1;
             else
                 gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
+        },
+
+        focusPlayingTrack :function focusPlayingTrack()
+        {
+            focusTrack(gMM.sequencer.currentItem);
+        },
+
+        listTracks: function listTracks(view)
+        {
+            //let myView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args);
+            let length = view.length;
+            let tracksList = [];
+
+            for (var i=0; i < length; i++)
+            {
+                var mediaItem = view.getItemByIndex(i);
+                var trackName = mediaItem.getProperty(SBProperties.trackName);
+                var albumName = mediaItem.getProperty(SBProperties.albumName);
+                var artistName = mediaItem.getProperty(SBProperties.artistName);
+
+                tracksList[i] = [ trackName, "Album : "+albumName+" Artist : "+artistName ];
+            }
+            return tracksList;
+        },
+        //TODO: Use this for implementing "/" and "?". -ken
+        searchTracks: function searchTracks(args)
+        {
+            let currentView = _SBGetCurrentView();
+            let mediaItemList = currentView.mediaList;
+            let search = _getSearchString(currentView);
+            let searchString = "";
+            if (search != "")
+                searchString = args + " " + search;
+            else
+                searchString = args;    
+            let myView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
+            focusTrack(myView.getItemByIndex(0));
         }
+
     };
     //}}}
 } // }}}
