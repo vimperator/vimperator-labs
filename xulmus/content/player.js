@@ -187,7 +187,7 @@ function Player() // {{{
 
         play: function play()
         {
-            gMM.sequencer.play();
+            gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
         },
 
         stop: function stop()
