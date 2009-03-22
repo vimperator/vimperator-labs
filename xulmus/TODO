@@ -2,10 +2,14 @@ Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
 BUGS:
-- SB doesn't support tab-undo yet so :undo and "u" etc don't work
+- broken commands:
+  - SB doesn't support tab-undo yet so :undo and "u" etc don't work
+  - :tabduplicate
+  - :back/H, :forward,L
 
 FEATURES:
 9 / and ? possibly reusing "Jump to" functionality directly.
 8 Playlist/SmartPlaylist operations.
 7 extended hint mode for opening links in FF.
 5 Check for default extensions and add commands for them. Ex. Last.fm, Seeqpod e.t.c
+    Wouldn't these be provided as Xulmus plugins like Vimperator does? --djk
