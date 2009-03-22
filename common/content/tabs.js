@@ -109,17 +109,14 @@ function Tabs() //{{{
     // hide tabs initially
     if (config.name == "Vimperator")
         getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
-/*
-    if (config.name == "Xulmus")
-        getBrowser()._strip.getElementsByClassName(
-*/
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     options.add(["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "number", config.name == "Vimperator" ? 2 : 0,
+        "number", config.optionDefaults['stal'],
         {
             setter: function (value)
             {
@@ -151,7 +148,7 @@ function Tabs() //{{{
             validator: Option.validateCompleter
         });
 
-    if (config.name == "Vimperator" || config.name == "Xulmus" )
+    if (config.hasTabbrowser)
     {
         options.add(["activate", "act"],
             "Define when tabs are automatically activated",
@@ -241,7 +238,7 @@ function Tabs() //{{{
         function (count) { tabs.select("-" + (count < 1 ? 1 : count), true); },
         { flags: Mappings.flags.COUNT });
 
-    if (config.name == "Vimperator" || config.name == "Xulmus")
+    if (config.hasTabbrowser)
     {
         mappings.add([modes.NORMAL], ["b"],
             "Open a prompt to switch buffers",
@@ -452,7 +449,7 @@ function Tabs() //{{{
         function () { tabs.select(0, false); },
         { argCount: "0" });
 
-    if (config.name == "Vimperator" || config.name == "Xulmus")
+    if (config.hasTabbrowser)
     {
         // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
         commands.add(["b[uffer]"],
@@ -587,6 +584,7 @@ function Tabs() //{{{
             });
     }
 
+    /* Why not xulmus? */
     if (liberator.has("session") && config.name != "Xulmus")
     {
         // TODO: extract common functionality of "undoall"

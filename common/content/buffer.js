@@ -217,10 +217,10 @@ function Buffer() //{{{
         "Stop loading",
         function ()
         {
-            if(config.name == "Xulmus")
-                getBrowser().mCurrentBrowser.stop();
+            if(config.stop)
+                config.stop();
             else
-             window.BrowserStop();
+                window.BrowserStop();
         });
 
     // scrolling
@@ -605,8 +605,8 @@ function Buffer() //{{{
         "Stop loading",
         function ()
         {
-            if (config.name == "Xulmus")
-                getBrowser().mCurrentBrowser.stop();
+            if (config.stop)
+                config.stop();
             else
                 window.BrowserStop();
         },
