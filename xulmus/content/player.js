@@ -1,4 +1,4 @@
-//Import Artist List as this can be huge
+// Import Artist List as this can be huge
 
 var artists = getArtistsArray();
 
@@ -46,7 +46,7 @@ function Player() // {{{
         function () { player.previous(); });
 
     mappings.add([modes.PLAYER],
-        ["c"], "Pause/Unpause track",
+        ["c"], "Pause/unpause track",
         function () { player.togglePlayPause(); });
 
     mappings.add([modes.PLAYER],
@@ -58,19 +58,19 @@ function Player() // {{{
         function () { player.stop(); });
 
     mappings.add([modes.PLAYER],
-        ["f"], "Filter Library",
+        ["f"], "Filter library",
         function () { commandline.open(":", "filter ", modes.EX); });
-    
+
     mappings.add([modes.PLAYER],
         ["F"], "Loads current view filtered by the keywords",
         function () { commandline.open(":", "Filter ", modes.EX); });
 
     mappings.add([modes.PLAYER],
-        ["s"], "Toggle Shuffle",
+        ["s"], "Toggle shuffle",
         function () { player.toggleShuffle(); });
 
     mappings.add([modes.PLAYER],
-        ["r"], "Toggle Repeat",
+        ["r"], "Toggle repeat",
         function () { player.toggleRepeat(); });
 
     mappings.add([modes.PLAYER],
@@ -94,11 +94,11 @@ function Player() // {{{
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
-         ["=", "+"], "Increase Volume by 10%",
+         ["=", "+"], "Increase volume by 10%",
          function () { player.increaseVolume(); });
 
     mappings.add([modes.PLAYER],
-         ["-"], "Decrease Volume by 10%",
+         ["-"], "Decrease volume by 10%",
          function () { player.decreaseVolume(); });
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
@@ -110,15 +110,15 @@ function Player() // {{{
         "Filter and play tracks",
         function (args)
         {
-            //Store the old view
-            //let prev_view = gMM.status.view;
+            // Store the old view
+            // let prev_view = gMM.status.view;
             let library = LibraryUtils.mainLibrary;
             let mainView = library.createView();
             let sqncr = gMM.sequencer;
             let customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                                   .createInstance(Ci.sbIMutablePropertyArray);
 
-            //args
+            // args
             switch (args.length)
             {
                 case 3:
@@ -152,16 +152,16 @@ function Player() // {{{
                 {
                      SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, myView,
                          "chrome://songbird/content/mediapages/filtersPage.xul");
-                     //TODO: make this focusTrack work ?
-                     focusTrack(myView.getItemByIndex(0));               
+                     // TODO: make this focusTrack work ?
+                     focusTrack(myView.getItemByIndex(0));
                 }
             },
             {
                 argCount: "+",
-           //     completer: function (context, args) completion.tracks(context, args);
+                //completer: function (context, args) completion.tracks(context, args);
             });
 
-    // TODO: better off as a single command, or cmus compatible E.g. :player-next? --djk
+    // TODO: better off as a single command (:player play) or cmus compatible (:player-play)? --djk
     commands.add(["playerp[lay]"],
         "Play track",
         function () { player.play(); });
@@ -201,7 +201,7 @@ function Player() // {{{
 
             player.volume = Math.min(Math.max(level, 0), 1);
         },
-        { argCount: 1 });
+        { argCount: "1" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -218,18 +218,18 @@ function Player() // {{{
 
         play: function play()
         {
-            //Check if there is any selection in place, else play first item of the visible view.
+            // Check if there is any selection in place, else play first item of the visible view.
             if (_SBGetCurrentView().selection.count != 0)
             {
-                //Play the selection.
-                gMM.sequencer.playView(_SBGetCurrentView(),_SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
+                // Play the selection.
+                gMM.sequencer.playView(_SBGetCurrentView(), _SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
                 focusTrack(gMM.sequencer.currentItem);
             }
             else
             {
                 gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
                 focusTrack(gMM.sequencer.currentItem);
-            }    
+            }
         },
 
         stop: function stop()
@@ -291,7 +291,7 @@ function Player() // {{{
             seek(interval, false);
         },
 
-        //FIXME: 10% ?
+        // FIXME: 10% ?
         increaseVolume: function increaseVolume()
         {
             gMM.volumeControl.volume = gMM.volumeControl.volume * 1.1;
@@ -316,28 +316,31 @@ function Player() // {{{
             let length = view.length;
             let tracksList = [];
 
-            for (var i=0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var mediaItem = view.getItemByIndex(i);
                 var trackName = mediaItem.getProperty(SBProperties.trackName);
                 var albumName = mediaItem.getProperty(SBProperties.albumName);
                 var artistName = mediaItem.getProperty(SBProperties.artistName);
 
-                tracksList[i] = [ trackName, "Album : "+albumName+" Artist : "+artistName ];
+                tracksList[i] = [trackName, "Album : " + albumName + " Artist : " + artistName];
             }
+
             return tracksList;
         },
-        //TODO: Use this for implementing "/" and "?". -ken
+        // TODO: Use this for implementing "/" and "?". -ken
         searchTracks: function searchTracks(args)
         {
             let currentView = _SBGetCurrentView();
             let mediaItemList = currentView.mediaList;
             let search = _getSearchString(currentView);
             let searchString = "";
+
             if (search != "")
                 searchString = args + " " + search;
             else
-                searchString = args;    
+                searchString = args;
+
             let myView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
             focusTrack(myView.getItemByIndex(0));
         }

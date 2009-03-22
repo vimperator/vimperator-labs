@@ -497,6 +497,7 @@ const config = { //{{{
         window.toJavaScriptConsole = function () {
             toOpenWindowByType("global:console", "chrome://global/content/console.xul");
         }
+
         window.BrowserStop = function () {
             getBrowser().mCurrentBrowser.stop();
         }
