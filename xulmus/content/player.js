@@ -343,6 +343,40 @@ function Player() // {{{
 
             let myView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
             focusTrack(myView.getItemByIndex(0));
+        },
+
+        getPlaylists: function getPlaylists()
+        {
+            var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                .getService(Components.interfaces.sbILibraryManager);
+            var mainLibrary = libraryManager.mainLibrary;
+            var playlists = [mainLibrary];
+            var playlistsArray = [];
+            var listener =
+            {
+                onEnumerationBegin: function() { },
+                onEnumerationEnd: function() { },
+                onEnumeratedItem: function(list, item) 
+                {
+                    if (playlistsArray.indexOf(item.name)==-1)
+                    {
+                        playlists.push(item);
+                        playlistsArray.push(item.name);
+                    }
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
+            };
+                  mainLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1", listener );
+                  return playlists;
+        },
+
+        // Play track at 'row' in 'playlist'
+        playPlaylist: function playPlaylist(playlist,row) 
+        {
+            var gMM = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                .getService(Components.interfaces.sbIMediacoreManager);
+            gMM.sequencer.playView(playlist.createView(),row);
+
         }
 
     };
