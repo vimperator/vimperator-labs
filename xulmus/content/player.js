@@ -218,8 +218,18 @@ function Player() // {{{
 
         play: function play()
         {
-            gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
-            focusTrack(gMM.sequencer.currentItem);    
+            //Check if there is any selection in place, else play first item of the visible view.
+            if (_SBGetCurrentView().selection.count != 0)
+            {
+                //Play the selection.
+                gMM.sequencer.playView(_SBGetCurrentView(),_SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
+                focusTrack(gMM.sequencer.currentItem);
+            }
+            else
+            {
+                gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
+                focusTrack(gMM.sequencer.currentItem);
+            }    
         },
 
         stop: function stop()
