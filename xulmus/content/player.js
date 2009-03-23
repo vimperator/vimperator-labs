@@ -347,12 +347,12 @@ function Player() // {{{
             let length = view.length;
             let tracksList = [];
 
-            for (var i = 0; i < length; i++)
+            for (let i = 0; i < length; i++)
             {
-                var mediaItem = view.getItemByIndex(i);
-                var trackName = mediaItem.getProperty(SBProperties.trackName);
-                var albumName = mediaItem.getProperty(SBProperties.albumName);
-                var artistName = mediaItem.getProperty(SBProperties.artistName);
+                let mediaItem = view.getItemByIndex(i);
+                let trackName = mediaItem.getProperty(SBProperties.trackName);
+                let albumName = mediaItem.getProperty(SBProperties.albumName);
+                let artistName = mediaItem.getProperty(SBProperties.artistName);
 
                 tracksList[i] = [trackName, "Album : " + albumName + " Artist : " + artistName];
             }
@@ -378,18 +378,17 @@ function Player() // {{{
 
         getPlaylists: function getPlaylists()
         {
-            var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                .getService(Components.interfaces.sbILibraryManager);
-            var mainLibrary = libraryManager.mainLibrary;
-            var playlists = [mainLibrary];
-            var playlistsArray = [];
-            var listener =
-            {
+            let libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                           .getService(Components.interfaces.sbILibraryManager);
+            let mainLibrary = libraryManager.mainLibrary;
+            let playlists = [mainLibrary];
+            let playlistsArray = [];
+            let listener = {
                 onEnumerationBegin: function() { },
                 onEnumerationEnd: function() { },
-                onEnumeratedItem: function(list, item) 
+                onEnumeratedItem: function(list, item)
                 {
-                    if (playlistsArray.indexOf(item.name)==-1)
+                    if (playlistsArray.indexOf(item.name) == -1)
                     {
                         playlists.push(item);
                         playlistsArray.push(item.name);
@@ -397,19 +396,17 @@ function Player() // {{{
                     return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
                 }
             };
-                  mainLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1", listener );
-                  return playlists;
+            mainLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1", listener );
+            return playlists;
         },
 
         // Play track at 'row' in 'playlist'
-        playPlaylist: function playPlaylist(playlist,row) 
+        playPlaylist: function playPlaylist(playlist, row)
         {
-            var gMM = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                .getService(Components.interfaces.sbIMediacoreManager);
-            gMM.sequencer.playView(playlist.createView(),row);
-
+            let gMM = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                                .getService(Components.interfaces.sbIMediacoreManager);
+            gMM.sequencer.playView(playlist.createView(), row);
         }
-
     };
     //}}}
 } // }}}
