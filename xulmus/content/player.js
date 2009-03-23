@@ -203,6 +203,37 @@ function Player() // {{{
         },
         { argCount: "1" });
 
+    commands.add(["load"],
+       "Load a playlist",
+       function (args)
+       {
+            
+            if (args.length != 0)
+            {
+                //load the selected playlist/smart playlist
+                let playlists = player.getPlaylists();
+                let length = playlists.length;
+                let playlistNames = [];
+
+                for (var i=0; i < length; i++)
+                {
+                    playlistNames[i] = playlists[i].name.toLowerCase();
+                }
+               
+                let playlist = args.string.replace("\\",""); 
+                SBGetBrowser().loadMediaList(playlists[playlistNames.indexOf(playlist.toLowerCase())]);
+                focusTrack(_SBGetCurrentView().getItemByIndex(0));    
+            }
+            else
+            {
+                //load main library if there are no args
+                _SBShowMainLibrary();
+            }
+       },
+       {
+            //args:
+            completer: function(context, args) completion.playlist(context, args)
+       });
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
