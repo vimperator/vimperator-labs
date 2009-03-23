@@ -250,6 +250,40 @@ const util = { //{{{
     },
 
     /**
+     * Split a string on literal occurances of a marker.
+     *
+     * Specifically this ignores occurences preceded by a backslash, or
+     * contained within 'single' or "double" quotes.
+     *
+     * It assumes backslash escaping on strings, and will thus not count quotes
+     * that are preceded by a backslash or within other quotes as starting or
+     * ending quoted sections of the string.
+     *
+     * @param {string} str
+     * @param {RegExp} marker
+     */
+    splitLiteral: function splitLiteral(str, marker)
+    {
+        let results = [];
+        let resep = RegExp(/^(([^\\'"]|\\.|'([^\\']|\\.)*'|"([^\\"]|\\.)*")*?)/.source + marker.source);
+        let cont = true;
+
+        while (cont)
+        {
+            cont = false;
+            str = str.replace(resep, function (match, before)
+            {
+                results.push(before);
+                cont = true;
+                return "";
+            });
+        }
+
+        results.push(str);
+        return results;
+    },
+
+    /**
      * Converts <b>bytes</b> to a pretty printed data size string.
      *
      * @param {number} bytes The number of bytes.
@@ -618,7 +652,7 @@ const util = { //{{{
      */
     stringToURLArray: function stringToURLArray(str)
     {
-        let urls = str.split(RegExp("\\s*" + options["urlseparator"] + "\\s*"));
+        let urls = util.splitLiteral(str, RegExp("\\s*" + options["urlseparator"] + "\\s*"));
 
         return urls.map(function (url) {
             try
