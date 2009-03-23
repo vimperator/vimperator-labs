@@ -146,13 +146,13 @@ function Buffer() //{{{
             getter: function () window.fullScreen
         });
 
-    options.add(["nextpattern"],
+        options.add(["nextpattern"], // \u00BB is » (>> in a single char)
         "Patterns to use when guessing the 'next' page in a document sequence",
-        "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
+        "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 
-    options.add(["previouspattern"],
+    options.add(["previouspattern"], // \u00AB is « (<< in a single char)
         "Patterns to use when guessing the 'previous' page in a document sequence",
-        "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
+        "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
