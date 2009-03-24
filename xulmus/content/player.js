@@ -68,12 +68,12 @@ function Player() // {{{
         function () { player.toggleRepeat(); });
 
     mappings.add([modes.PLAYER],
-        ["h"], "Seek -10s",
+        ["h", "<Left>"], "Seek -10s",
         function (count) { player.seekBackward(Math.max(1, count) * 10000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
-        ["l"], "Seek +10s",
+        ["l", "<Right>"], "Seek +10s",
         function (count) { player.seekForward(Math.max(1, count) * 10000); },
         { flags: Mappings.flags.COUNT });
 
