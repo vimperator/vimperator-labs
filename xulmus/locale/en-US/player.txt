@@ -136,4 +136,13 @@ Set the player volume. [a][value][a] can be an absolute value between 0 and
 100% or a relative value if prefixed with "-" or "+".
 ________________________________________________________________________________
 
+section:Managing{nbsp}playlists[playlists]
+
+|:load|
+||:load [a][playlist][a]|| +
+________________________________________________________________________________
+Load [a][playlist][a]. If no playlist is specified then the main library view
+is loaded.
+________________________________________________________________________________
+
 // vim: set filetype=asciidoc:

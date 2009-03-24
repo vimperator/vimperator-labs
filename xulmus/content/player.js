@@ -207,33 +207,37 @@ function Player() // {{{
        "Load a playlist",
        function (args)
        {
-            
-            if (args.length != 0)
-            {
-                //load the selected playlist/smart playlist
-                let playlists = player.getPlaylists();
-                let length = playlists.length;
-                let playlistNames = [];
+            let arg = args.literalArg;
 
-                for (var i=0; i < length; i++)
+            if (arg)
+            {
+                // load the selected playlist/smart playlist
+                let playlists = player.getPlaylists();
+
+                for ([i, list] in Iterator(playlists))
                 {
-                    playlistNames[i] = playlists[i].name.toLowerCase();
+                    if (util.compareIgnoreCase(arg, list.name) == 0)
+                    {
+                        SBGetBrowser().loadMediaList(playlists[i]);
+                        focusTrack(_SBGetCurrentView().getItemByIndex(0));
+                        return;
+                    }
                 }
-               
-                let playlist = args.string.replace("\\",""); 
-                SBGetBrowser().loadMediaList(playlists[playlistNames.indexOf(playlist.toLowerCase())]);
-                focusTrack(_SBGetCurrentView().getItemByIndex(0));    
+
+                liberator.echoerr("E475: Invalid argument: " + arg);
             }
             else
             {
-                //load main library if there are no args
+                // load main library if there are no args
                 _SBShowMainLibrary();
             }
        },
        {
-            //args:
-            completer: function(context, args) completion.playlist(context, args)
+            argCount: "?",
+            completer: function(context, args) completion.playlist(context, args),
+            literal: 0
        });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -378,33 +382,30 @@ function Player() // {{{
 
         getPlaylists: function getPlaylists()
         {
-            let libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                           .getService(Components.interfaces.sbILibraryManager);
-            let mainLibrary = libraryManager.mainLibrary;
+            let mainLibrary = LibraryUtils.mainLibrary;
             let playlists = [mainLibrary];
-            let playlistsArray = [];
             let listener = {
                 onEnumerationBegin: function() { },
                 onEnumerationEnd: function() { },
                 onEnumeratedItem: function(list, item)
                 {
-                    if (playlistsArray.indexOf(item.name) == -1)
+                    // FIXME: why are there null items and duplicates?
+                    if (!playlists.some(function (list) list.name == item.name) && item.name != null)
                     {
                         playlists.push(item);
-                        playlistsArray.push(item.name);
                     }
                     return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
                 }
             };
-            mainLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1", listener );
+
+            mainLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1", listener);
+
             return playlists;
         },
 
         // Play track at 'row' in 'playlist'
         playPlaylist: function playPlaylist(playlist, row)
         {
-            let gMM = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                                .getService(Components.interfaces.sbIMediacoreManager);
             gMM.sequencer.playView(playlist.createView(), row);
         }
     };

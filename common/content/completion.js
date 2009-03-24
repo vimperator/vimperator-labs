@@ -1411,17 +1411,9 @@ function Completion() //{{{
 
         playlist: function playlist(context, args)
         {
-            let playlists = Player().getPlaylists();
-            let length = playlists.length;
-            let playlistNames = [];
-
-            for (var i=0; i < length; i++)
-            {
-                playlistNames[i] = [playlists[i].name.toString(),playlists[i].name];
-            }
-            
-            context.title = ["Playlists"];
-            context.completions = playlistNames;
+            context.title = ["Playlist", "Type"];
+            context.keys = { text: "name", description: "type" };
+            context.completions = player.getPlaylists();
         },
 
         buffer: function buffer(context)
