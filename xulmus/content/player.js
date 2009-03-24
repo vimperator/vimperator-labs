@@ -56,6 +56,10 @@ function Player() // {{{
         function () { commandline.open(":", "Filter ", modes.EX); });
 
     mappings.add([modes.PLAYER],
+        ["i"], "Select current track",
+        function () { gSongbirdWindowController.doCommand("cmd_find_current_track"); });
+
+    mappings.add([modes.PLAYER],
         ["s"], "Toggle shuffle",
         function () { player.toggleShuffle(); });
 
