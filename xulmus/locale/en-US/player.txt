@@ -62,29 +62,29 @@ ________________________________________________________________________________
 section:Filtering{nbsp}the{nbsp}library[filter,filtering]
 
 |f| |:f| |:filter|
-||:f[ilter] [a][artist][a] [a]{album}[a] [a]{track}[a]|| +
+||:f[ilter] {artist} [a][album][a] [a][track][a]|| +
 ||f||
 ________________________________________________________________________________
-Filter and play tracks. If only [a][artist][a] is specified then all tracks for
-that artist are played in album order. If {album} is also specified then all
+Filter and play tracks. If only {artist} is specified then all tracks for that
+artist are played in album order. If [a][album][a] is also specified then all
 tracks for that album are played. A specific track can be specified with
-{track}.
+[a][track][a].
 ________________________________________________________________________________
 
 
 |F| |:F| |:Filter|
-||:F[ilter] {keywords}|| + 
+||:F[ilter] {keywords}|| +
 ||F||
 ________________________________________________________________________________
 Filter and show the tracks as a view. The tracks are filtered by the {keywords}
-provided as arguments. This text search applies over the default filter properties, 
-namely: Genre, Artist, and Album.
+provided as arguments. This text search applies over the default filter
+properties, namely: Genre, Artist, Album and Track.
 ________________________________________________________________________________
 
 section:Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
 
 |h|
-||h||
+||[count]h||
 ________________________________________________________________________________
 Seek +10s.
 ________________________________________________________________________________
@@ -111,6 +111,18 @@ Seek -1m.
 ________________________________________________________________________________
 
 
+|:see]| |:seek|
+||:see[k] {[HH:]MM:SS]}|| +
+||:see[k] +{time[hms]} | -{time[hms]}|| +
+________________________________________________________________________________
+Seek to an absolute or relative position in a track. The position can be given
+in seconds (s), minutes (m), or hours (h). If the unit is not specified then
+seconds is assumed. The position is absolute unless the value is prefixed with
+"-" or "+".
+
+Positions may also be specified in [a][HH:]MM:SS[a] format.
+________________________________________________________________________________
+
 section:Adjusting{nbsp}the{nbsp}volume[volume]
 
 |+| |=|
@@ -129,11 +141,11 @@ ________________________________________________________________________________
 
 
 |:vol| |:volume|
-||:vol[ume][!] [a][value][a]|| +
-||:vol[ume][!] +{value} | -{value}|| +
+||:vol[ume] {value}|| +
+||:vol[ume] +{value} | -{value}|| +
 ________________________________________________________________________________
-Set the player volume. [a][value][a] can be an absolute value between 0 and
-100% or a relative value if prefixed with "-" or "+".
+Set the player volume. {value} can be an absolute value between 0 and 100% or a
+relative value if prefixed with "-" or "+".
 ________________________________________________________________________________
 
 section:Managing{nbsp}playlists[playlists]

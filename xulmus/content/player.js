@@ -11,21 +11,11 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
-    // FIXME: need to test that we're playing - gMM.status.state
-    // interval (seconds)
+    // interval (milliseconds)
     function seek(interval, direction)
     {
-        if (!gMM.playbackControl)
-            return;
-
-        interval = interval * 1000;
-
-        let min = 0;
-        let max = gMM.playbackControl.duration;
-
-        let position = gMM.playbackControl.position + (direction ? interval : -interval);
-
-        gMM.playbackControl.position = Math.min(Math.max(position, min), max);
+        let position = gMM.playbackControl ? gMM.playbackControl.position : 0;
+        player.seekTo(position + (direction ? interval : -interval));
     }
 
     function focusTrack(mediaItem)
@@ -75,22 +65,22 @@ function Player() // {{{
 
     mappings.add([modes.PLAYER],
         ["h"], "Seek -10s",
-        function (count) { player.seekBackward(Math.max(1, count) * 10); },
+        function (count) { player.seekBackward(Math.max(1, count) * 10000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["l"], "Seek +10s",
-        function (count) { player.seekForward(Math.max(1, count) * 10); },
+        function (count) { player.seekForward(Math.max(1, count) * 10000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["H"], "Seek -1m",
-        function (count) { player.seekBackward(Math.max(1, count) * 60); },
+        function (count) { player.seekBackward(Math.max(1, count) * 60000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
         ["L"], "Seek +1m",
-        function (count) { player.seekForward(Math.max(1, count) * 60); },
+        function (count) { player.seekForward(Math.max(1, count) * 60000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
@@ -141,7 +131,7 @@ function Player() // {{{
         });
 
     commands.add(["F[ilter]"],
-            "Filter tracks based on keywords {artist/album/track}",
+            "Filter tracks based on keywords {genre/artist/album/track}",
             function (args)
             {
                 let library = LibraryUtils.mainLibrary;
@@ -182,6 +172,44 @@ function Player() // {{{
         "Stop track",
         function () { player.stop(); });
 
+    commands.add(["see[k]"],
+        "Seek to a track position",
+        function (args)
+        {
+            let arg = args[0];
+
+            // intentionally supports 999:99:99
+            if (!/^[+-]?(\d+[smh]?|(\d+:\d\d:|\d+:)?\d{2})$/.test(arg))
+            {
+                liberator.echoerr("E475: Invalid argument: " + arg);
+                return;
+            }
+
+            function ms(t, m) Math.abs(parseInt(t, 10) * { s: 1000, m: 60000, h: 3600000 }[m])
+
+            if (/:/.test(arg))
+            {
+                let [seconds, minutes, hours] = arg.split(":").reverse();
+                hours = hours || 0;
+                var value = ms(seconds, "s") + ms(minutes, "m") + ms(hours, "h");
+            }
+            else
+            {
+                if (!/[smh]/.test(arg.substr(-1)))
+                    arg += "s"; // default to seconds
+
+                value = ms(arg.substring(arg, arg.length - 1), arg.substr(-1));
+            }
+
+            if (/^[-+]/.test(arg))
+                arg[0] == "-" ? player.seekBackward(value) : player.seekForward(value)
+            else
+                player.seekTo(value)
+
+        },
+        { argCount: "1" });
+
+    // TODO: maybe :vol! could toggle mute on/off? --djk
     commands.add(["vol[ume]"],
         "Set the volume",
         function (args)
@@ -251,6 +279,7 @@ function Player() // {{{
             gMM.volumeControl.volume = value;
         },
 
+        // FIXME: can't be called from non-media tabs since 840e78
         play: function play()
         {
             // Check if there is any selection in place, else play first item of the visible view.
@@ -326,7 +355,19 @@ function Player() // {{{
             seek(interval, false);
         },
 
+        seekTo: function seekTo(position)
+        {
+            if (!gMM.playbackControl)
+                this.play();
+
+            let min = 0;
+            let max = gMM.playbackControl.duration - 5000; // TODO: 5s buffer like cmus desirable?
+
+            gMM.playbackControl.position = Math.min(Math.max(position, min), max);
+        },
+
         // FIXME: 10% ?
+        // I think just general increments of say 0.05 might be better --djk
         increaseVolume: function increaseVolume()
         {
             gMM.volumeControl.volume = gMM.volumeControl.volume * 1.1;
@@ -363,6 +404,7 @@ function Player() // {{{
 
             return tracksList;
         },
+
         // TODO: Use this for implementing "/" and "?". -ken
         searchTracks: function searchTracks(args)
         {
