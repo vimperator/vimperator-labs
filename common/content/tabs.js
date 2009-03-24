@@ -689,9 +689,10 @@ function Tabs() //{{{
         {
             let tabStrip = null;
 
+            // FIXME: why is this app specific conditional code here?
             if (config.hostApplication == "Firefox")
                 tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
-            else if (config.hostApplication == "Thunderbird")
+            else if (/^(Thunderbird|Songbird)$/.test(config.hostApplication))
                 tabStrip = getBrowser().mStrip;
 
             return tabStrip;
