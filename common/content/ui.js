@@ -1298,15 +1298,8 @@ function CommandLine() //{{{
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
                 //   FIXME: <Esc> should trigger "cancel" event
-                //   FIXME: This should not be waiting, some kind of callback mechanism on completion would be better.
                 if (events.isAcceptKey(key))
                 {
-                    while (completions.context.incomplete)
-                    {
-                        liberator.threadYield(true);
-                        command = this.command;
-                    }
-
                     let mode = currentExtendedMode; // save it here, as modes.pop() resets it
                     keepCommand = true;
                     currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
