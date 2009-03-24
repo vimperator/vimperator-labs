@@ -33,12 +33,13 @@ const config = { //{{{
     //mainWindowID: "mainplayer",
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
-    defaults: { guioptions: "rb" },
+    defaults: { guioptions: "mprb" }, // FIXME: "m" seems to be defaulting to on anyway
 
     guioptions: {
-        m: ["Menubar",      ["main-menubar"]],
-        T: ["Toolbar",      ["nav-bar"]],
-        B: ["Bookmark bar", ["PersonalToolbar"]]
+        m: ["Menubar",         ["main-menubar"]],
+        T: ["Toolbar",         ["nav-bar"]],
+        B: ["Bookmark bar",    ["PersonalToolbar"]], // FIXME: used/relevant?
+        p: ["Player controls", ["player_wrapper"]]
     },
 
     //get visualbellWindow() getBrowser().mPanelContainer,
