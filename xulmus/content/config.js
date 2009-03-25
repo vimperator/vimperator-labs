@@ -465,6 +465,8 @@ const config = { //{{{
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        options.get("showtabline").value = 2;
+
         options.add(["online"],
             "Set the 'work offline' option",
             "boolean", true,
