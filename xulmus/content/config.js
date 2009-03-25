@@ -138,7 +138,7 @@ const config = { //{{{
 
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
-    helpFiles: [ "player.html", "autocommands.html" ],
+    helpFiles: [ "player.html", "options.html", "autocommands.html" ],
        /* "intro.html", "tutorial.html", "starting.html", "browsing.html",
         "buffer.html", "cmdline.html", "insert.html", "options.html",
         "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",

@@ -2,7 +2,7 @@ HEADER
 
 |options| +
 
-Vimperator has a number of internal variables and switches which can be set to
+Xulmus has a number of internal variables and switches which can be set to
 achieve special effects. These options come in 5 forms:
 `------------`-----------------------------------------
 *boolean*    can only be on or off
@@ -155,35 +155,35 @@ Environment variables are expanded for path options like 'cdpath' and
 'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
 character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
 
-section:Setting{nbsp}Firefox{nbsp}options[firefox-options,preferences]
+section:Setting{nbsp}Songbird{nbsp}options[songbird-options,preferences]
 
-Firefox options can be viewed and set with the following commands:
+Songbird options can be viewed and set with the following commands:
 
 |:prefs| |:preferences|
 ||:pref[erences]||
 ________________________________________________________________________________
-Show the Firefox preferences dialog. You can change the browser preferences
-from this dialog. Be aware that not all Firefox preferences work, because
-Vimperator overrides some key bindings and changes Firefox's GUI.
+Show the Songbird preferences dialog. You can change the player preferences
+from this dialog. Be aware that not all Songbird preferences work, because
+Xulmus overrides some key bindings and changes Songbird's GUI.
 ________________________________________________________________________________
 
 |:prefs!| |:preferences!|
 ||:pref[erences]!||
 ________________________________________________________________________________
-Opens about:config in the current tab where you can change advanced Firefox
+Opens about:config in the current tab where you can change advanced Songbird
 preferences.
 ________________________________________________________________________________
 
 |:set!| |:set-!|
 ||:se[t]! {preference}={value}|| +
 ________________________________________________________________________________
-Change any Firefox {preference} (those in the about:config window). You can also
-reset/delete those preferences with [c]:set! {preference}&[c].
+Change any Songbird {preference} (those in the about:config window). You can
+also reset/delete those preferences with [c]:set! {preference}&[c].
 ________________________________________________________________________________
 
 |overridden-preferences| +
 
-Vimperator sets several Firefox preferences at startup. If this is undesirable,
+Xulmus sets several Songbird preferences at startup. If this is undesirable,
 they can be changed to a different value in your RC file using
 [c]:set! {preference}={value}[c]
 
@@ -231,7 +231,7 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 `---`--------------------------------------------------------------------------------
 *s* Search engines and keyword URLs
 *f* Local files
-*l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
+*l* Songbird location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
 *S* Suggest engines
 -------------------------------------------------------------------------------------
@@ -253,7 +253,7 @@ schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
 schwarzenegger[c]. Therefore, you need to add a keyword or search engine
 "youtube" first.
 
-If 'defsearch' is empty, then Firefox will always attempt to open the
+If 'defsearch' is empty, then Songbird will always attempt to open the
 raw [a][arg][a].
 ____
 
@@ -265,7 +265,7 @@ Set the external text editor.
 Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
 modes.
 
-Warning: Vimperator will not behave correctly if the editor forks its own
+Warning: Xulmus will not behave correctly if the editor forks its own
 process, such as with gvim without the -f argument.
 ____
 
@@ -331,7 +331,7 @@ Show or hide certain GUI elements like the menu or toolbar. Supported characters
 `---`-----------
 *m* Menubar
 *T* Toolbar
-*B* Bookmark bar
+*p* Player controls
 *n* Tab number
 *N* Tab number over image
 *b* Bottom scrollbar
@@ -439,8 +439,8 @@ ____
 ||'insertmode' 'im'|| boolean (default: on)
 ____
 Use Insert mode as the default for text areas.
-Makes Vimperator work in a way that Insert mode is the default mode for text areas.
-Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.
+Makes Xulmus work in a way that Insert mode is the default mode for text areas.
+Useful if you want to use Xulmus as a modeless editor, keeping the known Songbird interface for editing text areas.
 ____
 
 
@@ -471,9 +471,9 @@ ____
 ||'loadplugins' 'lpl'|| boolean (default on)
 ____
 Load plugin scripts when starting up. When on, yet unloaded plugins are
-automatically loaded after the vimperatorrc file has been sourced. To
+automatically loaded after the xulmusrc file has been sourced. To
 load plugins earlier, use the [c]:loadplugins[c] command within the
-vimperatorrc.
+xulmusrc.
 ____
 
 
@@ -555,12 +555,12 @@ they always open in a new tab. Possible values:
 .---`------------------------------------------------------------------------------------------------
 *0*  Force to open in the current tab (Warning: this can stop some web sites from working correctly!)
 *1*  Always open in a new tab
-*2*  Open in a new window if it has a specific requested size (default in Firefox)
+*2*  Open in a new window if it has a specific requested size (default in Songbird)
 *3*  Always open in a new window
 *4*  Open in the same tab unless it has a specific requested size
 -----------------------------------------------------------------------------------------------------
 
-Note: This option does not change the popup blocker of Firefox in any way.
+Note: This option does not change the popup blocker of Songbird in any way.
 ____
 
 
@@ -570,7 +570,7 @@ ____
 Speed up first time history/bookmark completion
 
 History access can be quite slow for a large history.
-Vimperator maintains a cache to speed it up significantly on subsequent access.
+Xulmus maintains a cache to speed it up significantly on subsequent access.
 In order to also speed up first time access, it is cached at startup, if this option is set (recommended).
 ____
 
@@ -587,23 +587,23 @@ link elements are those defined by 'hinttags'.
 ____
 
 
-|$VIMPERATOR_RUNTIME|
+|$XULMUS_RUNTIME|
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
 ____
-(default: _$VIMPERATOR_RUNTIME_ or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+(default: _$XULMUS_RUNTIME_ or Unix, Mac: "\~/.xulmus", Windows: "\~/xulmus")
 
 List of directories searched for runtime files: +
 colors/ +
 macros/ +
 plugin/ +
 
-Example: [c]:set runtimepath=\~/myvimperator,\~/.vimperator[c] +
-This will search for plugins in both "\~/myvimperator/plugin" and
-"\~/.vimperator/plugin"
+Example: [c]:set runtimepath=\~/myxulmus,\~/.xulmus[c] +
+This will search for plugins in both "\~/myxulmus/plugin" and
+"\~/.xulmus/plugin"
 
-On startup, if the environment variable _$VIMPERATOR_RUNTIME_ does not
-exist, Vimperator will set it to match this value.
+On startup, if the environment variable _$XULMUS_RUNTIME_ does not
+exist, Xulmus will set it to match this value.
 ____
 
 
@@ -690,13 +690,13 @@ ____
 
 
 |\'titlestring'|
-||'titlestring'|| string (default: "Vimperator")
+||'titlestring'|| string (default: "Xulmus")
 ____
-Change the title of the browser window.
-Vimperator changes the browser title from "Title of web page - Mozilla Firefox" to
-"Title of web page - Vimperator". +
+Change the title of the player window.
+Xulmus changes the player title from "Songbird" to
+"Title of tab - Xulmus". +
 If you don't like that, you can restore it with:
-[c]:set titlestring=Mozilla\ Firefox[c].
+[c]:set titlestring=Songbird[c].
 ____
 
 
@@ -725,7 +725,7 @@ ____
 ||'verbose' 'vbs'|| number (default: 1)
 ____
 Define which info messages are displayed.
-When bigger than zero, Vimperator will give messages about what it is doing.
+When bigger than zero, Xulmus will give messages about what it is doing.
 These can be viewed at any time with the [c]:messages[c] command. The highest
 value is 15, being the most verbose mode.
 
