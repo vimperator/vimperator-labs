@@ -621,7 +621,6 @@ function Bookmarks() //{{{
             // did not :open <tab> once before
             this.getSearchEngines();
 
-
             function getShortcutOrURI(aURL, aPostDataRef)
             {
                 var shortcutURL = null;
@@ -689,7 +688,9 @@ function Bookmarks() //{{{
                 }
                     return shortcutURL;
             }
+
             url = getShortcutOrURI(searchString, aPostDataRef);
+
             if (url == searchString)
                 url = null;
 

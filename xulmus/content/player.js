@@ -365,7 +365,7 @@ function Player() // {{{
         togglePlayPause: function togglePlayPause()
         {
             gSongbirdWindowController.doCommand("cmd_control_playpause");
-            SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(gMM.sequencer.currentItem));
+            focusTrack(gMM.sequencer.currentItem);
         },
 
         toggleShuffle: function toggleShuffle()

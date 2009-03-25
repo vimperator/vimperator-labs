@@ -6,6 +6,8 @@ BUGS:
   - SB doesn't support tab-undo yet so :undo and "u" etc don't work
   - :tabduplicate
   - :back/H, :forward,L
+  - :open songbird-internal-search searchString
+    Is this workable anyway? --djk
 
 FEATURES:
 9 / and ? possibly reusing "Jump to" functionality directly.
