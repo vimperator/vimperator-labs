@@ -58,9 +58,17 @@ const config = { //{{{
                    ["PageLoadPre",    "Triggered after a page load is initiated"],
                    ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
                    ["ShellCmdPost",   "Triggered after executing a shell command with :!cmd"],
-                   ["XulmusEnter",    "Triggered after Xulmus starts"],
-                   ["XulmusLeavePre", "Triggered before exiting Xulmus, just before destroying each module"],
-                   ["XulmusLeave",    "Triggered before exiting Xulmus"]],
+                   ["TrackChangePre", "Triggered before a playing track is changed"],
+                   ["TrackChange",    "Triggered after a playing track has changed"],
+                   ["ViewChangePre",  "Triggered before a sequencer view is changed"],
+                   ["ViewChange",     "Triggered after a sequencer view is changed"],
+                   ["StreamStart",    "Triggered after a stream has started"],
+                   ["StreamPause",    "Triggered after a stream has paused"],
+                   ["StreamEnd",      "Triggered after a stream has ended"],
+                   ["StreamStop",     "Triggered after a stream has stopped"],
+                   ["XulmusEnter",    "Triggered after Songbird starts"],
+                   ["XulmusLeavePre", "Triggered before exiting Songbird, just before destroying each module"],
+                   ["XulmusLeave",    "Triggered before exiting Songbird"]],
 
     // TODO: remove those which don't make sense, can't be provided.
     dialogs: [
@@ -130,7 +138,7 @@ const config = { //{{{
 
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
-    helpFiles: [ "player.html" ],
+    helpFiles: [ "player.html", "autocommands.html" ],
        /* "intro.html", "tutorial.html", "starting.html", "browsing.html",
         "buffer.html", "cmdline.html", "insert.html", "options.html",
         "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",

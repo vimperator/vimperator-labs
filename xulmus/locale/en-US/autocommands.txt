@@ -12,7 +12,7 @@ Execute commands automatically on events.
 
 [c]:au[tocmd][c] {event} {pat} {cmd}
 
-Add {cmd} to the list of commands Vimperator will execute on {event} for a URL matching {pat}:
+Add {cmd} to the list of commands Xulmus will execute on {event} for a URL matching {pat}:
 
 * [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
 * [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
@@ -31,9 +31,17 @@ Available {events}:
 *PageLoadPre*        Triggered after a page load is initiated
 *PageLoad*           Triggered when a page gets (re)loaded/opened
 *ShellCmdPost*       Triggered after executing a shell command with [c]:![c]#{cmd}
-*VimperatorEnter*    Triggered after Firefox starts
-*VimperatorLeavePre* Triggered before exiting Firefox, just before destroying each module
-*VimperatorLeave*    Triggered before exiting Firefox
+*TrackChangePre*     Triggered before a playing track is changed
+*TrackChange*        Triggered after a playing track has changed
+*ViewChangePre*      Triggered before a sequencer view is changed
+*ViewChange*         Triggered after a sequencer view is changed
+*StreamStart*        Triggered after a stream has started
+*StreamPause*        Triggered after a stream has paused
+*StreamEnd*          Triggered after a stream has ended
+*StreamStop*         Triggered after a stream has stopped
+*XulmusEnter*        Triggered after Songbird starts
+*XulmusLeavePre*     Triggered before exiting Songbird, just before destroying each module
+*XulmusLeave*        Triggered before exiting Songbird
 --------------------------------------------------------------
 
 {pat} is a regular expression, use .* if you want to match all URLs.
@@ -53,6 +61,8 @@ The following keywords are available where relevant:
 *<file>*       The target destination of a download. Only for *DownloadPost*.
 *<state>*      The new fullscreen state. Only for *Fullscreen*.
 *<name>*       The color scheme name. Only for *ColorScheme*.
+*<view>*       The new sequencer view. Only for *ViewChangePre* and *ViewChange*.
+*<track>*      The new media track. Only for *TrackChangePre* and *TrackChange*.
 --------------------------------------------------------------
 
 ________________________________________________________________________________
