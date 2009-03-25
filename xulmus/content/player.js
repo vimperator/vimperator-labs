@@ -23,6 +23,51 @@ function Player() // {{{
         SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
     }
 
+    var mediaCoreListener = {
+        onMediacoreEvent: function (event)
+        {
+            switch (event.type)
+            {
+                case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
+                    liberator.log("Before track changed: " + event.data);
+                    autocommands.trigger("TrackChangePre", { track: event.data });
+                    break;
+                case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+                    autocommands.trigger("TrackChange", { track: event.data });
+                    break;
+                case Ci.sbIMediacoreEvent.BEFORE_VIEW_CHANGE:
+                    liberator.log("Before view changed: " + event.data);
+                    autocommands.trigger("ViewChangePre", { view: event.data });
+                    break;
+                case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+                    liberator.log("View changed: " + event.data);
+                    autocommands.trigger("ViewChange", { view: event.data });
+                    break;
+                case Ci.sbIMediacoreEvent.STREAM_START:
+                    liberator.log("Track started: " + event.data);
+                    autocommands.trigger("StreamStart", {});
+                    break;
+                case Ci.sbIMediacoreEvent.STREAM_PAUSE:
+                    liberator.log("Track paused: " + event.data);
+                    autocommands.trigger("StreamPause", {});
+                    break;
+                case Ci.sbIMediacoreEvent.STREAM_END:
+                    liberator.log("Track ended: " + event.data);
+                    autocommands.trigger("StreamEnd", {});
+                    break;
+                case Ci.sbIMediacoreEvent.STREAM_STOP:
+                    liberator.log("Track stopped: " + event.data);
+                    autocommands.trigger("StreamStop", {});
+                    break;
+            }
+        }
+    };
+
+    gMM.addListener(mediaCoreListener);
+    liberator.registerObserver("shutdown", function () {
+        gMM.removeListener(mediaCoreListener);
+    });
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -139,19 +184,21 @@ function Player() // {{{
             function (args)
             {
                 let library = LibraryUtils.mainLibrary;
-                let myView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args.string);
-                if (myView.length == 0)
+                let view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args.literalArg);
+
+                if (view.length == 0)
                     liberator.echoerr("No Tracks matching the keywords");
                 else
                 {
-                     SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, myView,
-                         "chrome://songbird/content/mediapages/filtersPage.xul");
+                     SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, view,
+                                                     "chrome://songbird/content/mediapages/filtersPage.xul");
                      // TODO: make this focusTrack work ?
-                     focusTrack(myView.getItemByIndex(0));
+                     focusTrack(view.getItemByIndex(0));
                 }
             },
             {
-                argCount: "+",
+                argCount: "1",
+                literal: 0
                 //completer: function (context, args) completion.tracks(context, args);
             });
 
