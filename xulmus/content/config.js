@@ -465,7 +465,8 @@ const config = { //{{{
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        options.get("showtabline").value = 2;
+        let stal = options.get("showtabline");
+        stal.value = stal.defaultValue = 2;
 
         options.add(["online"],
             "Set the 'work offline' option",
