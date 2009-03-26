@@ -1664,6 +1664,14 @@ function Completion() //{{{
             context.completions = marks.all;
         },
 
+        mediaView: function mediaView(context)
+        {
+            context.title = ["Media View", "URL"];
+            context.anchored = false;
+            context.keys = { text: "contentTitle", description: "contentUrl" };
+            context.completions = player.getMediaPages();
+        },
+
         menuItem: function menuItem(context)
         {
             context.title = ["Menu Path", "Label"];

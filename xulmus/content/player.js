@@ -11,6 +11,9 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
+    const pageService = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaPageManager);
+
     // interval (milliseconds)
     function seek(interval, direction)
     {
@@ -202,6 +205,41 @@ function Player() // {{{
                 //completer: function (context, args) completion.tracks(context, args);
             });
 
+    commands.add(["load"],
+        "Load a playlist",
+        function (args)
+        {
+            let arg = args.literalArg;
+
+            if (arg)
+            {
+                // load the selected playlist/smart playlist
+                let playlists = player.getPlaylists();
+
+                for ([i, list] in Iterator(playlists))
+                {
+                    if (util.compareIgnoreCase(arg, list.name) == 0)
+                    {
+                        SBGetBrowser().loadMediaList(playlists[i]);
+                        focusTrack(_SBGetCurrentView().getItemByIndex(0));
+                        return;
+                    }
+                }
+
+                liberator.echoerr("E475: Invalid argument: " + arg);
+            }
+            else
+            {
+                // load main library if there are no args
+                _SBShowMainLibrary();
+            }
+        },
+        {
+            argCount: "?",
+            completer: function(context, args) completion.playlist(context, args),
+            literal: 0
+        });
+
     // TODO: better off as a single command (:player play) or cmus compatible (:player-play)? --djk
     commands.add(["playerp[lay]"],
         "Play track",
@@ -260,6 +298,41 @@ function Player() // {{{
         },
         { argCount: "1" });
 
+    commands.add(["mediav[iew]"],
+        "Change the current media view",
+        function (args)
+        {
+            // FIXME: is this a SB restriction? --djk
+            if (!gBrowser.currentMediaPage)
+            {
+                liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
+                return;
+            }
+
+            let arg = args[0];
+
+            if (arg)
+            {
+                let pages = player.getMediaPages();
+
+                for ([,page] in Iterator(pages))
+                {
+                    if (util.compareIgnoreCase(arg, page.contentTitle) == 0)
+                    {
+                        player.loadMediaPage(page, gBrowser.currentMediaListView.mediaList, gBrowser.currentMediaListView);
+                        return;
+                    }
+                }
+
+                liberator.echoerr("E475: Invalid argument: " + arg);
+            }
+        },
+        {
+            argCount: "1",
+            completer: function (context) completion.mediaView(context),
+            literal: 0
+        });
+
     // TODO: maybe :vol! could toggle mute on/off? --djk
     commands.add(["vol[ume]"],
         "Set the volume",
@@ -281,41 +354,6 @@ function Player() // {{{
             player.volume = Math.min(Math.max(level, 0), 1);
         },
         { argCount: "1" });
-
-    commands.add(["load"],
-       "Load a playlist",
-       function (args)
-       {
-            let arg = args.literalArg;
-
-            if (arg)
-            {
-                // load the selected playlist/smart playlist
-                let playlists = player.getPlaylists();
-
-                for ([i, list] in Iterator(playlists))
-                {
-                    if (util.compareIgnoreCase(arg, list.name) == 0)
-                    {
-                        SBGetBrowser().loadMediaList(playlists[i]);
-                        focusTrack(_SBGetCurrentView().getItemByIndex(0));
-                        return;
-                    }
-                }
-
-                liberator.echoerr("E475: Invalid argument: " + arg);
-            }
-            else
-            {
-                // load main library if there are no args
-                _SBShowMainLibrary();
-            }
-       },
-       {
-            argCount: "?",
-            completer: function(context, args) completion.playlist(context, args),
-            literal: 0
-       });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
@@ -408,6 +446,7 @@ function Player() // {{{
 
         seekTo: function seekTo(position)
         {
+            // FIXME: if not playing
             if (!gMM.playbackControl)
                 this.play();
 
@@ -500,6 +539,19 @@ function Player() // {{{
         playPlaylist: function playPlaylist(playlist, row)
         {
             gMM.sequencer.playView(playlist.createView(), row);
+        },
+
+        getMediaPages: function getMediaPages()
+        {
+            let list = gBrowser.currentMediaPage.mediaListView.mediaList;
+            let pages = pageService.getAvailablePages(list);
+            return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Components.interfaces.sbIMediaPageInfo));
+        },
+
+        loadMediaPage: function loadMediaList(page, list, view)
+        {
+            pageService.setPage(list, page);
+            gBrowser.loadMediaList(list, null, null, view, null);
         }
     };
     //}}}
