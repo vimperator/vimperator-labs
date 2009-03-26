@@ -9,6 +9,7 @@ BUGS:
   - :open songbird-internal-search searchString
     Is this workable anyway? --djk
   - <C-^> is off by one when alternating with the media tab
+  - numbered tabs
 
 FEATURES:
 9 / and ? possibly reusing "Jump to" functionality directly.

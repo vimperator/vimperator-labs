@@ -164,4 +164,13 @@ Load [a][playlist][a]. If no playlist is specified then the main library view
 is loaded.
 ________________________________________________________________________________
 
+section:Changing{nbsp}media{nbsp}views[media-view,view]
+
+|:mediav| |:mediaview|
+||:mediav[iew] {view}|| +
+________________________________________________________________________________
+Change the media view to {view}. This can only be run when the media tab is the
+current tab.
+________________________________________________________________________________
+
 // vim: set filetype=asciidoc:
