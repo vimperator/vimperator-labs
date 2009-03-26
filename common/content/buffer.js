@@ -1021,7 +1021,16 @@ function Buffer() //{{{
             }
             else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
                 return;
             }
 
@@ -1131,7 +1140,16 @@ function Buffer() //{{{
             }
             else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
                 return;
             }
 
