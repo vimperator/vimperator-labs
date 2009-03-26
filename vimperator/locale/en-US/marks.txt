@@ -80,7 +80,7 @@ section:History[history]
 ||[count]<C-o>||
 ________________________________________________________________________________
 Go to an older position in the jump list. The jump list is just the browser
-history for now.
+history for now. If [count] is specified go back [count] pages.
 ________________________________________________________________________________
 
 
@@ -88,7 +88,7 @@ ________________________________________________________________________________
 ||[count]<C-i>||
 ________________________________________________________________________________
 Go to a newer position in the jump list. The jump list is just the browser
-history for now.
+history for now. If [count] is specified go forward [count] pages.
 ________________________________________________________________________________
 
 

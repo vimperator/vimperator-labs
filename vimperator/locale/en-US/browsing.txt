@@ -51,7 +51,7 @@ Each token is analyzed and in this order:
    to set a custom name, you can change it with [c]:dialog searchengines[c].
 3. Opened with the default search engine or keyword (specified with the
    'defsearch' option) if the first word is no search engine ([c]:open linus
-   torvalds[c] opens a Google search for linux torvalds).
+   torvalds[c] opens a Google search for linus torvalds).
 4. Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
    www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
    background tab).
