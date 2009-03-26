@@ -898,6 +898,7 @@ function Events() //{{{
 
             let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
+            this.duringFeed = this.duringFeed || "";
             let wasSilent = commandline.silent;
             if (silent)
                 commandline.silent = silent;
@@ -993,6 +994,15 @@ function Events() //{{{
                 this.feedingKeys = wasFeeding;
                 if (silent)
                     commandline.silent = wasSilent;
+
+                if (this.duringFeed != "")
+                {
+                    //Create a scalar constant for closure.
+                    let duringFeed = this.duringFeed;
+                    this.duringFeed = "";
+
+                    setTimeout(function () events.feedkeys(duringFeed, false, false, true), 0);
+                }
             }
             return i == keys.length;
         },
@@ -1370,9 +1380,9 @@ function Events() //{{{
             // we can differentiate between a recorded <C-c>
             // interrupting whatever it's started and a real <C-c>
             // interrupting our playback.
-            if (events.feedingKeys)
+            if (events.feedingKeys && !event.isMacro)
             {
-                if (key == "<C-c>" && !event.isMacro)
+                if (key == "<C-c>")
                 {
                     events.feedingKeys = false;
                     if (modes.isReplaying)
@@ -1380,6 +1390,13 @@ function Events() //{{{
                         modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
                     }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return true;
+                }
+                else
+                {
+                    events.duringFeed += key;
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
