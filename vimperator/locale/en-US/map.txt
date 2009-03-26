@@ -346,7 +346,7 @@ Custom completion
 Custom completion can be provided by specifying the "custom,{func}" argument to
 -complete. The {func} is called with two arguments, a completion context, and
 an object describing the command's arguments. It should set the context's
-\'completions' property, or return an object, with \'start' and \'items'
+\'completions' property, or return an object, with \'items' and \'start'
 properties, describing the completions and where the replacement is to start.
 
 *start* is the index into the word being completed at which the returned values

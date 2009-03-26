@@ -132,7 +132,7 @@ section:Profiling[profile,profiling]
 |:time|
 ||:[count]time[!] {code|:command}|| +
 ________________________________________________________________________________
-Profile a piece of code or a command. Run {code} [count] times (default 1)
+Profile a piece of code or a command. Run {code} [count] times (default: 1)
 and returns the elapsed time. {code} is always passed to JavaScript's eval(),
 which might be slow, so take the results with a grain of salt.
 

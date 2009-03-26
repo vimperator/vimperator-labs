@@ -11,9 +11,9 @@ ________________________________________________________________________________
 
 |<C-l>| |CTRL-L| |:redr| |:redraw| +
 ||:redr[aw]||
-____
+________________________________________________________________________________
 Redraws the screen. Useful to update the screen halfway executing a script or function.
-____
+________________________________________________________________________________
 
 |:norm| |:normal|
 ||:norm[al][!] {commands}|| +
@@ -54,7 +54,7 @@ ________________________________________________________________________________
 Open help window. The default page, as specified by 'helpfile' is shown unless
 [a][subject][a] is specified. If you need help for a specific topic, try
 [c]:help overview[c].
-____________________________________________________________________________
+________________________________________________________________________________
 
 
 |:exu| |:exusage| +
