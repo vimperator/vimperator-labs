@@ -2018,16 +2018,18 @@ function StatusLine() //{{{
 
         /**
          * Update the status bar to indicate how secure the website is:
+         * extended - Secure connection with Extended Validation(EV) certificate.
          * secure -   Secure connection with valid certificate.
          * broken -   Secure connection with invalid certificate, or
          *            mixed content.
          * insecure - Insecure connection.
          *
-         * @param {'secure'|'broken'|'insecure'} type
+         * @param {'extended'|'secure'|'broken'|'insecure'} type
          */
         setClass: function setClass(type)
         {
             const highlightGroup = {
+                extended: "StatusLineExtended",
                 secure:   "StatusLineSecure",
                 broken:   "StatusLineBroken",
                 insecure: "StatusLine"

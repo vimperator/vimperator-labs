@@ -71,9 +71,10 @@ Highlights.prototype.CSS = <![CDATA[
     LineNr      color: orange; background: white;
     Question    color: green; background: white; font-weight: bold;
 
-    StatusLine       color: white; background: black;
-    StatusLineBroken color: black; background: #FF6060 /* light-red */
-    StatusLineSecure color: black; background: #B0FF00 /* light-green */
+    StatusLine         color: white; background: black;
+    StatusLineBroken   color: black; background: #FFa0a0 /* light-red */
+    StatusLineSecure   color: black; background: #a0a0FF /* light-blue */
+    StatusLineExtended color: black; background: #a0FFa0 /* light-green */
 
     TabClose
     TabIcon

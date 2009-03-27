@@ -1684,13 +1684,16 @@ function Events() //{{{
                 }
             },
             // for notifying the user about secure web pages
-            onSecurityChange: function (webProgress, aRequest, aState)
+            onSecurityChange: function (webProgress, request, state)
             {
-                if (aState & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
+                // TODO: do something useful with STATE_SECURE_MED and STATE_SECURE_LOW
+                if (state & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
                     statusline.setClass("insecure");
-                else if (aState & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
+                else if (state & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
                     statusline.setClass("broken");
-                else if (aState & Ci.nsIWebProgressListener.STATE_IS_SECURE)
+                else if (state & Ci.nsIWebProgressListener.STATE_IDENTITY_EV_TOPLEVEL)
+                    statusline.setClass("extended");
+                else if (state & Ci.nsIWebProgressListener.STATE_SECURE_HIGH)
                     statusline.setClass("secure");
             },
             onStatusChange: function (webProgress, request, status, message)
