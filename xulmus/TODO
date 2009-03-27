@@ -10,6 +10,7 @@ BUGS:
     Is this workable anyway? --djk
   - <C-^> is off by one when alternating with the media tab
   - numbered tabs
+  - :winopen
 
 FEATURES:
 9 '?' - Reusing '/'. 
