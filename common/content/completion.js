@@ -1395,17 +1395,17 @@ function Completion() //{{{
             if (args.completeArg == 0)
             {
                 context.title = ["Artists"];
-                context.completions = getArtists();
+                context.completions = player.getArtists();
             }
             else if (args.completeArg == 1)
             {
                 context.title = ["Albums by " + args[0]];
-                context.completions = getAlbums(args[0]);
+                context.completions =  player.getAlbums(args[0]);
             }
             else if (args.completeArg == 2)
             {
                 context.title = ["Tracks from " + args[1] + " by " + args[0]];
-                context.completions = getTracks(args[0], args[1]);
+                context.completions = player.getTracks(args[0], args[1]);
             }
         },
 
