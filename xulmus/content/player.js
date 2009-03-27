@@ -164,6 +164,32 @@ function Player() // {{{
          ["N"], "Find Previous",
          function () { player.searchViewAgain(true);});
 
+    //FIXME: Better way to do this ? --ken
+    mappings.add([modes.PLAYER],
+         ["<C-0>"], "Rate the current media item 0",
+         function () { player.rateMediaItem(0); });
+    
+    mappings.add([modes.PLAYER],
+         ["<C-1>"], "Rate the current media item 1",
+         function () { player.rateMediaItem(1); });
+
+    mappings.add([modes.PLAYER],
+         ["<C-2>"], "Rate the current media item 2",
+         function () { player.rateMediaItem(2); });
+
+    mappings.add([modes.PLAYER],
+         ["<C-3>"], "Rate the current media item 3",
+         function () { player.rateMediaItem(3); });
+
+    mappings.add([modes.PLAYER],
+         ["<C-4>"], "Rate the current media item 4",
+         function () { player.rateMediaItem(4); });
+
+    mappings.add([modes.PLAYER],
+         ["<C-5>"], "Rate the current media item 5",
+         function () { player.rateMediaItem(5); });
+    
+         
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -414,11 +440,13 @@ function Player() // {{{
         next: function next()
         {
             gSongbirdWindowController.doCommand("cmd_control_next");
+            gSongbirdWindowController.doCommand("cmd_find_current_track");
         },
 
         previous: function previous()
         {
             gSongbirdWindowController.doCommand("cmd_control_previous");
+            gSongbirdWindowController.doCommand("cmd_find_current_track");
         },
 
         togglePlayPause: function togglePlayPause()
@@ -615,6 +643,12 @@ function Player() // {{{
         {
             pageService.setPage(list, page);
             gBrowser.loadMediaList(list, null, null, view, null);
+        },
+
+        rateMediaItem: function rateMediaItem(rating)
+        {
+            if (gMM.sequencer.currentItem)
+                gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating); 
         }
     };
     //}}}
