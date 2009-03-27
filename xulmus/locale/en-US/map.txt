@@ -172,7 +172,7 @@ ________________________________________________________________________________
 
 section:Abbreviations[abbreviations]
 
-Vimperator can automatically replace words identified as abbreviations,
+Xulmus can automatically replace words identified as abbreviations,
 which may be used to save typing or to correct commonly misspelled
 words. An abbreviation can be one of three types that are defined by the
 types of constituent characters. Whitespace and quotes are non-keyword
@@ -319,7 +319,7 @@ Completion can be enabled by specifying one of the following arguments to the
 *buffer*         buffers
 *color*          color schemes
 *command*        Ex commands
-*dialog*         Firefox dialogs
+*dialog*         Songbird dialogs
 *dir*            directories
 *environment*    environment variables
 *event*          autocommand events
@@ -330,8 +330,8 @@ Completion can be enabled by specifying one of the following arguments to the
 *macro*          named macros
 *mapping*        user mappings
 *menu*           menu items
-*option*         Vimperator options
-*preference*     Firefox preferences
+*option*         Xulmus options
+*preference*     Songbird preferences
 *search*         search engines and keywords
 *shellcmd*       shell commands
 *sidebar*        sidebar panels

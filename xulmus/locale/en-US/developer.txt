@@ -60,7 +60,7 @@ Some notes about the code above:
   automatically marked up as an argument.
 
 There are also some additional asciidoc commands specifically for writing
-Vimperator documentation:
+Xulmus documentation:
 
 - *$$section:Writing{nbsp}documentation[writing-docs,documentation]$$* Creates
   a new section like _Writing Documentation_ in this help file with 2 tags.

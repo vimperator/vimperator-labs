@@ -25,7 +25,7 @@ ________________________________________________________________________________
 Start QuickHint mode, but open link in a new tab. Like normal QuickHint
 mode (activated with [m]f[m]) but opens the link in a new tab. The new
 tab will be loaded in background according to the
-\'browser.tabs.loadInBackground' Firefox preference.
+\'browser.tabs.loadInBackground' Songbird preference.
 ________________________________________________________________________________
 
 

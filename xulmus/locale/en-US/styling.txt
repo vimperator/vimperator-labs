@@ -2,7 +2,7 @@ HEADER
 
 |styling| +
 
-Vimperator allows you to style both the browser and any web pages you view. All
+Vimperator allows you to style both the player and any web pages you view. All
 styling is specified via CSS. Although you may style any user interface element
 via the [c]:style[c] command, most Vimperator elements can be styled with the
 [c]:highlight[c] command, for convenience.
@@ -102,7 +102,7 @@ ________________________________________________________________________________
 |:sty| |:style| +
 ||:sty[le][!] [-name={name}] [-append] {filter} [{css}]|| +
 ________________________________________________________________________________
-Add CSS styles to the browser or to web pages. {filter} is a comma
+Add CSS styles to the player or to web pages. {filter} is a comma
 separated list of URLs to match. URLs ending with *\** are matched as
 prefixes, URLs not containing any *:* or */* characters are
 matched as domains. If {name} (short option: [c]-n[c]) is provided, any

@@ -34,14 +34,14 @@ Run a command. Runs {cmd} through system() and displays its output. Any \'!' in
 backslash before the \'!', then that backslash is removed.
 
 Warning: Input redirection (< foo) not done, also do not run commands which
-require stdin or it will hang Firefox!
+require stdin or it will hang Songbird!
 ________________________________________________________________________________
 
 
 |:ve| |:version| +
 ||:ve[rsion][!]||
 ________________________________________________________________________________
-Show version information. You can show the Firefox version page with
+Show version information. You can show the Songbird version page with
 [c]:version![c].
 ________________________________________________________________________________
 

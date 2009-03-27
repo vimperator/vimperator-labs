@@ -2,7 +2,7 @@ HEADER
 
 |repeat| +
 
-Vimperator can repeat a number of commands and record macros.
+Xulmus can repeat a number of commands and record macros.
 
 section:Macros[macros,complex-repeat]
 
@@ -52,7 +52,7 @@ ____________________________________________________________________________
 ||[count].||
 ____________________________________________________________________________
 Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
-does not apply solely to editing commands, mainly because Vimperator doesn't
+does not apply solely to editing commands, mainly because Xulmus doesn't
 have them.
 ____________________________________________________________________________
 
@@ -99,7 +99,7 @@ Load all unloaded plugins immediately. Because plugins are automatically
 loaded after vimperatorrc is sourced, this command must be placed early
 in the vimperatorrc file if vimperatorrc also includes commands that are
 implemented by plugins. Additionally, this command allows for sourcing
-new plugins without restarting Vimperator.
+new plugins without restarting Xulmus.
 ________________________________________________________________________________
 
 
@@ -123,7 +123,7 @@ ________________________________________________________________________________
 |:fini| |:finish|
 ||:fini[sh]|| +
 ________________________________________________________________________________
-Stop sourcing a script file. This can only be called from within a Vimperator
+Stop sourcing a script file. This can only be called from within a Xulmus
 script file.
 ________________________________________________________________________________
 
@@ -136,7 +136,7 @@ Profile a piece of code or a command. Run {code} [count] times (default 1)
 and returns the elapsed time. {code} is always passed to JavaScript's eval(),
 which might be slow, so take the results with a grain of salt.
 
-If {code} starts with a [c]:[c], it is executed as a Vimperator command.
+If {code} starts with a [c]:[c], it is executed as a Xulmus command.
 
 Use the special version with [!] if you just want to run any command multiple
 times without showing profiling statistics.

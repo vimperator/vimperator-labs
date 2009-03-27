@@ -116,7 +116,7 @@ const config = { //{{{
             function () { window.BrowserViewSourceOfDocument(content.document); }],
         ["places",           "Places Organizer: Manage your bookmarks and history",
             function () { PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); }],
-        ["preferences",      "Show Firefox preferences dialog",
+        ["preferences",      "Show Songbird preferences dialog",
             function () { window.openPreferences(); }],
         /*
         ["printpreview",     "Preview the page before printing",
@@ -138,14 +138,14 @@ const config = { //{{{
 
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
-    helpFiles: [ "player.html", "options.html", "autocommands.html" ],
-       /* "intro.html", "tutorial.html", "starting.html", "browsing.html",
-        "buffer.html", "cmdline.html", "insert.html", "options.html",
-        "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",
-        "marks.html", "repeat.html", "autocommands.html", "print.html",
-        "gui.html", "styling.html", "message.html", "developer.html",
-        "various.html", "index.html", "version.html"
-    ], */
+    helpFiles: [
+        "intro.html", /*"tutorial.html",*/ "starting.html", "player.html",
+        "browsing.html", "buffer.html", "cmdline.html", "insert.html",
+        "options.html", "pattern.html", "tabs.html", "hints.html", "map.html",
+        "eval.html", "marks.html", "repeat.html", "autocommands.html",
+        "print.html", "gui.html", "styling.html", "message.html",
+        "developer.html", "various.html", "index.html", "version.html"
+    ],
 
     scripts: [
         "bookmarks.js",
@@ -155,8 +155,6 @@ const config = { //{{{
 
     init: function ()
     {
-        options["helpfile"] = "player.html";
-
         //Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
 
@@ -375,7 +373,7 @@ const config = { //{{{
             "Show " + config.hostApplication + " preferences",
             function (args)
             {
-                if (args.bang) // open Firefox settings GUI dialog
+                if (args.bang) // open Songbird settings GUI dialog
                 {
                     liberator.open("about:config",
                         (options["newtab"] && options.get("newtab").has("all", "prefs"))
