@@ -8,11 +8,20 @@ function Player() // {{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    let lastSearchString = "";
+    let lastSearchIndex = 0;
+    let lastSearchView = _SBGetCurrentView();
+
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
     const pageService = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
                                   .getService(Components.interfaces.sbIMediaPageManager);
+    // Register Callbacks for searching.
+
+    liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
+    liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
+    //liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
 
     // interval (milliseconds)
     function seek(interval, direction)
@@ -142,6 +151,18 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
          ["-"], "Decrease volume by 10%",
          function () { player.decreaseVolume(); });
+
+    mappings.add([modes.PLAYER],
+         ["/"], "Search View",
+         function (args) { commandline.open("/", "", modes.SEARCH_VIEW_FORWARD); });
+
+    mappings.add([modes.PLAYER],
+         ["n"], "Find Next",
+         function () { player.searchViewAgain(false);});
+    
+    mappings.add([modes.PLAYER],
+         ["N"], "Find Previous",
+         function () { player.searchViewAgain(true);});
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -495,22 +516,64 @@ function Player() // {{{
             return tracksList;
         },
 
-        // TODO: Use this for implementing "/" and "?". -ken
-        searchTracks: function searchTracks(args)
+        searchView: function searchView (args)
         {
             let currentView = _SBGetCurrentView();
             let mediaItemList = currentView.mediaList;
             let search = _getSearchString(currentView);
             let searchString = "";
+            let index = 0;
 
             if (search != "")
                 searchString = args + " " + search;
             else
                 searchString = args;
-
-            let myView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
-            focusTrack(myView.getItemByIndex(0));
+            
+            lastSearchString = searchString;
+            
+            let mySearchView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
+            
+            if (mySearchView.length)
+            {
+                lastSearchView = mySearchView;
+                focusTrack(mySearchView.getItemByIndex(index));
+            }
+            else
+            {
+                liberator.echoerr("E486 Pattern not found: "+searchString, commandline.FORCE_SINGLELINE);
+            }
         },
+ 
+        //FIXME: commandline.echo should work --ken
+        searchViewAgain: function searchViewAgain(reverse)
+        {
+            if (reverse)
+            {
+                if (lastSearchIndex == 0)
+                {
+                    //commandline.echo("Search hit TOP, continuing at BOTTOM",
+                    //      commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                    lastSearchIndex = lastSearchView.length - 1;
+                }
+                else
+                    lastSearchIndex = lastSearchIndex - 1;
+            }
+            else
+            {
+                if (lastSearchIndex == (lastSearchView.length -1))
+                {
+                    //commandline.echo("Search hit BOTTOM, continuing at TOP",
+                    //      commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                    lastSearchIndex = 0;
+                }
+                else
+                    lastSearchIndex = lastSearchIndex + 1;
+            }
+
+            //FIXME: Implement for "?" --ken
+            commandline.echo("/" + lastSearchString, null, commandline.FORCE_SINGLELINE);
+            focusTrack(lastSearchView.getItemByIndex(lastSearchIndex));
+        }, 
 
         getPlaylists: function getPlaylists()
         {

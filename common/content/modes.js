@@ -277,6 +277,8 @@ const modes = (function () //{{{
     self.addMode("OUTPUT_MULTILINE", true);
     self.addMode("SEARCH_FORWARD", true);
     self.addMode("SEARCH_BACKWARD", true);
+    self.addMode("SEARCH_VIEW_FORWARD", true);
+    self.addMode("SEARCH_VIEW_BACKWARD", true);
     self.addMode("MENU", true); // a popupmenu is active
     self.addMode("LINE", true); // linewise visual mode
     self.addMode("PROMPT", true);
