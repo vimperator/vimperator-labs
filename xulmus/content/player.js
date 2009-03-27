@@ -564,6 +564,7 @@ function Player() // {{{
             if (mySearchView.length)
             {
                 lastSearchView = mySearchView;
+                lastSearchIndex = 0;
                 focusTrack(mySearchView.getItemByIndex(index));
             }
             else
@@ -601,6 +602,7 @@ function Player() // {{{
             //FIXME: Implement for "?" --ken
             commandline.echo("/" + lastSearchString, null, commandline.FORCE_SINGLELINE);
             focusTrack(lastSearchView.getItemByIndex(lastSearchIndex));
+            
         }, 
 
         getPlaylists: function getPlaylists()
