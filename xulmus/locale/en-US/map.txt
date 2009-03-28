@@ -58,7 +58,7 @@ Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
 nested and recursive mappings.
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
+xulmusrc file!
 ________________________________________________________________________________
 
 
@@ -71,7 +71,7 @@ Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
 remapped, allowing for nested and recursive mappings.
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
+xulmusrc file!
 ________________________________________________________________________________
 
 
@@ -84,7 +84,7 @@ Map the key sequence {lhs} to {rhs} (in Insert mode). The {rhs} is remapped,
 allowing for nested and recursive mappings.
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
+xulmusrc file!
 ________________________________________________________________________________
 
 

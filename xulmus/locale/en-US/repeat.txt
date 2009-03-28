@@ -85,8 +85,8 @@ function hello2() {
 --------------------------------------------------------------------------------
 are only available within the scope of the script.
 
-The _.vimperatorrc_ file in your home directory and any files in
-_\~/.vimperator/plugin/_ are always sourced at startup. \~ is supported as a
+The _.xulmusrc_ file in your home directory and any files in
+_\~/.xulmus/plugin/_ are always sourced at startup. \~ is supported as a
 shortcut for the _$HOME_ directory. If [!] is specified, errors are not
 printed.
 ________________________________________________________________________________
@@ -96,8 +96,8 @@ ________________________________________________________________________________
 ||:loadplugins|| +
 ________________________________________________________________________________
 Load all unloaded plugins immediately. Because plugins are automatically
-loaded after vimperatorrc is sourced, this command must be placed early
-in the vimperatorrc file if vimperatorrc also includes commands that are
+loaded after xulmusrc is sourced, this command must be placed early
+in the xulmusrc file if xulmusrc also includes commands that are
 implemented by plugins. Additionally, this command allows for sourcing
 new plugins without restarting Xulmus.
 ________________________________________________________________________________

@@ -2,9 +2,9 @@ HEADER
 
 |styling| +
 
-Vimperator allows you to style both the player and any web pages you view. All
+Xulmus allows you to style both the player and any web pages you view. All
 styling is specified via CSS. Although you may style any user interface element
-via the [c]:style[c] command, most Vimperator elements can be styled with the
+via the [c]:style[c] command, most Xulmus elements can be styled with the
 [c]:highlight[c] command, for convenience.
 
 |E185| |:colo| |:colorscheme| +
@@ -22,13 +22,13 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Highlight {group} with {css}. Normally, {css} is checked for
 valid syntax before it's applied. Once you're certain it's
-valid, [!] will override the check, to speed Vimperator startup.
+valid, [!] will override the check, to speed Xulmus startup.
 {selector} can be any valid CSS selector, such as [c]:hover[c], and
 if provided will restrict the match to matching elements.
 
 Valid groups are:
 `--------------------`-----------------------------------
-*Bell*               Vimperator's visual bell
+*Bell*               Xulmus's visual bell
 *Boolean*            A JavaScript Boolean object
 *CmdLine*            The command line
 *CmdOutput*
