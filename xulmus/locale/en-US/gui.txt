@@ -52,6 +52,7 @@ Available dialogs:
 *savepage*         Save page to disk
 *searchengines*    Manage installed search engines
 *selectionsource*  View selection source
+*subscribe*        Add a new subscription
 -------------------------------------------------------
 
 ________________________________________________________________________________

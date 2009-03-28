@@ -133,7 +133,9 @@ const config = { //{{{
         ["searchengines",    "Manage installed search engines",
             function () { window.openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function () { buffer.viewSelectionSource(); }]
+            function () { buffer.viewSelectionSource(); }],
+        ["subscribe",        "Add a new subscription",
+            function () { SBSubscribe(); }]
     ],
 
     //TODO : Write intro.html and tutorial.html
