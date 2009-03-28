@@ -184,14 +184,14 @@ ________________________________________________________________________________
 |n|
 ||n|| +
 ________________________________________________________________________________
-Find next. Repeats the last search. If the search hits BOTTOM of the view, it 
+Find next. Repeats the last search. If the search hits BOTTOM of the view, it
 continues from TOP.
 ________________________________________________________________________________
 
 |N|
 ||N|| +
 ________________________________________________________________________________
-Find previous. Repeats the last search in the opposite direction. If the search 
+Find previous. Repeats the last search in the opposite direction. If the search
 hits TOP of the view, it continues from BOTTTOM.
 ________________________________________________________________________________
 

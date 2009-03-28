@@ -1,7 +1,5 @@
 // Import Artist List as this can be huge
 
-
-
 function Player() // {{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -11,11 +9,10 @@ function Player() // {{{
     let lastSearchString = "";
     let lastSearchIndex = 0;
     let lastSearchView = _SBGetCurrentView();
-   
+
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
-    
-    
+
     function getArtistsArray()
     {
         var list = LibraryUtils.mainLibrary;
@@ -49,7 +46,7 @@ function Player() // {{{
             artistCounts[artist] = listener.count;
             i++;
         }
-        
+
         //liberator.dump("Count : "+artistCounts.toSource());
         return artistArray;
     }
@@ -57,7 +54,7 @@ function Player() // {{{
     // Get the artist names before hand.
 
     let artists = getArtistsArray();
-    
+
     const pageService = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
                                   .getService(Components.interfaces.sbIMediaPageManager);
     // Register Callbacks for searching.
@@ -202,7 +199,7 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
          ["n"], "Find Next",
          function () { player.searchViewAgain(false);});
-    
+
     mappings.add([modes.PLAYER],
          ["N"], "Find Previous",
          function () { player.searchViewAgain(true);});
@@ -211,7 +208,7 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
          ["<C-0>"], "Rate the current media item 0",
          function () { player.rateMediaItem(0); });
-    
+
     mappings.add([modes.PLAYER],
          ["<C-1>"], "Rate the current media item 1",
          function () { player.rateMediaItem(1); });
@@ -231,8 +228,7 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
          ["<C-5>"], "Rate the current media item 5",
          function () { player.rateMediaItem(5); });
-    
-         
+
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -326,7 +322,7 @@ function Player() // {{{
         },
         {
             argCount: "?",
-            completer: function(context, args) completion.playlist(context, args),
+            completer: function (context, args) completion.playlist(context, args),
             literal: 0
         });
 
@@ -598,11 +594,11 @@ function Player() // {{{
                 searchString = args + " " + search;
             else
                 searchString = args;
-            
+
             lastSearchString = searchString;
-            
+
             let mySearchView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
-            
+
             if (mySearchView.length)
             {
                 lastSearchView = mySearchView;
@@ -614,7 +610,7 @@ function Player() // {{{
                 liberator.echoerr("E486 Pattern not found: "+searchString, commandline.FORCE_SINGLELINE);
             }
         },
- 
+
         //FIXME: commandline.echo should work --ken
         searchViewAgain: function searchViewAgain(reverse)
         {
@@ -644,17 +640,17 @@ function Player() // {{{
             //FIXME: Implement for "?" --ken
             commandline.echo("/" + lastSearchString, null, commandline.FORCE_SINGLELINE);
             focusTrack(lastSearchView.getItemByIndex(lastSearchIndex));
-            
-        }, 
+
+        },
 
         getPlaylists: function getPlaylists()
         {
             let mainLibrary = LibraryUtils.mainLibrary;
             let playlists = [mainLibrary];
             let listener = {
-                onEnumerationBegin: function() { },
-                onEnumerationEnd: function() { },
-                onEnumeratedItem: function(list, item)
+                onEnumerationBegin: function () { },
+                onEnumerationEnd: function () { },
+                onEnumeratedItem: function (list, item)
                 {
                     // FIXME: why are there null items and duplicates?
                     if (!playlists.some(function (list) list.name == item.name) && item.name != null)
@@ -692,7 +688,7 @@ function Player() // {{{
         rateMediaItem: function rateMediaItem(rating)
         {
             if (gMM.sequencer.currentItem)
-                gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating); 
+                gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating);
         },
 
         getArtists: function getArtists()
@@ -706,7 +702,6 @@ function Player() // {{{
             var albumArray = [], returnArray = [];
             var items = list.getItemsByProperty(SBProperties.artistName, artist).enumerate();
             var i = 0, j = 0;
-
 
             while (items.hasMoreElements())
             {
@@ -750,10 +745,9 @@ function Player() // {{{
 
             return tracksArray;
         }
-        
+
     };
     //}}}
 } // }}}
-
 
 // vim: set fdm=marker sw=4 ts=4 et:
