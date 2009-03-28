@@ -184,6 +184,31 @@ const config = { //{{{
             liberator.open(pre + newNumberStr + post);
         }
 
+        function openDisplayPane(id)
+        {
+            let pane = document.getElementById(id);
+            let manager = Components.classes['@songbirdnest.com/Songbird/DisplayPane/Manager;1']
+                                    .getService(Components.interfaces.sbIDisplayPaneManager);
+            let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
+
+            if (!paneinfo)
+                paneinfo = manager.defaultPaneInfo;
+
+            pane.loadContent(paneinfo);
+        }
+
+        // FIXME: best way to format these args? Hyphenated? One word like :dialog?
+        let displayPanes = {
+            "content pane bottom": "displaypane_contentpane_bottom",
+            "service pane bottom": "displaypane_servicepane_bottom",
+            "right sidebar": "displaypane_right_sidebar"
+        };
+
+        completion.displayPane = function (context) {
+            context.title = ["Display Pane"];
+            context.completions = displayPanes; // FIXME: useful description etc
+        };
+
         // load Xulmus specific modules
         // FIXME: Why aren't these listed in config.scripts?
         // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
@@ -402,50 +427,42 @@ const config = { //{{{
             },
             { argCount: "0" });
 
-        // TODO: service/content pane and right sidebar manipulation commands? --djk
-        /*
-        // TODO: move sidebar commands to ui.js?
-        commands.add(["sbcl[ose]"],
-            "Close the sidebar window",
-            function ()
-            {
-                if (!document.getElementById("sidebar-box").hidden)
-                    toggleSidebar();
-            },
-            { argCount: "0" });
-
-        commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
-            "Open the sidebar window",
+        commands.add(["dpcl[ose]"],
+            "Close a display pane",
             function (args)
             {
                 let arg = args.literalArg;
 
-                // focus if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == arg)
-                {
-                    document.getElementById("sidebar-box").focus();
-                    return;
-                }
+                if (arg in displayPanes)
+                    document.getElementById(displayPanes[arg]).hide();
+                else
+                    liberator.echoerr("E475: Invalid argument: " + arg);
 
-                let menu = document.getElementById("viewSidebarMenu");
-
-                for (let [,panel] in Iterator(menu.childNodes))
-                {
-                    if (panel.label == arg)
-                    {
-                        panel.doCommand();
-                        return;
-                    }
-                }
-
-                liberator.echoerr("No sidebar " + arg + " found");
             },
             {
                 argCount: "1",
-                completer: function (context) completion.sidebar(context),
+                completer: function (context) completion.displayPane(context),
                 literal: 0
             });
-        */
+
+        // TODO: this should accept a second arg to specify content
+        commands.add(["displayp[ane]", "dp[ane]", "dpope[n]"],
+            "Open a display pane",
+            function (args)
+            {
+                let arg = args.literalArg;
+
+                if (arg in displayPanes)
+                    openDisplayPane(displayPanes[arg])
+                    // TODO: focus when we have better key handling of these extended modes
+                else
+                    liberator.echoerr("E475: Invalid argument: " + arg);
+            },
+            {
+                argCount: "1",
+                completer: function (context) completion.displayPane(context),
+                literal: 0
+            });
 
         commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
