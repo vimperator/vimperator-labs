@@ -5,7 +5,7 @@
     <em:id>{3703dcdb-6ba3-4331-8de8-c18373fb05d1}</em:id>
     <em:type>2</em:type>
     <em:name>xulmus@vimperator.org</em:name>
-    <em:version>0.1</em:version>
+    <em:version>###VERSION###</em:version>
     <em:creator>Prathyush Thota</em:creator>
     <em:description>Makes Songbird behave like Vim and CMus.</em:description>
     <em:targetApplication>
