@@ -898,6 +898,7 @@ function Events() //{{{
 
             let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
+            this.duringFeed = this.duringFeed || "";
             let wasSilent = commandline.silent;
             if (silent)
                 commandline.silent = silent;
@@ -993,6 +994,15 @@ function Events() //{{{
                 this.feedingKeys = wasFeeding;
                 if (silent)
                     commandline.silent = wasSilent;
+
+                if (this.duringFeed != "")
+                {
+                    //Create a scalar constant for closure.
+                    let duringFeed = this.duringFeed;
+                    this.duringFeed = "";
+
+                    setTimeout(function () events.feedkeys(duringFeed, false, false, true), 0);
+                }
             }
             return i == keys.length;
         },
@@ -1385,9 +1395,9 @@ function Events() //{{{
             // we can differentiate between a recorded <C-c>
             // interrupting whatever it's started and a real <C-c>
             // interrupting our playback.
-            if (events.feedingKeys)
+            if (events.feedingKeys && !event.isMacro)
             {
-                if (key == "<C-c>" && !event.isMacro)
+                if (key == "<C-c>")
                 {
                     events.feedingKeys = false;
                     if (modes.isReplaying)
@@ -1395,6 +1405,13 @@ function Events() //{{{
                         modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
                     }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return true;
+                }
+                else
+                {
+                    events.duringFeed += key;
                     event.preventDefault();
                     event.stopPropagation();
                     return true;
@@ -1681,13 +1698,16 @@ function Events() //{{{
                 }
             },
             // for notifying the user about secure web pages
-            onSecurityChange: function (webProgress, aRequest, aState)
+            onSecurityChange: function (webProgress, request, state)
             {
-                if (aState & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
+                // TODO: do something useful with STATE_SECURE_MED and STATE_SECURE_LOW
+                if (state & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
                     statusline.setClass("insecure");
-                else if (aState & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
+                else if (state & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
                     statusline.setClass("broken");
-                else if (aState & Ci.nsIWebProgressListener.STATE_IS_SECURE)
+                else if (state & Ci.nsIWebProgressListener.STATE_IDENTITY_EV_TOPLEVEL)
+                    statusline.setClass("extended");
+                else if (state & Ci.nsIWebProgressListener.STATE_SECURE_HIGH)
                     statusline.setClass("secure");
             },
             onStatusChange: function (webProgress, request, status, message)
