@@ -4,12 +4,12 @@ section:Introduction[intro]
 
 http://vimperator.org/Xulmus[Xulmus] is a free media player add-on for
 Songbird, which combines the best features of the
-http://cmus.sourceforge.net[cmus] music player and the http://www.vim.org[Vim]
+http://cmus.sourceforge.net[CMus] music player and the http://www.vim.org[Vim]
 text editor.
 
 |warning| +
 Warning:
-To provide the most authentic cmus/Vim experience, the Songbird toolbar
+To provide the most authentic CMus/Vim experience, the Songbird toolbar
 is hidden. +
 If you really need it, type: [c]:set guioptions+=T[c] to get it back. +
 If you don't like Xulmus at all, you can uninstall it by typing
