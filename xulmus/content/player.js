@@ -193,41 +193,25 @@ function Player() // {{{
          function () { player.decreaseVolume(); });
 
     mappings.add([modes.PLAYER],
-         ["/"], "Search View",
+         ["/"], "Search forward for a track",
          function (args) { commandline.open("/", "", modes.SEARCH_VIEW_FORWARD); });
 
     mappings.add([modes.PLAYER],
-         ["n"], "Find Next",
+         ["n"], "Find the next track",
          function () { player.searchViewAgain(false);});
 
     mappings.add([modes.PLAYER],
-         ["N"], "Find Previous",
+         ["N"], "Find the previous track",
          function () { player.searchViewAgain(true);});
 
-    //FIXME: Better way to do this ? --ken
-    mappings.add([modes.PLAYER],
-         ["<C-0>"], "Rate the current media item 0",
-         function () { player.rateMediaItem(0); });
-
-    mappings.add([modes.PLAYER],
-         ["<C-1>"], "Rate the current media item 1",
-         function () { player.rateMediaItem(1); });
-
-    mappings.add([modes.PLAYER],
-         ["<C-2>"], "Rate the current media item 2",
-         function () { player.rateMediaItem(2); });
-
-    mappings.add([modes.PLAYER],
-         ["<C-3>"], "Rate the current media item 3",
-         function () { player.rateMediaItem(3); });
-
-    mappings.add([modes.PLAYER],
-         ["<C-4>"], "Rate the current media item 4",
-         function () { player.rateMediaItem(4); });
-
-    mappings.add([modes.PLAYER],
-         ["<C-5>"], "Rate the current media item 5",
-         function () { player.rateMediaItem(5); });
+    for (let i in util.range(0, 6))
+    {
+        let (rating = i) {
+            mappings.add([modes.PLAYER],
+                 ["<C-" + rating + ">"], "Rate the current media item " + rating,
+                 function () { player.rateMediaItem(rating); });
+        }
+    }
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -627,7 +611,7 @@ function Player() // {{{
             }
             else
             {
-                if (lastSearchIndex == (lastSearchView.length -1))
+                if (lastSearchIndex == (lastSearchView.length - 1))
                 {
                     //commandline.echo("Search hit BOTTOM, continuing at TOP",
                     //      commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);

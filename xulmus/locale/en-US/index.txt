@@ -23,6 +23,19 @@ section:Player{nbsp}mode[player-index]
 ||[m]+[m]|| Increase volume by 10% +
 ||[m]-[m]|| Decrease volume by 10% +
 
+||[m]/[m]|| Search forward for a track +
+//||[m]?[m]|| Search backward for a track +
+||[m]n[m]|| Find the next track +
+||[m]N[m]|| Find the previous track +
+
+// TODO: better formatting
+||<C-0>|| Rate the current track with 0 stars +
+||<C-1>|| Rate the current track with 1 stars +
+||<C-2>|| Rate the current track with 2 stars +
+||<C-3>|| Rate the current track with 3 stars +
+||<C-4>|| Rate the current track with 4 stars +
+||<C-5>|| Rate the current track with 5 stars +
+
 section:Insert{nbsp}mode[insert-index]
 
 ||[m]<C-i>[m]|| Launch the external editor +
