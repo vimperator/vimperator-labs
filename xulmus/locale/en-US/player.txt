@@ -178,7 +178,7 @@ section:Search{nbsp}commands[search]
 |/|
 ||/{pattern}<CR>|| +
 ________________________________________________________________________________
-Search for the first occurence of {pattern} in the visible media view.
+Search for the first occurrence of {pattern} in the visible media view.
 ________________________________________________________________________________
 
 |n|
