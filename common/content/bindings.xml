@@ -47,11 +47,9 @@
                     </xul:vbox>
                 </xul:stack>
                 <xul:stack class="tab-text-stack">
-                    <xul:label xbl:inherits="value=ordinal" class="tab-text-shadow" liberator:highlight="TabNumber"/>
                     <xul:label xbl:inherits="value=ordinal" class="tab-text" liberator:highlight="TabNumber"/>
                 </xul:stack>
                 <xul:stack class="tab-text-stack" flex="1">
-                    <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" crop="right" class="tab-text-shadow"/>
                     <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" crop="right" class="tab-text"/>
                 </xul:stack>
             </xul:hbox>
