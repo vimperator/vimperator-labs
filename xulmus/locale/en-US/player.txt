@@ -201,7 +201,7 @@ Find the previous track. Repeats the last search in the opposite direction. If
 the search hits TOP of the view, it continues from BOTTTOM.
 ________________________________________________________________________________
 
-section:Rating{nbsp}track[rating]
+section:Rating{nbsp}tracks[rating]
 
 |<C-5>| |<C-4>| |<C-3>| |<C-2>| |<C-1>| |<C-0>|
 ||<C-0>|| +
