@@ -1,5 +1,3 @@
-// Import Artist List as this can be huge
-
 function Player() // {{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -52,13 +50,12 @@ function Player() // {{{
     }
 
     // Get the artist names before hand.
-
     let artists = getArtistsArray();
 
     const pageService = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
                                   .getService(Components.interfaces.sbIMediaPageManager);
-    // Register Callbacks for searching.
 
+    // Register Callbacks for searching.
     liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
     liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
     //liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
@@ -175,12 +172,12 @@ function Player() // {{{
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
-        ["H"], "Seek -1m",
+        ["H", "<S-Left>"], "Seek -1m",
         function (count) { player.seekBackward(Math.max(1, count) * 60000); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.PLAYER],
-        ["L"], "Seek +1m",
+        ["L", "<S-Right>"], "Seek +1m",
         function (count) { player.seekForward(Math.max(1, count) * 60000); },
         { flags: Mappings.flags.COUNT });
 
@@ -217,7 +214,7 @@ function Player() // {{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: presumably this will eventually just filter the library view like cmus? --djk
+    // TODO: rename :Filter to :filter and move this functionality into :tqueue etc? --djk
     commands.add(["f[ilter]"],
         "Filter and play tracks",
         function (args)
@@ -591,7 +588,7 @@ function Player() // {{{
             }
             else
             {
-                liberator.echoerr("E486 Pattern not found: "+searchString, commandline.FORCE_SINGLELINE);
+                liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
             }
         },
 

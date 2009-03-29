@@ -17,14 +17,17 @@ section:Player{nbsp}mode[player-index]
 ||[m]f[m]|| Filter and play tracks +
 ||[m]F[m]|| Filter and show the tracks as a view +
 ||[m]h[m]|| Seek -10s +
+||[m]<Left>[m]|| Seek -10s +
 ||[m]l[m]|| Seek +10s +
+||[m]<Right>[m]|| Seek -10s +
 ||[m]H[m]|| Seek -1m +
+||[m]<S-Left>[m]|| Seek -10s +
 ||[m]L[m]|| Seek +1m +
+||[m]<S-Right>[m]|| Seek -10s +
 ||[m]+[m]|| Increase volume by 10% +
 ||[m]-[m]|| Decrease volume by 10% +
 
 ||[m]/[m]|| Search forward for a track +
-//||[m]?[m]|| Search backward for a track +
 ||[m]n[m]|| Find the next track +
 ||[m]N[m]|| Find the previous track +
 
