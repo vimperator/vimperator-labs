@@ -56,8 +56,8 @@ function Player() // {{{
                                   .getService(Components.interfaces.sbIMediaPageManager);
 
     // Register Callbacks for searching.
-    liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
-    liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
+    liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
+    liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
     //liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
 
     // interval (milliseconds)
@@ -592,16 +592,22 @@ function Player() // {{{
             }
         },
 
-        //FIXME: commandline.echo should work --ken
         searchViewAgain: function searchViewAgain(reverse)
         {
+            function echo(str)
+            {
+                setTimeout(function () {
+                    commandline.echo("Search hit TOP, continuing at BOTTOM",
+                          commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                }, 0);
+            }
+
             if (reverse)
             {
                 if (lastSearchIndex == 0)
                 {
-                    //commandline.echo("Search hit TOP, continuing at BOTTOM",
-                    //      commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
                     lastSearchIndex = lastSearchView.length - 1;
+                    echo("Search hit TOP, continuing at BOTTOM");
                 }
                 else
                     lastSearchIndex = lastSearchIndex - 1;
@@ -610,9 +616,8 @@ function Player() // {{{
             {
                 if (lastSearchIndex == (lastSearchView.length - 1))
                 {
-                    //commandline.echo("Search hit BOTTOM, continuing at TOP",
-                    //      commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
                     lastSearchIndex = 0;
+                    echo("Search hit BOTTOM, continuing at TOP");
                 }
                 else
                     lastSearchIndex = lastSearchIndex + 1;
@@ -622,6 +627,17 @@ function Player() // {{{
             commandline.echo("/" + lastSearchString, null, commandline.FORCE_SINGLELINE);
             focusTrack(lastSearchView.getItemByIndex(lastSearchIndex));
 
+        },
+
+        onSearchKeyPress: function (str)
+        {
+            if (options["incsearch"])
+                this.searchView(str);
+        },
+
+        onSearchSubmit: function (str)
+        {
+            this.searchView(str);
         },
 
         getPlaylists: function getPlaylists()
