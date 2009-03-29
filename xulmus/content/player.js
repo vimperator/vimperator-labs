@@ -93,20 +93,20 @@ function Player() // {{{
                     autocommands.trigger("ViewChange", { view: event.data });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_START:
-                    liberator.log("Track started: " + event.data);
-                    autocommands.trigger("StreamStart", {});
+                    liberator.log("Track started: " + gMM.sequencer.currentItem);
+                    autocommands.trigger("StreamStart", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_PAUSE:
-                    liberator.log("Track paused: " + event.data);
-                    autocommands.trigger("StreamPause", {});
+                    liberator.log("Track paused: " + gMM.sequencer.currentItem);
+                    autocommands.trigger("StreamPause", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_END:
-                    liberator.log("Track ended: " + event.data);
-                    autocommands.trigger("StreamEnd", {});
+                    liberator.log("Track ended: " + gMM.sequencer.currentItem);
+                    autocommands.trigger("StreamEnd", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_STOP:
-                    liberator.log("Track stopped: " + event.data);
-                    autocommands.trigger("StreamStop", {});
+                    liberator.log("Track stopped: " + gMM.sequencer.currentItem);
+                    autocommands.trigger("StreamStop", { track: gMM.sequencer.currentItem });
                     break;
             }
         }

@@ -62,7 +62,7 @@ The following keywords are available where relevant:
 *<state>*      The new fullscreen state. Only for *Fullscreen*.
 *<name>*       The color scheme name. Only for *ColorScheme*.
 *<view>*       The new sequencer view. Only for *ViewChangePre* and *ViewChange*.
-*<track>*      The new media track. Only for *TrackChangePre* and *TrackChange*.
+*<track>*      The new media track. Only for *TrackChangePre*, *TrackChange* and *Stream\**.
 --------------------------------------------------------------
 
 ________________________________________________________________________________
