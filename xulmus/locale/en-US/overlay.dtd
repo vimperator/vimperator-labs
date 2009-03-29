@@ -1,0 +1,4 @@
+<!ENTITY auditortest1.helloworld.label "Do HelloWorld">
+<!ENTITY auditortest1.helloworld.accesskey "H">
+<!ENTITY auditortest1.pane.label "This is a Display Pane">
+<!ENTITY auditortest1.pane.button "Learn More">

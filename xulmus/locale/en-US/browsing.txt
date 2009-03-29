@@ -1,0 +1,349 @@
+HEADER
+
+|surfing| |browsing| +
+
+Xulmus overrides nearly all Songbird keys in order to make browsing more
+pleasant for Vim users. On the rare occasions when you want to pass a keystroke
+to Songbird, or to the web page, and have it retain its original meaning you
+have 2 possibilities:
+
+|pass-through| |<C-z>| |CTRL-Z| +
+||CTRL-Z||
+________________________________________________________________________________
+Disable all Xulmus keys except [m]<Esc>[m] and pass them to the next event
+handler. This is especially useful, if JavaScript controlled forms like the
+RichEdit form fields of Gmail don't work anymore. To exit this mode, press
+[m]<Esc>[m]. If you also need to pass [m]<Esc>[m] in this mode to the web page,
+prepend it with [m]<C-v>[m].
+________________________________________________________________________________
+
+|send-key| |<C-v>| |CTRL-V| +
+||CTRL-V||
+________________________________________________________________________________
+If you only need to pass a single key to a JavaScript form field or another
+extension prefix the key with [m]<C-v>[m]. Also works to unshadow Songbird
+shortcuts like [m]<C-o>[m] which are otherwise hidden in Xulmus. When
+Xulmus mode is temporarily disabled with [m]<C-z>[m], [m]<C-v>[m] will pass
+the next key to Xulmus instead of the web page.
+________________________________________________________________________________
+
+section:Opening{nbsp}web{nbsp}pages[opening]
+
+|o| |:o| |:open|
+||:o[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
+||o||
+________________________________________________________________________________
+Open one or more URLs in the current tab.
+Multiple URLs can be separated with 'urlseparator' (default: ", " Note that the
+space after the comma is required.)
+The first URL is opened in the current tab, and all other URLs are
+opened in new tabs.
+Each token is analyzed and in this order:
+
+1. Opened as a local file if it is an existing relative or absolute filename.
+   - [c]:open /etc/fstab[c] shows the file system table.
+   - [c]:open ../other/foo.html[c] in your home directory opens
+	 [a]/home/other/foo.html[a]
+2. Opened with the specified search engine if the token looks like a search
+   string and the first word is the name of a search engine ([c]:open wikipedia
+   linus torvalds[c] opens the Wikipedia entry for linus torvalds). The short
+   name of a search engine is automatically guessed from its name. If you want
+   to set a custom name, you can change it with [c]:dialog searchengines[c].
+3. Opened with the default search engine or keyword (specified with the
+   'defsearch' option) if the first word is no search engine ([c]:open linus
+   torvalds[c] opens a Google search for linux torvalds).
+4. Passed directly to Songbird in all other cases ([c]:open www.osnews.com,
+   www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
+   background tab).
+
+You can use [c]:open -tags linux torvalds<Tab>[c] to complete bookmarks with
+tag "linux" and which contain "torvalds". Note that -tags support is only
+available for tab completion, not for the actual command.
+The items which are completed on [m]<Tab>[m] are specified in the 'complete'
+option.
+Without argument, reloads the current page.
+Without argument but with [!], reloads the current page skipping the cache.
+________________________________________________________________________________
+
+
+|t| |:t| |:tabopen| |:tabnew| |:tabe| |:tabedit|
+||:tabopen[!] [a][arg1][a], [a][arg2][a], ...|| +
+||t||
+________________________________________________________________________________
+Just like [c]:open[c] but also uses a new tab for the first URL. When
+used with [!], the *tabopen* value of the 'activate' option is negated.
+________________________________________________________________________________
+
+
+|T| +
+||T||
+________________________________________________________________________________
+Open one or more URLs in a new tab based on current location. Works like
+[m]t[m] but preselects current URL in the [c]:tabopen[c] query.
+________________________________________________________________________________
+
+
+|:tabd| |:tabduplicate|
+||:[count]tabd[uplicate][!]|| +
+________________________________________________________________________________
+Duplicates current tab [count] times. Uses *tabopen* value of the 'activate'
+option to determine if the last cloned tab should be activated. When used with
+[!], *tabopen* value is negated.
+________________________________________________________________________________
+
+
+|O| +
+||O||
+________________________________________________________________________________
+Open one or more URLs in the current tab based on current location. Works
+like [m]o[m] but preselects current URL in the [c]:open[c] query.
+________________________________________________________________________________
+
+
+|:winopen| |:wopen| |:winedit|
+||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
+________________________________________________________________________________
+Just like [c]:tabopen[c] but opens the resulting web page(s) in a new window.
+________________________________________________________________________________
+
+
+|<MiddleMouse>| |p| +
+||p||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in the current buffer.
+You can also just select (for non-X11 users: copy) some non-URL text, and
+search for it with the default search engine or keyword (specified by the
+'defsearch' option) with [m]p[m].
+________________________________________________________________________________
+
+
+|P| +
+||P||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer. Works
+like [m]p[m] but opens a new tab. +
+Whether the new buffer is activated, depends on the 'activate' option.
+________________________________________________________________________________
+
+
+|gP| +
+||gP||
+________________________________________________________________________________
+Open (put) a URL based on the current clipboard contents in a new buffer.
+Works like [m]P[m] but inverts the 'activate' option.
+________________________________________________________________________________
+
+
+|<C-x>|
+||[count]<C-x>||
+________________________________________________________________________________
+Decrements the last number in URL by 1, or by [count] if given. Negative
+numbers are not supported, as this is not generally useful, so the number cannot
+be decremented past 0.
+________________________________________________________________________________
+
+
+|<C-a>|
+||[count]<C-a>||
+________________________________________________________________________________
+Increments the last number in URL by 1, or by [count] if given.
+________________________________________________________________________________
+
+
+|\~| +
+||\~||
+________________________________________________________________________________
+Open home directory. You can also use the hints and have the probably fastest
+file browser on earth. :)
+________________________________________________________________________________
+
+section:Navigating[navigating]
+
+|H| |<C-o>| |CTRL-O| |:ba| |:back|
+||:[count]ba[ck] [url]|| +
+||:ba[ck]!|| +
+||CTRL-o||
+________________________________________________________________________________
+Go [count] pages back in the browser history. If [url] is specified go back to
+the first matching URL. The special version [c]:back![c] goes to the beginning
+of the browser history.
+________________________________________________________________________________
+
+
+|L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
+||:[count]fo[rward] [url]|| +
+||:fo[rward]!|| +
+||CTRL-i||
+________________________________________________________________________________
+Go [count] pages forward in the browser history. If [url] is specified go
+forward to the first matching URL. The special version [c]:forward![c] goes to
+the end of the browser history.
+________________________________________________________________________________
+
+
+|:ju| |:jumps|
+||:ju[mps]||
+________________________________________________________________________________
+List all jumps aka current tab's history aka session history.
+
+Current history position is marked with >, jump numbers are counters to be used
+with [c]:back[c] (above zero record) or [c]:forward[c] (below zero record).
+________________________________________________________________________________
+
+
+|gh|
+||gh||
+________________________________________________________________________________
+Go home. Opens the homepage in the current tab.
+________________________________________________________________________________
+
+
+|gH| +
+||gH||
+________________________________________________________________________________
+Go home in a new tab. Opens the homepage in a new tab. Whether the new tab is
+activated or not depends on the 'activate' option.
+________________________________________________________________________________
+
+
+|gu|
+||[count]gu||
+________________________________________________________________________________
+Go to [count]th parent directory. +
+
+[m]2gu[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
+_http://www.example.com/dir1/_.
+________________________________________________________________________________
+
+
+|gU|
+||gU||
+________________________________________________________________________________
+Go to the root of the web site. +
+
+[m]gU[m] on _http://www.example.com/dir1/dir2/file.htm_ opens
+_http://www.example.com/_.
+When browsing a local directory, it goes to the root directory.
+________________________________________________________________________________
+
+section:Reloading[reloading]
+
+|r|
+||r||
+________________________________________________________________________________
+Force reloading of the current page.
+________________________________________________________________________________
+
+
+|R|
+||R||
+________________________________________________________________________________
+Force reloading of the current page skipping the cache.
+________________________________________________________________________________
+
+
+|:re| |:reload| +
+||:re[load][!]||
+________________________________________________________________________________
+Reload current page. Forces reloading of the current page. If [!] is
+given, skip the cache.
+________________________________________________________________________________
+
+
+|:reloada| |:reloadall| +
+||:reloada[ll][!]||
+________________________________________________________________________________
+Reload all pages. Forces reloading of all pages. If [!] is given, skip the cache.
+________________________________________________________________________________
+
+section:Stopping[stopping]
+
+|<C-c>|
+||<C-c>||
+________________________________________________________________________________
+Stop loading the current web page.
+________________________________________________________________________________
+
+
+|:st| |:stop|
+||:st[op]||
+________________________________________________________________________________
+Stop loading. Stop loading current web page.
+________________________________________________________________________________
+
+section:Writing[writing,save-file]
+
+|:w| |:write| |:sav| |:saveas| +
+||:sav[eas][!] [a][file][a]||
+________________________________________________________________________________
+Save current web page to disk. If [a][file][a] is omitted, save to the page's
+default filename. Existing documents will only be overwritten if [!] is given.
+________________________________________________________________________________
+
+section:Quitting[quitting,save-session]
+
+|:q| |:quit| +
+||:q[uit]||
+________________________________________________________________________________
+Quit current tab. If this is the last tab in the window, close the window. If
+this was the last window, close Xulmus. When quitting Xulmus, the
+session is not stored.
+________________________________________________________________________________
+
+
+|:qa| |:qall| |:quita| |:quitall| +
+||:quita[ll]||
+________________________________________________________________________________
+Quit Xulmus. Quit Xulmus, no matter how many tabs/windows are open.
+The session is not stored.
+________________________________________________________________________________
+
+
+|:wc| |:wclose| |:winc| |:winclose|
+||:winc[lose]|| +
+________________________________________________________________________________
+Close window.
+________________________________________________________________________________
+
+
+|:xa| |:xall| |:wq| |:wqa| |:wqall|
+||:wqa[ll]|| +
+||:xa[ll]||
+________________________________________________________________________________
+Save the session and quit. Quit Xulmus, no matter how many tabs/windows
+are open. The session is stored. [c]:wq[c] is different from Vim, as it
+closes the window instead of just one tab by popular demand. Complain on the
+mailing list, if you want to change that.
+________________________________________________________________________________
+
+
+|ZQ|
+||ZQ||
+________________________________________________________________________________
+Quit and don't save the session. Works like [c]:qall[c].
+________________________________________________________________________________
+
+
+|ZZ|
+||ZZ||
+________________________________________________________________________________
+Quit and save the session. Quit Xulmus, no matter how many tabs/windows
+are open. The session is stored. Works like [c]:xall[c].
+________________________________________________________________________________
+
+section:The{nbsp}current{nbsp}directory[current-directory]
+
+|:chd| |:chdir| |:cd|
+||:cd [-|path]||
+________________________________________________________________________________
+Change the current directory. [c]:cd -[c] changes to the last directory.
+________________________________________________________________________________
+
+
+|:pw| |:pwd|
+||:pw[d]||
+________________________________________________________________________________
+Print the current directory name.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

@@ -1,0 +1,413 @@
+HEADER
+
+Key mappings, abbreviations, and user-defined commands.
+
+section:Key{nbsp}mapping[key-mapping,mapping,macro]
+
+The key mapping commands can be used to either redefine the standard key
+bindings or define new ones. A mapping consists of a key, or sequence of keys,
+which are translated to a string of characters. Example:
+
+  :map <F2> :echo new Date().toDateString()<CR>
+
+will echo the current date to the command line when [m]<F2>[m] is pressed.
+
+There are separate key mapping tables for each of the Normal, Insert, and
+Command-line modes.
+
+|:map-special-chars| +
+
+|<Nop>| +
+||<Nop>||
+________________________________________________________________________________
+Do nothing. This command is useful for disabling a specific mapping. [c]:map
+<C-n> <Nop>[c] will prevent [m]<C-n>[m] from doing anything.
+________________________________________________________________________________
+
+
+|<CR>| |map_return| +
+||<CR>||
+________________________________________________________________________________
+Expand to a line terminator in a key mapping. An Ex command in the {rhs} of a
+mapping requires a line terminator after it so that it is executed when the
+mapping is expanded. [m]<CR>[m] should be used for this purpose.
+________________________________________________________________________________
+
+
+|<Leader>| |mapleader| +
+||<Leader>||
+________________________________________________________________________________
+Expands to the value of the "mapleader" variable in key mapping. If
+"mapleader" is unset or empty then "\" is used. Example: +
+\{nbsp}[c]:map <Leader>h :echo "Hello"<CR>[c] +
+works like +
+\{nbsp}[c]:map \h :echo "Hello"<CR>[c] +
+but after +
+\{nbsp}[c]let mapleader = ","[c] +
+it works like +
+\{nbsp}[c]:map ,h :echo "Hello"<CR>[c]
+________________________________________________________________________________
+
+
+|:map|
+||:map {lhs} {rhs}|| +
+||:map {lhs}|| +
+||:map||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
+nested and recursive mappings.
+
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
+xulmusrc file!
+________________________________________________________________________________
+
+
+|:cm| |:cmap|
+||:cmap {lhs} {rhs}|| +
+||:cmap {lhs}|| +
+||:cmap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
+remapped, allowing for nested and recursive mappings.
+
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
+xulmusrc file!
+________________________________________________________________________________
+
+
+|:im| |:imap|
+||:imap {lhs} {rhs}|| +
+||:imap {lhs}|| +
+||:imap||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in Insert mode). The {rhs} is remapped,
+allowing for nested and recursive mappings.
+
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
+xulmusrc file!
+________________________________________________________________________________
+
+
+|:mapc| |:mapclear| +
+||:mapc[lear]||
+________________________________________________________________________________
+Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
+[c]:noremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:cmapc| |:cmapclear| +
+||:cmapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in Command-line mode). All user-defined mappings which
+were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:imapc| |:imapclear| +
+||:imapc[lear]||
+________________________________________________________________________________
+Remove all mappings (in Insert mode). All user-defined mappings which were set
+by [c]:imap[c] or [c]:inoremap[c] are cleared.
+________________________________________________________________________________
+
+
+|:no| |:noremap| +
+||:no[remap] {lhs} {rhs}|| +
+||:no[remap] {lhs}|| +
+||:no[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs}. No remapping of the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:cno| |:cnoremap| +
+||:cno[remap] {lhs} {rhs}|| +
+||:cno[remap] {lhs}|| +
+||:cno[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in Command-line mode). No remapping of
+the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:ino| |:inoremap| +
+||:ino[remap] {lhs} {rhs}|| +
+||:ino[remap] {lhs}|| +
+||:ino[remap]||
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} (in Insert mode). No remapping of the
+{rhs} is performed.
+________________________________________________________________________________
+
+
+|:map-<silent>| +
+________________________________________________________________________________
+When the first argument to one of the mapping commands is <silent>,
+{rhs} is not echoed to the command line, nor, for that matter, anything
+else until the command has completed.
+________________________________________________________________________________
+
+
+
+|:unm| |:unmap| +
+||:unm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs}.
+________________________________________________________________________________
+
+
+|:cunm| |:cunmap| +
+||:cunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in Command-line mode).
+________________________________________________________________________________
+
+
+|:iunm| |:iunmap| +
+||:iunm[ap] {lhs}||
+________________________________________________________________________________
+Remove the mapping of {lhs} (in Insert mode).
+________________________________________________________________________________
+
+section:Abbreviations[abbreviations]
+
+Xulmus can automatically replace words identified as abbreviations,
+which may be used to save typing or to correct commonly misspelled
+words. An abbreviation can be one of three types that are defined by the
+types of constituent characters. Whitespace and quotes are non-keyword
+types, and all other characters are keyword types.
+
+1. A "full-id" abbreviation consists entirely of keyword characters
+(e.g., "teh", "msoft").
+
+2. An "end-id" abbreviation ends in keyword character but otherwise
+contains all non-keyword characters (e.g., "'i").
+
+3. A "non-id" abbreviation ends in a non-keyword character but otherwise
+contains any non-whitespace character (e.g., "def'").
+
+Strings that cannot be abbreviations include "a'b" and "a b".
+
+An abbreviation is recognized when a space, quote character, or
+[m]<C-]>[m] is typed after the abbreviation. There are no default
+abbreviations, and abbreviations are never recursive.
+
+|:ab| |:abbreviate|
+||:ab[breviate] {lhs} {rhs}|| +
+||:ab[breviate] {lhs}|| +
+||:ab[breviate]||
+________________________________________________________________________________
+Abbreviate a key sequence. Abbreviate {lhs} to {rhs}. If only {lhs} is given,
+list all abbreviations that start with {lhs}. If no arguments are given,
+list all abbreviations.
+________________________________________________________________________________
+
+
+|:ca| |:cabbrev|
+||:ca[bbrev] {lhs} {rhs}|| +
+||:ca[bbrev] {lhs}|| +
+||:ca[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Command-line mode. Same as [c]:ab[reviate][c],
+but for Command-line mode only.
+________________________________________________________________________________
+
+
+|:ia| |:iabbrev|
+||:ia[bbrev] {lhs} {rhs}|| +
+||:ia[bbrev] {lhs}|| +
+||:ia[bbrev]||
+________________________________________________________________________________
+Abbreviate a key sequence for Insert mode. Same as [c]:ab[breviate][c] but
+for Insert mode only.
+________________________________________________________________________________
+
+
+|:una| |:unabbreviate|
+||:una[bbreviate] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation.
+________________________________________________________________________________
+
+
+|:cuna| |:cunabbrev|
+||:cuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Command-line mode. Same as [c]:una[bbreviate][c],
+but for Command-line mode only.
+________________________________________________________________________________
+
+
+|:iuna| |:iunabbrev|
+||:iuna[bbrev] {lhs}|| +
+________________________________________________________________________________
+Remove an abbreviation for Insert mode. Same as [c]:una[bbreviate][c] but for
+Insert mode only.
+________________________________________________________________________________
+
+
+|:abc| |:abclear| +
+||:abc[lear]||
+________________________________________________________________________________
+Remove all abbreviations.
+________________________________________________________________________________
+
+
+|:cabc| |:cabclear| +
+||:cabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Command-line mode.
+________________________________________________________________________________
+
+
+|:iabc| |:iabclear| +
+||:iabc[lear]||
+________________________________________________________________________________
+Remove all abbreviations for Insert mode.
+________________________________________________________________________________
+
+section:User-defined{nbsp}commands[user-commands]
+
+|:com| |:command|
+||:com[mand]|| +
+________________________________________________________________________________
+List all user-defined commands.
+________________________________________________________________________________
+
+||:com[mand] {cmd}|| +
+________________________________________________________________________________
+List all user-defined commands that start with {cmd}.
+________________________________________________________________________________
+
+
+||:com[mand][!] [{attr}...] {cmd} {rep}|| +
+________________________________________________________________________________
+Define a new user command. The name of the command is {cmd} and its replacement
+text is {rep}. The command's attributes are {attr}. If a command with this name
+already exists an error is reported unless [!] is specified, in which case the
+command is redefined. Unlike Vim, the command may start with a lowercase
+letter.
+
+The command's behavior can be specified by providing attributes when the
+command is defined.
+
+|E175| |E176| |:command-nargs| +
+Argument handling
+
+By default user commands accept no arguments. This can be changed by specifying
+the -nargs attribute.
+
+The valid values are:
+`----------`--------------------------------------------------------------------
+*-nargs=0* No arguments are allowed (default)
+*-nargs=1* One argument is allowed
+*-nargs=** Zero or more arguments are allowed
+*-nargs=?* Zero or one argument is allowed
+*-nargs=+* One or more arguments are allowed
+--------------------------------------------------------------------------------
+
+|E180| |E181| |:command-complete| +
+Argument completion
+
+Completion for arguments to user defined commands is not available by default.
+Completion can be enabled by specifying one of the following arguments to the
+-complete option when defining the command.
+`----------------`--------------------------------------------------------------
+*altstyle*       alternate author style sheets
+*bookmark*       bookmarks
+*buffer*         buffers
+*color*          color schemes
+*command*        Ex commands
+*dialog*         Songbird dialogs
+*dir*            directories
+*environment*    environment variables
+*event*          autocommand events
+*file*           files
+*help*           help tags
+*highlight*      highlight groups
+*javascript*     JavaScript expressions
+*macro*          named macros
+*mapping*        user mappings
+*menu*           menu items
+*option*         Xulmus options
+*preference*     Songbird preferences
+*search*         search engines and keywords
+*shellcmd*       shell commands
+*sidebar*        sidebar panels
+*url*            URLs
+*usercommand*    user commands
+*custom,{func}*  custom completion, provided by {func}
+--------------------------------------------------------------------------------
+
+|E467| |E468| |:command-completion-custom| +
+Custom completion
+
+Custom completion can be provided by specifying the "custom,{func}" argument to
+-complete. The {func} is called with two arguments, a completion context, and
+an object describing the command's arguments. It should set the context's
+\'completions' property, or return an object, with \'start' and \'items'
+properties, describing the completions and where the replacement is to start.
+
+*start* is the index into the word being completed at which the returned values
+should be applied and *completions* is a two dimensional array of the form:
+[[arg1, description1], [arg2, description2], ...]
+
+// TODO: add examples
+
+|E177| |E178| |:command-count| +
+Count handling
+
+By default user commands do not accept a count. Use the -count attribute if
+you'd like to have a count passed to your user command. This will then be
+available for expansion as <count> in the argument.
+
+|:command-bang| +
+Special cases
+
+By default a user command does not have a special version, i.e. a version
+executed with the ! modifier. Providing the -bang attribute will enable this
+and <bang> will be available in the argument.
+
+|:command-replacement-text| +
+Replacement text
+
+The replacement text {rep} is scanned for escape sequences and these are
+replaced with values from the user-entered command line. The resulting string
+is then executed as an Ex command.
+
+The valid escape sequences are:
+`----------`--------------------------------------------------------------------
+*<args>*   The command arguments exactly as supplied
+*<count>*  Any supplied count, e.g. 5
+*<bang>*   ! if the command was executed with the ! modifier
+*<lt>*     A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
+--------------------------------------------------------------------------------
+
+"q-" can be prefixed to the escape sequence so that the value is quoted, making
+it suitable for expression evaluation. Example: <q-args>
+________________________________________________________________________________
+
+
+|:comc| |:comclear| +
+||:comc[lear]||
+________________________________________________________________________________
+Delete all user-defined commands.
+________________________________________________________________________________
+
+
+|:delc| |:delcommand|
+||:delc[ommand] {cmd}|| +
+________________________________________________________________________________
+Delete the user-defined command {cmd}.
+________________________________________________________________________________
+
+section:Examples[command-examples]
+
+Add a :Google command to search via google:
+
+  :command -nargs=* Google open google <args>
+
+// TODO: add decent examples
+
+// vim: set filetype=asciidoc:

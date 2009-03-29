@@ -1,0 +1,83 @@
+HEADER
+
+|gui| +
+
+Although Xulmus offers the most frequently used Songbird functionality via
+Ex and Normal mode commands there may be times when directly accessing the GUI
+is required. There are commands for accessing the menu system, standard dialogs
+and the sidebar.
+
+|:emenu| +
+||:emenu {menu}||
+________________________________________________________________________________
+Execute {menu} from the command line. This command provides command-line access
+to all menu items available from the main Songbird menubar. {menu} is a
+hierarchical path to the menu item with each submenu separated by a period.
+E.g. [c]:emenu File.Open File...[c]
+________________________________________________________________________________
+
+
+|:addo| |:addons| +
+||:addo[ns]||
+________________________________________________________________________________
+Show available Songbird Extensions and Themes.
+You can add/remove/disable extensions from this dialog.
+Be aware that not all Songbird extensions work, because Xulmus overrides
+some key bindings and changes Songbird's GUI.
+________________________________________________________________________________
+
+
+|:dia| |:dialog|
+||:dia[log] [a][songbird-dialog][a]|| +
+________________________________________________________________________________
+Open a Songbird dialog.
+
+Available dialogs:
+`------------------`-----------------------------------
+*about*            About Songbird
+*addons*           Manage Add-ons
+*checkupdates*     Check for updates
+*cleardata*        Clear private data
+*cookies*          List your cookies
+*console*          JavaScript console
+*dominspector*     DOM Inspector
+*downloads*        Manage Downloads
+*openfile*         Open the file selector dialog
+*pagesource*       View page source
+*places*           Places Organizer: Manage your bookmarks and history
+*preferences*      Show Songbird preferences dialog
+*printsetup*       Setup the page size and orientation before printing
+*print*            Show print dialog
+*saveframe*        Save frame to disk
+*savepage*         Save page to disk
+*searchengines*    Manage installed search engines
+*selectionsource*  View selection source
+*subscribe*        Add a new subscription
+-------------------------------------------------------
+
+________________________________________________________________________________
+
+
+|:dl| |:downl| |:downloads| +
+||:downl[oads]||
+________________________________________________________________________________
+Show progress of current downloads. Open the original Songbird download dialog
+in a new tab. Here, downloads can be paused, canceled and resumed.
+________________________________________________________________________________
+
+
+|:dpcl| |:dpclose| +
+||:dpcl[ose] {pane}||
+________________________________________________________________________________
+Close the specified display pane.
+________________________________________________________________________________
+
+
+|:dpope| |:dpopen| |:dp| |:dpane| |:dislplayp| |:dislplaypane|
+||:displaypane {pane}|| +
+________________________________________________________________________________
+Open the specified display pane. {pane} is any of "content pane bottom",
+"service pane bottom" or "right sidebar".
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

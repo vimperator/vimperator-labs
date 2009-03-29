@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>{3703dcdb-6ba3-4331-8de8-c18373fb05d1}</em:id>
+    <em:type>2</em:type>
+    <em:name>xulmus@vimperator.org</em:name>
+    <em:version>###VERSION###</em:version>
+    <em:creator>Prathyush Thota</em:creator>
+    <em:description>Makes Songbird behave like Vim and CMus.</em:description>
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.8.0pre</em:minVersion>
+        <em:maxVersion>1.2.0pre</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>

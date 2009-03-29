@@ -49,7 +49,7 @@ function Tabs() //{{{
                     tabmail.__defineGetter__("mTabs", function () this.tabContainer.childNodes);
                     tabmail.__defineGetter__("mCurrentTab", function () this.tabContainer.selectedItem);
                     tabmail.__defineGetter__("mStrip", function () this.tabStrip);
-                    tabmail.__defineGetter__("browsers", function () [browser for (browser in Iterator(this.mTabs))] );
+                    tabmail.__defineGetter__("browsers", function () [browser for (browser in Iterator(this.mTabs))]);
                 }
                 return tabmail;
             };
@@ -109,7 +109,10 @@ function Tabs() //{{{
     // hide tabs initially
     if (config.name == "Vimperator")
         getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
-
+/*
+    if (config.name == "Xulmus")
+        getBrowser()._strip.getElementsByClassName(
+*/
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -148,7 +151,7 @@ function Tabs() //{{{
             validator: Option.validateCompleter
         });
 
-    if (config.name == "Vimperator")
+    if (config.name == "Vimperator" || config.name == "Xulmus")
     {
         options.add(["activate", "act"],
             "Define when tabs are automatically activated",
@@ -238,7 +241,7 @@ function Tabs() //{{{
         function (count) { tabs.select("-" + (count < 1 ? 1 : count), true); },
         { flags: Mappings.flags.COUNT });
 
-    if (config.name == "Vimperator")
+    if (config.name == "Vimperator" || config.name == "Xulmus")
     {
         mappings.add([modes.NORMAL], ["b"],
             "Open a prompt to switch buffers",
@@ -449,7 +452,7 @@ function Tabs() //{{{
         function () { tabs.select(0, false); },
         { argCount: "0" });
 
-    if (config.name == "Vimperator")
+    if (config.name == "Vimperator" || config.name == "Xulmus")
     {
         // TODO: "Zero count" if 0 specified as arg, multiple args and count ranges?
         commands.add(["b[uffer]"],
@@ -584,7 +587,7 @@ function Tabs() //{{{
             });
     }
 
-    if (liberator.has("session"))
+    if (liberator.has("session") && config.name != "Xulmus")
     {
         // TODO: extract common functionality of "undoall"
         commands.add(["u[ndo]"],
@@ -686,9 +689,10 @@ function Tabs() //{{{
         {
             let tabStrip = null;
 
+            // FIXME: why is this app specific conditional code here?
             if (config.hostApplication == "Firefox")
                 tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
-            else if (config.hostApplication == "Thunderbird")
+            else if (/^(Thunderbird|Songbird)$/.test(config.hostApplication))
                 tabStrip = getBrowser().mStrip;
 
             return tabStrip;
@@ -781,6 +785,22 @@ function Tabs() //{{{
                             getBrowser().removeTab(tab);
                         else
                             liberator.beep();
+                    },
+                    Songbird: function (tab)
+                    {
+                        if (getBrowser().mTabs.length > 1)
+                            getBrowser().removeTab(tab);
+                        else
+                        {
+                            if (buffer.URL != "about:blank" ||
+                                window.getWebNavigation().sessionHistory.count > 0)
+                            {
+                                liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
+                                getBrowser().removeTab(tab);
+                            }
+                            else
+                                liberator.beep();
+                        }
                     }
                 }[config.hostApplication] || function () {};
 

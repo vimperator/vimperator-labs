@@ -1,0 +1,249 @@
+HEADER
+
+|different-marks| |marks| +
+
+Xulmus supports a number of different marks:
+
+- Bookmarks which allow you to mark a web page as one of your favorites for
+  easy access.
+- QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or groups of
+  web sites) which you visit most often.
+- Local marks to store the position within a web page.
+- History is also a special type of marks, as Xulmus automatically
+  remembers sites which you have visited in the past.
+
+section:Bookmarks[bookmarks]
+
+|a| |:bma| |:bmark|
+||:bma[rk][!] [a][-title=title][a] [a][-keyword=kw][a] [a][-tags=tag1,tag2][a] [a][url][a]|| +
+||a||
+____________________________________________________________________________
+Add a bookmark. +
+
+The following options are interpreted:
+
+- -title="custom title" (short option: -t)
+- -tags=comma,separated,tag,list (short option: -T)
+- -keyword=keyword (short option: -k)
+
+If [!] is present, a new bookmark is always added. Otherwise, the first
+bookmark matching [a][url][a] is updated.
+
+When creating a new bookmark, if [a][-title][a] isn't given, either the web
+page's title or URL is used. You can omit the optional [a][url][a] argument, so
+just do [c]:bmark[c] to bookmark the currently loaded web page with a default
+title and without any tags.
+____________________________________________________________________________
+
+
+|A| +
+||A||
+________________________________________________________________________________
+Toggle bookmarked state of current URL. Add/remove a bookmark for the current
+location, depending on if it is already bookmarked or not. In contrast to the
+[c]:bmark[c] command, the bookmark is just _starred_ which means it is placed
+in the _Unfiled Bookmarks Folder_ instead of the bookmarks menu.
+________________________________________________________________________________
+
+
+|:bmarks|
+||:bmarks[!] [a][filter][a]|| +
+________________________________________________________________________________
+List or open multiple bookmarks. Open the message window at the bottom of the
+screen with all bookmarks which match [a][filter][a] either in the title or
+URL.
+
+The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
+opens all the found bookmarks in new tabs.
+
+Filter can also contain the following options: +
+-tags=comma,separated,tag,list (short option: -T) +
+-max=N (short options: -m)
+________________________________________________________________________________
+
+
+|:delbm| |:delbmarks|
+||:delbm[arks] [a][url][a]|| +
+________________________________________________________________________________
+Delete a bookmark. Deletes *all* bookmarks which match the [a][url][a]. If
+omitted, [a][url][a] defaults to the URL of the current buffer. Use [m]<Tab>[m]
+key on a string to complete the URL which you want to delete.
+
+The following options WILL be interpreted in the future:
+
+* [!] a special version to delete ALL bookmarks
+________________________________________________________________________________
+
+section:History[history]
+
+|<C-o>| +
+||[count]<C-o>||
+________________________________________________________________________________
+Go to an older position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<C-i>| +
+||[count]<C-i>||
+________________________________________________________________________________
+Go to a newer position in the jump list. The jump list is just the browser
+history for now.
+________________________________________________________________________________
+
+
+|<M-Left>| |<A-Left>| |H| +
+||[count]H||
+________________________________________________________________________________
+Go back in the browser history. If [count] is specified go back [count] pages.
+________________________________________________________________________________
+
+
+|<M-Right>| |<A-Right>| |L| +
+||[count]L||
+________________________________________________________________________________
+Go forward in the browser history. If [count] is specified go forward [count]
+pages.
+________________________________________________________________________________
+
+
+|:ba| |:back|
+||:[count]ba[ck][!] [a][url][a]|| +
+________________________________________________________________________________
+Go back in the browser history. If [count] is specified go back [count] pages. +
+The special version [c]:back![c] goes to the beginning of the browser history.
+________________________________________________________________________________
+
+
+|:fw| |:fo| |:forward|
+||:[count]fo[rward][!] [a][url][a]|| +
+________________________________________________________________________________
+Go forward in the browser history. If [count] is specified go forward [count]
+pages. +
+The special version [c]:forward![c] goes to the end of the browser history.
+________________________________________________________________________________
+
+
+|:hs| |:hist| |:history|
+||:hist[ory][!] [a][filter][a]|| +
+________________________________________________________________________________
+Show recently visited URLs. Open the message window at the bottom of the screen
+with all history items which match [a][filter][a] either in the title or URL.
+
+The special version [c]:history![c] works the same as [c]:history[c] except
+it opens all the found items in new tabs.
+
+Filter can also contain the following options: +
+-max=N (short options: -m)
+________________________________________________________________________________
+
+section:QuickMarks[quickmarks]
+
+|go| +
+||go[a]\\{a-zA-Z0-9\\}[a]||
+________________________________________________________________________________
+Jump to a QuickMark in the current tab. Open any QuickMark in the current tab.
+You can mark any URLs with [m]M[m][a]\\{a-zA-Z0-9\\}[a]. These QuickMarks are
+persistent across browser sessions.
+________________________________________________________________________________
+
+
+|gn| +
+||gn[a]\\{a-zA-Z0-9\\}[a]||
+________________________________________________________________________________
+Jump to a QuickMark in a new tab. Works like [m]go[m][a]\\{a-zA-Z0-9\\}[a] but
+opens the QuickMark in a new tab. Whether the new tab is activated or not
+depends on the 'activate' option. +
+Mnemonic: Go in a new tab. [m]gt[m] would make more sense but is already
+taken.
+________________________________________________________________________________
+
+
+|M| +
+||M[a]\\{a-zA-Z0-9\\}[a]||
+________________________________________________________________________________
+Add new QuickMark for current URL. You can go to a marked URL in the current
+tab with [m]go[m][a]\\{a-zA-Z0-9\\}[a] or in a new tab with
+[m]gn[m][a]\\{a-zA-Z0-9\\}[a]. These QuickMarks are persistent across browser
+sessions.
+________________________________________________________________________________
+
+
+|:delqm| |:delqmarks|
+||:delqm[arks] {marks}|| +
+||:delqm[arks]!||
+________________________________________________________________________________
+Delete the specified QuickMarks. QuickMarks are presented as a list.
+
+Examples:
+
+* [c]:delqmarks Aa b p[c] deletes QuickMarks A, a, b and p +
+* [c]:delqmarks b-p[c] deletes all QuickMarks in the range b to p +
+* [c]:delqmarks![c] deletes all QuickMarks
+
+________________________________________________________________________________
+
+
+|:qma| |:qmark|
+||:qma[rk] {a-zA-Z0-9} [a][url][a]|| +
+________________________________________________________________________________
+Mark a URL with a letter for quick access. You can also mark whole groups like this: +
+[c]:qmark f +++http://forum1.com+++, +++http://forum2.com+++, imdb some artist[c]
+________________________________________________________________________________
+
+
+|:qmarks|
+||:qmarks [a][arg][a]||
+________________________________________________________________________________
+Show all QuickMarks. If [a][arg][a] is specified then limit the list to those
+QuickMarks mentioned.
+________________________________________________________________________________
+
+section:Local{nbsp}marks[localmarks]
+
+|m| +
+||m[a]\\{a-zA-Z\\}[a]||
+________________________________________________________________________________
+Set mark at the cursor position. Marks a-z are local to the buffer, whereas
+A-Z are valid between buffers.
+________________________________________________________________________________
+
+
+|\`| |\'| +
+||\'[a]\\{a-zA-Z\\}[a]||
+________________________________________________________________________________
+Jump to the mark in the current buffer. Marks a-z are local to the buffer,
+whereas A-Z are valid between buffers.
+________________________________________________________________________________
+
+
+|:delm| |:delmarks|
+||:delm[arks] {marks}|| +
+||:delm[arks]!||
+________________________________________________________________________________
+Delete the specified marks. Marks are presented as a list.
+
+Examples:
+
+* [c]:delmarks Aa b p[c] deletes marks A, a, b and p +
+* [c]:delmarks b-p[c] deletes all marks in the range b to p +
+* [c]:delmarks![c] deletes all marks for the current buffer
+
+________________________________________________________________________________
+
+
+|:ma| |:mark|
+||:ma[rk] {a-zA-Z}||
+________________________________________________________________________________
+Mark current location within the web page.
+________________________________________________________________________________
+
+
+|:marks| +
+||:marks [a][arg][a]||
+________________________________________________________________________________
+Show all location marks of the current web page. If [a][arg][a] is specified then
+limit the list to those marks mentioned.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

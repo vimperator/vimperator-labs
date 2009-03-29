@@ -30,7 +30,7 @@ do
     (
         set -e
         cd $base
-	[ ${jar##*.} = jar ] && stage="$stage/${base##*/}"
+        [ ${jar##*.} = jar ] && stage="$stage/${base##*/}"
         for dir in $dirs
         do
             for f in $(getfiles "$bin" "$dir")

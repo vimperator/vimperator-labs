@@ -1,0 +1,21 @@
+" TODO: add some useful examples
+
+" I don't like beeps
+set visualbell
+
+" autoignore mode on certain pages
+:autocmd PageLoad .* :js modes.passAllKeys = /gmail\.com/.test(buffer.URL)
+
+
+" embedded javascript is possible
+" You can even add new functions which are then available in the :js command
+javascript <<EOF
+hello = function(name)
+{
+	alert("Hello world: " + name);
+}
+EOF
+
+echo "xulmusrc sourced"
+
+" vim: ft=xulmus:

@@ -1,0 +1,34 @@
+HEADER
+
+|printing| +
+
+|:ha| |:hardcopy| +
+||:ha[rdcopy][!]||
+________________________________________________________________________________
+Print current document. Open a GUI dialog where you can select the printer,
+number of copies, orientation, etc. When used with [!], the dialog is skipped
+and the default printer used.
+________________________________________________________________________________
+
+
+||:ha[rdcopy][!] >{filename}|| +
+________________________________________________________________________________
+As above, but write the output to {filename}.
+
+Note: Not available on Windows.
+________________________________________________________________________________
+
+section:Songbird{nbsp}printing{nbsp}dialogs[songbird-print-dialogs]
+
+The "Print Preview" and "Page Setup" dialogs can be opened via the [c]:dialog[c]
+command
+
+\{nbsp}[c]:dialog printpreview[c]
+
+and
+
+\{nbsp}[c]:dialog printsetup[c]
+
+respectively.
+
+// vim: set filetype=asciidoc:

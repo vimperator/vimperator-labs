@@ -1,0 +1,70 @@
+HEADER
+
+|text-search-commands| +
+
+Xulmus provides a Vim-like interface to Songbird's standard text search
+functionality. There is no support for using regular expressions in search
+commands as Songbird does not provide native regexp support. It is unlikely that
+this will ever be available.
+
+|/| +
+||/{pattern}[/]<CR>|| +
+________________________________________________________________________________
+Search forward for the first occurrence of {pattern}.
+
+If "\c" appears anywhere in the pattern the whole pattern is handled as though
+'ignorecase' is on. "\C" forces case-sensitive matching for the whole pattern. +
+If "\l" appears in the pattern only the text of links is searched for a
+match as though 'linksearch' is on. "\L" forces the entire page to be searched
+for a match.
+________________________________________________________________________________
+
+
+|?| +
+||?{pattern}[?]<CR>|| +
+________________________________________________________________________________
+Search backwards for {pattern}.
+
+{pattern} can use the same modifiers as for [m]/[m]. +
+
+Note: incremental searching currently only works in the forward direction.
+________________________________________________________________________________
+
+
+|n| +
+||n||
+________________________________________________________________________________
+Find next. Repeat the last search 1 time (until count is supported).
+________________________________________________________________________________
+
+
+|N| +
+||N||
+________________________________________________________________________________
+Find previous. Repeat the last search 1 time (until count is supported) in the
+opposite direction.
+________________________________________________________________________________
+
+
+|\*| +
+||\*||
+________________________________________________________________________________
+Search forward for the next word under the cursor.
+________________________________________________________________________________
+
+
+|\#| +
+||\#||
+________________________________________________________________________________
+Search backward for the previous word under the cursor.
+________________________________________________________________________________
+
+
+|:noh| |:nohlsearch| +
+||:noh[lsearch]||
+________________________________________________________________________________
+Remove the search highlighting. The document highlighting is turned back on
+when another search command is used or the 'hlsearch' option is set.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

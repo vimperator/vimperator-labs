@@ -1,0 +1,101 @@
+HEADER
+
+|autocommands| +
+
+Autocommands are a way to automatically execute code when certain events
+happen.
+
+|:au| |:autocmd| +
+||:au[tocmd]||
+________________________________________________________________________________
+Execute commands automatically on events.
+
+[c]:au[tocmd][c] {event} {pat} {cmd}
+
+Add {cmd} to the list of commands Xulmus will execute on {event} for a URL matching {pat}:
+
+* [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
+* [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
+* [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}
+* [c]:autocmd[!][c]: list/remove all autocommands
+
+Available {events}:
+
+`--------------------`----------------------------------------
+*BookmarkAdd*        Triggered after a page is bookmarked
+*ColorScheme*        Triggered after a color scheme has been loaded
+*DOMLoad*            Triggered when a page's DOM content has fully loaded
+*DownloadPost*       Triggered when a download has completed
+*Fullscreen*         Triggered when the player's fullscreen state changes
+*LocationChange*     Triggered when changing tabs or when navigating to a new location
+*PageLoadPre*        Triggered after a page load is initiated
+*PageLoad*           Triggered when a page gets (re)loaded/opened
+*ShellCmdPost*       Triggered after executing a shell command with [c]:![c]#{cmd}
+*TrackChangePre*     Triggered before a playing track is changed
+*TrackChange*        Triggered after a playing track has changed
+*ViewChangePre*      Triggered before a sequencer view is changed
+*ViewChange*         Triggered after a sequencer view is changed
+*StreamStart*        Triggered after a stream has started
+*StreamPause*        Triggered after a stream has paused
+*StreamEnd*          Triggered after a stream has ended
+*StreamStop*         Triggered after a stream has stopped
+*XulmusEnter*        Triggered after Songbird starts
+*XulmusLeavePre*     Triggered before exiting Songbird, just before destroying each module
+*XulmusLeave*        Triggered before exiting Songbird
+--------------------------------------------------------------
+
+{pat} is a regular expression, use .* if you want to match all URLs.
+
+Note: This differs from Vim which uses a glob rather than a regexp for {pat}.
+
+The following keywords are available where relevant:
+
+`--------------`----------------------------------------------
+*<url>*        The URL against which the event was selected.
+*<title>*      The page, bookmark or download title.
+*<tab>*        The tab in which the event occurred.
+*<tags>*       The tags applied to <url>. Only for *BookmarkAdd*.
+*<keyword>*    The keywords applied to the bookmark. Only for *BookmarkAdd*.
+*<icon>*       The icon associated with <url>. Only for *BookmarkAdd*.
+*<size>*       The size of a downloaded file. Only for *DownloadPost*.
+*<file>*       The target destination of a download. Only for *DownloadPost*.
+*<state>*      The new fullscreen state. Only for *Fullscreen*.
+*<name>*       The color scheme name. Only for *ColorScheme*.
+*<view>*       The new sequencer view. Only for *ViewChangePre* and *ViewChange*.
+*<track>*      The new media track. Only for *TrackChangePre* and *TrackChange*.
+--------------------------------------------------------------
+
+________________________________________________________________________________
+
+
+|:doautoa| |:doautoall|
+||:doautoa[ll] {event} [a][url][a]|| +
+________________________________________________________________________________
+Apply the autocommands matching the specified URL to all buffers. If no
+[a][url][a] is specified use the current URL.
+________________________________________________________________________________
+
+
+|:do| |:doautocmd|
+||:do[autocmd] {event} [a][url][a]|| +
+________________________________________________________________________________
+Apply the autocommands matching the specified URL to the current buffer. If no
+[a][url][a] is specified use the current URL.
+________________________________________________________________________________
+
+section:Examples[autocmd-examples]
+
+Enable _passthrough_ mode on all Google sites:
+
+\{nbsp}[c]:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)[c]
+
+Enable _passthrough_ mode on *some* Google sites:
+
+\{nbsp}[c]:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)[c]
+
+Set the filetype to mail when editing email at Gmail:
+
+\{nbsp}[c]:autocmd LocationChange .* :set editor=gvim\ -f[c] +
+\{nbsp}[c]:autocmd LocationChange mail\.google\.com :set editor="gvim -f -c 'set ft=mail'"[c]
+
+// vim: set filetype=asciidoc:

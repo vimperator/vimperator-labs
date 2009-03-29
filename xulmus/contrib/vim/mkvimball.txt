@@ -1,0 +1,2 @@
+syntax/xulmus.vim
+ftdetect/xulmus.vim

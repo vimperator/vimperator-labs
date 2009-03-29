@@ -141,13 +141,17 @@ statusbarpanel {
 }
 
 #liberator-commandline-prompt {
+    background-color: inherit;
     margin: 0px;
     padding: 0px;
-    background-color: inherit;
 }
 #liberator-commandline-command {
     background-color: inherit;
     color: inherit;
+    margin: 0px;
+}
+#liberator-message {
+    margin: 0px;
 }
 
 #sidebar {
@@ -174,7 +178,9 @@ statusbarpanel {
 }
 
 #liberator-completions-content *,
-#liberator-multiline-output-content * {
+#liberator-multiline-output-content *,
+#liberator-commandline-prompt *,
+#liberator-commandline-command {
     font: inherit;
 }
 

@@ -257,8 +257,11 @@ function Mappings() //{{{
     addMapCommands("",  [modes.NORMAL], "");
     addMapCommands("c", [modes.COMMAND_LINE], "command line");
     addMapCommands("i", [modes.INSERT, modes.TEXTAREA], "insert");
+    // FIXME
     if (liberator.has("mail"))
         addMapCommands("m", [modes.MESSAGE], "message");
+    if (liberator.has("player"))
+        addMapCommands("p", [modes.PLAYER], "player");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

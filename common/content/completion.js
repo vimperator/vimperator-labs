@@ -1390,6 +1390,32 @@ function Completion() //{{{
             completion.urls(context, tags);
         },
 
+        song: function song(context, args)
+        {
+            if (args.completeArg == 0)
+            {
+                context.title = ["Artists"];
+                context.completions = player.getArtists();
+            }
+            else if (args.completeArg == 1)
+            {
+                context.title = ["Albums by " + args[0]];
+                context.completions =  player.getAlbums(args[0]);
+            }
+            else if (args.completeArg == 2)
+            {
+                context.title = ["Tracks from " + args[1] + " by " + args[0]];
+                context.completions = player.getTracks(args[0], args[1]);
+            }
+        },
+
+        playlist: function playlist(context, args)
+        {
+            context.title = ["Playlist", "Type"];
+            context.keys = { text: "name", description: "type" };
+            context.completions = player.getPlaylists();
+        },
+
         buffer: function buffer(context)
         {
             filter = context.filter.toLowerCase();
@@ -1636,6 +1662,14 @@ function Completion() //{{{
             context.title = ["Mark", "Line Column File"];
             context.keys.description = function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
             context.completions = marks.all;
+        },
+
+        mediaView: function mediaView(context)
+        {
+            context.title = ["Media View", "URL"];
+            context.anchored = false;
+            context.keys = { text: "contentTitle", description: "contentUrl" };
+            context.completions = player.getMediaPages();
         },
 
         menuItem: function menuItem(context)

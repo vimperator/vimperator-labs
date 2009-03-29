@@ -26,6 +26,7 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+
 /** @scope modules */
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
@@ -82,6 +83,9 @@ const liberator = (function () //{{{
         {
             if (nError++ == 0)
                 window.toJavaScriptConsole();
+            liberator.dump("Error loading module - "+ name + "..");
+            liberator.dump(e);
+            liberator.dump(e.stack);
             liberator.reportError(e);
         }
     }
