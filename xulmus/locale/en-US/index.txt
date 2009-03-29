@@ -296,8 +296,6 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:version[c]|| Show version information +
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
-||[c]:winclose[c]|| Close window +
-||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +
 

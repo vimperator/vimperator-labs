@@ -464,27 +464,6 @@ const config = { //{{{
                 literal: 0
             });
 
-        commands.add(["winc[lose]", "wc[lose]"],
-            "Close window",
-            function () { window.close(); },
-            { argCount: "0" });
-
-        commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
-            "Open one or more URLs in a new window",
-            function (args)
-            {
-                args = args.string;
-
-                if (args)
-                    liberator.open(args, liberator.NEW_WINDOW);
-                else
-                    liberator.open("about:blank", liberator.NEW_WINDOW);
-            },
-            {
-                completer: function (context) completion.url(context),
-                literal: 0
-            });
-
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
