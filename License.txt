@@ -11,7 +11,7 @@ for the specific language governing rights and limitations under the
 License.
 
 Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
-Copyright (c) 2009 by Prathyush Thota <prathyushthota@gmail.com>
+and the authors of the specific projects inside (see the AUTHORS file in each).
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
