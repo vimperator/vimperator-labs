@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
     Code based on venkman
 
 Alternatively, the contents of this file may be used under the terms of
@@ -105,12 +105,7 @@ function IO() //{{{
                        .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
     }
 
-    function replacePathSep(path)
-    {
-        if (WINDOWS)
-            return path.replace("/", "\\");
-        return path;
-    }
+    function replacePathSep(path) path.replace("/", IO.PATH_SEP, "g");
 
     function joinPaths(head, tail)
     {
@@ -278,7 +273,7 @@ function IO() //{{{
         function (args)
         {
             // TODO: "E172: Only one file name allowed"
-            let filename = args[0] || "~/" + (WINDOWS ? "_" : ".") + EXTENSION_NAME + "rc";
+            let filename = args[0] || io.getRCFile(null, true).path;
             let file = io.getFile(filename);
 
             if (file.exists() && !args.bang)
@@ -460,11 +455,6 @@ function IO() //{{{
         sourcing: null,
 
         /**
-         * @property {string} The OS's path separator.
-         */
-        pathSeparator: WINDOWS ? "\\" : "/",
-
-        /**
          * Expands "~" and environment variables in <b>path</b>.
          *
          * "~" is expanded to to the value of $HOME. On Windows if this is not
@@ -554,10 +544,12 @@ function IO() //{{{
          * Returns the first user RC file found in <b>dir</b>.
          *
          * @param {string} dir The directory to search.
+         * @param {boolean} always When true, return a path whether
+         *     the file exists or not.
          * @default $HOME.
          * @returns {nsIFile} The RC file or null if none is found.
          */
-        getRCFile: function (dir)
+        getRCFile: function (dir, always)
         {
             dir = dir || "~";
 
@@ -571,8 +563,9 @@ function IO() //{{{
                 return rcFile1;
             else if (rcFile2.exists() && rcFile2.isFile())
                 return rcFile2;
-            else
-                return null;
+            else if (always)
+                return rcFile1;
+            return null;
         },
 
         // return a nsILocalFile for path where you can call isDirectory(), etc. on
@@ -1107,6 +1100,12 @@ lookup:
 
 }; //}}}
 
+IO.PATH_SEP = (function () {
+    let file = services.create("file");
+    file.append("foo");
+    return file.path[0];
+})();
+
 /**
  * @property {string} The value of the $VIMPERATOR_RUNTIME environment
  *     variable.
@@ -1126,8 +1125,6 @@ IO.expandPath = function (path, relative)
 {
     // TODO: proper pathname separator translation like Vim - this should be done elsewhere
     const WINDOWS = liberator.has("Win32");
-    if (WINDOWS)
-        path = path.replace("/", "\\", "g");
 
     // expand any $ENV vars - this is naive but so is Vim and we like to be compatible
     // TODO: Vim does not expand variables set to an empty string (and documents it).
@@ -1141,7 +1138,8 @@ IO.expandPath = function (path, relative)
     path = expand(path);
 
     // expand ~
-    if (!relative && (WINDOWS ? /^~(?:$|[\\\/])/ : /^~(?:$|\/)/).test(path))
+    // Yuck.
+    if (!relative && RegExp("~(?:$|[/" + util.escapeRegex(IO.PATH_SEP) + "])").test(path))
     {
         // Try $HOME first, on all systems
         let home = services.get("environment").get("HOME");
@@ -1157,11 +1155,7 @@ IO.expandPath = function (path, relative)
     // TODO: Vim expands paths twice, once before checking for ~, once
     // after, but doesn't document it. Is this just a bug? --Kris
     path = expand(path);
-
-    if (WINDOWS)
-        path = path.replace("/", "\\", "g");
-
-    return path;
+    return path.replace("/", IO.PATH_SEP, "g");
 };
 
 // vim: set fdm=marker sw=4 ts=4 et:

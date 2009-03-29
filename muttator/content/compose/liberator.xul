@@ -1,1 +1,119 @@
-../../../common/content/liberator.xul
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ***** BEGIN LICENSE BLOCK ***** {{{
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+
+Alternatively, the contents of this file may be used under the terms of
+either the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the GPL or the LGPL are applicable instead
+of those above. If you wish to allow use of your version of this file only
+under the terms of either the GPL or the LGPL, and not to allow others to
+use your version of this file under the terms of the MPL, indicate your
+decision by deleting the provisions above and replace them with the notice
+and other provisions required by the GPL or the LGPL. If you do not delete
+the provisions above, a recipient may use your version of this file under
+the terms of any one of the MPL, the GPL or the LGPL.
+}}} ***** END LICENSE BLOCK ***** -->
+
+<?xml-stylesheet href="chrome://liberator/skin/liberator.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "liberator.dtd" [
+    <!ENTITY liberator.content "chrome://liberator/content/">
+]>
+
+<overlay id="liberator"
+    xmlns:liberator="http://vimperator.org/namespaces/liberator"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="http://home.netscape.com/NC-rdf#"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript;version=1.8" src="&liberator.content;liberator-overlay.js"/>
+
+    <window id="&liberator.mainWindow;">
+
+        <keyset id="mainKeyset">
+            <key id="key_open_vimbar" key=":" oncommand="liberator.modules.commandline.open(':', '', liberator.modules.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.modules.events.onEscape();"/>
+            <!-- other keys are handled inside the event loop in events.js -->
+        </keyset>
+
+        <popupset>
+            <panel id="liberator-visualbell" liberator:highlight="Bell"/>
+        </popupset>
+
+        <!--this notifies us also of focus events in the XUL
+            from: http://developer.mozilla.org/en/docs/XUL_Tutorial:Updating_Commands !-->
+        <commandset id="onVimperatorFocus"
+            commandupdater="true"
+            events="focus"
+            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onFocusChange(event);"/>
+        <commandset id="onVimperatorSelect"
+            commandupdater="true"
+            events="select"
+            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
+
+        <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
+             therefore we need to put them into a <vbox> for which that works just fine -->
+        <vbox class="liberator-container" hidden="false" collapsed="true">
+            <iframe id="liberator-multiline-output" src="chrome://liberator/content/buffer.xhtml"
+                flex="1" hidden="false" collapsed="false"
+                onclick="liberator.modules.commandline.onMultilineOutputEvent(event)"/>
+        </vbox>
+
+        <vbox class="liberator-container" hidden="false" collapsed="true">
+            <iframe id="liberator-completions" src="chrome://liberator/content/buffer.xhtml"
+                flex="1" hidden="false" collapsed="false"
+                onclick="liberator.modules.commandline.onMultilineOutputEvent(event)"/>
+        </vbox>
+
+        <stack orient="horizontal" align="stretch" class="liberator-container" liberator:highlight="CmdLine">
+            <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
+            <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
+                <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                    oninput="liberator.modules.commandline.onEvent(event);"
+                    onkeyup="liberator.modules.commandline.onEvent(event);"
+                    onfocus="liberator.modules.commandline.onEvent(event);"
+                    onblur="liberator.modules.commandline.onEvent(event);"/>
+            </hbox>
+        </stack>
+
+        <vbox class="liberator-container" hidden="false" collapsed="false">
+            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
+                onkeypress="liberator.modules.commandline.onMultilineInputEvent(event);"
+                oninput="liberator.modules.commandline.onMultilineInputEvent(event);"
+                onblur="liberator.modules.commandline.onMultilineInputEvent(event);"/>
+        </vbox>
+
+    </window>
+
+    <statusbar id="status-bar" liberator:highlight="StatusLine">
+        <hbox insertbefore="&liberator.statusBefore;" insertafter="&liberator.statusAfter;"
+              id="liberator-statusline" flex="1" hidden="false" align="center">
+            <textbox class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
+            <label class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
+            <label class="plain" id="liberator-statusline-field-progress"       flex="0"/>
+            <label class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
+            <label class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
+        </hbox>
+        <!-- just hide them since other elements expect them -->
+        <statusbarpanel id="statusbar-display" hidden="true"/>
+        <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
+    </statusbar>
+
+</overlay>
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->

@@ -203,6 +203,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:mark[c]|| Mark current location within the web page +
 ||[c]:marks[c]|| Show all location marks of current web page +
 ||[c]:messages[c]|| Display previously given messages +
+||[c]:messclear[c]|| Clear the message history +
 ||[c]:mkvimperatorrc[c]|| Write current key mappings and changed options to the config file +
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
