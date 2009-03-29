@@ -5,6 +5,7 @@
     * add ' and " local marks
     * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
     * add :messclear
+    * add 'maxitems' configuration variable
 
 2009-03-28:
     * version 2.0

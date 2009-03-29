@@ -777,6 +777,11 @@ function CommandLine() //{{{
         "number", 500,
         { validator: function (value) value >= 0 });
 
+    options.add(["maxitems"],
+        "Maximum number of items to display at once",
+        "number", 20,
+        { validator: function (value) value >= 0 });
+
     options.add(["messages", "msgs"],
         "Number of messages to store in the message history",
         "number", 100,
@@ -1725,8 +1730,6 @@ function ItemList(id) //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const CONTEXT_LINES = 3;
-    var maxItems = 20;
     var completionElements = [];
 
     var iframe = document.getElementById(id);
@@ -1782,7 +1785,7 @@ function ItemList(id) //{{{
                 <div key="completions"/>
                 <div highlight="Completions">
                 {
-                    template.map(util.range(0, maxItems * 2), function (i)
+                    template.map(util.range(0, options["maxitems"] * 2), function (i)
                     <span highlight="CompItem">
                         <li highlight="NonText">~</li>
                     </span>)
@@ -1818,7 +1821,7 @@ function ItemList(id) //{{{
      * Uses the entries in "items" to fill the listbox and does incremental
      * filling to speed up things.
      *
-     * @param {number} offset Start at this index and show maxItems.
+     * @param {number} offset Start at this index and show options["maxitems"].
      */
     function fill(offset)
     {
@@ -1828,11 +1831,11 @@ function ItemList(id) //{{{
             return false;
 
         startIndex = offset;
-        endIndex = Math.min(startIndex + maxItems, items.allItems.items.length);
+        endIndex = Math.min(startIndex + options["maxitems"], items.allItems.items.length);
 
         let haveCompletions = false;
         let off = 0;
-        let end = startIndex + maxItems;
+        let end = startIndex + options["maxitems"];
         function getRows(context)
         {
             function fix(n) Math.max(0, Math.min(len, n));
@@ -1946,6 +1949,8 @@ function ItemList(id) //{{{
             let sel = selIndex;
             let len = items.allItems.items.length;
             let newOffset = startIndex;
+            let maxItems = options["maxitems"];
+            let contextLines = (maxItems > 3)? 3 : Math.max(0, maxItems - 1);
 
             if (index == -1 || index == null || index == len) // wrapped around
             {
@@ -1956,10 +1961,10 @@ function ItemList(id) //{{{
             }
             else
             {
-                if (index <= startIndex + CONTEXT_LINES)
-                    newOffset = index - CONTEXT_LINES;
-                if (index >= endIndex - CONTEXT_LINES)
-                    newOffset = index + CONTEXT_LINES - maxItems + 1;
+                if (index <= startIndex + contextLines)
+                    newOffset = index - contextLines;
+                if (index >= endIndex - contextLines)
+                    newOffset = index + contextLines - maxItems + 1;
 
                 newOffset = Math.min(newOffset, len - maxItems);
                 newOffset = Math.max(newOffset, 0);
