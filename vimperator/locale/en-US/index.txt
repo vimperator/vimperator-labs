@@ -50,6 +50,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]R[m]|| Reload while skipping the cache +
 ||[m]T[m]|| Open one or more URLs in a new tab, based on current location +
 ||[m]Y[m]|| Copy selected text or current word +
+||[m]W[m]|| Open one or more URLs in a new window, based on current location +
 
 ||[m]a[m]|| Open a prompt to bookmark the current URL +
 ||[m]b[m]|| Open a prompt to switch buffers +
@@ -69,6 +70,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]t[m]|| Open one or more URLs in a new tab +
 ||[m]u[m]|| Undo closing of a tab +
 ||[m]y[m]|| Yank current location to the clipboard +
+||[m]w[m]|| Open one or more URLs in a new window +
 
 ||[m];[m]|| Start an extended hint mode +
 
