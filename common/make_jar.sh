@@ -51,8 +51,6 @@ do
     )
 done
 
-cd $stage
-zip -r "$top/$jar" *
-cd -
+(cd $stage; zip -r "$top/$jar" *)
 rm -rf "$stage"
 
