@@ -687,7 +687,7 @@ function Events() //{{{
         ["<Tab>"], "Advance keyboard focus",
         function () { document.commandDispatcher.advanceFocus(); });
 
-    mappings.add([modes.NORMAL, modes.PLAYER,modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
+    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
         ["<S-Tab>"], "Rewind keyboard focus",
         function () { document.commandDispatcher.rewindFocus(); });
 
@@ -1242,13 +1242,9 @@ function Events() //{{{
                 {
                     // Switch to -- PLAYER -- mode for Songbird Media Player.
                     if (config.isPlayerWindow)
-                    {
                         liberator.mode = modes.PLAYER;
-                    }
                     else
-                    {
                         liberator.mode =  modes.NORMAL;
-                    }
                     return;
                 }
 

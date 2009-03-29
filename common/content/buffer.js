@@ -44,7 +44,6 @@ function Buffer() //{{{
 
     // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "main-window";
-
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
