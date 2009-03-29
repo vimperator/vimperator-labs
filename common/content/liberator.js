@@ -83,9 +83,6 @@ const liberator = (function () //{{{
         {
             if (nError++ == 0)
                 window.toJavaScriptConsole();
-            liberator.dump("Error loading module - "+ name + "..");
-            liberator.dump(e);
-            liberator.dump(e.stack);
             liberator.reportError(e);
         }
     }
