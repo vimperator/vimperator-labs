@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -658,6 +658,11 @@ CompletionContext.prototype = {
         this.tabPressed = false;
         this.title = ["Completions"];
         this.updateAsync = false;
+        try
+        {
+            this.waitingForTab = false;
+        }
+        catch (e) {}
 
         this.cancelAll();
 
@@ -676,6 +681,11 @@ CompletionContext.prototype = {
         for each (let context in this.contexts)
         {
             context.hasItems = false;
+            try
+            {
+                context.incomplete = false;
+            }
+            catch (e) {}
         }
     },
 
@@ -683,8 +693,9 @@ CompletionContext.prototype = {
      * Wait for all subcontexts to complete.
      *
      * @param {boolean} interruptible When true, the call may be interrupted
-     *    via <C-c>. In this case, "Interrupted" may be thrown.
+     *    via <C-c>, in which case, "Interrupted" may be thrown.
      * @param {number} timeout The maximum time, in milliseconds, to wait.
+     *    If 0 or null, wait indefinately.
      */
     wait: function wait(interruptable, timeout)
     {
@@ -1415,15 +1426,17 @@ function Completion() //{{{
 
         colorScheme: function colorScheme(context)
         {
-            // TODO: use path for the description?
+            let colors = [];
+
             io.getRuntimeDirectories("colors").forEach(function (dir) {
-                context.fork(dir.path, 0, null, function (context) {
-                    context.filter = dir.path + IO.PATH_SEP + context.filter;
-                    completion.file(context);
-                    context.title = ["Color Scheme"];
-                    context.quote = ["", function (text) text.replace(/\.vimp$/, ""), ""];
+                io.readDirectory(dir).forEach(function (file) {
+                    if (/\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))
+                        colors.push(file);
                 });
             });
+
+            context.title = ["Color Scheme", "Runtime Path"];
+            context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([,c] in Iterator(colors))]
         },
 
         command: function command(context)

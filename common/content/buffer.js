@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -147,13 +147,13 @@ function Buffer() //{{{
             getter: function () window.fullScreen
         });
 
-    options.add(["nextpattern"],
+        options.add(["nextpattern"], // \u00BB is » (>> in a single char)
         "Patterns to use when guessing the 'next' page in a document sequence",
-        "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
+        "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 
-    options.add(["previouspattern"],
+    options.add(["previouspattern"], // \u00AB is « (<< in a single char)
         "Patterns to use when guessing the 'previous' page in a document sequence",
-        "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
+        "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
@@ -1020,6 +1020,20 @@ function Buffer() //{{{
                 elem.contentWindow.focus();
                 return;
             }
+            else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            {
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
+                return;
+            }
 
             elem.focus();
 
@@ -1124,6 +1138,20 @@ function Buffer() //{{{
                 let coords = elem.getAttribute("coords").split(",");
                 offsetX = Number(coords[0]) + 1;
                 offsetY = Number(coords[1]) + 1;
+            }
+            else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            {
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
+                return;
             }
 
             let ctrlKey = false, shiftKey = false;

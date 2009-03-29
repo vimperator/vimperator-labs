@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -1222,6 +1222,8 @@ function CommandLine() //{{{
          *     for the user's input.
          * @... {string} promptHighlight - The HighlightGroup used for the
          *     prompt. @default "Question"
+         * @... {string} default - The initial value that will be returned
+         *     if the user presses <CR> straightaway. @default ""
          */
         input: function _input(prompt, callback, extra)
         {
@@ -1303,19 +1305,16 @@ function CommandLine() //{{{
             }
             else if (event.type == "input")
             {
-                //liberator.dump("input: " + command);
                 this.resetCompletions();
                 liberator.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
+                let key = events.toString(event);
                 if (completions)
                     completions.previewClear();
                 if (!currentExtendedMode)
                     return true;
-
-                let key = events.toString(event);
-                //liberator.log("command line handling key: " + key + "\n");
 
                 // user pressed ENTER to carry out a command
                 // user pressing ESCAPE is handled in the global onEscape
@@ -2040,16 +2039,18 @@ function StatusLine() //{{{
 
         /**
          * Update the status bar to indicate how secure the website is:
+         * extended - Secure connection with Extended Validation(EV) certificate.
          * secure -   Secure connection with valid certificate.
          * broken -   Secure connection with invalid certificate, or
          *            mixed content.
          * insecure - Insecure connection.
          *
-         * @param {'secure'|'broken'|'insecure'} type
+         * @param {'extended'|'secure'|'broken'|'insecure'} type
          */
         setClass: function setClass(type)
         {
             const highlightGroup = {
+                extended: "StatusLineExtended",
                 secure:   "StatusLineSecure",
                 broken:   "StatusLineBroken",
                 insecure: "StatusLine"

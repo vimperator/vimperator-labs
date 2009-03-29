@@ -252,7 +252,7 @@ Sets the default search engine. The default search engine name is used in the
 [c]:[tab]open [arg][c] command if [a][arg][a] neither looks like a URL or like
 a specified search engine/keyword.
 
-This means, it you set 'defsearch' to "youtube", then [c]:open arnold
+This means, if you set 'defsearch' to "youtube", then [c]:open arnold
 schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
 schwarzenegger[c]. Therefore, you need to add a keyword or search engine
 "youtube" first.
@@ -266,7 +266,7 @@ ____
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
-Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
+Sets the editor to run when [m]<C-i>[m] is pressed in Insert and TextArea
 modes.
 
 Warning: Vimperator will not behave correctly if the editor forks its own
@@ -472,7 +472,7 @@ ____
 
 
 |\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
-||'loadplugins' 'lpl'|| boolean (default on)
+||'loadplugins' 'lpl'|| boolean (default: on)
 ____
 Load plugin scripts when starting up. When on, yet unloaded plugins are
 automatically loaded after the vimperatorrc file has been sourced. To
@@ -527,7 +527,7 @@ ____
 
 
 |\'noonline'| |\'online'|
-||'online'|| boolean (default on)
+||'online'|| boolean (default: on)
 ____
 Show and set the \'work offline' behavior.
 ____
@@ -571,7 +571,7 @@ ____
 |\'nopreload'| |\'preload'|
 ||'preload' 'nopreload'|| boolean (default: on)
 ____
-Speed up first time history/bookmark completion
+Speed up first time history/bookmark completion.
 
 History access can be quite slow for a large history.
 Vimperator maintains a cache to speed it up significantly on subsequent access.
@@ -751,7 +751,7 @@ ____
 |\'wildcase'| |\'wic'|
 ||'wildcase' 'wic'|| string (default: "smart")
 ____
-Defines how completions are matched with regard to character case.
+Defines how completions are matched with regard to character case. Possible values:
 
 `---------------`------------------------
 "smart"		Case is significant when capital letters are typed

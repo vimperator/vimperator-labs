@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -623,6 +623,7 @@ function Tabs() //{{{
                 completer: function (context)
                 {
                     context.anchored = false;
+                    context.compare = CompletionContext.Sort.unsorted;
                     context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
                     context.completions = tabs.closedTabs;
                 },

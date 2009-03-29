@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -737,6 +737,7 @@ function History() //{{{
                 context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, -1))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.compare = CompletionContext.Sort.unsorted;
             },
             count: true,
             literal: 0
@@ -783,6 +784,7 @@ function History() //{{{
                 context.anchored = false;
                 context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index + 1, sh.count))];
                 context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.compare = CompletionContext.Sort.unsorted;
             },
             count: true,
             literal: 0

@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -1225,7 +1225,12 @@ const liberator = (function () //{{{
             config.features.push(getPlatformFeature());
             config.defaults = config.defaults || {};
             config.guioptions = config.guioptions || {};
-            config.browserModes = config.browserModes || [modes.NORMAL];
+
+            // -> we can't use this, since config.browserModes might already be defined as a getter-only
+            // TODO: also change the other config.* defaults?
+            // config.browserModes = config.browserModes || [modes.NORMAL];
+            if (!config.browserModes)
+                 config.browserModes = [modes.NORMAL];
             config.mailModes = config.mailModes || [modes.NORMAL];
             // TODO: suitable defaults?
             //config.mainWidget
@@ -1292,13 +1297,12 @@ const liberator = (function () //{{{
 
                 let extensionName = config.name.toUpperCase();
                 let init = services.get("environment").get(extensionName + "_INIT");
+                let rcFile = io.getRCFile("~");
 
                 if (init)
                     liberator.execute(init);
                 else
                 {
-                    let rcFile = io.getRCFile("~");
-
                     if (rcFile)
                     {
                         io.source(rcFile.path, true);
@@ -1311,7 +1315,7 @@ const liberator = (function () //{{{
                 if (options["exrc"])
                 {
                     let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
-                    if (localRCFile)
+                    if (localRCFile && !localRCFile.equals(rcFile))
                         io.source(localRCFile.path, true);
                 }
 

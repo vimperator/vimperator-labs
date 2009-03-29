@@ -1,5 +1,5 @@
 Main developer/Project founder:
-  * Martin Stubenschrott (stubenschrott@gmx.net)
+  * Martin Stubenschrott (stubenschrott@vimperator.org)
 
 Developers:
   * Doug Kearns (dougkearns@gmail.com)
@@ -11,6 +11,7 @@ Developers:
   * anekos <anekos@snca.net>
   * teramako <teramako@gmail.com>
   * janus_wel <janus.wel.3@gmail.com>
+  * Conrad Irwin
 
 Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
@@ -18,7 +19,7 @@ Inactive/former developers:
 
 Patches (in no special order):
   * Ruud Grosmann ('followhints' option)
-  * Xie&Tian (multibyte support for hints)
+  * Xie&Tian (multibyte support for hints, doc fixes)
   * Juergen Descher
   * Kazuo (count support for ctrl-^)
   * Daniel Schaffrath (;b support)

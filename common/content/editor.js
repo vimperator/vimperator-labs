@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -623,12 +623,23 @@ function Editor() //{{{
 
         pasteClipboard: function ()
         {
+            if (liberator.has("Win32"))
+            {
+                this.executeCommand("cmd_paste");
+                return;
+            }
+
+            // FIXME: #93 (<s-insert> in the bottom of a long textarea bounces up)
             let elem = window.document.commandDispatcher.focusedElement;
 
             if (elem.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
             {
+                // This is a hacky fix - but it works.
+                let curTop = elem.scrollTop;
+                let curLeft = elem.scrollLeft;
+
                 let rangeStart = elem.selectionStart; // caret position
                 let rangeEnd = elem.selectionEnd;
                 let tempStr1 = elem.value.substring(0, rangeStart);
@@ -637,6 +648,9 @@ function Editor() //{{{
                 elem.value = tempStr1 + tempStr2 + tempStr3;
                 elem.selectionStart = rangeStart + tempStr2.length;
                 elem.selectionEnd = elem.selectionStart;
+
+                elem.scrollTop = curTop;
+                elem.scrollLeft = curLeft;
             }
         },
 

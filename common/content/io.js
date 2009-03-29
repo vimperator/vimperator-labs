@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
     Code based on venkman
 
 Alternatively, the contents of this file may be used under the terms of
@@ -547,6 +547,7 @@ function IO() //{{{
          * @param {boolean} always When true, return a path whether
          *     the file exists or not.
          * @default $HOME.
+         * @returns {nsIFile} The RC file or null if none is found.
          */
         getRCFile: function (dir, always)
         {

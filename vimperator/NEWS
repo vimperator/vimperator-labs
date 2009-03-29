@@ -6,15 +6,15 @@
     * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
     * add :messclear
 
-2008-XX-XX:
-    * version 2.0 (probably)
+2009-03-28:
+    * version 2.0
     * IMPORTANT: For compatibility with vim, guioptions=b has been renamed
       'B'. 'b' now represents the bottom scrollbar.
     * IMPORTANT: :set now sets multiple options, as in Vim. Spaces in values
       must be quoted or escaped.
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
-      value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
-      to use 'h' in 'complete'.
+      value to 'sfl', listing intelligent Firefox location bar results. Using 'b' or 'h'
+      might cause problems/massive slowdowns, use with care!
     * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly.
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
@@ -29,6 +29,8 @@
     * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages.
     * IMPORTANT: $VIMPERATOR_HOME is no longer used.
 
+    * Selecting an <input type="file"> with hints now causes the commandline to prompt
+      for file input (instead of doing nothing).
     * [count]<C-n> now goes to the [count]th next tab rather than the [count]th tab.
     * add ~/.vimperator/info/{profile}/, similar to viminfo
     * add $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT
@@ -51,7 +53,7 @@
     * add 'exrc'
     * add 'errorbells'
     * add shell command completion for :!
-    * add :map <silent> to prevent a mapping from being echoed
+    * add :map <silent> to prevent a mapping from being echoed (might be slow currently, however)
     * add guioptions=nN to number tabs
     * add :loadplugins command
     * add . mapping

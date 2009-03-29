@@ -170,7 +170,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:delmarks[c]|| Delete the specified marks +
 ||[c]:delqmarks[c]|| Delete the specified QuickMarks +
 ||[c]:delstyle[c]|| Delete any matching styles +
-||[c]:dialog[c]|| Open a undefined dialog +
+||[c]:dialog[c]|| Open a Firefox dialog +
 ||[c]:doautoall[c]|| Apply the autocommands matching the specified URL to all buffers +
 ||[c]:doautocmd[c]|| Apply the autocommands matching the specified URL to the current buffer +
 ||[c]:downloads[c]|| Show progress of current downloads +
@@ -218,11 +218,11 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
 ||[c]:quit[c]|| Quit current tab +
-||[c]:quitall[c]|| Quit undefined +
+||[c]:quitall[c]|| Quit Vimperator +
 ||[c]:redraw[c]|| Redraw the screen +
 ||[c]:reload[c]|| Reload current page +
 ||[c]:reloadall[c]|| Reload all tab pages +
-||[c]:restart[c]|| Force undefined to restart +
+||[c]:restart[c]|| Force the browser to restart +
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
 ||[c]:saveas[c]|| Save current document to disk +
 ||[c]:sbclose[c]|| Close the sidebar window +
@@ -262,7 +262,7 @@ section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
 ||'cdpath'|| List of directories searched when executing [c]:cd[c] +
-||'complete'|| Items which are completed at the [c]:[tab]open prompt[c] +
+||'complete'|| Items which are completed at the [c]:[tab]open[c] prompt +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
