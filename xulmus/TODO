@@ -14,6 +14,8 @@ BUGS:
 FEATURES:
 9 '?' - Reusing '/'. 
 8 Playlist/SmartPlaylist operations & meta-data operations.
+8 Sort-View commands.
+7 j/k - for browsing through the visible view.
 7 extended hint mode for opening links in FF.
 6 :tqueue, :lqueue etc.
 5 make Player mode commands work in the Mini-Player.
