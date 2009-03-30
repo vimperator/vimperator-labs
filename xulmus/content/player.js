@@ -597,8 +597,7 @@ function Player() // {{{
             function echo(str)
             {
                 setTimeout(function () {
-                    commandline.echo("Search hit TOP, continuing at BOTTOM",
-                          commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                    commandline.echo(str, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
                 }, 0);
             }
 
