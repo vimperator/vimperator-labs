@@ -78,7 +78,7 @@ function Buffer() //{{{
         let i = cur + steps;
         i = Math.max(0, Math.min(values.length - 1, i));
 
-        if (i == cur && fulZoom == ZoomManager.useFullZoom)
+    if (i == cur && fulZoom == ZoomManager.useFullZoom)
             liberator.beep();
         setZoom(Math.round(values[i] * 100), fullZoom);
     }
@@ -602,7 +602,6 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
-<<<<<<< HEAD:common/content/buffer.js
         function ()
         {
             if (config.stop)
@@ -610,9 +609,6 @@ function Buffer() //{{{
             else
                 window.BrowserStop();
         },
-=======
-        function () { window.BrowserStop(); },
->>>>>>> a9f04ee3d00b282e7a91b37eb23168fb39e9de5b:common/content/buffer.js
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],
