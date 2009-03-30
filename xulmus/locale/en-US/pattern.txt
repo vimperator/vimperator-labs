@@ -2,9 +2,9 @@ HEADER
 
 |text-search-commands| +
 
-Vimperator provides a Vim-like interface to Firefox's standard text search
+Xulmus provides a Vim-like interface to Songbird's standard text search
 functionality. There is no support for using regular expressions in search
-commands as Firefox does not provide native regexp support. It is unlikely that
+commands as Songbird does not provide native regexp support. It is unlikely that
 this will ever be available.
 
 |/| +

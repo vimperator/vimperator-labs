@@ -4,6 +4,41 @@ HEADER
 
 This file contains a list of all available commands.
 
+section:Player{nbsp}mode[player-index]
+
+||[m]x[m]|| Play the current track +
+||[m]z[m]|| Play the previous track +
+||[m]b[m]|| Play the next track +
+||[m]c[m]|| Pause/unpause the current track +
+||[m]v[m]|| Stop playing the current track +
+||[m]t[m]|| Toggle shuffle mode +
+||[m]r[m]|| Toggle repeat mode +
+||[m]i[m]|| Select the currently playing track +
+||[m]f[m]|| Filter and play tracks +
+||[m]F[m]|| Filter and show the tracks as a view +
+||[m]h[m]|| Seek -10s +
+||[m]<Left>[m]|| Seek -10s +
+||[m]l[m]|| Seek +10s +
+||[m]<Right>[m]|| Seek -10s +
+||[m]H[m]|| Seek -1m +
+||[m]<S-Left>[m]|| Seek -10s +
+||[m]L[m]|| Seek +1m +
+||[m]<S-Right>[m]|| Seek -10s +
+||[m]+[m]|| Increase volume by 10% +
+||[m]-[m]|| Decrease volume by 10% +
+
+||[m]/[m]|| Search forward for a track +
+||[m]n[m]|| Find the next track +
+||[m]N[m]|| Find the previous track +
+
+// TODO: better formatting
+||<C-0>|| Rate the current track with 0 stars +
+||<C-1>|| Rate the current track with 1 stars +
+||<C-2>|| Rate the current track with 2 stars +
+||<C-3>|| Rate the current track with 3 stars +
+||<C-4>|| Rate the current track with 4 stars +
+||<C-5>|| Rate the current track with 5 stars +
+
 section:Insert{nbsp}mode[insert-index]
 
 ||[m]<C-i>[m]|| Launch the external editor +
@@ -24,7 +59,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]<C-u>[m]|| Scroll window upwards in the buffer +
 ||[m]<C-v>[m]|| Pass through next key +
 ||[m]<C-x>[m]|| Decrement last number in URL +
-||[m]<C-z>[m]|| Temporarily ignore all Vimperator key bindings +
+||[m]<C-z>[m]|| Temporarily ignore all Xulmus key bindings +
 
 ||[m]<Esc>[m]|| Focus content +
 
@@ -141,6 +176,18 @@ section:Command-line{nbsp}editing[ex-edit-index]
 
 section:Ex{nbsp}commands[ex-cmd-index,:index]
 
+||[c]:playerplay[c]|| Play the current track +
+||[c]:playerprev[c]|| Play the previous track +
+||[c]:playernext[c]|| Play the next track +
+||[c]:playerpause[c]|| Pause/unpause the current track +
+||[c]:playerstop[c]|| Stop playing the current track +
+||[c]:filter[c]|| Filter and play tracks +
+||[c]:Filter[c]|| Filter and show the tracks as a view +
+||[c]:seek[c]|| Seek to an absolute or relative position in a track +
+||[c]:volume[c]|| Set the player volume +
+||[c]:load[c]|| Load a playlist +
+||[c]:mediaview[c]|| Change the media view +
+
 ||[c]:![c]|| Run a command +
 ||[c]:abbreviate[c]|| Abbreviate a key sequence +
 ||[c]:abclear[c]|| Remove all abbreviations +
@@ -174,6 +221,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:doautoall[c]|| Apply the autocommands matching the specified URL to all buffers +
 ||[c]:doautocmd[c]|| Apply the autocommands matching the specified URL to the current buffer +
 ||[c]:downloads[c]|| Show progress of current downloads +
+||[c]:displaypane[c]|| Open the specified display pane +
+||[c]:dpclose[c]|| Close the specified display pane +
 ||[c]:echo[c]|| Echo the expression +
 ||[c]:echoerr[c]|| Echo the expression as an error message +
 ||[c]:echomsg[c]|| Echo the expression as an informational message +
@@ -184,7 +233,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:forward[c]|| Go forward in the browser history +
 ||[c]:hardcopy[c]|| Print current document +
 ||[c]:help[c]|| Display help +
-||[c]:highlight[c]|| Style Vimperator +
+||[c]:highlight[c]|| Style Xulmus +
 ||[c]:history[c]|| Show recently visited URLs +
 ||[c]:iabbrev[c]|| Abbreviate a key sequence in Insert mode +
 ||[c]:iabclear[c]|| Remove all abbreviations in Insert mode +
@@ -203,7 +252,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:mark[c]|| Mark current location within the web page +
 ||[c]:marks[c]|| Show all location marks of current web page +
 ||[c]:messages[c]|| Display previously given messages +
-||[c]:mkvimperatorrc[c]|| Write current key mappings and changed options to the config file +
+||[c]:mkxulmusrc[c]|| Write current key mappings and changed options to the config file +
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
 ||[c]:normal[c]|| Execute Normal mode commands +
@@ -212,7 +261,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:pageinfo[c]|| Show various page information +
 ||[c]:pagestyle[c]|| Select the author style sheet to apply +
 ||[c]:play[c]|| Replay a recorded macro +
-||[c]:preferences[c]|| Show Firefox preferences dialog +
+||[c]:preferences[c]|| Show Songbird preferences dialog +
 ||[c]:pwd[c]|| Print the current directory name +
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
@@ -224,13 +273,11 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:restart[c]|| Force undefined to restart +
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
 ||[c]:saveas[c]|| Save current document to disk +
-||[c]:sbclose[c]|| Close the sidebar window +
 ||[c]:scriptnames[c]|| List all sourced script names +
 ||[c]:set[c]|| Set an option +
 ||[c]:setglobal[c]|| Set global option +
 ||[c]:setlocal[c]|| Set local option +
-||[c]:sidebar[c]|| Open the sidebar window +
-||[c]:style[c]|| Style Vimperator and web sites +
+||[c]:style[c]|| Style Xulmus and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
 ||[c]:stop[c]|| Stop loading +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
@@ -252,8 +299,6 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:version[c]|| Show version information +
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
-||[c]:winclose[c]|| Close window +
-||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +
 
@@ -284,6 +329,7 @@ section:Options[option-index]
 ||'laststatus'|| Show the status line +
 ||'linksearch'|| Limit the search to hyperlink text +
 ||'loadplugins'|| Load plugin scripts when starting up +
+||'maxitems'|| Maximum number of items to display at once in a listing +
 ||'messages'|| Number of messages to store in the message history +
 ||'more'|| Pause the message list window when more than one screen of listings is displayed +
 ||'newtab'|| Define which commands should output in a new tab by default +

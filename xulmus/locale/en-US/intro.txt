@@ -1,31 +1,25 @@
 LOGO
 
-+++<div style="text-align: center;">+++
-*First there was a Navigator, then there was an Explorer.
-Later it was time for a Konqueror. Now it's time for an Imperator, the
-VIMperator :)*
-+++</div>+++
-
 section:Introduction[intro]
 
-http://vimperator.org[Vimperator] is a free browser add-on for Firefox,
-which makes it look and behave like the http://www.vim.org[Vim]
-text editor. It has similar key bindings, and you could call it a modal
-web browser, as key bindings differ according to which mode you are in.
+http://vimperator.org/Xulmus[Xulmus] is a free media player add-on for
+Songbird, which combines the best features of the
+http://cmus.sourceforge.net[CMus] music player and the http://www.vim.org[Vim]
+text editor.
 
 |warning| +
 Warning:
-To provide the most authentic Vim experience, the Firefox menubar and toolbar
-are hidden. +
-If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
-If you don't like Vimperator at all, you can uninstall it by typing
+To provide the most authentic CMus/Vim experience, the Songbird toolbar
+is hidden. +
+If you really need it, type: [c]:set guioptions+=T[c] to get it back. +
+If you don't like Xulmus at all, you can uninstall it by typing
 [c]:addons[c] and remove/disable it. +
 If you like it but can't remember the shortcuts, then press [m]F1[m] or
 [c]:help[c] to get this help window back.
 
 |author| |donation| +
-Vimperator was written by mailto:stubenschrott@gmx.net[Martin Stubenschrott].
-If you appreciate my work on Vimperator and want to encourage me working on it
+Xulmus was written by mailto:prathyushthota@gmail.com[Prathyush Thota].
+If you appreciate my work on Xulmus and want to encourage me working on it
 more, you can either send me greetings, patches or make a donation:
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -38,14 +32,15 @@ more, you can either send me greetings, patches or make a donation:
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Of course as a believer in free open source software, only make a donation
-if you really like Vimperator and the money doesn't hurt -- otherwise just use
+if you really like Xulmus and the money doesn't hurt -- otherwise just use
 it, recommend it and like it :)
 
 section:Help{nbsp}topics[overview]
 
-- help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
-- help:Initialization[starting.html]: How Vimperator starts up, where it reads
+//- help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
+- help:Initialization[starting.html]: How Xulmus starts up, where it reads
   the config file...
+- help:Player[player.html]: Interacting with the media player.
 - help:Browsing[browsing.html]: Basic mappings and commands needed for a
   browsing session (how to open a web page or go back in history).
 - help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
@@ -65,8 +60,8 @@ section:Help{nbsp}topics[overview]
 - help:Autocommands[autocommands.html]: Automatically executing code on certain
   events.
 - help:Print[print.html]: Printing pages.
-- help:GUI[gui.html]: Accessing Firefox menus, dialogs and the sidebar.
-- help:Styling[styling.html]: Changing the styling of content pages and Vimperator itself.
+- help:GUI[gui.html]: Accessing Songbird menus, dialogs and the sidebar.
+- help:Styling[styling.html]: Changing the styling of content pages and Xulmus itself.
 - help:Messages[message.html]: A description of messages and error messages.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
@@ -87,11 +82,11 @@ section:Features[features]
 * Advanced completion of bookmark and history URLs (searching also in title, not only URL)
 * Vim-like statusline with a wget-like progress bar
 * Minimal GUI (easily hide useless menubar and toolbar with [c]:set guioptions=[c])
-* Ability to [c]:source[c] JavaScript files, and to use a [a]~/.vimperatorrc[a] file
-  with syntax highlighting if you install scripts/vimperator.vim
+* Ability to [c]:source[c] JavaScript files, and to use a [a]~/.xulmusrc[a] file
+  with syntax highlighting if you install scripts/xulmus.vim
 * Easy quick searches ([c]:open foo[c] will search for "foo" in google,
   [c]:open ebay terminator[c] will search for "terminator" on ebay)
-  with support for Firefox keyword bookmarks and search engines
+  with support for Songbird keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
 * Marks support ([m]ma[m] to set mark a on a web page, [m]'a[m] to go there)

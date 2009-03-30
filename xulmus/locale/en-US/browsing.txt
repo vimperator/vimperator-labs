@@ -2,15 +2,15 @@ HEADER
 
 |surfing| |browsing| +
 
-Vimperator overrides nearly all Firefox keys in order to make browsing more
+Xulmus overrides nearly all Songbird keys in order to make browsing more
 pleasant for Vim users. On the rare occasions when you want to pass a keystroke
-to Firefox, or to the web page, and have it retain its original meaning you
+to Songbird, or to the web page, and have it retain its original meaning you
 have 2 possibilities:
 
 |pass-through| |<C-z>| |CTRL-Z| +
 ||CTRL-Z||
 ________________________________________________________________________________
-Disable all Vimperator keys except [m]<Esc>[m] and pass them to the next event
+Disable all Xulmus keys except [m]<Esc>[m] and pass them to the next event
 handler. This is especially useful, if JavaScript controlled forms like the
 RichEdit form fields of Gmail don't work anymore. To exit this mode, press
 [m]<Esc>[m]. If you also need to pass [m]<Esc>[m] in this mode to the web page,
@@ -21,10 +21,10 @@ ________________________________________________________________________________
 ||CTRL-V||
 ________________________________________________________________________________
 If you only need to pass a single key to a JavaScript form field or another
-extension prefix the key with [m]<C-v>[m]. Also works to unshadow Firefox
-shortcuts like [m]<C-o>[m] which are otherwise hidden in Vimperator. When
-Vimperator mode is temporarily disabled with [m]<C-z>[m], [m]<C-v>[m] will pass
-the next key to Vimperator instead of the web page.
+extension prefix the key with [m]<C-v>[m]. Also works to unshadow Songbird
+shortcuts like [m]<C-o>[m] which are otherwise hidden in Xulmus. When
+Xulmus mode is temporarily disabled with [m]<C-z>[m], [m]<C-v>[m] will pass
+the next key to Xulmus instead of the web page.
 ________________________________________________________________________________
 
 section:Opening{nbsp}web{nbsp}pages[opening]
@@ -52,7 +52,7 @@ Each token is analyzed and in this order:
 3. Opened with the default search engine or keyword (specified with the
    'defsearch' option) if the first word is no search engine ([c]:open linus
    torvalds[c] opens a Google search for linux torvalds).
-4. Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
+4. Passed directly to Songbird in all other cases ([c]:open www.osnews.com,
    www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
    background tab).
 
@@ -97,13 +97,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Open one or more URLs in the current tab based on current location. Works
 like [m]o[m] but preselects current URL in the [c]:open[c] query.
-________________________________________________________________________________
-
-
-|:winopen| |:wopen| |:winedit|
-||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
-________________________________________________________________________________
-Just like [c]:tabopen[c] but opens the resulting web page(s) in a new window.
 ________________________________________________________________________________
 
 
@@ -286,7 +279,7 @@ section:Quitting[quitting,save-session]
 ||:q[uit]||
 ________________________________________________________________________________
 Quit current tab. If this is the last tab in the window, close the window. If
-this was the last window, close Vimperator. When quitting Vimperator, the
+this was the last window, close Xulmus. When quitting Xulmus, the
 session is not stored.
 ________________________________________________________________________________
 
@@ -294,15 +287,8 @@ ________________________________________________________________________________
 |:qa| |:qall| |:quita| |:quitall| +
 ||:quita[ll]||
 ________________________________________________________________________________
-Quit Vimperator. Quit Vimperator, no matter how many tabs/windows are open.
+Quit Xulmus. Quit Xulmus, no matter how many tabs/windows are open.
 The session is not stored.
-________________________________________________________________________________
-
-
-|:wc| |:wclose| |:winc| |:winclose|
-||:winc[lose]|| +
-________________________________________________________________________________
-Close window.
 ________________________________________________________________________________
 
 
@@ -310,7 +296,7 @@ ________________________________________________________________________________
 ||:wqa[ll]|| +
 ||:xa[ll]||
 ________________________________________________________________________________
-Save the session and quit. Quit Vimperator, no matter how many tabs/windows
+Save the session and quit. Quit Xulmus, no matter how many tabs/windows
 are open. The session is stored. [c]:wq[c] is different from Vim, as it
 closes the window instead of just one tab by popular demand. Complain on the
 mailing list, if you want to change that.
@@ -327,7 +313,7 @@ ________________________________________________________________________________
 |ZZ|
 ||ZZ||
 ________________________________________________________________________________
-Quit and save the session. Quit Vimperator, no matter how many tabs/windows
+Quit and save the session. Quit Xulmus, no matter how many tabs/windows
 are open. The session is stored. Works like [c]:xall[c].
 ________________________________________________________________________________
 

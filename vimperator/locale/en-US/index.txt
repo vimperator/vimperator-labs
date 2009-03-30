@@ -50,6 +50,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]R[m]|| Reload while skipping the cache +
 ||[m]T[m]|| Open one or more URLs in a new tab, based on current location +
 ||[m]Y[m]|| Copy selected text or current word +
+||[m]W[m]|| Open one or more URLs in a new window, based on current location +
 
 ||[m]a[m]|| Open a prompt to bookmark the current URL +
 ||[m]b[m]|| Open a prompt to switch buffers +
@@ -69,6 +70,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]t[m]|| Open one or more URLs in a new tab +
 ||[m]u[m]|| Undo closing of a tab +
 ||[m]y[m]|| Yank current location to the clipboard +
+||[m]w[m]|| Open one or more URLs in a new window +
 
 ||[m];[m]|| Start an extended hint mode +
 
@@ -170,7 +172,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:delmarks[c]|| Delete the specified marks +
 ||[c]:delqmarks[c]|| Delete the specified QuickMarks +
 ||[c]:delstyle[c]|| Delete any matching styles +
-||[c]:dialog[c]|| Open a undefined dialog +
+||[c]:dialog[c]|| Open a Firefox dialog +
 ||[c]:doautoall[c]|| Apply the autocommands matching the specified URL to all buffers +
 ||[c]:doautocmd[c]|| Apply the autocommands matching the specified URL to the current buffer +
 ||[c]:downloads[c]|| Show progress of current downloads +
@@ -203,6 +205,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:mark[c]|| Mark current location within the web page +
 ||[c]:marks[c]|| Show all location marks of current web page +
 ||[c]:messages[c]|| Display previously given messages +
+||[c]:messclear[c]|| Clear the message history +
 ||[c]:mkvimperatorrc[c]|| Write current key mappings and changed options to the config file +
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
@@ -217,11 +220,11 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
 ||[c]:quit[c]|| Quit current tab +
-||[c]:quitall[c]|| Quit undefined +
+||[c]:quitall[c]|| Quit Vimperator +
 ||[c]:redraw[c]|| Redraw the screen +
 ||[c]:reload[c]|| Reload current page +
 ||[c]:reloadall[c]|| Reload all tab pages +
-||[c]:restart[c]|| Force undefined to restart +
+||[c]:restart[c]|| Force the browser to restart +
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
 ||[c]:saveas[c]|| Save current document to disk +
 ||[c]:sbclose[c]|| Close the sidebar window +
@@ -261,7 +264,7 @@ section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
 ||'cdpath'|| List of directories searched when executing [c]:cd[c] +
-||'complete'|| Items which are completed at the [c]:[tab]open prompt[c] +
+||'complete'|| Items which are completed at the [c]:[tab]open[c] prompt +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
 ||'errorbells'|| Ring the bell when an error message is displayed +
@@ -284,6 +287,7 @@ section:Options[option-index]
 ||'laststatus'|| Show the status line +
 ||'linksearch'|| Limit the search to hyperlink text +
 ||'loadplugins'|| Load plugin scripts when starting up +
+||'maxitems'|| Maximum number of items to display at once in a listing +
 ||'messages'|| Number of messages to store in the message history +
 ||'more'|| Pause the message list window when more than one screen of listings is displayed +
 ||'newtab'|| Define which commands should output in a new tab by default +

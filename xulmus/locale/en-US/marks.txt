@@ -2,14 +2,14 @@ HEADER
 
 |different-marks| |marks| +
 
-Vimperator supports a number of different marks:
+Xulmus supports a number of different marks:
 
 - Bookmarks which allow you to mark a web page as one of your favorites for
   easy access.
 - QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or groups of
   web sites) which you visit most often.
 - Local marks to store the position within a web page.
-- History is also a special type of marks, as Vimperator automatically
+- History is also a special type of marks, as Xulmus automatically
   remembers sites which you have visited in the past.
 
 section:Bookmarks[bookmarks]

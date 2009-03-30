@@ -9,7 +9,7 @@ LOCALEDIR     = locale
 DOC_SRC_FILES = $(wildcard $(LOCALEDIR)/*/*.txt)
 LOCALES       = $(foreach locale,$(wildcard $(LOCALEDIR)/*),$(word 2,$(subst /, ,$(locale))))
 
-MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" bash  $(BASE)/make_jar.sh
+MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
 
 # TODO: specify source files manually?
 JAR_BASES     = $(TOP) $(BASE)
@@ -45,7 +45,7 @@ TARGETS = all help info doc jar xpi install clean distclean $(JAR)
 $(TARGETS:%=\%.%):
 	echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
-	echo $$SHELL
+
 .PHONY: $(TARGETS)
 all: help
 

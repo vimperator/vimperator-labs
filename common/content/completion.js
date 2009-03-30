@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -1393,11 +1393,27 @@ function Completion() //{{{
         song: function song(context, args)
         {
             if (args.completeArg == 0)
-                context.completions = getArtists();
+            {
+                context.title = ["Artists"];
+                context.completions = player.getArtists();
+            }
             else if (args.completeArg == 1)
-                context.completions = getAlbums(args[0]);
+            {
+                context.title = ["Albums by " + args[0]];
+                context.completions =  player.getAlbums(args[0]);
+            }
             else if (args.completeArg == 2)
-                context.completions = getTracks(args[0],args[1]);
+            {
+                context.title = ["Tracks from " + args[1] + " by " + args[0]];
+                context.completions = player.getTracks(args[0], args[1]);
+            }
+        },
+
+        playlist: function playlist(context, args)
+        {
+            context.title = ["Playlist", "Type"];
+            context.keys = { text: "name", description: "type" };
+            context.completions = player.getPlaylists();
         },
 
         buffer: function buffer(context)
@@ -1646,6 +1662,14 @@ function Completion() //{{{
             context.title = ["Mark", "Line Column File"];
             context.keys.description = function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
             context.completions = marks.all;
+        },
+
+        mediaView: function mediaView(context)
+        {
+            context.title = ["Media View", "URL"];
+            context.anchored = false;
+            context.keys = { text: "contentTitle", description: "contentUrl" };
+            context.completions = player.getMediaPages();
         },
 
         menuItem: function menuItem(context)

@@ -123,6 +123,16 @@ set).
 ________________________________________________________________________________
 
 
+|<Right>| |l| +
+||[count]l||
+________________________________________________________________________________
+Scroll document to the right. If [count] is specified then move [count] times
+as much to the right. +
+If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
+set).
+________________________________________________________________________________
+
+
 |<C-d>| +
 ||[count]<C-d>||
 ________________________________________________________________________________
@@ -138,16 +148,6 @@ ________________________________________________________________________________
 Scroll window upwards in the buffer. The number of lines is set by the
 'scroll' option which defaults to half a page. If [count] is given 'scroll' is
 first set to this value.
-________________________________________________________________________________
-
-
-|<Right>| |l| +
-||[count]l||
-________________________________________________________________________________
-Scroll document to the right. If [count] is specified then move [count] times
-as much to the right. +
-If the document cannot scroll more, a beep is emitted (unless 'visualbell' is
-set).
 ________________________________________________________________________________
 
 
@@ -235,7 +235,7 @@ default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
 
 The available zoom range can be changed by setting the
 \'http://kb.mozillazine.org/Zoom.minPercent[zoom.minPercent]' and
-\'http://kb.mozillazine.org/Zoom.minPercent[zoom.maxPercent]' Firefox
+\'http://kb.mozillazine.org/Zoom.maxPercent[zoom.maxPercent]' Firefox
 preferences. The zoom levels can be changed using the
 \'http://kb.mozillazine.org/Toolkit.zoomManager.zoomValues[toolkit.ZoomManager.zoomLevels]'
 preference.
@@ -274,7 +274,7 @@ ________________________________________________________________________________
 |zz| +
 ||[count]zz||
 ________________________________________________________________________________
-Set text zoom value of current web page. Zoom value can be between 30 and 300%.
+Set text zoom value of current web page. Zoom value can be between 30% and 300%.
 If it is omitted, text zoom is reset to 100%.
 ________________________________________________________________________________
 
@@ -320,7 +320,7 @@ ________________________________________________________________________________
 ||:zo[om][!] +{value} | -{value}|| +
 ________________________________________________________________________________
 Set zoom value of current web page. [a][value][a] can be an absolute value
-between 30 and 300% or a relative value if prefixed with "-" or "+". If
+between 30% and 300% or a relative value if prefixed with "-" or "+". If
 [a][value][a] is omitted, zoom is reset to 100%.
 
 Normally this command operates on the text zoom, if used with [!] it operates

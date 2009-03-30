@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -83,9 +83,6 @@ const liberator = (function () //{{{
         {
             if (nError++ == 0)
                 window.toJavaScriptConsole();
-            liberator.dump("Error loading module - "+ name + "..");
-            liberator.dump(e);
-            liberator.dump(e.stack);
             liberator.reportError(e);
         }
     }
@@ -1229,7 +1226,12 @@ const liberator = (function () //{{{
             config.features.push(getPlatformFeature());
             config.defaults = config.defaults || {};
             config.guioptions = config.guioptions || {};
-            config.browserModes = config.browserModes || [modes.NORMAL];
+
+            // -> we can't use this, since config.browserModes might already be defined as a getter-only
+            // TODO: also change the other config.* defaults?
+            // config.browserModes = config.browserModes || [modes.NORMAL];
+            if (!config.browserModes)
+                 config.browserModes = [modes.NORMAL];
             config.mailModes = config.mailModes || [modes.NORMAL];
             // TODO: suitable defaults?
             //config.mainWidget
@@ -1290,11 +1292,12 @@ const liberator = (function () //{{{
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
 
-            // finally, read a ~/.vimperatorrc and plugin/**.{vimp,js}
+            // finally, read the RC file and source plugins
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
 
-                let init = services.get("environment").get(config.name.toUpperCase() + "_INIT");
+                let extensionName = config.name.toUpperCase();
+                let init = services.get("environment").get(extensionName + "_INIT");
                 let rcFile = io.getRCFile("~");
 
                 if (init)
@@ -1302,7 +1305,10 @@ const liberator = (function () //{{{
                 else
                 {
                     if (rcFile)
+                    {
                         io.source(rcFile.path, true);
+                        services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
+                    }
                     else
                         liberator.log("No user RC file found", 3);
                 }
@@ -1319,7 +1325,7 @@ const liberator = (function () //{{{
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been
-                // set before by any rc file
+                // set before by any RC file
                 for (let option in options)
                 {
                     if (option.setter)

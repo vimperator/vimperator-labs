@@ -1,6 +1,9 @@
 Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
+ARCHITECTURE:
+- modular help system
+
 BUGS:
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set

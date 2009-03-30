@@ -199,20 +199,21 @@ Like [m]d[m] but selects the tab to the left of the deleted tab.
 ________________________________________________________________________________
 
 
-|u| |:u| |:undo|
-||:[count]u[ndo] [a][url][a]|| +
-||[count]u||
-________________________________________________________________________________
-Undo closing of a tab. If a count is given, don't undo the last but the
-[count]th last closed tab. With [a][url][a] restores the tab matching the URL.
-________________________________________________________________________________
-
-
-|:undoa| |:undoall| +
-||:undoa[ll]||
-________________________________________________________________________________
-Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
-after a browser restart.
-________________________________________________________________________________
+// FIXME: No undo in Songbird for now.
+//|u| |:u| |:undo|
+//||:[count]u[ndo] [a][url][a]|| +
+//||[count]u||
+//________________________________________________________________________________
+//Undo closing of a tab. If a count is given, don't undo the last but the
+//[count]th last closed tab. With [a][url][a] restores the tab matching the URL.
+//________________________________________________________________________________
+//
+//
+//|:undoa| |:undoall| +
+//||:undoa[ll]||
+//________________________________________________________________________________
+//Undo closing of all closed tabs. Songbird stores up to 10 closed tabs, even
+//after a browser restart.
+//________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

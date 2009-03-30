@@ -1,12 +1,21 @@
 2009-XX-XX:
-    * version 2.0 (probably)
+    * version 2.1 (probably)
+    * add :silent
+    * add $MY_VIMPERATORRC
+    * add ' and " local marks
+    * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
+    * add :messclear
+    * add 'maxitems' configuration variable
+
+2009-03-28:
+    * version 2.0
     * IMPORTANT: For compatibility with vim, guioptions=b has been renamed
       'B'. 'b' now represents the bottom scrollbar.
     * IMPORTANT: :set now sets multiple options, as in Vim. Spaces in values
       must be quoted or escaped.
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
-      value to 'sfl', listing intelligent Firefox location bar results. Removed possibility
-      to use 'h' in 'complete'.
+      value to 'sfl', listing intelligent Firefox location bar results. Using 'b' or 'h'
+      might cause problems/massive slowdowns, use with care!
     * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly.
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
@@ -45,7 +54,7 @@
     * add 'exrc'
     * add 'errorbells'
     * add shell command completion for :!
-    * add :map <silent> to prevent a mapping from being echoed
+    * add :map <silent> to prevent a mapping from being echoed (might be slow currently, however)
     * add guioptions=nN to number tabs
     * add :loadplugins command
     * add . mapping

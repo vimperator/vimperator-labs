@@ -1,22 +1,22 @@
 HEADER
 
-Vimperator does not yet read any command-line options. When it does, they will
+Xulmus does not yet read any command-line options. When it does, they will
 be documented here.
 
 section:Initialization[initialization,startup]
 
-At startup, Vimperator completes the following tasks in order.
+At startup, Xulmus completes the following tasks in order.
 
-1. Vimperator can perform user initialization commands. When
+1. Xulmus can perform user initialization commands. When
 one of the following is successfully located, it is executed, and no
 further locations are tried.
 
-  a. |$VIMPERATOR_INIT|
-     _$VIMPERATOR_INIT_ -- May contain a single Ex command (e.g.,
+  a. |$XULMUS_INIT|
+     _$XULMUS_INIT_ -- May contain a single Ex command (e.g.,
                            "[c]:source {file}[c]").
-  b. [a]\~/_vimperatorrc[a] -- Windows only. If this file exists, its contents
+  b. [a]\~/_xulmusrc[a] -- Windows only. If this file exists, its contents
 	are executed.
-  c. [a]\~/.vimperatorrc[a] -- If this file exists, its contents are executed.
+  c. [a]\~/.xulmusrc[a] -- If this file exists, its contents are executed.
 
 2. If 'exrc' is set, then any RC file in the current directory is also sourced.
 
@@ -31,18 +31,18 @@ command).
 The user's ~ (i.e., "home") directory is determined as follows:
 
 * On Unix and Mac, the environment variable  _$HOME_ is used.
-* On Windows, Vimperator checks for the existence of _%HOME%_, then
+* On Windows, Xulmus checks for the existence of _%HOME%_, then
 _%USERPROFILE%_, and then _%HOMEDRIVE%%HOMEPATH%_. It uses the first one
 it finds.
 
 section:Saving{nbsp}settings[save-settings]
 
-|:mkv| |:mkvimperatorrc|
-||:mkv[imperatorrc][!] [a][file][a]|| +
+|:mkx| |:mkxulmusrc|
+||:mkx[ulmusrc][!] [a][file][a]|| +
 ________________________________________________________________________________
 Write current key mappings and changed options to [a][file][a]. If no
-[a][file][a] is specified then _~/.vimperatorrc_ is written unless this file
-already exists. The special version [c]:mkvimperatorrc![c] will overwrite
+[a][file][a] is specified then _~/.xulmusrc_ is written unless this file
+already exists. The special version [c]:mkxulmusrc![c] will overwrite
 [a][file][a] if it exists.
 
 Warning: this differs from Vim's behavior which defaults to writing the file
@@ -54,7 +54,7 @@ section:Restarting[restarting]
 |:res| |:restart| +
 ||:res[tart]||
 ________________________________________________________________________________
-Force the browser to restart. Useful when installing extensions.
+Force Xulmus to restart. Useful when installing extensions.
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

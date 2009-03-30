@@ -51,7 +51,7 @@ Each token is analyzed and in this order:
    to set a custom name, you can change it with [c]:dialog searchengines[c].
 3. Opened with the default search engine or keyword (specified with the
    'defsearch' option) if the first word is no search engine ([c]:open linus
-   torvalds[c] opens a Google search for linux torvalds).
+   torvalds[c] opens a Google search for linus torvalds).
 4. Passed directly to Firefox in all other cases ([c]:open www.osnews.com,
    www.slashdot.org[c] opens OSNews in the current, and Slashdot in a new
    background tab).
@@ -102,8 +102,17 @@ ________________________________________________________________________________
 
 |:winopen| |:wopen| |:winedit|
 ||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
+||w||
 ________________________________________________________________________________
 Just like [c]:tabopen[c] but opens the resulting web page(s) in a new window.
+________________________________________________________________________________
+
+
+|W| +
+||W||
+________________________________________________________________________________
+Open one or more URLs in a new window based on current location. Works like
+[m]w[m] but preselects current URL in the [c]:winopen[c] query.
 ________________________________________________________________________________
 
 
@@ -160,7 +169,7 @@ ________________________________________________________________________________
 section:Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
-||:[count]ba[ck] [url]|| +
+||:[count]ba[ck] [a][url][a]|| +
 ||:ba[ck]!|| +
 ||CTRL-o||
 ________________________________________________________________________________
@@ -171,7 +180,7 @@ ________________________________________________________________________________
 
 
 |L| |<C-i>| |CTRL-i| |:fo| |:fw| |:forward|
-||:[count]fo[rward] [url]|| +
+||:[count]fo[rward] [a][url][a]|| +
 ||:fo[rward]!|| +
 ||CTRL-i||
 ________________________________________________________________________________

@@ -2,7 +2,7 @@ HEADER
 
 |message-history| +
 
-Vimperator stores all info and error messages in a message history. The type of
+Xulmus stores all info and error messages in a message history. The type of
 info messages output can be controlled by the 'verbose' option.
 
 |:mes| |:messages| +

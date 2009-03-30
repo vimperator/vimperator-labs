@@ -1,7 +1,9 @@
-2008-xx-xx:
+2008-03-29
     * version 0.5
+    * fixes for recent TB nightly changes
     * new "threads" option (non-functional for now)
     * new "archivefolder" option
+    * small bug fixes
 
 2008-08-03:
     * version 0.4

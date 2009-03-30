@@ -2,7 +2,7 @@ HEADER
 
 |gui| +
 
-Although Vimperator offers the most frequently used Firefox functionality via
+Although Xulmus offers the most frequently used Songbird functionality via
 Ex and Normal mode commands there may be times when directly accessing the GUI
 is required. There are commands for accessing the menu system, standard dialogs
 and the sidebar.
@@ -11,7 +11,7 @@ and the sidebar.
 ||:emenu {menu}||
 ________________________________________________________________________________
 Execute {menu} from the command line. This command provides command-line access
-to all menu items available from the main Firefox menubar. {menu} is a
+to all menu items available from the main Songbird menubar. {menu} is a
 hierarchical path to the menu item with each submenu separated by a period.
 E.g. [c]:emenu File.Open File...[c]
 ________________________________________________________________________________
@@ -20,45 +20,39 @@ ________________________________________________________________________________
 |:addo| |:addons| +
 ||:addo[ns]||
 ________________________________________________________________________________
-Show available Browser Extensions and Themes.
-You can add/remove/disable browser extensions from this dialog.
-Be aware that not all Firefox extensions work, because Vimperator overrides
-some key bindings and changes Firefox's GUI.
+Show available Songbird Extensions and Themes.
+You can add/remove/disable extensions from this dialog.
+Be aware that not all Songbird extensions work, because Xulmus overrides
+some key bindings and changes Songbird's GUI.
 ________________________________________________________________________________
 
 
 |:dia| |:dialog|
-||:dia[log] [a][firefox-dialog][a]|| +
+||:dia[log] [a][songbird-dialog][a]|| +
 ________________________________________________________________________________
-Open a Firefox dialog.
+Open a Songbird dialog.
 
 Available dialogs:
 `------------------`-----------------------------------
-*about*            About Firefox
-*addbookmark*      Add bookmark for the current page
+*about*            About Songbird
 *addons*           Manage Add-ons
-*bookmarks*        List your bookmarks
 *checkupdates*     Check for updates
 *cleardata*        Clear private data
 *cookies*          List your cookies
 *console*          JavaScript console
-*customizetoolbar* Customize the Toolbar
 *dominspector*     DOM Inspector
 *downloads*        Manage Downloads
-*history*          List your history
-*import*           Import Preferences, Bookmarks, History, etc. from other browsers
 *openfile*         Open the file selector dialog
-*pageinfo*         Show information about the current page
 *pagesource*       View page source
 *places*           Places Organizer: Manage your bookmarks and history
-*preferences*      Show Firefox preferences dialog
-*printpreview*     Preview the page before printing
+*preferences*      Show Songbird preferences dialog
 *printsetup*       Setup the page size and orientation before printing
 *print*            Show print dialog
 *saveframe*        Save frame to disk
 *savepage*         Save page to disk
 *searchengines*    Manage installed search engines
 *selectionsource*  View selection source
+*subscribe*        Add a new subscription
 -------------------------------------------------------
 
 ________________________________________________________________________________
@@ -67,24 +61,23 @@ ________________________________________________________________________________
 |:dl| |:downl| |:downloads| +
 ||:downl[oads]||
 ________________________________________________________________________________
-Show progress of current downloads. Open the original Firefox download dialog
+Show progress of current downloads. Open the original Songbird download dialog
 in a new tab. Here, downloads can be paused, canceled and resumed.
 ________________________________________________________________________________
 
 
-|:sbcl| |:sbclose| +
-||:sbcl[ose]||
+|:dpcl| |:dpclose| +
+||:dpcl[ose] {pane}||
 ________________________________________________________________________________
-Close the sidebar window.
+Close the specified display pane.
 ________________________________________________________________________________
 
 
-|:sbope| |:sbopen| |:sb| |:sbar| |:sideb| |:sidebar| +
-||:sidebar {name}||
+|:dpope| |:dpopen| |:dp| |:dpane| |:dislplayp| |:dislplaypane|
+||:displaypane {pane}|| +
 ________________________________________________________________________________
-Open the sidebar window. {name} is any of the menu items listed under the
-standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
-also available in the sidebar.
+Open the specified display pane. {pane} is any of "content pane bottom",
+"service pane bottom" or "right sidebar".
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

@@ -1,5 +1,5 @@
 Main developer/Project founder:
-  * Martin Stubenschrott (stubenschrott@gmx.net)
+  * Martin Stubenschrott (stubenschrott@vimperator.org)
 
 Developers:
   * Doug Kearns (dougkearns@gmail.com)
@@ -19,7 +19,7 @@ Inactive/former developers:
 
 Patches (in no special order):
   * Ruud Grosmann ('followhints' option)
-  * Xie&Tian (multibyte support for hints)
+  * Xie&Tian (multibyte support for hints, doc fixes)
   * Juergen Descher
   * Kazuo (count support for ctrl-^)
   * Daniel Schaffrath (;b support)
@@ -39,3 +39,4 @@ Patches (in no special order):
   * Ryan Zheng (ctrl-x/a support)
   * Dan Boger (:set online support)
   * Štěpán Němec (help copy-editing and favicon support)
+  * Jarkko Oranen ('maxitems' option)

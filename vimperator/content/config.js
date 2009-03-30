@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -49,7 +49,7 @@ const config = { //{{{
                    ["DOMLoad",            "Triggered when a page's DOM content has fully loaded"],
                    ["DownloadPost",       "Triggered when a download has completed"],
                    ["Fullscreen",         "Triggered when the browser's fullscreen state changes"],
-                   ["LocationChange",     "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["LocationChange",     "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
                    ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
@@ -215,6 +215,14 @@ const config = { //{{{
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
             function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
+
+        mappings.add([modes.NORMAL], ["w"],
+            "Open one or more URLs in a new window",
+            function () { commandline.open(":", "winopen ", modes.EX); });
+
+        mappings.add([modes.NORMAL], ["W"],
+            "Open one or more URLs in a new window, based on current location",
+            function () { commandline.open(":", "winopen " + buffer.URL, modes.EX); });
 
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",

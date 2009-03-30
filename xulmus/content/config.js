@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -33,12 +33,12 @@ const config = { //{{{
     //mainWindowID: "mainplayer",
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
-    defaults: { guioptions: "rb" },
+    defaults: { guioptions: "mprb" },
 
     guioptions: {
-        m: ["Menubar",      ["main-menubar"]],
-        T: ["Toolbar",      ["nav-bar"]],
-        B: ["Bookmark bar", ["PersonalToolbar"]]
+        m: ["Menubar",         ["main-menubar"]],
+        T: ["Toolbar",         ["nav-bar"]],
+        p: ["Player controls", ["player_wrapper"]]
     },
 
     //get visualbellWindow() getBrowser().mPanelContainer,
@@ -54,53 +54,74 @@ const config = { //{{{
                    ["DOMLoad",        "Triggered when a page's DOM content has fully loaded"],
                    ["DownloadPost",   "Triggered when a download has completed"],
                    ["Fullscreen",     "Triggered when the browser's fullscreen state changes"],
-                   ["LocationChange", "Triggered when changing tabs or when naviagtion to a new location"],
+                   ["LocationChange", "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",    "Triggered after a page load is initiated"],
                    ["PageLoad",       "Triggered when a page gets (re)loaded/opened"],
                    ["ShellCmdPost",   "Triggered after executing a shell command with :!cmd"],
-                   ["XulmusEnter",    "Triggered after Xulmus starts"],
-                   ["XulmusLeavePre", "Triggered before exiting Xulmus, just before destroying each module"],
-                   ["XulmusLeave",    "Triggered before exiting Xulmus"]],
+                   ["TrackChangePre", "Triggered before a playing track is changed"],
+                   ["TrackChange",    "Triggered after a playing track has changed"],
+                   ["ViewChangePre",  "Triggered before a sequencer view is changed"],
+                   ["ViewChange",     "Triggered after a sequencer view is changed"],
+                   ["StreamStart",    "Triggered after a stream has started"],
+                   ["StreamPause",    "Triggered after a stream has paused"],
+                   ["StreamEnd",      "Triggered after a stream has ended"],
+                   ["StreamStop",     "Triggered after a stream has stopped"],
+                   ["XulmusEnter",    "Triggered after Songbird starts"],
+                   ["XulmusLeavePre", "Triggered before exiting Songbird, just before destroying each module"],
+                   ["XulmusLeave",    "Triggered before exiting Songbird"]],
 
+    // TODO: remove those which don't make sense, can't be provided.
     dialogs: [
         ["about",            "About Songbird",
-            function () { window.openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
+            function () { window.openDialog("chrome://songbird/content/xul/about.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
+        /*
         ["addbookmark",      "Add bookmark for the current page",
             function () { PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); }],
+        */
         ["addons",           "Manage Add-ons",
-            function () { window.BrowserOpenAddonsMgr(); }],
+            function () { SBOpenPreferences("paneAddons"); }],
+        /*
         ["bookmarks",        "List your bookmarks",
             function () { window.openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); }],
+        */
         ["checkupdates",     "Check for updates",
             function () { window.checkForUpdates(); }],
         ["cleardata",        "Clear private data",
-            function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
+            function () {  Sanitizer.showUI(); }],
         ["cookies",          "List your cookies",
             function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["console",          "JavaScript console",
             function () { window.toJavaScriptConsole(); }],
+        /*
         ["customizetoolbar", "Customize the Toolbar",
             function () { window.BrowserCustomizeToolbar(); }],
+        */
         ["dominspector",     "DOM Inspector",
             function () { try { window.inspectDOMDocument(content.document); } catch (e) { liberator.echoerr("DOM Inspector extension not installed"); } }],
         ["downloads",        "Manage Downloads",
             function () { window.toOpenWindowByType("Download:Manager", "chrome://mozapps/content/downloads/downloads.xul", "chrome,dialog=no,resizable"); }],
+        /*
         ["history",          "List your history",
             function () { window.openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); }],
         ["import",           "Import Preferences, Bookmarks, History, etc. from other browsers",
             function () { window.BrowserImport(); }],
+        */
         ["openfile",         "Open the file selector dialog",
-            function () { window.BrowserOpenFileWindow(); }],
+            function () { SBFileOpen(); }],
+        /*
         ["pageinfo",         "Show information about the current page",
             function () { window.BrowserPageInfo(); }],
+        */
         ["pagesource",       "View page source",
             function () { window.BrowserViewSourceOfDocument(content.document); }],
         ["places",           "Places Organizer: Manage your bookmarks and history",
             function () { PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); }],
-        ["preferences",      "Show Firefox preferences dialog",
+        ["preferences",      "Show Songbird preferences dialog",
             function () { window.openPreferences(); }],
+        /*
         ["printpreview",     "Preview the page before printing",
             function () { PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); }],
+        */
         ["printsetup",       "Setup the page size and orientation before printing",
             function () { PrintUtils.showPageSetup(); }],
         ["print",            "Show print dialog",
@@ -112,7 +133,9 @@ const config = { //{{{
         ["searchengines",    "Manage installed search engines",
             function () { window.openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
-            function () { buffer.viewSelectionSource(); }]
+            function () { buffer.viewSelectionSource(); }],
+        ["subscribe",        "Add a new subscription",
+            function () { SBSubscribe(); }]
     ],
 
     focusChange: function() {
@@ -127,14 +150,14 @@ const config = { //{{{
 
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
-    //helpFiles: [ "intro.html" ],
-       /* "intro.html", "tutorial.html", "starting.html", "browsing.html",
-        "buffer.html", "cmdline.html", "insert.html", "options.html",
-        "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",
-        "marks.html", "repeat.html", "autocommands.html", "print.html",
-        "gui.html", "styling.html", "message.html", "developer.html",
-        "various.html", "index.html", "version.html"
-    ], */
+    helpFiles: [
+        "intro.html", /*"tutorial.html",*/ "starting.html", "player.html",
+        "browsing.html", "buffer.html", "cmdline.html", "insert.html",
+        "options.html", "pattern.html", "tabs.html", "hints.html", "map.html",
+        "eval.html", "marks.html", "repeat.html", "autocommands.html",
+        "print.html", "gui.html", "styling.html", "message.html",
+        "developer.html", "various.html", "index.html", "version.html"
+    ],
 
     optionDefaults: {
         stal: 0,
@@ -179,6 +202,31 @@ const config = { //{{{
             liberator.open(pre + newNumberStr + post);
         }
 
+        function openDisplayPane(id)
+        {
+            let pane = document.getElementById(id);
+            let manager = Components.classes['@songbirdnest.com/Songbird/DisplayPane/Manager;1']
+                                    .getService(Components.interfaces.sbIDisplayPaneManager);
+            let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
+
+            if (!paneinfo)
+                paneinfo = manager.defaultPaneInfo;
+
+            pane.loadContent(paneinfo);
+        }
+
+        // FIXME: best way to format these args? Hyphenated? One word like :dialog?
+        let displayPanes = {
+            "content pane bottom": "displaypane_contentpane_bottom",
+            "service pane bottom": "displaypane_servicepane_bottom",
+            "right sidebar": "displaypane_right_sidebar"
+        };
+
+        completion.displayPane = function (context) {
+            context.title = ["Display Pane"];
+            context.completions = displayPanes; // FIXME: useful description etc
+        };
+
         // load Xulmus specific modules
         // FIXME: Why aren't these listed in config.scripts?
         // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
@@ -198,6 +246,7 @@ const config = { //{{{
         liberator.loadModule("hints",      Hints);
         // Load the Player module
         liberator.loadModule("player",     Player);
+
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
@@ -369,7 +418,7 @@ const config = { //{{{
             "Show " + config.hostApplication + " preferences",
             function (args)
             {
-                if (args.bang) // open Firefox settings GUI dialog
+                if (args.bang) // open Songbird settings GUI dialog
                 {
                     liberator.open("about:config",
                         (options["newtab"] && options.get("newtab").has("all", "prefs"))
@@ -396,72 +445,49 @@ const config = { //{{{
             },
             { argCount: "0" });
 
-        // TODO: move sidebar commands to ui.js?
-        commands.add(["sbcl[ose]"],
-            "Close the sidebar window",
-            function ()
-            {
-                if (!document.getElementById("sidebar-box").hidden)
-                    toggleSidebar();
-            },
-            { argCount: "0" });
-
-        commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
-            "Open the sidebar window",
+        commands.add(["dpcl[ose]"],
+            "Close a display pane",
             function (args)
             {
                 let arg = args.literalArg;
 
-                // focus if the requested sidebar is already open
-                if (document.getElementById("sidebar-title").value == arg)
-                {
-                    document.getElementById("sidebar-box").focus();
-                    return;
-                }
+                if (arg in displayPanes)
+                    document.getElementById(displayPanes[arg]).hide();
+                else
+                    liberator.echoerr("E475: Invalid argument: " + arg);
 
-                let menu = document.getElementById("viewSidebarMenu");
-
-                for (let [,panel] in Iterator(menu.childNodes))
-                {
-                    if (panel.label == arg)
-                    {
-                        panel.doCommand();
-                        return;
-                    }
-                }
-
-                liberator.echoerr("No sidebar " + arg + " found");
             },
             {
                 argCount: "1",
-                completer: function (context) completion.sidebar(context),
+                completer: function (context) completion.displayPane(context),
                 literal: 0
             });
 
-        commands.add(["winc[lose]", "wc[lose]"],
-            "Close window",
-            function () { window.close(); },
-            { argCount: "0" });
-
-        commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
-            "Open one or more URLs in a new window",
+        // TODO: this should accept a second arg to specify content
+        commands.add(["displayp[ane]", "dp[ane]", "dpope[n]"],
+            "Open a display pane",
             function (args)
             {
-                args = args.string;
+                let arg = args.literalArg;
 
-                if (args)
-                    liberator.open(args, liberator.NEW_WINDOW);
+                if (arg in displayPanes)
+                    openDisplayPane(displayPanes[arg])
+                    // TODO: focus when we have better key handling of these extended modes
                 else
-                    liberator.open("about:blank", liberator.NEW_WINDOW);
+                    liberator.echoerr("E475: Invalid argument: " + arg);
             },
             {
-                completer: function (context) completion.url(context),
+                argCount: "1",
+                completer: function (context) completion.displayPane(context),
                 literal: 0
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
+
+        let stal = options.get("showtabline");
+        stal.value = stal.defaultValue = 2;
 
         options.add(["online"],
             "Set the 'work offline' option",
@@ -505,8 +531,18 @@ const config = { //{{{
         options.add(["urlseparator"],
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");
+        //}}}
+
+        // TODO: mention this to SB devs, they seem keen to provide these
+        // functions to make porting from FF as simple as possible.
+        window.toJavaScriptConsole = function () {
+            toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+        }
+
+        window.BrowserStop = function () {
+            getBrowser().mCurrentBrowser.stop();
+        }
     }
-    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

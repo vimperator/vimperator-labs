@@ -1,0 +1,217 @@
+HEADER
+
+|player-mode| |player| +
+
+The following features apply to Player mode which is activated when the media
+tab has focus.
+
+section:Playing{nbsp}tracks[playing-tracks]
+
+|p_x| |:playerp| |:playerplay|
+||:playerp[lay]|| +
+||x||
+________________________________________________________________________________
+Play the current track.
+________________________________________________________________________________
+
+|p_z| |:playerpr| |:playerprev|
+||:playerpr[ev]|| +
+||z||
+________________________________________________________________________________
+Play the previous track.
+________________________________________________________________________________
+
+
+|p_b| |:playern| |:playernext|
+||:playern[ext]|| +
+||b||
+________________________________________________________________________________
+Play the next track.
+________________________________________________________________________________
+
+
+|p_c| |:playerpa| |:playerpause|
+||:playerpa[use]|| +
+||c||
+________________________________________________________________________________
+Pause/unpause the current track.
+________________________________________________________________________________
+
+
+|p_v| |:players| |:playerstop|
+||:players[top]|| +
+||v||
+________________________________________________________________________________
+Stop playing the current track.
+________________________________________________________________________________
+
+
+|p_x|
+||x||
+________________________________________________________________________________
+Toggle shuffle mode.
+________________________________________________________________________________
+
+
+|p_r|
+||r||
+________________________________________________________________________________
+Toggle repeat mode.
+________________________________________________________________________________
+
+
+|p_i|
+||i||
+________________________________________________________________________________
+Select the currently playing track.
+________________________________________________________________________________
+
+section:Filtering{nbsp}the{nbsp}library[filter,filtering]
+
+|p_f| |:f| |:filter|
+||:f[ilter] {artist} [a][album][a] [a][track][a]|| +
+||f||
+________________________________________________________________________________
+Filter and play tracks. If only {artist} is specified then all tracks for that
+artist are played in album order. If [a][album][a] is also specified then all
+tracks for that album are played. A specific track can be specified with
+[a][track][a].
+________________________________________________________________________________
+
+
+|p_F| |:F| |:Filter|
+||:F[ilter] {keywords}|| +
+||F||
+________________________________________________________________________________
+Filter and show the tracks as a view. The tracks are filtered by the {keywords}
+provided as arguments. This text search applies over the default filter
+properties, namely: Genre, Artist, Album and Track.
+________________________________________________________________________________
+
+section:Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
+
+|p_<Left>| |p_h|
+||[count]h||
+________________________________________________________________________________
+Seek +10s.
+________________________________________________________________________________
+
+
+|p_<Right>| |p_l|
+||[count]l||
+________________________________________________________________________________
+Seek -10s.
+________________________________________________________________________________
+
+
+|p_<S-Left>| |p_H|
+||[count]H||
+________________________________________________________________________________
+Seek +1m.
+________________________________________________________________________________
+
+
+|p_<S-Right>| |p_L|
+||[count]L||
+________________________________________________________________________________
+Seek -1m.
+________________________________________________________________________________
+
+
+|:see| |:seek|
+||:see[k] {[HH:]MM:SS]}|| +
+||:see[k] +{time[hms]} | -{time[hms]}|| +
+________________________________________________________________________________
+Seek to an absolute or relative position in a track. The position can be given
+in seconds (s), minutes (m), or hours (h). If the unit is not specified then
+seconds is assumed. The position is absolute unless the value is prefixed with
+"-" or "+".
+
+Positions may also be specified in [a][HH:]MM:SS[a] format.
+________________________________________________________________________________
+
+section:Adjusting{nbsp}the{nbsp}volume[volume]
+
+|p_+| |p_=|
+||+|| +
+||=||
+________________________________________________________________________________
+Increase volume by 10%.
+________________________________________________________________________________
+
+
+|p_-|
+||-|| +
+________________________________________________________________________________
+Decrease volume by 10%.
+________________________________________________________________________________
+
+
+|:vol| |:volume|
+||:vol[ume] {value}|| +
+||:vol[ume] +{value} | -{value}|| +
+________________________________________________________________________________
+Set the player volume. {value} can be an absolute value between 0 and 100% or a
+relative value if prefixed with "-" or "+".
+________________________________________________________________________________
+
+section:Managing{nbsp}playlists[playlists]
+
+|:load|
+||:load [a][playlist][a]|| +
+________________________________________________________________________________
+Load [a][playlist][a]. If no playlist is specified then the main library view
+is loaded.
+________________________________________________________________________________
+
+section:Changing{nbsp}media{nbsp}views[media-view,view]
+
+|:mediav| |:mediaview|
+||:mediav[iew] {view}|| +
+________________________________________________________________________________
+Change the media view to {view}. This can only be run when the media tab is the
+current tab.
+________________________________________________________________________________
+
+section:Search{nbsp}commands[search]
+
+|p_/|
+||/{pattern}<CR>|| +
+________________________________________________________________________________
+Search forward for a track matching {pattern} in the visible media view.
+________________________________________________________________________________
+
+//|p_?|
+//||?{pattern}<CR>|| +
+//________________________________________________________________________________
+//Search backwards for a track matching {pattern} in the visible media view.
+//________________________________________________________________________________
+
+|p_n|
+||n|| +
+________________________________________________________________________________
+Find the next track. Repeats the last search. If the search hits BOTTOM of the
+view, it continues from TOP.
+________________________________________________________________________________
+
+|p_N|
+||N|| +
+________________________________________________________________________________
+Find the previous track. Repeats the last search in the opposite direction. If
+the search hits TOP of the view, it continues from BOTTTOM.
+________________________________________________________________________________
+
+section:Rating{nbsp}tracks[rating]
+
+|p_<C-5>| |p_<C-4>| |p_<C-3>| |p_<C-2>| |p_<C-1>| |p_<C-0>|
+||<C-0>|| +
+||<C-1>|| +
+||<C-2>|| +
+||<C-3>|| +
+||<C-4>|| +
+||<C-5>|| +
+________________________________________________________________________________
+Rate the current track with N stars.
+________________________________________________________________________________
+
+// vim: set filetype=asciidoc:

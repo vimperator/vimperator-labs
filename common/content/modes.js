@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -277,6 +277,8 @@ const modes = (function () //{{{
     self.addMode("OUTPUT_MULTILINE", true);
     self.addMode("SEARCH_FORWARD", true);
     self.addMode("SEARCH_BACKWARD", true);
+    self.addMode("SEARCH_VIEW_FORWARD", true);
+    self.addMode("SEARCH_VIEW_BACKWARD", true);
     self.addMode("MENU", true); // a popupmenu is active
     self.addMode("LINE", true); // linewise visual mode
     self.addMode("PROMPT", true);

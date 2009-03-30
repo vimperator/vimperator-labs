@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -44,7 +44,6 @@ function Buffer() //{{{
 
     // FIXME: This doesn't belong here.
     let mainWindowID = config.mainWindowID || "main-window";
-
     let fontSize = util.computedStyle(document.getElementById(mainWindowID)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
@@ -125,6 +124,7 @@ function Buffer() //{{{
         else
             v = win.scrollMaxY / 100 * vertical;
 
+        marks.add("'", true);
         win.scrollTo(h, v);
     }
 
@@ -147,13 +147,13 @@ function Buffer() //{{{
             getter: function () window.fullScreen
         });
 
-    options.add(["nextpattern"],
+        options.add(["nextpattern"], // \u00BB is » (>> in a single char)
         "Patterns to use when guessing the 'next' page in a document sequence",
-        "stringlist", "\\bnext\\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\\bmore\\b");
+        "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 
-    options.add(["previouspattern"],
+    options.add(["previouspattern"], // \u00AB is « (<< in a single char)
         "Patterns to use when guessing the 'previous' page in a document sequence",
-        "stringlist", "\\bprev|previous\\b,^<$,^(<<|«)$,^(<|«),(<|«)$");
+        "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
     options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
         {
@@ -603,6 +603,7 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
+<<<<<<< HEAD:common/content/buffer.js
         function ()
         {
             if (config.stop)
@@ -610,6 +611,9 @@ function Buffer() //{{{
             else
                 window.BrowserStop();
         },
+=======
+        function () { window.BrowserStop(); },
+>>>>>>> a9f04ee3d00b282e7a91b37eb23168fb39e9de5b:common/content/buffer.js
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],
@@ -1034,7 +1038,16 @@ function Buffer() //{{{
             }
             else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
                 return;
             }
 
@@ -1144,7 +1157,16 @@ function Buffer() //{{{
             }
             else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (file) elem.value = file, {completer: completion.file, default: elem.value});
+                commandline.input("Upload file: ", function (path) 
+                    {
+                        let file = io.getFile(path);
+
+                        if (!file.exists())
+                            return liberator.beep();
+
+                        elem.value = file.path;
+                    }
+                    , {completer: completion.file, default: elem.value});
                 return;
             }
 
@@ -1295,6 +1317,17 @@ function Buffer() //{{{
         scrollToPercentile: function (percentage)
         {
             scrollToPercentiles(-1, percentage);
+        },
+
+        scrollToRatio: function (x, y)
+        {
+            scrollToPercentiles(x * 100, y * 100);
+        },
+
+        scrollTo: function (x, y)
+        {
+            marks.add("'", true);
+            content.scrollTo(x, y);
         },
 
         /**
@@ -1533,12 +1566,11 @@ function Marks() //{{{
     function onPageLoad(event)
     {
         let win = event.originalTarget.defaultView;
-        for (let i = 0, length = pendingJumps.length; i < length; i++)
+        for (let [i, mark] in Iterator(pendingJumps))
         {
-            let mark = pendingJumps[i];
             if (win && win.location.href == mark.location)
             {
-                win.scrollTo(mark.position.x * win.scrollMaxX, mark.position.y * win.scrollMaxY);
+                buffer.scrollToRatio(mark.position.x, mark.position.y);
                 pendingJumps.splice(i, 1);
                 return;
             }
@@ -1583,7 +1615,7 @@ function Marks() //{{{
         }
     }
 
-    function isLocalMark(mark) /^[a-z]$/.test(mark);
+    function isLocalMark(mark) /^['`a-z]$/.test(mark);
     function isURLMark(mark) /^[A-Z0-9]$/.test(mark);
 
     function localMarkIter()
@@ -1744,13 +1776,14 @@ function Marks() //{{{
          * @param {string} mark
          */
         // TODO: add support for frameset pages
-        add: function (mark)
+        add: function (mark, silent)
         {
             let win = window.content;
 
             if (win.document.body.localName.toLowerCase() == "frameset")
             {
-                liberator.echoerr("Marks support for frameset pages not implemented yet");
+                if (!silent)
+                    liberator.echoerr("Marks support for frameset pages not implemented yet");
                 return;
             }
 
@@ -1761,7 +1794,8 @@ function Marks() //{{{
             if (isURLMark(mark))
             {
                 urlMarks.set(mark, { location: win.location.href, position: position, tab: tabs.getTab() });
-                liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
+                if (!silent)
+                    liberator.log("Adding URL mark: " + markToString(mark, urlMarks.get(mark)), 5);
             }
             else if (isLocalMark(mark))
             {
@@ -1771,7 +1805,8 @@ function Marks() //{{{
                     localMarks.set(mark, []);
                 let vals = { location: win.location.href, position: position };
                 localMarks.get(mark).push(vals);
-                liberator.log("Adding local mark: " + markToString(mark, vals), 5);
+                if (!silent)
+                    liberator.log("Adding local mark: " + markToString(mark, vals), 5);
             }
         },
 
@@ -1841,7 +1876,7 @@ function Marks() //{{{
                             return;
                         }
                         liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
-                        win.scrollTo(slice.position.x * win.scrollMaxX, slice.position.y * win.scrollMaxY);
+                        buffer.scrollToRatio(slice.position.x, slice.position.y);
                         ok = true;
                     }
                 }
@@ -1856,7 +1891,7 @@ function Marks() //{{{
                     if (win.location.href == lmark.location)
                     {
                         liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
-                        win.scrollTo(lmark.position.x * win.scrollMaxX, lmark.position.y * win.scrollMaxY);
+                        buffer.scrollToRatio(lmark.position.x, lmark.position.y);
                         ok = true;
                         break;
                     }

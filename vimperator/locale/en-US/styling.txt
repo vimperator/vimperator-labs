@@ -73,6 +73,7 @@ Valid groups are:
 *StatusLine*         The status bar
 *StatusLineBroken*   The status bar for a broken web page
 *StatusLineSecure*   The status bar for a secure web page
+*StatusLineExtended* The status bar for a secure web page with an Extended Validation(EV) certificate
 *String*             A JavaScript String object
 *TabClose*           The close button of a browser tab
 *TabIcon*            The icon of a browser tab

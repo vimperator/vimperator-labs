@@ -11,7 +11,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the
 License.
 
-Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@gmx.net>
+Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -57,7 +57,7 @@ function Bookmarks() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const historyService   = PlacesUtils.history; //Cc["@mozilla.org/browser/global-history;1"].getService(Ci.nsIGlobalHistory);
-    const bookmarksService = PlacesUtils.bookmarks //Cc["@songbirdnest.com/servicepane/bookmarks;1"].getService(Ci.sbIBookmarks); 
+    const bookmarksService = PlacesUtils.bookmarks //Cc["@songbirdnest.com/servicepane/bookmarks;1"].getService(Ci.sbIBookmarks);
     const taggingService   = PlacesUtils.tagging //Cc["@mozilla.org/browser/tagging-service;1"].getService(Ci.nsITaggingService);
     const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
 
@@ -571,14 +571,14 @@ function Bookmarks() //{{{
         getSuggestions: function getSuggestions(engineName, query, callback)
         {
             const responseType = "application/x-suggestions+json";
-            
+
             let engine = services.get("browserSearch").getEngineByAlias(engineName);
-            
+
             if (engine && engine.supportsResponseType(responseType))
                 var queryURI = engine.getSubmission(query, responseType).uri.spec;
             if (!queryURI)
                 return [];
-            
+
             function process(resp)
             {
                 let results = [];
@@ -594,7 +594,7 @@ function Bookmarks() //{{{
             }
 
             let resp = util.httpGet(queryURI, callback && process);
-            
+
             if (!callback)
                 return process(resp);
         },
@@ -620,76 +620,77 @@ function Bookmarks() //{{{
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
             this.getSearchEngines();
- 
 
-            function getShortcutOrURI(aURL, aPostDataRef) 
-            {     
-                var shortcutURL = null;     
-                var keyword = aURL;     
-                var param = "";     
-                var searchService = Cc['@mozilla.org/browser/search-service;1'].getService(Ci.nsIBrowserSearchService);     
-                var offset = aURL.indexOf(" ");     
-                if (offset > 0) 
-                {         
-                    keyword = aURL.substr(0, offset);         
-                    param = aURL.substr(offset + 1);     
-                }     
-                if (!aPostDataRef) 
-                {         
-                    aPostDataRef = {};     
+            function getShortcutOrURI(aURL, aPostDataRef)
+            {
+                var shortcutURL = null;
+                var keyword = aURL;
+                var param = "";
+                var searchService = Cc['@mozilla.org/browser/search-service;1'].getService(Ci.nsIBrowserSearchService);
+                var offset = aURL.indexOf(" ");
+                if (offset > 0)
+                {
+                    keyword = aURL.substr(0, offset);
+                    param = aURL.substr(offset + 1);
                 }
-                var engine = searchService.getEngineByAlias(keyword);     
-                if (engine) 
-                {         
-                    var submission = engine.getSubmission(param, null);         
-                    aPostDataRef.value = submission.postData;         
-                    return submission.uri.spec;     
-                }     
-                [shortcutURL, aPostDataRef.value] = PlacesUtils.getURLAndPostDataForKeyword(keyword);     
-                if (!shortcutURL) 
-                {         
-                    return aURL;     
-                }     
-                var postData = "";     
-                if (aPostDataRef.value) 
-                {         
-                    postData = unescape(aPostDataRef.value);     
-                }     
-                if (/%s/i.test(shortcutURL) || /%s/i.test(postData)) 
-                {         
-                    var charset = "";         
-                    const re = /^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/;         
-                    var matches = shortcutURL.match(re);         
-                    if (matches) 
-                    {             
-                        [, shortcutURL, charset] = matches;         
-                    } 
-                    else 
-                    {             
-                        try 
-                        {                 
-                            charset = PlacesUtils.history.getCharsetForURI(makeURI(shortcutURL));             
-                        } catch (e) {             }         
-                    }         
-                    var encodedParam = "";         
-                    if (charset) 
-                    {             
-                        encodedParam = escape(convertFromUnicode(charset, param));         
-                    } else {             
-                        encodedParam = encodeURIComponent(param);         
-                    }         
-                    shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);         
-                    if (/%s/i.test(postData)) 
-                    {            
-                        aPostDataRef.value = getPostDataStream(postData, param, encodedParam, "application/x-www-form-urlencoded");         
-                    }     
-                } else if (param) {         
-                    aPostDataRef.value = null;         
-                    return aURL;     
+                if (!aPostDataRef)
+                {
+                    aPostDataRef = {};
                 }
-                    return shortcutURL; 
+                var engine = searchService.getEngineByAlias(keyword);
+                if (engine)
+                {
+                    var submission = engine.getSubmission(param, null);
+                    aPostDataRef.value = submission.postData;
+                    return submission.uri.spec;
+                }
+                [shortcutURL, aPostDataRef.value] = PlacesUtils.getURLAndPostDataForKeyword(keyword);
+                if (!shortcutURL)
+                {
+                    return aURL;
+                }
+                var postData = "";
+                if (aPostDataRef.value)
+                {
+                    postData = unescape(aPostDataRef.value);
+                }
+                if (/%s/i.test(shortcutURL) || /%s/i.test(postData))
+                {
+                    var charset = "";
+                    const re = /^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/;
+                    var matches = shortcutURL.match(re);
+                    if (matches)
+                    {
+                        [, shortcutURL, charset] = matches;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            charset = PlacesUtils.history.getCharsetForURI(makeURI(shortcutURL));
+                        } catch (e) {             }
+                    }
+                    var encodedParam = "";
+                    if (charset)
+                    {
+                        encodedParam = escape(convertFromUnicode(charset, param));
+                    } else {
+                        encodedParam = encodeURIComponent(param);
+                    }
+                    shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);
+                    if (/%s/i.test(postData))
+                    {
+                        aPostDataRef.value = getPostDataStream(postData, param, encodedParam, "application/x-www-form-urlencoded");
+                    }
+                } else if (param) {
+                    aPostDataRef.value = null;
+                    return aURL;
+                }
+                    return shortcutURL;
             }
+
             url = getShortcutOrURI(searchString, aPostDataRef);
+
             if (url == searchString)
                 url = null;
 
