@@ -671,7 +671,7 @@ const util = { //{{{
             let proto = url.match(/^([-\w]+):/);
             if (proto && Cc["@mozilla.org/network/protocol;1?name=" + proto[1]])
                 // Handle as URL, but remove spaces. Useful for copied/'p'asted URLs.
-                return url.replace(/\s+/g, "");
+                return url.replace(/\s*\n+\s*/g, "");
 
             // Ok, not a valid proto. If it looks like URL-ish (foo.com/bar),
             // let Gecko figure it out.
