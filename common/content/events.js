@@ -1222,7 +1222,7 @@ function Events() //{{{
                     return;
                 }
 
-                if (config.focusChange())
+                if (config.focusChange)
                     return void config.focusChange(win);
 
                 urlbar = document.getElementById("urlbar");
