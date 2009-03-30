@@ -74,14 +74,13 @@ function Buffer() //{{{
     function bumpZoomLevel(steps, fullZoom)
     {
         let values = ZoomManager.zoomValues;
-        let i = values.indexOf(ZoomManager.snap(ZoomManager.zoom)) + steps;
+        let cur = values.indexOf(ZoomManager.snap(ZoomManager.zoom));
+        let i = cur + steps;
+        i = Math.max(0, Math.min(values.length - 1, i));
 
-        if (i >= 0 && i < values.length)
-            setZoom(Math.round(values[i] * 100), fullZoom);
-        // TODO: I'll leave the behaviour as is for now, but I think this
-        // should probably just take you to the respective bounds -- djk
-        else
+        if (i == cur && fulZoom == ZoomManager.useFullZoom)
             liberator.beep();
+        setZoom(Math.round(values[i] * 100), fullZoom);
     }
 
     function checkScrollYBounds(win, direction)
