@@ -780,7 +780,7 @@ function CommandLine() //{{{
     options.add(["maxitems"],
         "Maximum number of items to display at once",
         "number", 20,
-        { validator: function (value) value >= 0 });
+        { validator: function (value) value >= 1 });
 
     options.add(["messages", "msgs"],
         "Number of messages to store in the message history",
@@ -1950,7 +1950,7 @@ function ItemList(id) //{{{
             let len = items.allItems.items.length;
             let newOffset = startIndex;
             let maxItems = options["maxitems"];
-            let contextLines = (maxItems > 3)? 3 : Math.max(0, maxItems - 1);
+            let contextLines = Math.min(3, parseInt((maxItems - 1) / 2));
 
             if (index == -1 || index == null || index == len) // wrapped around
             {
