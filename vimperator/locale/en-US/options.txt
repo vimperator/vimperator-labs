@@ -480,6 +480,7 @@ load plugins earlier, use the [c]:loadplugins[c] command within the
 vimperatorrc.
 ____
 
+
 |\'maxitems'|
 ||'maxitems'|| number (default: 20)
 ____

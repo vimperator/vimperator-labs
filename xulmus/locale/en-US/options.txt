@@ -477,6 +477,14 @@ xulmusrc.
 ____
 
 
+|\'maxitems'|
+||'maxitems'|| number (default: 20)
+____
+Maximum number of items to display at once in a listing.
+____
+
+
+
 |\'msgs'| |\'messages'|
 ||'messages' 'msgs'|| number (default: 100)
 ____

@@ -329,6 +329,7 @@ section:Options[option-index]
 ||'laststatus'|| Show the status line +
 ||'linksearch'|| Limit the search to hyperlink text +
 ||'loadplugins'|| Load plugin scripts when starting up +
+||'maxitems'|| Maximum number of items to display at once in a listing +
 ||'messages'|| Number of messages to store in the message history +
 ||'more'|| Pause the message list window when more than one screen of listings is displayed +
 ||'newtab'|| Define which commands should output in a new tab by default +
