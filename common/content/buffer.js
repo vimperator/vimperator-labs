@@ -78,8 +78,9 @@ function Buffer() //{{{
         let i = cur + steps;
         i = Math.max(0, Math.min(values.length - 1, i));
 
-    if (i == cur && fulZoom == ZoomManager.useFullZoom)
+        if (i == cur && fullZoom == ZoomManager.useFullZoom)
             liberator.beep();
+
         setZoom(Math.round(values[i] * 100), fullZoom);
     }
 
