@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>{3703dcdb-6ba3-4331-8de8-c18373fb05d1}</em:id>
+    <em:id>xulmus@vimperator.org</em:id>
     <em:type>2</em:type>
     <em:name>xulmus@vimperator.org</em:name>
     <em:version>###VERSION###</em:version>
