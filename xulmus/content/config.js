@@ -138,16 +138,6 @@ const config = { //{{{
             function () { SBSubscribe(); }]
     ],
 
-    focusChange: function() {
-        // Switch to -- PLAYER -- mode for Songbird Media Player.
-        if (config.isPlayerWindow)
-            liberator.mode = modes.PLAYER;
-        else
-            liberator.mode = modes.NORMAL;
-    },
-
-    hasTabbrowser: true,
-
     //TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
     helpFiles: [
@@ -159,19 +149,11 @@ const config = { //{{{
         "developer.html", "various.html", "index.html", "version.html"
     ],
 
-    optionDefaults: {
-        stal: 0,
-    },
-
     scripts: [
         "bookmarks.js",
         "tabs.js",
         "player.js",
     ],
-
-    stop: function() {
-        getBrowser().mCurrentBrowser.stop();
-    },
 
     init: function ()
     {

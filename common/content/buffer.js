@@ -215,13 +215,7 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["<C-c>"],
         "Stop loading",
-        function ()
-        {
-            if(config.stop)
-                config.stop();
-            else
-                window.BrowserStop();
-        });
+        function () { window.BrowserStop(); });
 
     // scrolling
     mappings.add(myModes, ["j", "<Down>", "<C-e>"],
@@ -603,17 +597,7 @@ function Buffer() //{{{
 
     commands.add(["st[op]"],
         "Stop loading",
-<<<<<<< HEAD:common/content/buffer.js
-        function ()
-        {
-            if (config.stop)
-                config.stop();
-            else
-                window.BrowserStop();
-        },
-=======
         function () { window.BrowserStop(); },
->>>>>>> a9f04ee3d00b282e7a91b37eb23168fb39e9de5b:common/content/buffer.js
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],

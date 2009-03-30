@@ -1222,8 +1222,32 @@ function Events() //{{{
                     return;
                 }
 
-                if (config.focusChange())
-                    return void config.focusChange(win);
+                if (config.name == "Muttator")
+                {
+                    // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
+                    if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
+                    {
+                        if (config.isComposeWindow)
+                        {
+                            //liberator.dump("Compose editor got focus");
+                            modes.set(modes.INSERT, modes.TEXTAREA);
+                        }
+                        else if (liberator.mode != modes.MESSAGE)
+                            liberator.mode = modes.MESSAGE;
+                        return;
+                    }
+                }
+
+                if (config.name == "Xulmus")
+                {
+                    // Switch to -- PLAYER -- mode for Songbird Media Player.
+                    if (config.isPlayerWindow)
+                        liberator.mode = modes.PLAYER;
+                    else
+                        liberator.mode =  modes.NORMAL;
+                    return;
+                }
+
 
                 urlbar = document.getElementById("urlbar");
                 if (elem == null && urlbar && urlbar.inputField == lastFocus)

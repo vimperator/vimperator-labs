@@ -2105,23 +2105,21 @@ function StatusLine() //{{{
             }
 
             // when session information is available, add [+] when we can go backwards
-            let modified = "";
-            if (window.getWebNavigation)
+            if (config.name == "Vimperator")
             {
                 let sh = window.getWebNavigation().sessionHistory;
+                let modified = "";
                 if (sh.index > 0)
                     modified += "+";
                 if (sh.index < sh.count -1)
                     modified += "-";
-            }
-            if (liberator.has("bookmarks")) {
                 if (bookmarks.isBookmarked(buffer.URL))
                     modified += "\u2764"; // a heart symbol: ❤
                     //modified += "\u2665"; // a heart symbol: ♥
-            }
 
-            if (modified)
-                url += " [" + modified + "]";
+                if (modified)
+                    url += " [" + modified + "]";
+            }
 
             urlWidget.value = url;
         },

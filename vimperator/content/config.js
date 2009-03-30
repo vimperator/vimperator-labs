@@ -110,8 +110,6 @@ const config = { //{{{
             function () { buffer.viewSelectionSource(); }]
     ],
 
-    hasTabbrowser: true,
-
     // they are sorted by relevance, not alphabetically
     helpFiles: [
         "intro.html", "tutorial.html", "starting.html", "browsing.html",
@@ -121,10 +119,6 @@ const config = { //{{{
         "gui.html", "styling.html", "message.html", "developer.html",
         "various.html", "index.html", "version.html"
     ],
-
-    optionDefaults: {
-        stal: 0,
-    },
 
     scripts: [
         "bookmarks.js",

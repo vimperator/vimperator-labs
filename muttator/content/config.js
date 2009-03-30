@@ -102,17 +102,6 @@ const config = { //{{{
             function () { buffer.viewSelectionSource(); }]*/
     ],
 
-    focusChange: function(win) {
-        // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
-        if (hasHTMLDocument(win) || elem instanceof HTMLAnchorElement)
-        {
-            if (config.isComposeWindow)
-                modes.set(modes.INSERT, modes.TEXTAREA);
-            else if (liberator.mode != modes.MESSAGE)
-                liberator.mode = modes.MESSAGE;
-        }
-    },
-
     // they are sorted by relevance, not alphabetically
     helpFiles: ["intro.html", "version.html"],
      /* "tutorial.html", "starting.html",
@@ -121,10 +110,6 @@ const config = { //{{{
         "repeat.html", "autocommands.html", "print.html", "developer.html",
         "various.html"
         ],*/
-
-    optionDefaults: {
-        stal: 2,
-    },
 
     scripts: [
         "addressbook.js",
