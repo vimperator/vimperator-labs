@@ -6,11 +6,11 @@ ASCIIDOC      = asciidoc
 AWK           = awk
 
 LOCALE   = $(shell basename `pwd`)
-LANG     = $(shell basename `pwd` | $(AWK) -F- '{ print ($$1 ~ /^[a-z][a-z]$$/) ? $$1 : "en" }')
+DOCLANG  = $(shell basename `pwd` | $(AWK) -F- '{ print ($$1 ~ /^[a-z][a-z]$$/) ? $$1 : "en" }')
 
 ADC_SRC_FILES = $(wildcard *.txt)
 ADC_FILES     = $(ADC_SRC_FILES:%.txt=%.html)
-ADC_DEPS      = $(wildcard asciidoc.conf lang-$(LANG).conf)
+ADC_DEPS      = $(wildcard asciidoc.conf lang-$(DOCLANG).conf)
 
 DOC_FILES     = $(ADC_FILES) version.html
 
@@ -52,7 +52,7 @@ check-asciidoc:
 
 $(ADC_FILES): %.html: %.txt $(BASE)/Makefile.doc $(ADC_DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
-	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(LANG) -a doctitle="$(shell basename $@)" -o $@ $<
+	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(DOCLANG) -a doctitle="$(shell basename $@)" -o $@ $<
 
 version.html: ../../NEWS $(BASE)/Makefile.doc $(ADC_DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
