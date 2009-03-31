@@ -233,6 +233,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:setglobal[c]|| Set global option +
 ||[c]:setlocal[c]|| Set local option +
 ||[c]:sidebar[c]|| Open the sidebar window +
+||[c]:silent[c]|| Execute a command silently +
 ||[c]:style[c]|| Style Vimperator and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
 ||[c]:stop[c]|| Stop loading +
