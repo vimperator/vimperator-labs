@@ -42,7 +42,7 @@ const config = { //{{{
     },
 
     //get visualbellWindow() getBrowser().mPanelContainer,
-    get isPlayerWindow() gBrowser.mCurrentTab._tPos == 0,
+    get isPlayerWindow() getBrowser().mCurrentTab == getBrowser().mediaTab,
     // focusContent() focuses this widget gSongbirdWindowController takes care of the focus.
     get mainWindowID() "mainplayer",
     get visualbellWindow() document.getElementById(this.mainWindowID),
