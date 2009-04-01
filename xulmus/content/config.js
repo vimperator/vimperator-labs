@@ -41,8 +41,7 @@ const config = { //{{{
         p: ["Player controls", ["player_wrapper"]]
     },
 
-    //get visualbellWindow() getBrowser().mPanelContainer,
-    get isPlayerWindow() getBrowser().mCurrentTab == getBrowser().mediaTab,
+    get isPlayerWindow() SBGetBrowser().mCurrentTab == SBGetBrowser().mediaTab,
     // focusContent() focuses this widget gSongbirdWindowController takes care of the focus.
     get mainWindowID() "mainplayer",
     get visualbellWindow() document.getElementById(this.mainWindowID),
@@ -173,7 +172,7 @@ const config = { //{{{
     ],
 
     stop: function() {
-        getBrowser().mCurrentBrowser.stop();
+        SBGetBrowser().mCurrentBrowser.stop();
     },
 
     init: function ()
@@ -538,7 +537,7 @@ const config = { //{{{
         }
 
         window.BrowserStop = function () {
-            getBrowser().mCurrentBrowser.stop();
+            SBGetBrowser().mCurrentBrowser.stop();
         }
     }
 }; //}}}
