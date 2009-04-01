@@ -10,9 +10,10 @@ BUGS:
     Is this workable anyway? --djk
   - <C-^> is off by one when alternating with the media tab
   - numbered tabs
+  - default search
 
 FEATURES:
-9 '?' - Reusing '/'. 
+9 '?' - Reusing '/'.
 8 Playlist/SmartPlaylist operations & meta-data operations.
 8 Sort-View commands.
 7 j/k - for browsing through the visible view.

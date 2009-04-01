@@ -106,6 +106,8 @@ const config = { //{{{
         ["import",           "Import Preferences, Bookmarks, History, etc. from other browsers",
             function () { window.BrowserImport(); }],
         */
+        ["newsmartplaylist", "Open the file selector dialog",
+            function () { SBNewSmartPlaylist(); }],
         ["openfile",         "Open the file selector dialog",
             function () { SBFileOpen(); }],
         /*

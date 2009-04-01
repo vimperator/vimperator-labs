@@ -42,6 +42,7 @@ Available dialogs:
 *console*          JavaScript console
 *dominspector*     DOM Inspector
 *downloads*        Manage Downloads
+*newsmartplaylist* Create a new smart playlist
 *openfile*         Open the file selector dialog
 *pagesource*       View page source
 *places*           Places Organizer: Manage your bookmarks and history
