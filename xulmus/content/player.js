@@ -11,47 +11,6 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
-    function getArtistsArray()
-    {
-        var list = LibraryUtils.mainLibrary;
-
-        //  Create an enumeration listener to count each item
-        var listener = {
-                count: 0,
-                onEnumerationBegin: function (aMediaList) {
-                this.count = 0;
-                },
-        onEnumeratedItem: function (aMediaList, aMediaItem) {
-                this.count++;
-                },
-        onEnumerationEnd: function (aMediaList, aStatusCode) {}
-        };
-
-        var artistCounts = {};
-        var artists = list.getDistinctValuesForProperty(SBProperties.artistName);
-        var artist;
-        var artistArray = [];
-        var i = 0;
-        // Count the number of media items for each distinct artist
-        while (artists.hasMore())
-        {
-            artist = artists.getNext();
-            artistArray[i] = [artist, artist];
-            list.enumerateItemsByProperty(SBProperties.artistName,
-                    artist,
-                    listener,
-                    Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
-            artistCounts[artist] = listener.count;
-            i++;
-        }
-
-        //liberator.dump("Count : "+artistCounts.toSource());
-        return artistArray;
-    }
-
-    // Get the artist names before hand.
-    let artists = getArtistsArray();
-
     const pageService = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"].getService(Ci.sbIMediaPageManager);
 
     // Register Callbacks for searching.
@@ -684,61 +643,6 @@ function Player() // {{{
         {
             if (gMM.sequencer.currentItem)
                 gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating);
-        },
-
-        getArtists: function getArtists()
-        {
-            return artists;
-        },
-
-        getAlbums: function getAlbums(artist)
-        {
-            var list = LibraryUtils.mainLibrary;
-            var albumArray = [], returnArray = [];
-            var items = list.getItemsByProperty(SBProperties.artistName, artist).enumerate();
-            var i = 0, j = 0;
-
-            while (items.hasMoreElements())
-            {
-                album = items.getNext().getProperty(SBProperties.albumName);
-                albumArray[i] = [album, album];
-
-                if (i == 0)
-                {
-                    returnArray[j] = albumArray[i];
-                    j++;
-                }
-                else if (albumArray[i-1].toString() != albumArray[i].toString())
-                {
-                    returnArray[i] = albumArray[i];
-                    j++;
-                }
-                i++;
-            }
-
-            return returnArray;
-        },
-
-        getTracks: function getTracks(artist, album)
-        {
-            var list = LibraryUtils.mainLibrary;
-            var tracksArray = [];
-            var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                .createInstance(Ci.sbIMutablePropertyArray);
-            var i = 0;
-
-            pa.appendProperty(SBProperties.artistName, artist.toString());
-            pa.appendProperty(SBProperties.albumName, album.toString());
-            var items = list.getItemsByProperties(pa).enumerate();
-
-            while (items.hasMoreElements())
-            {
-                track = items.getNext().getProperty(SBProperties.trackName);
-                tracksArray[i] = [track, track];
-                i++;
-            }
-
-            return tracksArray;
         }
 
     };

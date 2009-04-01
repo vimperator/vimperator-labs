@@ -1392,20 +1392,24 @@ function Completion() //{{{
 
         song: function song(context, args)
         {
+            // TODO: useful descriptions?
+            function map(list) list.map(function (i) [i, ""]);
+            let [artist, album] = [args[0], args[1]];
+
             if (args.completeArg == 0)
             {
                 context.title = ["Artists"];
-                context.completions = player.getArtists();
+                context.completions = map(library.getArtists());
             }
             else if (args.completeArg == 1)
             {
-                context.title = ["Albums by " + args[0]];
-                context.completions =  player.getAlbums(args[0]);
+                context.title = ["Albums by " + artist];
+                context.completions = map(library.getAlbums(artist));
             }
             else if (args.completeArg == 2)
             {
-                context.title = ["Tracks from " + args[1] + " by " + args[0]];
-                context.completions = player.getTracks(args[0], args[1]);
+                context.title = ["Tracks from " + album + " by " + artist];
+                context.completions = map(library.getTracks(artist, album));
             }
         },
 

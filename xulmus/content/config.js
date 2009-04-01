@@ -169,6 +169,7 @@ const config = { //{{{
         "bookmarks.js",
         "tabs.js",
         "player.js",
+        "library.js"
     ],
 
     stop: function() {
@@ -177,10 +178,8 @@ const config = { //{{{
 
     init: function ()
     {
-        //Adding a mode for Player
+        // Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
-
-       // var artistArray = getArtists();
 
         // TODO: support 'nrformats'? -> probably not worth it --mst
         function incrementURL(count)
@@ -246,8 +245,8 @@ const config = { //{{{
         liberator.loadModule("marks",      Marks);
         liberator.loadModule("quickmarks", QuickMarks);
         liberator.loadModule("hints",      Hints);
-        // Load the Player module
         liberator.loadModule("player",     Player);
+        liberator.loadModule("library",    Library);
 
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
