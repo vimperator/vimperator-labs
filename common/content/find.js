@@ -137,6 +137,7 @@ function Search() //{{{
      *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
      */
     var highlightObj = {
+        spans: [],
         search: function (aWord, matchCase)
         {
             var finder = services.create("find");
@@ -224,10 +225,32 @@ function Search() //{{{
             var parent = before.parentNode;
             aNode.appendChild(docfrag);
             parent.insertBefore(aNode, before);
+            this.spans.push(aNode)
             return aNode;
         },
 
-        getSpans: function (doc) buffer.evaluateXPath("//*[@liberator:highlight='Search']", doc)
+        /**
+         * Clears all search highlighting.
+         */
+        clear: function ()
+        {
+            this.spans.forEach(function (span) 
+            {
+                if (span.parentNode)
+                {
+                    let el = span.firstChild
+                    while (el)
+                    {
+                        span.removeChild(el)
+                        span.parentNode.insertBefore(el, span)
+                        el = span.firstChild;
+                    }
+                    span.parentNode.removeChild(span);
+                }
+            })
+            this.spans = []
+        },
+        getSpans: function (doc) this.spans 
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -499,11 +522,7 @@ function Search() //{{{
          */
         clear: function ()
         {
-            // FIXME: moves the selection
-            highlightObj.highlightDoc(window.content);
-            // need to manually collapse the selection if the document is not
-            // highlighted
-            getBrowser().fastFind.collapseSelection();
+            highlightObj.clear()
         }
     };
     //}}}
