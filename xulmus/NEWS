@@ -1,3 +1,14 @@
+2009-XX-XX:
+    * version 0.2pre
+    * add :silent
+    * add $MY_XULMUSRC
+    * add ' and " local marks
+    * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
+    * add :messclear
+    * add 'maxitems'
+    * :dialog {subscribe|newsmartplaylist}
+    * add :displaypane and :dpclose
+
 2009-03-28:
     * version 0.1
     * first public release
