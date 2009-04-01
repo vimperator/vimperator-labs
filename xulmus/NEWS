@@ -8,6 +8,7 @@
     * add 'maxitems'
     * :dialog {subscribe|newsmartplaylist}
     * add :displaypane and :dpclose
+    * rename :filter to :queue and :Filter to :filter
 
 2009-03-28:
     * version 0.1

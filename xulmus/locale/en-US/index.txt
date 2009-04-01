@@ -14,8 +14,8 @@ section:Player{nbsp}mode[player-index]
 ||[m]t[m]|| Toggle shuffle mode +
 ||[m]r[m]|| Toggle repeat mode +
 ||[m]i[m]|| Select the currently playing track +
-||[m]f[m]|| Filter and play tracks +
-||[m]F[m]|| Filter and show the tracks as a view +
+||[m]f[m]|| Filter and show the tracks as a view +
+||[m]Q[m]|| Queue tracks by artist/album/track +
 ||[m]h[m]|| Seek -10s +
 ||[m]<Left>[m]|| Seek -10s +
 ||[m]l[m]|| Seek +10s +
@@ -176,17 +176,17 @@ section:Command-line{nbsp}editing[ex-edit-index]
 
 section:Ex{nbsp}commands[ex-cmd-index,:index]
 
+||[c]:filter[c]|| Filter and show the tracks as a view +
+||[c]:load[c]|| Load a playlist +
+||[c]:mediaview[c]|| Change the media view +
 ||[c]:playerplay[c]|| Play the current track +
 ||[c]:playerprev[c]|| Play the previous track +
 ||[c]:playernext[c]|| Play the next track +
 ||[c]:playerpause[c]|| Pause/unpause the current track +
 ||[c]:playerstop[c]|| Stop playing the current track +
-||[c]:filter[c]|| Filter and play tracks +
-||[c]:Filter[c]|| Filter and show the tracks as a view +
+||[c]:queue[c]|| Queue tracks by artist/album/track +
 ||[c]:seek[c]|| Seek to an absolute or relative position in a track +
 ||[c]:volume[c]|| Set the player volume +
-||[c]:load[c]|| Load a playlist +
-||[c]:mediaview[c]|| Change the media view +
 
 ||[c]:![c]|| Run a command +
 ||[c]:abbreviate[c]|| Abbreviate a key sequence +

@@ -66,18 +66,20 @@ ________________________________________________________________________________
 Select the currently playing track.
 ________________________________________________________________________________
 
-section:Filtering{nbsp}the{nbsp}library[filter,filtering]
+section:Queueing{nbsp}tracks[queue,queueing]
 
 |p_f| |:f| |:filter|
 ||:f[ilter] {artist} [a][album][a] [a][track][a]|| +
 ||f||
 ________________________________________________________________________________
-Filter and play tracks. If only {artist} is specified then all tracks for that
-artist are played in album order. If [a][album][a] is also specified then all
-tracks for that album are played. A specific track can be specified with
-[a][track][a].
+Queue tracks by artist/album/track. If only {artist} is specified then all
+tracks for that artist are played in album order. If [a][album][a] is also
+specified then all tracks for that album are played. A specific track can be
+specified with [a][track][a].
 ________________________________________________________________________________
 
+
+section:Filtering{nbsp}the{nbsp}library[filter,filtering]
 
 |p_F| |:F| |:Filter|
 ||:F[ilter] {keywords}|| +

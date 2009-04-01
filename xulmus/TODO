@@ -16,9 +16,11 @@ FEATURES:
 9 '?' - Reusing '/'.
 8 Playlist/SmartPlaylist operations & meta-data operations.
 8 Sort-View commands.
+7 Queue view.
 7 j/k - for browsing through the visible view.
 7 extended hint mode for opening links in FF.
 6 :tqueue, :lqueue etc.
 5 make Player mode commands work in the Mini-Player.
 5 Check for default extensions and add commands for them. Ex. Last.fm, Seeqpod e.t.c
     Wouldn't these be provided as Xulmus plugins like Vimperator does? --djk
+5 tagging tracks for manipulation by commands

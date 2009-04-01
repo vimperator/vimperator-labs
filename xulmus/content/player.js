@@ -100,12 +100,12 @@ function Player() // {{{
         function () { player.stop(); });
 
     mappings.add([modes.PLAYER],
-        ["f"], "Filter library",
-        function () { commandline.open(":", "filter ", modes.EX); });
+        ["Q"], "Queue tracks by artist/album/track",
+        function () { commandline.open(":", "queue ", modes.EX); });
 
     mappings.add([modes.PLAYER],
-        ["F"], "Loads current view filtered by the keywords",
-        function () { commandline.open(":", "Filter ", modes.EX); });
+        ["f"], "Loads current view filtered by the keywords",
+        function () { commandline.open(":", "filter ", modes.EX); });
 
     mappings.add([modes.PLAYER],
         ["i"], "Select current track",
@@ -172,9 +172,9 @@ function Player() // {{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: rename :Filter to :filter and move this functionality into :tqueue etc? --djk
-    commands.add(["f[ilter]"],
-        "Filter and play tracks",
+    // FIXM: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
+    commands.add(["qu[eue]"],
+        "Queue tracks by artist/album/track",
         function (args)
         {
             // Store the old view
@@ -207,7 +207,7 @@ function Player() // {{{
             completer: function (context, args) completion.song(context, args)
         });
 
-    commands.add(["F[ilter]"],
+    commands.add(["f[ilter]"],
             "Filter tracks based on keywords {genre/artist/album/track}",
             function (args)
             {
