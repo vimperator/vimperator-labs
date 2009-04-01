@@ -116,7 +116,7 @@ function Tabs() //{{{
 
     options.add(["showtabline", "stal"],
         "Control when to show the tab bar of opened web pages",
-        "number", config.optionDefaults['stal'],
+        "number", config.optionDefaults["showtabline"],
         {
             setter: function (value)
             {

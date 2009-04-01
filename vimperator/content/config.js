@@ -123,7 +123,7 @@ const config = { //{{{
     ],
 
     optionDefaults: {
-        stal: 0,
+        showtabline: 2,
     },
 
     scripts: [

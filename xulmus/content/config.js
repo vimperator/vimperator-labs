@@ -160,7 +160,7 @@ const config = { //{{{
     ],
 
     optionDefaults: {
-        stal: 0,
+        showtabline: 2,
     },
 
     scripts: [
@@ -485,9 +485,6 @@ const config = { //{{{
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
-
-        let stal = options.get("showtabline");
-        stal.value = stal.defaultValue = 2;
 
         options.add(["online"],
             "Set the 'work offline' option",
