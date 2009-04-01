@@ -11,12 +11,12 @@ function Player() // {{{
     // Get the focus to the visible playlist first
     //window._SBShowMainLibrary();
 
-    const pageService = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"].getService(Ci.sbIMediaPageManager);
+    services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
 
     // Register Callbacks for searching.
     liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
     liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
-    //liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function (command) { player.searchView(command);});
+    liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function () { player.onSearchCancel(); });
 
     // interval (milliseconds)
     function seek(interval, direction)
@@ -172,41 +172,6 @@ function Player() // {{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXM: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
-    commands.add(["qu[eue]"],
-        "Queue tracks by artist/album/track",
-        function (args)
-        {
-            // Store the old view
-            // let prev_view = gMM.status.view;
-            let library = LibraryUtils.mainLibrary;
-            let mainView = library.createView();
-            let sqncr = gMM.sequencer;
-            let customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                                  .createInstance(Ci.sbIMutablePropertyArray);
-
-            // args
-            switch (args.length)
-            {
-                case 3:
-                    customProps.appendProperty(SBProperties.trackName, args[2].toString());
-                case 2:
-                    customProps.appendProperty(SBProperties.albumName, args[1].toString());
-                case 1:
-                    customProps.appendProperty(SBProperties.artistName, args[0].toString());
-                    break;
-                default:
-                    break;
-            }
-
-            sqncr.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0, Ci.sbIMediaItem)));
-            player.focusPlayingTrack();
-        },
-        {
-            argCount: "+",
-            completer: function (context, args) completion.song(context, args)
-        });
-
     commands.add(["f[ilter]"],
             "Filter tracks based on keywords {genre/artist/album/track}",
             function (args)
@@ -358,6 +323,40 @@ function Player() // {{{
             literal: 0
         });
 
+    // FIXME: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
+    commands.add(["qu[eue]"],
+        "Queue tracks by artist/album/track",
+        function (args)
+        {
+            // Store the old view
+            // let prev_view = gMM.status.view;
+            let library = LibraryUtils.mainLibrary;
+            let mainView = library.createView();
+            let customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                                  .createInstance(Ci.sbIMutablePropertyArray);
+
+            // args
+            switch (args.length)
+            {
+                case 3:
+                    customProps.appendProperty(SBProperties.trackName, args[2]);
+                case 2:
+                    customProps.appendProperty(SBProperties.albumName, args[1]);
+                case 1:
+                    customProps.appendProperty(SBProperties.artistName, args[0]);
+                    break;
+                default:
+                    break;
+            }
+
+            gMM.sequencer.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0, Ci.sbIMediaItem)));
+            player.focusPlayingTrack();
+        },
+        {
+            argCount: "+",
+            completer: function (context, args) completion.song(context, args)
+        });
+
     // TODO: maybe :vol! could toggle mute on/off? --djk
     commands.add(["vol[ume]"],
         "Set the volume",
@@ -387,6 +386,9 @@ function Player() // {{{
     return {
 
         // TODO: check bounds and round, 0 - 1 or 0 - 100?
+        /**
+         * @property {string} The player volume as a percentage.
+         */
         get volume() gMM.volumeControl.volume,
         set volume(value)
         {
@@ -461,16 +463,35 @@ function Player() // {{{
             }
         },
 
+        /**
+         *  Seek forward <b>interval</b> milliseconds in the currently playing
+         *  track.
+         *
+         *  @param {number} interval The time interval (ms) to advance the
+         *      current track.
+         */
         seekForward: function seekForward(interval)
         {
             seek(interval, true);
         },
 
+        /**
+         *  Seek backwards <b>interval</b> milliseconds in the currently
+         *  playing track.
+         *
+         *  @param {number} interval The time interval (ms) to rewind the
+         *      current track.
+         */
         seekBackward: function seekBackward(interval)
         {
             seek(interval, false);
         },
 
+        /**
+         * Seek to a specific position in the currently playing track.
+         *
+         * @param {number} The new position (ms) in the track.
+         */
         seekTo: function seekTo(position)
         {
             // FIXME: if not playing
@@ -586,15 +607,33 @@ function Player() // {{{
 
         },
 
+        /**
+         * The search dialog keypress callback.
+         *
+         * @param {string} str The contents of the search dialog.
+         */
         onSearchKeyPress: function (str)
         {
             if (options["incsearch"])
                 this.searchView(str);
         },
 
+        /**
+         * The search dialog submit callback.
+         *
+         * @param {string} str The contents of the search dialog.
+         */
         onSearchSubmit: function (str)
         {
             this.searchView(str);
+        },
+
+        /**
+         * The search dialog cancel callback.
+         */
+        onSearchCancel: function ()
+        {
+            // TODO: restore the view state if altered by an 'incsearch' search
         },
 
         getPlaylists: function getPlaylists()
@@ -629,13 +668,13 @@ function Player() // {{{
         getMediaPages: function getMediaPages()
         {
             let list = gBrowser.currentMediaPage.mediaListView.mediaList;
-            let pages = pageService.getAvailablePages(list);
+            let pages = services.get("mediaPageManager").getAvailablePages(list);
             return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Ci.sbIMediaPageInfo));
         },
 
         loadMediaPage: function loadMediaList(page, list, view)
         {
-            pageService.setPage(list, page);
+            services.get("mediaPageManager").setPage(list, page);
             gBrowser.loadMediaList(list, null, null, view, null);
         },
 
