@@ -52,8 +52,7 @@ function Player() // {{{
     // Get the artist names before hand.
     let artists = getArtistsArray();
 
-    const pageService = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaPageManager);
+    const pageService = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"].getService(Ci.sbIMediaPageManager);
 
     // Register Callbacks for searching.
     liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
@@ -653,7 +652,7 @@ function Player() // {{{
                     {
                         playlists.push(item);
                     }
-                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                    return Ci.sbIMediaListEnumerationListener.CONTINUE;
                 }
             };
 
@@ -672,7 +671,7 @@ function Player() // {{{
         {
             let list = gBrowser.currentMediaPage.mediaListView.mediaList;
             let pages = pageService.getAvailablePages(list);
-            return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Components.interfaces.sbIMediaPageInfo));
+            return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Ci.sbIMediaPageInfo));
         },
 
         loadMediaPage: function loadMediaList(page, list, view)
