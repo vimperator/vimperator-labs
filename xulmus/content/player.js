@@ -76,6 +76,33 @@ function Player() // {{{
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    options.add(["repeat"],
+        "Set the playback repeat mode",
+        "number", 0,
+        {
+            setter: function (value) gMM.sequencer.repeatMode = value,
+            getter: function () gMM.sequencer.repeatMode,
+            completer: function (context) [
+                ["0", "Repeat none"],
+                ["1", "Repeat one"],
+                ["2", "Repeat all"]
+            ],
+            validator: Option.validateCompleter
+        });
+
+    options.add(["shuffle"],
+        "Play tracks in shuffled order",
+        "boolean", false,
+        {
+            setter: function (value) value ? gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE :
+                                             gMM.sequencer.mode = gMM.sequencer.MODE_FORWARD,
+            getter: function () gMM.sequencer.mode == gMM.sequencer.MODE_SHUFFLE
+        });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

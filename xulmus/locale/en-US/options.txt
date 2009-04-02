@@ -595,6 +595,20 @@ link elements are those defined by 'hinttags'.
 ____
 
 
+|\'repeat'|
+||'repeat'|| number (default: 0)
+____
+Set the playback repeat mode.
+
+.---`-----------
+*0*  Repeat none
+*1*  Repeat one
+*2*  Repeat all
+----------------
+
+____
+
+
 |$XULMUS_RUNTIME|
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
@@ -677,6 +691,12 @@ Control when to show the tab bar of opened web pages. Possible values:
 
 ____
 
+
+|\'shuffle'|
+||'shuffle'|| boolean (default: false)
+____
+Play tracks in shuffled order.
+____
 
 |\'noscs'| |\'nosmartcase'| |\'scs'| |\'smartcase'|
 ||'smartcase' 'scs'|| boolean (default: on)
