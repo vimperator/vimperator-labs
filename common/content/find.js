@@ -457,9 +457,9 @@ function Search() //{{{
             if (typeof forcedBackward === "boolean")
                 backwards = forcedBackward;
 
-            // use the last pattern if none specified
+            //Allow /<CR> to work.
             if (!command)
-                command = lastSearchPattern;
+                return this.findAgain(backwards != lastSearchBackwards)
 
             this.clear();
 
