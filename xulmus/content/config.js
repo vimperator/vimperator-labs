@@ -180,10 +180,7 @@ const config = { //{{{
     init: function ()
     {
         // Adding a mode for Player
-        //modes.addMode("PLAYER");
-
-        // enable the service pane hide/show button in the media tab
-        document.getElementById("servicepane-status-bar-box").childNodes[0].disabled = false
+        //modes.addMode("PLAYER"); // Player mode for songbird
 
         // TODO: support 'nrformats'? -> probably not worth it --mst
         function incrementURL(count)
