@@ -1102,8 +1102,9 @@ lookup:
 
 IO.PATH_SEP = (function () {
     let file = services.create("file");
-    file.append("foo");
-    return file.path[0];
+    let pathsep = "/";
+    try { file.initWithPath("/") } catch(e) { pathsep = "\\"; }
+    return pathsep;
 })();
 
 /**
