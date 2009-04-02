@@ -78,8 +78,8 @@ ________________________________________________________________________________
 |:dpope| |:dpopen| |:dp| |:dpane| |:dislplayp| |:dislplaypane|
 ||:displaypane {pane}|| +
 ________________________________________________________________________________
-Open the specified display pane. {pane} is any of "content pane bottom",
-"service pane bottom" or "right sidebar".
+Open the specified display pane. {pane} is any of "service pane left", "service
+pane bottom", "content pane bottom" or "right sidebar".
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

@@ -204,21 +204,42 @@ const config = { //{{{
             liberator.open(pre + newNumberStr + post);
         }
 
+        function showServicePane(value)
+        {
+            const key = "splitter.servicepane_splitter.was_collapsed";
+            gServicePane.open = value;
+            SBDataSetBoolValue(key, gServicePane.open);
+        }
+
         function openDisplayPane(id)
         {
-            let pane = document.getElementById(id);
-            let manager = Components.classes['@songbirdnest.com/Songbird/DisplayPane/Manager;1']
-                                    .getService(Components.interfaces.sbIDisplayPaneManager);
-            let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
+            if (id == "servicepane")
+                showServicePane(true);
+            else
+            {
+                let pane = document.getElementById(id);
+                let manager = Components.classes['@songbirdnest.com/Songbird/DisplayPane/Manager;1']
+                                        .getService(Components.interfaces.sbIDisplayPaneManager);
+                let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
 
-            if (!paneinfo)
-                paneinfo = manager.defaultPaneInfo;
+                if (!paneinfo)
+                    paneinfo = manager.defaultPaneInfo;
 
-            pane.loadContent(paneinfo);
+                pane.loadContent(paneinfo);
+            }
+        }
+
+        function closeDisplayPane(id)
+        {
+            if (id == "servicepane")
+                showServicePane(false);
+            else
+                document.getElementById(id).hide();
         }
 
         // FIXME: best way to format these args? Hyphenated? One word like :dialog?
         let displayPanes = {
+            "service pane left": "servicepane",
             "content pane bottom": "displaypane_contentpane_bottom",
             "service pane bottom": "displaypane_servicepane_bottom",
             "right sidebar": "displaypane_right_sidebar"
@@ -454,7 +475,7 @@ const config = { //{{{
                 let arg = args.literalArg;
 
                 if (arg in displayPanes)
-                    document.getElementById(displayPanes[arg]).hide();
+                    closeDisplayPane(displayPanes[arg]);
                 else
                     liberator.echoerr("E475: Invalid argument: " + arg);
 
