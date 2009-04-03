@@ -19,7 +19,7 @@
     <binding id="tab" display="xul:hbox"
              extends="chrome://global/content/bindings/tabbox.xml#tab">
         <content chromedir="ltr" closetabtext="Close Tab">
-            <xul:stack class="liberator-tab-stack">
+            <xul:stack class="tab-icon liberator-tab-stack">
                 <xul:image xbl:inherits="validate,src=image" class="tab-icon-image" liberator:highlight="TabIcon"/>
                 <xul:vbox>
                     <xul:spring flex="1"/>
