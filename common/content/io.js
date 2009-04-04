@@ -1101,10 +1101,9 @@ lookup:
 }; //}}}
 
 IO.PATH_SEP = (function () {
-    let file = services.create("file");
-    let pathsep = "/";
-    try { file.initWithPath("/"); } catch(e) { pathsep = "\\"; }
-    return pathsep;
+    let f = services.get("directory").get("CurProcD", Ci.nsIFile);
+    f.append("foo");
+    return f.path.substr(f.parent.path.length, 1);
 })();
 
 /**
