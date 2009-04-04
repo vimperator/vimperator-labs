@@ -83,7 +83,11 @@ function Hints() //{{{
         Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
     };
 
-    // Used to open multiple hints
+    /**
+     * Used to open multiple hints
+     *
+     * @param {node} elem  the previously selected hint
+     */
     function hintAction_F(elem)
     {
         buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
@@ -94,7 +98,9 @@ function Hints() //{{{
         hints.show("F");
     }
 
-    // reset all important variables
+    /**
+     * Reset hints, so that they can be cleanly used again.
+     */
     function reset()
     {
         statusline.updateInputBuffer("");
@@ -113,11 +119,164 @@ function Hints() //{{{
         activeTimeout = null;
     }
 
+    /**
+     * Display the current status to the user.
+     */
     function updateStatusline()
     {
         statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (hintNumber || ""));
     }
 
+    /**
+     * Get a hint for "input", "textarea" and "select".
+     *
+     * Tries to use <label>s if possible but does not try to guess that a
+     * neighbouring element might look like a label. Only called by generate()
+     *
+     * If it finds a hint it returns it, if the hint is not the caption of the
+     * element it will return showtext=true.
+     *
+     * @param {object} elem  The element.
+     * @param {string} tagname  Its tagname.
+     * @param {doc}  The document it is in.
+     *
+     * @return [text, showtext]
+     */
+    function getInputHint(elem, tagname, doc)
+    {
+        // <input type="submit|button|reset">   Always use the value
+        // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
+        // <input type="password">              Never use the value, use label or name
+        // <input type="text|file"> <textarea>  Use value if set or label or name
+        // <input type="image">                 Use the alt text if present (showtext) or label or name
+        // <input type="hidden">                Never gets here
+        // <select>                             Use the text of the selected item or label or name
+        text = "";
+        let type = elem.type ? elem.type.toLowerCase() : ""; 
+
+        if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
+            return [elem.value, true] 
+        else
+        {
+            for each (let option in options["hintinputs"].split(","))
+            {
+                if (option == "value")
+                {
+                    if (tagname == "select")
+                    {
+                        if (elem.selectedIndex >= 0)
+                            return [elem.item(elem.selectedIndex).text.toLowerCase(), false]
+                    }
+                    else if (type == "image")
+                    {
+                        if (elem.alt)
+                            return [elem.alt.toLowerCase(), true]
+                    }
+                    else if (elem.value && type != "password")
+                    {
+                        // radio's and checkboxes often use internal ids as values - maybe make this an option too...
+                        if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
+                            return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")]
+                    }
+                }
+                else if (option == "label")
+                {
+                    if (elem.id)
+                    {
+                        //TODO: (possibly) do some guess work for label-like objects
+                        let label = buffer.evaluateXPath("//label[@for='"+elem.id+"']", doc).snapshotItem(0);
+                        if (label)
+                            return [label.textContent.toLowerCase(),true]
+                    }
+                }
+                else if (option == "name")
+                    return [elem.name.toLowerCase(), true]
+            }
+        }
+        return ["", false]
+    }
+
+    /**
+     * Gets the actual offset of an imagemap area.
+     *
+     * Only called by generate()
+     *
+     * @param {object} elem  The <area> element.
+     * @param {Number} leftpos  The left offset of the image.
+     * @param {Number} toppos  The top offset of the image.
+     *
+     * @return [leftpos, toppos]  The updated offsets.
+     */
+    function getAreaOffset(elem, leftpos, toppos)
+    {
+        try
+        {
+            // Need to add the offset to the area element.
+            // Always try to find the top-left point, as per vimperator default.
+            let shape = elem.getAttribute("shape").toLowerCase();
+            let coordstr = elem.getAttribute("coords");
+            // Technically it should be only commas, but hey
+            coordstr = coordstr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
+            let coords = coordstr.split(",").map(Number);
+
+            if ((shape == "rect" || shape == "rectangle") && coords.length == 4)
+            {
+                leftpos += coords[0];
+                toppos += coords[1];
+            }
+            else if (shape == "circle" && coords.length == 3)
+            {
+                leftpos += coords[0] - coords[2] / Math.sqrt(2);
+                toppos += coords[1] - coords[2] / Math.sqrt(2);
+            }
+            else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0)
+            {
+                let leftbound = Infinity;
+                let topbound = Infinity;
+
+                // First find the top-left corner of the bounding rectangle (offset from image topleft can be noticably suboptimal)
+                for (let i = 0; i < coords.length; i += 2)
+                {
+                    leftbound = Math.min(coords[i], leftbound);
+                    topbound = Math.min(coords[i+1], topbound);
+                }
+
+                let curtop = null;
+                let curleft = null;
+                let curdist = Infinity;
+
+                // Then find the closest vertex. (we could generalise to nearest point on an edge, but I doubt there is a need)
+                for (let i = 0; i < coords.length; i += 2)
+                {
+                    let leftoffset = coords[i] - leftbound;
+                    let topoffset = coords[i+1] - topbound;
+                    let dist = Math.sqrt(leftoffset * leftoffset + topoffset * topoffset);
+                    if (dist < curdist)
+                    {
+                        curdist = dist;
+                        curleft = coords[i];
+                        curtop = coords[i+1];
+                    }
+                }
+
+                // If we found a satisfactory offset, let's use it.
+                if (curdist < Infinity)
+                {
+                    return [leftpos + curleft, toppos + curtop]
+                }
+            }
+        }
+        catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
+        return [leftpos, toppos]
+    }
+
+    /**
+     * Generate the hints in a window.
+     *
+     * Pushes the hints into the pageHints object, but does not display them.
+     *
+     * @param {object} win  The window,defaults to window.content
+     */
     function generate(win)
     {
         if (!win)
@@ -155,75 +314,7 @@ function Hints() //{{{
 
             tagname = elem.localName.toLowerCase();
             if (tagname == "input" || tagname == "select" || tagname == "textarea")
-            {
-                //TODO: Split this out somewhere...
-                // <input type="submit|button|reset">   Always use the value
-                // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
-                // <input type="password">              Never use the value, use label or name
-                // <input type="text|file"> <textarea>  Use value if set or label or name
-                // <input type="image">                 Use the alt text if present (showtext) or label or name
-                // <input type="hidden">                Never gets here
-                // <select>                             Use the text of the selected item or label or name
-                text = "";
-                let type = elem.type ? elem.type.toLowerCase() : ""; 
-
-                if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
-                {
-                    text = elem.value
-                }
-                else
-                {
-                    for each (let option in options["hintinputs"].split(","))
-                    {
-                        if (option == "value")
-                        {
-                            if (tagname == "select")
-                            {
-                                if (elem.selectedIndex >= 0)
-                                    text = elem.item(elem.selectedIndex).text;
-                            }
-                            else if (type == "image")
-                            {
-                                if (elem.alt)
-                                {
-                                    text = elem.alt;
-                                    showtext = true;
-                                }
-                            }
-                            else if (elem.value && type != "password")
-                            {
-                                // radio's and checkboxes often use internal ids as values - maybe make this an option too...
-                                if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
-                                {
-                                    text = elem.value
-                                    showtext = true;
-                                }
-                            }
-                        }
-                        else if (option == "label")
-                        {
-                            if (elem.id)
-                            {
-                                //TODO: (possibly) do some guess work for label-like objects
-                                let label = buffer.evaluateXPath("//label[@for='"+elem.id+"']", doc).snapshotItem(0);
-                                if (label)
-                                {
-                                    text = label.textContent.toLowerCase();
-                                    showtext = true;
-                                }
-                            }
-                        }
-                        else if (option == "name")
-                        {
-                            text = elem.name;
-                            showtext = true;
-                        }
-
-                        if(text)
-                            break;
-                    }
-                }
-            }
+                [text, showtext] = getInputHint(elem, tagname, doc);
             else
                 text = elem.textContent.toLowerCase();
 
@@ -234,66 +325,7 @@ function Hints() //{{{
 
             if (tagname == "area")
             {
-                // TODO: Maybe put the following into a seperate function
-                try
-                {
-                    // Need to add the offset to the area element.
-                    // Always try to find the top-left point, as per vimperator default.
-                    let shape = elem.getAttribute("shape").toLowerCase();
-                    let coordstr = elem.getAttribute("coords");
-                    // Technically it should be only commas, but hey
-                    coordstr = coordstr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
-                    let coords = coordstr.split(",").map(Number);
-
-                    if ((shape == "rect" || shape == "rectangle") && coords.length == 4)
-                    {
-                        leftpos += coords[0];
-                        toppos += coords[1];
-                    }
-                    else if (shape == "circle" && coords.length == 3)
-                    {
-                        leftpos += coords[0] - coords[2] / Math.sqrt(2);
-                        toppos += coords[1] - coords[2] / Math.sqrt(2);
-                    }
-                    else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0)
-                    {
-                        let leftbound = Infinity;
-                        let topbound = Infinity;
-
-                        // First find the top-left corner of the bounding rectangle (offset from image topleft can be noticably suboptimal)
-                        for (let i = 0; i < coords.length; i += 2)
-                        {
-                            leftbound = Math.min(coords[i], leftbound);
-                            topbound = Math.min(coords[i+1], topbound);
-                        }
-
-                        let curtop = null;
-                        let curleft = null;
-                        let curdist = Infinity;
-
-                        // Then find the closest vertex. (we could generalise to nearest point on an edge, but I doubt there is a need)
-                        for (let i = 0; i < coords.length; i += 2)
-                        {
-                            let leftoffset = coords[i] - leftbound;
-                            let topoffset = coords[i+1] - topbound;
-                            let dist = Math.sqrt(leftoffset * leftoffset + topoffset * topoffset);
-                            if (dist < curdist)
-                            {
-                                curdist = dist;
-                                curleft = coords[i];
-                                curtop = coords[i+1];
-                            }
-                        }
-
-                        // If we found a satisfactory offset, let's use it.
-                        if (curdist < Infinity)
-                        {
-                            leftpos += curleft;
-                            toppos += curtop;
-                        }
-                    }
-                }
-                catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
+                [leftpos, toppos] = getAreaOffset(elem, leftpos, toppos);
             }
 
             span.style.left = leftpos + "px";
@@ -315,7 +347,14 @@ function Hints() //{{{
         return true;
     }
 
-    // TODO: make it aware of imgspans
+    /**
+     * Update the activeHint.
+     *
+     * By default highlights it green instead of yellow.
+     *
+     * @param {Number} newID  The hint to make active
+     * @param {Number} oldID  The currently active hint
+     */
     function showActiveHint(newID, oldID)
     {
         let oldElem = validHints[oldID - 1];
@@ -327,6 +366,12 @@ function Hints() //{{{
             setClass(newElem, true);
     }
 
+    /**
+     * Toggle the highlight of a hint.
+     *
+     * @param {object} elem  The element to toggle.
+     * @param {boolean} active  Whether it is the currently active hint or not.
+     */
     function setClass(elem, active)
     {
         let prefix = (elem.getAttributeNS(NS.uri, "class") || "") + " ";
@@ -336,6 +381,9 @@ function Hints() //{{{
             elem.setAttributeNS(NS.uri, "highlight", prefix + "HintElem");
     }
 
+    /**
+     * Display the hints in pageHints that are still valid.
+     */
     function showHints()
     {
 
@@ -419,6 +467,14 @@ function Hints() //{{{
         return true;
     }
 
+    /**
+     * Remove all hints from the document, and reset the completions.
+     *
+     * Lingers on the active hint briefly to confirm the selection to the user.
+     *
+     * @param {Number} timeout  The number of milliseconds before the active
+     *                          hint disappears.
+     */
     function removeHints(timeout)
     {
         let firstElem = validHints[0] || null;
@@ -443,6 +499,16 @@ function Hints() //{{{
         reset();
     }
 
+    /**
+     * Finish hinting.
+     *
+     * Called when there are one or zero hints in order to possibly activate it
+     * and, if activated, to clean up the rest of the hinting system.
+     *
+     * @param {boolean} followFirst  Whether to force the following of the
+     *        first link (when 'followhints' is 1 or 2)
+     *
+     */
     function processHints(followFirst)
     {
         if (validHints.length == 0)
@@ -492,6 +558,14 @@ function Hints() //{{{
         return true;
     }
 
+    /**
+     * Handle user input.
+     *
+     * Will update the filter on displayed hints and follow the final hint if
+     * necessary.
+     *
+     * @param {Event} event  The keypress event.
+     */
     function onInput (event)
     {
         prevInput = "text";
@@ -511,9 +585,38 @@ function Hints() //{{{
             processHints(false);
     }
 
+    /**
+     * Get the hintMatcher according to user preference.
+     *
+     * @param {string} hintString  The currently typed hint.
+     *
+     * @return {hintMatcher}
+     */
     function hintMatcher(hintString) //{{{
     {
+        /**
+         * Divide a string by a regular expression.
+         *
+         * @param {RegExp|String} pat  The pattern to split on
+         * @param {String} string  The string to split
+         *
+         * @return {Array(string)}  The lowercased splits of the stting.
+         */
         function tokenize(pat, string) string.split(pat).map(String.toLowerCase);
+
+        /**
+         * Get a hint matcher for hintmatching=contains
+         *
+         * The hintMatcher expects the user input to be space delimited and it
+         * returns true if each set of characters typed can be found, in any
+         * order, in the link.
+         *
+         * @param {String} hintString  The string typed by the user.
+         *
+         * @return {function(String):bool} A function that takes the text of a
+         *          hint and returns true if all the (space-delimited) sets of
+         *          characters typed by the user can be found in it.
+         */
         function containsMatcher(hintString) //{{{
         {
             let tokens = tokenize(/\s+/, hintString);
@@ -524,14 +627,40 @@ function Hints() //{{{
             };
         } //}}}
 
+        /**
+         * Get a hintMatcher for hintmatching=firstletters|wordstartswith
+         *
+         * The hintMatcher will look for any division of the user input that
+         * would match the first letters of words. It will always only match
+         * words in order.
+         *
+         * @param {String} hintString  The string typed by the user.
+         * @param {boolean} allowWordOverleaping  Whether to allow non-contiguous
+         *         words to match.
+         *
+         * @return {function(String):bool} A function that will filter only
+         *         hints that match as above.
+         */
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
         {
             let hintStrings    = tokenize(/\s+/, hintString);
             let wordSplitRegex = RegExp(options["wordseparators"]);
-
-            // What the **** does this do? --Kris
-            //
-            // This function matches hintStrings like 'hekho' to links like 'Hey Kris, how are you?' -> [HE]y [K]ris [HO]w are you   --Daniel
+            
+            /**
+             * Match a set of characters to the start of words.
+             *
+             * What the **** does this do? --Kris
+             * This function matches hintStrings like 'hekho' to links 
+             * like 'Hey Kris, how are you?' -> [HE]y [K]ris [HO]w are you
+             * --Daniel
+             *
+             * @param {String} chars  The characters to match
+             * @param {Array(String)} words  The words to match them against
+             * @param {boolean} allowWordOverleaping  Whether words may be
+             *        skipped during matching.
+             *
+             *  @return {boolean}  Whether a match can be found.
+             */
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
                 function charMatches(charIdx, chars, wordIdx, words, inWordIdx, allowWordOverleaping)
@@ -577,6 +706,21 @@ function Hints() //{{{
                 return charMatches(0, chars, 0, words, 0, allowWordOverleaping);
             }
 
+            /**
+             * Check whether the array of strings all exist at the start of the words.
+             *
+             * i.e.  ['ro', 'e'] would match ['rollover', 'effect']
+             *
+             * The matches must be in order, and, if allowWordOverleaping is false,
+             * contiguous.
+             *
+             * @param {Array(String)} strings  The strings to search for.
+             * @param {Array(String)} words  The words to search in.
+             * @param {boolean} allowWordOverleaping  Whether matches may be 
+             *        non-contiguous.
+             *
+             * @return boolean  Whether all the strings matched.
+             */
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
                 let strIdx = 0;
@@ -738,11 +882,28 @@ function Hints() //{{{
 
     return {
 
+        /**
+         * Create a new hint mode
+         *
+         * @param {String} mode  The letter that identifies this mode.
+         * @param {String} description  The description to display to the user about this mode.
+         * @param {function(Node)} callback  The function to be called with the element that matches.
+         * @param {function():String} selector  The function that returns an XPath selector to decide
+         *                                      which elements can be hinted (the default returns
+         *                                      options.hinttags)
+         */
         addMode: function (mode)
         {
             hintModes[mode] = Mode.apply(Mode, Array.slice(arguments, 1));
         },
 
+        /**
+         * Update the display of hints.
+         *
+         * @param {String} minor  Which hint mode to use.
+         * @param {String} filter  The filter to use.
+         * @param {Object} win  The window in which we are showing hints
+         */
         show: function (minor, filter, win)
         {
             hintMode = hintModes[minor];
@@ -784,11 +945,19 @@ function Hints() //{{{
                 return true;
         },
 
+        /**
+         * Cancel all hinting.
+         */
         hide: function ()
         {
             removeHints(0);
         },
 
+        /**
+         * Handle an event
+         *
+         * @param {Event} event  The event to handle.
+         */
         onEvent: function (event)
         {
             let key = events.toString(event);
