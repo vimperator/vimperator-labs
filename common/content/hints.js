@@ -155,7 +155,7 @@ function Hints() //{{{
         let type = elem.type ? elem.type.toLowerCase() : ""; 
 
         if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
-            return [elem.value, true] 
+            return [elem.value, false] 
         else
         {
             for each (let option in options["hintinputs"].split(","))
