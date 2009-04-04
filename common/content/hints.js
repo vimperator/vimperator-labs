@@ -131,13 +131,15 @@ function Hints() //{{{
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
-        let elem, tagname, text, span, rect;
+        let elem, tagname, text, span, rect, showtext;
         let res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         let start = pageHints.length;
         for (let elem in res)
         {
+            showtext = false;
+
             // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
             if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
@@ -152,14 +154,75 @@ function Hints() //{{{
                 continue;
 
             tagname = elem.localName.toLowerCase();
-            if (tagname == "input" || tagname == "textarea")
-                text = elem.value;
-            else if (tagname == "select")
+            if (tagname == "input" || tagname == "select" || tagname == "textarea")
             {
-                if (elem.selectedIndex >= 0)
-                    text = elem.item(elem.selectedIndex).text;
+                //TODO: Split this out somewhere...
+                // <input type="submit|button|reset">   Always use the value
+                // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
+                // <input type="password">              Never use the value, use label or name
+                // <input type="text|file"> <textarea>  Use value if set or label or name
+                // <input type="image">                 Use the alt text if present (showtext) or label or name
+                // <input type="hidden">                Never gets here
+                // <select>                             Use the text of the selected item or label or name
+                text = "";
+                let type = elem.type ? elem.type.toLowerCase() : ""; 
+
+                if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
+                {
+                    text = elem.value
+                }
                 else
-                    text = "";
+                {
+                    for each (let option in options["hintinputs"].split(","))
+                    {
+                        if (option == "value")
+                        {
+                            if (tagname == "select")
+                            {
+                                if (elem.selectedIndex >= 0)
+                                    text = elem.item(elem.selectedIndex).text;
+                            }
+                            else if (type == "image")
+                            {
+                                if (elem.alt)
+                                {
+                                    text = elem.alt;
+                                    showtext = true;
+                                }
+                            }
+                            else if (elem.value && type != "password")
+                            {
+                                // radio's and checkboxes often use internal ids as values - maybe make this an option too...
+                                if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
+                                {
+                                    text = elem.value
+                                    showtext = true;
+                                }
+                            }
+                        }
+                        else if (option == "label")
+                        {
+                            if (elem.id)
+                            {
+                                //TODO: (possibly) do some guess work for label-like objects
+                                let label = buffer.evaluateXPath("//label[@for='"+elem.id+"']", doc).snapshotItem(0);
+                                if (label)
+                                {
+                                    text = label.textContent.toLowerCase();
+                                    showtext = true;
+                                }
+                            }
+                        }
+                        else if (option == "name")
+                        {
+                            text = elem.name;
+                            showtext = true;
+                        }
+
+                        if(text)
+                            break;
+                    }
+                }
             }
             else
                 text = elem.textContent.toLowerCase();
@@ -237,7 +300,7 @@ function Hints() //{{{
             span.style.top =  toppos + "px";
             fragment.appendChild(span);
 
-            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color]);
+            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showtext]);
         }
 
         if (doc.body)
@@ -276,7 +339,7 @@ function Hints() //{{{
     function showHints()
     {
 
-        let elem, tagname, text, rect, span, imgspan;
+        let elem, tagname, text, rect, span, imgspan, _a, _b, showtext;
         let hintnum = 1;
         let validHint = hintMatcher(hintString.toLowerCase());
         let activeHint = hintNumber || 1;
@@ -291,7 +354,7 @@ function Hints() //{{{
             for (let i in (util.interruptibleRange(start, end + 1, 500)))
             {
                 let hint = pageHints[i];
-                [elem, text, span, imgspan] = hint;
+                [elem, text, span, imgspan, _a, _b, showtext] = hint;
 
                 let valid = validHint(text);
                 span.style.display = (valid ? "" : "none");
@@ -324,7 +387,7 @@ function Hints() //{{{
                     setClass(imgspan, activeHint == hintnum);
                 }
 
-                span.setAttribute("number", hintnum);
+                span.setAttribute("number", showtext ? hintnum + ": " + text.substr(0,50): hintnum);
                 if (imgspan)
                     imgspan.setAttribute("number", hintnum);
                 else
@@ -615,6 +678,19 @@ function Hints() //{{{
     options.add(["wordseparators", "wsp"],
         "How words are split for hintmatching",
         "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
+
+    options.add(["hintinputs", "hi"],
+        "How text inputs are hinted",
+        "stringlist", "label,value",
+        {
+            completer: function (context) [
+                ["value", "Match against the value contained by the input field"],
+                ["label", "Match against the value of a label for the input field, if one can be found"],
+                ["name",  "Match against the name of an input field, only if neither a name or value could be found."]
+            ],
+            validator: Option.validateCompleter
+        });
+
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////

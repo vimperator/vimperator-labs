@@ -316,6 +316,22 @@ want to stay in Normal mode when browsing between web sites. When "on", it
 blurs any textbox which often is automatically focused on page load.
 If you usually like 'focuscontent' but sometimes you'd like to focus the
 first input field, you can use [m]gi[m] to jump to it.
+
+____
+
+
+|\'fh'| |\'followhints'|
+||'followhints' 'fh'|| number (default: 0)
+____
+
+Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
+
+`---------`----------------------------------------------------------
+*0*       Follow the first hint as soon as typed text uniquely identifies it.
+*1*       Follow the selected hint on [m]<Return>[m].
+*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
+---------------------------------------------------------------------
+
 ____
 
 
@@ -324,6 +340,7 @@ ____
 ____
 Show the current window fullscreen. Also hide certain GUI elements like the
 statusline.
+
 ____
 
 
@@ -355,6 +372,23 @@ displayed in the status line when viewing the page.
 ____
 
 
+|\'hin'| |\'hintinputs'|
+||'hintinputs' 'hin'|| stringlist (default: "label,value")
+____
+When generating hints for input elements that do not have an explicit caption,
+this specifies the methods to try and generate a textual hint. It tries the
+options in the order that you give, and uses the first that it finds. 
+
+`--------------------`---------------------------------------------------------
+*value*              The hint is the value displayed in a text input, or the selected option for a dropdown.
+*label*              The value of an explicit label for the input, this will not match most manually added labels that are found on sites.
+*name*               The name of the input will be used, although the name is not designed for user consumption, it is frequently very similar to the label.  
+
+-------------------------------------------------------------------------------
+
+____
+
+
 |\'hm'| |\'hintmatching'|
 ||'hintmatching' 'hm'|| string (default: contains)
 ____
@@ -367,22 +401,6 @@ Change the hint matching algorithm during Hints mode. Possible values:
 *firstletters*       Behaves like wordstartswith, but non-matching words aren't overleaped.
 *custom*             Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)
 -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-____
-
-
-|\'fh'| |\'followhints'|
-||'followhints' 'fh'|| number (default: 0)
-____
-
-Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
-
-`---------`----------------------------------------------------------
-*0*       Follow the first hint as soon as typed text uniquely identifies it.
-	  Follow the selected hint on [m]<Return>[m].
-*1*       Follow the selected hint on [m]<Return>[m].
-*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
----------------------------------------------------------------------
 
 ____
 
