@@ -998,17 +998,20 @@ function Buffer() //{{{
         getCurrentWord: function ()
         {
             let selection = window.content.getSelection();
+            let range = selection.getRangeAt(0);
             if (selection.isCollapsed)
             {
                 let selController = this.selectionController;
                 let caretmode = selController.getCaretEnabled();
                 selController.setCaretEnabled(true);
-                selController.wordMove(false, false);
+                //Only move backwards if the previous character is not a space.
+                if (range.startOffset > 0 && !/\s/.test(range.startContainer.textContent[range.startOffset - 1]))
+                    selController.wordMove(false, false);
+
                 selController.wordMove(true, true);
                 selController.setCaretEnabled(caretmode);
                 return String.match(selection, /\w*/)[0];
             }
-            let range = selection.getRangeAt(0);
             if (util.computedStyle(range.startContainer).whiteSpace == "pre"
                 && util.computedStyle(range.endContainer).whiteSpace == "pre")
                 return String(range);
