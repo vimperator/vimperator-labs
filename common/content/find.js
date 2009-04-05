@@ -316,8 +316,10 @@ function Search() //{{{
         function ()
         {
             found = false;
-            search.searchSubmitted(buffer.getCurrentWord(), false);
-            search.findAgain();
+            let word = buffer.getCurrentWord();
+            // A hacky way to move after the current match before searching forwards
+            window.content.getSelection().getRangeAt(0).collapse(false);
+            search.searchSubmitted(word, false)
         });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
@@ -325,8 +327,10 @@ function Search() //{{{
         function ()
         {
             found = false;
-            search.searchSubmitted(buffer.getCurrentWord(), true);
-            search.findAgain();
+            let word = buffer.getCurrentWord();
+            // A hacky way to move before the current match before searching backwards
+            window.content.getSelection().getRangeAt(0).collapse(true);
+            search.searchSubmitted(word, true)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -458,7 +462,7 @@ function Search() //{{{
                 backwards = forcedBackward;
 
             //Allow /<CR> to work.
-            if (!command)
+            if ((!command) || command == lastSearchPattern)
                 return this.findAgain(backwards != lastSearchBackwards)
 
             this.clear();
