@@ -208,7 +208,7 @@ const template = {
     highlightURL: function highlightURL(str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return <a highlight="URL" href="#">{str}</a>;
+            return <a highlight="URL" href={str}>{str}</a>;
         else
             return str;
     },
