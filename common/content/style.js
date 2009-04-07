@@ -76,9 +76,9 @@ Highlights.prototype.CSS = <![CDATA[
     StatusLineSecure   color: black; background: #a0a0FF /* light-blue */
     StatusLineExtended color: black; background: #a0FFa0 /* light-green */
 
-    TabClose
-    TabIcon
-    TabText
+    TabClose,.tab-close-button
+    TabIcon,.tab-icon
+    TabText,.tab-text
     TabNumber      font-weight: bold; margin: 0px; padding-right: .3ex;
     TabIconNumber {
         font-weight: bold;
@@ -332,7 +332,7 @@ function Styles(name, store, serial)
     {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
-        if (typeof sheet == "number")
+        if (typeof sheet === "number")
             return sheets[sheet];
         return names[sheet]
     };

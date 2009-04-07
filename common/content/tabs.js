@@ -204,11 +204,6 @@ function Tabs() //{{{
                 ],
                 validator: Option.validateCompleter
             });
-        let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
-        // TODO: Add option, or only apply when go~=[nN]
-        styles.addSheet(true, "tab-binding", "chrome://browser/content/browser.xul",
-            ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }");
-
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -661,6 +656,18 @@ function Tabs() //{{{
             let browsers = getBrowser().browsers;
             for (let i = 0; i < browsers.length; i++)
                 yield [i, browsers[i]];
+        },
+
+        get tabsBound() {
+            return Boolean(styles.get(true, "tab-binding"))
+        },
+        set tabsBound(val) {
+            let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
+            if (!val)
+                styles.removeSheet(true, "tab-binding");
+            else if (!this.tabsBound)
+                styles.addSheet(true, "tab-binding", "chrome://browser/content/browser.xul",
+                    ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }");
         },
 
         get count() getBrowser().mTabs.length,
