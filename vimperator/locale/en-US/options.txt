@@ -357,7 +357,7 @@ Show or hide certain GUI elements like the menu or toolbar. Supported characters
 *N* Tab number over image
 *b* Bottom scrollbar
 *r* Right scrollbar
-*l* Left scrollbar
+*l* Left scrollbar (*l* and *r* are mutually exclusive)
 ----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].
