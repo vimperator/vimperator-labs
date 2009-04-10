@@ -1699,7 +1699,7 @@ function Events() //{{{
                 autocommands.trigger("LocationChange", { url: buffer.URL });
 
                 // if this is not delayed we get the position of the old buffer
-                setTimeout(function () { statusline.updateBufferPosition(); }, 100);
+                setTimeout(function () { statusline.updateBufferPosition(); }, 500);
             },
             // called at the very end of a page load
             asyncUpdateUI: function ()
