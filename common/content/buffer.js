@@ -139,6 +139,55 @@ function Buffer() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    function getWebNav() {
+        function call(val, fn) {
+            try
+            {
+                return fn(val);
+            }
+            catch(e)
+            {
+                return val
+            }
+        }
+        return [
+            function() getBrowser().webNavigation,
+            function(webNav) webNav.sessionHistory.QueryInterface(Ci.nsIWebNavigation)
+        ].reduce(call, null);
+    }
+
+    options.add(["encoding", "enc"],
+        "Sets the current buffer's character encoding",
+        "string", "UTF-8",
+        {
+            scope: options.OPTION_SCOPE_LOCAL,
+            getter: function() getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
+            setter: function(val)
+            {
+                // Stolen from browser.jar/content/browser/browser.js, more or
+                // less.
+                try
+                {
+                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
+                    PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
+                    getWebNav().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
+                }
+                catch (e) { liberator.reportError(e) }
+            },
+            completer: function(context) {
+                context.anchored = false;
+                context.generate = function() {
+                    let names = util.Array.uniq(
+                        util.Array.flatten(
+                            'more1 more2 more3 more4 more5 unicode'.split(' ').map(function(key)
+                                options.getPref('intl.charsetmenu.browser.' + key).split(', '))));
+                    let bundle = document.getElementById('liberator-charset-bundle');
+                    return names.map(function(name) [name, bundle.getString(name.toLowerCase() + '.title')])
+                };
+            }
+        });
+
+    // FIXME: Most certainly belongs elsewhere.
     options.add(["fullscreen", "fs"],
         "Show the current window fullscreen",
         "boolean", false,
@@ -147,7 +196,7 @@ function Buffer() //{{{
             getter: function () window.fullScreen
         });
 
-        options.add(["nextpattern"], // \u00BB is » (>> in a single char)
+    options.add(["nextpattern"], // \u00BB is » (>> in a single char)
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 

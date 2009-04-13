@@ -1,5 +1,6 @@
 2009-XX-XX:
     * version 2.1 (probably)
+    * add 'encoding'
     * add 'hintinputs'
     * add :silent
     * add $MY_VIMPERATORRC

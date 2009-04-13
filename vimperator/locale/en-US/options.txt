@@ -307,6 +307,13 @@ A list of autocommand event names which should be ignored. If the list contains
 the value "all" then all events are ignored.
 ____
 
+|\'enc'| |\'encoding'|
+||'encoding'|| string (default: "UTF-8")
+____
+Changes the character encodign of the current buffer. Valid only for the
+current page.
+____
+
 
 |\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
 ||'focuscontent' 'fc'|| boolean (default: off)

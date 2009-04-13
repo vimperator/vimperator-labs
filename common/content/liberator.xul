@@ -43,6 +43,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
     <script type="application/x-javascript;version=1.8" src="&liberator.content;liberator-overlay.js"/>
 
     <window id="&liberator.mainWindow;">
+        <stringbundleset id="liberator-stringbundles">
+            <stringbundle id="liberator-charset-bundle"
+                src="chrome://global/locale/charsetTitles.properties"/>
+        </stringbundleset>
 
         <keyset id="mainKeyset">
             <key id="key_open_vimbar" key=":" oncommand="liberator.modules.commandline.open(':', '', liberator.modules.modes.EX);" modifiers=""/>
