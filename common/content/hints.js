@@ -779,13 +779,27 @@ function Hints() //{{{
                              "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
 
+    function checkXPath(val) {
+        try
+        {
+            buffer.evaluateXPath(val, document.implementation.createDocument("", "", null));
+            return true;
+        }
+        catch (e)
+        {
+            return false;
+        }
+    }
+
     options.add(["extendedhinttags", "eht"],
         "XPath string of hintable elements activated by ';'",
-        "string", DEFAULT_HINTTAGS);
+        "string", DEFAULT_HINTTAGS,
+        { validator: checkXPath });
 
     options.add(["hinttags", "ht"],
         "XPath string of hintable elements activated by 'f' and 'F'",
-        "string", DEFAULT_HINTTAGS);
+        "string", DEFAULT_HINTTAGS,
+        { validator: checkXPath });
 
     options.add(["hinttimeout", "hto"],
         "Timeout before automatically following a non-unique numerical hint",
