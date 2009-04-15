@@ -1208,7 +1208,7 @@ function Events() //{{{
                     return;
                 }
 
-                if (elem instanceof HTMLTextAreaElement)
+                if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable))
                 {
                     this.wantsModeReset = false;
                     if (options["insertmode"])
