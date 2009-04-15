@@ -287,8 +287,15 @@ function IO() //{{{
             lines = util.Array.flatten(lines);
 
             // source a user .vimperatorrc file
-            lines.unshift('"' + liberator.version);
-            lines.push("\nsource! " + filename + ".local");
+            lines.unshift('"' + liberator.version + "\n");
+
+            // For the record, I think that adding this line is absurd. --Kris
+            lines.push(commands.commandToString({
+                command: "source",
+                bang: true,
+                arguments: [filename + ".local"]
+            }));
+
             lines.push("\n\" vim: set ft=vimperator:");
 
             try

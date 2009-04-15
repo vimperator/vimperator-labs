@@ -488,7 +488,7 @@ function Styles(name, store, serial)
         return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
     }
 }
-let (array = utiltte.Array)
+let (array = util.Array)
 {
     Styles.prototype = {
         get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq(),
