@@ -33,96 +33,6 @@ const NS = Namespace("liberator", "http://vimperator.org/namespaces/liberator");
 default xml namespace = XHTML;
 
 const util = { //{{{
-
-    /**
-     * Array utility methods.
-     * @singleton
-     */
-    Array: {
-        /**
-         * Converts an array to an object. As in lisp, an assoc is an
-         * array of key-value pairs, which maps directly to an object,
-         * as such:
-         *    [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
-         *
-         * @param {Array[]} assoc
-         * @... {string} 0 - Key
-         * @...          1 - Value
-         */
-        assocToObj: function assocToObj(assoc)
-        {
-            let obj = {};
-            assoc.forEach(function ([k, v]) { obj[k] = v });
-            return obj;
-        },
-
-        /**
-         * Flattens an array, such that all elements of the array are
-         * joined into a single array:
-         *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
-         *
-         * @param {Array} ary
-         * @returns {Array}
-         */
-        flatten: function flatten(ary) Array.concat.apply([], ary),
-
-        /**
-         * Returns an Iterator for an array's values.
-         *
-         * @param {Array} ary
-         * @returns {Iterator(Object)}
-         */
-        iterator: function iterator(ary)
-        {
-            let length = ary.length;
-            for (let i = 0; i < length; i++)
-                yield ary[i];
-        },
-
-        /**
-         * Returns an Iterator for an array's indices and values.
-         *
-         * @param {Array} ary
-         * @returns {Iterator([{number}, {Object}])}
-         */
-        iterator2: function (ary)
-        {
-            let length = ary.length;
-            for (let i = 0; i < length; i++)
-                yield [i, ary[i]];
-        },
-
-        /**
-         * Filters out all duplicates from an array. If
-         * <b>unsorted</b> is false, the array is sorted before
-         * duplicates are removed.
-         *
-         * @param {Array} ary
-         * @param {boolean} unsorted
-         * @returns {Array}
-         */
-        uniq: function uniq(ary, unsorted)
-        {
-            let ret = [];
-            if (unsorted)
-            {
-                for (let [,item] in Iterator(ary))
-                    if (ret.indexOf(item) == -1)
-                        ret.push(item);
-            }
-            else
-            {
-                for (let [,item] in Iterator(ary.sort()))
-                {
-                    if (item != last || !ret.length)
-                        ret.push(item);
-                    var last = item;
-                }
-            }
-            return ret;
-        }
-    },
-
     /**
      * Returns a shallow copy of <b>obj</b>.
      *
@@ -729,6 +639,106 @@ const util = { //{{{
         }
     }
 }; //}}}
+
+/**
+ * Array utility methods.
+ * @singleton
+ */
+util.Array = function Array(ary) {
+    var obj = {
+        __proto__: ary,
+        __iterator__: function() this.iteritems(),
+        __noSuchMethod__: function (meth, args) {
+            let res = util.Array(util.Array[meth].apply(null, [this.__proto__].concat(args)))
+            if (res instanceof Array)
+                return util.Array(res);
+            return res;
+        }
+    };
+    return obj;
+}
+/**
+ * Converts an array to an object. As in lisp, an assoc is an
+ * array of key-value pairs, which maps directly to an object,
+ * as such:
+ *    [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
+ *
+ * @param {Array[]} assoc
+ * @... {string} 0 - Key
+ * @...          1 - Value
+ */
+util.Array.toObject = function toObject(assoc)
+{
+    let obj = {};
+    assoc.forEach(function ([k, v]) { obj[k] = v });
+    return obj;
+};
+
+/**
+ * Flattens an array, such that all elements of the array are
+ * joined into a single array:
+ *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+ *
+ * @param {Array} ary
+ * @returns {Array}
+ */
+util.Array.flatten = function flatten(ary) Array.concat.apply([], ary),
+
+/**
+ * Returns an Iterator for an array's values.
+ *
+ * @param {Array} ary
+ * @returns {Iterator(Object)}
+ */
+util.Array.itervalues = function itervalues(ary)
+{
+    let length = ary.length;
+    for (let i = 0; i < length; i++)
+        yield ary[i];
+};
+
+/**
+ * Returns an Iterator for an array's indices and values.
+ *
+ * @param {Array} ary
+ * @returns {Iterator([{number}, {Object}])}
+ */
+util.Array.iteritems = function iteritems(ary)
+{
+    let length = ary.length;
+    for (let i = 0; i < length; i++)
+        yield [i, ary[i]];
+};
+
+/**
+ * Filters out all duplicates from an array. If
+ * <b>unsorted</b> is false, the array is sorted before
+ * duplicates are removed.
+ *
+ * @param {Array} ary
+ * @param {boolean} unsorted
+ * @returns {Array}
+ */
+util.Array.uniq = function uniq(ary, unsorted)
+{
+    let ret = [];
+    if (unsorted)
+    {
+        for (let [,item] in Iterator(ary))
+            if (ret.indexOf(item) == -1)
+                ret.push(item);
+    }
+    else
+    {
+        for (let [,item] in Iterator(ary.sort()))
+        {
+            if (item != last || !ret.length)
+                ret.push(item);
+            var last = item;
+        }
+    }
+    return ret;
+};
 
 function Struct()
 {

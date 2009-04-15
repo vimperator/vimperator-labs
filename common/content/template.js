@@ -15,7 +15,7 @@ const template = {
     map: function map(iter, fn, sep, interruptable)
     {
         if (iter.length) // FIXME: Kludge?
-            iter = util.Array.iterator(iter);
+            iter = util.Array.itervalues(iter);
         let ret = <></>;
         let n = 0;
         for each (let i in Iterator(iter))

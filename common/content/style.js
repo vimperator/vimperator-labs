@@ -488,10 +488,10 @@ function Styles(name, store, serial)
         return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
     }
 }
-let (array = util.Array)
+let (array = utiltte.Array)
 {
     Styles.prototype = {
-        get sites() array.uniq(array.flatten([v.sites for ([k, v] in this.userSheets)])),
+        get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq(),
         completeSite: function (context, content)
         {
             let compl = [];

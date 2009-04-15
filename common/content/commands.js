@@ -324,7 +324,7 @@ function Commands() //{{{
         __iterator__: function ()
         {
             let sorted = exCommands.sort(function (a, b) a.name > b.name);
-            return util.Array.iterator(sorted);
+            return util.Array.itervalues(sorted);
         },
 
         add: function (names, description, action, extra)
@@ -480,7 +480,7 @@ function Commands() //{{{
                 argCount = "*";
 
             var args = [];       // parsed options
-            args.__iterator__ = function () util.Array.iterator2(this);
+            args.__iterator__ = function () util.Array.iteritems(this);
             args.string = str;   // for access to the unparsed string
             args.literalArg = "";
 
@@ -919,12 +919,10 @@ function Commands() //{{{
                 {
                     command: this.name,
                     bang: true,
-                    // Yeah, this is a bit scary. Perhaps I'll fix it when I'm
-                    // awake.
-                    options: util.Array.assocToObj(
-                        util.map({ argCount: "-nargs", bang: "-bang", count: "-count" },
-                                function ([k, v]) k in cmd && cmd[k] != "0" && [v, typeof cmd[k] == "boolean" ? null : cmd[k]])
-                            .filter(util.identity)),
+                    options: util.Array.toObject(
+                        [[v, typeof cmd[k] == "boolean" ? null : cmd[k]]
+                         for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count" }))
+                         if (k in cmd && cmd[k] != "0")]),
                     arguments: [cmd.name],
                     literalArg: cmd.replacementText
                 }

@@ -1867,7 +1867,7 @@ function ItemList(id) //{{{
 
             for (let [i, row] in Iterator(context.getRows(start, end, doc)))
                 nodes[i] = row;
-            for (let [i, row] in util.Array.iterator2(nodes))
+            for (let [i, row] in util.Array.iteritems(nodes))
             {
                 if (!row)
                     continue;
@@ -2197,7 +2197,7 @@ function StatusLine() //{{{
             // tab numbers set
             if (options.get("guioptions").has("n", "N"))
             {
-                for (let [i, tab] in util.Array.iterator2(getBrowser().mTabs))
+                for (let [i, tab] in util.Array.iteritems(getBrowser().mTabs))
                     tab.setAttribute("ordinal", i + 1);
             }
 

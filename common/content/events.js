@@ -180,7 +180,7 @@ function AutoCommands() //{{{
 
     return {
 
-        __iterator__: function () util.Array.iterator(store),
+        __iterator__: function () util.Array.itervalues(store),
 
         /**
          * Adds a new autocommand. <b>cmd</b> will be executed when one of the

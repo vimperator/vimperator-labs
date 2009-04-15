@@ -101,7 +101,7 @@ function Buffer() //{{{
         if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
             return win;
 
-        for (let frame in util.Array.iterator(win.frames))
+        for (let frame in util.Array.itervalues(win.frames))
             if (frame.scrollMaxX > 0 || frame.scrollMaxY > 0)
                 return frame;
 
@@ -174,17 +174,7 @@ function Buffer() //{{{
                 }
                 catch (e) { liberator.reportError(e) }
             },
-            completer: function(context) {
-                context.anchored = false;
-                context.generate = function() {
-                    let names = util.Array.uniq(
-                        util.Array.flatten(
-                            'more1 more2 more3 more4 more5 unicode'.split(' ').map(function(key)
-                                options.getPref('intl.charsetmenu.browser.' + key).split(', '))));
-                    let bundle = document.getElementById('liberator-charset-bundle');
-                    return names.map(function(name) [name, bundle.getString(name.toLowerCase() + '.title')])
-                };
-            }
+            completer: function(context) completion.charset(context)
         });
 
     // FIXME: Most certainly belongs elsewhere.
@@ -803,7 +793,7 @@ function Buffer() //{{{
         const ACCESS_READ = Ci.nsICache.ACCESS_READ;
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
-        for (let proto in util.Array.iterator(["HTTP", "FTP"]))
+        for (let proto in util.Array.itervalues(["HTTP", "FTP"]))
         {
             try
             {
