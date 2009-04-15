@@ -78,8 +78,8 @@ ________________________________________________________________________________
 |T| +
 ||T||
 ________________________________________________________________________________
-Open one or more URLs in a new tab based on current location. Works like
-[m]t[m] but preselects current URL in the [c]:tabopen[c] query.
+Show a [c]:tabopen[c] prompt containing the current URL. Useful if you want to
+go somewhere by editing the URL of the current page.
 ________________________________________________________________________________
 
 
@@ -95,8 +95,8 @@ ________________________________________________________________________________
 |O| +
 ||O||
 ________________________________________________________________________________
-Open one or more URLs in the current tab based on current location. Works
-like [m]o[m] but preselects current URL in the [c]:open[c] query.
+Show an [c]:open[c] prompt containing the current URL. Useful if you want to 
+go somewhere by editing the URL of the current page.
 ________________________________________________________________________________
 
 
