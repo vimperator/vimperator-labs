@@ -62,30 +62,30 @@ ________________________________________________________________________________
 |gt| +
 ||[count]gt||
 ________________________________________________________________________________
-Go to the next tab. Cycles to the first tab, when the last is selected. +
+Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th tab.
 ________________________________________________________________________________
 
 |<C-PageDown>| |<C-Tab>| |<C-n>| +
 ||[count]<C-n>||
 ________________________________________________________________________________
-Go to the next tab. Cycles to the first tab, when the last is selected. +
+Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th next tab.
 ________________________________________________________________________________
 
 |<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
 ||[count]gT||
 ________________________________________________________________________________
-Go {count} pages back. Wraps around from the first tab to the last tab. +
-If [count] is specified go back [count] tabs.
+Go to the previous tab. Cycles to the last tab when the first is selected. +
+If [count] is specified go to the [count]th previous tab.
 ________________________________________________________________________________
 
 
 |<C-6>| |<C-^>| +
 ||[count]<C-^>||
 ________________________________________________________________________________
-Select the alternate tab or the [count]th tab. The alternate tab is the last
-selected tab. This provides a quick method of toggling between two tabs.
+Select the previously selected tab. This provides a quick method of toggling
+between two tabs. If [count] is specified, go to the [count]th tab.
 ________________________________________________________________________________
 
 
