@@ -1330,7 +1330,10 @@ const liberator = (function () //{{{
                 // set before by any RC file
                 for (let option in options)
                 {
-                    if (option.setter)
+                    // 'encoding' option should not be set at this timing.
+                    // Probably a wrong value is set into the option,
+                    // if current page's encoging is not UTF-8.
+                    if (option.name != "encoding" && option.setter)
                         option.value = option.value;
                 }
 
