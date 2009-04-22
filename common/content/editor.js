@@ -85,10 +85,7 @@ function Editor() //{{{
     // Used in addAbbrevation and expandAbbreviation
     var abbrevmatch = full_id + "|" + end_id + "|" + non_id;
 
-    function getEditor()
-    {
-        return window.document.commandDispatcher.focusedElement;
-    }
+    function getEditor() liberator.focus;
 
     function getController()
     {
@@ -606,7 +603,7 @@ function Editor() //{{{
 
         unselectText: function ()
         {
-            let elem = window.document.commandDispatcher.focusedElement;
+            let elem = liberator.focus;
             // A error occurs if the element has been removed when "elem.selectionStart" is executed.
             try {
                 if (elem && elem.selectionEnd)
@@ -630,7 +627,7 @@ function Editor() //{{{
             }
 
             // FIXME: #93 (<s-insert> in the bottom of a long textarea bounces up)
-            let elem = window.document.commandDispatcher.focusedElement;
+            let elem = liberator.focus;
 
             if (elem.setSelectionRange && util.readFromClipboard())
                 // readFromClipboard would return 'undefined' if not checked
@@ -887,7 +884,7 @@ function Editor() //{{{
 
             let textBox = null;
             if (!(config.isComposeWindow))
-                textBox = document.commandDispatcher.focusedElement;
+                textBox = liberator.focus;
 
             let text = ""; // XXX
             if (textBox)

@@ -257,7 +257,7 @@ function Styles(name, store, serial)
     const ios = services.get("io");
     const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
     const namespace = '@namespace html "' + XHTML + '";\n' +
-                      '@namespace xul "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";\n' +
+                      '@namespace xul "' + XUL + '";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
     const Sheet = new Struct("name", "sites", "css", "ref", "agent");
 

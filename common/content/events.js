@@ -501,7 +501,7 @@ function Events() //{{{
 
     function isFormElemFocused()
     {
-        let elem = window.document.commandDispatcher.focusedElement;
+        let elem = liberator.focus;
         if (elem == null)
             return false;
 
@@ -591,7 +591,7 @@ function Events() //{{{
                 if (options["focuscontent"])
                 {
                     setTimeout(function () {
-                        let focused = document.commandDispatcher.focusedElement;
+                        let focused = liberator.focus;
                         if (focused && (focused.value !== undefined) && focused.value.length == 0)
                             focused.blur();
                     }, 100);
@@ -963,7 +963,7 @@ function Events() //{{{
                         shift = (keys[i] >= "A" && keys[i] <= "Z");
                     }
 
-                    let elem = window.document.commandDispatcher.focusedElement;
+                    let elem = liberator.focus;
                     if (!elem)
                         elem = window.content;
 

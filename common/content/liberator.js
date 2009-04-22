@@ -217,16 +217,16 @@ const liberator = (function () //{{{
             for (let [,item] in Iterator(node.childNodes))
             {
                 if (item.childNodes.length == 0 && item.localName == "menuitem"
-                    && !/rdf:http:/.test(item.label)) // FIXME
+                    && !/rdf:http:/.test(item.getAttribute("label"))) // FIXME
                 {
-                    item.fullMenuPath = parent + item.label;
+                    item.fullMenuPath = parent + item.getAttribute("label");
                     items.push(item);
                 }
                 else
                 {
                     let path = parent;
                     if (item.localName == "menu")
-                        path += item.label + ".";
+                        path += item.getAttribute("label") + ".";
                     addChildren(item, path);
                 }
             }
@@ -600,6 +600,8 @@ const liberator = (function () //{{{
 
         get menuItems() getMenuItems(),
 
+        get focus() document.commandDispatcher.focusedElement,
+
         // Global constants
         CURRENT_TAB: 1,
         NEW_TAB: 2,
@@ -926,9 +928,9 @@ const liberator = (function () //{{{
                 }
             }
             catch (e) {}
-            if (clearFocusedElement && document.commandDispatcher.focusedElement)
-                document.commandDispatcher.focusedElement.blur();
-            if (elem && (elem != document.commandDispatcher.focusedElement))
+            if (clearFocusedElement && liberator.focus)
+                liberator.focus.blur();
+            if (elem && elem != liberator.focus)
                 elem.focus();
         },
 

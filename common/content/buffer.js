@@ -565,7 +565,7 @@ function Buffer() //{{{
             }
         });
 
-    commands.add(["pagest[yle]"],
+    commands.add(["pagest[yle]", "pas"],
         "Select the author style sheet to apply",
         function (args)
         {

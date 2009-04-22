@@ -104,8 +104,7 @@ const config = { //{{{
 
     focusChange: function(win) {
         // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
-        let elem = window.document.commandDispatcher.focusedElement;
-        if ((win && win.document && win.document instanceof HTMLDocument) || elem instanceof HTMLAnchorElement)
+        if (win && win.document instanceof HTMLDocument || liberator.focus instanceof HTMLAnchorElement)
         {
             if (config.isComposeWindow)
                 modes.set(modes.INSERT, modes.TEXTAREA);

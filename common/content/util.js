@@ -28,7 +28,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-const XHTML = "http://www.w3.org/1999/xhtml";
+const XHTML = Namespace("html", "http://www.w3.org/1999/xhtml");
+const XUL = Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 const NS = Namespace("liberator", "http://vimperator.org/namespaces/liberator");
 default xml namespace = XHTML;
 
@@ -403,6 +404,32 @@ const util = { //{{{
 
         if (typeof object != "object")
             return false;
+
+        const NAMESPACES = util.Array.toObject([
+            [NS, 'liberator'],
+            [XHTML, 'html'],
+            [XUL, 'xul'],
+        ]);
+        if (object instanceof Node) {
+            let elem = object;
+            if (elem.nodeType == elem.TEXT_NODE)
+                return elem.data;
+            function namespaced(node) {
+                var ns = NAMESPACES[node.namespaceURI];
+                if (ns)
+                    return ns + ":" + node.localName;
+                return node.localName.toLowerCase();
+            }
+            let tag = "<" + [namespaced(elem)].concat(
+                [namespaced(a) + "=" +  template.highlight(a.value, true)
+                 for ([i, a] in util.Array.iteritems(elem.attributes))]).join(" ");
+
+            if (!elem.firstChild || /^\s*$/.test(elem.firstChild) && !elem.firstChild.nextSibling)
+                tag += '/>';
+            else
+                tag += '>...</' + namespaced(elem) + '>';
+            return tag;
+        }
 
         try
         { // for window.JSON
