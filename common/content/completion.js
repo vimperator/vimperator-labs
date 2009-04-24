@@ -1699,7 +1699,7 @@ function Completion() //{{{
         option: function option(context, scope)
         {
             context.title = ["Option"];
-            context.keys = { text: "names", description: "description" };
+            context.keys = { text: "fullMenuPath", description: function (item) item.getAttribute("label") };
             context.completions = options;
             if (scope)
                 context.filters.push(function ({ item: opt }) opt.scope & scope);
