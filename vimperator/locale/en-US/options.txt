@@ -532,10 +532,10 @@ ____
 ____
 (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 
-Patterns to use when guessing the \'next' page in a document sequence. Each
-pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions and the
-link elements are those defined by 'hinttags'.
+Patterns to use when guessing the \'next' page in a document sequence when the 
+user hits [c]]][c]. Each pattern, in order, is matched against all links in the
+page with the first match being used. The patterns are case insensitive regular
+expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
@@ -616,10 +616,10 @@ ____
 ____
 (default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 
-Patterns to use when guessing the \'previous' page in a document sequence. Each
-pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions and the
-link elements are those defined by 'hinttags'.
+Patterns to use when guessing the \'previous' page in a document sequence when 
+the user hits [c][[[c]. Each pattern, in order, is matched against all links 
+in the page with the first match being used. The patterns are case insensitive 
+regular expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
