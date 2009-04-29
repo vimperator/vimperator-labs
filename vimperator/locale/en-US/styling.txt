@@ -20,11 +20,11 @@ ________________________________________________________________________________
 |:hi| |:highlight| +
 ||:hi[ghlight][!] [-append] {group}[{selector}] [{css}]|| +
 ________________________________________________________________________________
-Highlight {group} with {css}. Normally, {css} is checked for
-valid syntax before it's applied. Once you're certain it's
-valid, [!] will override the check, to speed Vimperator startup.
-{selector} can be any valid CSS selector, such as [c]:hover[c], and
-if provided will restrict the match to matching elements.
+Highlight {group} with {css}. Normally, {css} is checked for valid
+syntax before it's applied. Once you're certain it's valid, [!] can be
+used to override the check to speed Vimperator startup. {selector} can
+be any valid CSS selector, such as [c]:hover[c], and, if provided, will
+restrict the match to matching elements.
 
 Valid groups are:
 `--------------------`-----------------------------------

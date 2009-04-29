@@ -323,8 +323,8 @@ Set zoom value of current web page. [a][value][a] can be an absolute value
 between 30% and 300% or a relative value if prefixed with "-" or "+". If
 [a][value][a] is omitted, zoom is reset to 100%.
 
-Normally this command operates on the text zoom, if used with [!] it operates
-on full zoom.
+Normally this command operates on the text zoom; if used with [!], it
+operates on full zoom.
 ________________________________________________________________________________
 
 section:Copying{nbsp}text[copying,yanking]

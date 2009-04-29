@@ -103,7 +103,7 @@ ____
 
 ____
 Subtract the {value} from a number option, or remove the {value} from a string
-option, if it is there. If the {value} is not found in a string option, there
+option if it is there. If the {value} is not found in a string option, there
 is no error or warning. When the option is a comma separated list, a comma is
 deleted, unless the option becomes empty. When the option is a list of flags,
 {value} must be exactly as they appear in the option. Remove flags one by one
@@ -217,9 +217,9 @@ ____
 |\'cd'| |\'cdpath'|
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
-List of directories searched when executing the [c]:cd[c] command. This is
-only used for relative paths, if an absolute path is specified then the option
-is ignored.
+List of directories searched when executing the [c]:cd[c] command. This
+is only used for relative paths; if an absolute path is specified, then
+the option is ignored.
 ____
 
 
@@ -307,7 +307,7 @@ ____
 |\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____
-Focus the content after a page has loaded. This is useful, if you always
+Focus the content after a page has loaded. This is useful if you always
 want to stay in Normal mode when browsing between web sites. When "on", it
 blurs any textbox which often is automatically focused on page load.
 If you usually like 'focuscontent' but sometimes you'd like to focus the
@@ -577,9 +577,10 @@ ____
 ____
 Speed up first time history/bookmark completion
 
-History access can be quite slow for a large history.
-Xulmus maintains a cache to speed it up significantly on subsequent access.
-In order to also speed up first time access, it is cached at startup, if this option is set (recommended).
+History access can be quite slow for a large history. Xulmus maintains a
+cache to speed it up significantly on subsequent access. In order to
+also speed up first time access, it is cached at startup if this option
+is set (recommended).
 ____
 
 

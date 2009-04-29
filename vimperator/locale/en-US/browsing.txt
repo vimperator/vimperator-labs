@@ -11,8 +11,8 @@ have 2 possibilities:
 ||CTRL-Z||
 ________________________________________________________________________________
 Disable all Vimperator keys except [m]<Esc>[m] and pass them to the next event
-handler. This is especially useful, if JavaScript controlled forms like the
-RichEdit form fields of Gmail don't work anymore. To exit this mode, press
+handler. This is especially useful if JavaScript controlled forms (e.g., the
+RichEdit form fields of Gmail) don't work anymore. To exit this mode, press
 [m]<Esc>[m]. If you also need to pass [m]<Esc>[m] in this mode to the web page,
 prepend it with [m]<C-v>[m].
 ________________________________________________________________________________
@@ -322,7 +322,7 @@ ________________________________________________________________________________
 Save the session and quit. Quit Vimperator, no matter how many tabs/windows
 are open. The session is stored. [c]:wq[c] is different from Vim, as it
 closes the window instead of just one tab by popular demand. Complain on the
-mailing list, if you want to change that.
+mailing list if you want to change that.
 ________________________________________________________________________________
 
 
