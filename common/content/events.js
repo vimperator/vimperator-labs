@@ -905,7 +905,7 @@ function Events() //{{{
 
             try
             {
-                liberator.threadYield(false, true);
+                liberator.threadYield(1, true);
 
                 noremap = !!noremap;
 

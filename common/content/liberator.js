@@ -1391,7 +1391,7 @@ const liberator = (function () //{{{
                 if (liberator.interrupted)
                     throw new Error("Interrupted");
             }
-            while (flush && mainThread.hasPendingEvents());
+            while (flush === true && mainThread.hasPendingEvents());
         },
 
         variableReference: function (string)
