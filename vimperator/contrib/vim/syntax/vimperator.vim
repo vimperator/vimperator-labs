@@ -57,7 +57,7 @@ syn match vimperatorOption "\<\%(no\|inv\)\=\%(errorbells\|eb\|exrc\|ex\|focusco
     \ contained nextgroup=vimperatorSetMod
 syn match vimperatorOption "\<\%(no\|inv\)\=\%(incsearch\|is\|insertmode\|im\|hlsearch\|hls\|linksearch\|lks\)\>!\="
     \ contained nextgroup=vimperatorSetMod
-syn match vimperatorOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|preload\|showmode\|smd\|smartcase\|scs\)\>!\="
+syn match vimperatorOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|showmode\|smd\|smartcase\|scs\)\>!\="
     \ contained nextgroup=vimperatorSetMod
 syn match vimperatorOption "\<\%(no\|inv\)\=\%(online\|visualbell\|vb\|usermode\|um\)\>!\="
     \ contained nextgroup=vimperatorSetMod

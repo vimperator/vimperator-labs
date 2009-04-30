@@ -59,7 +59,7 @@ syn match xulmusOption "\<\%(no\|inv\)\=\%(errorbells\|eb\|exrc\|ex\|focusconten
     \ contained nextgroup=xulmusSetMod
 syn match xulmusOption "\<\%(no\|inv\)\=\%(incsearch\|is\|insertmode\|im\|hlsearch\|hls\|linksearch\|lks\)\>!\="
     \ contained nextgroup=xulmusSetMod
-syn match xulmusOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|preload\|showmode\|smd\|smartcase\|scs\)\>!\="
+syn match xulmusOption "\<\%(no\|inv\)\=\%(loadplugins\|lpl\|more\|online\|showmode\|smd\|smartcase\|scs\)\>!\="
     \ contained nextgroup=xulmusSetMod
 syn match xulmusOption "\<\%(no\|inv\)\=\%(online\|visualbell\|vb\|usermode\|um\)\>!\="
     \ contained nextgroup=xulmusSetMod

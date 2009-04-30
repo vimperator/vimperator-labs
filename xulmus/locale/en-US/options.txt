@@ -572,18 +572,6 @@ Note: This option does not change the popup blocker of Songbird in any way.
 ____
 
 
-|\'nopreload'| |\'preload'|
-||'preload' 'nopreload'|| boolean (default: on)
-____
-Speed up first time history/bookmark completion
-
-History access can be quite slow for a large history. Xulmus maintains a
-cache to speed it up significantly on subsequent access. In order to
-also speed up first time access, it is cached at startup if this option
-is set (recommended).
-____
-
-
 |\'previouspattern'|
 ||'previouspattern'|| stringlist
 ____

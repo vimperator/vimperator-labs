@@ -133,6 +133,8 @@ function Bookmarks() //{{{
             return root;
         }
 
+        // since we don't use a threaded bookmark loading (by set preload)
+        // anymore, is this loading synchronization still needed? --mst
         let loading = false;
         this.load = function load()
         {
@@ -247,15 +249,6 @@ function Bookmarks() //{{{
     var cache = storage.newObject("bookmark-cache", Cache, false);
     storage.addObserver("bookmark-cache", bookmarkObserver, window);
 
-    liberator.registerObserver("enter", function () {
-        if (options["preload"])
-        {
-            // Forces a load, if not already loaded but wait 10sec
-            // so most tabs should be restored and the CPU should be idle again usually
-            setTimeout(function () { liberator.callFunctionInThread(null, function () cache.bookmarks); }, 10000);
-        }
-    });
-
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -271,10 +264,6 @@ function Bookmarks() //{{{
             },
             validator: Option.validateCompleter
         });
-
-    options.add(["preload"],
-        "Speed up first time history/bookmark completion",
-        "boolean", true);
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
