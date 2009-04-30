@@ -134,6 +134,7 @@ ________________________________________________________________________________
 Detach the current tab, and open it in its own window.
 ________________________________________________________________________________
 
+section:Reordering{nbsp}tabs[reordering-tabs]
 
 |:tabm| |:tabmove|
 ||:tabm[ove] [a][N][a]|| +
@@ -175,8 +176,6 @@ Switch to the previous tab or go [count] tabs back. Wraps around from the
 first tab to the last tab.
 ________________________________________________________________________________
 
-
-
 section:Closing{nbsp}tabs[closing-tabs]
 
 |d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
@@ -213,6 +212,19 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Undo closing of all closed tabs. Firefox stores up to 10 closed tabs, even
 after a browser restart.
+________________________________________________________________________________
+
+
+section:Looping{nbsp}over{nbsp}tabs[looping-over-tabs]
+
+|:tabd| |:tabdo| |:bufd| |:bufdo| +
+||:tabd[o] {cmd}||
+________________________________________________________________________________
+Execute {cmd} in each tab. {cmd} is executed in each tab starting with the
+first and ending with the last which becomes the current tab.
+
+{cmd} should not alter the tab list state by adding, removing or reordering
+tabs.
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

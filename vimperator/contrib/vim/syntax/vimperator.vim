@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Feb 19
+" Last Change:      2009 Apr 30
 
 if exists("b:current_syntax")
   finish
@@ -19,7 +19,7 @@ unlet b:current_syntax
 syn match vimperatorCommandStart "\%(^\s*:\=\)\@<=" nextgroup=vimperatorCommand,vimperatorAutoCmd
 
 syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] ba[ck] bd[elete] beep bf[irst] bl[ast] bma[rk]
-    \ bmarks bn[ext] bp[revious] br[ewind] buffers bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cm[ap] cmapc[lear]
+    \ bmarks bn[ext] bp[revious] br[ewind] buffers  bufd[o] bun[load]bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cm[ap] cmapc[lear]
     \ cno[remap] colo[rscheme] com[mand] comc[lear] cu[nmap] cuna[bbrev] delbm[arks] delc[ommand] delm[arks] delmac[ros]
     \ delqm[arks] dels[tyle] dia[log] dl do[autocmd] doautoa[ll] downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute]
     \ exu[sage] files fini[sh] fo[rward] fw h[elp] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear]
@@ -27,8 +27,8 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] b
     \ mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen] optionu[sage] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences]
     \ prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sav[eas] sb[ar]
     \ sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal] sideb[ar] so[urce] st[op] sty[le] tN[ext] t[open] tab
-    \ tabN[ext] tabc[lose] tabd[uplicate] tabde[tach] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen
-    \ tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion]
+    \ tabN[ext] tabc[lose] tabd[uplicate] tabde[tach] tabd[o] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly]
+    \ tabopen tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion]
     \ vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained
 

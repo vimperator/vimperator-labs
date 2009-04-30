@@ -2,12 +2,14 @@
     * version 2.1
     * massively speed up :open completions
     * TabMixPlus (and other tab extensions) should work much better now
-      together with vimperator unless you :set guioptions+=[nN]
+      together with Vimperator unless you :set guioptions+=[nN]
     * remove 'preload' option. You can fake it by some custom javascript in your init file
+    * add :tabdo
     * add 'encoding'
     * add 'hintinputs'
     * add :silent
     * add $MY_VIMPERATORRC // TODO: I still don't like this --mst
+                               You're yet to explain why... --djk
     * add ' and " local marks
     * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
     * add :messclear

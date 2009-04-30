@@ -359,6 +359,22 @@ function Tabs() //{{{
             literal: 0
         });
 
+    commands.add(["tabd[o]", "bufd[o]"],
+        "Execute a command in each tab",
+        function (args)
+        {
+            for (let i = 0; i < tabs.count; i++)
+            {
+                tabs.select(i);
+                liberator.execute(args.string);
+            }
+        },
+        {
+            argCount: "1",
+            completer: function (context) completion.ex(context),
+            literal: 0
+        });
+
     commands.add(["tabl[ast]", "bl[ast]"],
         "Switch to the last tab",
         function () tabs.select("$", false),
