@@ -1692,14 +1692,14 @@ function Completion() //{{{
         {
             context.title = ["Menu Path", "Label"];
             context.anchored = false;
-            context.keys = { text: "fullMenuPath", description: "label" };
+            context.keys = { text: "fullMenuPath", description: function (item) item.getAttribute("label") };
             context.completions = liberator.menuItems;
         },
 
         option: function option(context, scope)
         {
             context.title = ["Option"];
-            context.keys = { text: "fullMenuPath", description: function (item) item.getAttribute("label") };
+            context.keys = { text: "names", description: "description" };
             context.completions = options;
             if (scope)
                 context.filters.push(function ({ item: opt }) opt.scope & scope);

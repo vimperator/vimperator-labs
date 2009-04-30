@@ -491,7 +491,7 @@ function Styles(name, store, serial)
 let (array = util.Array)
 {
     Styles.prototype = {
-        get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq(),
+        get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
         completeSite: function (context, content)
         {
             let compl = [];
