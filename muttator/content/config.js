@@ -102,7 +102,8 @@ const config = { //{{{
             function () { buffer.viewSelectionSource(); }]*/
     ],
 
-    focusChange: function(win) {
+    focusChange: function (win)
+    {
         // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
         if (win && win.document instanceof HTMLDocument || liberator.focus instanceof HTMLAnchorElement)
         {

@@ -1454,15 +1454,16 @@ function Completion() //{{{
             });
         },
 
-        charset: function(context) {
+        charset: function (context)
+        {
             context.anchored = false;
-            context.generate = function() {
+            context.generate = function () {
                 let names = util.Array(
-                    'more1 more2 more3 more4 more5 unicode'.split(' ').map(function(key)
+                    'more1 more2 more3 more4 more5 unicode'.split(' ').map(function (key)
                         options.getPref('intl.charsetmenu.browser.' + key).split(', ')))
                     .flatten().uniq();
                 let bundle = document.getElementById('liberator-charset-bundle');
-                return names.map(function(name) [name, bundle.getString(name.toLowerCase() + '.title')]);
+                return names.map(function (name) [name, bundle.getString(name.toLowerCase() + '.title')]);
             };
         },
 

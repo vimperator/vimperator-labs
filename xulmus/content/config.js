@@ -141,7 +141,8 @@ const config = { //{{{
             function () { SBSubscribe(); }]
     ],
 
-    focusChange: function() {
+    focusChange: function ()
+    {
         // Switch to -- PLAYER -- mode for Songbird Media Player.
         if (config.isPlayerWindow)
             liberator.mode = modes.PLAYER;
@@ -173,7 +174,8 @@ const config = { //{{{
         "library.js"
     ],
 
-    stop: function() {
+    stop: function ()
+    {
         SBGetBrowser().mCurrentBrowser.stop();
     },
 

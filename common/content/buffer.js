@@ -145,14 +145,14 @@ function Buffer() //{{{
             {
                 return fn(val);
             }
-            catch(e)
+            catch (e)
             {
                 return val
             }
         }
         return [
-            function() getBrowser().webNavigation,
-            function(webNav) webNav.sessionHistory.QueryInterface(Ci.nsIWebNavigation)
+            function () getBrowser().webNavigation,
+            function (webNav) webNav.sessionHistory.QueryInterface(Ci.nsIWebNavigation)
         ].reduce(call, null);
     }
 
@@ -161,8 +161,8 @@ function Buffer() //{{{
         "string", "UTF-8",
         {
             scope: options.OPTION_SCOPE_LOCAL,
-            getter: function() getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
-            setter: function(val)
+            getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
+            setter: function (val)
             {
                 // Stolen from browser.jar/content/browser/browser.js, more or
                 // less.
@@ -174,7 +174,7 @@ function Buffer() //{{{
                 }
                 catch (e) { liberator.reportError(e) }
             },
-            completer: function(context) completion.charset(context)
+            completer: function (context) completion.charset(context)
         });
 
     // FIXME: Most certainly belongs elsewhere.
@@ -256,7 +256,7 @@ function Buffer() //{{{
         "Stop loading",
         function ()
         {
-            if(config.stop)
+            if (config.stop)
                 config.stop();
             else
                 window.BrowserStop();
@@ -1076,7 +1076,7 @@ function Buffer() //{{{
             }
             else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (path) 
+                commandline.input("Upload file: ", function (path)
                     {
                         let file = io.getFile(path);
 
@@ -1195,7 +1195,7 @@ function Buffer() //{{{
             }
             else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (path) 
+                commandline.input("Upload file: ", function (path)
                     {
                         let file = io.getFile(path);
 

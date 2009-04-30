@@ -152,10 +152,10 @@ function Hints() //{{{
         // <input type="hidden">                Never gets here
         // <select>                             Use the text of the selected item or label or name
         text = "";
-        let type = elem.type ? elem.type.toLowerCase() : ""; 
+        let type = elem.type ? elem.type.toLowerCase() : "";
 
         if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
-            return [elem.value, false] 
+            return [elem.value, false]
         else
         {
             for each (let option in options["hintinputs"].split(","))
@@ -645,12 +645,12 @@ function Hints() //{{{
         {
             let hintStrings    = tokenize(/\s+/, hintString);
             let wordSplitRegex = RegExp(options["wordseparators"]);
-            
+
             /**
              * Match a set of characters to the start of words.
              *
              * What the **** does this do? --Kris
-             * This function matches hintStrings like 'hekho' to links 
+             * This function matches hintStrings like 'hekho' to links
              * like 'Hey Kris, how are you?' -> [HE]y [K]ris [HO]w are you
              * --Daniel
              *
@@ -716,7 +716,7 @@ function Hints() //{{{
              *
              * @param {Array(String)} strings  The strings to search for.
              * @param {Array(String)} words  The words to search in.
-             * @param {boolean} allowWordOverleaping  Whether matches may be 
+             * @param {boolean} allowWordOverleaping  Whether matches may be
              *        non-contiguous.
              *
              * @return boolean  Whether all the strings matched.

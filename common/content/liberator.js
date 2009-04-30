@@ -140,7 +140,7 @@ const liberator = (function () //{{{
                     let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
                     let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
                     styles.addSheet(true, "taboptions", "chrome://*", css);
-                    tabs.tabsBound = Array.some(opts, function(k) k in self.opts);
+                    tabs.tabsBound = Array.some(opts, function (k) k in self.opts);
                     statusline.updateTabCount();
                 }
             }

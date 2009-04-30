@@ -410,7 +410,8 @@ const util = { //{{{
             [XHTML, 'html'],
             [XUL, 'xul'],
         ]);
-        if (object instanceof Node && !(object instanceof Document)) {
+        if (object instanceof Node && !(object instanceof Document))
+        {
             let elem = object;
             if (elem.nodeType == elem.TEXT_NODE)
                 return elem.data;
@@ -674,7 +675,7 @@ const util = { //{{{
 util.Array = function Array(ary) {
     var obj = {
         __proto__: ary,
-        __iterator__: function() this.iteritems(),
+        __iterator__: function () this.iteritems(),
         __noSuchMethod__: function (meth, args) {
             let res = util.Array(util.Array[meth].apply(null, [this.__proto__].concat(args)))
             if (res instanceof Array)

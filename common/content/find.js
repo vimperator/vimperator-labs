@@ -234,7 +234,7 @@ function Search() //{{{
          */
         clear: function ()
         {
-            this.spans.forEach(function (span) 
+            this.spans.forEach(function (span)
             {
                 if (span.parentNode)
                 {
@@ -250,7 +250,7 @@ function Search() //{{{
             })
             this.spans = []
         },
-        getSpans: function (doc) this.spans 
+        getSpans: function (doc) this.spans
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
