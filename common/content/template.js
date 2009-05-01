@@ -204,7 +204,6 @@ const template = {
         return s + <>{str.substr(start)}</>;
     },
 
-    // FIXME: why is href="#"?
     highlightURL: function highlightURL(str, force)
     {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
