@@ -174,7 +174,8 @@ function Buffer() //{{{
                 }
                 catch (e) { liberator.reportError(e) }
             },
-            completer: function (context) completion.charset(context)
+            completer: function (context) completion.charset(context),
+            validator: Option.validateCompleter
         });
 
     // FIXME: Most certainly belongs elsewhere.

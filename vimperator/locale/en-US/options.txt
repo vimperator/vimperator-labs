@@ -315,6 +315,13 @@ current page.
 ____
 
 
+|\'fenc'| |\'fileencoding'|
+||'fileencoding'|| string (default: "UTF-8")
+____
+Changes the character encoding that Vimperator uses to read and write files.
+____
+
+
 |\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____

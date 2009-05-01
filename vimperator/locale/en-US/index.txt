@@ -274,6 +274,7 @@ section:Options[option-index]
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
+||'fileencoding'|| Changes the character encoding that Vimperator uses to read and write files.
 ||'focuscontent'|| Try to stay in Normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in Hints mode +
 ||'fullscreen'|| Show the current window fullscreen +

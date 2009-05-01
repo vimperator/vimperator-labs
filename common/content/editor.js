@@ -894,12 +894,10 @@ function Editor() //{{{
             else
                 return false;
 
-            let oldbg, tmpBg;
+            let oldBg, tmpBg;
             try
             {
                 let res = io.withTempFiles(function (tmpfile) {
-                    io.writeFile(tmpfile, text);
-
                     if (textBox)
                     {
                         textBox.setAttribute("readonly", "true");
@@ -907,6 +905,10 @@ function Editor() //{{{
                         tmpBg = "yellow";
                         textBox.style.backgroundColor = "#bbbbbb";
                     }
+
+                    if (!io.writeFile(tmpfile, text))
+                        throw "Input contains characters not valid in the current " +
+                              "file encoding";
 
                     this.editFileExternally(tmpfile.path);
 

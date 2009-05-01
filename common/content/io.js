@@ -169,6 +169,13 @@ function IO() //{{{
     ////////////////////// OPTIONS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    options.add(["fileencoding", "fenc"],
+        "Sets the character encoding of read and written files",
+        "string", "UTF-8",
+        {
+            completer: function (context) completion.charset(context),
+            validator: Option.validateCompleter
+        });
     options.add(["cdpath", "cd"],
         "List of directories searched when executing :cd",
         "stringlist", cdpath,
@@ -685,19 +692,21 @@ function IO() //{{{
          *     pathname or an instance of nsIFile.
          * @returns {string}
          */
-        readFile: function (file)
+        readFile: function (file, encoding)
         {
             let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
             let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
-            let toCharset = "UTF-8";
+            if (!encoding)
+                encoding = options["fileencoding"];
             if (typeof file == "string")
                 file = self.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
                 throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
+                // How would you expect it to work? It's an integer. --Kris
 
             ifstream.init(file, -1, 0, 0);
-            icstream.init(ifstream, toCharset, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
+            icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
 
             let buffer = "";
             let str = {};
@@ -734,12 +743,17 @@ function IO() //{{{
          *     permissions if the file exists.
          * @default 0644
          */
-        writeFile: function (file, buf, mode, perms)
+        writeFile: function (file, buf, mode, perms, encoding)
         {
             let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-            let ocstream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+            function getStream(defaultChar) {
+                let stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+                stream.init(ofstream, encoding, 0, defaultChar);
+                return stream;
+            }
 
-            let charset = "UTF-8"; // Can be any character encoding name that Mozilla supports
+            if (!encoding)
+                encoding = options["fileencoding"];
             if (typeof file == "string")
                 file = self.getFile(file);
             else if (!(file instanceof Ci.nsILocalFile))
@@ -754,11 +768,33 @@ function IO() //{{{
                 perms = 0644;
 
             ofstream.init(file, mode, perms, 0);
-            ocstream.init(ofstream, charset, 0, 0x0000);
-            ocstream.writeString(buf);
-
-            ocstream.close();
-            ofstream.close();
+            let ocstream = getStream(0);
+            try
+            {
+                ocstream.writeString(buf);
+            }
+            catch (e)
+            {
+                liberator.dump(e);
+                if (e.result == Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA)
+                {
+                    ocstream = getStream("?".charCodeAt(0));
+                    ocstream.writeString(buf);
+                    return false;
+                }
+                else
+                    throw e;
+            }
+            finally
+            {
+                try
+                {
+                    ocstream.close();
+                }
+                catch (e) {}
+                ofstream.close();
+            }
+            return true;
         },
 
         /**
