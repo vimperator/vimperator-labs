@@ -310,7 +310,7 @@ ____
 |\'enc'| |\'encoding'|
 ||'encoding'|| string (default: "UTF-8")
 ____
-Changes the character encodign of the current buffer. Valid only for the
+Changes the character encoding of the current buffer. Valid only for the
 current page.
 ____
 

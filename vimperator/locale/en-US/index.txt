@@ -269,7 +269,7 @@ section:Options[option-index]
 ||'complete'|| Items which are completed at the [c]:[tab]open[c] prompt +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
-||'encoding'|| Changes the character encodign of the current buffer +
+||'encoding'|| Changes the character encoding of the current buffer +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
