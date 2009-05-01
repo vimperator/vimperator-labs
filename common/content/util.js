@@ -173,24 +173,18 @@ const util = { //{{{
      * @param {string} str
      * @param {RegExp} marker
      */
+    /*
+     * I hate this function. I hate it, I hate it. I really hate it.
+     *   --Kris
+     */
     splitLiteral: function splitLiteral(str, marker)
     {
+        let re = RegExp(/((?:[^\\'"]|\\(?:%)|'.*?'|".*?")*?)(%|$)/.source.replace(/%/g, marker.source), "gy");
         let results = [];
-        let resep = RegExp(/^(([^\\'"]|\\.|'([^\\']|\\.)*'|"([^\\"]|\\.)*")*?)/.source + marker.source);
-        let cont = true;
+        let match;
 
-        while (cont)
-        {
-            cont = false;
-            str = str.replace(resep, function (match, before)
-            {
-                results.push(before);
-                cont = true;
-                return "";
-            });
-        }
-
-        results.push(str);
+        while ((match = re.exec(str)) && match[0])
+            results.push(match[1]);
         return results;
     },
 

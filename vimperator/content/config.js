@@ -461,12 +461,16 @@ const config = { //{{{
             "Change the title of the window",
             "string", "Vimperator",
             {
+                getter: function() {
+                    return document.getElementById(config.mainWindowID || "main-window")
+                                   .getAttribute("titlemodifier");
+                },
                 setter: function (value)
                 {
                     try
                     {
-                        let id = config.mainWindowID || "main-window";
-                        document.getElementById(id).setAttribute("titlemodifier", value);
+                        document.getElementById(config.mainWindowID || "main-window")
+                                .setAttribute("titlemodifier", value);
                         if (window.content.document.title.length > 0)
                             document.title = window.content.document.title + " - " + value;
                         else
