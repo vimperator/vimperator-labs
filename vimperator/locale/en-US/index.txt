@@ -238,7 +238,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:source[c]|| Read Ex commands from a file +
 ||[c]:stop[c]|| Stop loading +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
-||[c]:tabd[o]|| Execute a command in each tab +
+||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +
 ||[c]:tabduplicate[c]|| Duplicate current tab +
 ||[c]:tablast[c]|| Switch to the last tab +
@@ -274,7 +274,7 @@ section:Options[option-index]
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
-||'fileencoding'|| Changes the character encoding that Vimperator uses to read and write files.
+||'fileencoding'|| Changes the character encoding that Vimperator uses to read and write files +
 ||'focuscontent'|| Try to stay in Normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in Hints mode +
 ||'fullscreen'|| Show the current window fullscreen +
