@@ -12,7 +12,8 @@ function Player() // {{{
     //window._SBShowMainLibrary();
 
     services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
-
+    services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
+            
     // Register Callbacks for searching.
     liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
     liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
@@ -349,6 +350,14 @@ function Player() // {{{
             completer: function (context) completion.mediaView(context),
             literal: 0
         });
+
+    commands.add(["sort[view]"],
+            "Sort the current media view",
+            function (args)
+            {
+               player.sortBy(args, true);
+
+            });
 
     // FIXME: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
     commands.add(["qu[eue]"],
@@ -709,6 +718,51 @@ function Player() // {{{
         {
             if (gMM.sequencer.currentItem)
                 gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating);
+        },
+
+        getUserViewable: function getUserViewable()
+        {
+            let propManager = services.get("propertyManager");
+            let propEnumerator = propManager.propertyIDs;
+            let properties = [];
+
+            while (propEnumerator.hasMore())
+            {
+                let propertyID = propEnumerator.getNext();
+
+                if (propManager.getPropertyInfo(propertyID).userViewable)
+                {
+                    liberator.dump("PropertyID - "+propManager.getPropertyInfo(propertyID).id);
+                    properties.push(propManager.getPropertyInfo(propertyID).displayName);
+                }
+            }            
+            
+            return properties;
+        },
+
+        sortBy: function sortBy(property, order)
+        {
+            let pa =  Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].createInstance(Ci.sbIMutablePropertyArray);
+            liberator.dump("Property: "+property);
+            
+            switch (property.string)
+            {
+                case "#":
+                case "Title":
+                        pa.appendProperty(SBProperties.trackName, 'a');
+                    break;
+                case "Rating":
+                    pa.appendProperty(SBProperties.rating, 1);
+                break;
+                case "Album":
+                    pa.appendProperty(SBProperties.albumName, 'a');
+                break;
+                default:
+                    pa.appendProperty(SBProperties.trackName, 'a');
+                break;
+            }
+            
+            _SBGetCurrentView().setSort(pa);            
         }
 
     };
