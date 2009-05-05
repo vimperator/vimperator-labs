@@ -1544,14 +1544,21 @@ function Completion() //{{{
                     cmdContext.advance(args.completeStart);
                     cmdContext.quote = args.quote;
                     cmdContext.filter = args.completeFilter;
-                    let compObject = command.completer.call(command, cmdContext, args);
-                    if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
-                        compObject = { start: compObject[0], items: compObject[1] };
-                    if (compObject != null)
+                    try
                     {
-                        cmdContext.advance(compObject.start);
-                        cmdContext.filterFunc = null;
-                        cmdContext.completions = compObject.items;
+                        let compObject = command.completer.call(command, cmdContext, args);
+                        if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                            compObject = { start: compObject[0], items: compObject[1] };
+                        if (compObject != null)
+                        {
+                            cmdContext.advance(compObject.start);
+                            cmdContext.filterFunc = null;
+                            cmdContext.completions = compObject.items;
+                        }
+                    }
+                    catch (e)
+                    {
+                        liberator.reportError(e);
                     }
                 }
             }

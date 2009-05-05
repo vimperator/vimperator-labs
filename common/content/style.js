@@ -1,5 +1,6 @@
 /***** BEGIN LICENSE BLOCK ***** {{{
  Copyright © 2008-2009 by Kris Maglione <maglione.k at Gmail>
+
  Distributable under the terms of the MIT license, which allows
  for sublicensing under any compatible license, including the MPL,
  GPL, and MPL. Anyone who changes this file is welcome to relicense
@@ -490,21 +491,28 @@ function Styles(name, store, serial)
 }
 let (array = util.Array)
 {
-    Styles.prototype = {
+    util.extend(Styles.prototype, {
         get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
         completeSite: function (context, content)
         {
-            let compl = [];
+            context.anchored = false;
             try
             {
-                compl.push([content.location.host, "Current Host"]);
-                compl.push([content.location.href, "Current URL"]);
+                context.fork("current", 0, this, function(context) {
+                    context.title = ["Current Site"];
+                    context.completions = [
+                        [content.location.host, "Current Host"],
+                        [content.location.href, "Current URL"]
+                    ];
+                });
             }
             catch (e) {}
-            context.anchored = false;
-            context.completions = compl.concat([[s, ""] for each (s in styles.sites)]);
+            context.fork("others", 0, this, function(context) {
+                context.title = ["Site"];
+                context.completions = [[s, ""] for each (s in styles.sites)];
+            });
         }
-    };
+    });
 }
 
 /**

@@ -254,14 +254,12 @@ function Mappings() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addMapCommands("",  [modes.NORMAL], "");
-    addMapCommands("c", [modes.COMMAND_LINE], "command line");
-    addMapCommands("i", [modes.INSERT, modes.TEXTAREA], "insert");
-    // FIXME
-    if (liberator.has("mail"))
-        addMapCommands("m", [modes.MESSAGE], "message");
-    if (liberator.has("player"))
-        addMapCommands("p", [modes.PLAYER], "player");
+    addMapCommands("",  [modes.NORMAL, modes.VISUAL], "");
+    for (let mode in modes.mainModes)
+        if (mode.char)
+            addMapCommands(mode.char,
+                           [m.mask for (m in modes.mainModes) if (m.char == mode.char)],
+                           [mode.disp.toLowerCase()]);
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

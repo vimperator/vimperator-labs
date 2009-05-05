@@ -579,7 +579,7 @@ function Options() //{{{
             });
         }
 
-        completion.optionValue(context, opt.name, opt.operator);
+        context.fork("values", 0, completion, "optionValue", opt.name, opt.operator);
     }
 
     //

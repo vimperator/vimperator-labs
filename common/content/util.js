@@ -160,6 +160,24 @@ const util = { //{{{
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
+    extend: function extend(dest) {
+        Array.slice(arguments, 1).filter(util.identity).forEach(function (src)
+        {
+            for (let [k, v] in Iterator(src))
+            {
+                let get = src.__lookupGetter__(k),
+                    set = src.__lookupSetter__(k);
+                if (!get && !set)
+                    dest[k] = v;
+                if (get)
+                    dest.__defineGetter__(k, get);
+                if (set)
+                    dest.__defineSetter__(k, set);
+            }
+        });
+        return dest;
+    },
+
     /**
      * Split a string on literal occurances of a marker.
      *

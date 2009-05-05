@@ -135,16 +135,24 @@ const modes = (function () //{{{
 
         get inputMode() main & (this.COMMAND_LINE | this.INPUT | this.TEXTAREA | this.COMPOSE),
 
-        addMode: function (name, extended, display)
+        get mainModes() (mode for ([k, mode] in Iterator(modeMap)) if (!mode.extended && mode.name == k)),
+
+        addMode: function (name, extended, options)
         {
             let disp = name.replace("_", " ", "g");
             this[name] = 1 << lastMode++;
-            modeMap[name] = modeMap[this[name]] = {
+            if (typeof extended == "object")
+            {
+                options = extended;
+                extended = false;
+            }
+            modeMap[name] = modeMap[this[name]] = util.extend({
                 extended: extended,
                 mask: this[name],
                 name: name,
-                display: display || function () disp
-            };
+                disp: disp
+            }, options);
+            modeMap[name].display = modeMap[name].display || function () disp;
             if (!extended)
                 mainModes.push(this[name]);
         },
@@ -260,16 +268,18 @@ const modes = (function () //{{{
     var modeMap = {};
 
     // main modes, only one should ever be active
-    self.addMode("NORMAL", false, -1);
-    self.addMode("INSERT");
-    self.addMode("VISUAL", false, function () "VISUAL" + (extended & modes.LINE ? " LINE" : ""));
-    self.addMode("COMMAND_LINE");
+    self.addMode("NORMAL", { char: "n", display: -1 });
+    self.addMode("INSERT", { char: "i" });
+    self.addMode("VISUAL", { char: "v", display: function () "VISUAL" + (extended & modes.LINE ? " LINE" : "") });
+    self.addMode("COMMAND_LINE", { char: "c" });
     self.addMode("CARET"); // text cursor is visible
-    self.addMode("TEXTAREA"); // text cursor is in a HTMLTextAreaElement
-    self.addMode("MESSAGE"); // for now only used in Muttator when the message has focus
+    self.addMode("TEXTAREA", { char: "i" }); // text cursor is in a HTMLTextAreaElement
+    self.addMode("CUSTOM",  { display: function () plugins.mode });
+    // FIXME: These belong elsewhere
+    //   So too, probably, do most of the others.
+    self.addMode("MESSAGE", { char: "m" }); // for now only used in Muttator when the message has focus
     self.addMode("COMPOSE");
-    self.addMode("CUSTOM", false, function () plugins.mode);
-    self.addMode("PLAYER"); // Player mode for songbird
+    self.addMode("PLAYER",  { char: "p" }); // Player mode for songbird
     // extended modes, can include multiple modes, and even main modes
     self.addMode("EX", true);
     self.addMode("HINTS", true);
