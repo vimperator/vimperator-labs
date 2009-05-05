@@ -92,6 +92,8 @@ function Mail() //{{{
     function getFolderCompletions(context)
     {
         let folders = mail.getFolders(context.filter);
+        context.anchored = false;
+        context.quote = false;
         context.completions = folders.map(function (folder)
                 [folder.server.prettyName + ": " + folder.name,
                  "Unread: " + folder.getNumUnread(false)]);
