@@ -20,6 +20,15 @@ important, please ask.
 In general: Just look at the existing source code!
 We try to be quite consistent, but of course, that's not always possible.
 
+Also we try to target experienced JavaScript developers which do not
+necessarily need to have a good understanding of Vimperator's source code, nor
+do they probably know in-depth concepts of other languages like Lisp or Python.
+Therefore, the coding style should feel natural to any JavaScript developer
+so it is easy to read and understand. Of course, this does not mean, you have
+to avoid all new JavaScript features like list comprehension or generators.
+Use them, when they make sense, but don't use them, when the resulting code
+is hard to read.
+
 === The most important style issues are: ===
 
 * Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use Vim,
