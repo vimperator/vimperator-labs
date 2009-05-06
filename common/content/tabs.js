@@ -220,7 +220,13 @@ function Tabs() //{{{
 
     mappings.add([modes.NORMAL], ["gt"],
         "Go to the next tab",
-        function (count) { tabs.select(count > 0 ? count - 1 : "+1", count > 0 ? false : true); },
+        function (count)
+        {
+            if (count > 0)
+                tabs.select(count - 1, false);
+            else
+                tabs.select("+1", true);
+        },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.NORMAL], ["<C-n>", "<C-Tab>", "<C-PageDown>"],
