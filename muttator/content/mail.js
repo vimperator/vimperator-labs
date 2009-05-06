@@ -374,12 +374,12 @@ function Mail() //{{{
     // SCROLLING
     mappings.add(myModes, ["<Down>"],
         "Scroll message down",
-        function (count) { buffer.scrollLines(count > 1 ? count : 1); },
+        function (count) { buffer.scrollLines(Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["<Up>"],
         "Scroll message up",
-        function (count) { buffer.scrollLines(-(count > 1 ? count : 1)); },
+        function (count) { buffer.scrollLines(-Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add([modes.MESSAGE], ["<Left>"],

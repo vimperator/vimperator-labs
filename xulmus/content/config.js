@@ -325,12 +325,12 @@ const config = { //{{{
 
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
-            function (count) { incrementURL(count > 1 ? count : 1); },
+            function (count) { incrementURL(Math.max(count, 1)); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL],
             ["<C-x>"], "Decrement last number in URL",
-            function (count) { incrementURL(-(count > 1 ? count : 1)); },
+            function (count) { incrementURL(-Math.max(count, 1)); },
             { flags: Mappings.flags.COUNT });
 
         mappings.add([modes.NORMAL], ["~"],

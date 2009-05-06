@@ -334,7 +334,7 @@ function Tabs() //{{{
                     liberator.echoerr("E94: No matching tab for " + arg);
             }
             else // just remove the current tab
-                tabs.remove(tabs.getTab(), count > 0 ? count : 1, special, 0);
+                tabs.remove(tabs.getTab(), Math.max(count, 1), special, 0);
         },
         {
             argCount: "?",

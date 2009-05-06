@@ -732,22 +732,22 @@ function History() //{{{
 
     mappings.add(myModes,
         ["<C-o>"], "Go to an older position in the jump list",
-        function (count) { history.stepTo(-(count > 1 ? count : 1)); },
+        function (count) { history.stepTo(-Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["<C-i>"], "Go to a newer position in the jump list",
-        function (count) { history.stepTo(count > 1 ? count : 1); },
+        function (count) { history.stepTo(Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["H", "<A-Left>", "<M-Left>"], "Go back in the browser history",
-        function (count) { history.stepTo(-(count > 1 ? count : 1)); },
+        function (count) { history.stepTo(-Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes,
         ["L", "<A-Right>", "<M-Right>"], "Go forward in the browser history",
-        function (count) { history.stepTo(count > 1 ? count : 1); },
+        function (count) { history.stepTo(Math.max(count, 1)); },
         { flags: Mappings.flags.COUNT });
 
     /////////////////////////////////////////////////////////////////////////////}}}
