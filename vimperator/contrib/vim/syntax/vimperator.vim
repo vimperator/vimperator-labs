@@ -30,7 +30,7 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] b
     \ tabN[ext] tabc[lose] tabd[uplicate] tabde[tach] tabd[o] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly]
     \ tabopen tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion]
     \ vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
-    \ contained
+    \ contained nm[ap] nno[remap] nu[nmap] nmapc[clear]
 
 syn match vimperatorCommand "!" contained
 
