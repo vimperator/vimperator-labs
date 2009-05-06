@@ -683,7 +683,9 @@ function Tabs() //{{{
                 styles.removeSheet(true, "tab-binding");
             else if (!this.tabsBound)
                 styles.addSheet(true, "tab-binding", "chrome://browser/content/browser.xul",
-                    ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }");
+                    ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }" +
+                    // FIXME: better solution for themes?
+                    ".tabbrowser-tab[busy] > .tab-icon > .tab-icon-image { list-style-image: url('chrome://global/skin/icons/loading_16.png') !important; }");
         },
 
         get count() getBrowser().mTabs.length,
