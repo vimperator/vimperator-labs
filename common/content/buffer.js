@@ -987,8 +987,8 @@ function Buffer() //{{{
 
         /**
          * Evaluates an XPath expression in the current or provided
-         * document.  It provides the xhtml and liberator XML
-         * namespaces. The result may be used as an iterator.
+         * document. It provides the xhtml and liberator XML namespaces. The
+         * result may be used as an iterator.
          *
          * @param {string} expression The XPath expression to evaluate.
          * @param {Document} doc The document to evaluate the expression in.
@@ -1518,7 +1518,8 @@ function Buffer() //{{{
         },
 
         /**
-         * Opens a viewer to inspect the source of the currently selected range.
+         * Opens a viewer to inspect the source of the currently selected
+         * range.
          */
         viewSelectionSource: function ()
         {
@@ -1803,6 +1804,10 @@ function Marks() //{{{
 
     return {
 
+        /**
+         * @property {Array} Returns all marks, both local and URL, in a sorted
+         *     array.
+         */
         get all() getSortedMarks(),
 
         /**
