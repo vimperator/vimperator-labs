@@ -15,6 +15,10 @@ will echo the current date to the command line when [m]<F2>[m] is pressed.
 There are separate key mapping tables for each of the Normal, Insert, and
 Command-line modes.
 
+Please note that, unlike Vim and other applications, mappings containing
+the Shift key are specified with the capital letter, so e.g. [m]<C-n>[m] is
+different from [m]<C-N>[m], the latter being the only way to map Shift-Ctrl-n.
+
 |:map-special-chars| +
 
 |<Nop>| +

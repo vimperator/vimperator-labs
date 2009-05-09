@@ -30,11 +30,12 @@ ________________________________________________________________________________
 ||:!{cmd}||
 ________________________________________________________________________________
 Run a command. Runs {cmd} through system() and displays its output. Any \'!' in
-{cmd} is replaced with the previous external command. But not when there is a
-backslash before the \'!', then that backslash is removed.
+{cmd} is replaced with the previous external command, but not when there is a
+backslash before the \'!', then the backslash is removed.
 
 Warning: Input redirection (< foo) not done, also do not run commands which
-require stdin or it will hang Firefox!
+require stdin or it will hang Firefox! It is possible to launch background
+processes, though (e.g. ':! xterm &').
 ________________________________________________________________________________
 
 
