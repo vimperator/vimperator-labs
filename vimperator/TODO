@@ -24,6 +24,7 @@ BUGS:
   are mapped. Vimp should recognize "<C-g>" as an atom that should not
   be matched literally. In fact, typing "g<C-g>" out literally is
   equivalent to typing "g" and then <C-g>.
+- RC file is sourced once per window
 
 (recent CVS regressions):
 - visual caret mode is broken, requires a manual page focus first anyway or
@@ -42,13 +43,13 @@ BUGS:
 - URLs in :ls output are no longer hyperlinks
 
 FEATURES:
-9 change the extension ID to vimperator@vimperator.org rather than
+8 change the extension ID to vimperator@vimperator.org rather than
   vimperator@mozdev.org
-9 finish :help TODOs
-9 fix local options
-9 adaptive timeout for auto-completions, :set completions can be updated more often than
+8 finish :help TODOs
+8 fix local options
+8 adaptive timeout for auto-completions, :set completions can be updated more often than
   :open foo
-9 use the storage module for autocommands
+8 use the storage module for autocommands
 8 support 'activate' in buffer.followLink?
   Leave this to the bookmarks.tabs.loadInBackground. Hint activation
   should be nearly equivalent to the corresponding mouse motion, and that
