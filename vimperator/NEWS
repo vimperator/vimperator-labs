@@ -4,6 +4,7 @@
     * TabMixPlus (and other tab extensions) should work much better now
       together with Vimperator unless you :set guioptions+=[nN]
     * remove 'preload' option. You can fake it by some custom javascript in your init file
+    * add :stopall
     * add :tabdo
     * add 'encoding'
     * add 'hintinputs'

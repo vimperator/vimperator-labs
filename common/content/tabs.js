@@ -527,6 +527,11 @@ function Tabs() //{{{
                 bang: true
             });
 
+        commands.add(["stopa[ll]"],
+            "Stop loading all tab pages",
+            function () { tabs.stopAll(); },
+            { argCount: "0" });
+
         // TODO: add count support
         commands.add(["tabm[ove]"],
             "Move the current tab after tab N",
@@ -886,6 +891,13 @@ function Tabs() //{{{
             getBrowser().mTabContainer.selectedIndex = index;
         },
 
+        /**
+         * Reload the specified tab.
+         *
+         * @param {Object} tab The tab to reload.
+         * @param {boolean} bypassCache Whether to bypass the cache when
+         *     reloading.
+         */
         reload: function (tab, bypassCache)
         {
             if (bypassCache)
@@ -899,6 +911,12 @@ function Tabs() //{{{
             }
         },
 
+        /**
+         * Reload all tabs.
+         *
+         * @param {boolean} bypassCache Whether to bypass the cache when
+         *     reloading.
+         */
         reloadAll: function (bypassCache)
         {
             if (bypassCache)
@@ -920,6 +938,28 @@ function Tabs() //{{{
             {
                 getBrowser().reloadAllTabs();
             }
+        },
+
+        /**
+         * Stop loading the specified tab.
+         *
+         * @param {Object} tab The tab to stop loading.
+         */
+        stop: function (tab)
+        {
+            if (config.stop)
+                config.stop(tab);
+            else
+                tab.linkedBrowser.stop();
+        },
+
+        /**
+         * Stop loading all tabs.
+         */
+        stopAll: function ()
+        {
+            for (let [,browser] in this.browsers)
+                browser.stop();
         },
 
         // "buffer" is a string which matches the URL or title of a buffer, if it

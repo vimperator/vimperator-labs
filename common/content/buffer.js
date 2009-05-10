@@ -254,14 +254,8 @@ function Buffer() //{{{
         });
 
     mappings.add(myModes, ["<C-c>"],
-        "Stop loading",
-        function ()
-        {
-            if (config.stop)
-                config.stop();
-            else
-                window.BrowserStop();
-        });
+        "Stop loading the current web page",
+        function () { tabs.stop(getBrowser().mCurrentTab); });
 
     // scrolling
     mappings.add(myModes, ["j", "<Down>", "<C-e>"],
@@ -430,7 +424,7 @@ function Buffer() //{{{
 
     // reloading
     mappings.add(myModes, ["r"],
-        "Reload current page",
+        "Reload the current web page",
         function () { tabs.reload(getBrowser().mCurrentTab, false); });
 
     mappings.add(myModes, ["R"],
@@ -592,7 +586,7 @@ function Buffer() //{{{
         });
 
     commands.add(["re[load]"],
-        "Reload current page",
+        "Reload the current web page",
         function (args) { tabs.reload(getBrowser().mCurrentTab, args.bang); },
         {
             bang: true,
@@ -642,14 +636,8 @@ function Buffer() //{{{
         });
 
     commands.add(["st[op]"],
-        "Stop loading",
-        function ()
-        {
-            if (config.stop)
-                config.stop();
-            else
-                window.BrowserStop();
-        },
+        "Stop loading the current web page",
+        function () { tabs.stop(getBrowser().mCurrentTab); },
         { argCount: "0" });
 
     commands.add(["vie[wsource]"],

@@ -14,7 +14,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]<C-^>[m]|| Select the alternate tab or the [count]th tab +
 ||[m]<C-a>[m]|| Increment last number in URL +
 ||[m]<C-b>[m]|| Scroll up a full page +
-||[m]<C-c>[m]|| Stop loading +
+||[m]<C-c>[m]|| Stop loading the current web page +
 ||[m]<C-d>[m]|| Scroll window downwards in the buffer +
 ||[m]<C-f>[m]|| Scroll down a full page +
 ||[m]<C-g>[m]|| Print the current file name +
@@ -66,7 +66,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]o[m]|| Open one or more URLs +
 ||[m]p[m]|| Open (put) a URL based on the current clipboard contents in the current buffer +
 ||[m]q[m]|| Record a key sequence into a macro +
-||[m]r[m]|| Reload current page +
+||[m]r[m]|| Reload the current web page +
 ||[m]t[m]|| Open one or more URLs in a new tab +
 ||[m]u[m]|| Undo closing of a tab +
 ||[m]y[m]|| Yank current location to the clipboard +
@@ -222,7 +222,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:quit[c]|| Quit current tab +
 ||[c]:quitall[c]|| Quit Vimperator +
 ||[c]:redraw[c]|| Redraw the screen +
-||[c]:reload[c]|| Reload current page +
+||[c]:reload[c]|| Reload the current web page +
 ||[c]:reloadall[c]|| Reload all tab pages +
 ||[c]:restart[c]|| Force the browser to restart +
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
@@ -236,7 +236,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:silent[c]|| Execute a command silently +
 ||[c]:style[c]|| Style Vimperator and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
-||[c]:stop[c]|| Stop loading +
+||[c]:stop[c]|| Stop loading the current web page +
+||[c]:stopall[c]|| Stop loading all tab pages +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
 ||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +

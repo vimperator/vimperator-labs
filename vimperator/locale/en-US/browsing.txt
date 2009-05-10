@@ -240,22 +240,22 @@ section:Reloading[reloading]
 |r|
 ||r||
 ________________________________________________________________________________
-Force reloading of the current page.
+Force reloading of the current web page.
 ________________________________________________________________________________
 
 
 |R|
 ||R||
 ________________________________________________________________________________
-Force reloading of the current page skipping the cache.
+Force reloading of the current web page skipping the cache.
 ________________________________________________________________________________
 
 
 |:re| |:reload| +
 ||:re[load][!]||
 ________________________________________________________________________________
-Reload current page. Forces reloading of the current page. If [!] is
-given, skip the cache.
+Reload current web page. Forces reloading of the current page. If [!] is given,
+skip the cache.
 ________________________________________________________________________________
 
 
@@ -277,7 +277,13 @@ ________________________________________________________________________________
 |:st| |:stop|
 ||:st[op]||
 ________________________________________________________________________________
-Stop loading. Stop loading current web page.
+Stop loading the current web page.
+________________________________________________________________________________
+
+|:stopa| |:stopall| +
+||:stopa[ll]||
+________________________________________________________________________________
+Stop loading all web pages.
 ________________________________________________________________________________
 
 section:Writing[writing,save-file]

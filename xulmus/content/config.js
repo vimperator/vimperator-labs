@@ -174,7 +174,8 @@ const config = { //{{{
         "library.js"
     ],
 
-    stop: function ()
+    // FIXME: tab arg and media tab exception?
+    stop: function (tab)
     {
         SBGetBrowser().mCurrentBrowser.stop();
     },
