@@ -137,7 +137,9 @@ function Search() //{{{
      *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
      */
     var highlightObj = {
+
         spans: [],
+
         search: function (aWord, matchCase)
         {
             var finder = services.create("find");
@@ -163,7 +165,7 @@ function Search() //{{{
             if (!aWord)
             {
                 let elems = highlightObj.getSpans(doc);
-                for (let i = elems.snapshotLength; --i >= 0;)
+                for (let i = elems.length; --i >= 0;)
                 {
                     let elem = elems.snapshotItem(i);
                     let docfrag = doc.createDocumentFragment();
@@ -250,6 +252,7 @@ function Search() //{{{
             })
             this.spans = []
         },
+
         getSpans: function (doc) this.spans
     };
 
@@ -461,9 +464,9 @@ function Search() //{{{
             if (typeof forcedBackward === "boolean")
                 backwards = forcedBackward;
 
-            //Allow /<CR> to work.
-            if ((!command) || command == lastSearchPattern)
-                return this.findAgain(backwards != lastSearchBackwards)
+            // Allow /<CR> to work.
+            if (!command)
+                command = lastSearchPattern;
 
             this.clear();
 
@@ -507,7 +510,7 @@ function Search() //{{{
                 return;
 
             // already highlighted?
-            if (highlightObj.getSpans(content.document).snapshotLength > 0)
+            if (highlightObj.getSpans(content.document).length > 0)
                 return;
 
             if (!str)
