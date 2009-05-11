@@ -952,7 +952,7 @@ function Hints() //{{{
             }
             else if (validHints.length == 1)
             {
-                processHints(true);
+                processHints(false);
                 return false;
             }
             else // still hints visible
