@@ -37,13 +37,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : 'linksearch' searches should highlight link matches only
 //     : changing any search settings should also update the search state including highlighting
 //     : incremental searches shouldn't permanently update search modifiers
-//     : normalise the use of "search" vs "find" and rename callbacks
 
 // make sure you only create this object when the "liberator" object is ready
 /**
- * @instance search
+ * @instance finder
  */
-function Search() //{{{
+function Finder() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -62,13 +61,13 @@ function Search() //{{{
     var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    liberator.registerCallback("change", modes.SEARCH_FORWARD, function (str) { search.onKeyPress(str); });
-    liberator.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { search.onSubmit(str); });
-    liberator.registerCallback("cancel", modes.SEARCH_FORWARD, function () { search.onCancel(); });
+    liberator.registerCallback("change", modes.SEARCH_FORWARD, function (str) { finder.onKeyPress(str); });
+    liberator.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { finder.onSubmit(str); });
+    liberator.registerCallback("cancel", modes.SEARCH_FORWARD, function () { finder.onCancel(); });
     // TODO: allow advanced myModes in register/triggerCallback
-    liberator.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { search.onKeyPress(str); });
-    liberator.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { search.onSubmit(str); });
-    liberator.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { search.onCancel(); });
+    liberator.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { finder.onKeyPress(str); });
+    liberator.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { finder.onSubmit(str); });
+    liberator.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { finder.onCancel(); });
 
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
@@ -267,9 +266,9 @@ function Search() //{{{
             setter: function (value)
             {
                 if (value)
-                    search.highlight();
+                    finder.highlight();
                 else
-                    search.clear();
+                    finder.clear();
 
                 return value;
             }
@@ -300,19 +299,19 @@ function Search() //{{{
 
     mappings.add(myModes,
         ["/"], "Search forward for a pattern",
-        function () { search.openPrompt(modes.SEARCH_FORWARD); });
+        function () { finder.openPrompt(modes.SEARCH_FORWARD); });
 
     mappings.add(myModes,
         ["?"], "Search backwards for a pattern",
-        function () { search.openPrompt(modes.SEARCH_BACKWARD); });
+        function () { finder.openPrompt(modes.SEARCH_BACKWARD); });
 
     mappings.add(myModes,
         ["n"], "Find next",
-        function () { search.findAgain(false); });
+        function () { finder.findAgain(false); });
 
     mappings.add(myModes,
         ["N"], "Find previous",
-        function () { search.findAgain(true); });
+        function () { finder.findAgain(true); });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["*"],
         "Find word under cursor",
@@ -322,7 +321,7 @@ function Search() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move after the current match before searching forwards
             window.content.getSelection().getRangeAt(0).collapse(false);
-            search.onSubmit(word, false)
+            finder.onSubmit(word, false)
         });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
@@ -333,7 +332,7 @@ function Search() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move before the current match before searching backwards
             window.content.getSelection().getRangeAt(0).collapse(true);
-            search.onSubmit(word, true)
+            finder.onSubmit(word, true)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -342,7 +341,7 @@ function Search() //{{{
 
     commands.add(["noh[lsearch]"],
         "Remove the search highlighting",
-        function () { search.clear(); },
+        function () { finder.clear(); },
         { argCount: "0" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -477,7 +476,7 @@ function Search() //{{{
             // TODO: move to find() when reverse incremental searching is kludged in
             // need to find again for reverse searching
             if (backwards)
-                setTimeout(function () { search.findAgain(false); }, 0);
+                setTimeout(function () { finder.findAgain(false); }, 0);
 
             if (options["hlsearch"])
                 this.highlight(searchString);

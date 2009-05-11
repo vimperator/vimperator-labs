@@ -263,7 +263,7 @@ const config = { //{{{
         //      or we could just make sure that they're all sourced in order.
         //      The scripts could even just instantiate them themselves.
         //        --Kris
-        liberator.loadModule("search",     Search);
+        liberator.loadModule("finder",     Finder);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
         liberator.loadModule("tabs",       Tabs);

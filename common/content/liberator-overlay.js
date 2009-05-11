@@ -41,7 +41,7 @@
      "completion.js",
      "editor.js",
      "events.js",
-     "find.js",
+     "finder.js",
      "hints.js",
      "io.js",
      "mappings.js",
