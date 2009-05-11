@@ -62,13 +62,13 @@ function Search() //{{{
     var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    liberator.registerCallback("change", modes.SEARCH_FORWARD, function (command) { search.searchKeyPressed(command); });
-    liberator.registerCallback("submit", modes.SEARCH_FORWARD, function (command) { search.searchSubmitted(command); });
-    liberator.registerCallback("cancel", modes.SEARCH_FORWARD, function () { search.searchCanceled(); });
+    liberator.registerCallback("change", modes.SEARCH_FORWARD, function (str) { search.onKeyPress(str); });
+    liberator.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { search.onSubmit(str); });
+    liberator.registerCallback("cancel", modes.SEARCH_FORWARD, function () { search.onCancel(); });
     // TODO: allow advanced myModes in register/triggerCallback
-    liberator.registerCallback("change", modes.SEARCH_BACKWARD, function (command) { search.searchKeyPressed(command); });
-    liberator.registerCallback("submit", modes.SEARCH_BACKWARD, function (command) { search.searchSubmitted(command); });
-    liberator.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { search.searchCanceled(); });
+    liberator.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { search.onKeyPress(str); });
+    liberator.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { search.onSubmit(str); });
+    liberator.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { search.onCancel(); });
 
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
@@ -300,11 +300,11 @@ function Search() //{{{
 
     mappings.add(myModes,
         ["/"], "Search forward for a pattern",
-        function () { search.openSearchDialog(modes.SEARCH_FORWARD); });
+        function () { search.openPrompt(modes.SEARCH_FORWARD); });
 
     mappings.add(myModes,
         ["?"], "Search backwards for a pattern",
-        function () { search.openSearchDialog(modes.SEARCH_BACKWARD); });
+        function () { search.openPrompt(modes.SEARCH_BACKWARD); });
 
     mappings.add(myModes,
         ["n"], "Find next",
@@ -322,7 +322,7 @@ function Search() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move after the current match before searching forwards
             window.content.getSelection().getRangeAt(0).collapse(false);
-            search.searchSubmitted(word, false)
+            search.onSubmit(word, false)
         });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
@@ -333,7 +333,7 @@ function Search() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move before the current match before searching backwards
             window.content.getSelection().getRangeAt(0).collapse(true);
-            search.searchSubmitted(word, true)
+            search.onSubmit(word, true)
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -358,7 +358,7 @@ function Search() //{{{
          *     modes.SEARCH_BACKWARD.
          * @default modes.SEARCH_FORWARD
          */
-        openSearchDialog: function (mode)
+        openPrompt: function (mode)
         {
             if (mode == modes.SEARCH_BACKWARD)
             {
@@ -421,12 +421,8 @@ function Search() //{{{
                 // hack needed, because wrapping causes a "scroll" event which clears
                 // our command line
                 setTimeout(function () {
-                    if (up)
-                        commandline.echo("search hit TOP, continuing at BOTTOM",
-                            commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
-                    else
-                        commandline.echo("search hit BOTTOM, continuing at TOP",
-                            commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                    let msg = up ? "search hit TOP, continuing at BOTTOM" : "search hit BOTTOM, continuing at TOP";
+                    commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
                 }, 0);
             }
             else
@@ -442,40 +438,40 @@ function Search() //{{{
          * Called when the user types a key in the search dialog. Triggers a
          * search attempt if 'incsearch' is set.
          *
-         * @param {string} command The search string.
+         * @param {string} str The search string.
          */
-        searchKeyPressed: function (command)
+        onKeyPress: function (str)
         {
             if (options["incsearch"])
-                this.find(command, backwards);
+                this.find(str, backwards);
         },
 
         /**
          * Called when the <Enter> key is pressed to trigger a search.
          *
-         * @param {string} command The search string.
+         * @param {string} str The search string.
          * @param {boolean} forcedBackward Whether to search forwards or
          *     backwards. This overrides the direction set in
-         *     (@link #openSearchDialog).
+         *     (@link #openPrompt).
          * @default false
          */
-        searchSubmitted: function (command, forcedBackward)
+        onSubmit: function (str, forcedBackward)
         {
             if (typeof forcedBackward === "boolean")
                 backwards = forcedBackward;
 
             // Allow /<CR> to work.
-            if (!command)
-                command = lastSearchPattern;
+            if (!str)
+                str = lastSearchPattern;
 
             this.clear();
 
             if (!options["incsearch"] || !found)
-                this.find(command, backwards);
+                this.find(str, backwards);
 
             lastSearchBackwards = backwards;
-            //lastSearchPattern = command.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
-            lastSearchPattern = command;
+            //lastSearchPattern = str.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
+            lastSearchPattern = str;
             lastSearchString = searchString;
 
             // TODO: move to find() when reverse incremental searching is kludged in
@@ -493,7 +489,7 @@ function Search() //{{{
          * Called when the search is canceled. For example, if someone presses
          * <Esc> while typing a search.
          */
-        searchCanceled: function ()
+        onCancel: function ()
         {
             // TODO: code to reposition the document to the place before search started
         },
