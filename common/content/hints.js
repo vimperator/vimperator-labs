@@ -886,7 +886,7 @@ function Hints() //{{{
                         context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
                     },
                     onChange: function () { modes.pop() },
-                    onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); },
+                    onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
                 });
         }, { flags: Mappings.flags.COUNT });
 
