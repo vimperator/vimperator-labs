@@ -401,7 +401,7 @@ function Tabs() //{{{
             if (arg)
             {
                 if (/^\d+$/.test(arg))
-                    tabs.select("-" + arg, true); // FIXME: urgh!
+                    tabs.select("-" + arg, true);
                 else
                     liberator.echoerr("E488: Trailing characters");
             }
@@ -989,7 +989,7 @@ function Tabs() //{{{
             // FIXME:
             if (index == -1)
             {
-                liberator.beep(); // XXX: move to ex-handling?
+                liberator.beep();
                 return;
             }
             getBrowser().mTabContainer.selectedIndex = index;

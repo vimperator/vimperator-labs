@@ -1931,7 +1931,7 @@ function Marks() //{{{
             }
 
             if (!ok)
-                liberator.echoerr("E20: Mark not set"); // FIXME: move up?
+                liberator.echoerr("E20: Mark not set");
         },
 
         /**

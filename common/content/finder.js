@@ -30,7 +30,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // TODO: proper backwards search - implement our own component?
 //     : implement our own highlighter?
-//     : frameset pages
 //     : <ESC> should cancel search highlighting in 'incsearch' mode and jump
 //       back to the presearch page location - can probably use the same
 //       solution as marks
@@ -48,8 +47,6 @@ function Finder() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME:
-    //var self = this;               // needed for callbacks since "this" is the "liberator" object in a callback
     var found = false;               // true if the last search was successful
     var backwards = false;           // currently searching backwards
     var searchString = "";           // current search string (without modifiers)

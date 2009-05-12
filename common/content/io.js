@@ -878,7 +878,6 @@ lookup:
             let dirs = getPathsFromPathList(options["runtimepath"]);
             let found = false;
 
-            // FIXME: should use original arg string
             liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
@@ -902,7 +901,7 @@ lookup:
             }
 
             if (!found)
-                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1);
 
             return found;
         },
@@ -1001,7 +1000,7 @@ lookup:
                             {
                                 let lineNumber = i + 1;
 
-                                // FIXME: messages need to be able to specify
+                                // TODO: messages need to be able to specify
                                 // whether they can be cleared/overwritten or
                                 // should be appended to and the MOW opened
                                 liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);
