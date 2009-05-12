@@ -601,13 +601,14 @@ function Bookmarks() //{{{
         getSearchURL: function getSearchURL(text, useDefsearch)
         {
             let url = null;
-            let aPostDataRef = {};
+            let postData = {};
             let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user
             // did not :open <tab> once before
             this.getSearchEngines();
 
+            // ripped from Firefox
             function getShortcutOrURI(aURL, aPostDataRef)
             {
                 var shortcutURL = null;
@@ -676,13 +677,13 @@ function Bookmarks() //{{{
                     return shortcutURL;
             }
 
-            url = getShortcutOrURI(searchString, aPostDataRef);
+            url = getShortcutOrURI(searchString, postData);
 
             if (url == searchString)
                 url = null;
 
-            if (aPostDataRef && aPostDataRef.value)
-                return [url, aPostDataRef.value];
+            if (postData && postData.value)
+                return [url, postData.value];
             else
                 return url; // can be null
         },

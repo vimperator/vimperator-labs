@@ -1750,14 +1750,14 @@ function Events() //{{{
                     this._branch.removeObserver("", this);
             },
 
-            observe: function (aSubject, aTopic, aData)
+            observe: function (subject, topic, data)
             {
-                if (aTopic != "nsPref:changed")
+                if (topic != "nsPref:changed")
                     return;
 
-                // aSubject is the nsIPrefBranch we're observing (after appropriate QI)
-                // aData is the name of the pref that's been changed (relative to aSubject)
-                switch (aData)
+                // subject is the nsIPrefBranch we're observing (after appropriate QI)
+                // data is the name of the pref that's been changed (relative to subject)
+                switch (data)
                 {
                     case "accessibility.browsewithcaret":
                         let value = options.getPref("accessibility.browsewithcaret", false);
