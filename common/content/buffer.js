@@ -509,6 +509,14 @@ function Buffer() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    commands.add(["frameo[nly]"],
+        "Show only the current frame's page",
+        function (args)
+        {
+            liberator.open(tabs.localStore.focusedFrame.document.documentURI);
+        },
+        { argCount: "0" });
+
     commands.add(["ha[rdcopy]"],
         "Print current document",
         function (args)
