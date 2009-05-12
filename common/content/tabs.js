@@ -30,6 +30,9 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // TODO: many methods do not work with Thunderbird correctly yet
 
+/**
+ * @instance tabs
+ */
 function Tabs() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -676,8 +679,16 @@ function Tabs() //{{{
 
     return {
 
+        /**
+         * @property {Object} The previously accessed tab or null if no tab
+         *     other than the current one has been accessed.
+         */
         get alternate() alternates[1],
 
+        /**
+         * @property {Iterator(Object)} A genenerator that returns all browsers
+         *     in the current window.
+         */
         get browsers()
         {
             let browsers = getBrowser().browsers;
@@ -685,10 +696,13 @@ function Tabs() //{{{
                 yield [i, browsers[i]];
         },
 
-        get tabsBound() {
-            return Boolean(styles.get(true, "tab-binding"))
-        },
-        set tabsBound(val) {
+        /**
+         * @property {boolean} Whether the tab numbering XBL binding has been
+         *     applied.
+         */
+        get tabsBound() Boolean(styles.get(true, "tab-binding")),
+        set tabsBound(val)
+        {
             let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
             if (!val)
                 styles.removeSheet(true, "tab-binding");
@@ -699,8 +713,14 @@ function Tabs() //{{{
                     ".tabbrowser-tab[busy] > .tab-icon > .tab-icon-image { list-style-image: url('chrome://global/skin/icons/loading_16.png') !important; }");
         },
 
+        /**
+         * @property {number} The number of tabs in the current window.
+         */
         get count() getBrowser().mTabs.length,
 
+        /**
+         * @property {Object} The local options store for the current tab.
+         */
         get options()
         {
             let store = this.localStore;
@@ -709,6 +729,15 @@ function Tabs() //{{{
             return store.options;
         },
 
+        /**
+         * Returns the local state store for the tab at the specified
+         * <b>tabIndex</b>. If <b>tabIndex</b> is not specified then the
+         * current tab is used.
+         *
+         * @param {number} tabIndex
+         * @returns {Object}
+         */
+        // FIXME: why not a tab arg? Why this and the property?
         getLocalStore: function (tabIndex)
         {
             let tab = this.getTab(tabIndex);
@@ -717,8 +746,15 @@ function Tabs() //{{{
             return tab.liberatorStore;
         },
 
+        /**
+         * @property {Object} The local state store for the currently selected
+         *     tab.
+         */
         get localStore() this.getLocalStore(),
 
+        /**
+         * @property {Object} The tab browser strip.
+         */
         get tabStrip()
         {
             let tabStrip = null;
@@ -732,18 +768,40 @@ function Tabs() //{{{
             return tabStrip;
         },
 
-        // @returns the index of the currently selected tab starting with 0
+        /**
+         * @property {Object[]} The array of closed tabs for the current
+         *     session.
+         */
+        get closedTabs()
+        {
+            return services.get("json").decode(services.get("sessionStore").getClosedTabData(window));
+        },
+
+        /**
+         * Returns the index of <b>tab</b> or the index of the currently
+         * selected tab if <b>tab</b> is not specified. This is a 0-based
+         * index.
+         *
+         * @param {Object} tab A tab from the current tab list.
+         * @returns {number}
+         */
         index: function (tab)
         {
             if (tab)
                 return Array.indexOf(getBrowser().mTabs, tab);
-
-            return getBrowser().mTabContainer.selectedIndex;
+            else
+                return getBrowser().mTabContainer.selectedIndex;
         },
 
         // TODO: implement filter
-        // @returns an array of tabs which match filter
-        get: function (filter)
+        /**
+         * Returns an array of all tabs in the tab list.
+         *
+         * @returns {Object[]}
+         */
+        // FIXME: why not return the tab element?
+        //      : unused? Remove me.
+        get: function ()
         {
             let buffers = [];
             for (let [i, browser] in this.browsers)
@@ -756,6 +814,13 @@ function Tabs() //{{{
             return buffers;
         },
 
+        /**
+         * Returns the index of the tab containing <b>content</b>.
+         *
+         * @param {Object} content Either a content window or a content
+         *     document.
+         */
+        // FIXME: Only called once...necessary?
         getContentIndex: function (content)
         {
             for (let [i, browser] in this.browsers)
@@ -766,6 +831,14 @@ function Tabs() //{{{
             return -1;
         },
 
+        /**
+         * Returns the tab at the specified <b>index</b> or the currently
+         * selected tab if <b>index</b> is not specified. This is a 0-based
+         * index.
+         *
+         * @param {number} index The index of the tab required.
+         * @returns {Object}
+         */
         getTab: function (index)
         {
             if (index != undefined)
@@ -774,26 +847,44 @@ function Tabs() //{{{
                 return getBrowser().mCurrentTab;
         },
 
-        get closedTabs()
-        {
-            return services.get("json").decode(services.get("sessionStore").getClosedTabData(window));
-        },
-
+        /**
+         * Lists all tabs matching <b>filter</b>.
+         *
+         * @param {string} filter A filter matching a substring of the tab's
+         *     document title or URL.
+         */
         list: function (filter)
         {
             completion.listCompleter("buffer", filter);
         },
 
-        // wrap causes the movement to wrap around the start and end of the tab list
-        // NOTE: position is a 0 based index
+        /**
+         * Moves a tab to a new position in the tab list.
+         *
+         * @param {Object} tab The tab to move.
+         * @param {string} spec See {@link indexFromSpec}.
+         * @param {boolean} wrap Whether an out of bounds <b>spec</b> causes
+         *     the destination position to wrap around the start/end of the tab
+         *     list.
+         */
         move: function (tab, spec, wrap)
         {
             let index = indexFromSpec(spec, wrap);
             getBrowser().moveTabTo(tab, index);
         },
 
-        // quitOnLastTab = 1: quit without saving session
-        // quitOnLastTab = 2: quit and save session
+        /**
+         * Removes the specified <b>tab</b> from the tab list.
+         *
+         * @param {Object} tab
+         * @param {number} count
+         * @param {boolean} focusLeftTab Focus the tab to the left of the removed tab.
+         * @param {number} quitOnLastTab Whether to quit if the tab being
+         *     deleted is the only tab in the tab list:
+         *         1 - quit without saving session
+         *         2 - quit and save session
+         */
+        // FIXME: what is quitOnLastTab {1,2} all about then, eh? --djk
         remove: function (tab, count, focusLeftTab, quitOnLastTab)
         {
             let removeOrBlankTab = {
@@ -874,11 +965,24 @@ function Tabs() //{{{
             }
         },
 
+        /**
+         * Removes all tabs from the tab list except the specified <b>tab</b>.
+         *
+         * @param {Object} tab The tab to keep.
+         */
         keepOnly: function (tab)
         {
             getBrowser().removeAllTabsBut(tab);
         },
 
+        /**
+         * Selects the tab at the position specified by <b>spec</b>.
+         *
+         * @param {string} spec See {@link indexFromSpec}
+         * @param {boolean} wrap Whether an out of bounds <b>spec</b> causes
+         *     the selection position to wrap around the start/end of the tab
+         *     list.
+         */
         select: function (spec, wrap)
         {
             let index = indexFromSpec(spec, wrap);
@@ -892,7 +996,7 @@ function Tabs() //{{{
         },
 
         /**
-         * Reload the specified tab.
+         * Reloads the specified tab.
          *
          * @param {Object} tab The tab to reload.
          * @param {boolean} bypassCache Whether to bypass the cache when
@@ -912,7 +1016,7 @@ function Tabs() //{{{
         },
 
         /**
-         * Reload all tabs.
+         * Reloads all tabs.
          *
          * @param {boolean} bypassCache Whether to bypass the cache when
          *     reloading.
@@ -941,7 +1045,7 @@ function Tabs() //{{{
         },
 
         /**
-         * Stop loading the specified tab.
+         * Stops loading the specified tab.
          *
          * @param {Object} tab The tab to stop loading.
          */
@@ -954,7 +1058,7 @@ function Tabs() //{{{
         },
 
         /**
-         * Stop loading all tabs.
+         * Stops loading all tabs.
          */
         stopAll: function ()
         {
@@ -962,8 +1066,20 @@ function Tabs() //{{{
                 browser.stop();
         },
 
-        // "buffer" is a string which matches the URL or title of a buffer, if it
-        // is null, the last used string is used again
+        /**
+         * Selects the tab containing the specified <b>buffer</b>.
+         *
+         * @param {string} buffer A string which matches the URL or title of a
+         *     buffer, if it is null, the last used string is used again.
+         * @param {boolean} allowNonUnique Whether to select the first of
+         *     multiple matches.
+         * @param {number} count If there are multiple matches select the
+         *     count'th match.
+         * @param {boolean} reverse Whether to search the buffer list in
+         *     reverse order.
+         *
+         */
+        // FIXME: help!
         switchTo: function (buffer, allowNonUnique, count, reverse)
         {
             if (buffer == "")
@@ -1037,6 +1153,12 @@ function Tabs() //{{{
             }
         },
 
+        /**
+         * Clones the specified <b>tab</b> and append it to the tab list.
+         *
+         * @param {Object} tab The tab to clone.
+         * @param {boolean} activate Whether to select the newly cloned tab.
+         */
         cloneTab: function (tab, activate)
         {
             let newTab = getBrowser().addTab();
@@ -1048,6 +1170,12 @@ function Tabs() //{{{
             return newTab;
         },
 
+        /**
+         * Detaches the specified <b>tab</b> and open it in a new window. If no
+         * tab is specified the currently selected tab is detached.
+         *
+         * @param {Object} tab The tab to detach.
+         */
         detachTab: function (tab)
         {
             if (!tab)
@@ -1060,6 +1188,9 @@ function Tabs() //{{{
             this.remove(tab, 1, false, 1);
         },
 
+        /**
+         * Selects the alternate tab.
+         */
         selectAlternateTab: function ()
         {
             if (tabs.alternate == null || tabs.getTab() == tabs.alternate)
@@ -1085,6 +1216,10 @@ function Tabs() //{{{
         // tab that was selected when the session was created.  As a result the
         // alternate after a restart is often incorrectly tab 1 when there
         // shouldn't be one yet.
+        /**
+         * Called on each TabSelect event to update the tab selection history.
+         * See (@link tabs.alternate).
+         */
         updateSelectionHistory: function ()
         {
             alternates = [this.getTab(), alternates[0]];

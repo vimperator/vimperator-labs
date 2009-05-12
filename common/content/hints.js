@@ -638,8 +638,8 @@ function Hints() //{{{
          * @param {boolean} allowWordOverleaping  Whether to allow non-contiguous
          *         words to match.
          *
-         * @return {function(String):bool} A function that will filter only
-         *         hints that match as above.
+         * @return {function(String):boolean} A function that will filter only
+         *     hints that match as above.
          */
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
         {
@@ -897,14 +897,16 @@ function Hints() //{{{
     return {
 
         /**
-         * Create a new hint mode
+         * Creates a new hint mode.
          *
          * @param {String} mode  The letter that identifies this mode.
-         * @param {String} description  The description to display to the user about this mode.
-         * @param {function(Node)} callback  The function to be called with the element that matches.
-         * @param {function():String} selector  The function that returns an XPath selector to decide
-         *                                      which elements can be hinted (the default returns
-         *                                      options.hinttags)
+         * @param {String} description  The description to display to the user
+         *     about this mode.
+         * @param {function(Node)} callback  The function to be called with the
+         *     element that matches.
+         * @param {function():String} selector  The function that returns an
+         *     XPath selector to decide which elements can be hinted (the
+         *     default returns options.hinttags).
          */
         addMode: function (mode)
         {
@@ -912,11 +914,11 @@ function Hints() //{{{
         },
 
         /**
-         * Update the display of hints.
+         * Updates the display of hints.
          *
          * @param {String} minor  Which hint mode to use.
          * @param {String} filter  The filter to use.
-         * @param {Object} win  The window in which we are showing hints
+         * @param {Object} win  The window in which we are showing hints.
          */
         show: function (minor, filter, win)
         {
@@ -968,7 +970,7 @@ function Hints() //{{{
         },
 
         /**
-         * Handle an event
+         * Handle an event.
          *
          * @param {Event} event  The event to handle.
          */
