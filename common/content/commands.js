@@ -53,9 +53,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
  */
 function Command(specs, description, action, extraInfo) //{{{
 {
-    if (!specs || !action)
-        return null;
-
     if (!extraInfo)
         extraInfo = {};
 

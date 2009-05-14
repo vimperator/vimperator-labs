@@ -49,9 +49,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
  */
 function Map(modes, keys, description, action, extraInfo) //{{{
 {
-    if (!modes || (!keys || !keys.length) || !action)
-        return null;
-
     if (!extraInfo)
         extraInfo = {};
 

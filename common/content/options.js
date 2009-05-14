@@ -32,9 +32,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 // options.add() instead
 function Option(names, description, type, defaultValue, extraInfo) //{{{
 {
-    if (!names || !type)
-        return null;
-
     if (!extraInfo)
         extraInfo = {};
 
