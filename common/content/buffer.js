@@ -1190,18 +1190,16 @@ function Buffer() //{{{
                 offsetX = Number(coords[0]) + 1;
                 offsetY = Number(coords[1]) + 1;
             }
-            else if (localName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            else if (localName == "input" && elem.type.toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (path)
-                    {
-                        let file = io.getFile(path);
+                commandline.input("Upload file: ", function (path) {
+                    let file = io.getFile(path);
 
-                        if (!file.exists())
-                            return liberator.beep();
+                    if (!file.exists())
+                        return liberator.beep();
 
-                        elem.value = file.path;
-                    }
-                    , {completer: completion.file, default: elem.value});
+                    elem.value = file.path;
+                }, { completer: completion.file, default: elem.value });
                 return;
             }
 
