@@ -30,33 +30,71 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // Do NOT create instances of this class yourself, use the helper method
 // mappings.add() instead
-function Map(modes, cmds, description, action, extraInfo) //{{{
+/**
+ * A class representing key mappings. Instances are created by the
+ * {@link Mappings} class.
+ *
+ * @param {number[]} modes The modes in which this mapping is active.
+ * @param {string[]} keys The key sequences which are bound to
+ *     <b>action</b>.
+ * @param {string} description A short one line description of the key mapping.
+ * @param {function} action The action invoked by each key sequence.
+ * @param {Object} extraInfo An optional extra configuration hash. The
+ *     following properties are supported.
+ *         flags   - See (@link Map#flags)
+ *         noremap - See (@link Map#noremap)
+ *         rhs     - See (@link Map#rhs)
+ *         silent  - See (@link Map#silent)
+ * @private
+ */
+function Map(modes, keys, description, action, extraInfo) //{{{
 {
-    if (!modes || (!cmds || !cmds.length) || !action)
+    if (!modes || (!keys || !keys.length) || !action)
         return null;
 
     if (!extraInfo)
         extraInfo = {};
 
+    /** @property {number[]} All of the modes for which this mapping applies. */
     this.modes = modes;
-    // only store keysyms with uppercase modifier strings
-    this.names = cmds.map(function (cmd) cmd.replace(/[casm]-/g, String.toUpperCase));
+    /** @property {string[]} All of this mapping's names (key sequences). */
+    this.names = keys.map(function (cmd) cmd.replace(/[casm]-/g, String.toUpperCase)); // only store keysyms with uppercase modifier strings
+    /** @property {function (number)} The function called to execute this mapping. */
     this.action = action;
 
+    /** @property {number} See (@link Mappings#flags) */
     this.flags = extraInfo.flags || 0;
+    /** @property {string} This mapping's description, as shown in :viusage. */
     this.description = description || "";
+    /** @property {string} The literal RHS expansion of this mapping. */
     this.rhs = extraInfo.rhs || null;
+    /** @property {boolean} Whether the RHS of the mapping should expand mappings recursively. */
     this.noremap = extraInfo.noremap || false;
+    /** @property {boolean} Whether any output from the mapping should be echoed on the command line. */
     this.silent = extraInfo.silent || false;
 };
 
 Map.prototype = {
 
-    hasName: function (name)
-    {
-        return this.names.indexOf(name) >= 0;
-    },
+    /**
+     * Returns whether this mapping can be invoked by a key sequence matching
+     * <b>name</b>.
+     *
+     * @param {string} name The name to query.
+     * @returns {boolean}
+     */
+    hasName: function (name) this.names.indexOf(name) >= 0,
 
+    /**
+     * Execute the action for this mapping.
+     *
+     * @param {string} motion The motion argument if accepted by this mapping.
+     *     E.g. "w" for "dw"
+     * @param {number} count The associated count. E.g. "5" for "5j"
+     * @default -1
+     * @param {string} argument The normal argument if accepted by this
+     *     mapping. E.g. "a" for "ma"
+     */
     execute: function (motion, count, argument)
     {
         let args = [];
@@ -100,9 +138,9 @@ function Mappings() //{{{
     {
         let where = userMap ? user : main;
         map.modes.forEach(function (mode) {
-                if (!(mode in where))
-                    where[mode] = [];
-                where[mode].push(map);
+            if (!(mode in where))
+                where[mode] = [];
+            where[mode].push(map);
         });
     }
 
@@ -255,6 +293,7 @@ function Mappings() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     addMapCommands("",  [modes.NORMAL, modes.VISUAL], "");
+
     for (let mode in modes.mainModes)
         if (mode.char)
             addMapCommands(mode.char,
@@ -296,13 +335,40 @@ function Mappings() //{{{
         __iterator__: function () mappingsIterator([modes.NORMAL], main),
 
         // used by :mkvimperatorrc to save mappings
+        /**
+         * Returns a user-defined mappings iterator for the specified
+         * <b>mode</b>.
+         *
+         * @param {number} mode The mode to return mappings from.
+         * @returns {Iterator(Map)}
+         */
         getUserIterator: function (mode) mappingsIterator(mode, user),
 
+        /**
+         * Add a new default key mapping.
+         *
+         * @param {number[]} modes The modes that this mapping applies to.
+         * @param {string[]} keys The key sequences which are bound to
+         *     <b>action</b>.
+         * @param {string} description A description of the key mapping.
+         * @param {function} action The action invoked by each key sequence.
+         * @param {Object} extra An optional extra configuration hash.
+         */
         add: function (modes, keys, description, action, extra)
         {
             addMap(new Map(modes, keys, description, action, extra), false);
         },
 
+        /**
+         * Add a new user-defined key mapping.
+         *
+         * @param {number[]} modes The modes that this mapping applies to.
+         * @param {string[]} keys The key sequences which are bound to
+         *     <b>action</b>.
+         * @param {string} description A description of the key mapping.
+         * @param {function} action The action invoked by each key sequence.
+         * @param {Object} extra An optional extra configuration hash.
+         */
         addUserMap: function (modes, keys, description, action, extra)
         {
             keys = keys.map(expandLeader);
@@ -318,20 +384,41 @@ function Mappings() //{{{
             addMap(map, true);
         },
 
+        /**
+         * Returns the map from <b>mode</b> named <b>cmd</b>.
+         *
+         * @param {number} mode The mode to search.
+         * @param {string} cmd The map name to match.
+         * @returns {Map}
+         */
         get: function (mode, cmd)
         {
             mode = mode || modes.NORMAL;
             return getMap(mode, cmd, user) || getMap(mode, cmd, main);
         },
 
+        /**
+         * Returns the default map from <b>mode</b> named <b>cmd</b>.
+         *
+         * @param {number} mode The mode to search.
+         * @param {string} cmd The map name to match.
+         * @returns {Map}
+         */
         getDefault: function (mode, cmd)
         {
             mode = mode || modes.NORMAL;
             return getMap(mode, cmd, main);
         },
 
-        // returns an array of mappings with names which START with "cmd" (but are NOT "cmd")
-        getCandidates: function (mode, cmd)
+        /**
+         * Returns an array of maps with names starting with but not equal to
+         * <b>prefix</b>.
+         *
+         * @param {number} mode The mode to search.
+         * @param {string} prefix The map prefix string to match.
+         * @returns {Map[]}
+         */
+        getCandidates: function (mode, prefix)
         {
             let mappings = user[mode].concat(main[mode]);
             let matches = [];
@@ -340,10 +427,10 @@ function Mappings() //{{{
             {
                 for (let [,name] in Iterator(map.names))
                 {
-                    if (name.indexOf(cmd) == 0 && name.length > cmd.length)
+                    if (name.indexOf(prefix) == 0 && name.length > prefix.length)
                     {
                         // for < only return a candidate if it doesn't look like a <c-x> mapping
-                        if (cmd != "<" || !/^<.+>/.test(name))
+                        if (prefix != "<" || !/^<.+>/.test(name))
                             matches.push(map);
                     }
                 }
@@ -352,28 +439,57 @@ function Mappings() //{{{
             return matches;
         },
 
+        /*
+         * Returns the map leader string used to replace the special token
+         * "<Leader>" when user mappings are defined.
+         *
+         * @returns {string}
+         */
+        // FIXME: property
         getMapLeader: function ()
         {
             let leaderRef = liberator.variableReference("mapleader");
             return leaderRef[0] ? leaderRef[0][leaderRef[1]] : "\\";
         },
 
-        // returns whether the user added a custom user map
-        hasMap: function (mode, cmd)
-        {
-            return user[mode].some(function (map) map.hasName(cmd));
-        },
+        /**
+         * Returns whether there is a user-defined mapping <b>cmd</b> for the
+         * specified <b>mode</b>.
+         *
+         * @param {number} mode The mode to search.
+         * @param {string} cmd The candidate key mapping.
+         * @returns {boolean}
+         */
+        hasMap: function (mode, cmd) user[mode].some(function (map) map.hasName(cmd)),
 
+        /**
+         * Remove the user-defined mapping named <b>cmd</b> for <b>mode</b>.
+         *
+         * @param {number} mode The mode to search.
+         * @param {string} cmd The map name to match.
+         */
         remove: function (mode, cmd)
         {
             removeMap(mode, cmd);
         },
 
+        /**
+         * Remove all user-defined mappings for <b>mode</b>.
+         *
+         * @param {number} mode The mode to remove all mappings from.
+         */
         removeAll: function (mode)
         {
             user[mode] = [];
         },
 
+        /**
+         * Lists all user-defined mappings matching <b>filter</b> for the
+         * specified <b>modes</b>.
+         *
+         * @param {number[]} modes An array of modes to search.
+         * @param {string} filter The filter string to match.
+         */
         list: function (modes, filter)
         {
             let modeSign = "";
@@ -413,7 +529,6 @@ function Mappings() //{{{
             }
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
-
     };
     //}}}
 }; //}}}

@@ -46,7 +46,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * @author Kris Maglione <maglione.k@gmail.com>
  * @constructor
  */
-
 function CompletionContext(editor, name, offset) //{{{
 {
     if (!(this instanceof arguments.callee))
