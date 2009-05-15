@@ -805,7 +805,7 @@ function Options() //{{{
                                      .map(function (pref) [pref, ""])]);
     });
 
-    return {
+    const self = {
 
         OPTION_SCOPE_GLOBAL: 1,
         OPTION_SCOPE_LOCAL:  2,
@@ -815,6 +815,37 @@ function Options() //{{{
         {
             let sorted = [o for ([i, o] in Iterator(optionHash))].sort(function (a, b) String.localeCompare(a.name, b.name));
             return (v for ([k, v] in Iterator(sorted)));
+        },
+
+        prefObserver: {
+            register: function ()
+            {
+                // better way to monitor all changes?
+                this._branch = services.get("pref").getBranch("").QueryInterface(Ci.nsIPrefBranch2);
+                this._branch.addObserver("", this, false);
+            },
+
+            unregister: function ()
+            {
+                if (this._branch)
+                    this._branch.removeObserver("", this);
+            },
+
+            observe: function (subject, topic, data)
+            {
+                if (topic != "nsPref:changed")
+                    return;
+
+                // subject is the nsIPrefBranch we're observing (after appropriate QI)
+                // data is the name of the pref that's been changed (relative to subject)
+                switch (data)
+                {
+                    case "accessibility.browsewithcaret":
+                        let value = options.getPref("accessibility.browsewithcaret", false);
+                        liberator.mode = value ? modes.CARET : modes.NORMAL;
+                        break;
+                }
+             }
         },
 
         add: function (names, description, type, defaultValue, extraInfo)
@@ -1064,8 +1095,15 @@ function Options() //{{{
                 this.popContext();
             }
         }
-    };
-    //}}}
+    }; //}}}
+
+    self.prefObserver.register();
+    liberator.registerObserver("shutdown", function () {
+            self.prefObserver.unregister();
+    });
+
+    return self;
+
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
