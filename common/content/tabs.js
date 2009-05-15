@@ -310,7 +310,6 @@ function Tabs() //{{{
 
             if (arg)
             {
-                arg = arg.toLowerCase();
                 let removed = 0;
                 let matches = arg.match(/^(\d+):?/);
 
@@ -321,15 +320,27 @@ function Tabs() //{{{
                 }
                 else
                 {
+                    let str = arg.toLowerCase();
                     let browsers = getBrowser().browsers;
+
                     for (let i = browsers.length - 1; i >= 0; i--)
                     {
-                        let title = browsers[i].contentTitle.toLowerCase() || "";
-                        let uri = browsers[i].currentURI.spec.toLowerCase();
-                        let host = browsers[i].currentURI.host.toLowerCase();
+                        let host, title, uri = browsers[i].currentURI.spec;
+                        if (browsers[i].currentURI.schemeIs("about"))
+                        {
+                            host = "";
+                            title = "(Untitled)";
+                        }
+                        else
+                        {
+                            host = browsers[i].currentURI.host;
+                            title = browsers[i].contentTitle;
+                        }
 
-                        if (host.indexOf(arg) >= 0 || uri == arg ||
-                            (special && (title.indexOf(arg) >= 0 || uri.indexOf(arg) >= 0)))
+                        [host, title, uri] = [host, title, uri].map(String.toLowerCase);
+
+                        if (host.indexOf(str) >= 0 || uri == str ||
+                            (special && (title.indexOf(str) >= 0 || uri.indexOf(str) >= 0)))
                         {
                             tabs.remove(tabs.getTab(i));
                             removed++;
