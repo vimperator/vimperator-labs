@@ -135,6 +135,19 @@ function Buffer() //{{{
         pageInfo[option] = [fn, title];
     }
 
+    function openUploadPrompt(elem)
+    {
+        commandline.input("Upload file: ", function (path) {
+                let file = io.getFile(path);
+
+                if (!file.exists())
+                    return liberator.beep();
+
+                elem.value = file.path;
+        },
+        { completer: completion.file, default: elem.value });
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -360,16 +373,13 @@ function Buffer() //{{{
         function (count)
         {
             if (count < 1 && buffer.lastInputField)
-            {
-                buffer.lastInputField.focus();
-            }
+                buffer.focusElement(buffer.lastInputField);
             else
             {
                 let elements = [];
                 let matches = buffer.evaluateXPath(
-                    // TODO: type="file"
-                    "//input[not(@type) or @type='text' or @type='password'] | //textarea[not(@disabled) and not(@readonly)] |" +
-                    "//xhtml:input[not(@type) or @type='text' or @type='password'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
+                    "//input[not(@type) or @type='text' or @type='password' or @type='file'] | //textarea[not(@disabled) and not(@readonly)] |" +
+                    "//xhtml:input[not(@type) or @type='text' or @type='password' or @type='file'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
                 );
 
                 for (let match in matches)
@@ -382,12 +392,10 @@ function Buffer() //{{{
                 if (elements.length > 0)
                 {
                     count = Math.min(Math.max(count, 1), elements.length);
-                    elements[count - 1].focus();
+                    buffer.focusElement(elements[count - 1]);
                 }
                 else
-                {
                     liberator.beep();
-                }
             }
         },
         { flags: Mappings.flags.COUNT });
@@ -1071,18 +1079,10 @@ function Buffer() //{{{
                 elem.contentWindow.focus();
                 return;
             }
-            else if (elemTagName == "input" && elem.getAttribute('type').toLowerCase() == "file")
+            else if (elemTagName == "input" && elem.type.toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (path)
-                    {
-                        let file = io.getFile(path);
-
-                        if (!file.exists())
-                            return liberator.beep();
-
-                        elem.value = file.path;
-                    }
-                    , {completer: completion.file, default: elem.value});
+                openUploadPrompt(elem);
+                buffer.lastInputField = elem;
                 return;
             }
 
@@ -1192,14 +1192,7 @@ function Buffer() //{{{
             }
             else if (localName == "input" && elem.type.toLowerCase() == "file")
             {
-                commandline.input("Upload file: ", function (path) {
-                    let file = io.getFile(path);
-
-                    if (!file.exists())
-                        return liberator.beep();
-
-                    elem.value = file.path;
-                }, { completer: completion.file, default: elem.value });
+                openUploadPrompt(elem);
                 return;
             }
 
