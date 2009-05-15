@@ -1120,7 +1120,7 @@ lookup:
          *
          * @param {function} fn The function to execute.
          * @param {Object} self The 'this' object used when executing fn.
-         * @return {boolean} false if temp files couldn't be created,
+         * @returns {boolean} false if temp files couldn't be created,
          *     otherwise, the return value of <b>fn</b>.
          */
         withTempFiles: function (fn, self)

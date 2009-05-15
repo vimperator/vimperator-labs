@@ -620,7 +620,7 @@ function CommandLine() //{{{
     /**
      * Determines whether the command line should be visible.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function commandShown() modes.main == modes.COMMAND_LINE &&
             !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE));

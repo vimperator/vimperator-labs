@@ -140,7 +140,7 @@ function Hints() //{{{
      * @param {string} tagname  Its tagname.
      * @param {doc}  The document it is in.
      *
-     * @return [text, showtext]
+     * @returns [text, showtext]
      */
     function getInputHint(elem, tagname, doc)
     {
@@ -184,9 +184,9 @@ function Hints() //{{{
                     if (elem.id)
                     {
                         //TODO: (possibly) do some guess work for label-like objects
-                        let label = buffer.evaluateXPath("//label[@for='"+elem.id+"']", doc).snapshotItem(0);
+                        let label = buffer.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
                         if (label)
-                            return [label.textContent.toLowerCase(),true]
+                            return [label.textContent.toLowerCase(), true]
                     }
                 }
                 else if (option == "name")
@@ -204,8 +204,7 @@ function Hints() //{{{
      * @param {object} elem  The <area> element.
      * @param {Number} leftpos  The left offset of the image.
      * @param {Number} toppos  The top offset of the image.
-     *
-     * @return [leftpos, toppos]  The updated offsets.
+     * @returns [leftpos, toppos]  The updated offsets.
      */
     function getAreaOffset(elem, leftpos, toppos)
     {
@@ -238,7 +237,7 @@ function Hints() //{{{
                 for (let i = 0; i < coords.length; i += 2)
                 {
                     leftbound = Math.min(coords[i], leftbound);
-                    topbound = Math.min(coords[i+1], topbound);
+                    topbound = Math.min(coords[i + 1], topbound);
                 }
 
                 let curtop = null;
@@ -249,13 +248,13 @@ function Hints() //{{{
                 for (let i = 0; i < coords.length; i += 2)
                 {
                     let leftoffset = coords[i] - leftbound;
-                    let topoffset = coords[i+1] - topbound;
+                    let topoffset = coords[i + 1] - topbound;
                     let dist = Math.sqrt(leftoffset * leftoffset + topoffset * topoffset);
                     if (dist < curdist)
                     {
                         curdist = dist;
                         curleft = coords[i];
-                        curtop = coords[i+1];
+                        curtop = coords[i + 1];
                     }
                 }
 
@@ -589,8 +588,7 @@ function Hints() //{{{
      * Get the hintMatcher according to user preference.
      *
      * @param {string} hintString  The currently typed hint.
-     *
-     * @return {hintMatcher}
+     * @returns {hintMatcher}
      */
     function hintMatcher(hintString) //{{{
     {
@@ -599,8 +597,7 @@ function Hints() //{{{
          *
          * @param {RegExp|String} pat  The pattern to split on
          * @param {String} string  The string to split
-         *
-         * @return {Array(string)}  The lowercased splits of the stting.
+         * @returns {Array(string)}  The lowercased splits of the stting.
          */
         function tokenize(pat, string) string.split(pat).map(String.toLowerCase);
 
@@ -612,10 +609,9 @@ function Hints() //{{{
          * order, in the link.
          *
          * @param {String} hintString  The string typed by the user.
-         *
-         * @return {function(String):bool} A function that takes the text of a
-         *          hint and returns true if all the (space-delimited) sets of
-         *          characters typed by the user can be found in it.
+         * @returns {function(String):boolean} A function that takes the text
+         *     of a hint and returns true if all the (space-delimited) sets of
+         *     characters typed by the user can be found in it.
          */
         function containsMatcher(hintString) //{{{
         {
@@ -636,9 +632,8 @@ function Hints() //{{{
          *
          * @param {String} hintString  The string typed by the user.
          * @param {boolean} allowWordOverleaping  Whether to allow non-contiguous
-         *         words to match.
-         *
-         * @return {function(String):boolean} A function that will filter only
+         *     words to match.
+         * @returns {function(String):boolean} A function that will filter only
          *     hints that match as above.
          */
         function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
@@ -657,9 +652,8 @@ function Hints() //{{{
              * @param {String} chars  The characters to match
              * @param {Array(String)} words  The words to match them against
              * @param {boolean} allowWordOverleaping  Whether words may be
-             *        skipped during matching.
-             *
-             *  @return {boolean}  Whether a match can be found.
+             *     skipped during matching.
+             * @returns {boolean}  Whether a match can be found.
              */
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
@@ -717,9 +711,8 @@ function Hints() //{{{
              * @param {Array(String)} strings  The strings to search for.
              * @param {Array(String)} words  The words to search in.
              * @param {boolean} allowWordOverleaping  Whether matches may be
-             *        non-contiguous.
-             *
-             * @return boolean  Whether all the strings matched.
+             *     non-contiguous.
+             * @returns boolean  Whether all the strings matched.
              */
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
@@ -779,7 +772,8 @@ function Hints() //{{{
                              "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
                              "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
 
-    function checkXPath(val) {
+    function checkXPath(val)
+    {
         try
         {
             buffer.evaluateXPath(val, document.implementation.createDocument("", "", null));
@@ -899,12 +893,12 @@ function Hints() //{{{
         /**
          * Creates a new hint mode.
          *
-         * @param {String} mode  The letter that identifies this mode.
-         * @param {String} description  The description to display to the user
+         * @param {string} mode  The letter that identifies this mode.
+         * @param {string} description  The description to display to the user
          *     about this mode.
          * @param {function(Node)} callback  The function to be called with the
          *     element that matches.
-         * @param {function():String} selector  The function that returns an
+         * @param {function():string} selector  The function that returns an
          *     XPath selector to decide which elements can be hinted (the
          *     default returns options.hinttags).
          */
@@ -970,7 +964,7 @@ function Hints() //{{{
         },
 
         /**
-         * Handle an event.
+         * Handle a hint mode event.
          *
          * @param {Event} event  The event to handle.
          */
