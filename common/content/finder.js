@@ -163,7 +163,7 @@ function Finder() //{{{
                 let elems = highlightObj.getSpans(doc);
                 for (let i = elems.length; --i >= 0;)
                 {
-                    let elem = elems.snapshotItem(i);
+                    let elem = elems[i];
                     let docfrag = doc.createDocumentFragment();
                     let next = elem.nextSibling;
                     let parent = elem.parentNode;
