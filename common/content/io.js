@@ -297,6 +297,7 @@ function IO() //{{{
             lines.unshift('"' + liberator.version + "\n");
 
             // For the record, I think that adding this line is absurd. --Kris
+            // I can't disagree. --djk
             lines.push(commands.commandToString({
                 command: "source",
                 bang: true,
