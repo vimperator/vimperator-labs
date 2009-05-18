@@ -82,6 +82,7 @@ FEATURES:
 7 make an option to disable session saving by default when you close Firefox
 7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
+6 :mksession
 6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
