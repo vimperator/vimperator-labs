@@ -837,7 +837,7 @@ function Hints() //{{{
         "How words are split for hintmatching",
         "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
 
-    options.add(["hintinputs", "hi"],
+    options.add(["hintinputs", "hin"],
         "How text inputs are hinted",
         "stringlist", "label,value",
         {
