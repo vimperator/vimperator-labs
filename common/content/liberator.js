@@ -1069,7 +1069,7 @@ const liberator = (function () //{{{
          * Opens one or more URLs. Returns true when load was initiated, or
          * false on error.
          *
-         * @param {FIXME} urls Either a URL string or an array of URLs.
+         * @param {string|string[]} urls Either a URL string or an array of URLs.
          *     The array can look like this:
          *       ["url1", "url2", "url3", ...]
          *     or:

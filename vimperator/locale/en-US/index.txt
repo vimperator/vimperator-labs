@@ -183,6 +183,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:execute[c]|| Execute the argument as an Ex command +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:finish[c]|| Stop sourcing a script file +
+||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:forward[c]|| Go forward in the browser history +
 ||[c]:hardcopy[c]|| Print current document +
 ||[c]:help[c]|| Display help +

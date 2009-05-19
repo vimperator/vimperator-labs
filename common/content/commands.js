@@ -34,13 +34,25 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * A class representing Ex commands. Instances are created by
  * the {@link Commands} class.
  *
+ * @param {string[]} specs The names by which this command can be invoked.
+ *     These are specified in the form "com[mand]" where "com" is a unique
+ *     command name prefix.
+ * @param {string} description A short one line description of the command.
+ * @param {function} action The action invoked by this command when executed.
+ * @param {Object} extraInfo An optional extra configuration hash. The
+ *     following properties are supported.
+ *         argCount  - See (@link Command#argCount)
+ *         bang      - See (@link Command#bang)
+ *         completer - See (@link Command#completer)
+ *         count     - See (@link Command#count)
+ *         heredoc   - See (@link Command#heredoc)
+ *         literal   - See (@link Command#literal)
+ *         options   - See (@link Command#options)
+ *         serial    - See (@link Command#serial)
  * @private
  */
 function Command(specs, description, action, extraInfo) //{{{
 {
-    if (!specs || !action)
-        return null;
-
     if (!extraInfo)
         extraInfo = {};
 
@@ -91,7 +103,7 @@ function Command(specs, description, action, extraInfo) //{{{
     /** @property {string[]} All of this command's long and short names. */
     this.names       = expandedSpecs.names; // return all command name aliases
 
-    /** @property {string} This command's description, as shown in :exinfo */
+    /** @property {string} This command's description, as shown in :exusage */
     this.description = description || "";
     /** @property {function (Args)} The function called to execute this command. */
     this.action      = action;

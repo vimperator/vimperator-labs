@@ -44,12 +44,12 @@ const template = {
         return <>{xml}</>;
     },
 
-    completionRow: function completionRow(item, class)
+    completionRow: function completionRow(item, highlightGroup)
     {
         if (typeof icon == "function")
             icon = icon();
 
-        if (class)
+        if (highlightGroup)
         {
             var text = item[0] || "";
             var desc = item[1] || "";
@@ -61,7 +61,7 @@ const template = {
         }
 
         // <e4x>
-        return <div highlight={class || "CompItem"} style="white-space: nowrap">
+        return <div highlight={highlightGroup || "CompItem"} style="white-space: nowrap">
                    <!-- The non-breaking spaces prevent empty elements
                       - from pushing the baseline down and enlarging
                       - the row.

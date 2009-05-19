@@ -1733,38 +1733,6 @@ function Events() //{{{
             // Stub for something else, presumably. Not in any documented
             // interface.
             onLinkIconAvailable: function () {}
-        },
-
-        // TODO: move to options.js?
-        prefObserver: {
-            register: function ()
-            {
-                // better way to monitor all changes?
-                this._branch = services.get("pref").getBranch("").QueryInterface(Ci.nsIPrefBranch2);
-                this._branch.addObserver("", this, false);
-            },
-
-            unregister: function ()
-            {
-                if (this._branch)
-                    this._branch.removeObserver("", this);
-            },
-
-            observe: function (aSubject, aTopic, aData)
-            {
-                if (aTopic != "nsPref:changed")
-                    return;
-
-                // aSubject is the nsIPrefBranch we're observing (after appropriate QI)
-                // aData is the name of the pref that's been changed (relative to aSubject)
-                switch (aData)
-                {
-                    case "accessibility.browsewithcaret":
-                        let value = options.getPref("accessibility.browsewithcaret", false);
-                        liberator.mode = value ? modes.CARET : modes.NORMAL;
-                        break;
-                }
-             }
         }
     }; //}}}
 
@@ -1782,10 +1750,8 @@ function Events() //{{{
     }
     catch (e) {}
 
-    self.prefObserver.register();
     liberator.registerObserver("shutdown", function () {
             self.destroy();
-            self.prefObserver.unregister();
     });
 
     window.addEventListener("keypress", wrapListener("onKeyPress"),    true);

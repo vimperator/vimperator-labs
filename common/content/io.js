@@ -335,7 +335,7 @@ function IO() //{{{
         function ()
         {
             let list = template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
-                ([i + 1, file] for ([i, file] in Iterator(scriptNames))));  // TODO: add colon?
+                ([i + 1, file] for ([i, file] in Iterator(scriptNames))));  // TODO: add colon and remove column titles for pedantic Vim compatibility?
 
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
@@ -345,11 +345,13 @@ function IO() //{{{
         "Read Ex commands from a file",
         function (args)
         {
-            // FIXME: "E172: Only one file name allowed"
-            io.source(args[0], args.bang);
+            if (args.length > 1)
+                liberator.echoerr("E172: Only one file name allowed");
+            else
+                io.source(args[0], args.bang);
         },
         {
-            argCount: "1",
+            argCount: "+", // FIXME: should be "1" but kludged for proper error message
             bang: true,
             completer: function (context) completion.file(context, true)
         });
@@ -878,7 +880,6 @@ lookup:
             let dirs = getPathsFromPathList(options["runtimepath"]);
             let found = false;
 
-            // FIXME: should use original arg string
             liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
@@ -902,7 +903,7 @@ lookup:
             }
 
             if (!found)
-                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1); // FIXME: should use original arg string
+                liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1);
 
             return found;
         },
@@ -1001,7 +1002,7 @@ lookup:
                             {
                                 let lineNumber = i + 1;
 
-                                // FIXME: messages need to be able to specify
+                                // TODO: messages need to be able to specify
                                 // whether they can be cleared/overwritten or
                                 // should be appended to and the MOW opened
                                 liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);

@@ -187,9 +187,9 @@ const config = { //{{{
 
             var stateListener =
             {
-                QueryInterface: function (aIID)
+                QueryInterface: function (id)
                 {
-                    if (aIID.equals(Components.interfaces.nsIDocumentStateListener))
+                    if (id.equals(Components.interfaces.nsIDocumentStateListener))
                         return this;
                     throw Components.results.NS_NOINTERFACE;
                 },

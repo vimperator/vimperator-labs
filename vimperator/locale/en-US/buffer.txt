@@ -327,6 +327,14 @@ Normally this command operates on the text zoom; if used with [!], it
 operates on full zoom.
 ________________________________________________________________________________
 
+section:Working{nbsp}with{nbsp}frames[frames]
+
+|:frameo| |:frameonly|
+||:frameo[nly]|| +
+________________________________________________________________________________
+Show only the current frame's page.
+________________________________________________________________________________
+
 section:Copying{nbsp}text[copying,yanking]
 
 When running in X11, the text of the following commands is not only

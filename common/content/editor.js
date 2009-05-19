@@ -690,7 +690,7 @@ function Editor() //{{{
         // motion = b, 0, gg, G, etc.
         executeCommandWithMotion: function (cmd, motion, count)
         {
-            if (!typeof count == "number" || count < 1)
+            if (typeof count != "number" || count < 1)
                 count = 1;
 
             if (cmd == motion)
@@ -705,12 +705,12 @@ function Editor() //{{{
             {
                 case "j":
                     this.executeCommand("cmd_beginLine", 1);
-                    this.executeCommand("cmd_selectLineNext", count+1);
+                    this.executeCommand("cmd_selectLineNext", count + 1);
                     break;
                 case "k":
                     this.executeCommand("cmd_beginLine", 1);
                     this.executeCommand("cmd_lineNext", 1);
-                    this.executeCommand("cmd_selectLinePrevious", count+1);
+                    this.executeCommand("cmd_selectLinePrevious", count + 1);
                     break;
                 case "h":
                     this.executeCommand("cmd_selectCharPrevious", count);
