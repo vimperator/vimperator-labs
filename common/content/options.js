@@ -129,15 +129,15 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
         }
     }
 
-    if (this.globalvalue == undefined)
-        this.globalvalue = this.defaultValue;
+    if (this.globalValue == undefined)
+        this.globalValue = this.defaultValue;
 }
 
 Option.prototype = {
 
     /** @property {value} The option's global value. @see #scope */
-    get globalvalue() options.store.get(this.name),
-    set globalvalue(val) { options.store.set(this.name, val); },
+    get globalValue() options.store.get(this.name),
+    set globalValue(val) { options.store.set(this.name, val); },
 
     /**
      * Returns <b>value</b> as an array of parsed values if the option type is
@@ -223,7 +223,7 @@ Option.prototype = {
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             aValue = tabs.options[this.name];
         if ((scope & options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
-            aValue = this.globalvalue;
+            aValue = this.globalValue;
 
         if (this.getter)
             return this.getter.call(this, aValue);
@@ -261,14 +261,14 @@ Option.prototype = {
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
         if ((scope & options.OPTION_SCOPE_GLOBAL) && newValue != this.globalValue)
-            this.globalvalue = newValue;
+            this.globalValue = newValue;
 
         this.hasChanged = true;
     },
 
     /**
      * @property {value} The option's current value. The option's local value,
-     * or if no local value is set, this is equal to the (@link #globalvalue).
+     * or if no local value is set, this is equal to the (@link #globalValue).
      */
     get value() this.get(),
     set value(val) this.set(val),
