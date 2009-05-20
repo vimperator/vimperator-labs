@@ -84,9 +84,9 @@ function Hints() //{{{
     };
 
     /**
-     * Used to open multiple hints
+     * Used to open multiple hints.
      *
-     * @param {node} elem  the previously selected hint
+     * @param {node} elem The previously selected hint.
      */
     function hintAction_F(elem)
     {
@@ -131,14 +131,14 @@ function Hints() //{{{
      * Get a hint for "input", "textarea" and "select".
      *
      * Tries to use <label>s if possible but does not try to guess that a
-     * neighbouring element might look like a label. Only called by generate()
+     * neighbouring element might look like a label. Only called by generate().
      *
      * If it finds a hint it returns it, if the hint is not the caption of the
      * element it will return showtext=true.
      *
-     * @param {Object} elem  The element.
-     * @param {string} tagname  Its tagname.
-     * @param {Document} doc  The document it is in.
+     * @param {Object} elem The element.
+     * @param {string} tagname Its tagname.
+     * @param {Document} doc The document it is in.
      *
      * @returns [text, showtext]
      */
@@ -199,7 +199,7 @@ function Hints() //{{{
     /**
      * Gets the actual offset of an imagemap area.
      *
-     * Only called by generate()
+     * Only called by generate().
      *
      * @param {Object} elem  The <area> element.
      * @param {number} leftpos  The left offset of the image.
@@ -274,7 +274,7 @@ function Hints() //{{{
      *
      * Pushes the hints into the pageHints object, but does not display them.
      *
-     * @param {Window} win  The window,defaults to window.content
+     * @param {Window} win The window,defaults to window.content.
      */
     function generate(win)
     {
@@ -351,8 +351,8 @@ function Hints() //{{{
      *
      * By default highlights it green instead of yellow.
      *
-     * @param {Number} newID  The hint to make active
-     * @param {Number} oldID  The currently active hint
+     * @param {Number} newID The hint to make active
+     * @param {Number} oldID The currently active hint
      */
     function showActiveHint(newID, oldID)
     {
@@ -368,8 +368,8 @@ function Hints() //{{{
     /**
      * Toggle the highlight of a hint.
      *
-     * @param {Object} elem  The element to toggle.
-     * @param {boolean} active  Whether it is the currently active hint or not.
+     * @param {Object} elem The element to toggle.
+     * @param {boolean} active Whether it is the currently active hint or not.
      */
     function setClass(elem, active)
     {
@@ -444,10 +444,6 @@ function Hints() //{{{
             }
         }
 
-        // TODO: is it better to set up an observer for this property and set
-        // 'usermode' appropriately? We're generally not very well integrated
-        // into FF so having menu items toggle Vimperator options may be
-        // confusing. --djk
         if (getBrowser().markupDocumentViewer.authorStyleDisabled)
         {
             let css = [];
@@ -471,8 +467,8 @@ function Hints() //{{{
      *
      * Lingers on the active hint briefly to confirm the selection to the user.
      *
-     * @param {Number} timeout  The number of milliseconds before the active
-     *                          hint disappears.
+     * @param {number} timeout The number of milliseconds before the active
+     *     hint disappears.
      */
     function removeHints(timeout)
     {
@@ -504,8 +500,8 @@ function Hints() //{{{
      * Called when there are one or zero hints in order to possibly activate it
      * and, if activated, to clean up the rest of the hinting system.
      *
-     * @param {boolean} followFirst  Whether to force the following of the
-     *        first link (when 'followhints' is 1 or 2)
+     * @param {boolean} followFirst Whether to force the following of the first
+     *     link (when 'followhints' is 1 or 2)
      *
      */
     function processHints(followFirst)
@@ -563,7 +559,7 @@ function Hints() //{{{
      * Will update the filter on displayed hints and follow the final hint if
      * necessary.
      *
-     * @param {Event} event  The keypress event.
+     * @param {Event} event The keypress event.
      */
     function onInput (event)
     {
@@ -587,7 +583,7 @@ function Hints() //{{{
     /**
      * Get the hintMatcher according to user preference.
      *
-     * @param {string} hintString  The currently typed hint.
+     * @param {string} hintString The currently typed hint.
      * @returns {hintMatcher}
      */
     function hintMatcher(hintString) //{{{
@@ -595,11 +591,11 @@ function Hints() //{{{
         /**
          * Divide a string by a regular expression.
          *
-         * @param {RegExp|String} pat  The pattern to split on
-         * @param {String} string  The string to split
-         * @returns {Array(string)}  The lowercased splits of the stting.
+         * @param {RegExp|string} pat The pattern to split on.
+         * @param {string} str The string to split.
+         * @returns {Array(string)} The lowercased splits of the splitting.
          */
-        function tokenize(pat, string) string.split(pat).map(String.toLowerCase);
+        function tokenize(pat, str) str.split(pat).map(String.toLowerCase);
 
         /**
          * Get a hint matcher for hintmatching=contains
@@ -608,7 +604,7 @@ function Hints() //{{{
          * returns true if each set of characters typed can be found, in any
          * order, in the link.
          *
-         * @param {String} hintString  The string typed by the user.
+         * @param {string} hintString  The string typed by the user.
          * @returns {function(String):boolean} A function that takes the text
          *     of a hint and returns true if all the (space-delimited) sets of
          *     characters typed by the user can be found in it.
@@ -630,8 +626,8 @@ function Hints() //{{{
          * would match the first letters of words. It will always only match
          * words in order.
          *
-         * @param {String} hintString  The string typed by the user.
-         * @param {boolean} allowWordOverleaping  Whether to allow non-contiguous
+         * @param {String} hintString The string typed by the user.
+         * @param {boolean} allowWordOverleaping Whether to allow non-contiguous
          *     words to match.
          * @returns {function(String):boolean} A function that will filter only
          *     hints that match as above.
@@ -649,11 +645,11 @@ function Hints() //{{{
              * like 'Hey Kris, how are you?' -> [HE]y [K]ris [HO]w are you
              * --Daniel
              *
-             * @param {String} chars  The characters to match
-             * @param {Array(String)} words  The words to match them against
-             * @param {boolean} allowWordOverleaping  Whether words may be
+             * @param {string} chars The characters to match.
+             * @param {Array(string)} words The words to match them against.
+             * @param {boolean} allowWordOverleaping Whether words may be
              *     skipped during matching.
-             * @returns {boolean}  Whether a match can be found.
+             * @returns {boolean} Whether a match can be found.
              */
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
             {
@@ -701,18 +697,19 @@ function Hints() //{{{
             }
 
             /**
-             * Check whether the array of strings all exist at the start of the words.
+             * Check whether the array of strings all exist at the start of the
+             * words.
              *
-             * i.e.  ['ro', 'e'] would match ['rollover', 'effect']
+             * i.e. ['ro', 'e'] would match ['rollover', 'effect']
              *
-             * The matches must be in order, and, if allowWordOverleaping is false,
-             * contiguous.
+             * The matches must be in order, and, if allowWordOverleaping is
+             * false, contiguous.
              *
-             * @param {Array(String)} strings  The strings to search for.
-             * @param {Array(String)} words  The words to search in.
-             * @param {boolean} allowWordOverleaping  Whether matches may be
+             * @param {Array(string)} strings The strings to search for.
+             * @param {Array(string)} words The words to search in.
+             * @param {boolean} allowWordOverleaping Whether matches may be
              *     non-contiguous.
-             * @returns boolean  Whether all the strings matched.
+             * @returns boolean Whether all the strings matched.
              */
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
@@ -893,12 +890,12 @@ function Hints() //{{{
         /**
          * Creates a new hint mode.
          *
-         * @param {string} mode  The letter that identifies this mode.
-         * @param {string} description  The description to display to the user
+         * @param {string} mode The letter that identifies this mode.
+         * @param {string} description The description to display to the user
          *     about this mode.
-         * @param {function(Node)} callback  The function to be called with the
+         * @param {function(Node)} callback The function to be called with the
          *     element that matches.
-         * @param {function():string} selector  The function that returns an
+         * @param {function():string} selector The function that returns an
          *     XPath selector to decide which elements can be hinted (the
          *     default returns options.hinttags).
          */
@@ -910,9 +907,9 @@ function Hints() //{{{
         /**
          * Updates the display of hints.
          *
-         * @param {String} minor  Which hint mode to use.
-         * @param {String} filter  The filter to use.
-         * @param {Object} win  The window in which we are showing hints.
+         * @param {string} minor Which hint mode to use.
+         * @param {string} filter The filter to use.
+         * @param {Object} win The window in which we are showing hints.
          */
         show: function (minor, filter, win)
         {
@@ -966,7 +963,7 @@ function Hints() //{{{
         /**
          * Handle a hint mode event.
          *
-         * @param {Event} event  The event to handle.
+         * @param {Event} event The event to handle.
          */
         onEvent: function (event)
         {

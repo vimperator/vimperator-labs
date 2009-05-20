@@ -403,52 +403,54 @@ function Commands() //{{{
 
         // FIXME: remove later, when our option handler is better
         /**
-         * @property The option argument is unspecified. Any argument is
-         *     accepted and caller is responsible for parsing the return value.
+         * @property {number} The option argument is unspecified. Any argument
+         *     is accepted and caller is responsible for parsing the return
+         *     value.
          * @final
          */
         OPTION_ANY: 0,
 
         /**
-         * @property The option doesn't accept an argument.
+         * @property {number} The option doesn't accept an argument.
          * @final
          */
         OPTION_NOARG: 1,
         /**
-         * @property The option accepts a boolean argument.
+         * @property {number} The option accepts a boolean argument.
          * @final
          */
         OPTION_BOOL: 2,
         /**
-         * @property The option accepts a string argument.
+         * @property {number} The option accepts a string argument.
          * @final
          */
         OPTION_STRING: 3,
         /**
-         * @property The option accepts an integer argument.
+         * @property {number} The option accepts an integer argument.
          * @final
          */
         OPTION_INT: 4,
         /**
-         * @property The option accepts a float argument.
+         * @property {number} The option accepts a float argument.
          * @final
          */
         OPTION_FLOAT: 5,
         /**
-         * @property The option accepts a string list argument. E.g. "foo,bar"
+         * @property {number} The option accepts a string list argument.
+         *     E.g. "foo,bar"
          * @final
          */
         OPTION_LIST: 6,
 
         /**
-         * @property Indicates that no count was specified for this command
-         *     invocation.
+         * @property {number} Indicates that no count was specified for this
+         *     command invocation.
          * @final
          */
         COUNT_NONE: -1,
         /**
-         * @property Indicates that the full buffer range (1,$) was specified
-         *     for this command invocation.
+         * @property {number} Indicates that the full buffer range (1,$) was
+         *     specified for this command invocation.
          * @final
          */
         // FIXME: this isn't a count at all

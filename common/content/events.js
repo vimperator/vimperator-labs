@@ -765,10 +765,17 @@ function Events() //{{{
 
     const self = {
 
+        /**
+         * @property {boolean} Whether synthetic key events are currently being
+         *     processed.
+         */
         feedingKeys: false,
 
         wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
 
+        /**
+         * A destructor called when this module is destroyed.
+         */
         destroy: function ()
         {
             // removeEventListeners() to avoid mem leaks
@@ -789,6 +796,11 @@ function Events() //{{{
             window.removeEventListener("keydown", this.onKeyDown, true);
         },
 
+        /**
+         * Initiates the recording of a key event macro.
+         *
+         * @param {string} macro The name for the macro.
+         */
         startRecording: function (macro)
         {
             if (!/[a-zA-Z0-9]/.test(macro))
@@ -813,6 +825,12 @@ function Events() //{{{
             }
         },
 
+        /**
+         * Replays a macro.
+         *
+         * @param {string} The name of the macro to replay.
+         * @return {boolean}
+         */
         playMacro: function (macro)
         {
             let res = false;
@@ -863,6 +881,11 @@ function Events() //{{{
             return res;
         },
 
+        /**
+         * Returns all macros matching <b>filter</b>.
+         *
+         * @param {string} filter A regular expression filter.
+         */
         getMacros: function (filter)
         {
             if (!filter)
@@ -872,6 +895,11 @@ function Events() //{{{
             return ([macro, keys] for ([macro, keys] in macros) if (re.test(macro)));
         },
 
+        /**
+         * Deletes all macros matching <b>filter</b>.
+         *
+         * @param {string} filter A regular expression filter.
+         */
         deleteMacros: function (filter)
         {
             let re = RegExp(filter);
@@ -884,12 +912,13 @@ function Events() //{{{
         },
 
         /**
-         * Pushes keys into the event queue from liberator it is similar to
+         * Pushes keys onto the event queue from liberator. It is similar to
          * Vim's feedkeys() method, but cannot cope with 2 partially-fed
          * strings, you have to feed one parsable string.
          *
-         * @param {string} keys A string like "2<C-f>" to pass if you want "<"
-         *     to be taken literally, prepend it with a "\\".
+         * @param {string} keys A string like "2<C-f>" to push onto the event
+         *     queue. If you want "<" to be taken literally, prepend it with a
+         *     "\\".
          * @param {boolean} noremap Allow recursive mappings.
          * @param {boolean} silent Whether the command should be echoed to the
          *     command line.
@@ -1012,10 +1041,15 @@ function Events() //{{{
             return i == keys.length;
         },
 
-        // this function converts the given event to
-        // a keycode which can be used in mappings
-        // e.g. pressing ctrl+n would result in the string "<C-n>"
-        // null if unknown key
+        /**
+         * Converts the specified key event to a string in liberator key-code
+         * notation. Returns null for an unknown key event.
+         *
+         * E.g. pressing ctrl+n would result in the string "<C-n>".
+         *
+         * @param {Event} event
+         * @returns {string}
+         */
         toString: function (event)
         {
             if (!event)
@@ -1125,16 +1159,34 @@ function Events() //{{{
             return "<" + modifier + key + ">";
         },
 
+        /**
+         * Whether <b>key</b> is a key code defined to accept/execute input on
+         * the command line.
+         *
+         * @returns {boolean}
+         */
         isAcceptKey: function (key)
         {
             return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
         },
 
+        /**
+         * Whether <b>key</b> is a key code defined to reject/cancel input on
+         * the command line.
+         *
+         * @returns {boolean}
+         */
         isCancelKey: function (key)
         {
             return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
         },
 
+        /*
+         * Waits for the current buffer to successfully finish loading. Returns
+         * true for a successful page load otherwise false.
+         *
+         * @returns {boolean}
+         */
         waitForPageLoad: function ()
         {
             //liberator.dump("start waiting in loaded state: " + buffer.loaded);
@@ -1181,6 +1233,7 @@ function Events() //{{{
 
         // argument "event" is deliberately not used, as i don't seem to have
         // access to the real focus target
+        // Huh? --djk
         //
         // the ugly wantsModeReset is needed, because Firefox generates a massive
         // amount of focus changes for things like <C-v><C-k> (focusing the search field)
