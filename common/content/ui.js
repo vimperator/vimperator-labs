@@ -1220,7 +1220,7 @@ function CommandLine() //{{{
          *
          * @param {string} prompt The input prompt to use.
          * @param {function(string)} callback
-         * @param {object} extra
+         * @param {Object} extra
          * @... {function} onChange - A function to be called with the current
          *     input every time it changes.
          * @... {function(CompletionContext)} completer - A completion function

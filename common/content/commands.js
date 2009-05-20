@@ -41,14 +41,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * @param {function} action The action invoked by this command when executed.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         argCount  - See (@link Command#argCount)
- *         bang      - See (@link Command#bang)
- *         completer - See (@link Command#completer)
- *         count     - See (@link Command#count)
- *         heredoc   - See (@link Command#heredoc)
- *         literal   - See (@link Command#literal)
- *         options   - See (@link Command#options)
- *         serial    - See (@link Command#serial)
+ *         argCount  - see {@link Command#argCount}
+ *         bang      - see {@link Command#bang}
+ *         completer - see {@link Command#completer}
+ *         count     - see {@link Command#count}
+ *         heredoc   - see {@link Command#heredoc}
+ *         literal   - see {@link Command#literal}
+ *         options   - see {@link Command#options}
+ *         serial    - see {@link Command#serial}
+ * @optional
  * @private
  */
 function Command(specs, description, action, extraInfo) //{{{
@@ -91,64 +92,84 @@ function Command(specs, description, action, extraInfo) //{{{
     };
 
     let expandedSpecs = parseSpecs(specs);
-    /** @property {string[]} All of this command's name spacs. e.g., "com[mand]" */
+    /**
+     * @property {string[]} All of this command's name specs. e.g., "com[mand]"
+     */
     this.specs      = specs;
     /** @property {string[]} All of this command's short names, e.g., "com" */
     this.shortNames = expandedSpecs.shortNames;
-    /** @property {string[]} All of this command's long names, e.g., "command" */
-    this.longNames  = expandedSpecs.longNames;
+    /**
+     * @property {string[]} All of this command's long names, e.g., "command"
+     */
+    this.longNames = expandedSpecs.longNames;
 
     /** @property {string} The command's canonical name. */
-    this.name        = this.longNames[0];
+    this.name = this.longNames[0];
     /** @property {string[]} All of this command's long and short names. */
-    this.names       = expandedSpecs.names; // return all command name aliases
+    this.names = expandedSpecs.names; // return all command name aliases
 
     /** @property {string} This command's description, as shown in :exusage */
     this.description = description || "";
-    /** @property {function (Args)} The function called to execute this command. */
-    this.action      = action;
-    /** @property {string} This command's argument count spec. @see Commands#parseArguments */
-    this.argCount    = extraInfo.argCount || 0;
-    /** @property {function (CompletionContext, Args)} This command's completer. @see CompletionContext */
-    this.completer   = extraInfo.completer || null;
+    /**
+     * @property {function (Args)} The function called to execute this command.
+     */
+    this.action = action;
+    /**
+     * @property {string} This command's argument count spec.
+     * @see Commands#parseArguments
+     */
+    this.argCount = extraInfo.argCount || 0;
+    /**
+     * @property {function (CompletionContext, Args)} This command's completer.
+     * @see CompletionContext
+     */
+    this.completer = extraInfo.completer || null;
     /** @property {boolean} Whether this command accepts a here document. */
-    this.hereDoc     = extraInfo.hereDoc || false;
-    /** @property {Array} The options this command takes. @see Commands@parseArguments */
-    this.options     = extraInfo.options || [];
-    /** @property {boolean} Whether this command may be called with a bang, e.g., :com! */
-    this.bang        = extraInfo.bang || false;
-    /** @property {boolean} Whether this command may be called with a count, e.g., :12bdel */
-    this.count       = extraInfo.count || false;
+    this.hereDoc = extraInfo.hereDoc || false;
     /**
-     * @property {boolean} At what index this command's literal
-     * arguments begin. For instance, with a value of 2, all arguments
-     * starting with the third are parsed as a single string, with all
-     * quoting characters passed literally. This is especially useful for
-     * commands which take key mappings or Ex command lines as
-     * arguments.
+     * @property {Array} The options this command takes.
+     * @see Commands@parseArguments
      */
-    this.literal     = extraInfo.literal == null ? null : extraInfo.literal;
+    this.options = extraInfo.options || [];
     /**
-     * @property {function} Should return an array of <b>Object</b>s
-     * suitable to be passed to {@link Commands#commandToString}, one
-     * for each past invocation which should be restored on subsequent
-     * @liberator startups.
+     * @property {boolean} Whether this command may be called with a bang,
+     *     e.g., :com!
      */
-    this.serial      = extraInfo.serial;
+    this.bang = extraInfo.bang || false;
+    /**
+     * @property {boolean} Whether this command may be called with a count,
+     *     e.g., :12bdel
+     */
+    this.count = extraInfo.count || false;
+    /**
+     * @property {boolean} At what index this command's literal arguments
+     *     begin. For instance, with a value of 2, all arguments starting with
+     *     the third are parsed as a single string, with all quoting characters
+     *     passed literally. This is especially useful for commands which take
+     *     key mappings or Ex command lines as arguments.
+     */
+    this.literal = extraInfo.literal == null ? null : extraInfo.literal;
+    /**
+     * @property {function} Should return an array of <b>Object</b>s suitable
+     *     to be passed to {@link Commands#commandToString}, one for each past
+     *     invocation which should be restored on subsequent @liberator
+     *     startups.
+     */
+    this.serial = extraInfo.serial;
 
     /**
-     * @property {boolean} Specifies whether this is a user command.
-     * User commands may be created by plugins, or directly by users,
-     * and, unlike basic commands, may be overwritten. Users and
-     * plugin authors should create only user commands.
+     * @property {boolean} Specifies whether this is a user command.  User
+     *     commands may be created by plugins, or directly by users, and,
+     *     unlike basic commands, may be overwritten. Users and plugin authors
+     *     should create only user commands.
      */
-    this.isUserCommand   = extraInfo.isUserCommand || false;
+    this.isUserCommand = extraInfo.isUserCommand || false;
     /**
-     * @property {string} For commands defined via :command, contains
-     * the Ex command line to be executed upon invocation.
+     * @property {string} For commands defined via :command, contains the Ex
+     *     command line to be executed upon invocation.
      */
     this.replacementText = extraInfo.replacementText || null;
-};
+}
 
 Command.prototype = {
 
@@ -286,6 +307,66 @@ function Commands() //{{{
         ArgType("list",    function (arg) arg && arg.split(/\s*,\s*/))
     ];
 
+    // returns [count, parsed_argument]
+    function parseArg(str)
+    {
+        let arg = "";
+        let quote = null;
+        let len = str.length;
+
+        while (str.length && !/^\s/.test(str))
+        {
+            let res;
+
+            switch (QUOTE_STYLE)
+            {
+                case "vim-sucks":
+                    if (res = str.match = str.match(/^()((?:[^\\\s]|\\.)+)((?:\\$)?)/))
+                        arg += res[2].replace(/\\(.)/g, "$1");
+                    break;
+
+                case "vimperator":
+                    if (res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                        arg += res[2].replace(/\\(.)/g, "$1");
+                    else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                        arg += eval(res[0] + (res[3] ? "" : '"'));
+                    else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                        arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
+                    break;
+
+                case "rc-ish":
+                    if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                        arg += res[2].replace(/\\(.)/g, "$1");
+                    else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                        arg += eval(res[0] + (res[3] ? "" : '"'));
+                    else if (res = str.match(/^(')((?:[^']|'')*)('?)/))
+                        arg += res[2].replace("''", "'", "g");
+                    break;
+
+                case "pythonesque":
+                    if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                        arg += res[2].replace(/\\(.)/g, "$1");
+                    else if (res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/))
+                        arg += res[2];
+                    else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                        arg += eval(res[0] + (res[3] ? "" : '"'));
+                    else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                        arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
+                    break;
+            }
+
+            if (!res)
+                break;
+            if (!res[3])
+                quote = res[1];
+            if (!res[1])
+                quote = res[3];
+            str = str.substr(res[0].length);
+        }
+
+        return [len - str.length, arg, quote];
+    }
+
     function addCommand(command, isUserCommand, replace)
     {
         if (!command) // XXX
@@ -321,29 +402,93 @@ function Commands() //{{{
     const self = {
 
         // FIXME: remove later, when our option handler is better
-        OPTION_ANY:    0, // can be given no argument or an argument of any type,
-                          // caller is responsible for parsing the return value
-        OPTION_NOARG:  1,
-        OPTION_BOOL:   2,
+        /**
+         * @property The option argument is unspecified. Any argument is
+         *     accepted and caller is responsible for parsing the return value.
+         * @final
+         */
+        OPTION_ANY: 0,
+
+        /**
+         * @property The option doesn't accept an argument.
+         * @final
+         */
+        OPTION_NOARG: 1,
+        /**
+         * @property The option accepts a boolean argument.
+         * @final
+         */
+        OPTION_BOOL: 2,
+        /**
+         * @property The option accepts a string argument.
+         * @final
+         */
         OPTION_STRING: 3,
-        OPTION_INT:    4,
-        OPTION_FLOAT:  5,
-        OPTION_LIST:   6,
+        /**
+         * @property The option accepts an integer argument.
+         * @final
+         */
+        OPTION_INT: 4,
+        /**
+         * @property The option accepts a float argument.
+         * @final
+         */
+        OPTION_FLOAT: 5,
+        /**
+         * @property The option accepts a string list argument. E.g. "foo,bar"
+         * @final
+         */
+        OPTION_LIST: 6,
 
+        /**
+         * @property Indicates that no count was specified for this command
+         *     invocation.
+         * @final
+         */
         COUNT_NONE: -1,
-        COUNT_ALL:  -2, // :%...
+        /**
+         * @property Indicates that the full buffer range (1,$) was specified
+         *     for this command invocation.
+         * @final
+         */
+        // FIXME: this isn't a count at all
+        COUNT_ALL: -2, // :%...
 
+        /** @property {Iterator(Command)} @private */
         __iterator__: function ()
         {
             let sorted = exCommands.sort(function (a, b) a.name > b.name);
             return util.Array.itervalues(sorted);
         },
 
+        /**
+         * Adds a new default command.
+         *
+         * @param {string[]} names The names by which this command can be
+         *     invoked. The first name specified is the command's canonical
+         *     name.
+         * @param {string} description A description of the command.
+         * @param {function} action The action invoked by this command.
+         * @param {Object} extra An optional extra configuration hash.
+         * @optional
+         */
         add: function (names, description, action, extra)
         {
             return addCommand(new Command(names, description, action, extra), false, false);
         },
 
+        /**
+         * Adds a new user-defined command.
+         *
+         * @param {string[]} names The names by which this command can be
+         *     invoked. The first name specified is the command's canonical
+         *     name.
+         * @param {string} description A description of the command.
+         * @param {function} action The action invoked by this command.
+         * @param {Object} extra An optional extra configuration hash.
+         * @param {boolean} replace Overwrite an existing command with the same
+         *     canonical name.
+         */
         addUserCommand: function (names, description, action, extra, replace)
         {
             extra = extra || {};
@@ -353,6 +498,13 @@ function Commands() //{{{
             return addCommand(new Command(names, description, action, extra), true, replace);
         },
 
+        /**
+         * Returns the specified command invocation object serialized to
+         * an executable Ex command string.
+         *
+         * @param {Object} args The command invocation object.
+         * @returns {string}
+         */
         commandToString: function (args)
         {
             let res = [args.command + (args.bang ? "!" : "")];
@@ -373,111 +525,96 @@ function Commands() //{{{
             return res.join(" ");
         },
 
+        /**
+         * Returns the command with matching <b>name</b>.
+         *
+         * @param {string} name The name of the command to return. This can be
+         *     any of the command's names.
+         * @returns {Command}
+         */
         get: function (name)
         {
             return exCommands.filter(function (cmd) cmd.hasName(name))[0] || null;
         },
 
+        /**
+         * Returns the user-defined command with matching <b>name</b>.
+         *
+         * @param {string} name The name of the command to return. This can be
+         *     any of the command's names.
+         * @returns {Command}
+         */
         getUserCommand: function (name)
         {
             return exCommands.filter(function (cmd) cmd.isUserCommand && cmd.hasName(name))[0] || null;
         },
 
+        /**
+         * Returns all user-defined commands.
+         *
+         * @returns {Command[]}
+         */
         getUserCommands: function ()
         {
             return exCommands.filter(function (cmd) cmd.isUserCommand);
         },
 
-        // returns [count, parsed_argument]
-        parseArg: function parseArg(str)
-        {
-            let arg = "";
-            let quote = null;
-            let len = str.length;
-
-            while (str.length && !/^\s/.test(str))
-            {
-                let res;
-
-                switch (QUOTE_STYLE)
-                {
-                    case "vim-sucks":
-                        if (res = str.match = str.match(/^()((?:[^\\\s]|\\.)+)((?:\\$)?)/))
-                            arg += res[2].replace(/\\(.)/g, "$1");
-                        break;
-
-                    case "vimperator":
-                        if (res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
-                            arg += res[2].replace(/\\(.)/g, "$1");
-                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
-                            arg += eval(res[0] + (res[3] ? "" : '"'));
-                        else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
-                            arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
-                        break;
-
-                    case "rc-ish":
-                        if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
-                            arg += res[2].replace(/\\(.)/g, "$1");
-                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
-                            arg += eval(res[0] + (res[3] ? "" : '"'));
-                        else if (res = str.match(/^(')((?:[^']|'')*)('?)/))
-                            arg += res[2].replace("''", "'", "g");
-                        break;
-
-                    case "pythonesque":
-                        if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
-                            arg += res[2].replace(/\\(.)/g, "$1");
-                        else if (res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/))
-                            arg += res[2];
-                        else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
-                            arg += eval(res[0] + (res[3] ? "" : '"'));
-                        else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
-                            arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
-                        break;
-                }
-
-                if (!res)
-                    break;
-                if (!res[3])
-                    quote = res[1];
-                if (!res[1])
-                    quote = res[3];
-                str = str.substr(res[0].length);
-            }
-
-            return [len - str.length, arg, quote];
-        },
-
-        // in '-quoted strings, only ' and \ itself are escaped
-        // in "-quoted strings, also ", \n and \t are translated
-        // in non-quoted strings everything is taken literally apart from "\ " and "\\"
-        //
-        // @param str: something like "-x=foo -opt=bar arg1 arg2"
-        // "options" is an array [name, type, validator, completions] and could look like:
-        //  options = [[["-force"], OPTION_NOARG],
-        //             [["-fullscreen", "-f"], OPTION_BOOL],
-        //             [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
-        //             [["-speed"], OPTION_INT],
-        //             [["-acceleration"], OPTION_FLOAT],
-        //             [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
-        //             [["-other"], OPTION_ANY]];
-        // @param argCount can be:
-        //            "0": no arguments
-        //            "1": exactly one argument
-        //            "+": one or more arguments
-        //            "*": zero or more arguments (default if unspecified)
-        //            "?": zero or one arguments
-        // @param allowUnknownOptions: -foo won't result in an error, if -foo isn't
-        //                             specified in "options"
         // TODO: should it handle comments?
         //     : it might be nice to be able to specify that certain quoting
         //     should be disabled E.g. backslash without having to resort to
-        //     using literal etc
+        //     using literal etc.
+        //     : I'm not sure documenting the returned object here, and
+        //     elsewhere, as type Args rather than simply Object makes sense,
+        //     especially since it is further augmented for use in
+        //     Command#action etc.
+        /**
+         * Parses <b>str</b> for options and plain arguments.
+         *
+         * The returned <b>Args</b> object is an augmented array of arguments.
+         * Any key/value pairs of <b>extra</b> will be available and the
+         * following additional properties:
+         *     -opt       - the value of the option -opt if specified
+         *     string     - the original argument string <b>str</b>
+         *     literalArg - any trailing literal argument
+         *
+         * Quoting rules:
+         *     '-quoted strings   - only ' and \ itself are escaped
+         *     "-quoted strings   - also ", \n and \t are translated
+         *     non-quoted strings - everything is taken literally apart from "\
+         *                          " and "\\"
+         *
+         * @param {string} str The Ex command-line string to parse. E.g.
+         *     "-x=foo -opt=bar arg1 arg2"
+         * @param {Array} options The options accepted. These are specified as
+         *     an array [name, type, validator, completions]. E.g.
+         *     options = [[["-force"], OPTION_NOARG],
+         *                [["-fullscreen", "-f"], OPTION_BOOL],
+         *                [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
+         *                [["-speed"], OPTION_INT],
+         *                [["-acceleration"], OPTION_FLOAT],
+         *                [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
+         *                [["-other"], OPTION_ANY]];
+         * @param {string} argCount The number of arguments accepted.
+         *            "0": no arguments
+         *            "1": exactly one argument
+         *            "+": one or more arguments
+         *            "*": zero or more arguments (default if unspecified)
+         *            "?": zero or one arguments
+         * @param {boolean} allowUnknownOptions Whether unspecified options
+         *     should cause an error.
+         * @param {number} literal The index at which any literal arg begins.
+         *     See {@link Command#literal}.
+         * @param {CompletionContext} complete The relevant completion context
+         *     when the args are being parsed for completion.
+         * @param {Object} extra Extra keys to be spliced into the returned
+         *     Args object.
+         * @returns {Args}
+         */
         parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra)
         {
             function getNextArg(str)
             {
-                let [count, arg, quote] = commands.parseArg(str);
+                let [count, arg, quote] = parseArg(str);
                 if (quote == "\\" && !complete)
                     return [,,,"Trailing \\"];
                 if (quote && !complete)
@@ -737,6 +874,21 @@ function Commands() //{{{
             return args;
         },
 
+        /**
+         * Parses a complete Ex command.
+         *
+         * The parsed string is returned as an Array like
+         * [count, command, bang, args]:
+         *     count   - any count specified
+         *     command - the Ex command name
+         *     bang    - whether the special "bang" version was called
+         *     args    - the commands full argument string
+         * E.g. ":2foo! bar" -> [2, "foo", true, "bar"]
+         *
+         * @param {string} str The Ex command line string.
+         * @returns {Array}
+         */
+        // FIXME: why does this return an Array rather than Object?
         parseCommand: function (str)
         {
             // remove comments
@@ -759,16 +911,37 @@ function Commands() //{{{
             return [count, cmd, !!special, args || ""];
         },
 
-        get complQuote() complQuote,
+        /** @property @private */
+        get complQuote() complQuote, // XXX: needed?
 
-        get quoteArg() quoteArg,
+        /** @property @private */
+        get quoteArg() quoteArg, // XXX: needed?
 
+        /**
+         * Remove the user-defined command with matching <b>name</b>.
+         *
+         * @param {string} name The name of the command to remove. This can be
+         *     any of the command's names.
+         */
         removeUserCommand: function (name)
         {
             exCommands = exCommands.filter(function (cmd) !(cmd.isUserCommand && cmd.hasName(name)));
         },
 
-        // FIXME: still belong here? Also used for autocommand parameters
+        // FIXME: still belong here? Also used for autocommand parameters.
+        /**
+         * Returns a string with all tokens in <b>string</b> matching "<key>"
+         * replaced with "value". Where "key" is a property of the specified
+         * <b>tokens</b> object and "value" is the corresponding value. The
+         * <lt> token can be used to include a literal "<" in the returned
+         * string. Any tokens prefixed with "q-" will be quoted except for
+         * <q-lt> which is treated like <lt>.
+         *
+         * @param {string} str The string with tokens to replace.
+         * @param {Object} tokens A map object whose keys are replaced with its
+         *     values.
+         * @returns {string}
+         */
         replaceTokens: function replaceTokens(str, tokens)
         {
             return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)

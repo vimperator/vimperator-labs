@@ -1229,7 +1229,7 @@ function Tabs() //{{{
         // shouldn't be one yet.
         /**
          * Called on each TabSelect event to update the tab selection history.
-         * See (@link tabs.alternate).
+         * @see tabs#alternate
          */
         updateSelectionHistory: function ()
         {

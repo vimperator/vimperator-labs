@@ -1062,7 +1062,8 @@ function Editor() //{{{
         /**
          * Expands an abbreviation in the currently active textbox.
          *
-         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} filter The mode filter.
+         * @see #addAbbreviation
          */
         expandAbbreviation: function (filter)
         {
@@ -1099,10 +1100,10 @@ function Editor() //{{{
         /**
          * Returns all abbreviations matching <b>filter</b> and <b>lhs</b>.
          *
-         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} filter The mode filter.
          * @param {string} lhs The LHS of the abbreviation.
-         *     (@see #addAbbreviation)
          * @returns {Array} The matching abbreviations [mode, lhs, rhs]
+         * @see #addAbbreviation
          */
         getAbbreviations: function (filter, lhs)
         {
@@ -1115,9 +1116,9 @@ function Editor() //{{{
         /**
          * Lists all abbreviations matching <b>filter</b> and <b>lhs</b>.
          *
-         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} filter The mode filter.
          * @param {string} lhs The LHS of the abbreviation.
-         *     (@see #addAbbreviation)
+         * @see #addAbbreviation
          */
         listAbbreviations: function (filter, lhs)
         {
@@ -1143,9 +1144,9 @@ function Editor() //{{{
         /**
          * Deletes all abbreviations matching <b>filter</b> and <b>lhs</b>.
          *
-         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} filter The mode filter.
          * @param {string} lhs The LHS of the abbreviation.
-         *     (@see #addAbbreviation)
+         * @see #addAbbreviation
          */
         removeAbbreviation: function (filter, lhs)
         {
@@ -1196,7 +1197,8 @@ function Editor() //{{{
         /**
          * Removes all abbreviations matching <b>filter</b>.
          *
-         * @param {string} filter The mode filter. (@see #addAbbreviation)
+         * @param {string} filter The mode filter.
+         * @see #addAbbreviation
          */
         removeAllAbbreviations: function (filter)
         {

@@ -633,7 +633,6 @@ const liberator = (function () //{{{
         //  "complete"
         //  TODO: "zoom": if the zoom value of the current buffer changed
         //  TODO: move to ui.js?
-        //  Yes --djk
         registerCallback: function (type, mode, func)
         {
             if (!(type in callbacks))

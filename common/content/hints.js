@@ -136,9 +136,9 @@ function Hints() //{{{
      * If it finds a hint it returns it, if the hint is not the caption of the
      * element it will return showtext=true.
      *
-     * @param {object} elem  The element.
+     * @param {Object} elem  The element.
      * @param {string} tagname  Its tagname.
-     * @param {doc}  The document it is in.
+     * @param {Document} doc  The document it is in.
      *
      * @returns [text, showtext]
      */
@@ -201,9 +201,9 @@ function Hints() //{{{
      *
      * Only called by generate()
      *
-     * @param {object} elem  The <area> element.
-     * @param {Number} leftpos  The left offset of the image.
-     * @param {Number} toppos  The top offset of the image.
+     * @param {Object} elem  The <area> element.
+     * @param {number} leftpos  The left offset of the image.
+     * @param {number} toppos  The top offset of the image.
      * @returns [leftpos, toppos]  The updated offsets.
      */
     function getAreaOffset(elem, leftpos, toppos)
@@ -274,7 +274,7 @@ function Hints() //{{{
      *
      * Pushes the hints into the pageHints object, but does not display them.
      *
-     * @param {object} win  The window,defaults to window.content
+     * @param {Window} win  The window,defaults to window.content
      */
     function generate(win)
     {
@@ -368,7 +368,7 @@ function Hints() //{{{
     /**
      * Toggle the highlight of a hint.
      *
-     * @param {object} elem  The element to toggle.
+     * @param {Object} elem  The element to toggle.
      * @param {boolean} active  Whether it is the currently active hint or not.
      */
     function setClass(elem, active)

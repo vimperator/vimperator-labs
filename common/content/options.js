@@ -30,30 +30,92 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 // do NOT create instances of this class yourself, use the helper method
 // options.add() instead
+/**
+ * A class representing configuration options. Instances are created by the
+ * {@link Options} class.
+ *
+ * @param {string[]} names The names by which this option is identified.
+ * @param {string} description A short one line description of the option.
+ * @param {string} type The option's value data type (see {@link Option#type}).
+ * @param {string} defaultValue The default value for this option.
+ * @param {Object} extraInfo An optional extra configuration hash. The
+ *     following properties are supported.
+ *         scope     - see {@link Option#scope}
+ *         setter    - see {@link Option#setter}
+ *         getter    - see {@link Option#getter}
+ *         completer - see {@link Option#completer}
+ *         valdator  - see {@link Option#validator}
+ *         checkHas  - see {@link Option#checkHas}
+ * @optional
+ * @private
+ */
 function Option(names, description, type, defaultValue, extraInfo) //{{{
 {
     if (!extraInfo)
         extraInfo = {};
 
+    /** @property {string} The option's canonical name. */
     this.name = names[0];
+    /** @property {string[]} All names by which this option is identified. */
     this.names = names;
+    /**
+     * @property {string} The option's data type. One of:
+     *     "boolean"    - Boolean E.g. true
+     *     "number"     - Integer E.g. 1
+     *     "string"     - String E.g. "Vimperator"
+     *     "charlist"   - Character list E.g. "rb"
+     *     "stringlist" - String list E.g. "homepage,quickmark,tabopen,paste"
+     */
     this.type = type;
-    this.scope = (extraInfo.scope & options.OPTION_SCOPE_BOTH) ||
-                 options.OPTION_SCOPE_GLOBAL;
-                 // XXX set to BOTH by default someday? - kstep
+    /**
+     * @property {number} The scope of the option. This can be local, global,
+     * or both.
+     * @see Options#OPTION_SCOPE_LOCAL
+     * @see Options#OPTION_SCOPE_GLOBAL
+     * @see Options#OPTION_SCOPE_BOTH
+     */
+    this.scope = (extraInfo.scope & options.OPTION_SCOPE_BOTH) || options.OPTION_SCOPE_GLOBAL; // XXX set to BOTH by default someday? - kstep
+    /**
+     * @property {string} This option's description, as shown in :optionusage.
+     */
     this.description = description || "";
 
-    // "", 0 are valid default values
-    this.defaultValue = (defaultValue === undefined) ? null : defaultValue;
+    /**
+     * @property {value} The option's default value. This value will be used
+     * unless the option is explicitly set either interactively or in an RC
+     * file or plugin.
+     */
+    this.defaultValue = (defaultValue === undefined) ? null : defaultValue; // "", 0 are valid default values
 
+    /**
+     * @property {function} The function called when the option value is set.
+     */
     this.setter = extraInfo.setter || null;
+    /**
+     * @property {function} The function called when the option value is read.
+     */
     this.getter = extraInfo.getter || null;
+    /**
+     * @property {function(CompletionContext, Args)} This option's completer.
+     * @see CompletionContext
+     */
     this.completer = extraInfo.completer || null;
+    /**
+     * @property {function} The function called to validate the option's value
+     * when set.
+     */
     this.validator = extraInfo.validator || null;
+    /**
+     * @property The function called to determine whether the option already
+     * contains a specified value.
+     * @see #has
+     */
     this.checkHas = extraInfo.checkHas || null;
-
-    // this property is set to true whenever the option is first set
-    // useful to see whether it was changed by some rc file
+    /**
+     * @property {boolean} Set to true whenever the option is first set. This
+     * is useful to see whether it was changed from its default value
+     * interactively or by some RC file.
+     */
     this.hasChanged = false;
 
     // add no{option} variant of boolean {option} to this.names
@@ -70,10 +132,20 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     if (this.globalvalue == undefined)
         this.globalvalue = this.defaultValue;
 }
+
 Option.prototype = {
+
+    /** @property {value} The option's global value. @see #scope */
     get globalvalue() options.store.get(this.name),
     set globalvalue(val) { options.store.set(this.name, val); },
 
+    /**
+     * Returns <b>value</b> as an array of parsed values if the option type is
+     * "charlist" or "stringlist" or else unchanged.
+     *
+     * @param {value} value The option value.
+     * @returns {value|string[]}
+     */
     parseValues: function (value)
     {
         if (this.type == "stringlist")
@@ -83,6 +155,13 @@ Option.prototype = {
         return value;
     },
 
+    /**
+     * Returns <b>values</b> packed in the appropriate format for the option
+     * type.
+     *
+     * @param {value|string[]} values The option value.
+     * @returns {value}
+     */
     joinValues: function (values)
     {
         if (this.type == "stringlist")
@@ -92,16 +171,41 @@ Option.prototype = {
         return values;
     },
 
+    /** @property {value|string[]} The option value or array of values. */
     get values() this.parseValues(this.value),
     set values(values) this.setValues(values, this.scope),
 
+    /**
+     * Returns the option's value as an array of parsed values if the option
+     * type is "charlist" or "stringlist" or else the simple value.
+     *
+     * @param {number} scope The scope to return these values from (see
+     *     {@link Option#scope}).
+     * @returns {value|string[]}
+     */
     getValues: function (scope) this.parseValues(this.get(scope)),
 
+    /**
+     * Sets the option's value from an array of values if the option type is
+     * "charlist" or "stringlist" or else the simple value.
+     *
+     * @param {number} scope The scope to apply these values to (see
+     *     {@link Option#scope}).
+     */
     setValues: function (values, scope)
     {
         this.set(this.joinValues(values), scope || this.scope);
     },
 
+    /**
+     * Returns the value of the option in the specified <b>scope</b>. The
+     * (@link Option#getter) callback, if it exists, is invoked with this value
+     * before it is returned.
+     *
+     * @param {number} scope The scope to return this value from (see
+     *     {@link Option#scope}).
+     * @returns {value}
+     */
     get: function (scope)
     {
         if (scope)
@@ -127,6 +231,15 @@ Option.prototype = {
         return aValue;
     },
 
+    /**
+     * Sets the option value to <b>newValue</b> for the specified <b>scope</b>.
+     * The (@link Option#setter) callback, if it exists, is invoked with
+     * <b>newValue</b>.
+     *
+     * @param {value} newValue The option's new value.
+     * @param {number} scope The scope to apply this value to (see
+     *     {@link Option#scope}).
+     */
     set: function (newValue, scope)
     {
         scope = scope || this.scope;
@@ -153,9 +266,19 @@ Option.prototype = {
         this.hasChanged = true;
     },
 
+    /**
+     * @property {value} The option's current value. The option's local value,
+     * or if no local value is set, this is equal to the (@link #globalvalue).
+     */
     get value() this.get(),
     set value(val) this.set(val),
 
+    /**
+     * Returns whether the option value contains one or more of the specified
+     * arguments.
+     *
+     * @returns {boolean}
+     */
     has: function ()
     {
         let self = this;
@@ -167,8 +290,18 @@ Option.prototype = {
         return Array.some(arguments, function (val) test(val));
     },
 
+    /**
+     * Returns whether this option is identified by <b>name</b>.
+     *
+     * @param {string} name
+     * @returns {boolean}
+     */
     hasName: function (name) this.names.indexOf(name) >= 0,
 
+    /**
+     * Returns whether the specified <b>values</b> are valid for this option.
+     * @see Option#validator
+     */
     isValidValue: function (values)
     {
         if (this.validator)
@@ -177,11 +310,23 @@ Option.prototype = {
             return true;
     },
 
+    /**
+     * Resets the option to its default value.
+     */
     reset: function ()
     {
         this.value = this.defaultValue;
     },
 
+    /**
+     * Sets the option's value using the specified set <b>operator</b>.
+     *
+     * @param {string} operator The set operator.
+     * @param {value|string[]} values The value (or values) to apply.
+     * @param {number} scope The scope to apply this value to (see
+     *     {@link #scope}).
+     * @param {boolean} invert Whether this is an invert boolean operation.
+     */
     op: function (operator, values, scope, invert)
     {
         let newValue = null;
@@ -281,15 +426,23 @@ Option.prototype = {
         this.setValues(newValue, scope);
     }
 };
-  // TODO: Run this by default?
+
+// TODO: Run this by default?
+/**
+ * Validates the specified <b>values</b> against values generated by the
+ * option's completer function.
+ *
+ * @param {value|string[]} values The value or array of values to validate.
+ * @returns {boolean}
+ */
 Option.validateCompleter = function (values)
 {
+    liberator.log(values instanceof Array)
     let context = CompletionContext("");
     let res = context.fork("", 0, this, this.completer);
     if (!res)
         res = context.allItems.items.map(function (item) [item.text]);
-    return Array.concat(values).every(
-        function (value) res.some(function (item) item[0] == value));
+    return Array.concat(values).every(function (value) res.some(function (item) item[0] == value));
 }; //}}}
 
 /**
@@ -807,16 +960,33 @@ function Options() //{{{
 
     const self = {
 
+        /**
+         * @property {number} Global option scope.
+         * @final
+         */
         OPTION_SCOPE_GLOBAL: 1,
-        OPTION_SCOPE_LOCAL:  2,
-        OPTION_SCOPE_BOTH:   3,
 
+        /**
+         * @property {number} Local option scope. Options in this scope only
+         *     apply to the current tab/buffer.
+         * @final
+         */
+        OPTION_SCOPE_LOCAL: 2,
+
+        /**
+         * @property {number} Both local and global option scope.
+         * @final
+         */
+        OPTION_SCOPE_BOTH: 3,
+
+        /** @property {Iterator(Option)} @private */
         __iterator__: function ()
         {
             let sorted = [o for ([i, o] in Iterator(optionHash))].sort(function (a, b) String.localeCompare(a.name, b.name));
             return (v for ([k, v] in Iterator(sorted)));
         },
 
+        /** @property {Object} Observes preference value changes. */
         prefObserver: {
             register: function ()
             {
@@ -848,6 +1018,18 @@ function Options() //{{{
              }
         },
 
+        /**
+         * Adds a new option.
+         *
+         * @param {string[]} names All names for the option.
+         * @param {string} description A description of the option.
+         * @param {string} type The option type (see {@link Option#type}).
+         * @param {value} defaultValue The option's default value.
+         * @param {Object} extra An optional extra configuration hash (see
+         *     {@link Map#extraInfo}).
+         * @optional
+         * @returns {boolean} Whether the option was created.
+         */
         add: function (names, description, type, defaultValue, extraInfo)
         {
             if (!extraInfo)
@@ -873,6 +1055,14 @@ function Options() //{{{
             return true;
         },
 
+        /**
+         * Returns the option with <b>name</b> in the specified <b>scope</b>.
+         *
+         * @param {string} name The option's name.
+         * @param {number} scope The option's scope (see {@link Option#scope}).
+         * @optional
+         * @returns {Option} The matching option.
+         */
         get: function (name, scope)
         {
             if (!scope)
@@ -890,6 +1080,15 @@ function Options() //{{{
             return null;
         },
 
+        /**
+         * Lists all options in <b>scope</b> or only those with changed values
+         * if <b>onlyNonDefault</b> is specified.
+         *
+         * @param {boolean} onlyNonDefault Limit the list to prefs with a
+         *     non-default value.
+         * @param {number} scope Only list options in this scope (see
+         *     {@link Option#scope}).
+         */
         list: function (onlyNonDefault, scope)
         {
             if (!scope)
@@ -929,6 +1128,16 @@ function Options() //{{{
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Lists all preferences matching <b>filter</b> or only those with
+         * changed values if <b>onlyNonDefault</b> is specified.
+         *
+         * @param {boolean} onlyNonDefault Limit the list to prefs with a
+         *     non-default value.
+         * @param {string} filter The list filter. A null filter lists all
+         *     prefs.
+         * @optional
+         */
         listPrefs: function (onlyNonDefault, filter)
         {
             if (!filter)
@@ -961,6 +1170,15 @@ function Options() //{{{
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
 
+        /**
+         * Parses a :set command.
+         *
+         * @param {string} args The :set command's argument string.
+         * @param {Object} modifiers A hash of parsing modifiers. These are:
+         *     scope - see {@link Option#scope}
+         * @optional
+         * @returns {Object} The parsed command object.
+         */
         parseOpt: function parseOpt(args, modifiers)
         {
             let ret = {};
@@ -1005,15 +1223,29 @@ function Options() //{{{
             return ret;
         },
 
+        /** @property {Object} The options store. */
         get store() storage.options,
 
+        /**
+         * Returns the value of the preference <b>name</b>.
+         *
+         * @param {string} name The preference name.
+         * @param {value} forcedDefault The the default value for this
+         *     preference. Used for internal liberator preferences.
+         */
         getPref: function (name, forcedDefault)
         {
             return loadPreference(name, forcedDefault);
         },
 
-        // Set a pref, but warn the user if it's changed from its default
-        // value.
+        /**
+         * Sets the preference <b>name</b> to </b>value</b> but warns the user
+         * if the value is changed from its default.
+         *
+         * @param {string} name The preference name.
+         * @param {value} value The new preference value.
+         */
+        // FIXME: Well it used to. I'm looking at you mst! --djk
         safeSetPref: function (name, value)
         {
             let val = loadPreference(name, null, false);
@@ -1025,11 +1257,22 @@ function Options() //{{{
             storePreference(SAVED + name, value);
         },
 
+        /**
+         * Sets the preference <b>name</b> to </b>value</b>.
+         *
+         * @param {string} name The preference name.
+         * @param {value} value The new preference value.
+         */
         setPref: function (name, value)
         {
             storePreference(name, value);
         },
 
+        /**
+         * Resets the preference <b>name</b> to its default value.
+         *
+         * @param {string} name The preference name.
+         */
         resetPref: function (name)
         {
             try
@@ -1042,7 +1285,11 @@ function Options() //{{{
             }
         },
 
-        // this works only for booleans
+        /**
+         * Toggles the value of the boolean preference <b>name</b>.
+         *
+         * @param {string} name The preference name.
+         */
         invertPref: function (name)
         {
             if (services.get("pref").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
@@ -1079,7 +1326,7 @@ function Options() //{{{
          * previous values.
          *
          * @param {function} fn The function to call.
-         * @param {object} fn The 'this' object with which to call <b>fn</b>
+         * @param {Object} fn The 'this' object with which to call <b>fn</b>
          * @see #pushContext
          * @see #popContext
          */

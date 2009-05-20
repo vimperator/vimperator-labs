@@ -41,10 +41,11 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * @param {function} action The action invoked by each key sequence.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         flags   - See (@link Map#flags)
- *         noremap - See (@link Map#noremap)
- *         rhs     - See (@link Map#rhs)
- *         silent  - See (@link Map#silent)
+ *         flags   - see {@link Map#flags}
+ *         noremap - see {@link Map#noremap}
+ *         rhs     - see {@link Map#rhs}
+ *         silent  - see {@link Map#silent}
+ * @optional
  * @private
  */
 function Map(modes, keys, description, action, extraInfo) //{{{
@@ -59,7 +60,8 @@ function Map(modes, keys, description, action, extraInfo) //{{{
     /** @property {function (number)} The function called to execute this mapping. */
     this.action = action;
 
-    /** @property {number} See (@link Mappings#flags) */
+    /** @property {number} @see Mappings#flags */
+    // FIXME: flags is incongruent with the other properties
     this.flags = extraInfo.flags || 0;
     /** @property {string} This mapping's description, as shown in :viusage. */
     this.description = description || "";
@@ -69,7 +71,7 @@ function Map(modes, keys, description, action, extraInfo) //{{{
     this.noremap = extraInfo.noremap || false;
     /** @property {boolean} Whether any output from the mapping should be echoed on the command line. */
     this.silent = extraInfo.silent || false;
-};
+}
 
 Map.prototype = {
 
@@ -329,6 +331,7 @@ function Mappings() //{{{
     return {
 
         // NOTE: just normal mode for now
+        /** @property {Iterator(Map)} @private */
         __iterator__: function () mappingsIterator([modes.NORMAL], main),
 
         // used by :mkvimperatorrc to save mappings
@@ -342,7 +345,7 @@ function Mappings() //{{{
         getUserIterator: function (mode) mappingsIterator(mode, user),
 
         /**
-         * Add a new default key mapping.
+         * Adds a new default key mapping.
          *
          * @param {number[]} modes The modes that this mapping applies to.
          * @param {string[]} keys The key sequences which are bound to
@@ -350,6 +353,7 @@ function Mappings() //{{{
          * @param {string} description A description of the key mapping.
          * @param {function} action The action invoked by each key sequence.
          * @param {Object} extra An optional extra configuration hash.
+         * @optional
          */
         add: function (modes, keys, description, action, extra)
         {
@@ -357,14 +361,16 @@ function Mappings() //{{{
         },
 
         /**
-         * Add a new user-defined key mapping.
+         * Adds a new user-defined key mapping.
          *
          * @param {number[]} modes The modes that this mapping applies to.
          * @param {string[]} keys The key sequences which are bound to
          *     <b>action</b>.
          * @param {string} description A description of the key mapping.
          * @param {function} action The action invoked by each key sequence.
-         * @param {Object} extra An optional extra configuration hash.
+         * @param {Object} extra An optional extra configuration hash (see
+         *     {@link Map#extraInfo}).
+         * @optional
          */
         addUserMap: function (modes, keys, description, action, extra)
         {
