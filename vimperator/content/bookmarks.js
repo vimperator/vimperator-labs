@@ -830,14 +830,20 @@ function History() //{{{
             return items;
         },
 
-        // TODO: better names and move to buffer.?
+        // TODO: better names
         stepTo: function stepTo(steps)
         {
-            let index = window.getWebNavigation().sessionHistory.index + steps;
-            if (index >= 0 && index < window.getWebNavigation().sessionHistory.count)
-                window.getWebNavigation().gotoIndex(index);
+            let start = 0;
+            let end = window.getWebNavigation().sessionHistory.count - 1;
+            let current = window.getWebNavigation().sessionHistory.index;
+
+            if (current == start && steps < 0 || current == end && steps > 0)
+                liberator.beep();
             else
-                liberator.beep(); // XXX: really wanted?
+            {
+                let index = Math.max(start, Math.min(end, current + steps));
+                window.getWebNavigation().gotoIndex(index);
+            }
         },
 
         goToStart: function goToStart()
@@ -847,7 +853,7 @@ function History() //{{{
             if (index > 0)
                 window.getWebNavigation().gotoIndex(0);
             else
-                liberator.beep(); // XXX: really wanted?
+                liberator.beep();
 
         },
 
@@ -859,7 +865,7 @@ function History() //{{{
             if (sh.index < max)
                 window.getWebNavigation().gotoIndex(max);
             else
-                liberator.beep(); // XXX: really wanted?
+                liberator.beep();
 
         },
 
