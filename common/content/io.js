@@ -279,7 +279,12 @@ function IO() //{{{
         "Write current key mappings and changed options to the config file",
         function (args)
         {
-            // TODO: "E172: Only one file name allowed"
+            if (args.length > 1)
+            {
+                liberator.echoerr("E172: Only one file name allowed");
+                return;
+            }
+
             let filename = args[0] || io.getRCFile(null, true).path;
             let file = io.getFile(filename);
 
@@ -317,7 +322,7 @@ function IO() //{{{
             }
         },
         {
-            argCount: "?",
+            argCount: "*", // FIXME: should be "?" but kludged for proper error message
             bang: true,
             completer: function (context) completion.file(context, true)
         });
