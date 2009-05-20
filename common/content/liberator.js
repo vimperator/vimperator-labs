@@ -618,14 +618,6 @@ const liberator = (function () //{{{
         // then selectedProfile returns last selected profile! (not current one!)
         profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
 
-        // TODO: move to events.js?
-        input: {
-            buffer: "",                // partial command storage
-            pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
-            pendingArgMap: null,       // pending map storage for commands like m{a-z}
-            count: -1                  // parsed count from the input buffer
-        },
-
         // @param type can be:
         //  "submit": when the user pressed enter in the command line
         //  "change"

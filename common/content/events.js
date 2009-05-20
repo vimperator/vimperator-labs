@@ -333,14 +333,19 @@ function Events() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const input = liberator.input;
+    const input = {
+        buffer: "",                // partial command storage
+        pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
+        pendingArgMap: null,       // pending map storage for commands like m{a-z}
+        count: -1                  // parsed count from the input buffer
+    }
 
     var fullscreen = window.fullScreen;
 
     var lastFocus = null;
 
-    var inputBufferLength = 0; // count the number of keys in v.input.buffer (can be different from v.input.buffer.length)
-    var skipMap = false; // while feeding the keys (stored in v.input.buffer | no map found) - ignore mappings
+    var inputBufferLength = 0; // count the number of keys in input.buffer (can be different from input.buffer.length)
+    var skipMap = false; // while feeding the keys (stored in input.buffer | no map found) - ignore mappings
 
     var macros = storage.newMap("macros", true);
 
@@ -1512,7 +1517,7 @@ function Events() //{{{
                 input.buffer = "";
                 inputBufferLength = 0;
                 let tmp = input.pendingArgMap; // must be set to null before .execute; if not
-                input.pendingArgMap = null;    // v.input.pendingArgMap is still 'true' also for new feeded keys
+                input.pendingArgMap = null;    // input.pendingArgMap is still 'true' also for new feeded keys
                 if (key != "<Esc>" && key != "<C-[>")
                 {
                     if (modes.isReplaying && !waitForPageLoaded())
@@ -1578,13 +1583,13 @@ function Events() //{{{
                 if (input.buffer != "" && !skipMap && (liberator.mode == modes.INSERT ||
                     liberator.mode == modes.COMMAND_LINE || liberator.mode == modes.TEXTAREA))
                 {
-                    // no map found -> refeed stuff in v.input.buffer (only while in INSERT, CO... modes)
+                    // no map found -> refeed stuff in input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so
                     events.feedkeys(input.buffer, true);
                 }
                 if (skipMap)
                 {
-                    if (--inputBufferLength == 0) // inputBufferLength == 0. v.input.buffer refeeded...
+                    if (--inputBufferLength == 0) // inputBufferLength == 0. input.buffer refeeded...
                         skipMap = false; // done...
                 }
 
