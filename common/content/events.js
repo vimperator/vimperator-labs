@@ -732,15 +732,22 @@ function Events() //{{{
         "Delete macros",
         function (args)
         {
-            if (args.bang)
-                args.string = ".*"; // XXX
+            if (args.bang && args.string)
+            {
+                liberator.echoerr("E474: Invalid argument");
+                return;
+            }
 
-            events.deleteMacros(args.string);
+            if (args.bang)
+                events.deleteMacros();
+            else if (args.string)
+                events.deleteMacros(args.string);
+            else
+                liberator.echoerr("E471: Argument required");
         },
         {
             bang: true,
-            completer: function (context) completion.macro(context),
-            literal: 0
+            completer: function (context) completion.macro(context)
         });
 
     commands.add(["macros"],
@@ -884,7 +891,8 @@ function Events() //{{{
         /**
          * Returns all macros matching <b>filter</b>.
          *
-         * @param {string} filter A regular expression filter.
+         * @param {string} filter A regular expression filter string. A null
+         *     filter selects all macros.
          */
         getMacros: function (filter)
         {
@@ -898,7 +906,8 @@ function Events() //{{{
         /**
          * Deletes all macros matching <b>filter</b>.
          *
-         * @param {string} filter A regular expression filter.
+         * @param {string} filter A regular expression filter string. A null
+         *     filter deletes all macros.
          */
         deleteMacros: function (filter)
         {
@@ -906,7 +915,7 @@ function Events() //{{{
 
             for (let [item,] in macros)
             {
-                if (re.test(item))
+                if (re.test(item) || !filter)
                     macros.remove(item);
             }
         },
