@@ -301,12 +301,12 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["gg", "<Home>"],
         "Go to the top of the document",
-        function (count) { buffer.scrollToPercentile(Math.max(count, 0)); },
+        function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, Math.max(count, 0)); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["G", "<End>"],
         "Go to the end of the document",
-        function (count) { buffer.scrollToPercentile(count >= 0 ? count : 100); },
+        function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, count >= 0 ? count : 100); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["%"],
@@ -314,7 +314,7 @@ function Buffer() //{{{
         function (count)
         {
             if (count > 0 && count <= 100)
-                buffer.scrollToPercentile(count);
+                buffer.scrollToPercentiles(buffer.scrollXPercent, count);
             else
                 liberator.beep();
         },
@@ -322,12 +322,12 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["<C-d>"],
         "Scroll window downwards in the buffer",
-        function (count) { buffer.scrollByScrollSize(count, 1); },
+        function (count) { buffer.scrollByScrollSize(count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["<C-u>"],
         "Scroll window upwards in the buffer",
-        function (count) { buffer.scrollByScrollSize(count, -1); },
+        function (count) { buffer.scrollByScrollSize(-count); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["<C-b>", "<PageUp>", "<S-Space>"],
@@ -979,6 +979,30 @@ function Buffer() //{{{
         },
 
         /**
+         * @property {number} The buffer's horizontal scroll percentile.
+         */
+        get scrollXPercent()
+        {
+            let win = findScrollableWindow();
+            if (win.scrollMaxX > 0)
+                return Math.round(win.scrollX / win.scrollMaxX * 100);
+            else
+                return 0;
+        },
+
+        /**
+         * @property {number} The buffer's vertical scroll percentile.
+         */
+        get scrollYPercent()
+        {
+            let win = findScrollableWindow();
+            if (win.scrollMaxY > 0)
+                return Math.round(win.scrollY / win.scrollMaxY * 100);
+            else
+                return 0;
+        },
+
+        /**
          * Adds a new section to the page information output.
          *
          * @param {string} option The section's value in 'pageinfo'.
@@ -1069,7 +1093,6 @@ function Buffer() //{{{
          *
          * @param {Node} elem The element to focus.
          */
-        // TODO: merge with followLink()?
         focusElement: function (elem)
         {
             let doc = window.content.document;
@@ -1227,7 +1250,8 @@ function Buffer() //{{{
         },
 
         /**
-         * @property {nsISelectionController} The current document's selection controller.
+         * @property {nsISelectionController} The current document's selection
+         *     controller.
          */
         get selectionController() getBrowser().docShell
                 .QueryInterface(Ci.nsIInterfaceRequestor)
@@ -1238,7 +1262,8 @@ function Buffer() //{{{
          * Saves a page link to disk.
          *
          * @param {HTMLAnchorElement} elem The page link to save.
-         * @param {boolean} skipPrompt Whether to open the "Save Link As..." dialog.
+         * @param {boolean} skipPrompt Whether to open the "Save Link As..."
+         *     dialog.
          */
         saveLink: function (elem, skipPrompt)
         {
@@ -1268,9 +1293,10 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the window laterally <b>cols</b> columns.
+         * Scrolls the buffer laterally <b>cols</b> columns.
          *
-         * @param {number} cols The number of columns to scroll.
+         * @param {number} cols The number of columns to scroll. A positive
+         *     value scrolls right and a negative value left.
          */
         scrollColumns: function (cols)
         {
@@ -1284,7 +1310,7 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the buffer to its rightmost position.
+         * Scrolls to the top of the current buffer.
          */
         scrollEnd: function ()
         {
@@ -1294,7 +1320,8 @@ function Buffer() //{{{
         /**
          * Scrolls the buffer vertically <b>lines</b> rows.
          *
-         * @param {number} lines The number of lines to scroll.
+         * @param {number} lines The number of lines to scroll. A positive
+         *     value scrolls down and a negative value up.
          */
         scrollLines: function (lines)
         {
@@ -1306,7 +1333,8 @@ function Buffer() //{{{
         /**
          * Scrolls the buffer vertically <b>pages</b> pages.
          *
-         * @param {number} pages The number of pages to scroll.
+         * @param {number} pages The number of pages to scroll. A positive
+         *     value scrolls down and a negative value up.
          */
         scrollPages: function (pages)
         {
@@ -1318,10 +1346,10 @@ function Buffer() //{{{
         /**
          * Scrolls the buffer vertically <b>count</b> * 'scroll' rows.
          *
-         * @param {number} count The multiple of 'scroll' lines to scroll.
-         * @param {number} direction The direction to scroll, down if 1 and up if -1.
+         * @param {number} count The multiple of 'scroll' lines to scroll. A
+         *     positive value scrolls down and a negative value up.
          */
-        scrollByScrollSize: function (count, direction) // XXX: boolean
+        scrollByScrollSize: function (count)
         {
             if (count > 0)
                 options["scroll"] = count;
@@ -1336,20 +1364,22 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the current buffer vertically to <b>percentage</b>.
+         * Scrolls the buffer to the specified screen percentiles.
          *
-         * @param {number} percentage The page percentile to scroll the buffer to.
+         * @param {number} x The horizontal page percentile.
+         * @param {number} y The vertical page percentile.
          */
-        scrollToPercentile: function (percentage)
+        scrollToPercentiles: function (x, y)
         {
-            scrollToPercentiles(-1, percentage);
+            scrollToPercentiles(x, y);
         },
 
-        scrollToRatio: function (x, y)
-        {
-            scrollToPercentiles(x * 100, y * 100);
-        },
-
+        /**
+         * Scrolls the buffer to the specified screen pixels.
+         *
+         * @param {number} x The horizontal pixel.
+         * @param {number} y The vertical pixel.
+         */
         scrollTo: function (x, y)
         {
             marks.add("'", true);
@@ -1365,7 +1395,7 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the current buffer vertically to its top.
+         * Scrolls the current buffer vertically to the top.
          */
         scrollTop: function ()
         {
@@ -1597,7 +1627,7 @@ function Marks() //{{{
         {
             if (win && win.location.href == mark.location)
             {
-                buffer.scrollToRatio(mark.position.x, mark.position.y);
+                buffer.scrollToPercentiles(mark.position.x * 100, mark.position.y * 100);
                 pendingJumps.splice(i, 1);
                 return;
             }
@@ -1907,7 +1937,7 @@ function Marks() //{{{
                             return;
                         }
                         liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
-                        buffer.scrollToRatio(slice.position.x, slice.position.y);
+                        buffer.scrollToPercentiles(slice.position.x * 100, slice.position.y * 100);
                         ok = true;
                     }
                 }
@@ -1922,7 +1952,7 @@ function Marks() //{{{
                     if (win.location.href == lmark.location)
                     {
                         liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
-                        buffer.scrollToRatio(lmark.position.x, lmark.position.y);
+                        buffer.scrollToPercentiles(lmark.position.x * 100, lmark.position.y * 100);
                         ok = true;
                         break;
                     }
