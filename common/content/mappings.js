@@ -204,9 +204,7 @@ function Mappings() //{{{
             let [lhs, rhs] = args;
 
             if (!rhs) // list the mapping
-            {
                 mappings.list(mode, expandLeader(lhs));
-            }
             else
             {
                 for (let [,m] in Iterator(mode))

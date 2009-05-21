@@ -409,9 +409,7 @@ function Finder() //{{{
             let result = getBrowser().fastFind.findAgain(up, linksOnly);
 
             if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND)
-            {
                 liberator.echoerr("E486: Pattern not found: " + lastSearchPattern, commandline.FORCE_SINGLELINE);
-            }
             else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED)
             {
                 // hack needed, because wrapping causes a "scroll" event which clears

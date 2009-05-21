@@ -557,7 +557,7 @@ liberator.registerObserver("load_commands", function ()
             if (scheme == "default")
                 highlight.clear();
             else if (!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]))
-                return liberator.echoerr("E185: Cannot find color scheme " + scheme);
+                return void liberator.echoerr("E185: Cannot find color scheme " + scheme);
             autocommands.trigger("ColorScheme", { name: scheme });
         },
         {
@@ -605,9 +605,7 @@ liberator.registerObserver("load_commands", function ()
             {
                 let compl = [];
                 if (args.completeArg == 0)
-                {
                     styles.completeSite(context, content);
-                }
                 else if (args.completeArg == 1)
                 {
                     let sheet = styles.get(false, args["-name"]);

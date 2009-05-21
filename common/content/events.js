@@ -80,10 +80,7 @@ function AutoCommands() //{{{
 
                 events = event.split(",");
                 if (!events.every(function (event) validEvents.indexOf(event) >= 0))
-                {
-                    liberator.echoerr("E216: No such group or event: " + event);
-                    return;
-                }
+                    return void liberator.echoerr("E216: No such group or event: " + event);
             }
 
             if (cmd) // add new command, possibly removing all others with the same event/pattern
@@ -104,9 +101,7 @@ function AutoCommands() //{{{
                         autocommands.remove(event, regex); // remove all
                 }
                 else
-                {
                     autocommands.list(event, regex);   // list all
-                }
             }
         },
         {
@@ -146,13 +141,9 @@ function AutoCommands() //{{{
             let validEvents = config.autocommands.map(function (e) e[0]);
 
             if (event == "*")
-            {
                 liberator.echoerr("E217: Can't execute autocommands for ALL events");
-            }
             else if (validEvents.indexOf(event) == -1)
-            {
                 liberator.echoerr("E216: No such group or event: " + args);
-            }
             else
             {
                 // TODO: perhaps trigger could return the number of autocmds triggered
@@ -314,9 +305,7 @@ function AutoCommands() //{{{
                         }
                     }
                     else
-                    {
                         liberator.execute(commands.replaceTokens(autoCmd.command, args), null, true);
-                    }
                 }
             }
         }
@@ -603,9 +592,7 @@ function Events() //{{{
                 }
             }
             else // background tab
-            {
                 liberator.echomsg("Background tab loaded: " + title || url, 3);
-            }
 
             triggerLoadAutocmd("PageLoad", doc);
         }
@@ -663,9 +650,7 @@ function Events() //{{{
                 }
             }
             else
-            {
                 liberator.log("No user macros directory found", 3);
-            }
         }
         catch (e)
         {
@@ -733,10 +718,7 @@ function Events() //{{{
         function (args)
         {
             if (args.bang && args.string)
-            {
-                liberator.echoerr("E474: Invalid argument");
-                return;
-            }
+                return void liberator.echoerr("E474: Invalid argument");
 
             if (args.bang)
                 events.deleteMacros();
@@ -811,11 +793,8 @@ function Events() //{{{
         startRecording: function (macro)
         {
             if (!/[a-zA-Z0-9]/.test(macro))
-            {
                 // TODO: ignore this like Vim?
-                liberator.echoerr("E354: Invalid register name: '" + macro + "'");
-                return;
-            }
+                return void liberator.echoerr("E354: Invalid register name: '" + macro + "'");
 
             modes.isRecording = true;
 
@@ -981,21 +960,13 @@ function Events() //{{{
                                 charCode = keyname.charCodeAt(0);
                             }
                             else if (keyname.toLowerCase() == "space")
-                            {
                                 charCode = 32;
-                            }
                             else if (keyname.toLowerCase() == "nop")
-                            {
                                 string = "<Nop>";
-                            }
                             else if (keyCode = getKeyCode(keyname))
-                            {
                                 charCode = 0;
-                            }
                             else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
-                            {
                                 break;
-                            }
 
                             i += match.length - 1;
                         }
@@ -1020,9 +991,7 @@ function Events() //{{{
                         events.onKeyPress(evt);
                     }
                     else
-                    {
                         elem.dispatchEvent(evt);
-                    }
                     if (!this.feedingKeys)
                         break;
                     // stop feeding keys if page loading failed
@@ -1120,9 +1089,7 @@ function Events() //{{{
                         modifier = modifier.replace("C-", "");
                     }
                     else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
-                    {
                         key = String.fromCharCode(event.charCode + 64);
-                    }
                 }
                 // special handling of the Space key
                 else if (event.charCode == 32)
@@ -1310,9 +1277,7 @@ function Events() //{{{
                          }, 0);
                      }
                      else
-                     {
                          modes.reset();
-                     }
                 }
             }
             finally
@@ -1422,9 +1387,7 @@ function Events() //{{{
                     return true;
                 }
                 else if (!mappings.hasMap(liberator.mode, input.buffer + key))
-                {
                     macros.set(currentMacro, macros.get(currentMacro) + key);
-                }
             }
 
             if (key == "<C-c>")
@@ -1606,9 +1569,7 @@ function Events() //{{{
                 else if (input.pendingMotionMap)
                 {
                     if (key != "<Esc>" && key != "<C-[>")
-                    {
                         input.pendingMotionMap.execute(candidateCommand, input.count, null);
-                    }
                     input.pendingMotionMap = null;
                     input.buffer = "";
                     inputBufferLength = 0;
@@ -1671,9 +1632,7 @@ function Events() //{{{
                             commandline.onEvent(event); // reroute event in command line mode
                     }
                     else if (liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA)
-                    {
                         liberator.beep();
-                    }
                 }
             }
 

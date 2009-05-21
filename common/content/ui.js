@@ -714,9 +714,7 @@ function CommandLine() //{{{
             elements[elements.length - 1].scrollIntoView(true);
         }
         else
-        {
             win.scrollTo(0, doc.height);
-        }
 
         win.focus();
 
@@ -1413,9 +1411,7 @@ function CommandLine() //{{{
                     setTimeout(function () { multilineInputWidget.inputField.focus(); }, 0);
             }
             else if (event.type == "input")
-            {
                 autosizeMultilineInputWidget();
-            }
             return true;
         },
 
@@ -1462,9 +1458,7 @@ function CommandLine() //{{{
                             tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
                         }
                         else
-                        {
                             openLink(liberator.CURRENT_TAB);
-                        }
                         break;
                     case "<MiddleMouse>":
                     case "<C-LeftMouse>":
@@ -1635,9 +1629,7 @@ function CommandLine() //{{{
                     events.onKeyPress(event);
             }
             else
-            {
                 commandline.updateMorePrompt(showMorePrompt, showMoreHelpPrompt);
-            }
         },
 
         getSpaceNeeded: function getSpaceNeeded()
@@ -2157,9 +2149,7 @@ function StatusLine() //{{{
                 progress = "";
 
             if (typeof progress == "string")
-            {
                 progressWidget.value = progress;
-            }
             else if (typeof progress == "number")
             {
                 let progressStr = "";

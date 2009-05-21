@@ -129,9 +129,7 @@ function Tabs() //{{{
                     return options["showtabline"]; // XXX
 
                 if (value == 0)
-                {
                     tabStrip.collapsed = true;
-                }
                 else
                 {
                     let pref = "browser.tabStrip.autoHide";
@@ -417,13 +415,9 @@ function Tabs() //{{{
                     liberator.echoerr("E488: Trailing characters");
             }
             else if (count > 0)
-            {
                 tabs.select("-" + count, true);
-            }
             else
-            {
                 tabs.select("-1", true);
-            }
         },
         {
             argCount: "?",
@@ -446,19 +440,12 @@ function Tabs() //{{{
                 if (arg)
                 {
                     if (/^\d+$/.test(arg))
-                    {
                         index = arg - 1;
-                    }
                     else
-                    {
-                        liberator.echoerr("E488: Trailing characters");
-                        return;
-                    }
+                        return void liberator.echoerr("E488: Trailing characters");
                 }
                 else
-                {
                     index = count - 1;
-                }
 
                 if (index < tabs.count)
                     tabs.select(index, true);
@@ -466,9 +453,7 @@ function Tabs() //{{{
                     liberator.beep();
             }
             else
-            {
                 tabs.select("+1", true);
-            }
         },
         {
             argCount: "?",
@@ -501,13 +486,9 @@ function Tabs() //{{{
                         liberator.echoerr("E488: Trailing characters");
                 }
                 else if (count > 0)
-                {
                     tabs.switchTo(count.toString(), special);
-                }
                 else
-                {
                     tabs.switchTo(arg, special);
-                }
             },
             {
                 argCount: "?",
@@ -555,10 +536,7 @@ function Tabs() //{{{
 
                 // FIXME: tabmove! N should probably produce an error
                 if (arg && !/^([+-]?\d+)$/.test(arg))
-                {
-                    liberator.echoerr("E488: Trailing characters");
-                    return;
-                }
+                    return void liberator.echoerr("E488: Trailing characters");
 
                 // if not specified, move to after the last tab
                 tabs.move(getBrowser().mCurrentTab, arg || "$", args.bang);
@@ -647,10 +625,7 @@ function Tabs() //{{{
                     }
 
                     if (!count)
-                    {
-                        liberator.echoerr("Exxx: No matching closed tab");
-                        return;
-                    }
+                        return void liberator.echoerr("Exxx: No matching closed tab");
                 }
 
                 window.undoCloseTab(count - 1);
@@ -1021,9 +996,7 @@ function Tabs() //{{{
                 getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
             }
             else
-            {
                 getBrowser().reloadTab(tab);
-            }
         },
 
         /**
@@ -1050,9 +1023,7 @@ function Tabs() //{{{
                 }
             }
             else
-            {
                 getBrowser().reloadAllTabs();
-            }
         },
 
         /**
@@ -1205,10 +1176,7 @@ function Tabs() //{{{
         selectAlternateTab: function ()
         {
             if (tabs.alternate == null || tabs.getTab() == tabs.alternate)
-            {
-                liberator.echoerr("E23: No alternate page");
-                return;
-            }
+                return void liberator.echoerr("E23: No alternate page");
 
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null

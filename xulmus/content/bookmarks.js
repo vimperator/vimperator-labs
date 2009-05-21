@@ -465,9 +465,7 @@ function Bookmarks() //{{{
 
             let count = this.remove(url);
             if (count > 0)
-            {
                 commandline.echo("Removed bookmark: " + url, commandline.HL_NORMAL, commandline.FORCE_SINGLELINE);
-            }
             else
             {
                 let title = buffer.title || url;
@@ -622,9 +620,7 @@ function Bookmarks() //{{{
                     param = aURL.substr(offset + 1);
                 }
                 if (!aPostDataRef)
-                {
                     aPostDataRef = {};
-                }
                 var engine = searchService.getEngineByAlias(keyword);
                 if (engine)
                 {
@@ -634,23 +630,17 @@ function Bookmarks() //{{{
                 }
                 [shortcutURL, aPostDataRef.value] = PlacesUtils.getURLAndPostDataForKeyword(keyword);
                 if (!shortcutURL)
-                {
                     return aURL;
-                }
                 var postData = "";
                 if (aPostDataRef.value)
-                {
                     postData = unescape(aPostDataRef.value);
-                }
                 if (/%s/i.test(shortcutURL) || /%s/i.test(postData))
                 {
                     var charset = "";
                     const re = /^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/;
                     var matches = shortcutURL.match(re);
                     if (matches)
-                    {
                         [, shortcutURL, charset] = matches;
-                    }
                     else
                     {
                         try
@@ -660,21 +650,19 @@ function Bookmarks() //{{{
                     }
                     var encodedParam = "";
                     if (charset)
-                    {
                         encodedParam = escape(convertFromUnicode(charset, param));
-                    } else {
+                    else
                         encodedParam = encodeURIComponent(param);
-                    }
                     shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);
                     if (/%s/i.test(postData))
-                    {
                         aPostDataRef.value = getPostDataStream(postData, param, encodedParam, "application/x-www-form-urlencoded");
-                    }
-                } else if (param) {
+                }
+                else if (param)
+                {
                     aPostDataRef.value = null;
                     return aURL;
                 }
-                    return shortcutURL;
+                return shortcutURL;
             }
 
             url = getShortcutOrURI(searchString, postData);
@@ -762,9 +750,7 @@ function History() //{{{
             let url = args.literalArg;
 
             if (args.bang)
-            {
                 history.goToStart();
-            }
             else
             {
                 if (url)
@@ -781,9 +767,7 @@ function History() //{{{
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
-                {
                     history.stepTo(-Math.max(args.count, 1));
-                }
             }
         },
         {
@@ -808,9 +792,7 @@ function History() //{{{
             let url = args.literalArg;
 
             if (args.bang)
-            {
                 history.goToEnd();
-            }
             else
             {
                 if (url)
@@ -827,9 +809,7 @@ function History() //{{{
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
-                {
                     history.stepTo(Math.max(args.count, 1));
-                }
             }
         },
         {
@@ -1006,16 +986,10 @@ function QuickMarks() //{{{
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!args.bang && !args.string)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
+                return void liberator.echoerr("E471: Argument required");
 
             if (args.bang && args.string)
-            {
-                liberator.echoerr("E474: Invalid argument");
-                return;
-            }
+                return void liberator.echoerr("E474: Invalid argument");
 
             if (args.bang)
                 quickmarks.removeAll();
@@ -1053,10 +1027,7 @@ function QuickMarks() //{{{
 
             // ignore invalid qmark characters unless there are no valid qmark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
-            {
-                liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
-                return;
-            }
+                return void liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
 
             let filter = args.replace(/[^a-zA-Z0-9]/g, "");
             quickmarks.list(filter);
@@ -1110,19 +1081,13 @@ function QuickMarks() //{{{
             marks = Array.concat(lowercaseMarks, uppercaseMarks, numberMarks);
 
             if (marks.length == 0)
-            {
-                liberator.echoerr("No QuickMarks set");
-                return;
-            }
+                return void liberator.echoerr("No QuickMarks set");
 
             if (filter.length > 0)
             {
                 marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
                 if (marks.length == 0)
-                {
-                    liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
-                    return;
-                }
+                    return void liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
             }
 
             let items = [[mark, qmarks.get(mark)] for ([k, mark] in Iterator(marks))];

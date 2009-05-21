@@ -375,9 +375,7 @@ function Commands() //{{{
         if (exCommands.some(function (c) c.hasName(command.name)))
         {
             if (isUserCommand && replace)
-            {
                 commands.removeUserCommand(command.name);
-            }
             else
             {
                 liberator.log("Warning: :" + command.name + " already exists, NOT replacing existing command.", 1);
@@ -716,7 +714,7 @@ function Commands() //{{{
                                 {
                                     [count, arg, quote, error] = getNextArg(sub.substr(optname.length + 1));
                                     if (error)
-                                        return liberator.echoerr(error);
+                                        return void liberator.echoerr(error);
 
                                     // if we add the argument to an option after a space, it MUST not be empty
                                     if (sep != "=" && !quote && arg.length == 0)
@@ -725,9 +723,7 @@ function Commands() //{{{
                                     count++; // to compensate the "=" character
                                 }
                                 else if (!/\s/.test(sep) && sep != undefined) // this isn't really an option as it has trailing characters, parse it as an argument
-                                {
                                     invalid = true;
-                                }
 
                                 let context = null;
                                 if (!complete && quote)
@@ -807,7 +803,7 @@ function Commands() //{{{
                 // if not an option, treat this token as an argument
                 let [count, arg, quote, error] = getNextArg(sub);
                 if (error)
-                    return liberator.echoerr(error);
+                    return void liberator.echoerr(error);
 
                 if (complete)
                 {
@@ -997,10 +993,7 @@ function Commands() //{{{
             let cmd = args[0];
 
             if (cmd != null && /\W/.test(cmd))
-            {
-                liberator.echoerr("E182: Invalid command name");
-                return;
-            }
+                return void liberator.echoerr("E182: Invalid command name");
 
             if (args.literalArg)
             {
@@ -1036,9 +1029,7 @@ function Commands() //{{{
                         }
                     }
                     else
-                    {
                         completeFunc = completion[completeOptionMap[completeOpt]];
-                    }
                 }
 
                 let added = commands.addUserCommand([cmd],
@@ -1083,9 +1074,7 @@ function Commands() //{{{
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
                 else
-                {
                     liberator.echomsg("No user-defined commands found");
-                }
             }
         },
         {

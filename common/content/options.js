@@ -214,9 +214,7 @@ Option.prototype = {
                 return null;
         }
         else
-        {
             scope = this.scope;
-        }
 
         let aValue;
 
@@ -602,25 +600,17 @@ function Options() //{{{
                     options.setPref(name, value);
                 }
                 else
-                {
                     options.listPrefs(onlyNonDefault, name);
-                }
                 return;
             }
 
             let opt = options.parseOpt(arg, modifiers);
             if (!opt)
-            {
-                liberator.echoerr("Error parsing :set command: " + arg);
-                return;
-            }
+                return void liberator.echoerr("Error parsing :set command: " + arg);
 
             let option = opt.option;
             if (option == null && !opt.all)
-            {
-                liberator.echoerr("No such option: " + opt.name);
-                return;
-            }
+                return void liberator.echoerr("No such option: " + opt.name);
 
             // reset a variable to its default value
             if (opt.reset)
@@ -631,17 +621,13 @@ function Options() //{{{
                         option.reset();
                 }
                 else
-                {
                     option.reset();
-                }
             }
             // read access
             else if (opt.get)
             {
                 if (opt.all)
-                {
                     options.list(opt.onlyNonDefault, opt.scope);
-                }
                 else
                 {
                     if (option.type == "boolean")
@@ -658,10 +644,7 @@ function Options() //{{{
                 if (opt.option.type == "boolean")
                 {
                     if (opt.valueGiven)
-                    {
-                        liberator.echoerr("E474: Invalid argument: " + arg);
-                        return;
-                    }
+                        return void liberator.echoerr("E474: Invalid argument: " + arg);
                     opt.values = !opt.unsetBoolean;
                 }
                 let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
@@ -803,17 +786,11 @@ function Options() //{{{
                 {
                     let reference = liberator.variableReference(matches[2]);
                     if (!reference[0] && matches[3])
-                    {
-                        liberator.echoerr("E121: Undefined variable: " + matches[2]);
-                        return;
-                    }
+                        return void liberator.echoerr("E121: Undefined variable: " + matches[2]);
 
                     let expr = liberator.evalExpression(matches[4]);
                     if (expr === undefined)
-                    {
-                        liberator.echoerr("E15: Invalid expression: " + matches[4]);
-                        return;
-                    }
+                        return void liberator.echoerr("E15: Invalid expression: " + matches[4]);
                     else
                     {
                         if (!reference[0])
@@ -843,10 +820,7 @@ function Options() //{{{
             {
                 let reference = liberator.variableReference(matches[1]);
                 if (!reference[0])
-                {
-                    liberator.echoerr("E121: Undefined variable: " + matches[1]);
-                    return;
-                }
+                    return void liberator.echoerr("E121: Undefined variable: " + matches[1]);
 
                 let value = reference[0][reference[1]];
                 let prefix = typeof value == "number"   ? "#" :
@@ -1117,9 +1091,7 @@ function Options() //{{{
                         option.default = (option.default ? "" : "no") + opt.name;
                     }
                     else
-                    {
                         option.value = <>={template.highlight(opt.value)}</>;
-                    }
                     yield option;
                 }
             };

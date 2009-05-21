@@ -537,13 +537,9 @@ function Editor() //{{{
         function (count)
         {
             if (modes.main == modes.VISUAL)
-            {
                 count = getEditor().selectionEnd - getEditor().selectionStart;
-            }
             if (typeof count != "number" || count < 1)
-            {
                 count = 1;
-            }
 
             while (count-- > 0)
             {
@@ -867,10 +863,7 @@ function Editor() //{{{
             let args = commands.parseArgs(options["editor"], [], "*", true);
 
             if (args.length < 1)
-            {
-                liberator.echoerr("No editor specified");
-                return;
-            }
+                return void liberator.echoerr("No editor specified");
 
             args.push(path);
             liberator.callFunctionInThread(null, io.run, io.expandPath(args.shift()), args, true);
@@ -1038,9 +1031,7 @@ function Editor() //{{{
                             return;
                         }
                         else
-                        {
                             return;
-                        }
                     }
                 }
             }
@@ -1125,9 +1116,7 @@ function Editor() //{{{
             let list = this.getAbbreviations(filter, lhs);
 
             if (!list.length)
-            {
                 liberator.echomsg("No abbreviations found");
-            }
             else if (list.length == 1)
             {
                 let [mode, lhs, rhs] = list[0];

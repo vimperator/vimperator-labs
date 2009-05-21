@@ -13,7 +13,7 @@ function Player() // {{{
 
     services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
     services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
-            
+
     // Register Callbacks for searching.
     liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
     liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
@@ -287,10 +287,7 @@ function Player() // {{{
 
             // intentionally supports 999:99:99
             if (!/^[+-]?(\d+[smh]?|(\d+:\d\d:|\d+:)?\d{2})$/.test(arg))
-            {
-                liberator.echoerr("E475: Invalid argument: " + arg);
-                return;
-            }
+                return void liberator.echoerr("E475: Invalid argument: " + arg);
 
             function ms(t, m) Math.abs(parseInt(t, 10) * { s: 1000, m: 60000, h: 3600000 }[m])
 
@@ -322,10 +319,7 @@ function Player() // {{{
         {
             // FIXME: is this a SB restriction? --djk
             if (!gBrowser.currentMediaPage)
-            {
-                liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
-                return;
-            }
+                return void liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
 
             let arg = args[0];
 
@@ -401,10 +395,7 @@ function Player() // {{{
             let arg = args[0];
 
             if (!/^[+-]?\d+$/.test(arg))
-            {
-                liberator.echoerr("E488: Trailing characters");
-                return;
-            }
+                return void liberator.echoerr("E488: Trailing characters");
 
             let level = parseInt(arg, 10) / 100;
 
@@ -602,9 +593,7 @@ function Player() // {{{
                 focusTrack(mySearchView.getItemByIndex(lastSearchIndex));
             }
             else
-            {
                 liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
-            }
         },
 
         searchViewAgain: function searchViewAgain(reverse)
@@ -683,9 +672,7 @@ function Player() // {{{
                 {
                     // FIXME: why are there null items and duplicates?
                     if (!playlists.some(function (list) list.name == item.name) && item.name != null)
-                    {
                         playlists.push(item);
-                    }
                     return Ci.sbIMediaListEnumerationListener.CONTINUE;
                 }
             };
@@ -735,34 +722,34 @@ function Player() // {{{
                     liberator.dump("PropertyID - "+propManager.getPropertyInfo(propertyID).id);
                     properties.push(propManager.getPropertyInfo(propertyID).displayName);
                 }
-            }            
-            
+            }
+
             return properties;
         },
 
         sortBy: function sortBy(property, order)
         {
             let pa =  Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].createInstance(Ci.sbIMutablePropertyArray);
-            liberator.dump("Property: "+property);
-            
+            liberator.dump("Property: " + property);
+
             switch (property.string)
             {
                 case "#":
                 case "Title":
-                        pa.appendProperty(SBProperties.trackName, 'a');
+                        pa.appendProperty(SBProperties.trackName, "a");
                     break;
                 case "Rating":
                     pa.appendProperty(SBProperties.rating, 1);
                 break;
                 case "Album":
-                    pa.appendProperty(SBProperties.albumName, 'a');
+                    pa.appendProperty(SBProperties.albumName, "a");
                 break;
                 default:
-                    pa.appendProperty(SBProperties.trackName, 'a');
+                    pa.appendProperty(SBProperties.trackName, "a");
                 break;
             }
-            
-            _SBGetCurrentView().setSort(pa);            
+
+            _SBGetCurrentView().setSort(pa);
         }
 
     };

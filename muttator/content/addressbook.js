@@ -100,9 +100,7 @@ function Addressbook() //{{{
                             + " -lastname=" + names[1].replace(/"/g, "");
             }
             else
-            {
                 displayName = "-name=\"" + displayName.replace(/"/g, "") + "\"";
-            }
 
             commandline.open(":", "contact " + address + " " + displayName, modes.EX);
         });

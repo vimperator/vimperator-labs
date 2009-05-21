@@ -260,9 +260,7 @@ function Hints() //{{{
 
                 // If we found a satisfactory offset, let's use it.
                 if (curdist < Infinity)
-                {
                     return [leftpos + curleft, toppos + curtop]
-                }
             }
         }
         catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
@@ -323,9 +321,7 @@ function Hints() //{{{
             let toppos =  Math.max((rect.top + scrollY), scrollY);
 
             if (tagname == "area")
-            {
                 [leftpos, toppos] = getAreaOffset(elem, leftpos, toppos);
-            }
 
             span.style.left = leftpos + "px";
             span.style.top =  toppos + "px";
@@ -532,9 +528,7 @@ function Hints() //{{{
                     return false;
             }
             else if (validHints.length > 1)
-            {
                 return false;
-            }
         }
 
         let timeout = followFirst || events.feedingKeys ? 0 : 500;

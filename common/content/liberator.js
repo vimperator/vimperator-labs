@@ -299,10 +299,7 @@ const liberator = (function () //{{{
                 let items = getMenuItems();
 
                 if (!items.some(function (i) i.fullMenuPath == arg))
-                {
-                    liberator.echoerr("E334: Menu not found: " + arg);
-                    return;
-                }
+                    return void liberator.echoerr("E334: Menu not found: " + arg);
 
                 for (let [,item] in Iterator(items))
                 {
@@ -333,7 +330,6 @@ const liberator = (function () //{{{
                 catch (e)
                 {
                     liberator.echoerr(e);
-                    return;
                 }
             });
 
@@ -350,10 +346,7 @@ const liberator = (function () //{{{
             function (args)
             {
                 if (args.bang)
-                {
-                    liberator.echoerr("E478: Don't panic!");
-                    return;
-                }
+                    return void liberator.echoerr("E478: Don't panic!");
 
                 liberator.help(args.literalArg);
             },
@@ -480,9 +473,7 @@ const liberator = (function () //{{{
                             totalUnits = "sec";
                         }
                         else
-                        {
                             totalUnits = "msec";
-                        }
 
                         let str = template.commandOutput(
                                 <table>
@@ -811,10 +802,7 @@ const liberator = (function () //{{{
                 let opt = this.options.get(matches[1]);
 
                 if (!opt)
-                {
-                    this.echoerr("E113: Unknown option: " + matches[1]);
-                    return;
-                }
+                    return void this.echoerr("E113: Unknown option: " + matches[1]);
 
                 let type = opt.type;
                 let value = opt.getter();
@@ -829,21 +817,14 @@ const liberator = (function () //{{{
             else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
             {
                 if (matches)
-                {
                     return matches[2].toString();
-                }
                 else
-                {
-                    this.echoerr("E115: Missing quote: " + string);
-                    return;
-                }
+                    return void this.echoerr("E115: Missing quote: " + string);
             }
 
             // Number
             else if (matches = string.match(/^(\d+)$/))
-            {
                 return parseInt(matches[1], 10);
-            }
 
             let reference = this.variableReference(string);
 
@@ -874,20 +855,14 @@ const liberator = (function () //{{{
                 liberator.focusContent();
             }
             else if (command.action === null)
-            {
                 err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
-            }
             else if (count != -1 && !command.count)
-            {
                 err = "E481: No range allowed";
-            }
             else if (special && !command.bang)
-            {
                 err = "E477: No ! allowed";
-            }
 
             if (err)
-                return liberator.echoerr(err);
+                return void liberator.echoerr(err);
             if (!silent)
                 commandline.command = str.replace(/^\s*:\s*/, "");
             command.execute(args, special, count, modifiers);
@@ -947,9 +922,7 @@ const liberator = (function () //{{{
                 if (item[0] == topic)
                     return format(item);
                 else if (!partialMatch && item[0].indexOf(topic) > -1)
-                {
                     partialMatch = item;
-                }
             }
 
             if (partialMatch)
@@ -975,7 +948,7 @@ const liberator = (function () //{{{
 
             let page = this.findHelp(topic);
             if (page == null)
-                return liberator.echoerr("E149: Sorry, no help for " + topic);
+                return void liberator.echoerr("E149: Sorry, no help for " + topic);
 
             liberator.open("chrome://liberator/locale/" + page, where);
             if (where == this.CURRENT_TAB)
@@ -991,10 +964,7 @@ const liberator = (function () //{{{
             function sourceDirectory(dir)
             {
                 if (!dir.isReadable())
-                {
-                    liberator.echoerr("E484: Can't open file " + dir.path);
-                    return;
-                }
+                    return void liberator.echoerr("E484: Can't open file " + dir.path);
 
                 liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
                 io.readDirectory(dir.path, true).forEach(function (file) {
@@ -1011,9 +981,7 @@ const liberator = (function () //{{{
                         }
                     }
                     else if (file.isDirectory())
-                    {
                         sourceDirectory(file);
-                    }
                 });
             }
 

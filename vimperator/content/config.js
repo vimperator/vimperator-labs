@@ -326,9 +326,7 @@ const config = { //{{{
             function (args)
             {
                 if (args.string)
-                {
                     liberator.open(args.string);
-                }
                 else if (args.bang)
                     BrowserReloadSkipCache();
                 else
@@ -351,9 +349,7 @@ const config = { //{{{
                                 ? liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else
-                {
                     window.openPreferences();
-                }
             },
             {
                 argCount: "0",

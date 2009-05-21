@@ -467,9 +467,7 @@ function Bookmarks() //{{{
 
             let count = this.remove(url);
             if (count > 0)
-            {
                 commandline.echo("Removed bookmark: " + url, commandline.HL_NORMAL, commandline.FORCE_SINGLELINE);
-            }
             else
             {
                 let title = buffer.title || url;
@@ -692,9 +690,7 @@ function History() //{{{
             let url = args.literalArg;
 
             if (args.bang)
-            {
                 history.goToStart();
-            }
             else
             {
                 if (url)
@@ -711,9 +707,7 @@ function History() //{{{
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
-                {
                     history.stepTo(-Math.max(args.count, 1));
-                }
             }
         },
         {
@@ -739,9 +733,7 @@ function History() //{{{
             let url = args.literalArg;
 
             if (args.bang)
-            {
                 history.goToEnd();
-            }
             else
             {
                 if (url)
@@ -758,9 +750,7 @@ function History() //{{{
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
-                {
                     history.stepTo(Math.max(args.count, 1));
-                }
             }
         },
         {
@@ -944,16 +934,10 @@ function QuickMarks() //{{{
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
             if (!args.bang && !args.string)
-            {
-                liberator.echoerr("E471: Argument required");
-                return;
-            }
+                return void liberator.echoerr("E471: Argument required");
 
             if (args.bang && args.string)
-            {
-                liberator.echoerr("E474: Invalid argument");
-                return;
-            }
+                return void liberator.echoerr("E474: Invalid argument");
 
             if (args.bang)
                 quickmarks.removeAll();
@@ -991,10 +975,7 @@ function QuickMarks() //{{{
 
             // ignore invalid qmark characters unless there are no valid qmark chars
             if (args && !/[a-zA-Z0-9]/.test(args))
-            {
-                liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
-                return;
-            }
+                return void liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
 
             let filter = args.replace(/[^a-zA-Z0-9]/g, "");
             quickmarks.list(filter);
@@ -1048,19 +1029,13 @@ function QuickMarks() //{{{
             marks = Array.concat(lowercaseMarks, uppercaseMarks, numberMarks);
 
             if (marks.length == 0)
-            {
-                liberator.echoerr("No QuickMarks set");
-                return;
-            }
+                return void liberator.echoerr("No QuickMarks set");
 
             if (filter.length > 0)
             {
                 marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
                 if (marks.length == 0)
-                {
-                    liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
-                    return;
-                }
+                    return void liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
             }
 
             let items = [[mark, qmarks.get(mark)] for ([k, mark] in Iterator(marks))];

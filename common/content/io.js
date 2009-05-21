@@ -206,20 +206,13 @@ function IO() //{{{
             let arg = args.literalArg;
 
             if (!arg)
-            {
                 arg = "~";
-            }
             else if (arg == "-")
             {
                 if (oldcwd)
-                {
                     arg = oldcwd.path;
-                }
                 else
-                {
-                    liberator.echoerr("E186: No previous directory");
-                    return;
-                }
+                    return void liberator.echoerr("E186: No previous directory");
             }
 
             arg = io.expandPath(arg);
@@ -280,19 +273,13 @@ function IO() //{{{
         function (args)
         {
             if (args.length > 1)
-            {
-                liberator.echoerr("E172: Only one file name allowed");
-                return;
-            }
+                return void liberator.echoerr("E172: Only one file name allowed");
 
             let filename = args[0] || io.getRCFile(null, true).path;
             let file = io.getFile(filename);
 
             if (file.exists() && !args.bang)
-            {
-                liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
-                return;
-            }
+                return void liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
 
             // TODO: Use a set/specifiable list here:
             let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
@@ -375,10 +362,7 @@ function IO() //{{{
 
             // replaceable bang and no previous command?
             if (/((^|[^\\])(\\\\)*)!/.test(arg) && !lastRunCommand)
-            {
-                liberator.echoerr("E34: No previous command");
-                return;
-            }
+                return void liberator.echoerr("E34: No previous command");
 
             // NOTE: Vim doesn't replace ! preceded by 2 or more backslashes and documents it - desirable?
             // pass through a raw bang when escaped or substitute the last command
@@ -527,9 +511,7 @@ function IO() //{{{
             newDir = newDir || "~";
 
             if (newDir == "-")
-            {
                 [cwd, oldcwd] = [oldcwd, this.getCurrentDirectory()];
-            }
             else
             {
                 let dir = self.getFile(newDir);
@@ -820,9 +802,7 @@ function IO() //{{{
             let file;
 
             if (isAbsolutePath(program))
-            {
                 file = self.getFile(program, true);
-            }
             else
             {
                 let dirs = services.get("environment").get("PATH").split(WINDOWS ? ";" : ":");
@@ -968,9 +948,7 @@ lookup:
                     }
                 }
                 else if (/\.css$/.test(filename))
-                {
                     storage.styles.registerSheet(uri.spec, true);
-                }
                 else
                 {
                     let heredoc = "";
@@ -988,9 +966,7 @@ lookup:
                                 heredocEnd = null;
                             }
                             else
-                            {
                                 heredoc += line + "\n";
-                            }
                         }
                         else
                         {
@@ -1018,9 +994,7 @@ lookup:
                             else
                             {
                                 if (command.name == "finish")
-                                {
                                     break;
-                                }
                                 else if (command.hereDoc)
                                 {
                                     // check for a heredoc
@@ -1034,9 +1008,7 @@ lookup:
                                             heredoc = matches[1] + "\n";
                                     }
                                     else
-                                    {
                                         command.execute(args, special, count);
-                                    }
                                 }
                                 else
                                 {

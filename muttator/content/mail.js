@@ -707,10 +707,7 @@ function Mail() //{{{
 
             // TODO: is there a better way to check for validity?
             if (addresses.some(function (recipient) !(/\S@\S+\.\S/.test(recipient))))
-            {
-                liberator.echoerr("Exxx: Invalid e-mail address");
-                return;
-            }
+                return void liberator.echoerr("Exxx: Invalid e-mail address");
 
             mail.composeNewMail(mailargs);
         },
@@ -789,10 +786,7 @@ function Mail() //{{{
                         var url = args.attachments.pop();
                         var file = io.getFile(url);
                         if (!file.exists())
-                        {
-                            liberator.echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
-                            return;
-                        }
+                            return void liberator.echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
 
                         attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
                                                .createInstance(Components.interfaces.nsIMsgAttachment);
