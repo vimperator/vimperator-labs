@@ -812,7 +812,7 @@ function CommandLine() //{{{
     // TODO: these belong in ui.js
     options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
-        "charlist", "sfl",
+        "charlist", "slf",
         {
             completer: function (context) [k for each (k in completion.urlCompleters)],
             validator: Option.validateCompleter

@@ -224,7 +224,7 @@ ____
 
 
 |\'cpt'| |\'complete'|
-||'complete' 'cpt'|| charlist (default: sfl)
+||'complete' 'cpt'|| charlist (default: slf)
 ____
 Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 

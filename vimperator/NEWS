@@ -1,5 +1,6 @@
-2009-XX-XX:
+2009-05-21:
     * version 2.1
+    * IMPORTANT: Default value of 'complete' has been changed from 'sfl' to 'slf'
     * massively speed up :open completions
     * TabMixPlus (and other tab extensions) should work much better now
       together with Vimperator unless you :set guioptions+=[nN]
@@ -10,12 +11,12 @@
     * add 'encoding'
     * add 'hintinputs'
     * add :silent
-    * add $MY_VIMPERATORRC // TODO: I still don't like this --mst
-                               You're yet to explain why... --djk
+    * add $MY_VIMPERATORRC
     * add ' and " local marks
     * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
     * add :messclear
     * add 'maxitems'
+    * as usual many small bug fixes
 
 2009-03-28:
     * version 2.0
