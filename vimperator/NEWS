@@ -1,3 +1,7 @@
+2009-XX-XX:
+    * version 2.2a1pre
+    * add @: mapping
+
 2009-05-21:
     * version 2.1
     * IMPORTANT: Default value of 'complete' has been changed from 'sfl' to 'slf'

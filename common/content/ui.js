@@ -525,6 +525,7 @@ function CommandLine() //{{{
     var input = {};
 
     liberator.registerCallback("submit", modes.EX, function (command) {
+        commands.repeat = command;
         liberator.execute(command);
     });
     liberator.registerCallback("complete", modes.EX, function (context) {

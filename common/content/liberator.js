@@ -896,6 +896,7 @@ const liberator = (function () //{{{
                 return void liberator.echoerr(err);
             if (!silent)
                 commandline.command = str.replace(/^\s*:\s*/, "");
+
             command.execute(args, special, count, modifiers);
         },
 

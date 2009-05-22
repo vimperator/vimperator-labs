@@ -90,6 +90,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]@[m]|| Play a macro +
 
 ||[m].[m]|| Repeat the last keyboard command +
+||[m]@:[m]|| Repeat the last Ex command [count] times +
 
 ||[m]]f[m]|| Focus next frame +
 ||[m][f[m]|| Focus previous frame +

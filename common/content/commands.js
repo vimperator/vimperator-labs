@@ -462,6 +462,9 @@ function Commands() //{{{
             return util.Array.itervalues(sorted);
         },
 
+        /** @property {string} The last executed Ex command line. */
+        repeat: null,
+
         /**
          * Adds a new default command.
          *
@@ -956,6 +959,27 @@ function Commands() //{{{
             });
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.registerObserver("load_mappings", function ()
+    {
+        mappings.add([m for ([,m] in Iterator(modes.all)) if (m != modes.INSERT)],
+            ["@:"], "Repeat the last Ex command",
+            function (count)
+            {
+                if (commands.repeat)
+                {
+                    for (let i in util.interruptibleRange(0, Math.max(count, 1), 100))
+                        liberator.execute(commands.repeat);
+                }
+                else
+                    liberator.echoerr("E30: No previous command line");
+            },
+            { flags: Mappings.flags.COUNT });
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
