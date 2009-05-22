@@ -966,7 +966,7 @@ function Commands() //{{{
 
     liberator.registerObserver("load_mappings", function ()
     {
-        mappings.add([m for ([,m] in Iterator(modes.all)) if (m != modes.INSERT)],
+        mappings.add(config.browserModes,
             ["@:"], "Repeat the last Ex command",
             function (count)
             {
