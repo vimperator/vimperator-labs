@@ -365,6 +365,18 @@ function Buffer() //{{{
         "View source with an external editor",
         function () { buffer.viewSource(null, true); });
 
+    mappings.add(myModes, ["\\"],
+        "Toggle between rendered and source view",
+        function ()
+        {
+            const scheme = "view-source";
+
+            if (util.newURI(buffer.URL).scheme == scheme)
+                liberator.open(buffer.URL.substr(scheme.length + 1));
+            else
+                liberator.open(scheme + ":" + buffer.URL)
+        });
+
     mappings.add(myModes, ["gi"],
         "Focus last used input field",
         function (count)

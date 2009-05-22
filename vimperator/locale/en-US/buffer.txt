@@ -54,6 +54,14 @@ source of that document. When [!] is given, it is opened with the external
 editor.
 ________________________________________________________________________________
 
+
+|\| +
+||\||
+________________________________________________________________________________
+Toggle between rendered and source view. Alternates the page in the current tab
+between a normally rendered view and the internal editor source view.
+________________________________________________________________________________
+
 section:Motion{nbsp}commands[motion,scrolling]
 
 |^| |0| +

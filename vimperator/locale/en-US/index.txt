@@ -78,6 +78,8 @@ section:Normal{nbsp}mode[normal-index]
 
 ||[m]~[m]|| Open home directory +
 
+||[m]\[m]|| Toggle between rendered and source view +
+
 ||[m]/[m]|| Search forward for a pattern +
 ||[m]?[m]|| Search backwards for a pattern +
 ||[m]*[m]|| Find word under cursor +
