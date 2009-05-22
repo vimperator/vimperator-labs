@@ -176,14 +176,15 @@ Command.prototype = {
     /**
      * Execute this command.
      *
-     * @param {Args} args The parsed args to be passed to
+     * @param {string} args The args to be parsed and passed to
      *     {@link #action}.
-     * @param {boolean} bang @deprecated Whether this command was
-     *     executed with a trailing !.
-     * @param {number} count @deprecated Whether this command was
-     *     executed with a leading count.
-     * @param modifiers Any modifiers to be passed to
-     *     {@link #action}.
+     * @param {boolean} bang Whether this command was executed with a trailing
+     *     !.
+     * @deprecated
+     * @param {number} count Whether this command was executed with a leading
+     *     count.
+     * @deprecated
+     * @param {Object} modifiers Any modifiers to be passed to {@link #action}.
      */
     execute: function (args, bang, count, modifiers)
     {

@@ -586,11 +586,13 @@ const liberator = (function () //{{{
 
         modules: modules,
 
+        /** @property {number} The current main mode. */
         get mode()      modes.main,
         set mode(value) modes.main = value,
 
         get menuItems() getMenuItems(),
 
+        /** @property {Element} The currently focused element. */
         get focus() document.commandDispatcher.focusedElement,
 
         // Global constants
@@ -602,11 +604,15 @@ const liberator = (function () //{{{
         forceNewTab: false,
 
         // these VERSION and DATE tokens are replaced by the Makefile
+        /** @property {string} The liberator application version string. */
         version: "###VERSION### (created: ###DATE###)",
 
-        // NOTE: services.get("profile").selectedProfile.name is not rightness.
-        // If default profile Firefox runs without arguments,
-        // then selectedProfile returns last selected profile! (not current one!)
+        // NOTE: services.get("profile").selectedProfile.name doesn't return
+        // what you might expect. It returns the last _actively_ selected
+        // profile (i.e. via the Profile Manager or -p option) rather than the
+        // current one. These will differ if the current process was run
+        // without explicitly selecting a profile.
+        /** @property {string} The name of the current user profile. */
         profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
 
         // @param type can be:
@@ -645,6 +651,11 @@ const liberator = (function () //{{{
                 fn.apply(null, args);
         },
 
+        /**
+         * Triggers the application bell to notify the user of an error. The
+         * bell may be either audible or visual depending on the value of the
+         * 'visualbell' option.
+         */
         beep: function ()
         {
             // FIXME: popups clear the command line
@@ -688,15 +699,27 @@ const liberator = (function () //{{{
         },
 
         // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
-        dump: function (message)
+        /**
+         * Prints a message to the console. If <b>msg</b> is an object it is
+         * pretty printed.
+         *
+         * @param {string|Object} msg The message to print.
+         */
+        dump: function (msg)
         {
-            if (typeof message == "object")
-                message = util.objectToString(message);
+            if (typeof msg == "object")
+                msg = util.objectToString(msg);
             else
-                message += "\n";
-            window.dump(("config" in modules && config.name.toLowerCase()) + ": " + message);
+                msg += "\n";
+            window.dump(("config" in modules && config.name.toLowerCase()) + ": " + msg);
         },
 
+        /**
+         * Dumps a stack trace to the console.
+         *
+         * @param {string} msg The trace message.
+         * @param {number} frames The number of frames to print.
+         */
         dumpStack: function (msg, frames)
         {
             let stack = Error().stack.replace(/(?:.*\n){2}/, "");
@@ -836,7 +859,15 @@ const liberator = (function () //{{{
             return;
         },
 
-        // Execute an Ex command like str=":zoom 300"
+        /**
+         * Execute an Ex command string. E.g. ":zoom 300".
+         *
+         * @param {string} str The command to execute.
+         * @param {Object} modifiers Any modifiers to be passed to
+         *     {@link Command#action}.
+         * @param {boolean} silent Whether the command should be echoed on the
+         *     command line.
+         */
         execute: function (str, modifiers, silent)
         {
             // skip comments and blank lines
@@ -868,8 +899,12 @@ const liberator = (function () //{{{
             command.execute(args, special, count, modifiers);
         },
 
-        // after pressing Escape, put focus on a non-input field of the browser document
-        // if clearFocusedElement, also blur a focused link
+        /**
+         * Focus the content window.
+         *
+         * @param {boolean} clearFocusedElement Remove focus from any focused
+         *     element.
+         */
         focusContent: function (clearFocusedElement)
         {
             if (window != services.get("windowWatcher").activeWindow)
@@ -894,6 +929,7 @@ const liberator = (function () //{{{
                 }
             }
             catch (e) {}
+
             if (clearFocusedElement && liberator.focus)
                 liberator.focus.blur();
             if (elem && elem != liberator.focus)
@@ -1002,9 +1038,16 @@ const liberator = (function () //{{{
             });
         },
 
-        // logs a message to the JavaScript error console
-        // if msg is an object, it is beautified
         // TODO: add proper level constants
+        /**
+         * Logs a message to the JavaScript error console. Each message has an
+         * associated log level. Only messages with a log level less than or
+         * equal to <b>level</b> will be printed. If <b>msg</b> is an object,
+         * it is pretty printed.
+         *
+         * @param {string|Object} msg The message to print.
+         * @param {number} level The logging level 0 - 15.
+         */
         log: function (msg, level)
         {
             let verbose = 0;
@@ -1154,6 +1197,9 @@ const liberator = (function () //{{{
             catch (e) {}
         },
 
+        /**
+         * Restart the liberator host application.
+         */
         restart: function ()
         {
             // notify all windows that an application quit has been requested.
@@ -1311,13 +1357,9 @@ const liberator = (function () //{{{
         shutdown: function ()
         {
             autocommands.trigger(config.name + "LeavePre", {});
-
             storage.saveAll();
-
             liberator.triggerObserver("shutdown", null);
-
             liberator.dump("All liberator modules destroyed\n");
-
             autocommands.trigger(config.name + "Leave", {});
         },
 
@@ -1379,6 +1421,10 @@ const liberator = (function () //{{{
             }
         },
 
+        /**
+         * @property {Window[]} Returns an array of all the host application's
+         *     open windows.
+         */
         get windows()
         {
             let windows = [];

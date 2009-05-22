@@ -435,7 +435,6 @@ Option.prototype = {
  */
 Option.validateCompleter = function (values)
 {
-    liberator.log(values instanceof Array)
     let context = CompletionContext("");
     let res = context.fork("", 0, this, this.completer);
     if (!res)
