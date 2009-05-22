@@ -15,11 +15,11 @@ ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
 'hinttags' XPath query) is assigned a unique number. You can either type
 this number or type part of the link text as specified by the 'hintmatching'
-option, and it is followed as soon as it can be uniquely identified. Often it 
-can be useful to combine these techniques to narrow down results with some 
-letters, and then typing a single digit to make the match unique. Pressing 
-[m]<Leader>[m] (defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode", 
-where numbers are treated as normal text. + [m]<Esc>[m] stops this mode at any 
+option, and it is followed as soon as it can be uniquely identified. Often it
+can be useful to combine these techniques to narrow down results with some
+letters, and then typing a single digit to make the match unique. Pressing
+[m]<Leader>[m] (defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode",
+where numbers are treated as normal text. + [m]<Esc>[m] stops this mode at any
 time.
 ________________________________________________________________________________
 

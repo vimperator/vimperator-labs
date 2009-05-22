@@ -285,6 +285,7 @@ section:Options[option-index]
 ||'fullscreen'|| Show the current window fullscreen +
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
 ||'helpfile'|| Name of the main help file +
+||'hintinputs'|| How text input fields are hinted +
 ||'hintmatching'|| How links are matched +
 ||'hinttags'|| XPath string of hintable elements activated by [m]f[m] and [m]F[m] +
 ||'hinttimeout'|| Timeout before automatically following a non-unique numerical hint +

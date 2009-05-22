@@ -95,7 +95,7 @@ ________________________________________________________________________________
 |O| +
 ||O||
 ________________________________________________________________________________
-Show an [c]:open[c] prompt containing the current URL. Useful if you want to 
+Show an [c]:open[c] prompt containing the current URL. Useful if you want to
 go somewhere by editing the URL of the current page.
 ________________________________________________________________________________
 

@@ -823,7 +823,7 @@ function Hints() //{{{
         "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
 
     options.add(["hintinputs", "hin"],
-        "How text inputs are hinted",
+        "How text input fields are hinted",
         "stringlist", "label,value",
         {
             completer: function (context) [

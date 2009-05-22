@@ -391,12 +391,12 @@ ____
 ____
 When generating hints for input elements that do not have an explicit caption,
 this specifies the methods to try and generate a textual hint. It tries the
-options in the order that you give, and uses the first that it finds. 
+options in the order that you give, and uses the first that it finds.
 
 `--------------------`---------------------------------------------------------
 *value*              The hint is the value displayed in a text input, or the selected option for a dropdown.
 *label*              The value of an explicit label for the input, this will not match most manually added labels that are found on sites.
-*name*               The name of the input will be used, although the name is not designed for user consumption, it is frequently very similar to the label.  
+*name*               The name of the input will be used, although the name is not designed for user consumption, it is frequently very similar to the label.
 
 -------------------------------------------------------------------------------
 
@@ -539,7 +539,7 @@ ____
 ____
 (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 
-Patterns to use when guessing the \'next' page in a document sequence when the 
+Patterns to use when guessing the \'next' page in a document sequence when the
 user hits [c]]][c]. Each pattern, in order, is matched against all links in the
 page with the first match being used. The patterns are case insensitive regular
 expressions and the link elements are those defined by 'hinttags'.
@@ -612,9 +612,9 @@ ____
 ____
 (default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 
-Patterns to use when guessing the \'previous' page in a document sequence when 
-the user hits [c][[[c]. Each pattern, in order, is matched against all links 
-in the page with the first match being used. The patterns are case insensitive 
+Patterns to use when guessing the \'previous' page in a document sequence when
+the user hits [c][[[c]. Each pattern, in order, is matched against all links
+in the page with the first match being used. The patterns are case insensitive
 regular expressions and the link elements are those defined by 'hinttags'.
 ____
 
