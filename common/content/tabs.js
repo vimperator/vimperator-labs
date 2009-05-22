@@ -611,7 +611,7 @@ function Tabs() //{{{
                 if (count < 1)
                     count = 1;
 
-                if (m = /^(\d+)(:|$)/.exec(args || ''))
+                if (m = /^(\d+)(:|$)/.exec(args || '1'))
                     window.undoCloseTab(Number(m[1]) - 1);
                 else if (args)
                 {
