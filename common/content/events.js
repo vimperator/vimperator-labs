@@ -929,8 +929,6 @@ function Events() //{{{
             {
                 liberator.threadYield(1, true);
 
-                noremap = !!noremap;
-
                 for (var i = 0; i < keys.length; i++)
                 {
                     let charCode = keys.charCodeAt(i);
@@ -983,7 +981,7 @@ function Events() //{{{
 
                     let evt = doc.createEvent("KeyEvents");
                     evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
-                    evt.noremap = noremap;
+                    evt.noremap = !!noremap;
                     evt.isMacro = true;
                     if (string)
                     {

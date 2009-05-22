@@ -794,6 +794,7 @@ function IO() //{{{
          * @param {string[]} args An array of arguments to pass to <b>program</b>.
          * @param {boolean} blocking Whether to wait until the process terminates.
          */
+        blockingProcesses: [],
         run: function (program, args, blocking)
         {
             args = args || [];
@@ -845,7 +846,7 @@ lookup:
             let process = services.create("process");
 
             process.init(file);
-            process.run(blocking, args, args.length);
+            process.run(blocking, args.map(String), args.length);
 
             return process.exitValue;
         },

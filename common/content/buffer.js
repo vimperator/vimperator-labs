@@ -1099,7 +1099,7 @@ function Buffer() //{{{
                 elem.contentWindow.focus();
                 return;
             }
-            else if (elemTagName == "input" && elem.type.toLowerCase() == "file")
+            else if (elemTagName == "input" && elem.type == "file")
             {
                 openUploadPrompt(elem);
                 buffer.lastInputField = elem;

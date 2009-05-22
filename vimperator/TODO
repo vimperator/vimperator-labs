@@ -43,6 +43,8 @@ BUGS:
 - The MOW shouldn't close when executing hints and ;F isn't working.
 
 FEATURES:
+8 Replace config.name tests in liberator with more specific feature
+  tests or overridable APIs where at all feasible.
 8 change the extension ID to vimperator@vimperator.org rather than
   vimperator@mozdev.org
 8 finish :help TODOs

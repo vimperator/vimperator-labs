@@ -601,7 +601,6 @@ function Tabs() //{{{
     /* Why not xulmus? */
     if (liberator.has("session") && config.name != "Xulmus")
     {
-        // TODO: extract common functionality of "undoall"
         commands.add(["u[ndo]"],
             "Undo closing of a tab",
             function (args)
@@ -612,23 +611,16 @@ function Tabs() //{{{
                 if (count < 1)
                     count = 1;
 
-                if (args)
+                if (m = /^(\d+)(:|$)/.exec(args || ''))
+                    window.undoCloseTab(Number(m[1]) - 1);
+                else if (args)
                 {
-                    count = 0;
                     for (let [i, item] in Iterator(tabs.closedTabs))
-                    {
-                        if (item.state.entries[0].url == args)
-                        {
-                            count = i + 1;
-                            break;
-                        }
-                    }
+                        if (item.state.entries[item.state.index - 1].url == args)
+                            return void window.undoCloseTab(i);
 
-                    if (!count)
-                        return void liberator.echoerr("Exxx: No matching closed tab");
+                    liberator.echoerr("Exxx: No matching closed tab");
                 }
-
-                window.undoCloseTab(count - 1);
             },
             {
                 argCount: "?",
@@ -636,8 +628,8 @@ function Tabs() //{{{
                 {
                     context.anchored = false;
                     context.compare = CompletionContext.Sort.unsorted;
-                    context.keys = { text: function (item) item.state.entries[0].url, description: "title" };
-                    context.completions = tabs.closedTabs;
+                    context.keys = { text: function ([i, item]) (i + 1) + ": " + item.state.entries[item.state.index - 1].url, description: "[1].title", icon: "[1].image" };
+                    context.completions = Iterator(tabs.closedTabs);
                 },
                 count: true,
                 literal: 0
@@ -758,10 +750,8 @@ function Tabs() //{{{
          * @property {Object[]} The array of closed tabs for the current
          *     session.
          */
-        get closedTabs()
-        {
-            return services.get("json").decode(services.get("sessionStore").getClosedTabData(window));
-        },
+        get closedTabs() services.get("json").decode(services.get("sessionStore")
+            .getClosedTabData(window)),
 
         /**
          * Returns the index of <b>tab</b> or the index of the currently

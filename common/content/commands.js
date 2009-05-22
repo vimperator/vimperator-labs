@@ -54,6 +54,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
  */
 function Command(specs, description, action, extraInfo) //{{{
 {
+    specs = Array.concat(specs);
+
     if (!extraInfo)
         extraInfo = {};
 
@@ -71,12 +73,12 @@ function Command(specs, description, action, extraInfo) //{{{
 
         for (let [,spec] in Iterator(specs))
         {
-            let matches = spec.match(/(\w+)\[(\w+)\]/);
+            let matches = spec.match(/(\w+)\[(\w+)\](\w*)/);
 
             if (matches)
             {
-                shortNames.push(matches[1]);
-                longNames.push(matches[1] + matches[2]);
+                shortNames.push(matches[1] + matches[3]);
+                longNames.push(matches[1] + matches[2] + matches[3]);
                 // order as long1, short1, long2, short2
                 names.push(matches[1] + matches[2]);
                 names.push(matches[1]);
