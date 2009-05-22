@@ -1446,7 +1446,7 @@ function Completion() //{{{
 
                 return {
                     text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
-                    url:  url,
+                    url:  template.highlightURL(url),
                     indicator: indicator,
                     icon: tab.image || DEFAULT_FAVICON
                 };

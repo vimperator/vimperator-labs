@@ -41,7 +41,6 @@ BUGS:
 - :messages is _very_ slow for message history of several thousand lines ->
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 - The MOW shouldn't close when executing hints and ;F isn't working.
-- URLs in :ls output are no longer hyperlinks
 
 FEATURES:
 8 change the extension ID to vimperator@vimperator.org rather than
