@@ -1256,6 +1256,18 @@ function Buffer() //{{{
                 .QueryInterface(Ci.nsISelectionController),
 
         /**
+         * Opens the appropriate context menu for <b>elem</b>.
+         *
+         * @param {Node} elem The context element.
+         */
+        openContextMenu: function (elem)
+        {
+            document.popupNode = elem;
+            let menu = document.getElementById("contentAreaContextMenu");
+            menu.showPopup(elem, -1, -1, "context", "bottomleft", "topleft");
+        },
+
+        /**
          * Saves a page link to disk.
          *
          * @param {HTMLAnchorElement} elem The page link to save.

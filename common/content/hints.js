@@ -73,22 +73,25 @@ function Hints() //{{{
         t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
         w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Open multiple hints in tabs",         hintAction_F),
+        F: Mode("Open multiple hints in tabs",         followAndReshow),
         O: Mode("Generate an ':open URL' using hint",  function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
         T: Mode("Generate a ':tabopen URL' using hint",function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
         W: Mode("Generate a ':winopen URL' using hint",function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
         v: Mode("View hint source",                    function (elem, loc) buffer.viewSource(loc, false),                    extended),
         V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
         y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended)
+        Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+        c: Mode("Open context menu",                   function (elem) buffer.openContextMenu(elem), extended)
+
     };
 
     /**
-     * Used to open multiple hints.
+     * Follows the specified hint and then reshows all hints. Used to open
+     * multiple hints in succession.
      *
-     * @param {node} elem The previously selected hint.
+     * @param {Node} elem The selected hint.
      */
-    function hintAction_F(elem)
+    function followAndReshow(elem)
     {
         buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 

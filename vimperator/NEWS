@@ -2,6 +2,7 @@
     * version 2.2a1pre
     * add @: mapping - repeat the last Ex command
     * add \ mapping - toggle between rendered and source view
+    * add ;c extended hint mode - open the context menu
 
 2009-05-21:
     * version 2.1
