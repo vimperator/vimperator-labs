@@ -498,7 +498,7 @@ let (array = util.Array)
             context.anchored = false;
             try
             {
-                context.fork("current", 0, this, function(context) {
+                context.fork("current", 0, this, function (context) {
                     context.title = ["Current Site"];
                     context.completions = [
                         [content.location.host, "Current Host"],
@@ -507,7 +507,7 @@ let (array = util.Array)
                 });
             }
             catch (e) {}
-            context.fork("others", 0, this, function(context) {
+            context.fork("others", 0, this, function (context) {
                 context.title = ["Site"];
                 context.completions = [[s, ""] for each (s in styles.sites)];
             });
