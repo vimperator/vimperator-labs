@@ -5,7 +5,6 @@ ARCHITECTURE:
 - modular help system
 
 BUGS:
-- :mkvimperatorrc now adds spurious vmap and nmap entries
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set
 - http://msdn2.microsoft.com/en-us/library/ms535258.aspx does not scroll with j/k/etc.
