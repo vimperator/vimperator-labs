@@ -163,6 +163,8 @@ const config = { //{{{
         "developer.html", "various.html", "index.html", "version.html"
     ],
 
+    modes: [["PLAYER", { char: "p" }]],
+
     optionDefaults: {
         showtabline: 2,
     },

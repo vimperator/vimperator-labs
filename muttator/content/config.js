@@ -123,6 +123,11 @@ const config = { //{{{
         "various.html"
         ],*/
 
+    modes: [
+        ["MESSAGE", { char: "m" }],
+        ["COMPOSE"]
+    ],
+
     optionDefaults: {
         showtabline: 1,
     },

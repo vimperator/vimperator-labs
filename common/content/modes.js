@@ -275,11 +275,6 @@ const modes = (function () //{{{
     self.addMode("CARET"); // text cursor is visible
     self.addMode("TEXTAREA", { char: "i" }); // text cursor is in a HTMLTextAreaElement
     self.addMode("CUSTOM",  { display: function () plugins.mode });
-    // FIXME: These belong elsewhere
-    //   So too, probably, do most of the others.
-    self.addMode("MESSAGE", { char: "m" }); // for now only used in Muttator when the message has focus
-    self.addMode("COMPOSE");
-    self.addMode("PLAYER",  { char: "p" }); // Player mode for songbird
     // extended modes, can include multiple modes, and even main modes
     self.addMode("EX", true);
     self.addMode("HINTS", true);
@@ -292,6 +287,9 @@ const modes = (function () //{{{
     self.addMode("MENU", true); // a popupmenu is active
     self.addMode("LINE", true); // linewise visual mode
     self.addMode("PROMPT", true);
+
+    if (config.modes)
+        config.modes.forEach(function (mode) { self.addMode.apply(self, mode) });
 
     return self;
     //}}}
