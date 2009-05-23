@@ -372,9 +372,6 @@ function Commands() //{{{
 
     function addCommand(command, isUserCommand, replace)
     {
-        if (!command) // XXX
-            return false;
-
         if (exCommands.some(function (c) c.hasName(command.name)))
         {
             if (isUserCommand && replace)
