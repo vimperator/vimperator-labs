@@ -432,66 +432,33 @@ function Events() //{{{
     //       matters, so use that string as the first item, that you
     //       want to refer to within liberator's source code for
     //       comparisons like if (key == "<Esc>") { ... }
-    var keyTable = [
-        [ KeyEvent.DOM_VK_ESCAPE, ["Esc", "Escape"] ],
-        [ KeyEvent.DOM_VK_LEFT_SHIFT, ["<"] ],
-        [ KeyEvent.DOM_VK_RIGHT_SHIFT, [">"] ],
-        [ KeyEvent.DOM_VK_RETURN, ["Return", "CR", "Enter"] ],
-        [ KeyEvent.DOM_VK_TAB, ["Tab"] ],
-        [ KeyEvent.DOM_VK_DELETE, ["Del"] ],
-        [ KeyEvent.DOM_VK_BACK_SPACE, ["BS"] ],
-        [ KeyEvent.DOM_VK_HOME, ["Home"] ],
-        [ KeyEvent.DOM_VK_INSERT, ["Insert", "Ins"] ],
-        [ KeyEvent.DOM_VK_END, ["End"] ],
-        [ KeyEvent.DOM_VK_LEFT, ["Left"] ],
-        [ KeyEvent.DOM_VK_RIGHT, ["Right"] ],
-        [ KeyEvent.DOM_VK_UP, ["Up"] ],
-        [ KeyEvent.DOM_VK_DOWN, ["Down"] ],
-        [ KeyEvent.DOM_VK_PAGE_UP, ["PageUp"] ],
-        [ KeyEvent.DOM_VK_PAGE_DOWN, ["PageDown"] ],
-        [ KeyEvent.DOM_VK_F1, ["F1"] ],
-        [ KeyEvent.DOM_VK_F2, ["F2"] ],
-        [ KeyEvent.DOM_VK_F3, ["F3"] ],
-        [ KeyEvent.DOM_VK_F4, ["F4"] ],
-        [ KeyEvent.DOM_VK_F5, ["F5"] ],
-        [ KeyEvent.DOM_VK_F6, ["F6"] ],
-        [ KeyEvent.DOM_VK_F7, ["F7"] ],
-        [ KeyEvent.DOM_VK_F8, ["F8"] ],
-        [ KeyEvent.DOM_VK_F9, ["F9"] ],
-        [ KeyEvent.DOM_VK_F10, ["F10"] ],
-        [ KeyEvent.DOM_VK_F11, ["F11"] ],
-        [ KeyEvent.DOM_VK_F12, ["F12"] ],
-        [ KeyEvent.DOM_VK_F13, ["F13"] ],
-        [ KeyEvent.DOM_VK_F14, ["F14"] ],
-        [ KeyEvent.DOM_VK_F15, ["F15"] ],
-        [ KeyEvent.DOM_VK_F16, ["F16"] ],
-        [ KeyEvent.DOM_VK_F17, ["F17"] ],
-        [ KeyEvent.DOM_VK_F18, ["F18"] ],
-        [ KeyEvent.DOM_VK_F19, ["F19"] ],
-        [ KeyEvent.DOM_VK_F20, ["F20"] ],
-        [ KeyEvent.DOM_VK_F21, ["F21"] ],
-        [ KeyEvent.DOM_VK_F22, ["F22"] ],
-        [ KeyEvent.DOM_VK_F23, ["F23"] ],
-        [ KeyEvent.DOM_VK_F24, ["F24"] ]
-    ];
+    var keyTable = {
+        add: ["Plus", "Add"],
+        back_space: ["BS"],
+        delete: ["Del"],
+        escape: ["Esc", "Escape"],
+        insert: ["Insert", "Ins"],
+        left_shift: ["<"],
+        return: ["Return", "CR", "Enter"],
+        right_shift: [">"],
+        space: ["Space", " "],
+        subtract: ["Minus", "Subtract"],
+    };
 
-    function getKeyCode(str)
-    {
-        str = str.toLowerCase();
+    const code_key = {};
+    const key_code = {};
 
-        for (let [,key] in Iterator(keyTable))
-        {
-            for (let [,name] in Iterator(key[1]))
-            {
-                // we don't store lowercase keys in the keyTable, because we
-                // also need to get good looking strings for the reverse action
-                if (name.toLowerCase() == str)
-                    return key[0];
-            }
+    for (let [k, v] in Iterator(KeyEvent))
+        if (/^DOM_VK_/.test(k)) {
+            k = k.substr(7).toLowerCase();
+            let names = [k.replace(/(^|_)(.)/g, function (m, n1, n2) n2.toUpperCase())
+                          .replace(/^NUMPAD/, "k")];
+            if (k in keyTable)
+                names = keyTable[k];
+            code_key[v] = names[0]
+            for (let [,name] in Iterator(names))
+                key_code[name.toLowerCase()] = v
         }
-
-        return 0;
-    }
 
     function isFormElemFocused()
     {
@@ -663,51 +630,53 @@ function Events() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    mappings.add(modes.all,
-        ["<Esc>", "<C-[>"], "Focus content",
-        function () { events.onEscape(); });
+    liberator.registerObserver("load_mappings", function() {
+        mappings.add(modes.all,
+            ["<Esc>", "<C-[>"], "Focus content",
+            function () { events.onEscape(); });
 
-    // add the ":" mapping in all but insert mode mappings
-    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
-        [":"], "Enter command line mode",
-        function () { commandline.open(":", "", modes.EX); });
+        // add the ":" mapping in all but insert mode mappings
+        mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
+            [":"], "Enter command line mode",
+            function () { commandline.open(":", "", modes.EX); });
 
-    // focus events
-    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET],
-        ["<Tab>"], "Advance keyboard focus",
-        function () { document.commandDispatcher.advanceFocus(); });
+        // focus events
+        mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET],
+            ["<Tab>"], "Advance keyboard focus",
+            function () { document.commandDispatcher.advanceFocus(); });
 
-    mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
-        ["<S-Tab>"], "Rewind keyboard focus",
-        function () { document.commandDispatcher.rewindFocus(); });
+        mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET, modes.INSERT, modes.TEXTAREA],
+            ["<S-Tab>"], "Rewind keyboard focus",
+            function () { document.commandDispatcher.rewindFocus(); });
 
-    mappings.add(modes.all,
-        ["<C-z>"], "Temporarily ignore all " + config.name + " key bindings",
-        function () { modes.passAllKeys = true; });
+        mappings.add(modes.all,
+            ["<C-z>"], "Temporarily ignore all " + config.name + " key bindings",
+            function () { modes.passAllKeys = true; });
 
-    mappings.add(modes.all,
-        ["<C-v>"], "Pass through next key",
-        function () { modes.passNextKey = true; });
+        mappings.add(modes.all,
+            ["<C-v>"], "Pass through next key",
+            function () { modes.passNextKey = true; });
 
-    mappings.add(modes.all,
-        ["<Nop>"], "Do nothing",
-        function () { return; });
+        mappings.add(modes.all,
+            ["<Nop>"], "Do nothing",
+            function () { return; });
 
-    // macros
-    mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
-        ["q"], "Record a key sequence into a macro",
-        function (arg) { events.startRecording(arg); },
-        { flags: Mappings.flags.ARGUMENT });
+        // macros
+        mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
+            ["q"], "Record a key sequence into a macro",
+            function (arg) { events.startRecording(arg); },
+            { flags: Mappings.flags.ARGUMENT });
 
-    mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
-        ["@"], "Play a macro",
-        function (count, arg)
-        {
-            if (count < 1) count = 1;
-            while (count-- && events.playMacro(arg))
-                ;
-        },
-        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+        mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
+            ["@"], "Play a macro",
+            function (count, arg)
+            {
+                if (count < 1) count = 1;
+                while (count-- && events.playMacro(arg))
+                    ;
+            },
+            { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -899,6 +868,41 @@ function Events() //{{{
             }
         },
 
+        canonKeys: function(keys)
+        {
+            var res = []
+            for (var i = 0; i < keys.length; i++)
+            {
+                let key = [keys[i]];
+                let keyCode = 0;
+
+                if (keys[i] == "<")
+                {
+                    let [match, modifier, keyname] = keys.substr(i).toLowerCase().match(/<((?:[csma]-)*)(.+?)>/) || [];
+                    if (keyname)
+                    {
+                        modifier = modifier.toUpperCase();
+                        key = [k + "-" for ([i, k] in Iterator("CASM")) if (modifier.indexOf(k + "-") >= 0)]
+                        keyCode = key_code[keyname];
+
+                        let c = String.fromCharCode(keyCode);
+                        if (key.length == 0 && c == code_key[keyCode])
+                            key = [c.toLowerCase()];
+                        else
+                            key = ["<"].concat(key, code_key[keyCode] || keyname, ">");
+                        i += match.length - 1;
+                    }
+                }
+                else // a simple key
+                {
+                    if (keys[i] != keys[i].toLowerCase())
+                        key = ["<S-", keys[i].toUpperCase(), ">"];
+                }
+                res.push(key);
+            }
+            return util.Array.flatten(res).join("");
+        },
+
         /**
          * Pushes keys onto the event queue from liberator. It is similar to
          * Vim's feedkeys() method, but cannot cope with 2 partially-fed
@@ -942,6 +946,7 @@ function Events() //{{{
                         let [match, modifier, keyname] = keys.substr(i).match(/<((?:[CSMA]-)*)(.+?)>/i) || [];
                         if (keyname)
                         {
+                            keyname = keyname.toLowerCase();
                             if (modifier) // check for modifiers
                             {
                                 ctrl  = /C-/i.test(modifier);
@@ -957,22 +962,24 @@ function Events() //{{{
                                     keyname = keyname.toUpperCase();
                                 charCode = keyname.charCodeAt(0);
                             }
-                            else if (keyname.toLowerCase() == "space")
-                                charCode = 32;
-                            else if (keyname.toLowerCase() == "nop")
+                            else if (keyname == "nop")
                                 string = "<Nop>";
-                            else if (keyCode = getKeyCode(keyname))
+                            else if (keyname == "space")
+                                ;
+                            else if (keyCode = key_code[keyname])
                                 charCode = 0;
                             else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
                                 break;
+
+                            if (keyCode == 32)
+                                charCode = 32;
 
                             i += match.length - 1;
                         }
                     }
                     else // a simple key
                     {
-                        // FIXME: does not work for non A-Z keys like Ö,Ä,...
-                        shift = (keys[i] >= "A" && keys[i] <= "Z");
+                        shift = keys[i] != keys[i].toLowerCase();
                     }
 
                     let elem = liberator.focus;
@@ -1026,7 +1033,7 @@ function Events() //{{{
          * @param {Event} event
          * @returns {string}
          */
-        toString: function (event)
+        toString: function (event, all)
         {
             if (!event)
                 return "[object Mappings]";
@@ -1041,6 +1048,8 @@ function Events() //{{{
                 modifier += "C-";
             if (event.altKey)
                 modifier += "A-";
+            if (event.shiftKey)
+                modifier += "S-";
             if (event.metaKey)
                 modifier += "M-";
 
@@ -1048,17 +1057,8 @@ function Events() //{{{
             {
                 if (event.charCode == 0)
                 {
-                    if (event.shiftKey)
-                        modifier += "S-";
-
-                    for (let i = 0; i < keyTable.length; i++)
-                    {
-                        if (keyTable[i][0] == event.keyCode)
-                        {
-                            key = keyTable[i][1][0];
-                            break;
-                        }
-                    }
+                    if (event.keyCode in code_key)
+                        key = code_key[event.keyCode];
                 }
                 // [Ctrl-Bug] special handling of mysterious <C-[>, <C-\\>, <C-]>, <C-^>, <C-_> bugs (OS/X)
                 //            (i.e., cntrl codes 27--31)
@@ -1089,19 +1089,20 @@ function Events() //{{{
                     else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
                         key = String.fromCharCode(event.charCode + 64);
                 }
-                // special handling of the Space key
-                else if (event.charCode == 32)
-                {
-                    if (event.shiftKey)
-                        modifier += "S-";
-                    key = "Space";
-                }
                 // a normal key like a, b, c, 0, etc.
                 else if (event.charCode > 0)
                 {
-                    key = String.fromCharCode(event.charCode);
+                    key = String.fromCharCode(event.charCode).toLowerCase();
+                    if (key in key_code)
+                        key = code_key[key_code[key]];
+                }
+                if (key == null)
+                    return;
+                let k = key.toLowerCase();
+                if (!(k in key_code) || String.fromCharCode(key_code[k]).toLowerCase() == k)
+                {
                     if (modifier.length == 0)
-                        return key;
+                        return k;
                 }
             }
             else if (event.type == "click" || event.type == "dblclick")
@@ -1129,7 +1130,6 @@ function Events() //{{{
             if (key == null)
                 return null;
 
-            // a key like F1 is always enclosed in < and >
             return "<" + modifier + key + ">";
         },
 

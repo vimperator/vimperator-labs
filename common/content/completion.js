@@ -815,7 +815,7 @@ function Completion() //{{{
                 let key = item[0];
                 if (!isNaN(key))
                     key = parseInt(key);
-                else if (/^[A-Z_]+$/.test(key))
+                else if (/^[A-Z_][A-Z0-9_]*$/.test(key))
                     key = "";
                 item.key = key;
             });
@@ -1120,7 +1120,7 @@ function Completion() //{{{
                         {
                             if (!isNaN(a.item.key) && !isNaN(b.item.key))
                                 return a.item.key - b.item.key;
-                            return isNaN(b.item.key) - isNaN(a.item.key) || compare(a, b);
+                            return isNaN(b.item.key) - isNaN(a.item.key) || compare(a.item.key, b.item.key);
                         }
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));

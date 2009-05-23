@@ -1268,9 +1268,9 @@ const liberator = (function () //{{{
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
             loadModule("options",      Options);
+            loadModule("events",       Events);
             loadModule("mappings",     Mappings);
             loadModule("buffer",       Buffer);
-            loadModule("events",       Events);
             loadModule("commandline",  CommandLine);
             loadModule("statusline",   StatusLine);
             loadModule("editor",       Editor);

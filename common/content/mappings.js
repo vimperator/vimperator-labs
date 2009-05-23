@@ -58,7 +58,7 @@ function Map(modes, keys, description, action, extraInfo) //{{{
     /** @property {number[]} All of the modes for which this mapping applies. */
     this.modes = modes;
     /** @property {string[]} All of this mapping's names (key sequences). */
-    this.names = keys.map(function (cmd) cmd.replace(/[casm]-/g, String.toUpperCase)); // only store keysyms with uppercase modifier strings
+    this.names = keys.map(events.canonKeys);
     /** @property {function (number)} The function called to execute this mapping. */
     this.action = action;
 
