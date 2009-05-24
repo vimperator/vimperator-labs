@@ -1,5 +1,7 @@
 2009-XX-XX:
     * version 2.2a1pre
+    * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
+      and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
     * add @: mapping - repeat the last Ex command
     * add \ mapping - toggle between rendered and source view
     * add ;c extended hint mode - open the context menu
