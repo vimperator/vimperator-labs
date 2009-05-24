@@ -42,6 +42,7 @@ BUGS:
 - The MOW shouldn't close when executing hints and ;F isn't working.
 
 FEATURES:
+8 Incremental earches should retreat to their starting position on <Backspace>
 8 Replace config.name tests in liberator with more specific feature
   tests or overridable APIs where at all feasible.
 8 change the extension ID to vimperator@vimperator.org rather than
@@ -70,6 +71,16 @@ FEATURES:
   This would require performance tests, how fast it is to add 20 keywords that way, as we need
   to search all existing bookmarks to see if the keyword is already defined, and then just update
   that bookmark. --mst
+
+  Wah? I don't see how that's especially relevant, since they only
+     need to be added once, but, if you insist:
+	:100time bookmarks.getKeywords().some(function(k) k.keyword == "wikipedia")
+	  Code execution summary
+	  Executed:	100	times
+	  Average time:	2.48	msec
+	  Total time:	0.25	sec
+     --Kris
+     
 8 allow for multiple ex commands separated with |
 7 use ctrl-n/p in insert mode for word completion
 7 implement QuickFix window based on ItemList

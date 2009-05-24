@@ -288,8 +288,7 @@ const modes = (function () //{{{
     self.addMode("LINE", true); // linewise visual mode
     self.addMode("PROMPT", true);
 
-    if (config.modes)
-        config.modes.forEach(function (mode) { self.addMode.apply(self, mode) });
+    config.modes.forEach(function (mode) { self.addMode.apply(self, mode) });
 
     return self;
     //}}}

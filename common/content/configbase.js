@@ -47,6 +47,8 @@ const configbase = { //{{{
 
     ignoreKeys: {},
 
+    modes: [],
+
     optionDefaults: {},
 
     scripts: [],
