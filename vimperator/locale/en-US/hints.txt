@@ -1,6 +1,4 @@
-HEADER
-
-|quick-hints| |hints| +
+heading:Hints[quick-hints,hints]
 
 Hints are the way in which Vimperator allows you to follow links on a page. By
 providing each link with a suitable hint, you can access all links with a

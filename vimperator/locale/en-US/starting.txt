@@ -1,4 +1,4 @@
-HEADER
+heading:Starting{nbsp}Vimperator[starting]
 
 Vimperator does not yet read any command-line options. When it does, they will
 be documented here.

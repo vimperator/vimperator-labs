@@ -3,6 +3,7 @@
     * add @: mapping - repeat the last Ex command
     * add \ mapping - toggle between rendered and source view
     * add ;c extended hint mode - open the context menu
+    * :help all now shows all help sections in a single page
 
 2009-05-21:
     * version 2.1

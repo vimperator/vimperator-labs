@@ -1,6 +1,4 @@
-HEADER
-
-|options| +
+heading:Options[options]
 
 Vimperator has a number of internal variables and switches which can be set to
 achieve special effects. These options come in 5 forms:

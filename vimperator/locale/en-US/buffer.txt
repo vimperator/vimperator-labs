@@ -1,6 +1,4 @@
-HEADER
-
-|buffer| |document| +
+heading:Buffer[buffer,document]
 
 Vimperator holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.

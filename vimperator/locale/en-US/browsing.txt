@@ -1,6 +1,4 @@
-HEADER
-
-|surfing| |browsing| +
+heading:Browsing[surfing,browsing]
 
 Vimperator overrides nearly all Firefox keys in order to make browsing more
 pleasant for Vim users. On the rare occasions when you want to pass a keystroke

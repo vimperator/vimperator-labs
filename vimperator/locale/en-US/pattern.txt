@@ -1,6 +1,4 @@
-HEADER
-
-|text-search-commands| +
+heading:Text{nbsp}search{nbsp}commands[text-search-commands]
 
 Vimperator provides a Vim-like interface to Firefox's standard text search
 functionality. There is no support for using regular expressions in search

@@ -1,10 +1,8 @@
-HEADER
-
-|repeat| +
+heading:Repeating{nbsp}commands[repeating]
 
 Vimperator can repeat a number of commands and record macros.
 
-section:Single{nbsp}repates[single-repeat]
+section:Single{nbsp}repeats[single-repeat]
 
 |.|
 ||[count].||

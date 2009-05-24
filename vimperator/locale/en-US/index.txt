@@ -1,8 +1,6 @@
-HEADER
+heading:Index[index]
 
-|index| +
-
-This file contains a list of all available commands.
+This file contains a list of all available commands, mappings and options.
 
 section:Insert{nbsp}mode[insert-index]
 

@@ -1,6 +1,4 @@
-HEADER
-
-|different-marks| |marks| +
+heading:Marks[different-marks,marks]
 
 Vimperator supports a number of different marks:
 

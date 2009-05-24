@@ -1,6 +1,4 @@
-HEADER
-
-|styling| +
+heading:Styling{nbsp}the{nbsp}GUI{nbsp}and{nbsp}web{nbsp}pages[styling]
 
 Vimperator allows you to style both the browser and any web pages you view. All
 styling is specified via CSS. Although you may style any user interface element

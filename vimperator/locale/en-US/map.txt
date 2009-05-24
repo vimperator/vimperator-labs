@@ -1,6 +1,4 @@
-HEADER
-
-Key mappings, abbreviations, and user-defined commands.
+heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands.[]
 
 section:Key{nbsp}mapping[key-mapping,mapping,macro]
 
