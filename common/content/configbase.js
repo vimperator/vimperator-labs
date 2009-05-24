@@ -27,26 +27,29 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 const configbase = { //{{{
-    features: [],
+    autocommands: [],
+
+    get browserModes() [modes.NORMAL],
 
     defaults: { guioptions: "rb" },
 
-    guioptions: {},
-
-    autocommands: [],
-
     dialogs: [],
+
+    features: [],
+
+    guioptions: {},
 
     hasTabbrowser: false,
 
-    // they are sorted by relevance, not alphabetically
     helpFiles: [],
+
+    init: function () {},
+
+    ignoreKeys: {},
 
     optionDefaults: {},
 
     scripts: [],
-
-    init: function () {},
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

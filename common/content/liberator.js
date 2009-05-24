@@ -1232,25 +1232,7 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
-            config.features = config.features || [];
             config.features.push(getPlatformFeature());
-            config.defaults = config.defaults || {};
-            config.guioptions = config.guioptions || {};
-
-            // -> we can't use this, since config.browserModes might already be defined as a getter-only
-            // TODO: also change the other config.* defaults?
-            // config.browserModes = config.browserModes || [modes.NORMAL];
-            if (!config.browserModes)
-                 config.browserModes = [modes.NORMAL];
-            config.mailModes = config.mailModes || [modes.NORMAL];
-            // TODO: suitable defaults?
-            //config.mainWidget
-            //config.mainWindowID
-            //config.visualbellWindow
-            //config.styleableChrome
-            config.autocommands = config.autocommands || [];
-            config.dialogs = config.dialogs || [];
-            config.helpFiles = config.helpFiles || [];
 
             try
             {

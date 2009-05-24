@@ -33,6 +33,7 @@
 
     ["services.js",
      "liberator.js",
+     "configbase.js",
      "config.js",
      "util.js",
      "style.js",
@@ -50,9 +51,9 @@
      "template.js",
      "ui.js"].forEach(load);
 
+    modules.config.__proto__ = modules.configbase;
     prefix.unshift("chrome://" + modules.config.name.toLowerCase() + "/content/");
-    if (modules.config.scripts)
-        modules.config.scripts.forEach(load);
+    modules.config.scripts.forEach(load);
 
 })()
 

@@ -110,7 +110,7 @@ function Tabs() //{{{
     }
 
     // hide tabs initially
-    if (config.name == "Vimperator")
+    if (config.hasTabbrowser)
         getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
 
     /////////////////////////////////////////////////////////////////////////////}}}

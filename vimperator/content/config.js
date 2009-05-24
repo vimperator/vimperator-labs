@@ -122,6 +122,16 @@ const config = { //{{{
         "various.html", "index.html", "version.html"
     ],
 
+    get ignoreKeys() {
+        delete this.ignoreKeys;
+        return this.ignoreKeys = {
+            "<Return>": modes.NORMAL | modes.INSERT, 
+            "<Space>": modes.NORMAL | modes.INSERT, 
+            "<Up>": modes.NORMAL | modes.INSERT, 
+            "<Down>": modes.NORMAL | modes.INSERT, 
+        }
+    },
+
     optionDefaults: {
         showtabline: 2,
     },

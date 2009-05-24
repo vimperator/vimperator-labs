@@ -1014,10 +1014,8 @@ function Events() //{{{
 
                 if (this.duringFeed != "")
                 {
-                    //Create a scalar constant for closure.
                     let duringFeed = this.duringFeed;
                     this.duringFeed = "";
-
                     setTimeout(function () events.feedkeys(duringFeed, false, false, true), 0);
                 }
             }
@@ -1458,13 +1456,8 @@ function Events() //{{{
             // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
-            if (((config.name == "Xulmus"  || config.name == "Vimperator") && liberator.mode == modes.NORMAL || liberator.mode == modes.INSERT))
-            {
-                if (key == "<Return>")
-                    return false;
-                else if (key == "<Space>" || key == "<Up>" || key == "<Down>")
-                    return false;
-            }
+            if (key in config.ignoreKeys && (config.ignoreKeys[key] & liberator.mode))
+                return false;
 
             // TODO: handle middle click in content area
 
@@ -1601,8 +1594,8 @@ function Events() //{{{
             else // if the key is neither a mapping nor the start of one
             {
                 // the mode checking is necessary so that things like g<esc> do not beep
-                if (input.buffer != "" && !skipMap && (liberator.mode == modes.INSERT ||
-                    liberator.mode == modes.COMMAND_LINE || liberator.mode == modes.TEXTAREA))
+                if (input.buffer != "" && !skipMap &&
+                    (liberator.mode & (modes.INSERT | modes.COMMAND_LINE | modes.TEXTAREA)))
                 {
                     // no map found -> refeed stuff in input.buffer (only while in INSERT, CO... modes)
                     skipMap = true; // ignore maps while doing so

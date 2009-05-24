@@ -28,8 +28,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 /** @scope modules */
 
-// Do NOT create instances of this class yourself, use the helper method
-// mappings.add() instead
 /**
  * A class representing key mappings. Instances are created by the
  * {@link Mappings} class.
