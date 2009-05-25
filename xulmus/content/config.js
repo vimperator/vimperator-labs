@@ -33,7 +33,10 @@ const config = { //{{{
     //mainWindowID: "mainplayer",
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
-    defaults: { guioptions: "mprb" },
+    defaults: {
+        guioptions: "mprb",
+        showtabline: 2,
+    },
 
     guioptions: {
         m: ["Menubar",         ["main-menubar"]],
@@ -173,10 +176,6 @@ const config = { //{{{
             "<Up>": modes.NORMAL | modes.INSERT,
             "<Down>": modes.NORMAL | modes.INSERT,
         }
-    },
-
-    optionDefaults: {
-        showtabline: 2,
     },
 
     scripts: [

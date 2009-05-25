@@ -33,7 +33,10 @@ const config = { //{{{
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
-    defaults: { guioptions: "rb" },
+    defaults: {
+        guioptions: "rb",
+        showtabline: 2,
+    },
 
     guioptions: {
         m: ["Menubar",      ["toolbar-menubar"]],
@@ -130,10 +133,6 @@ const config = { //{{{
             "<Up>": modes.NORMAL | modes.INSERT,
             "<Down>": modes.NORMAL | modes.INSERT,
         }
-    },
-
-    optionDefaults: {
-        showtabline: 2,
     },
 
     scripts: [

@@ -33,7 +33,10 @@ const config = { //{{{
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
-    defaults: { guioptions: "frb" },
+    defaults: {
+        guioptions: "frb",
+        showtabline: 1,
+    },
 
     guioptions: {
         m: ["MenuBar",            ["mail-toolbar-menubar2"]],
@@ -127,10 +130,6 @@ const config = { //{{{
         ["MESSAGE", { char: "m" }],
         ["COMPOSE"]
     ],
-
-    optionDefaults: {
-        showtabline: 1,
-    },
 
     scripts: [
         "addressbook.js",

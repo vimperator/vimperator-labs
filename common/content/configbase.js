@@ -27,30 +27,88 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 const configbase = { //{{{
+    /**
+     * @property {[["string", "string"]]} A sequence of names and descriptions
+     *     of the autocommands available in this application. Primarily used
+     *     for completion results.
+     */
     autocommands: [],
 
     get browserModes() [modes.NORMAL],
 
+    /**
+     * @property {object} Application specific defaults for option values. The
+     *     property names must be the options' cannonical names, and the values
+     *     must be strings as entered via :set.
+     */
     defaults: { guioptions: "rb" },
 
+    /**
+     * @property {[["string", "string", "function"]]} An array of
+     *    dialogs available via the :dialog command.
+     *  [0] name - The name of the dialog, used as the first
+     *             argument to :dialog.
+     *  [1] description - A description of the dialog, used in
+     *                    command completion results for :dialog.
+     *  [2] action - The function executed by :dialog.
+     */
     dialogs: [],
 
+    /**
+     * @property {string[]} A list of features available in this
+     *    application. Used extensively in feature test macros. Use
+     *    liberator.has(feature) to check for a feature's presense
+     *    in this array.
+     */
     features: [],
 
     guioptions: {},
 
     hasTabbrowser: false,
 
+    /**
+     * @property {string} The name of the application that hosts the
+     *     “liberated” application. E.g., "Firefox" or "Xulrunner".
+     */
+    hostApplication: null,
+
+    /**
+     * @property {[string]} A list of HTML help files available under
+     *     chrome://liberator/locale/. Used to generate help tag indeces for
+     *     the :help command.
+     */
     helpFiles: [],
 
+    /**
+     * @property {function} Called on liberator startup to allow for any
+     *     arbitrary application-specific initialization code.
+     */
     init: function () {},
 
+    /**
+     * @property {object} A map between key names for key events should be ignored,
+     *     and a mask of the modes in which they shoule be ignored.
+     */
     ignoreKeys: {},
 
+    /**
+     * @property {[[]]} An array of application specific mode specifications.
+     *     The values of each mode are passed to modes.addMode during
+     *     liberator startup.
+     */
     modes: [],
 
-    optionDefaults: {},
+    /**
+     * @property {string} The name of “liberated” application.
+     *    Required.
+     */
+    name: null,
 
+    /**
+     * @property {[string]} A list of extra scripts in the liberator or
+     *    application namespaces which should be loaded before liberator
+     *    initialization.
+     */
     scripts: [],
 }; //}}}
 
