@@ -1364,9 +1364,15 @@ function Events() //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
+            function killEvent()
+            {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
             let key = events.toString(event);
             if (!key)
-                 return true;
+                 return;
 
             //liberator.log(key + " in mode: " + liberator.mode);
             //liberator.dump(key + " in mode: " + liberator.mode);
@@ -1378,9 +1384,7 @@ function Events() //{{{
                     modes.isRecording = false;
                     liberator.log("Recorded " + currentMacro + ": " + macros.get(currentMacro), 9);
                     liberator.echomsg("Recorded macro '" + currentMacro + "'");
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return true;
+                    return void killEvent();
                 }
                 else if (!mappings.hasMap(liberator.mode, input.buffer + key))
                     macros.set(currentMacro, macros.get(currentMacro) + key);
@@ -1403,16 +1407,12 @@ function Events() //{{{
                         modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
                     }
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return true;
+                    return void killEvent();
                 }
                 else
                 {
                     events.duringFeed += key;
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return true;
+                    return void killEvent();
                 }
             }
 
@@ -1420,17 +1420,17 @@ function Events() //{{{
 
             let win = document.commandDispatcher.focusedWindow;
             if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
-                return false;
+                return;
 
             // menus have their own command handlers
             if (modes.extended & modes.MENU)
-                return false;
+                return;
 
             // handle Escape-one-key mode (Ctrl-v)
             if (modes.passNextKey && !modes.passAllKeys)
             {
                 modes.passNextKey = false;
-                return false;
+                return;
             }
             // handle Escape-all-keys mode (Ctrl-q)
             if (modes.passAllKeys)
@@ -1440,7 +1440,7 @@ function Events() //{{{
                 else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
                     ; // let flow continue to handle these keys to cancel escape-all-keys mode
                 else
-                    return false;
+                    return;
             }
 
             // just forward event without checking any mappings when the MOW is open
@@ -1448,16 +1448,14 @@ function Events() //{{{
                 (modes.extended & modes.OUTPUT_MULTILINE))
             {
                 commandline.onMultilineOutputEvent(event);
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
+                return void killEvent();
             }
 
             // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
             // also fixes key navigation in combo boxes, submitting forms, etc.
             // FIXME: breaks iabbr for now --mst
             if (key in config.ignoreKeys && (config.ignoreKeys[key] & liberator.mode))
-                return false;
+                return;
 
             // TODO: handle middle click in content area
 
@@ -1467,9 +1465,7 @@ function Events() //{{{
                 if (liberator.mode == modes.CUSTOM)
                 {
                     plugins.onEvent(event);
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return false;
+                    return void killEvent();
                 }
 
                 if (modes.extended & modes.HINTS)
@@ -1481,9 +1477,7 @@ function Events() //{{{
                         || (/^[0-9]$/.test(key) && !hints.escNumbers))
                     {
                         hints.onEvent(event);
-                        event.preventDefault();
-                        event.stopPropagation();
-                        return false;
+                        return void killEvent();
                     }
 
                     // others are left to generate the 'input' event or handled by Firefox
@@ -1499,7 +1493,7 @@ function Events() //{{{
             // XXX: why not just do that as well for HINTS mode actually?
 
             if (liberator.mode == modes.CUSTOM)
-                return true;
+                return;
 
             let countStr = input.buffer.match(/^[0-9]*/)[0];
             let candidateCommand = (input.buffer + key).replace(countStr, "");
@@ -1537,7 +1531,7 @@ function Events() //{{{
                 if (key != "<Esc>" && key != "<C-[>")
                 {
                     if (modes.isReplaying && !waitForPageLoaded())
-                        return true;
+                        return;
 
                     tmp.execute(null, input.count, key);
                 }
@@ -1578,7 +1572,7 @@ function Events() //{{{
                     inputBufferLength = 0;
 
                     if (modes.isReplaying && !waitForPageLoaded())
-                        return true;
+                        return;
 
                     let ret = map.execute(null, input.count);
                     if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
@@ -1628,24 +1622,19 @@ function Events() //{{{
             }
 
             if (stop)
-            {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+                killEvent();
 
             let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
             statusline.updateInputBuffer(motionMap + input.buffer);
-            return false;
         },
 
         // this is need for sites like msn.com which focus the input field on keydown
         onKeyUpOrDown: function (event)
         {
             if (modes.passNextKey ^ modes.passAllKeys || isFormElemFocused())
-                return true;
+                return;
 
             event.stopPropagation();
-            return false;
         },
 
         // TODO: move to buffer.js?
