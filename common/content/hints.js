@@ -63,6 +63,8 @@ function Hints() //{{{
     const Mode = new Struct("prompt", "action", "tags");
     Mode.defaultValue("tags", function () function () options.hinttags);
     function extended() options.extendedhinttags;
+    function images() "//img";
+
     const hintModes = {
         ";": Mode("Focus hint",                        function (elem) buffer.focusElement(elem),                             extended),
         "?": Mode("Show information for hint",         function (elem) buffer.showElementInfo(elem),                          extended),
@@ -81,8 +83,9 @@ function Hints() //{{{
         V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
         y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
         Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
-        c: Mode("Open context menu",                   function (elem) buffer.openContextMenu(elem), extended)
-
+        c: Mode("Open context menu",                   function (elem) buffer.openContextMenu(elem), extended),
+        i: Mode("Show image",                          function (elem) liberator.open(elem.src), images),
+        I: Mode("Show image in a new tab",             function (elem) liberator.open(elem.src, liberator.NEW_TAB), images)
     };
 
     /**
