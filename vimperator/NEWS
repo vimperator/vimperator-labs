@@ -1,4 +1,5 @@
 2009-XX-XX:
+    * add :i and :I for opening image location (in new tab)
     * version 2.2a1pre
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.

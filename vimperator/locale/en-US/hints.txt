@@ -63,6 +63,8 @@ hint mode. Then press [a]24[a] to copy the hint location.
 * |;y| [m]y[m] to yank its destination location
 * |;Y| [m]Y[m] to yank its text description
 * |;c| [m]c[m] to open its context menu
+* |;i| [m]i[m] to open an image
+* |;I| [m]I[m] to open an image in a new tab.
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
