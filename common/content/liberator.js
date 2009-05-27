@@ -615,6 +615,25 @@ const liberator = (function () //{{{
         /** @property {string} The name of the current user profile. */
         profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
 
+        /**
+         * @property {Object} The map of command-line options. These are
+         *     specified in the argument to the host application's -liberator
+         *     option. E.g. $ firefox -liberator '+u=tempRcFile ++noplugin'
+         *     Supported options:
+         *         +u=RCFILE   Use RCFILE instead of .vimperatorrc.
+         *         ++noplugin  Don't load plugins.
+         */
+        commandLineOptions: {
+            /** @property Whether plugin loading should be prevented. */
+            noPlugins: false,
+            /** @property An RC file to use rather than the default. */
+            rcFile: null,
+            /** @property An Ex command to run before any initialization is performed. */
+            preCommand: null,
+            /** @property An Ex command to run after all initialization is performed. */
+            postCommand: null
+        },
+
         // @param type can be:
         //  "submit": when the user pressed enter in the command line
         //  "change"
@@ -1225,6 +1244,17 @@ const liberator = (function () //{{{
             services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
         },
 
+        parseCommandLine: function (commandline)
+        {
+            const options = [
+                [["+u"], commands.OPTIONS_STRING],
+                [["++noplugin"], commands.OPTIONS_NOARG],
+                [["++cmd"], commands.OPTIONS_STRING],
+                [["+c"], commands.OPTIONS_STRING]
+            ];
+            return commands.parseArgs(commandline, options, "*");
+        },
+
         // TODO: move to {muttator,vimperator,...}.js
         // this function is called when the chrome is ready
         startup: function ()
@@ -1268,6 +1298,19 @@ const liberator = (function () //{{{
 
             liberator.log("All modules loaded", 3);
 
+            let commandline = services.get("commandLineHandler").wrappedJSObject.optionValue;
+            if (commandline)
+            {
+                let args = liberator.parseCommandLine(commandline);
+                liberator.commandLineOptions.rcFile = args["+u"];
+                liberator.commandLineOptions.noPlugins = "++noplugin" in args;
+                liberator.commandLineOptions.postCommand = args["+c"];
+                liberator.commandLineOptions.preCommand = args["++cmd"];
+                liberator.dump("Processing command-line option: " + commandline);
+            }
+
+            liberator.log("Command-line options: " + util.objectToString(liberator.commandLineOptions), 3);
+
             // first time intro message
             const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";
             if (options.getPref(firstTime, true))
@@ -1284,6 +1327,9 @@ const liberator = (function () //{{{
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
 
+            if (liberator.commandLineOptions.preCommand)
+                liberator.execute(liberator.commandLineOptions.preCommand);
+
             // finally, read the RC file and source plugins
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
             setTimeout(function () {
@@ -1292,25 +1338,37 @@ const liberator = (function () //{{{
                 let init = services.get("environment").get(extensionName + "_INIT");
                 let rcFile = io.getRCFile("~");
 
-                if (init)
-                    liberator.execute(init);
+                if (liberator.commandLineOptions.rcFile)
+                {
+                    let filename = liberator.commandLineOptions.rcFile;
+                    if (!/^(NONE|NORC)$/.test(filename))
+                        io.source(io.getFile(filename).path, false); // let io.source handle any read failure like Vim
+                }
                 else
                 {
-                    if (rcFile)
-                    {
-                        io.source(rcFile.path, true);
-                        services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
-                    }
+                    if (init)
+                        liberator.execute(init);
                     else
-                        liberator.log("No user RC file found", 3);
+                    {
+                        if (rcFile)
+                        {
+                            io.source(rcFile.path, true);
+                            services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
+                        }
+                        else
+                            liberator.log("No user RC file found", 3);
+                    }
+
+                    if (options["exrc"] && !liberator.commandLineOptions.rcFile)
+                    {
+                        let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
+                        if (localRCFile && !localRCFile.equals(rcFile))
+                            io.source(localRCFile.path, true);
+                    }
                 }
 
-                if (options["exrc"])
-                {
-                    let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
-                    if (localRCFile && !localRCFile.equals(rcFile))
-                        io.source(localRCFile.path, true);
-                }
+                if (liberator.commandLineOptions.rcFile == "NONE" || liberator.commandLineOptions.noPlugins)
+                    options["loadplugins"] = false;
 
                 if (options["loadplugins"])
                     liberator.loadPlugins();
@@ -1326,6 +1384,9 @@ const liberator = (function () //{{{
                     if (option.name != "encoding" && option.setter)
                         option.value = option.value;
                 }
+
+                if (liberator.commandLineOptions.postCommand)
+                    liberator.execute(liberator.commandLineOptions.postCommand);
 
                 liberator.triggerObserver("enter", null);
                 autocommands.trigger(config.name + "Enter", {});

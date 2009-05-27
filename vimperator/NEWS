@@ -7,6 +7,8 @@
     * add \ mapping - toggle between rendered and source view
     * add ;c extended hint mode - open the context menu
     * :help all now shows all help sections in a single page
+    * command-line options are now supported via the host application's
+      -liberator option
 
 2009-05-21:
     * version 2.1
