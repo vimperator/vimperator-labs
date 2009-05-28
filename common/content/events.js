@@ -435,7 +435,7 @@ function Events() //{{{
         delete: ["Del"],
         escape: ["Esc", "Escape"],
         insert: ["Insert", "Ins"],
-        left_shift: ["<"],
+        left_shift: ["LT", "<"],
         return: ["Return", "CR", "Enter"],
         right_shift: [">"],
         space: ["Space", " "],
@@ -865,17 +865,21 @@ function Events() //{{{
             }
         },
 
+        splitKeys: function(keys) {
+            let re = /<.*?>|[^<]/g
+            let match;
+            while (match = re.exec(keys))
+                yield match[0];
+        },
+
         canonKeys: function(keys)
         {
-            var res = []
-            for (var i = 0; i < keys.length; i++)
-            {
-                let key = [keys[i]];
+            var res = util.map(events.splitKeys(keys), function(key) {
                 let keyCode = 0;
 
-                if (keys[i] == "<")
+                if (key[0] == "<")
                 {
-                    let [match, modifier, keyname] = keys.substr(i).toLowerCase().match(/<((?:[csma]-)*)(.+?)>/) || [];
+                    let [match, modifier, keyname] = key.toLowerCase().match(/^<((?:[csma]-)*)(.+?)>$/) || [];
                     if (keyname)
                     {
                         modifier = modifier.toUpperCase();
@@ -884,19 +888,18 @@ function Events() //{{{
 
                         let c = String.fromCharCode(keyCode);
                         if (key.length == 0 && c == code_key[keyCode])
-                            key = [c.toLowerCase()];
+                            return c.toLowerCase();
                         else
-                            key = ["<"].concat(key, code_key[keyCode] || keyname, ">");
-                        i += match.length - 1;
+                            return ["<"].concat(key, code_key[keyCode] || keyname, ">");
                     }
                 }
                 else // a simple key
                 {
-                    if (keys[i] != keys[i].toLowerCase())
-                        key = ["<S-", keys[i].toUpperCase(), ">"];
+                    if (key != key.toLowerCase())
+                        return ["<S-", key.toUpperCase(), ">"];
+                    return key;
                 }
-                res.push(key);
-            }
+            });
             return util.Array.flatten(res).join("");
         },
 
@@ -930,17 +933,16 @@ function Events() //{{{
             {
                 liberator.threadYield(1, true);
 
-                for (var i = 0; i < keys.length; i++)
+                for (let key in events.splitKeys(keys))
                 {
-                    let charCode = keys.charCodeAt(i);
+                    let charCode = key.charCodeAt(0);
                     let keyCode = 0;
                     let shift = false, ctrl = false, alt = false, meta = false;
                     let string = null;
 
-                    //if (keys[i] == "\\") // FIXME: support the escape key
-                    if (keys[i] == "<" && !escapeKey) // start a complex key
+                    if (key[0] == "<")
                     {
-                        let [match, modifier, keyname] = keys.substr(i).match(/<((?:[CSMA]-)*)(.+?)>/i) || [];
+                        let [match, modifier, keyname] = key.match(/^<((?:[CSMA]-)*)(.+?)>$/i) || [];
                         if (keyname)
                         {
                             keyname = keyname.toLowerCase();
@@ -976,7 +978,7 @@ function Events() //{{{
                     }
                     else // a simple key
                     {
-                        shift = keys[i] != keys[i].toLowerCase();
+                        shift = key != key.toLowerCase();
                     }
 
                     let elem = liberator.focus;
@@ -991,6 +993,8 @@ function Events() //{{{
                     else
                         evt.noremap = !!noremap;
                     evt.isMacro = true;
+
+                    // A special hack for liberator-specific key names.
                     if (string)
                     {
                         evt.liberatorString = string;
@@ -998,13 +1002,13 @@ function Events() //{{{
                     }
                     else
                         elem.dispatchEvent(evt);
+
                     if (!this.feedingKeys)
                         break;
-                    // stop feeding keys if page loading failed
+
+                    // Stop feeding keys if page loading failed.
                     if (modes.isReplaying && !waitForPageLoaded())
                         break;
-                    // else // a short break between keys often helps
-                    //     liberator.sleep(50);
                 }
             }
             finally
@@ -1444,7 +1448,7 @@ function Events() //{{{
                 if (stop)
                 {
                     input.buffer = "";
-                    return void killEvent();
+                    return;
                 }
 
                 stop = true; // set to false if we should NOT consume this event but let Firefox handle it
@@ -1473,7 +1477,7 @@ function Events() //{{{
                     // custom mode...
                     if (liberator.mode == modes.CUSTOM)
                     {
-                        hints.onEvent(event);
+                        plugins.onEvent(event);
                         return void killEvent();
                     }
 
@@ -1486,8 +1490,6 @@ function Events() //{{{
                             || (/^[0-9]$/.test(key) && !hints.escNumbers))
                         {
                             hints.onEvent(event);
-                            event.preventDefault();
-                            event.stopPropagation();
                             return void killEvent();
                         }
 
@@ -1516,16 +1518,6 @@ function Events() //{{{
                 {
                     map = input.pendingMap;
                     input.pendingMap = null;
-                }
-
-                input.buffer = "";
-                inputBufferLength = 0;
-                let tmp = input.pendingArgMap; // must be set to null before .execute; if not
-                input.pendingArgMap = null;    // input.pendingArgMap is still 'true' also for new feeded keys
-                if (key != "<Esc>" && key != "<C-[>")
-                {
-                    if (modes.isReplaying && !waitForPageLoaded())
-                        return;
                 }
 
                 // counts must be at the start of a complete mapping (10j -> go 10 lines down)
@@ -1567,7 +1559,6 @@ function Events() //{{{
                     }
                     else if (input.pendingMotionMap)
                     {
-                        input.buffer = "";
                         if (key != "<Esc>" && key != "<C-[>")
                             input.pendingMotionMap.execute(candidateCommand, input.count, null);
                         input.pendingMotionMap = null;
@@ -1620,7 +1611,7 @@ function Events() //{{{
                 }
 
                 if (stop)
-                    killEvent()
+                    killEvent();
             }
             finally
             {
