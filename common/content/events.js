@@ -333,9 +333,6 @@ function Events() //{{{
 
     var lastFocus = null;
 
-    var inputBufferLength = 0; // count the number of keys in input.buffer (can be different from input.buffer.length)
-    var skipMap = false; // while feeding the keys (stored in input.buffer | no map found) - ignore mappings
-
     var macros = storage.newMap("macros", true);
 
     var currentMacro = "";
@@ -988,7 +985,11 @@ function Events() //{{{
 
                     let evt = doc.createEvent("KeyEvents");
                     evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
-                    evt.noremap = !!noremap;
+                    if (typeof noremap == "object")
+                        for (let [k, v] in Iterator(noremap))
+                            event[k] = v;
+                    else
+                        evt.noremap = !!noremap;
                     evt.isMacro = true;
                     if (string)
                     {
@@ -1374,9 +1375,6 @@ function Events() //{{{
             if (!key)
                  return;
 
-            //liberator.log(key + " in mode: " + liberator.mode);
-            //liberator.dump(key + " in mode: " + liberator.mode);
-
             if (modes.isRecording)
             {
                 if (key == "q") // TODO: should not be hardcoded
@@ -1416,114 +1414,110 @@ function Events() //{{{
                 }
             }
 
-            let stop = true; // set to false if we should NOT consume this event but let Firefox handle it
-
-            let win = document.commandDispatcher.focusedWindow;
-            if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
-                return;
-
-            // menus have their own command handlers
-            if (modes.extended & modes.MENU)
-                return;
-
-            // handle Escape-one-key mode (Ctrl-v)
-            if (modes.passNextKey && !modes.passAllKeys)
+            try
             {
-                modes.passNextKey = false;
-                return;
-            }
-            // handle Escape-all-keys mode (Ctrl-q)
-            if (modes.passAllKeys)
-            {
-                if (modes.passNextKey)
-                    modes.passNextKey = false; // and then let flow continue
-                else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
-                    ; // let flow continue to handle these keys to cancel escape-all-keys mode
-                else
-                    return;
-            }
+                let stop = false;
 
-            // just forward event without checking any mappings when the MOW is open
-            if (liberator.mode == modes.COMMAND_LINE &&
-                (modes.extended & modes.OUTPUT_MULTILINE))
-            {
-                commandline.onMultilineOutputEvent(event);
-                return void killEvent();
-            }
-
-            // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
-            // also fixes key navigation in combo boxes, submitting forms, etc.
-            // FIXME: breaks iabbr for now --mst
-            if (key in config.ignoreKeys && (config.ignoreKeys[key] & liberator.mode))
-                return;
-
-            // TODO: handle middle click in content area
-
-            if (key != "<Esc>" && key != "<C-[>")
-            {
-                // custom mode...
-                if (liberator.mode == modes.CUSTOM)
+                let win = document.commandDispatcher.focusedWindow;
+                if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
+                    stop = true;
+                // menus have their own command handlers
+                if (modes.extended & modes.MENU)
+                    stop = true;
+                // handle Escape-one-key mode (Ctrl-v)
+                else if (modes.passNextKey && !modes.passAllKeys)
                 {
-                    plugins.onEvent(event);
+                    modes.passNextKey = false;
+                    stop = true;
+                }
+                // handle Escape-all-keys mode (Ctrl-q)
+                else if (modes.passAllKeys)
+                {
+                    if (modes.passNextKey)
+                        modes.passNextKey = false; // and then let flow continue
+                    else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
+                        ; // let flow continue to handle these keys to cancel escape-all-keys mode
+                    else
+                        stop = true;
+                }
+
+                if (stop)
+                {
+                    input.buffer = "";
                     return void killEvent();
                 }
 
-                if (modes.extended & modes.HINTS)
+                stop = true; // set to false if we should NOT consume this event but let Firefox handle it
+
+                // just forward event without checking any mappings when the MOW is open
+                if (liberator.mode == modes.COMMAND_LINE &&
+                    (modes.extended & modes.OUTPUT_MULTILINE))
                 {
-                    // under HINT mode, certain keys are redirected to hints.onEvent
-                    if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
-                        || key == mappings.getMapLeader()
-                        || (key == "<BS>" && hints.previnput == "number")
-                        || (/^[0-9]$/.test(key) && !hints.escNumbers))
+                    commandline.onMultilineOutputEvent(event);
+                    return void killEvent();
+                }
+
+                // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
+                // also fixes key navigation in combo boxes, submitting forms, etc.
+                // FIXME: breaks iabbr for now --mst
+                if (key in config.ignoreKeys && (config.ignoreKeys[key] & liberator.mode))
+                {
+                    input.buffer = "";
+                    return;
+                }
+
+                // TODO: handle middle click in content area
+
+                if (key != "<Esc>" && key != "<C-[>")
+                {
+                    // custom mode...
+                    if (liberator.mode == modes.CUSTOM)
                     {
                         hints.onEvent(event);
                         return void killEvent();
                     }
 
-                    // others are left to generate the 'input' event or handled by Firefox
+                    if (modes.extended & modes.HINTS)
+                    {
+                        // under HINT mode, certain keys are redirected to hints.onEvent
+                        if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
+                            || key == mappings.getMapLeader()
+                            || (key == "<BS>" && hints.previnput == "number")
+                            || (/^[0-9]$/.test(key) && !hints.escNumbers))
+                        {
+                            hints.onEvent(event);
+                            event.preventDefault();
+                            event.stopPropagation();
+                            return void killEvent();
+                        }
+
+                        // others are left to generate the 'input' event or handled by Firefox
+                        return;
+                    }
+                }
+
+                // FIXME (maybe): (is an ESC or C-] here): on HINTS mode, it enters
+                // into 'if (map && !skipMap) below. With that (or however) it
+                // triggers the onEscape part, where it resets mode. Here I just
+                // return true, with the effect that it also gets to there (for
+                // whatever reason).  if that happens to be correct, well..
+                // XXX: why not just do that as well for HINTS mode actually?
+
+                if (liberator.mode == modes.CUSTOM)
                     return;
-                }
-            }
 
-            // FIXME (maybe): (is an ESC or C-] here): on HINTS mode, it enters
-            // into 'if (map && !skipMap) below. With that (or however) it
-            // triggers the onEscape part, where it resets mode. Here I just
-            // return true, with the effect that it also gets to there (for
-            // whatever reason).  if that happens to be correct, well..
-            // XXX: why not just do that as well for HINTS mode actually?
+                let inputStr = input.buffer + key;
+                let countStr = inputStr.match(/^[1-9][0-9]*|/)[0];
+                let candidateCommand = inputStr.substr(countStr.length);
+                let map = mappings[event.noremap ? "getDefault" : "get"](liberator.mode, candidateCommand);
 
-            if (liberator.mode == modes.CUSTOM)
-                return;
-
-            let countStr = input.buffer.match(/^[0-9]*/)[0];
-            let candidateCommand = (input.buffer + key).replace(countStr, "");
-            let map;
-            if (event.noremap)
-                map = mappings.getDefault(liberator.mode, candidateCommand);
-            else
-                map = mappings.get(liberator.mode, candidateCommand);
-
-            let candidates = mappings.getCandidates(liberator.mode, candidateCommand);
-            if (candidates.length == 0 && !map)
-            {
-                map = input.pendingMap;
-                input.pendingMap = null;
-            }
-
-            // counts must be at the start of a complete mapping (10j -> go 10 lines down)
-            if (/^[1-9][0-9]*$/.test(input.buffer + key))
-            {
-                // no count for insert mode mappings
-                if (liberator.mode == modes.INSERT || liberator.mode == modes.COMMAND_LINE)
-                    stop = false;
-                else
+                let candidates = mappings.getCandidates(liberator.mode, candidateCommand);
+                if (candidates.length == 0 && !map)
                 {
-                    input.buffer += key;
-                    inputBufferLength++;
+                    map = input.pendingMap;
+                    input.pendingMap = null;
                 }
-            }
-            else if (input.pendingArgMap)
-            {
+
                 input.buffer = "";
                 inputBufferLength = 0;
                 let tmp = input.pendingArgMap; // must be set to null before .execute; if not
@@ -1532,100 +1526,108 @@ function Events() //{{{
                 {
                     if (modes.isReplaying && !waitForPageLoaded())
                         return;
+                }
 
-                    tmp.execute(null, input.count, key);
-                }
-            }
-            // only follow a map if there isn't a longer possible mapping
-            // (allows you to do :map z yy, when zz is a longer mapping than z)
-            // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
-            else if (map && !skipMap && (map.rhs || candidates.length == 0))
-            {
-                input.pendingMap = null;
-                input.count = parseInt(countStr, 10);
-                if (isNaN(input.count))
-                    input.count = -1;
-                if (map.flags & Mappings.flags.ARGUMENT)
+                // counts must be at the start of a complete mapping (10j -> go 10 lines down)
+                if (countStr && !candidateCommand)
                 {
-                    input.pendingArgMap = map;
-                    input.buffer += key;
-                    inputBufferLength++;
-                }
-                else if (input.pendingMotionMap)
-                {
-                    if (key != "<Esc>" && key != "<C-[>")
-                        input.pendingMotionMap.execute(candidateCommand, input.count, null);
-                    input.pendingMotionMap = null;
-                    input.buffer = "";
-                    inputBufferLength = 0;
-                }
-                // no count support for these commands yet
-                else if (map.flags & Mappings.flags.MOTION)
-                {
-                    input.pendingMotionMap = map;
-                    input.buffer = "";
-                    inputBufferLength = 0;
-                }
-                else
-                {
-                    input.buffer = "";
-                    inputBufferLength = 0;
-
-                    if (modes.isReplaying && !waitForPageLoaded())
-                        return;
-
-                    let ret = map.execute(null, input.count);
-                    if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                    // no count for insert mode mappings
+                    if (liberator.mode == modes.INSERT || liberator.mode == modes.COMMAND_LINE)
                         stop = false;
+                    else
+                        input.buffer = inputStr;
                 }
-            }
-            else if (mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !skipMap)
-            {
-                input.pendingMap = map;
-                input.buffer += key;
-                inputBufferLength++;
-            }
-            else // if the key is neither a mapping nor the start of one
-            {
-                // the mode checking is necessary so that things like g<esc> do not beep
-                if (input.buffer != "" && !skipMap &&
-                    (liberator.mode & (modes.INSERT | modes.COMMAND_LINE | modes.TEXTAREA)))
+                else if (input.pendingArgMap)
                 {
-                    // no map found -> refeed stuff in input.buffer (only while in INSERT, CO... modes)
-                    skipMap = true; // ignore maps while doing so
-                    events.feedkeys(input.buffer, true);
-                }
-                if (skipMap)
-                {
-                    if (--inputBufferLength == 0) // inputBufferLength == 0. input.buffer refeeded...
-                        skipMap = false; // done...
-                }
-
-                input.buffer = "";
-                input.pendingArgMap = null;
-                input.pendingMotionMap = null;
-                input.pendingMap = null;
-
-                if (key != "<Esc>" && key != "<C-[>")
-                {
-                    // allow key to be passed to Firefox if we can't handle it
-                    stop = false;
-
-                    if (liberator.mode == modes.COMMAND_LINE)
+                    input.buffer = "";
+                    let tmp = input.pendingArgMap; // must be set to null before .execute; if not
+                    input.pendingArgMap = null;    // input.pendingArgMap is still 'true' also for new feeded keys
+                    if (key != "<Esc>" && key != "<C-[>")
                     {
-                        if (!(modes.extended & modes.INPUT_MULTILINE))
-                            commandline.onEvent(event); // reroute event in command line mode
+                        if (modes.isReplaying && !waitForPageLoaded())
+                            return;
+
+                        tmp.execute(null, input.count, key);
                     }
-                    else if (liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA)
-                        liberator.beep();
                 }
+                // only follow a map if there isn't a longer possible mapping
+                // (allows you to do :map z yy, when zz is a longer mapping than z)
+                // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
+                else if (map && !event.skipmap && (map.rhs || candidates.length == 0))
+                {
+                    input.pendingMap = null;
+                    input.count = parseInt(countStr, 10);
+                    if (isNaN(input.count))
+                        input.count = -1;
+                    input.buffer = "";
+                    if (map.flags & Mappings.flags.ARGUMENT)
+                    {
+                        input.buffer = inputStr;
+                        input.pendingArgMap = map;
+                    }
+                    else if (input.pendingMotionMap)
+                    {
+                        input.buffer = "";
+                        if (key != "<Esc>" && key != "<C-[>")
+                            input.pendingMotionMap.execute(candidateCommand, input.count, null);
+                        input.pendingMotionMap = null;
+                    }
+                    // no count support for these commands yet
+                    else if (map.flags & Mappings.flags.MOTION)
+                    {
+                        input.pendingMotionMap = map;
+                    }
+                    else
+                    {
+                        if (modes.isReplaying && !waitForPageLoaded())
+                            return void killEvent();
+
+                        let ret = map.execute(null, input.count);
+                        if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                            stop = false;
+                    }
+                }
+                else if (mappings.getCandidates(liberator.mode, candidateCommand).length > 0 && !event.skipmap)
+                {
+                    input.pendingMap = map;
+                    input.buffer += key;
+                }
+                else // if the key is neither a mapping nor the start of one
+                {
+                    // the mode checking is necessary so that things like g<esc> do not beep
+                    if (input.buffer != "" && !event.skipmap &&
+                        (liberator.mode & (modes.INSERT | modes.COMMAND_LINE | modes.TEXTAREA)))
+                        events.feedkeys(input.buffer, { noremap: true, skipmap: true });
+
+                    input.buffer = "";
+                    input.pendingArgMap = null;
+                    input.pendingMotionMap = null;
+                    input.pendingMap = null;
+
+                    if (key != "<Esc>" && key != "<C-[>")
+                    {
+                        // allow key to be passed to Firefox if we can't handle it
+                        stop = false;
+
+                        if (liberator.mode == modes.COMMAND_LINE)
+                        {
+                            if (!(modes.extended & modes.INPUT_MULTILINE))
+                                commandline.onEvent(event); // reroute event in command line mode
+                        }
+                        else if (liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA)
+                            liberator.beep();
+                    }
+                }
+
+                if (stop)
+                    killEvent()
             }
-
-            if (stop)
-                killEvent();
-
-            let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
-            statusline.updateInputBuffer(motionMap + input.buffer);
+            finally
+            {
+                let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
+                statusline.updateInputBuffer(motionMap + input.buffer);
+            }
+            return false;
         },
 
         // this is need for sites like msn.com which focus the input field on keydown

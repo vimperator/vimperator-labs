@@ -688,21 +688,23 @@ const util = { //{{{
 
 /**
  * Array utility methods.
- * @singleton
  */
 util.Array = function Array(ary) {
     var obj = {
         __proto__: ary,
         __iterator__: function () this.iteritems(),
         __noSuchMethod__: function (meth, args) {
-            let res = util.Array(util.Array[meth].apply(null, [this.__proto__].concat(args)))
-            if (res instanceof Array)
+            let res = util.Array[meth].apply(null, [this.__proto__].concat(args));
+            if (util.Array.isinstance(res))
                 return util.Array(res);
             return res;
         }
     };
     return obj;
 }
+util.Array.isinstance = function isinstance(obj) {
+    return Object.prototype.toString.call(obj) == "[object Array]";
+};
 /**
  * Converts an array to an object. As in lisp, an assoc is an
  * array of key-value pairs, which maps directly to an object,
