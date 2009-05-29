@@ -819,7 +819,7 @@ function Events() //{{{
 
                 buffer.loaded = 1; // even if not a full page load, assume it did load correctly before starting the macro
                 modes.isReplaying = true;
-                res = events.feedkeys(macros.get(lastMacro), true); // true -> noremap
+                res = events.feedkeys(macros.get(lastMacro), { noremap: true });
                 modes.isReplaying = false;
             }
             else
@@ -866,7 +866,7 @@ function Events() //{{{
         },
 
         splitKeys: function(keys) {
-            let re = /<.*?>|[^<]/g
+            let re = RegExp("<.*?>|[^<]", "g");
             let match;
             while (match = re.exec(keys))
                 yield match[0];
@@ -920,7 +920,6 @@ function Events() //{{{
         {
             let doc = window.document;
             let view = window.document.defaultView;
-            let escapeKey = false; // \ to escape some special keys
 
             let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
@@ -937,7 +936,7 @@ function Events() //{{{
                 {
                     let charCode = key.charCodeAt(0);
                     let keyCode = 0;
-                    let shift = false, ctrl = false, alt = false, meta = false;
+                    let [shift, ctrl, alt, meta] = [false, false, false, false]
                     let string = null;
 
                     if (key[0] == "<")
@@ -972,8 +971,6 @@ function Events() //{{{
 
                             if (keyCode == 32)
                                 charCode = 32;
-
-                            i += match.length - 1;
                         }
                     }
                     else // a simple key
@@ -1021,10 +1018,9 @@ function Events() //{{{
                 {
                     let duringFeed = this.duringFeed;
                     this.duringFeed = "";
-                    setTimeout(function () events.feedkeys(duringFeed, false, false, true), 0);
+                    setTimeout(function () events.feedkeys(duringFeed), 0);
                 }
             }
-            return i == keys.length;
         },
 
         /**
@@ -1211,9 +1207,6 @@ function Events() //{{{
         // argument "event" is deliberately not used, as i don't seem to have
         // access to the real focus target
         // Huh? --djk
-        //
-        // the ugly wantsModeReset is needed, because Firefox generates a massive
-        // amount of focus changes for things like <C-v><C-k> (focusing the search field)
         onFocusChange: function (event)
         {
             // command line has it's own focus change handler
@@ -1236,7 +1229,6 @@ function Events() //{{{
                 if ((elem instanceof HTMLInputElement && /^(text|password)$/.test(elem.type)) ||
                     (elem instanceof HTMLSelectElement))
                 {
-                    this.wantsModeReset = false;
                     liberator.mode = modes.INSERT;
                     if (hasHTMLDocument(win))
                         buffer.lastInputField = elem;
@@ -1245,7 +1237,6 @@ function Events() //{{{
 
                 if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable == "true"))
                 {
-                    this.wantsModeReset = false;
                     if (options["insertmode"])
                         modes.set(modes.INSERT, modes.TEXTAREA);
                     else if (elem.selectionEnd - elem.selectionStart > 0)
@@ -1265,21 +1256,7 @@ function Events() //{{{
                     liberator.threadYield(true);
 
                 if (liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.MESSAGE | modes.VISUAL))
-                {
-                     if (0) // FIXME: currently this hack is disabled to make macros work
-                     {
-                         this.wantsModeReset = true;
-                         setTimeout(function () {
-                             if (events.wantsModeReset)
-                             {
-                                 events.wantsModeReset = false;
-                                 modes.reset();
-                             }
-                         }, 0);
-                     }
-                     else
-                         modes.reset();
-                }
+                     modes.reset();
             }
             finally
             {
@@ -1618,7 +1595,6 @@ function Events() //{{{
                 let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
                 statusline.updateInputBuffer(motionMap + input.buffer);
             }
-            return false;
         },
 
         // this is need for sites like msn.com which focus the input field on keydown
