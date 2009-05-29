@@ -627,7 +627,7 @@ function Events() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_mappings", function() {
+    liberator.registerObserver("load_mappings", function () {
         mappings.add(modes.all,
             ["<Esc>", "<C-[>"], "Focus content",
             function () { events.onEscape(); });
@@ -872,9 +872,9 @@ function Events() //{{{
                 yield match[0];
         },
 
-        canonKeys: function(keys)
+        canonKeys: function (keys)
         {
-            var res = util.map(events.splitKeys(keys), function(key) {
+            var res = util.map(events.splitKeys(keys), function (key) {
                 let keyCode = 0;
 
                 if (key[0] == "<")

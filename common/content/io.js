@@ -736,7 +736,8 @@ function IO() //{{{
         writeFile: function (file, buf, mode, perms, encoding)
         {
             let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-            function getStream(defaultChar) {
+            function getStream(defaultChar)
+            {
                 let stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
                 stream.init(ofstream, encoding, 0, defaultChar);
                 return stream;

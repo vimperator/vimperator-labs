@@ -149,8 +149,10 @@ function Buffer() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    function getWebNav() {
-        function call(val, fn) {
+    function getWebNav()
+    {
+        function call(val, fn)
+        {
             try
             {
                 return fn(val);
@@ -182,7 +184,7 @@ function Buffer() //{{{
                     PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
                     getWebNav().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                 }
-                catch (e) { liberator.reportError(e) }
+                catch (e) { liberator.reportError(e); }
             },
             completer: function (context) completion.charset(context),
             validator: Option.validateCompleter

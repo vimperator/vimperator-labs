@@ -433,7 +433,8 @@ const util = { //{{{
             let elem = object;
             if (elem.nodeType == elem.TEXT_NODE)
                 return elem.data;
-            function namespaced(node) {
+            function namespaced(node)
+            {
                 var ns = NAMESPACES[node.namespaceURI];
                 if (ns)
                     return ns + ":" + node.localName;

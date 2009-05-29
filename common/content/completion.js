@@ -340,7 +340,7 @@ CompletionContext.prototype = {
             let [k, v] = i;
             let _k = "_" + k;
             if (typeof v == "string" && /^[.[]/.test(v))
-                v = eval("(function(i) i" + v + ")")
+                v = eval("(function (i) i" + v + ")")
             if (typeof v == "function")
                 res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = v(this.item)));
             else
