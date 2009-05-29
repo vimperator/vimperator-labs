@@ -47,6 +47,7 @@ const config = { //{{{
 
     get isComposeWindow() window.wintype == "msgcompose",
     get browserModes() [modes.MESSAGE],
+    get mailModes() [modes.NORMAL],
     // focusContent() focuses this widget
     get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
     get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
