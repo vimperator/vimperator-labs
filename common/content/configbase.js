@@ -87,9 +87,9 @@ const configbase = { //{{{
 
     /**
      * @property {object} A map between key names for key events should be ignored,
-     *     and a mask of the modes in which they shoule be ignored.
+     *     and a mask of the modes in which they should be ignored.
      */
-    ignoreKeys: {},
+    ignoreKeys: {}, // XXX: be aware you can't put useful values in here, as "modes.NORMAL" etc. are not defined at this time
 
     /**
      * @property {[[]]} An array of application specific mode specifications.

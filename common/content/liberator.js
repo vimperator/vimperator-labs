@@ -561,7 +561,7 @@ const liberator = (function () //{{{
         }
     }
 
-    // return the platform normalised to Vim values
+    // return the platform normalized to Vim values
     function getPlatformFeature()
     {
         let platform = navigator.platform;
