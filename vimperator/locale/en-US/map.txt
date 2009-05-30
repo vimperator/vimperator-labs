@@ -17,7 +17,133 @@ Please note that, unlike Vim and other applications, mappings containing
 the Shift key are specified with the capital letter, so e.g. [m]<C-n>[m] is
 different from [m]<C-N>[m], the latter being the only way to map Shift-Ctrl-n.
 
-|:map-special-chars| +
+subsection:Map{nbsp}commands[:map-commands]
+
+|:map|
+||:map {lhs} {rhs}|| +
+|:nm| |:nmap|
+||:nm[ap] {lhs} {rhs}|| +
+|:vm| |:vmap|
+||:vm[ap] {lhs} {rhs}|| +
+|:im| |:imap|
+||:im[ap] {lhs} {rhs}|| +
+|:cm| |:cmap|
+||:cm[ap] {lhs} {rhs}|| +
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} for the applicable mode(s). The {rhs} is
+remapped, allowing for nested and recursive mappings.
+
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
+vimperatorrc file!
+________________________________________________________________________________
+
+
+|:no| |:noremap|
+||:no[remap] {lhs} {rhs}|| +
+|:nn| |:nnoremap|
+||:nn[oremap] {lhs} {rhs}|| +
+|:vn| |:vnoremap|
+||:vn[oremap] {lhs} {rhs}|| +
+|:ino| |:inoremap|
+||:ino[remap] {lhs} {rhs}|| +
+|:cno| |:cnoremap|
+||:cno[remap] {lhs} {rhs}|| +
+________________________________________________________________________________
+Map the key sequence {lhs} to {rhs} for the applicable mode(s). No remapping of
+the {rhs} is performed.
+________________________________________________________________________________
+
+
+|:unm| |:unmap|
+||:map {lhs} {rhs}|| +
+|:nun| |:nunmap|
+||:nun[map] {lhs} {rhs}|| +
+|:vun| |:vunmap|
+||:vun[map] {lhs} {rhs}|| +
+|:iu| |:iunmap|
+||:iu[nmap] {lhs} {rhs}|| +
+|:cu| |:cunmap|
+||:cu[nmap] {lhs} {rhs}|| +
+________________________________________________________________________________
+Remove the mapping of {lhs} for the applicable mode(s).
+________________________________________________________________________________
+
+
+|:mapc| |:mapclear|
+||:mapc[lear]|| +
+|:nmapc| |:nmapclear|
+||:nmapc[lear]|| +
+|:vmapc| |:vmapclear|
+||:vmapc[lear]|| +
+|:imapc| |:imapclear|
+||:imapc[lear]|| +
+|:cmapc| |:cmapclear|
+||:cmapc[lear]|| +
+________________________________________________________________________________
+Remove all mappings for the applicable mode(s). All user-defined mappings are
+cleared.
+________________________________________________________________________________
+
+|:map|
+||:map|| +
+|:nm| |:nmap|
+||:nm[ap]|| +
+|:vm| |:vmap|
+||:vm[ap]|| +
+|:im| |:imap|
+||:im[ap]|| +
+|:cm| |:cmap|
+||:cm[ap]|| +
+________________________________________________________________________________
+List all mappings for the applicable mode(s).
+________________________________________________________________________________
+
+
+|:map|
+||:map {lhs}|| +
+|:nm| |:nmap|
+||:nm[ap] {lhs}|| +
+|:vm| |:vmap|
+||:vm[ap] {lhs}|| +
+|:im| |:imap|
+||:im[ap] {lhs}|| +
+|:cm| |:cmap|
+||:cm[ap] {lhs}|| +
+________________________________________________________________________________
+List all mappings starting with {lhs} for the applicable mode(s).
+________________________________________________________________________________
+
+
+subsection:Special{nbsp}arguments{nbsp}[:map-arguments]
+
+|:map-<silent>| +
+
+When the first argument to one of the mapping commands is [c]<silent>[c], {rhs}
+is not echoed to the command line, nor, for that matter, anything else until
+the command has completed.
+
+subsection:Mapping{nbsp}and{nbsp}modes[:map-modes]
+
+Keys can be mapped in four distinct modes:
+
+  * Normal mode
+  * Visual mode
+  * Insert mode
+  * Command-line mode
+
+|map-overview| |map-modes| +
+
+Below is an overview of which modes each map command applies to:
+
+// TODO: table format
+
+:map   :noremap   :unmap   :mapclear  - both Normal and Visual modes
+:nmap  :nnoremap  :nunmap  :nmapclear - Normal mode
+:vmap  :vnoremap  :vunmap  :vmapclear - Visual mode
+:imap  :inoremap  :iunmap  :imapclear - Insert mode
+:cmap  :cnoremap  :cunmap  :cmapclear - Command-line mode
+
+subsection:Special{nbsp}characters[:map-special-chars]
 
 |<Nop>| +
 ||<Nop>||
@@ -48,128 +174,6 @@ but after +
 \{nbsp}[c]let mapleader = ","[c] +
 it works like +
 \{nbsp}[c]:map ,h :echo "Hello"<CR>[c]
-________________________________________________________________________________
-
-
-|:map|
-||:map {lhs} {rhs}|| +
-||:map {lhs}|| +
-||:map||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs}. The {rhs} is remapped, allowing for
-nested and recursive mappings.
-
-Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
-________________________________________________________________________________
-
-
-|:cm| |:cmap|
-||:cmap {lhs} {rhs}|| +
-||:cmap {lhs}|| +
-||:cmap||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in Command-line mode). The {rhs} is
-remapped, allowing for nested and recursive mappings.
-
-Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
-________________________________________________________________________________
-
-
-|:im| |:imap|
-||:imap {lhs} {rhs}|| +
-||:imap {lhs}|| +
-||:imap||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in Insert mode). The {rhs} is remapped,
-allowing for nested and recursive mappings.
-
-Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
-________________________________________________________________________________
-
-
-|:mapc| |:mapclear| +
-||:mapc[lear]||
-________________________________________________________________________________
-Remove all mappings. All user-defined mappings which were set by [c]:map[c] or
-[c]:noremap[c] are cleared.
-________________________________________________________________________________
-
-
-|:cmapc| |:cmapclear| +
-||:cmapc[lear]||
-________________________________________________________________________________
-Remove all mappings (in Command-line mode). All user-defined mappings which
-were set by [c]:cmap[c] or [c]:cnoremap[c] are cleared.
-________________________________________________________________________________
-
-
-|:imapc| |:imapclear| +
-||:imapc[lear]||
-________________________________________________________________________________
-Remove all mappings (in Insert mode). All user-defined mappings which were set
-by [c]:imap[c] or [c]:inoremap[c] are cleared.
-________________________________________________________________________________
-
-
-|:no| |:noremap| +
-||:no[remap] {lhs} {rhs}|| +
-||:no[remap] {lhs}|| +
-||:no[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs}. No remapping of the {rhs} is performed.
-________________________________________________________________________________
-
-
-|:cno| |:cnoremap| +
-||:cno[remap] {lhs} {rhs}|| +
-||:cno[remap] {lhs}|| +
-||:cno[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in Command-line mode). No remapping of
-the {rhs} is performed.
-________________________________________________________________________________
-
-
-|:ino| |:inoremap| +
-||:ino[remap] {lhs} {rhs}|| +
-||:ino[remap] {lhs}|| +
-||:ino[remap]||
-________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} (in Insert mode). No remapping of the
-{rhs} is performed.
-________________________________________________________________________________
-
-
-|:map-<silent>| +
-________________________________________________________________________________
-When the first argument to one of the mapping commands is <silent>,
-{rhs} is not echoed to the command line, nor, for that matter, anything
-else until the command has completed.
-________________________________________________________________________________
-
-
-
-|:unm| |:unmap| +
-||:unm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs}.
-________________________________________________________________________________
-
-
-|:cunm| |:cunmap| +
-||:cunm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs} (in Command-line mode).
-________________________________________________________________________________
-
-
-|:iunm| |:iunmap| +
-||:iunm[ap] {lhs}||
-________________________________________________________________________________
-Remove the mapping of {lhs} (in Insert mode).
 ________________________________________________________________________________
 
 section:Abbreviations[abbreviations]
