@@ -923,7 +923,7 @@ function Events() //{{{
 
             let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
-            this.duringFeed = this.duringFeed || "";
+            this.duringFeed = this.duringFeed || [];
             let wasSilent = commandline.silent;
             if (silent)
                 commandline.silent = silent;
@@ -978,10 +978,7 @@ function Events() //{{{
                         shift = key != key.toLowerCase();
                     }
 
-                    let elem = liberator.focus;
-                    if (!elem)
-                        elem = window.content;
-
+                    let elem = liberator.focus || window.content;
                     let evt = doc.createEvent("KeyEvents");
                     evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                     if (typeof noremap == "object")
@@ -1014,11 +1011,12 @@ function Events() //{{{
                 if (silent)
                     commandline.silent = wasSilent;
 
-                if (this.duringFeed != "")
+                if (this.duringFeed.length)
                 {
                     let duringFeed = this.duringFeed;
-                    this.duringFeed = "";
-                    setTimeout(function () events.feedkeys(duringFeed), 0);
+                    this.duringFeed = [];
+                    for (let [,evt] in Iterator(duringFeed))
+                        evt.target.dispatchEvent(evt);
                 }
             }
         },
@@ -1390,7 +1388,7 @@ function Events() //{{{
                 }
                 else
                 {
-                    events.duringFeed += key;
+                    events.duringFeed.push(event);
                     return void killEvent();
                 }
             }
@@ -1509,14 +1507,15 @@ function Events() //{{{
                 else if (input.pendingArgMap)
                 {
                     input.buffer = "";
-                    let tmp = input.pendingArgMap; // must be set to null before .execute; if not
-                    input.pendingArgMap = null;    // input.pendingArgMap is still 'true' also for new feeded keys
+                    let map = input.pendingArgMap;
+                    input.pendingArgMap = null;
+                    // FIXME.
+                    key = key.replace(/^<S-([A-Z])>$/, "$1");
                     if (key != "<Esc>" && key != "<C-[>")
                     {
                         if (modes.isReplaying && !waitForPageLoaded())
                             return;
-
-                        tmp.execute(null, input.count, key);
+                        map.execute(null, input.count, key);
                     }
                 }
                 // only follow a map if there isn't a longer possible mapping
