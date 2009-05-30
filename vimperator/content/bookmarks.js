@@ -831,7 +831,7 @@ function History() //{{{
                 liberator.beep();
             else
             {
-                let index = Math.max(start, Math.min(end, current + steps));
+                let index = util.Math.constrain(current + steps, start, end);
                 window.getWebNavigation().gotoIndex(index);
             }
         },

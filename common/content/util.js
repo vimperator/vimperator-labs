@@ -388,6 +388,23 @@ const util = { //{{{
     },
 
     /**
+     * Math utility methods.
+     * @singleton
+     */
+    Math: {
+        /**
+         * Returns the specified <b>value</b> constrained to the range <b>min</b> -
+         * <b>max</b>.
+         *
+         * @param {number} value The value to constrain.
+         * @param {number} min The minimum constraint.
+         * @param {number} max The maximum constraint.
+         * @returns {number}
+         */
+        constrain: function constrain(value, min, max) Math.min(Math.max(min, value), max),
+    },
+
+    /**
      * Converts a URI string into a URI object.
      *
      * @param {string} uri

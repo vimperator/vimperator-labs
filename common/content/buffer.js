@@ -72,8 +72,7 @@ function Buffer() //{{{
     {
         let values = ZoomManager.zoomValues;
         let cur = values.indexOf(ZoomManager.snap(ZoomManager.zoom));
-        let i = cur + steps;
-        i = Math.max(0, Math.min(values.length - 1, i));
+        let i = util.Math.constrain(cur + steps, 0, values.length - 1);
 
         if (i == cur && fullZoom == ZoomManager.useFullZoom)
             liberator.beep();
@@ -361,7 +360,7 @@ function Buffer() //{{{
 
                 if (elements.length > 0)
                 {
-                    count = Math.min(Math.max(count, 1), elements.length);
+                    count = util.Math.constrain(count, 1, elements.length);
                     buffer.focusElement(elements[count - 1]);
                 }
                 else
@@ -649,10 +648,7 @@ function Buffer() //{{{
                     level = buffer.textZoom + parseInt(arg, 10);
 
                 // relative args shouldn't take us out of range
-                if (level < ZOOM_MIN)
-                    level = ZOOM_MIN;
-                if (level > ZOOM_MAX)
-                    level = ZOOM_MAX;
+                level = util.Math.constrain(level, ZOOM_MIN, ZOOM_MAX);
             }
             else
                 return void liberator.echoerr("E488: Trailing characters");

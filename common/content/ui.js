@@ -154,7 +154,7 @@ function CommandLine() //{{{
                 this.index += diff;
                 if (this.index < 0 || this.index > this.store.length)
                 {
-                    this.index = Math.max(0, Math.min(this.store.length, this.index));
+                    this.index = util.Math.constrain(this.index, 0, this.store.length);
                     liberator.beep();
                     // I don't know why this kludge is needed. It
                     // prevents the caret from moving to the end of
@@ -373,7 +373,7 @@ function CommandLine() //{{{
                     idx = null;
                     break;
                 default:
-                    idx = Math.max(0, Math.min(this.items.length - 1, idx));
+                    idx = util.Math.constrain(idx, 0, this.items.length - 1);
                     break;
             }
 
@@ -479,7 +479,7 @@ function CommandLine() //{{{
                 if (this.type.list)
                     completionList.show();
 
-                this.wildIndex = Math.max(0, Math.min(this.wildtypes.length - 1, this.wildIndex + 1));
+                this.wildIndex = util.Math.constrain(this.wildIndex + 1, 0, this.wildtypes.length - 1);
                 this.preview();
 
                 statusTimer.tell();
@@ -1831,7 +1831,7 @@ function ItemList(id) //{{{
         let end = startIndex + options["maxitems"];
         function getRows(context)
         {
-            function fix(n) Math.max(0, Math.min(len, n));
+            function fix(n) util.Math.constrain(n, 0, len);
             end -= !!context.message + context.incomplete;
             let len = context.items.length;
             let start = off;
