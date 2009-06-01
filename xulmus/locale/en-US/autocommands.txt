@@ -1,6 +1,4 @@
-HEADER
-
-|autocommands| +
+heading:Automatic{nbsp}commands[autocommands]
 
 Autocommands are a way to automatically execute code when certain events
 happen.

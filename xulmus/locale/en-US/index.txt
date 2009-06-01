@@ -1,8 +1,7 @@
+heading:Index[index]
+
+This file contains a list of all available commands, mappings and options.
 HEADER
-
-|index| +
-
-This file contains a list of all available commands.
 
 section:Player{nbsp}mode[player-index]
 
@@ -49,7 +48,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]<C-^>[m]|| Select the alternate tab or the [count]th tab +
 ||[m]<C-a>[m]|| Increment last number in URL +
 ||[m]<C-b>[m]|| Scroll up a full page +
-||[m]<C-c>[m]|| Stop loading +
+||[m]<C-c>[m]|| Stop loading the current web page +
 ||[m]<C-d>[m]|| Scroll window downwards in the buffer +
 ||[m]<C-f>[m]|| Scroll down a full page +
 ||[m]<C-g>[m]|| Print the current file name +
@@ -85,6 +84,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]R[m]|| Reload while skipping the cache +
 ||[m]T[m]|| Open one or more URLs in a new tab, based on current location +
 ||[m]Y[m]|| Copy selected text or current word +
+||[m]W[m]|| Open one or more URLs in a new window, based on current location +
 
 ||[m]a[m]|| Open a prompt to bookmark the current URL +
 ||[m]b[m]|| Open a prompt to switch buffers +
@@ -100,16 +100,19 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]o[m]|| Open one or more URLs +
 ||[m]p[m]|| Open (put) a URL based on the current clipboard contents in the current buffer +
 ||[m]q[m]|| Record a key sequence into a macro +
-||[m]r[m]|| Reload current page +
+||[m]r[m]|| Reload current web page +
 ||[m]t[m]|| Open one or more URLs in a new tab +
 ||[m]u[m]|| Undo closing of a tab +
 ||[m]y[m]|| Yank current location to the clipboard +
+||[m]w[m]|| Open one or more URLs in a new window +
 
 ||[m];[m]|| Start an extended hint mode +
 
 ||[m]:[m]|| Enter Command-line mode +
 
 ||[m]~[m]|| Open home directory +
+
+||[m]\[m]|| Toggle between rendered and source view +
 
 ||[m]/[m]|| Search forward for a pattern +
 ||[m]?[m]|| Search backwards for a pattern +
@@ -123,6 +126,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]@[m]|| Play a macro +
 
 ||[m].[m]|| Repeat the last keyboard command +
+||[m]@:[m]|| Repeat the last Ex command [count] times +
 
 ||[m]]f[m]|| Focus next frame +
 ||[m][f[m]|| Focus previous frame +
@@ -217,7 +221,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:delmarks[c]|| Delete the specified marks +
 ||[c]:delqmarks[c]|| Delete the specified QuickMarks +
 ||[c]:delstyle[c]|| Delete any matching styles +
-||[c]:dialog[c]|| Open a undefined dialog +
+||[c]:dialog[c]|| Open a Songbird dialog +
 ||[c]:doautoall[c]|| Apply the autocommands matching the specified URL to all buffers +
 ||[c]:doautocmd[c]|| Apply the autocommands matching the specified URL to the current buffer +
 ||[c]:downloads[c]|| Show progress of current downloads +
@@ -230,6 +234,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:execute[c]|| Execute the argument as an Ex command +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:finish[c]|| Stop sourcing a script file +
+||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:forward[c]|| Go forward in the browser history +
 ||[c]:hardcopy[c]|| Print current document +
 ||[c]:help[c]|| Display help +
@@ -252,6 +257,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:mark[c]|| Mark current location within the web page +
 ||[c]:marks[c]|| Show all location marks of current web page +
 ||[c]:messages[c]|| Display previously given messages +
+||[c]:messclear[c]|| Clear the message history +
 ||[c]:mkxulmusrc[c]|| Write current key mappings and changed options to the config file +
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
@@ -266,11 +272,11 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
 ||[c]:quit[c]|| Quit current tab +
-||[c]:quitall[c]|| Quit undefined +
+||[c]:quitall[c]|| Quit Xulmus +
 ||[c]:redraw[c]|| Redraw the screen +
-||[c]:reload[c]|| Reload current page +
+||[c]:reload[c]|| Reload the current web page +
 ||[c]:reloadall[c]|| Reload all tab pages +
-||[c]:restart[c]|| Force undefined to restart +
+||[c]:restart[c]|| Force Xulmus to restart +
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
 ||[c]:saveas[c]|| Save current document to disk +
 ||[c]:scriptnames[c]|| List all sourced script names +
@@ -280,8 +286,10 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:silent[c]|| Execute a command silently +
 ||[c]:style[c]|| Style Xulmus and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
-||[c]:stop[c]|| Stop loading +
+||[c]:stop[c]|| Stop loading the current web page +
+||[c]:stopall[c]|| Stop loading all tab pages +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
+||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +
 ||[c]:tabduplicate[c]|| Duplicate current tab +
 ||[c]:tablast[c]|| Switch to the last tab +
@@ -300,6 +308,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:version[c]|| Show version information +
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
+||[c]:winclose[c]|| Close window +
+||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +
 
@@ -307,18 +317,21 @@ section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
 ||'cdpath'|| List of directories searched when executing [c]:cd[c] +
-||'complete'|| Items which are completed at the [c]:[tab]open prompt[c] +
+||'complete'|| Items which are completed at the [c]:[tab]open[c] prompt +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
+||'encoding'|| Changes the character encoding of the current buffer +
 ||'errorbells'|| Ring the bell when an error message is displayed +
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
+||'fileencoding'|| Changes the character encoding that Vimperator uses to read and write files +
 ||'focuscontent'|| Try to stay in Normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in Hints mode +
 ||'fullscreen'|| Show the current window fullscreen +
 ||'guioptions'|| Show or hide certain GUI elements like the menu or toolbar +
 ||'helpfile'|| Name of the main help file +
+||'hintinputs'|| How text input fields are hinted +
 ||'hintmatching'|| How links are matched +
 ||'hinttags'|| XPath string of hintable elements activated by [m]f[m] and [m]F[m] +
 ||'hinttimeout'|| Timeout before automatically following a non-unique numerical hint +

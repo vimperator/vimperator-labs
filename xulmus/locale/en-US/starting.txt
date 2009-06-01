@@ -1,7 +1,43 @@
-HEADER
+heading:Starting{nbsp}Xulmus[starting]
 
-Xulmus does not yet read any command-line options. When it does, they will
-be documented here.
+|startup-options| +
+
+Command-line options can be passed to Xulmus via the -liberator Firefox
+option. These are passed as single string argument.
+E.g firefox -liberator "\++cmd=\'set exrc' +u=\'tempRcFile' \++noplugin"
+
+|+c| +
+||+c={command}||
+________________________________________________________________________________
+Execute a single Ex command after all initialization has been performed. See
+help:initialization[starting.html#Initialization].
+________________________________________________________________________________
+
+
+|\++cmd| +
+||\++cmd={command}||
+________________________________________________________________________________
+Execute a single Ex command before any initialization has been performed. See
+help:initialization[starting.html#Initialization].
+________________________________________________________________________________
+
+
+|+u| +
+||+u={rcfile}||
+________________________________________________________________________________
+The file {rcfile} is used for user initialization commands. If {rcfile} is
+"NORC" then no startup initialization is performed except for the loading of
+plugins, i.e. steps 1. and 2. in
+help:initialization[starting.html#Initialization] are skipped. If {rcfile} is
+"NONE" then plugin loading is also skipped.
+________________________________________________________________________________
+
+
+|\++noplugin| +
+||\++noplugin||
+________________________________________________________________________________
+Prevents plugin scripts from being loaded at startup. See 'loadplugins'.
+________________________________________________________________________________
 
 section:Initialization[initialization,startup]
 
@@ -18,15 +54,21 @@ further locations are tried.
 	are executed and _$MY_XULMUSRC_ set to its path.
   c. [a]\~/.xulmusrc[a] -- If this file exists, its contents are executed.
 
-2. If 'exrc' is set, then any RC file in the current directory is also sourced.
+2. If 'exrc' is set and the +u command-line option was not specified, then any
+RC file in the current directory is also sourced.
 
 3. All directories in 'runtimepath' are searched for a "plugin"
-subdirectory and all yet unloaded plugins are loaded. For each plugin
-directory, all *.\{js,vimp} files (including those in further
+subdirectory and all yet unloaded plugins are loaded. For each
+plugin directory, all *.\{js,xulmus} files (including those in further
 subdirectories) are sourced alphabetically. No plugins will be sourced
-if 'noloadplugins' is set. Any particular plugin will not be loaded if
-it has already been loaded (e.g., by an earlier [c]:loadplugins[c]
-command).
+if:
+
+  * 'noloadplugins' is set.
+  * the \++noplugin command-line option was specified.
+  * the +u=NONE command-line option specified set.
+
+Any particular plugin will not be loaded if it has already been loaded (e.g.,
+by an earlier [c]:loadplugins[c] command).
 
 The user's ~ (i.e., "home") directory is determined as follows:
 

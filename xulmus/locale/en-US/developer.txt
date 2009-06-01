@@ -1,4 +1,4 @@
-HEADER
+heading:Developer{nbsp}information[developer-information]
 
 section:Writing{nbsp}documentation[writing-docs,documentation]
 

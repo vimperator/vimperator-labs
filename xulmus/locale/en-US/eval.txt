@@ -1,6 +1,4 @@
-HEADER
-
-|expression| |expr| |eval| +
+heading:Expression{nbsp}evaluation[expression,expr,eval]
 
 INTRO TO BE WRITTEN...
 
@@ -70,7 +68,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Sets or lists a variable. Sets the variable {var-name} to the value of the
 expression {expr1}. If no expression is given, the value of the variable is
-displayed.Without arguments, displays a list of all variables.
+displayed. Without arguments, displays a list of all variables.
 ________________________________________________________________________________
 
 

@@ -1,6 +1,4 @@
-HEADER
-
-|gui| +
+heading:Vimperator's{nbsp}GUI[gui]
 
 Although Xulmus offers the most frequently used Songbird functionality via
 Ex and Normal mode commands there may be times when directly accessing the GUI

@@ -1,21 +1,24 @@
-HEADER
+heading:Hints[quick-hints,hints]
 
-|quick-hints| |hints| +
-
-INTRO TO BE WRITTEN...
+Hints are the way in which Vimperator allows you to follow links on a page. By
+providing each link with a suitable hint, you can access all links with a
+similar amount of minimal effort. This contrasts strongly with the traditional
+approaches offered by the mouse, in which you must first find and then aim for
+the link you would like, and by using repeated tabbing which quickly becomes
+tedious unless you always visit the first link on a page.
 
 |f| +
 ||#f#{hint}||
 ________________________________________________________________________________
 Start QuickHint mode. In QuickHint mode, every hintable item (according to the
-'hinttags' XPath query) is assigned a unique number. You can now either type
-this number or type any part of the URL which you want to follow, and it is
-followed as soon as it can be uniquely identified. Often it can be useful to
-combine these techniques to narrow down results with some letters, and then
-typing a single digit to make the match unique. Pressing [m]<Leader>[m]
-(defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode", where numbers
-are treated as normal text. +
-[m]<Esc>[m] stops this mode at any time.
+'hinttags' XPath query) is assigned a unique number. You can either type
+this number or type part of the link text as specified by the 'hintmatching'
+option, and it is followed as soon as it can be uniquely identified. Often it
+can be useful to combine these techniques to narrow down results with some
+letters, and then typing a single digit to make the match unique. Pressing
+[m]<Leader>[m] (defaults to [c]:let mapleader = "\"[c]) toggles "escape-mode",
+where numbers are treated as normal text. + [m]<Esc>[m] stops this mode at any
+time.
 ________________________________________________________________________________
 
 
@@ -59,6 +62,9 @@ hint mode. Then press [a]24[a] to copy the hint location.
 * |;V| [m]V[m] to view its destination source in the external editor
 * |;y| [m]y[m] to yank its destination location
 * |;Y| [m]Y[m] to yank its text description
+* |;c| [m]c[m] to open its context menu
+* |;i| [m]i[m] to open an image
+* |;I| [m]I[m] to open an image in a new tab.
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.

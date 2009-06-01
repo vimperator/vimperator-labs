@@ -1,6 +1,4 @@
-HEADER
-
-|options| +
+heading:Options[options]
 
 Xulmus has a number of internal variables and switches which can be set to
 achieve special effects. These options come in 5 forms:
@@ -189,10 +187,10 @@ they can be changed to a different value in your RC file using
 
 The following preferences are set:
 
-* browser.startup.page
-* dom.popup_allowed_events
-* accessibility.typeaheadfind.autostart
-* accessibility.typeaheadfind
+* http://kb.mozillazine.org/Browser.startup.page[browser.startup.page]
+* http://kb.mozillazine.org/Dom.popup_allowed_events[dom.popup_allowed_events]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart[accessibility.typeaheadfind.autostart]
+* http://kb.mozillazine.org/Accessibility.typeaheadfind[accessibility.typeaheadfind]
 
 // TODO: others?
 
@@ -217,9 +215,9 @@ ____
 |\'cd'| |\'cdpath'|
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
-List of directories searched when executing the [c]:cd[c] command. This
-is only used for relative paths; if an absolute path is specified, then
-the option is ignored.
+List of directories searched when executing the [c]:cd[c] command. This is
+only used for relative paths if an absolute path is specified then the option
+is ignored.
 ____
 
 
@@ -233,11 +231,15 @@ Items which are completed at the [c]:[tab]open[c] prompt. Available items:
 *f* Local files
 *l* Songbird location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
+*h* History
 *S* Suggest engines
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
 and then any available quick searches.
+
+Warning: Using *b* and *h* can make completion very slow if there are many
+items.
 ____
 
 
@@ -248,7 +250,7 @@ Sets the default search engine. The default search engine name is used in the
 [c]:[tab]open [arg][c] command if [a][arg][a] neither looks like a URL or like
 a specified search engine/keyword.
 
-This means, it you set 'defsearch' to "youtube", then [c]:open arnold
+This means that if you set 'defsearch' to "youtube", then [c]:open arnold
 schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
 schwarzenegger[c]. Therefore, you need to add a keyword or search engine
 "youtube" first.
@@ -262,7 +264,7 @@ ____
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
-Sets the editor to run when [m]<C-i>[m] is pressed in INSERT and TEXTAREA
+Sets the editor to run when [m]<C-i>[m] is pressed in Insert and TextArea
 modes.
 
 Warning: Xulmus will not behave correctly if the editor forks its own
@@ -303,6 +305,20 @@ A list of autocommand event names which should be ignored. If the list contains
 the value "all" then all events are ignored.
 ____
 
+|\'enc'| |\'encoding'|
+||'encoding'|| string (default: "UTF-8")
+____
+Changes the character encoding of the current buffer. Valid only for the
+current page.
+____
+
+
+|\'fenc'| |\'fileencoding'|
+||'fileencoding'|| string (default: "UTF-8")
+____
+Changes the character encoding that Xulmus uses to read and write files.
+____
+
 
 |\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
 ||'focuscontent' 'fc'|| boolean (default: off)
@@ -312,6 +328,22 @@ want to stay in Normal mode when browsing between web sites. When "on", it
 blurs any textbox which often is automatically focused on page load.
 If you usually like 'focuscontent' but sometimes you'd like to focus the
 first input field, you can use [m]gi[m] to jump to it.
+
+____
+
+
+|\'fh'| |\'followhints'|
+||'followhints' 'fh'|| number (default: 0)
+____
+
+Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
+
+`---------`----------------------------------------------------------
+*0*       Follow the first hint as soon as typed text uniquely identifies it.
+*1*       Follow the selected hint on [m]<Return>[m].
+*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
+---------------------------------------------------------------------
+
 ____
 
 
@@ -320,6 +352,7 @@ ____
 ____
 Show the current window fullscreen. Also hide certain GUI elements like the
 statusline.
+
 ____
 
 
@@ -336,7 +369,7 @@ Show or hide certain GUI elements like the menu or toolbar. Supported characters
 *N* Tab number over image
 *b* Bottom scrollbar
 *r* Right scrollbar
-*l* Left scrollbar
+*l* Left scrollbar (*l* and *r* are mutually exclusive)
 ----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].
@@ -348,6 +381,23 @@ ____
 ____
 Name of the main help file. This is the tail component of the chrome URL as
 displayed in the status line when viewing the page.
+____
+
+
+|\'hin'| |\'hintinputs'|
+||'hintinputs' 'hin'|| stringlist (default: "label,value")
+____
+When generating hints for input elements that do not have an explicit caption,
+this specifies the methods to try and generate a textual hint. It tries the
+options in the order that you give, and uses the first that it finds.
+
+`--------------------`---------------------------------------------------------
+*value*              The hint is the value displayed in a text input, or the selected option for a dropdown.
+*label*              The value of an explicit label for the input, this will not match most manually added labels that are found on sites.
+*name*               The name of the input will be used, although the name is not designed for user consumption, it is frequently very similar to the label.
+
+-------------------------------------------------------------------------------
+
 ____
 
 
@@ -363,22 +413,6 @@ Change the hint matching algorithm during Hints mode. Possible values:
 *firstletters*       Behaves like wordstartswith, but non-matching words aren't overleaped.
 *custom*             Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)
 -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-____
-
-
-|\'fh'| |\'followhints'|
-||'followhints' 'fh'|| number (default: 0)
-____
-
-Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
-
-`---------`----------------------------------------------------------
-*0*       Follow the first hint as soon as typed text uniquely identifies it.
-	  Follow the selected hint on [m]<Return>[m].
-*1*       Follow the selected hint on [m]<Return>[m].
-*2*       Follow the selected hint on [m]<Return>[m] only if it's been [m]<Tab>[m]-selected.
----------------------------------------------------------------------
 
 ____
 
@@ -468,7 +502,7 @@ ____
 
 
 |\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
-||'loadplugins' 'lpl'|| boolean (default on)
+||'loadplugins' 'lpl'|| boolean (default: on)
 ____
 Load plugin scripts when starting up. When on, yet unloaded plugins are
 automatically loaded after the xulmusrc file has been sourced. To
@@ -482,7 +516,6 @@ ____
 ____
 Maximum number of items to display at once in a listing.
 ____
-
 
 
 |\'msgs'| |\'messages'|
@@ -504,10 +537,10 @@ ____
 ____
 (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 
-Patterns to use when guessing the \'next' page in a document sequence. Each
-pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions and the
-link elements are those defined by 'hinttags'.
+Patterns to use when guessing the \'next' page in a document sequence when the
+user hits [c]]][c]. Each pattern, in order, is matched against all links in the
+page with the first match being used. The patterns are case insensitive regular
+expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
@@ -531,7 +564,7 @@ ____
 
 
 |\'noonline'| |\'online'|
-||'online'|| boolean (default on)
+||'online'|| boolean (default: on)
 ____
 Show and set the \'work offline' behavior.
 ____
@@ -577,10 +610,10 @@ ____
 ____
 (default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 
-Patterns to use when guessing the \'previous' page in a document sequence. Each
-pattern, in order, is matched against all links in the page with the first
-match being used. The patterns are case insensitive regular expressions and the
-link elements are those defined by 'hinttags'.
+Patterns to use when guessing the \'previous' page in a document sequence when
+the user hits [c][[[c]. Each pattern, in order, is matched against all links
+in the page with the first match being used. The patterns are case insensitive
+regular expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
@@ -755,13 +788,16 @@ ____
 ____
 Use visual bell instead of beeping on errors. The visual bell style is
 controlled by [c]:hi Bell[c].
+
+To disable both the audible and visual bells use [c]:set visualbell[c] and
+[c]:hi Bell display: none;[c]
 ____
 
 
 |\'wildcase'| |\'wic'|
 ||'wildcase' 'wic'|| string (default: "smart")
 ____
-Defines how completions are matched with regard to character case.
+Defines how completions are matched with regard to character case. Possible values:
 
 `---------------`------------------------
 "smart"		Case is significant when capital letters are typed

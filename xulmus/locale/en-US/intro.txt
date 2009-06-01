@@ -89,7 +89,7 @@ section:Features[features]
   with support for Songbird keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
-* Marks support ([m]ma[m] to set mark a on a web page, [m]'a[m] to go there)
+* Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to go there)
 * QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
 * [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
@@ -101,10 +101,13 @@ section:Features[features]
 
 section:Contact[contact]
 
-Please send comments/bug reports/patches to the mailing list, where I will
-properly answer any questions. You can also join the #vimperator IRC channel
-on irc.freenode.net or check the Wiki for frequently asked questions. Make
-sure, you have read the TODO file first, as I am aware of many things which
-can be improved when I find time for it or get patches.
+Please send comments/bug reports/patches to the mailing list, where we will
+properly answer any questions. You can also join the
++++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC channel
+on http://www.freenode.net/[Freenode] or check the
+http://vimperator.org/trac/wiki/Xulmus/Wiki[Wiki] for
+http://vimperator.org/trac/wiki/Xulmus/FAQ[frequently asked questions
+(FAQ)]. Make sure, you have read the TODO file first, as we are aware of many
+things which can be improved when we find time for it or receive patches.
 
 // vim: set filetype=asciidoc:

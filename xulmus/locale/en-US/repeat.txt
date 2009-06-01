@@ -1,13 +1,28 @@
-HEADER
-
-|repeat| +
+heading:Repeating{nbsp}commands[repeating]
 
 Xulmus can repeat a number of commands and record macros.
+
+section:Single{nbsp}repeats[single-repeat]
+
+|.|
+||[count].||
+____________________________________________________________________________
+Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
+does not apply solely to editing commands, mainly because Xulmus doesn't
+have them.
+____________________________________________________________________________
+
+
+|@:|
+||[count]@:||
+____________________________________________________________________________
+Repeat the last Ex command [count] times.
+____________________________________________________________________________
 
 section:Macros[macros,complex-repeat]
 
 |q|
-||q{0-9a-zA-Z}|| +
+||q\\{0-9a-zA-Z}|| +
 ____________________________________________________________________________
 Record a key sequence into a macro.
 Available macros are {0-9a-zA-Z} (uppercase to append).
@@ -45,15 +60,6 @@ ____________________________________________________________________________
 ||[count]@@||
 ____________________________________________________________________________
 Replay the last executed macro [count] times.
-____________________________________________________________________________
-
-
-|.|
-||[count].||
-____________________________________________________________________________
-Repeat the last keyboard mapping [count] times. Note that, unlike in Vim, this
-does not apply solely to editing commands, mainly because Xulmus doesn't
-have them.
 ____________________________________________________________________________
 
 
@@ -132,7 +138,7 @@ section:Profiling[profile,profiling]
 |:time|
 ||:[count]time[!] {code|:command}|| +
 ________________________________________________________________________________
-Profile a piece of code or a command. Run {code} [count] times (default 1)
+Profile a piece of code or a command. Run {code} [count] times (default: 1)
 and returns the elapsed time. {code} is always passed to JavaScript's eval(),
 which might be slow, so take the results with a grain of salt.
 

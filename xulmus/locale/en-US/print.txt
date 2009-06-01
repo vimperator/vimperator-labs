@@ -1,6 +1,4 @@
-HEADER
-
-|printing| +
+heading:Printing[printing]
 
 |:ha| |:hardcopy| +
 ||:ha[rdcopy][!]||

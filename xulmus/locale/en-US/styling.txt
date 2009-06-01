@@ -1,6 +1,4 @@
-HEADER
-
-|styling| +
+heading:Styling{nbsp}the{nbsp}GUI{nbsp}and{nbsp}web{nbsp}pages[styling]
 
 Xulmus allows you to style both the player and any web pages you view. All
 styling is specified via CSS. Although you may style any user interface element
@@ -18,13 +16,13 @@ sourced.
 ________________________________________________________________________________
 
 |:hi| |:highlight| +
-||:hi[ghlight][!] [-append] {group}[{selector}] [{css}]|| +
+||:hi[ghlight][!] [-append] {group} [[{selector}] {css}]|| +
 ________________________________________________________________________________
-Highlight {group} with {css}. Normally, {css} is checked for
-valid syntax before it's applied. Once you're certain it's
-valid, [!] will override the check, to speed Xulmus startup.
-{selector} can be any valid CSS selector, such as [c]:hover[c], and,
-if provided, will restrict the match to matching elements.
+Highlight {group} with {css}. Normally, {css} is checked for valid
+syntax before it's applied. Once you're certain it's valid, [!] can be
+used to skip the check to speed up Vimperator startup. {selector} can
+be any valid CSS selector, such as [c]:hover[c], and, if provided, will
+restrict the match to matching elements.
 
 Valid groups are:
 `--------------------`-----------------------------------
@@ -73,6 +71,7 @@ Valid groups are:
 *StatusLine*         The status bar
 *StatusLineBroken*   The status bar for a broken web page
 *StatusLineSecure*   The status bar for a secure web page
+*StatusLineExtended* The status bar for a secure web page with an Extended Validation(EV) certificate
 *String*             A JavaScript String object
 *TabClose*           The close button of a browser tab
 *TabIcon*            The icon of a browser tab
@@ -88,11 +87,11 @@ Valid groups are:
 Every invocation completely replaces the styling of any previous invocation,
 unless *-append* (short option: *-a*) is provided, in which case {css} is
 appended to its current value. If {css} is not provided, any styles matching
-{group} are listed.
+{group} are listed, or all styles if no {group} provided.
 ________________________________________________________________________________
 
 |:highlight-clear| +
-||:hi[light] clear [{group}[{selector}]]|| +
+||:hi[ghlight] clear [{group} [{selector}]]|| +
 ________________________________________________________________________________
 Reset the highlighting for {group} to its default value. If
 {group} is not given, reset all highlighting groups.
@@ -105,7 +104,7 @@ ________________________________________________________________________________
 Add CSS styles to the player or to web pages. {filter} is a comma
 separated list of URLs to match. URLs ending with *\** are matched as
 prefixes, URLs not containing any *:* or */* characters are
-matched as domains. If {name} (short option: [c]-n[c]) is provided, any
+matched as domains. If {name} (short option: *-n*) is provided, any
 existing style with the same name is overridden, and the style may later
 be deleted using {name}. If *-append* (short option: *-a*) is provided
 along with *-name*, {css} and {filter} are appended to its current
@@ -118,13 +117,12 @@ ________________________________________________________________________________
 ||:dels[tyle] [-name={name}] [-index={index}] [{filter}] [{css}]|| +
 ________________________________________________________________________________
 Delete any matching styles. If {filter} is provided, only matching elements of
-the filter are disabled. For instance, a filter [c]mozilla.org[c], given a
-style for [c]www.google.com,mozilla.org[c], will result in a style for
-[c]www.google.com[c]. The available options are:
+the filter are disabled. For instance, a filter [a]mozilla.org[a], given a
+style for [a]www.google.com,mozilla.org[a], will result in a style for
+[a]www.google.com[a]. The available options are:
 
- * [c]-name[c]:  The name provided to [c]:style[c] (short option:
-                 *-n*)
- * [c]-index[c]: For unnamed styles, the index listed by [c]:style[c]
+ * *-name*:  The name provided to [c]:style[c] (short option: *-n*)
+ * *-index*: For unnamed styles, the index listed by [c]:style[c]
                  (short option: *-i*)
 ________________________________________________________________________________
 

@@ -1,4 +1,4 @@
-HEADER
+heading:Other{nbsp}help[]
 
 section:Various{nbsp}commands[various]
 
@@ -11,9 +11,9 @@ ________________________________________________________________________________
 
 |<C-l>| |CTRL-L| |:redr| |:redraw| +
 ||:redr[aw]||
-____
+________________________________________________________________________________
 Redraws the screen. Useful to update the screen halfway executing a script or function.
-____
+________________________________________________________________________________
 
 |:norm| |:normal|
 ||:norm[al][!] {commands}|| +
@@ -30,11 +30,12 @@ ________________________________________________________________________________
 ||:!{cmd}||
 ________________________________________________________________________________
 Run a command. Runs {cmd} through system() and displays its output. Any \'!' in
-{cmd} is replaced with the previous external command. But not when there is a
-backslash before the \'!', then that backslash is removed.
+{cmd} is replaced with the previous external command, but not when there is a
+backslash before the \'!', then the backslash is removed.
 
 Warning: Input redirection (< foo) not done, also do not run commands which
-require stdin or it will hang Songbird!
+require stdin or it will hang Songbird! It is possible to launch background
+processes, though (e.g. ':! xterm &').
 ________________________________________________________________________________
 
 
@@ -63,7 +64,9 @@ ________________________________________________________________________________
 Open help window. The default page, as specified by 'helpfile' is shown unless
 [a][subject][a] is specified. If you need help for a specific topic, try
 [c]:help overview[c].
-____________________________________________________________________________
+
+All help pages can be viewed in a single page via [c]:help all[c].
+________________________________________________________________________________
 
 
 |:exu| |:exusage| +

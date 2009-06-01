@@ -1,6 +1,4 @@
-HEADER
-
-|Insert-mode| |Insert| |mode-insert| +
+heading:Insert{nbsp}mode[Insert-mode,Insert,mode-insert]
 
 Insert mode is used to enter text in text boxes and text areas. When
 'insertmode' is set, focusing on a text area immediately switches to

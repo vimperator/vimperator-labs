@@ -1,6 +1,4 @@
-HEADER
-
-|tabs| +
+heading:Tabs[tabs]
 
 Tabs are used to be able to view many web pages at the same time. Each tab
 contains exactly one buffer -- multiple buffers per tab are not supported. As a
@@ -62,30 +60,30 @@ ________________________________________________________________________________
 |gt| +
 ||[count]gt||
 ________________________________________________________________________________
-Go to the next tab. Cycles to the first tab, when the last is selected. +
+Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th tab.
 ________________________________________________________________________________
 
 |<C-PageDown>| |<C-Tab>| |<C-n>| +
 ||[count]<C-n>||
 ________________________________________________________________________________
-Go to the next tab. Cycles to the first tab, when the last is selected. +
+Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th next tab.
 ________________________________________________________________________________
 
 |<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
 ||[count]gT||
 ________________________________________________________________________________
-Go {count} pages back. Wraps around from the first tab to the last tab. +
-If [count] is specified go back [count] tabs.
+Go to the previous tab. Cycles to the last tab when the first is selected. +
+If [count] is specified go to the [count]th previous tab.
 ________________________________________________________________________________
 
 
 |<C-6>| |<C-^>| +
 ||[count]<C-^>||
 ________________________________________________________________________________
-Select the alternate tab or the [count]th tab. The alternate tab is the last
-selected tab. This provides a quick method of toggling between two tabs.
+Select the previously selected tab. This provides a quick method of toggling
+between two tabs. If [count] is specified, go to the [count]th tab.
 ________________________________________________________________________________
 
 
@@ -134,6 +132,7 @@ ________________________________________________________________________________
 Detach the current tab, and open it in its own window.
 ________________________________________________________________________________
 
+section:Reordering{nbsp}tabs[reordering-tabs]
 
 |:tabm| |:tabmove|
 ||:tabm[ove] [a][N][a]|| +
@@ -175,8 +174,6 @@ Switch to the previous tab or go [count] tabs back. Wraps around from the
 first tab to the last tab.
 ________________________________________________________________________________
 
-
-
 section:Closing{nbsp}tabs[closing-tabs]
 
 |d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
@@ -215,5 +212,17 @@ ________________________________________________________________________________
 //Undo closing of all closed tabs. Songbird stores up to 10 closed tabs, even
 //after a browser restart.
 //________________________________________________________________________________
+
+section:Looping{nbsp}over{nbsp}tabs[looping-over-tabs]
+
+|:tabd| |:tabdo| |:bufd| |:bufdo| +
+||:tabd[o] {cmd}||
+________________________________________________________________________________
+Execute {cmd} in each tab. {cmd} is executed in each tab starting with the
+first and ending with the last which becomes the current tab.
+
+{cmd} should not alter the tab list state by adding, removing or reordering
+tabs.
+________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

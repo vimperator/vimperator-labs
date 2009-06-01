@@ -1,6 +1,4 @@
-HEADER
-
-|player-mode| |player| +
+heading:Player{nbsp}mode[player-mode,player]
 
 The following features apply to Player mode which is activated when the media
 tab has focus.

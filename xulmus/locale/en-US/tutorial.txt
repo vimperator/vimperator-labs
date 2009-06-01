@@ -1,13 +1,11 @@
-HEADER
-
 // Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu)
+
+heading:Quick-start{nbsp}tutorial[tutorial]
 
 +++<div style="text-align: center;">+++
 *This is a quickstart tutorial to help get new users up and running in
 Vimperator. It is not intended as a full reference explaining all features.*
 +++</div>+++
-
-section:Quick-start{nbsp}tutorial[tutorial]
 
 If you've started using Vimperator from scratch (i.e., without any
 customization), you should be looking at this help page in a relatively
@@ -22,8 +20,8 @@ If you're a veteran Vim user, this may look familiar. It should.
 
 However, in this author's opinion, the best way to get familiar with
 Vimperator is to leave these disabled for now. (The above action can be
-reversed with [c]:set go=<CR>[c]) You can look at the entry for
-[o]guioptions[o] in help:options[options.html] for more information on this.
+reversed with [c]:set go=<CR>[c]) You can look at the entry for 'guioptions' in
+help:options[options.html] for more information on this.
 
 section:Vimperator's{nbsp}modal{nbsp}interface[modal]
 
@@ -36,8 +34,8 @@ When Vimperator starts, it is in Normal mode by default. This is probably where
 you will spend the majority of your time.
 
 The other core mode of Vimperator, Command-line mode, can be entered from
-Normal mode by typing a \':' (colon). You will frequently see Vimperator
-commands start with a \':', indicating that what follows is a command.
+Normal mode by typing a \'[m]:[m]' (colon). You will frequently see Vimperator
+commands start with a \'[m]:[m]', indicating that what follows is a command.
 
 To return to Normal mode from Command-line mode, type [m]<Esc>[m]. Pressing
 [m]<Esc>[m] will also return you to Normal mode from most other modes in
@@ -57,7 +55,7 @@ Similarly, help on configurable options is available with [c]:help
 '{option_name}'[c]. (Note the single quotes around the option name as in Vim.)
 Information on all available options is, predictably, [c]:help options[c].
 
-and you can find out about the [m]gt[m] and [m]gT[m] mapping with
+And you can find out about the [m]gt[m] and [m]gT[m] mapping with
 
 \{nbsp}[c]:help gt<CR>[c] +
 \{nbsp}[c]:help gT<CR>[c]
@@ -142,7 +140,7 @@ type uniquely identifies any given link, Vimperator will follow that link
 immediately without any further user input.
 
 Whichever way you choose to indicate your target link, once Vimperator has
-highlighted the link you want, simply hit <Enter> to open it.
+highlighted the link you want, simply hit [m]<Enter>[m] to open it.
 
 The most common hint mode is called help:QuickHint{nbsp}mode[various.html,f].
 To activate QuickHint mode, press either [m]f[m] or [m]F[m]. The lower-case
