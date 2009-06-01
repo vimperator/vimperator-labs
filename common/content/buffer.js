@@ -149,47 +149,6 @@ function Buffer() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    function getWebNav()
-    {
-        function call(val, fn)
-        {
-            try
-            {
-                return fn(val);
-            }
-            catch (e)
-            {
-                return val
-            }
-        }
-        return [
-            function () getBrowser().webNavigation,
-            function (webNav) webNav.sessionHistory.QueryInterface(Ci.nsIWebNavigation)
-        ].reduce(call, null);
-    }
-
-    options.add(["encoding", "enc"],
-        "Sets the current buffer's character encoding",
-        "string", "UTF-8",
-        {
-            scope: options.OPTION_SCOPE_LOCAL,
-            getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
-            setter: function (val)
-            {
-                // Stolen from browser.jar/content/browser/browser.js, more or
-                // less.
-                try
-                {
-                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
-                    PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
-                    getWebNav().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
-                }
-                catch (e) { liberator.reportError(e); }
-            },
-            completer: function (context) completion.charset(context),
-            validator: Option.validateCompleter
-        });
-
     // FIXME: Most certainly belongs elsewhere.
     options.add(["fullscreen", "fs"],
         "Show the current window fullscreen",

@@ -448,6 +448,27 @@ const config = { //{{{
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        options.add(["encoding", "enc"],
+            "Sets the current buffer's character encoding",
+            "string", "UTF-8",
+            {
+                scope: options.OPTION_SCOPE_LOCAL,
+                getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
+                setter: function (val)
+                {
+                    // Stolen from browser.jar/content/browser/browser.js, more or less.
+                    try
+                    {
+                        var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
+                        PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
+                        getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
+                    }
+                    catch (e) { liberator.reportError(e); }
+                },
+                completer: function (context) completion.charset(context),
+                validator: Option.validateCompleter
+            });
+
         options.add(["online"],
             "Set the 'work offline' option",
             "boolean", true,
