@@ -392,8 +392,7 @@ function Commands() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_completion", function ()
-    {
+    liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
     });
 
@@ -945,8 +944,7 @@ function Commands() //{{{
          */
         replaceTokens: function replaceTokens(str, tokens)
         {
-            return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token)
-            {
+            return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token) {
                 if (token == "lt") // Don't quote, as in Vim (but, why so in Vim? You'd think people wouldn't say <q-lt> if they didn't want it)
                     return "<";
                 let res = tokens[token];
@@ -963,8 +961,7 @@ function Commands() //{{{
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_mappings", function ()
-    {
+    liberator.registerObserver("load_mappings", function () {
         mappings.add(config.browserModes,
             ["@:"], "Repeat the last Ex command",
             function (count)

@@ -88,8 +88,8 @@ const liberator = (function () //{{{
     }
 
     // Only general options are added here, which are valid for all Vimperator like extensions
-    registerObserver("load_options", function ()
-    {
+    registerObserver("load_options", function () {
+
         options.add(["errorbells", "eb"],
             "Ring the bell when an error message is displayed",
             "boolean", false);
@@ -191,8 +191,8 @@ const liberator = (function () //{{{
             });
     });
 
-    registerObserver("load_mappings", function ()
-    {
+    registerObserver("load_mappings", function () {
+
         mappings.add(modes.all, ["<F1>"],
             "Open help window",
             function () { liberator.help(); });
@@ -237,8 +237,8 @@ const liberator = (function () //{{{
         return items;
     }
 
-    registerObserver("load_commands", function ()
-    {
+    registerObserver("load_commands", function () {
+
         commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
             function ()

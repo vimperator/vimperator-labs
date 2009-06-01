@@ -43,8 +43,7 @@ function Tabs() //{{{
     var getBrowser = (function () {
         if (config.hostApplication == "Thunderbird")
         {
-            return function ()
-            {
+            return function () {
                 if (!tabmail)
                 {
                     tabmail = document.getElementById("tabmail");

@@ -612,8 +612,7 @@ function Hints() //{{{
         function containsMatcher(hintString) //{{{
         {
             let tokens = tokenize(/\s+/, hintString);
-            return function (linkText)
-            {
+            return function (linkText) {
                 linkText = linkText.toLowerCase();
                 return tokens.every(function (token) linkText.indexOf(token) >= 0);
             };
@@ -737,8 +736,7 @@ function Hints() //{{{
                 return true;
             }
 
-            return function (linkText)
-            {
+            return function (linkText) {
                 if (hintStrings.length == 1 && hintStrings[0].length == 0)
                     return true;
 

@@ -534,8 +534,7 @@ if (highlight.CSS != Highlights.prototype.CSS)
 liberator.triggerObserver("load_styles", "styles");
 liberator.triggerObserver("load_highlight", "highlight");
 
-liberator.registerObserver("load_completion", function ()
-{
+liberator.registerObserver("load_completion", function () {
     completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
         [ // Prototype: (system, name, filter, css, index)
             null,
@@ -546,8 +545,8 @@ liberator.registerObserver("load_completion", function ()
         ]);
 });
 
-liberator.registerObserver("load_commands", function ()
-{
+liberator.registerObserver("load_commands", function () {
+
     commands.add(["colo[rscheme]"],
         "Load a color scheme",
         function (args)

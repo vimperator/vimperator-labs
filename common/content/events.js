@@ -164,8 +164,7 @@ function AutoCommands() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_completion", function ()
-    {
+    liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(autocommands.get, [function () config.autocommands]);
     });
 
@@ -343,20 +342,16 @@ function Events() //{{{
         let tabcontainer = getBrowser().mTabContainer;
         if (tabcontainer) // not every VIM-like extension has a tab container
         {
-            tabcontainer.addEventListener("TabMove", function (event)
-            {
+            tabcontainer.addEventListener("TabMove", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabOpen", function (event)
-            {
+            tabcontainer.addEventListener("TabOpen", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabClose", function (event)
-            {
+            tabcontainer.addEventListener("TabClose", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabSelect", function (event)
-            {
+            tabcontainer.addEventListener("TabSelect", function (event) {
                 // TODO: is all of that necessary?
                 modes.reset();
                 statusline.updateTabCount();
@@ -374,16 +369,14 @@ function Events() //{{{
         getBrowser().addEventListener("load", onPageLoad, true);
 
         // called when the active document is scrolled
-        getBrowser().addEventListener("scroll", function (event)
-        {
+        getBrowser().addEventListener("scroll", function (event) {
             statusline.updateBufferPosition();
             modes.show();
         }, null);
     }
     catch (e) {}
 
-//    getBrowser().addEventListener("submit", function (event)
-//    {
+//    getBrowser().addEventListener("submit", function (event) {
 //        // reset buffer loading state as early as possible, important for macros
 //        buffer.loaded = 0;
 //    }, null);
@@ -420,8 +413,7 @@ function Events() //{{{
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
     window.addEventListener("resize", onResize, true);
 
-    // window.document.addEventListener("DOMTitleChanged", function (event)
-    // {
+    // window.document.addEventListener("DOMTitleChanged", function (event) {
     //     liberator.log("titlechanged");
     // }, null);
 
@@ -564,8 +556,7 @@ function Events() //{{{
 
     function wrapListener(method)
     {
-        return function (event)
-        {
+        return function (event) {
             try
             {
                 self[method](event);

@@ -389,8 +389,7 @@ function IO() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_completion", function ()
-    {
+    liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter([self.getFile, self.expandPath],
             [function (context, obj, args) {
                 context.quote[2] = "";

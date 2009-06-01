@@ -712,8 +712,7 @@ function Buffer() //{{{
     ////////////////////// PAGE INFO ///////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    addPageInfoSection("f", "Feeds", function (verbose)
-    {
+    addPageInfoSection("f", "Feeds", function (verbose) {
         let doc = window.content.document;
 
         const feedTypes = {
@@ -789,8 +788,7 @@ function Buffer() //{{{
             yield nFeed + " feed" + (nFeed > 1 ? "s" : "");
     });
 
-    addPageInfoSection("g", "General Info", function (verbose)
-    {
+    addPageInfoSection("g", "General Info", function (verbose) {
         let doc = window.content.document;
 
         // get file size
@@ -850,8 +848,7 @@ function Buffer() //{{{
             yield ["Last Modified", lastModVerbose];
     });
 
-    addPageInfoSection("m", "Meta Tags", function (verbose)
-    {
+    addPageInfoSection("m", "Meta Tags", function (verbose) {
         // get meta tag data, sort and put into pageMeta[]
         let metaNodes = window.content.document.getElementsByTagName("meta");
 

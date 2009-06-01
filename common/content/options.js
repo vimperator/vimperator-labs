@@ -724,10 +724,8 @@ function Options() //{{{
     if (!/keypress/.test(popupAllowedEvents))
     {
         storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
-        liberator.registerObserver("shutdown", function ()
-        {
-            if (loadPreference("dom.popup_allowed_events", "")
-                    == popupAllowedEvents + " keypress")
+        liberator.registerObserver("shutdown", function () {
+            if (loadPreference("dom.popup_allowed_events", "") == popupAllowedEvents + " keypress")
                 storePreference("dom.popup_allowed_events", popupAllowedEvents);
         });
     }
@@ -919,8 +917,7 @@ function Options() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // TODO: Does this belong elsewhere?
-    liberator.registerObserver("load_completion", function ()
-    {
+    liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
                 [function () services.get("pref")

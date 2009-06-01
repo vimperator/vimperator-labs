@@ -225,8 +225,7 @@ const config = { //{{{
             };
 
             // XXX: Hack!
-            window.document.addEventListener("load", function ()
-            {
+            window.document.addEventListener("load", function () {
                 if (window.messageWasEditedExternally === undefined)
                 {
                     window.messageWasEditedExternally = false;
@@ -234,8 +233,7 @@ const config = { //{{{
                 }
             }, true);
 
-            window.addEventListener("compose-window-close", function ()
-            {
+            window.addEventListener("compose-window-close", function () {
                 window.messageWasEditedExternally = false;
             }, true);
 

@@ -301,8 +301,7 @@ function Mappings() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_completion", function ()
-    {
+    liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(mappings.get,
         [
             null,

@@ -200,8 +200,7 @@ const util = { //{{{
         while (cont)
         {
             cont = false;
-            str = str.replace(resep, function (match, before)
-            {
+            str = str.replace(resep, function (match, before) {
                 results.push(before);
                 cont = true;
                 return "";
