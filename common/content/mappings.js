@@ -56,7 +56,7 @@ function Map(modes, keys, description, action, extraInfo) //{{{
     /** @property {number[]} All of the modes for which this mapping applies. */
     this.modes = modes;
     /** @property {string[]} All of this mapping's names (key sequences). */
-    this.names = keys.map(events.canonKeys);
+    this.names = keys.map(events.canonicalKeys);
     /** @property {function (number)} The function called to execute this mapping. */
     this.action = action;
 

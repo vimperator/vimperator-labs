@@ -110,64 +110,15 @@ is hard to read.
   The exceptions to this rule are for objects with __iterator__ set,
   and for XML objects (see README.E4X).
 
-* Avoid using 'new' with constructors where possible, and use [] and
-  {} rather than new Array/new Object.
+* Use [] and {} rather than new Array/new Object.
+
+* Don't use abbreviations for public methods
   Right:
-    RegExp("^" + foo + "$")
-    Function(code)
-    new Date
+    function splitString()...
+    let commands = ...;
+    let cmds = ...; // Since it's only used locally, abbreviations are ok, but so are the full names
   Wrong:
-    new RegExp("^" + foo + "$")
-    new Function(code)
-    Date() // Right if you want a string-representation of the date
-
-  NOTE by mst: That one is debateable, actually I like the "new" as one
-  immediately sees that a new object of a class is created which is not
-  so obvious by var x = CompletionContext(); which could also mean that
-  CompletionContext() could return a cached object. What's thesnowdog's
-  opinion and why do you, Kris, think it's better/cleaner?
-
-  I don't think it's better/cleaner, it just seemed to be a consensus.
-    --Kris
-
-  I don't like unnecessary use of 'new', I don't like 'new'. --djk
-
-  There is semantic value to using "new." It's good CBSE. --Ted
-
-  There's no semantic value. It's reasonable to infer that any function
-  named in CamelCase is a constructor. That's the case with all such
-  internal functions. As far as I'm concerned, 'new' is a hack. Actually,
-  most of JS is a hack...
-    --Kris
-
-      What he said. Although, I would have said "a pretty nifty language
-      with some regrettable design decisions" now that I'm in therapy.
-      --djk
-
-  There is semantic value: With new you know for SURE it's calling the
-  constructor of a class, with CamelCase only you just ASSUME you do.
-  I am all about making code clearer also to new developers. And this
-  includes getting rid of as many assumptions as possible, by making
-  things explicit, when they don't hurt readability (and new doesn't
-  for me). It's not so important, that i'll change all instances to
-  new immediately, but will probably do so over time, when I see it.
-    --mst
-
-      JavaScript doesn't have classes... What about all the other
-      'constructor' functions such as Commands? And I think it does hurt
-      readability because it's pointless.
-      Anyway, if it's important enough to change it should all be
-      changed at once. I've removed most of these sorts of
-      inconsistencies and I wouldn't like to see them reintroduced.
-      --djk
-
-  Actually, you're not sure of anything. You can call new (function (a)
-  a.substr(2)), and you don't get a new object. The only difference is
-  that it's called with 'this' set. Given that it's uncouth to name a
-  non-constructor function in CamelCase, and that most internal
-  constructors don't require new (and some, like String, break when
-  you use it), it just seems superfluous and distracting.
-    --Kris
+    function splitStr()
 
 == Testing/Optimization ==
 
@@ -182,24 +133,6 @@ guidelines about optimization?
 TODO: Document the existence of remote branches and discuss when and how
       to push to them. At least provide an index so that devs know where
       to look if an old branch needs to be maintained or a feature needs
-      to be added to a new branch. Keep in mind that git is not the most
-      intuitive SCM.
-
-    I don't agree. git is about as intuitive as any other SCM, but,
-    regardless, it's by far one of the most popular. There are
-    countless git walkthroughs, FAQs, tips pages (not to mention 'git
-    help') that I don't see the need to duplicate them here. As for
-    branches, 'git branch' should be sufficient, and, if not, there's
-    a list on gitweb. --Kris
-
-        I wasn't trying to say that git was a problem (though other DVCS
-        have more accessible help systems; except for very complex
-        projects, I think Mercurial is a much more comfortable DVCS to
-        learn, use, and navigate). I was saying that it might be nice if
-        the remote branches (and related polices) were documented. Yes,
-        anyone can do a "git branch -r", but seeing that a branch exists
-        is not the same as understanding why it's there. --Ted
-
-            Sure, I agree. --djk
+      to be added to a new branch.
 
 // vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:

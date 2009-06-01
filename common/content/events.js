@@ -863,7 +863,7 @@ function Events() //{{{
                 yield match[0];
         },
 
-        canonKeys: function (keys)
+        canonicalKeys: function (keys)
         {
             var res = util.map(events.splitKeys(keys), function (key) {
                 let keyCode = 0;
