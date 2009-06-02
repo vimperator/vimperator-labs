@@ -259,7 +259,7 @@ function Bookmarks() //{{{
         {
             completer: function completer(context)
             {
-                completion.search(context, true)
+                completion.search(context, true);
                 context.completions = [["", "Don't perform searches by default"]].concat(context.completions);
             },
             validator: Option.validateCompleter

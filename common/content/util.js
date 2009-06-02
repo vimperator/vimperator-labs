@@ -334,8 +334,8 @@ const util = { //{{{
             {
                 xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4)
-                        callback(xmlhttp)
-                }
+                        callback(xmlhttp);
+                };
             }
             xmlhttp.open("GET", url, !!callback);
             xmlhttp.send(null);
@@ -442,7 +442,7 @@ const util = { //{{{
         const NAMESPACES = util.Array.toObject([
             [NS, 'liberator'],
             [XHTML, 'html'],
-            [XUL, 'xul'],
+            [XUL, 'xul']
         ]);
         if (object instanceof Node && !(object instanceof Document))
         {
@@ -735,7 +735,7 @@ util.Array.isinstance = function isinstance(obj) {
 util.Array.toObject = function toObject(assoc)
 {
     let obj = {};
-    assoc.forEach(function ([k, v]) { obj[k] = v });
+    assoc.forEach(function ([k, v]) { obj[k] = v; });
     return obj;
 };
 
@@ -857,7 +857,7 @@ Struct.prototype = {
         let self = this;
         return ([v, self[v]] for ([k, v] in Iterator(self.members)))
     }
-}
+};
 
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or
 // get length() won't work.

@@ -174,8 +174,8 @@ const config = { //{{{
             "<Return>": modes.NORMAL | modes.INSERT,
             "<Space>": modes.NORMAL | modes.INSERT,
             "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT,
-        }
+            "<Down>": modes.NORMAL | modes.INSERT
+        };
     },
 
     scripts: [
@@ -504,7 +504,7 @@ const config = { //{{{
                 let arg = args.literalArg;
 
                 if (arg in displayPanes)
-                    openDisplayPane(displayPanes[arg])
+                    openDisplayPane(displayPanes[arg]);
                     // TODO: focus when we have better key handling of these extended modes
                 else
                     liberator.echoerr("E475: Invalid argument: " + arg);
@@ -567,11 +567,11 @@ const config = { //{{{
         // functions to make porting from FF as simple as possible.
         window.toJavaScriptConsole = function () {
             toOpenWindowByType("global:console", "chrome://global/content/console.xul");
-        }
+        };
 
         window.BrowserStop = function () {
             SBGetBrowser().mCurrentBrowser.stop();
-        }
+        };
     }
 }; //}}}
 

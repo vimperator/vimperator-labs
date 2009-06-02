@@ -1047,7 +1047,7 @@ function Commands() //{{{
                                 return undefined;
                             }
                             return completer.apply(this, Array.slice(arguments));
-                        }
+                        };
                     }
                     else
                         completeFunc = completion[completeOptionMap[completeOpt]];

@@ -223,7 +223,7 @@ function Finder() //{{{
             var parent = before.parentNode;
             aNode.appendChild(docfrag);
             parent.insertBefore(aNode, before);
-            this.spans.push(aNode)
+            this.spans.push(aNode);
             return aNode;
         },
 
@@ -236,17 +236,17 @@ function Finder() //{{{
             {
                 if (span.parentNode)
                 {
-                    let el = span.firstChild
+                    let el = span.firstChild;
                     while (el)
                     {
-                        span.removeChild(el)
-                        span.parentNode.insertBefore(el, span)
+                        span.removeChild(el);
+                        span.parentNode.insertBefore(el, span);
                         el = span.firstChild;
                     }
                     span.parentNode.removeChild(span);
                 }
-            })
-            this.spans = []
+            });
+            this.spans = [];
         },
 
         getSpans: function (doc) this.spans
@@ -318,7 +318,7 @@ function Finder() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move after the current match before searching forwards
             window.content.getSelection().getRangeAt(0).collapse(false);
-            finder.onSubmit(word, false)
+            finder.onSubmit(word, false);
         });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
@@ -329,7 +329,7 @@ function Finder() //{{{
             let word = buffer.getCurrentWord();
             // A hacky way to move before the current match before searching backwards
             window.content.getSelection().getRangeAt(0).collapse(true);
-            finder.onSubmit(word, true)
+            finder.onSubmit(word, true);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -519,7 +519,7 @@ function Finder() //{{{
          */
         clear: function ()
         {
-            highlightObj.clear()
+            highlightObj.clear();
         }
     };
     //}}}

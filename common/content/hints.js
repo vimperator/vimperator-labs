@@ -161,7 +161,7 @@ function Hints() //{{{
         let type = elem.type ? elem.type.toLowerCase() : "";
 
         if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
-            return [elem.value, false]
+            return [elem.value, false];
         else
         {
             for each (let option in options["hintinputs"].split(","))
@@ -171,18 +171,18 @@ function Hints() //{{{
                     if (tagname == "select")
                     {
                         if (elem.selectedIndex >= 0)
-                            return [elem.item(elem.selectedIndex).text.toLowerCase(), false]
+                            return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
                     }
                     else if (type == "image")
                     {
                         if (elem.alt)
-                            return [elem.alt.toLowerCase(), true]
+                            return [elem.alt.toLowerCase(), true];
                     }
                     else if (elem.value && type != "password")
                     {
                         // radio's and checkboxes often use internal ids as values - maybe make this an option too...
                         if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
-                            return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")]
+                            return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")];
                     }
                 }
                 else if (option == "label")
@@ -192,14 +192,14 @@ function Hints() //{{{
                         //TODO: (possibly) do some guess work for label-like objects
                         let label = buffer.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
                         if (label)
-                            return [label.textContent.toLowerCase(), true]
+                            return [label.textContent.toLowerCase(), true];
                     }
                 }
                 else if (option == "name")
-                    return [elem.name.toLowerCase(), true]
+                    return [elem.name.toLowerCase(), true];
             }
         }
-        return ["", false]
+        return ["", false];
     }
 
     /**
@@ -266,11 +266,11 @@ function Hints() //{{{
 
                 // If we found a satisfactory offset, let's use it.
                 if (curdist < Infinity)
-                    return [leftpos + curleft, toppos + curtop]
+                    return [leftpos + curleft, toppos + curtop];
             }
         }
         catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
-        return [leftpos, toppos]
+        return [leftpos, toppos];
     }
 
     /**
@@ -674,7 +674,7 @@ function Hints() //{{{
                         let beyondLastWord = (nextWordIdx == words.length);
                         let charMatched = false;
                         if (beyondLastWord == false)
-                            charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping)
+                            charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping);
 
                         if (charMatched)
                             return true;
@@ -874,7 +874,7 @@ function Hints() //{{{
                         context.compare = function () 0;
                         context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
                     },
-                    onChange: function () { modes.pop() },
+                    onChange: function () { modes.pop(); },
                     onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
                 });
         }, { flags: Mappings.flags.COUNT });

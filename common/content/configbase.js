@@ -109,7 +109,7 @@ const configbase = { //{{{
      *    application namespaces which should be loaded before liberator
      *    initialization.
      */
-    scripts: [],
+    scripts: []
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

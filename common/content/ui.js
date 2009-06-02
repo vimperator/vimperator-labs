@@ -472,7 +472,7 @@ function CommandLine() //{{{
                         }
                         // Fallthrough
                     case "full":
-                        this.select(reverse ? this.UP : this.DOWN)
+                        this.select(reverse ? this.UP : this.DOWN);
                         break;
                 }
 
@@ -1765,7 +1765,7 @@ function ItemList(id) //{{{
             div.style.minWidth = "";
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
-        setTimeout(function () { container.height -= commandline.getSpaceNeeded() }, 0)
+        setTimeout(function () { container.height -= commandline.getSpaceNeeded() }, 0);
     }
 
     function getCompletion(index) completionElements.snapshotItem(index - startIndex);
@@ -1847,7 +1847,7 @@ function ItemList(id) //{{{
                 return;
             haveCompletions = true;
 
-            let root = nodes.root
+            let root = nodes.root;
             let items = nodes.items;
             let [start, end, waiting] = getRows(context);
 
@@ -1883,9 +1883,9 @@ function ItemList(id) //{{{
                 return;
             nodes.up.style.opacity = (start == 0) ? "0" : "1";
             if (end != context.items.length)
-                nodes.down.style.display = "block"
+                nodes.down.style.display = "block";
             else
-                nodes.up.style.display = "block"
+                nodes.up.style.display = "block";
         });
 
         divNodes.noCompletions.style.display = haveCompletions ? "none" : "block";

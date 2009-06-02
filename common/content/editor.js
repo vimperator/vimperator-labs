@@ -419,7 +419,7 @@ function Editor() //{{{
 
     mappings.add([modes.VISUAL],
         ["v"], "End visual mode",
-        function (count) { events.onEscape() });
+        function (count) { events.onEscape(); });
 
     mappings.add([modes.TEXTAREA],
         ["V"], "Start visual line mode",
@@ -601,7 +601,8 @@ function Editor() //{{{
         {
             let elem = liberator.focus;
             // A error occurs if the element has been removed when "elem.selectionStart" is executed.
-            try {
+            try
+            {
                 if (elem && elem.selectionEnd)
                     elem.selectionEnd = elem.selectionStart;
             }

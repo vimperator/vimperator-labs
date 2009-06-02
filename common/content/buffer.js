@@ -334,7 +334,7 @@ function Buffer() //{{{
             if (util.newURI(buffer.URL).scheme == scheme)
                 liberator.open(buffer.URL.substr(scheme.length + 1));
             else
-                liberator.open(scheme + ":" + buffer.URL)
+                liberator.open(scheme + ":" + buffer.URL);
         });
 
     mappings.add(myModes, ["gi"],

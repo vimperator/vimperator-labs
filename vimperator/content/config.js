@@ -131,13 +131,13 @@ const config = { //{{{
             "<Return>": modes.NORMAL | modes.INSERT,
             "<Space>": modes.NORMAL | modes.INSERT,
             "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT,
-        }
+            "<Down>": modes.NORMAL | modes.INSERT
+        };
     },
 
     scripts: [
         "bookmarks.js",
-        "tabs.js",
+        "tabs.js"
     ],
 
     init: function ()
@@ -369,8 +369,8 @@ const config = { //{{{
             "Redraw the screen",
             function ()
             {
-                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor).
-                                getInterface(Ci.nsIDOMWindowUtils);
+                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
+                               .getInterface(Ci.nsIDOMWindowUtils);
                 wu.redraw();
                 modes.show();
             },

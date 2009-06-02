@@ -27,7 +27,7 @@ function Services()
         ifaces = Array.concat(ifaces);
         try
         {
-            let res = Cc[classes][meth || "getService"](ifaces.shift())
+            let res = Cc[classes][meth || "getService"](ifaces.shift());
             ifaces.forEach(function (iface) res.QueryInterface(iface));
             return res;
         }

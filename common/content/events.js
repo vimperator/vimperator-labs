@@ -431,7 +431,7 @@ function Events() //{{{
         return: ["Return", "CR", "Enter"],
         right_shift: [">"],
         space: ["Space", " "],
-        subtract: ["Minus", "Subtract"],
+        subtract: ["Minus", "Subtract"]
     };
 
     const code_key = {};
@@ -874,7 +874,7 @@ function Events() //{{{
                     if (keyname)
                     {
                         modifier = modifier.toUpperCase();
-                        key = [k + "-" for ([i, k] in Iterator("CASM")) if (modifier.indexOf(k + "-") >= 0)]
+                        key = [k + "-" for ([i, k] in Iterator("CASM")) if (modifier.indexOf(k + "-") >= 0)];
                         keyCode = key_code[keyname];
 
                         let c = String.fromCharCode(keyCode);
@@ -927,7 +927,7 @@ function Events() //{{{
                 {
                     let charCode = key.charCodeAt(0);
                     let keyCode = 0;
-                    let [shift, ctrl, alt, meta] = [false, false, false, false]
+                    let [shift, ctrl, alt, meta] = [false, false, false, false];
                     let string = null;
 
                     if (key[0] == "<")
