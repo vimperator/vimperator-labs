@@ -38,7 +38,7 @@ const configbase = { //{{{
 
     /**
      * @property {object} Application specific defaults for option values. The
-     *     property names must be the options' cannonical names, and the values
+     *     property names must be the options' canonical names, and the values
      *     must be strings as entered via :set.
      */
     defaults: { guioptions: "rb" },
@@ -57,7 +57,7 @@ const configbase = { //{{{
     /**
      * @property {string[]} A list of features available in this
      *    application. Used extensively in feature test macros. Use
-     *    liberator.has(feature) to check for a feature's presense
+     *    liberator.has(feature) to check for a feature's presence
      *    in this array.
      */
     features: [],
@@ -74,7 +74,7 @@ const configbase = { //{{{
 
     /**
      * @property {[string]} A list of HTML help files available under
-     *     chrome://liberator/locale/. Used to generate help tag indeces for
+     *     chrome://liberator/locale/. Used to generate help tag indexes for
      *     the :help command.
      */
     helpFiles: [],
