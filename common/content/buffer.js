@@ -277,14 +277,21 @@ function Buffer() //{{{
         },
         { flags: Mappings.flags.COUNT });
 
+    function scrollByScrollSize(count, direction)
+    {
+        if (count > 0)
+            options["scroll"] = count;
+        buffer.scrollByScrollSize(direction);
+    }
+
     mappings.add(myModes, ["<C-d>"],
         "Scroll window downwards in the buffer",
-        function (count) { buffer.scrollByScrollSize(count); },
+        function (count) { scrollByScrollSize(count, true); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["<C-u>"],
         "Scroll window upwards in the buffer",
-        function (count) { buffer.scrollByScrollSize(-count); },
+        function (count) { scrollByScrollSize(count, false); },
         { flags: Mappings.flags.COUNT });
 
     mappings.add(myModes, ["<C-b>", "<PageUp>", "<S-Space>"],
@@ -1307,17 +1314,19 @@ function Buffer() //{{{
         },
 
         /**
-         * Scrolls the buffer vertically <b>count</b> * 'scroll' rows.
+         * Scrolls the buffer vertically 'scroll' lines.
          *
-         * @param {number} count The multiple of 'scroll' lines to scroll. A
-         *     positive value scrolls down and a negative value up.
+         * @param {boolean} direction The direction to scroll. If true then
+         *     scroll up and if false scroll down.
+         * @param {number} count The multiple of 'scroll' lines to scroll.
+         * @optional
          */
-        scrollByScrollSize: function (count)
+        scrollByScrollSize: function (direction, count)
         {
-            if (count > 0)
-                options["scroll"] = count;
-
+            direction = direction ? 1 : -1;
+            count = count || 1;
             let win = findScrollableWindow();
+
             checkScrollYBounds(win, direction);
 
             if (options["scroll"] > 0)
