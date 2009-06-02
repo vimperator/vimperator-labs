@@ -546,10 +546,7 @@ function Editor() //{{{
                 let text = getEditor().value;
                 let pos = getEditor().selectionStart;
                 if (pos >= text.length)
-                {
-                    liberator.beep();
-                    return;
-                }
+                    return void liberator.beep();
                 let chr = text[pos];
                 getEditor().value = text.substring(0, pos) +
                     (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +

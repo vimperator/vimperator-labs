@@ -147,10 +147,7 @@ const config = { //{{{
         {
             let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
             if (!matches)
-            {
-                liberator.beep();
-                return;
-            }
+                return void liberator.beep();
 
             let [, pre, number, post] = matches;
             let newNumber = parseInt(number, 10) + count;
@@ -305,10 +302,7 @@ const config = { //{{{
             {
                 let uri = content.document.location;
                 if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
-                {
-                    liberator.beep();
-                    return;
-                }
+                    return void liberator.beep();
                 liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
             });
 

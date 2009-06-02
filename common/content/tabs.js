@@ -961,10 +961,7 @@ function Tabs() //{{{
             let index = indexFromSpec(spec, wrap);
             // FIXME:
             if (index == -1)
-            {
-                liberator.beep();
-                return;
-            }
+                return void liberator.beep();
             getBrowser().mTabContainer.selectedIndex = index;
         },
 

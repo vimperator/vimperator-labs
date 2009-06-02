@@ -1681,10 +1681,7 @@ function Marks() //{{{
         function (arg)
         {
             if (/[^a-zA-Z]/.test(arg))
-            {
-                liberator.beep();
-                return;
-            }
+                return void liberator.beep();
 
             marks.add(arg);
         },

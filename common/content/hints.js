@@ -913,10 +913,7 @@ function Hints() //{{{
         {
             hintMode = hintModes[minor];
             if (!hintMode)
-            {
-                liberator.beep();
-                return;
-            }
+                return void liberator.beep();
             commandline.input(hintMode.prompt + ": ", null, { onChange: onInput });
             modes.extended = modes.HINTS;
 
@@ -1013,8 +1010,7 @@ function Hints() //{{{
                     {
                         usedTabKey = false;
                         hintNumber = 0;
-                        liberator.beep();
-                        return;
+                        return void liberator.beep();
                     }
                     break;
 
@@ -1053,10 +1049,7 @@ function Hints() //{{{
                         showActiveHint(hintNumber, oldHintNumber || 1);
 
                         if (hintNumber == 0 || hintNumber > validHints.length)
-                        {
-                            liberator.beep();
-                            return;
-                        }
+                            return void liberator.beep();
 
                         // if we write a numeric part like 3, but we have 45 hints, only follow
                         // the hint after a timeout, as the user might have wanted to follow link 34

@@ -967,10 +967,7 @@ function QuickMarks() //{{{
         function (arg)
         {
             if (/[^a-zA-Z0-9]/.test(arg))
-            {
-                liberator.beep();
-                return;
-            }
+                return void liberator.beep();
 
             quickmarks.add(arg, buffer.URL);
         },
