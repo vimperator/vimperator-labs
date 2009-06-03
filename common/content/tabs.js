@@ -59,6 +59,16 @@ function Tabs() //{{{
         else
             return window.getBrowser;
     })();
+
+    // FIXME: why is this app specific conditional code here?
+    //        Why the distinction? Why not just mStrip? --djk
+    if (config.hostApplication == "Firefox")
+        var tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
+    else if (/^(Thunderbird|Songbird)$/.test(config.hostApplication))
+        tabStrip = getBrowser().mStrip;
+    else
+        tabStrip = null;
+
     var alternates = [getBrowser().mCurrentTab, null];
 
     // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
@@ -108,9 +118,9 @@ function Tabs() //{{{
         services.get("sessionStore").setTabState(to, tabState);
     }
 
-    // hide tabs initially
+    // hide tabs initially to prevent flickering when 'stal' is unset
     if (config.hasTabbrowser)
-        getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0].collapsed = true;
+        getBrowser().mStrip.collapsed = true;
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -732,25 +742,13 @@ function Tabs() //{{{
         /**
          * @property {Object} The tab browser strip.
          */
-        get tabStrip()
-        {
-            let tabStrip = null;
-
-            // FIXME: why is this app specific conditional code here?
-            if (config.hostApplication == "Firefox")
-                tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
-            else if (/^(Thunderbird|Songbird)$/.test(config.hostApplication))
-                tabStrip = getBrowser().mStrip;
-
-            return tabStrip;
-        },
+        get tabStrip() tabStrip,
 
         /**
          * @property {Object[]} The array of closed tabs for the current
          *     session.
          */
-        get closedTabs() services.get("json").decode(services.get("sessionStore")
-            .getClosedTabData(window)),
+        get closedTabs() services.get("json").decode(services.get("sessionStore").getClosedTabData(window)),
 
         /**
          * Returns the index of <b>tab</b> or the index of the currently
