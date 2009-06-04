@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 set -e
 
 top=$(pwd)
