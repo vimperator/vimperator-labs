@@ -1018,10 +1018,11 @@ function Commands() //{{{
 
             if (args.literalArg)
             {
-                let nargsOpt    = args["-nargs"] || "0";
-                let bangOpt     = "-bang"  in args;
-                let countOpt    = "-count" in args;
-                let completeOpt = args["-complete"];
+                let nargsOpt       = args["-nargs"] || "0";
+                let bangOpt        = "-bang"  in args;
+                let countOpt       = "-count" in args;
+                let descriptionOpt = args["-description"] || "User-defined command";
+                let completeOpt    = args["-complete"];
 
                 let completeFunc = null; // default to no completion for user commands
 
@@ -1054,7 +1055,7 @@ function Commands() //{{{
                 }
 
                 let added = commands.addUserCommand([cmd],
-                                "User defined command",
+                                descriptionOpt,
                                 userCommand,
                                 {
                                     argCount: nargsOpt,
@@ -1106,6 +1107,7 @@ function Commands() //{{{
                      function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
                 [["-bang"], self.OPTION_NOARG],
                 [["-count"], self.OPTION_NOARG],
+                [["-description"], self.OPTION_STRING],
                 // TODO: "E180: invalid complete value: " + arg
                 [["-complete"], self.OPTION_STRING,
                      function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),

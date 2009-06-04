@@ -375,6 +375,12 @@ By default a user command does not have a special version, i.e. a version
 executed with the ! modifier. Providing the -bang attribute will enable this
 and <bang> will be available in the argument.
 
+|:command-description| +
+Command description
+
+The command's description text can be set with -description. Otherwise it will
+default to "User-defined command".
+
 |:command-replacement-text| +
 Replacement text
 

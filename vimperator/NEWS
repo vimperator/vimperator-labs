@@ -2,9 +2,10 @@
     * version 2.2a1pre
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
+    * add -description option to :command
     * command-line options are now supported via the host application's
       -liberator option
-    * add :i and :I for opening image location (in new tab)
+    * add ;i and ;I for opening image location (in new tab)
     * add all.html to show all help sections in a single page - available via
       :help all
     * add ;c extended hint mode - open the context menu
