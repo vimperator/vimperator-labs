@@ -1120,8 +1120,10 @@ function Commands() //{{{
                     bang: true,
                     options: util.Array.toObject(
                         [[v, typeof cmd[k] == "boolean" ? null : cmd[k]]
-                         for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count" }))
-                         if (k in cmd && cmd[k] != "0")]),
+                         // FIXME: this map is expressed multiple times
+                         for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count", description: "-description" }))
+                         // FIXME: add support for default values to parseArgs
+                         if (k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")]),
                     arguments: [cmd.name],
                     literalArg: cmd.replacementText
                 }
