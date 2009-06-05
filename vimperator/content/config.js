@@ -32,7 +32,7 @@ const config = { //{{{
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "windows"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "tabUndo", "windows"],
     defaults: {
         guioptions: "rb",
         showtabline: 2,

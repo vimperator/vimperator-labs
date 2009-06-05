@@ -286,10 +286,14 @@ function Tabs() //{{{
             function (count) { tabs.switchTo(null, null, count, true); },
             { flags: Mappings.flags.COUNT });
 
-        mappings.add([modes.NORMAL], ["u"],
-            "Undo closing of a tab",
-            function (count) { commands.get("undo").execute("", false, count); },
-            { flags: Mappings.flags.COUNT });
+        // TODO: feature dependencies - implies "session"?
+        if (liberator.has("tabUndo"))
+        {
+            mappings.add([modes.NORMAL], ["u"],
+                "Undo closing of a tab",
+                function (count) { commands.get("undo").execute("", false, count); },
+                { flags: Mappings.flags.COUNT });
+        }
 
         mappings.add([modes.NORMAL], ["<C-^>", "<C-6>"],
             "Select the alternate tab or the [count]th tab",
@@ -607,8 +611,7 @@ function Tabs() //{{{
             });
     }
 
-    /* Why not xulmus? */
-    if (liberator.has("session") && config.name != "Xulmus")
+    if (liberator.has("tabUndo"))
     {
         commands.add(["u[ndo]"],
             "Undo closing of a tab",
@@ -654,6 +657,10 @@ function Tabs() //{{{
             },
             { argCount: "0" });
 
+    }
+
+    if (liberator.has("session"))
+    {
         commands.add(["wqa[ll]", "wq", "xa[ll]"],
             "Save the session and quit",
             function () { liberator.quit(true); },
