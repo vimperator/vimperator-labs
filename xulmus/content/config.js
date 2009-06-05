@@ -26,6 +26,8 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
+Components.utils.import("resource://gre/modules/utils.js"); // XXX
+
 const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Xulmus",

@@ -30,23 +30,24 @@ const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // Try to import older command line history, quick marks, etc.
 liberator.registerObserver("load", function () {
-    if (!options.getPref("extensions.vimperator.commandline_cmd_history"))
+    let branch = "extensions." + config.name.toLowerCase();
+    if (!options.getPref(branch + ".commandline_cmd_history"))
         return;
 
     let store = storage["history-command"];
-    let pref  = options.getPref("extensions.vimperator.commandline_cmd_history");
+    let pref  = options.getPref(branch + ".commandline_cmd_history");
     for (let [k, v] in Iterator(pref.split("\n")))
         store.push(v);
 
     store = storage["quickmarks"];
-    pref = options.getPref("extensions.vimperator.quickmarks")
+    pref = options.getPref(branch + ".quickmarks")
                     .split("\n");
     while (pref.length > 0)
         store.set(pref.shift(), pref.shift());
 
-    options.resetPref("extensions.vimperator.commandline_cmd_history");
-    options.resetPref("extensions.vimperator.commandline_search_history");
-    options.resetPref("extensions.vimperator.quickmarks");
+    options.resetPref(branch + ".commandline_cmd_history");
+    options.resetPref(branch + ".commandline_search_history");
+    options.resetPref(branch + ".quickmarks");
 });
 
 // also includes methods for dealing with keywords and search engines
@@ -523,7 +524,7 @@ function Bookmarks() //{{{
         getFavicon: function (url) getFavicon(url),
 
         // TODO: add filtering
-        // also ensures that each search engine has a Vimperator-friendly alias
+        // also ensures that each search engine has a Liberator-friendly alias
         getSearchEngines: function getSearchEngines()
         {
             let searchEngines = [];
@@ -606,7 +607,67 @@ function Bookmarks() //{{{
             // did not :open <tab> once before
             this.getSearchEngines();
 
+            // ripped from Firefox
+            if (!window.getShortcutOrURI)
+                window.getShortcutOrURI = function (aURL, aPostDataRef) {
+                    var shortcutURL = null;
+                    var keyword = aURL;
+                    var param = "";
+                    var searchService = Cc['@mozilla.org/browser/search-service;1'].getService(Ci.nsIBrowserSearchService);
+                    var offset = aURL.indexOf(" ");
+                    if (offset > 0)
+                    {
+                        keyword = aURL.substr(0, offset);
+                        param = aURL.substr(offset + 1);
+                    }
+                    if (!aPostDataRef)
+                        aPostDataRef = {};
+                    var engine = searchService.getEngineByAlias(keyword);
+                    if (engine)
+                    {
+                        var submission = engine.getSubmission(param, null);
+                        aPostDataRef.value = submission.postData;
+                        return submission.uri.spec;
+                    }
+                    [shortcutURL, aPostDataRef.value] = PlacesUtils.getURLAndPostDataForKeyword(keyword);
+                    if (!shortcutURL)
+                        return aURL;
+                    var postData = "";
+                    if (aPostDataRef.value)
+                        postData = unescape(aPostDataRef.value);
+                    if (/%s/i.test(shortcutURL) || /%s/i.test(postData))
+                    {
+                        var charset = "";
+                        const re = /^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/;
+                        var matches = shortcutURL.match(re);
+                        if (matches)
+                            [, shortcutURL, charset] = matches;
+                        else
+                        {
+                            try
+                            {
+                                charset = PlacesUtils.history.getCharsetForURI(makeURI(shortcutURL));
+                            } catch (e) {             }
+                        }
+                        var encodedParam = "";
+                        if (charset)
+                            encodedParam = escape(convertFromUnicode(charset, param));
+                        else
+                            encodedParam = encodeURIComponent(param);
+                        shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);
+                        if (/%s/i.test(postData))
+                            aPostDataRef.value = getPostDataStream(postData, param, encodedParam, "application/x-www-form-urlencoded");
+                    }
+                    else if (param)
+                    {
+                        aPostDataRef.value = null;
+                        return aURL;
+                    }
+                    return shortcutURL;
+                }
+
             url = window.getShortcutOrURI(searchString, postData);
+
             if (url == searchString)
                 url = null;
 
