@@ -970,8 +970,10 @@ function Events() //{{{
                     }
 
                     let elem = liberator.focus || window.content;
-                    let evt = doc.createEvent("KeyEvents");
-                    evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
+                    let evt = events.create(doc, "keypress", {
+                            ctrlKey: ctrl, altKey: alt, shiftKey: shift, metaKey: meta ,
+                            keyCode: keyCode, charCode: charCode
+                    });
                     if (typeof noremap == "object")
                         for (let [k, v] in Iterator(noremap))
                             evt[k] = v;
@@ -1010,6 +1012,40 @@ function Events() //{{{
                         evt.target.dispatchEvent(evt);
                 }
             }
+        },
+
+        create: function (doc, type, opts)
+        {
+            var DEFAULTS = {
+                Key: {
+                    type: type,
+                    bubbles: true, cancelable: true,
+                    view: doc.defaultView,
+                    ctrlKey: false, altKey: false, shiftKey: false, metaKey: false,
+                    keyCode: 0, charCode: 0
+                },
+                Mouse: {
+                    type: type,
+                    bubbles: true, cancelable: true,
+                    view: doc.defaultView, 
+                    detail: 1,
+                    screenX: 0, screenY: 0,
+                    clientX: 0, clientY: 0, 
+                    ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, 
+                    button: 0,
+                    relatedTarget: null
+                }
+            };
+            const TYPES = {
+                click: "Mouse", mousedown: "Mouse", mouseup: "Mouse",
+                mouseover: "Mouse", mouseout: "Mouse",
+                keypress: "Key", keyup: "Key", keydown: "Key"
+            };
+            var t = TYPES[type];
+            var evt = doc.createEvent(t + "Events");
+            evt["init" + t + "Event"].apply(evt,
+                    [v for ([k, v] in Iterator(util.extend(DEFAULTS[t], opts)))]);
+            return evt;
         },
 
         /**

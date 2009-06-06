@@ -1069,14 +1069,13 @@ function Buffer() //{{{
 
             elem.focus();
 
-            let evt = doc.createEvent("MouseEvents");
             let x = 0;
             let y = 0;
             // for imagemap
             if (elemTagName == "area")
                 [x, y] = elem.getAttribute("coords").split(",").map(Number);
 
-            evt.initMouseEvent("mouseover", true, true, doc.defaultView, 1, x, y, 0, 0, 0, 0, 0, 0, 0, null);
+            let evt = events.create(doc, "mouseover", { screenX: x, screenY: y });
             elem.dispatchEvent(evt);
         },
 
@@ -1159,19 +1158,18 @@ function Buffer() //{{{
             let offsetX = 1;
             let offsetY = 1;
 
-            let localName = elem.localName.toLowerCase();
-            if (localName == "frame" || localName == "iframe") // broken?
+            if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
             {
                 elem.contentWindow.focus();
                 return;
             }
-            else if (localName == "area") // for imagemap
+            else if (elem instanceof HTMLAreaElement) // for imagemap
             {
                 let coords = elem.getAttribute("coords").split(",");
                 offsetX = Number(coords[0]) + 1;
                 offsetY = Number(coords[1]) + 1;
             }
-            else if (localName == "input" && elem.type.toLowerCase() == "file")
+            else if (elem instanceof HTMLInputElement && elem.type == "file")
             {
                 openUploadPrompt(elem);
                 return;
@@ -1196,12 +1194,13 @@ function Buffer() //{{{
 
             elem.focus();
 
-            let evt = doc.createEvent("MouseEvents");
             options.withContext(function () {
                 options.setPref("browser.tabs.loadInBackground", true);
                 ["mousedown", "mouseup", "click"].forEach(function (event) {
-                    evt.initMouseEvent(event, true, true, view, 1, offsetX, offsetY, 0, 0,
-                            ctrlKey, /*altKey*/0, shiftKey, /*metaKey*/ ctrlKey, 0, null);
+                    let evt = events.create(doc, event, {
+                        screenX: offsetX, screenY: offsetY,
+                        ctrlKey: ctrlKey, shiftKey: shiftKey, metaKey: ctrlKey
+                    });
                     elem.dispatchEvent(evt);
                 });
             });
