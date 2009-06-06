@@ -1794,8 +1794,11 @@ function Marks() //{{{
         add: function (mark, silent)
         {
             let win = window.content;
+            let doc = win.document;
 
-            if (win.document.body.localName.toLowerCase() == "frameset")
+            if (!doc.body)
+                return;
+            if (doc.body instanceof HTMLFrameSetElement)
             {
                 if (!silent)
                     liberator.echoerr("Marks support for frameset pages not implemented yet");
