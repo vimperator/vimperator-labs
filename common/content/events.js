@@ -974,7 +974,7 @@ function Events() //{{{
                     evt.initKeyEvent("keypress", true, true, view, ctrl, alt, shift, meta, keyCode, charCode);
                     if (typeof noremap == "object")
                         for (let [k, v] in Iterator(noremap))
-                            event[k] = v;
+                            evt[k] = v;
                     else
                         evt.noremap = !!noremap;
                     evt.isMacro = true;
