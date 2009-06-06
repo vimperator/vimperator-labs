@@ -495,6 +495,7 @@ function CommandLine() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var statusTimer = new Timer(5, 100, function statusTell() {
+        // FIXME: completions is null Error
         if (completions.selected == null)
             statusline.updateProgress("");
         else
