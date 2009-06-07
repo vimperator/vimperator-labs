@@ -438,7 +438,7 @@ function Events() //{{{
     const key_code = {};
 
     for (let [k, v] in Iterator(KeyEvent))
-        if (/^DOM_VK_(?![A-Z0-1]$)/.test(k)) {
+        if (/^DOM_VK_(?![A-Z0-9]$)/.test(k)) {
             k = k.substr(7).toLowerCase();
             let names = [k.replace(/(^|_)(.)/g, function (m, n1, n2) n2.toUpperCase())
                           .replace(/^NUMPAD/, "k")];
