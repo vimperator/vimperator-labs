@@ -449,7 +449,7 @@ function Events() //{{{
                 key_code[name.toLowerCase()] = v
         }
 
-    //HACK: as firefox does not include an event for <, we must add this in manually.
+    // HACK: as firefox does not include an event for <, we must add this in manually.
     if (! ("<" in key_code))
     {
         key_code["<"] = 60;
@@ -846,55 +846,6 @@ function Events() //{{{
             }
         },
 
-        splitKeys: function(keys) {
-            let re = RegExp("<.*?>|[^<]|<(?!.*>)", "g");
-            let match;
-            while (match = re.exec(keys))
-                yield match[0];
-        },
-
-        canonicalKeys: function (keys)
-        {
-            var res = util.map(events.splitKeys(keys), function (key) {
-                let keyCode = 0;
-
-                if (key == "<")
-                    return "<lt>";
-
-                if (key[0] == "<")
-                {
-                    let [match, modifier, keyname] = key.toLowerCase().match(/^<((?:[csma]-)*)(.+?)>$/) || [];
-                    if (keyname)
-                    {
-                        modifier = modifier.toUpperCase();
-
-                        if (modifier.length > 0 && keyname.length == 1 && keyname.toUpperCase() != keyname.toLowerCase())
-                        {
-                            if (modifier.indexOf("S-") >= 0)
-                                keyname = keyname.toUpperCase();
-                            else
-                                keyname = keyname.toLowerCase();
-                            modifier = modifier.replace("S-", "");
-                        }
-
-                        key = [k + "-" for ([i, k] in Iterator("CASM")) if (modifier.indexOf(k + "-") >= 0)];
-                        keyCode = key_code[keyname];
-
-                        let c = String.fromCharCode(keyCode);
-                        if (key.length == 0 && c == code_key[keyCode])
-                            return c.toLowerCase();
-                        else
-                            return ["<"].concat(key, code_key[keyCode] || keyname, ">");
-                    }
-                }
-                else // a simple key
-                {
-                    return key;
-                }
-            });
-            return util.Array.flatten(res).join("");
-        },
-
         /**
          * Pushes keys onto the event queue from liberator. It is similar to
          * Vim's feedkeys() method, but cannot cope with 2 partially-fed
@@ -924,68 +875,25 @@ function Events() //{{{
             {
                 liberator.threadYield(1, true);
 
-                for (let key in events.splitKeys(keys))
+                for (let [,evt_obj] in Iterator(events.fromString(keys)))
                 {
-                    let charCode = key.charCodeAt(0);
-                    let keyCode = 0;
-                    let [shift, ctrl, alt, meta] = [false, false, false, false];
-                    let string = null;
-
-                    if (key[0] == "<")
-                    {
-                        let [match, modifier, keyname] = key.match(/^<((?:[CSMA]-)*)(.+?)>$/i) || [];
-                        if (keyname)
-                        {
-                            keyname = keyname.toLowerCase();
-                            if (modifier) // check for modifiers
-                            {
-                                ctrl  = /C-/i.test(modifier);
-                                alt   = /A-/i.test(modifier);
-                                shift = /S-/i.test(modifier);
-                                meta  = /M-/i.test(modifier);
-                            }
-                            if (keyname.length == 1)
-                            {
-                                if (!ctrl && !alt && !shift && !meta)
-                                    return false; // an invalid key like <a>
-                                else if (shift)
-                                    keyname = keyname.toUpperCase();
-                                charCode = keyname.charCodeAt(0);
-                            }
-                            else if (keyname == "nop")
-                                string = "<Nop>";
-                            else if (keyCode = key_code[keyname])
-                                charCode = 0;
-                            else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
-                                break;
-
-                            if (keyCode == 32)
-                                charCode = 32;
-                        }
-                    }
-                    else // a simple key
-                    {
-                        shift = key != key.toLowerCase();
-                    }
-
                     let elem = liberator.focus || window.content;
-                    let evt = events.create(doc, "keypress", {
-                            ctrlKey: ctrl, altKey: alt, shiftKey: shift, metaKey: meta ,
-                            keyCode: keyCode, charCode: charCode
-                    });
+                    let evt = events.create(doc, "keypress", evt_obj);
+
                     if (typeof noremap == "object")
                         for (let [k, v] in Iterator(noremap))
                             evt[k] = v;
                     else
                         evt.noremap = !!noremap;
                     evt.isMacro = true;
-
                     // A special hack for liberator-specific key names.
-                    if (string)
+                    if (evt_obj.liberatorString || evt_obj.liberatorShift)
                     {
-                        evt.liberatorString = string;
+                        evt.liberatorString = evt_obj.liberatorString; // for key-less keypress events e.g. <Nop>
+                        evt.liberatorShift = evt_obj.liberatorShift; // for untypable shift keys e.g. <S-1>
                         events.onKeyPress(evt);
                     }
+
                     else
                         elem.dispatchEvent(evt);
 
@@ -1013,6 +921,16 @@ function Events() //{{{
             }
         },
 
+        /**
+         * Creates an actual event from a pseudo-event object.
+         *
+         * The pseudo-event object (such as may be retrieved from events.fromString)
+         * should have any properties you want the event to have.
+         *
+         * @param {Document} doc  The DOM document to associate this event with
+         * @param {Type} type  The type of event (keypress, click, etc.)
+         * @param {Object} opts  The pseudo-event.
+         */
         create: function (doc, type, opts)
         {
             var DEFAULTS = {
@@ -1048,8 +966,117 @@ function Events() //{{{
         },
 
         /**
-         * Converts the specified key event to a string in liberator key-code
-         * notation. Returns null for an unknown key event.
+         * Converts a user-input string of keys into a canonical representation.
+         *
+         * <C-A> maps to <C-a>, <C-S-a> maps to <C-S-A>
+         * <C- > maps to <C-Space>, <S-a> maps to A
+         * << maps to <lt><lt>
+         *
+         * <S-@> is preserved, as in vim, to allow untypable key-combinations in macros
+         *
+         * canonicalKeys(canonicalKeys(x)) == canonicalKeys(x) for all values of x.
+         *
+         * @param {String} keys  messy form
+         * @returns {String}  canonical form
+         */
+        canonicalKeys: function (keys)
+        {
+            return events.fromString(keys).map(events.toString).join("");
+        },
+
+        /**
+         * Converts an event string into an array of pseudo-event objects.
+         *
+         * These objects can be used as arguments to events.toString or events.create,
+         * though they are unlikely to be much use for other purposes. They have many
+         * of the properties you'd expect to find on a real event, but none of the methods.
+         *
+         * Also may contain two "special" parameters, .liberatorString and .liberatorShift
+         * these are set for characters that can never by typed, but may appear in mappings,
+         * for example <Nop> is passed as liberatorString, and liberatorShift is set when
+         * a user specifies <S-@> where @ is a non-case-changable, non-space character.
+         *
+         * @param {String} keys  The string to parse
+         * @return {Array[Object]}
+         */
+        fromString: function (input)
+        {
+            let out = []
+
+            let re = RegExp("<.*?>?>|[^<]|<(?!.*>)", "g");
+            let match;
+
+            while (match = re.exec(input))
+            {
+                let evt_str = match[0];
+                let evt_obj = {ctrlKey:false, shiftKey:false,altKey:false, metaKey: false,
+                               keyCode: 0, charCode: 0, type: "keypress"};
+
+                if (evt_str.length > 1) // <.*?>
+                {
+                    let [match, modifier, keyname] = evt_str.match(/^<((?:[CSMA]-)*)(.+?)>$/i) || [false, '', ''];
+                    modifier = modifier.toUpperCase();
+                    keyname = keyname.toLowerCase();
+
+                    if (keyname && !(keyname.length == 1 && modifier.length == 0 ||  // disallow <> and <a>
+                        !(keyname.length == 1 || key_code[keyname] || keyname == "nop" || /mouse$/.test(keyname)))) // disallow <misteak>
+                    {
+                        evt_obj.ctrlKey  = /C-/.test(modifier);
+                        evt_obj.altKey   = /A-/.test(modifier);
+                        evt_obj.shiftKey = /S-/.test(modifier);
+                        evt_obj.metaKey  = /M-/.test(modifier);
+
+                        if (keyname.length == 1) // normal characters
+                        {
+                            if (evt_obj.shiftKey)
+                            {
+                                keyname = keyname.toUpperCase()
+                                if (keyname == keyname.toLowerCase())
+                                    evt_obj.liberatorShift = true;
+                            }
+
+                            evt_obj.charCode = keyname.charCodeAt(0);
+                        }
+                        else if (keyname == "nop") 
+                        {
+                            evt_obj.liberatorString = "<Nop>";
+                        }
+                        else if (/mouse$/.test(keyname)) // mouse events
+                        {
+                            evt_obj.type = (/2-/.test(modifier) ? "dblclick" : "click");
+                            evt_obj.button = ["leftmouse", "middlemouse", "rightmouse"].indexOf(keyname);
+                            delete evt_obj.keyCode;
+                            delete evt_obj.charCode;
+                        }
+                        else // spaces, control characters, and <
+                        {
+                            evt_obj.keyCode = key_code[keyname]
+                            evt_obj.charCode = 0;
+                        }
+                    }
+                    else // an invalid sequence starting with <, treat as a literal
+                    {
+                        out = out.concat(events.fromString("<lt>" + evt_str.substr(1)));
+                        continue;
+                    }
+                }
+                else // a simple key (no <...>)
+                    evt_obj.charCode = evt_str.charCodeAt(0);
+
+                // TODO: make a list of characters that need keyCode and charCode somewhere
+                if (evt_obj.keyCode == 32 || evt_obj.charCode == 32)
+                    evt_obj.charCode = evt_obj.keyCode = 32; // <Space>
+                if (evt_obj.keyCode == 60 || evt_obj.charCode == 60)
+                    evt_obj.charCode = evt_obj.keyCode = 60 // <lt>
+
+                out.push(evt_obj);
+            }
+            return out;
+        },
+
+        /**
+         * Converts the specified event to a string in liberator key-code
+         * notation. Returns null for an unknown event.
          *
          * E.g. pressing ctrl+n would result in the string "<C-n>".
          *
@@ -1118,15 +1145,23 @@ function Events() //{{{
                 {
                     key = String.fromCharCode(event.charCode);
 
-                    if (key in key_code) //If a character has a name, use that. Space characters can have S- safely.
+                    if (key in key_code) 
                     {
-                        if (key.match(/^\s$/) && event.shiftKey)
+                        // a named charcode key (<Space> and <lt>) space can be shifted, <lt> must be forced
+                        if ((key.match(/^\s$/) && event.shiftKey) || event.liberatorShift)
                             modifier += "S-";
 
                         key = code_key[key_code[key]];
                     }
-                    else if (modifier.length == 0) //Otherwise, we may be able to just return the character
-                        return key;
+                    else 
+                    {
+                        // a shift modifier is only allowed if the key is alphabetical and used in a C-A-M- mapping in the uppercase,
+                        // or if the shift has been forced for a non-alphabetical character by the user while :map-ping
+                        if ((key != key.toLowerCase() && (event.ctrlKey || event.altKey || event.metaKey)) || event.liberatorShift)
+                            modifier += "S-";
+                        else if  (modifier.length == 0) 
+                            return key;
+                    }
                 }
                 if (key == null)
                     return;

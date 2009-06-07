@@ -13,9 +13,14 @@ will echo the current date to the command line when [m]<F2>[m] is pressed.
 There are separate key mapping tables for each of the Normal, Insert, and
 Command-line modes.
 
-Please note that, unlike Vim and other applications, mappings containing
-the Shift key are specified with the capital letter, so e.g. [m]<C-n>[m] is
-different from [m]<C-N>[m], the latter being the only way to map Shift-Ctrl-n.
+Please note that, like Vim and other applications, modifier mappings containing
+the Shift key are specified with a [m]S-[m] modifier. For example, [m]<C-N>[m]
+is exactly the same as [m]<C-n>[m], it represents holding the Control key and a
+lowercase [m]n[m]. In order to map the Control key with an uppercase [m]N[m], either
+[m]<C-S-N>[m] or [m]<C-S-n>[m] can be used. For numbers and punctuation characters that 
+cannot change case, the [m]S-[m] is not used, even if you need to hold shift to type 
+that character. The mapping [m]<S-1>[m] can never be typed on a keyboard, but can 
+be used to create a mapping that can be activated by another map.
 
 subsection:Map{nbsp}commands[:map-commands]
 
