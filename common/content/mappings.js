@@ -82,7 +82,7 @@ Map.prototype = {
      * @param {string} name The name to query.
      * @returns {boolean}
      */
-    hasName: function (name) this.names.indexOf(name) >= 0 || this.names.indexOf(name.replace(/<S-(.)>/g, "$1")) >= 0,
+    hasName: function (name) this.names.indexOf(name) >= 0,
 
     /**
      * Execute the action for this mapping.
