@@ -562,26 +562,8 @@ function Events() //{{{
         }
     }
 
-    function wrapListener(method)
-    {
-        return function (event) {
-            try
-            {
-                self[method](event);
-            }
-            catch (e)
-            {
-                if (e.message == "Interrupted")
-                    liberator.echoerr("Interrupted");
-                else
-                    liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
-                liberator.reportError(e);
-            }
-        };
-    }
-
     // return true when load successful, or false otherwise
-    function waitForPageLoaded() events.waitForPageLoad();
+    function waitForPageLoad() events.waitForPageLoad();
 
     // load all macros
     // setTimeout needed since io. is loaded after events.
@@ -1011,7 +993,7 @@ function Events() //{{{
                         break;
 
                     // Stop feeding keys if page loading failed.
-                    if (modes.isReplaying && !waitForPageLoaded())
+                    if (modes.isReplaying && !waitForPageLoad())
                         break;
                 }
             }
@@ -1560,7 +1542,7 @@ function Events() //{{{
                     input.pendingArgMap = null;
                     if (key != "<Esc>" && key != "<C-[>")
                     {
-                        if (modes.isReplaying && !waitForPageLoaded())
+                        if (modes.isReplaying && !waitForPageLoad())
                             return;
                         map.execute(null, input.count, key);
                     }
@@ -1593,7 +1575,7 @@ function Events() //{{{
                     }
                     else
                     {
-                        if (modes.isReplaying && !waitForPageLoaded())
+                        if (modes.isReplaying && !waitForPageLoad())
                             return void killEvent();
 
                         let ret = map.execute(null, input.count);
@@ -1771,10 +1753,25 @@ function Events() //{{{
     }
     catch (e) {}
 
-    liberator.registerObserver("shutdown", function () {
-            self.destroy();
-    });
+    liberator.registerObserver("shutdown", function () { self.destroy(); });
 
+    function wrapListener(method)
+    {
+        return function (event) {
+            try
+            {
+                self[method](event);
+            }
+            catch (e)
+            {
+                if (e.message == "Interrupted")
+                    liberator.echoerr("Interrupted");
+                else
+                    liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
+                liberator.reportError(e);
+            }
+        };
+    }
     window.addEventListener("keypress", wrapListener("onKeyPress"),    true);
     window.addEventListener("keydown",  wrapListener("onKeyUpOrDown"), true);
     window.addEventListener("keyup",    wrapListener("onKeyUpOrDown"), true);

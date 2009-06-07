@@ -1054,13 +1054,9 @@ function Buffer() //{{{
         focusElement: function (elem)
         {
             let doc = window.content.document;
-            let elemTagName = elem.localName.toLowerCase();
-            if (elemTagName == "frame" || elemTagName == "iframe")
-            {
-                elem.contentWindow.focus();
-                return;
-            }
-            else if (elemTagName == "input" && elem.type == "file")
+            if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
+                return void elem.contentWindow.focus();
+            else if (elem instanceof HTMLInputElement && elem.type == "file")
             {
                 openUploadPrompt(elem);
                 buffer.lastInputField = elem;
@@ -1069,14 +1065,17 @@ function Buffer() //{{{
 
             elem.focus();
 
-            let x = 0;
-            let y = 0;
             // for imagemap
-            if (elemTagName == "area")
-                [x, y] = elem.getAttribute("coords").split(",").map(Number);
+            if (elem instanceof HTMLAreaElement)
+            {
+                try
+                {
+                    let [x, y] = elem.getAttribute("coords").split(",").map(parseFloat);
 
-            let evt = events.create(doc, "mouseover", { screenX: x, screenY: y });
-            elem.dispatchEvent(evt);
+                    elem.dispatchEvent(events.create(doc, "mouseover", { screenX: x, screenY: y }));
+                }
+                catch (e) {}
+            }
         },
 
         /**
@@ -1197,11 +1196,10 @@ function Buffer() //{{{
             options.withContext(function () {
                 options.setPref("browser.tabs.loadInBackground", true);
                 ["mousedown", "mouseup", "click"].forEach(function (event) {
-                    let evt = events.create(doc, event, {
+                    elem.dispatchEvent(events.create(doc, event, {
                         screenX: offsetX, screenY: offsetY,
                         ctrlKey: ctrlKey, shiftKey: shiftKey, metaKey: ctrlKey
-                    });
-                    elem.dispatchEvent(evt);
+                    }));
                 });
             });
         },

@@ -7,7 +7,7 @@ BASE          = $(TOP)/../common
 
 LOCALEDIR     = locale
 DOC_SRC_FILES = $(wildcard $(LOCALEDIR)/*/*.txt)
-LOCALES       = $(foreach locale,$(wildcard $(LOCALEDIR)/*),$(word 2,$(subst /, ,$(locale))))
+LOCALES       = $(shell ls $(LOCALEDIR))
 
 MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
 
@@ -107,4 +107,5 @@ $(JAR): doc
 
 #### doc (see Makefile.doc)
 
-doc: $(foreach localetgt,$(LOCALES:%=%.doc),$(addprefix $(LOCALEDIR)/,$(localetgt))) ;
+doc: $(LOCALES:%=$(LOCALEDIR)/%.doc) ;
+
