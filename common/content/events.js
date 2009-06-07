@@ -1200,10 +1200,7 @@ function Events() //{{{
          *
          * @returns {boolean}
          */
-        isAcceptKey: function (key)
-        {
-            return (key == "<Return>" || key == "<C-j>" || key == "<C-m>");
-        },
+        isAcceptKey: function (key) key == "<Return>" || key == "<C-j>" || key == "<C-m>",
 
         /**
          * Whether <b>key</b> is a key code defined to reject/cancel input on
@@ -1211,10 +1208,7 @@ function Events() //{{{
          *
          * @returns {boolean}
          */
-        isCancelKey: function (key)
-        {
-            return (key == "<Esc>" || key == "<C-[>" || key == "<C-c>");
-        },
+        isCancelKey: function (key) key == "<Esc>" || key == "<C-[>" || key == "<C-c>",
 
         /*
          * Waits for the current buffer to successfully finish loading. Returns
@@ -1408,6 +1402,8 @@ function Events() //{{{
         // the commandline has focus
         onKeyPress: function (event)
         {
+            function isEscapeKey(key) key == "<Esc>" || key == "<C-[>";
+
             function killEvent()
             {
                 event.preventDefault();
@@ -1478,7 +1474,7 @@ function Events() //{{{
                 {
                     if (modes.passNextKey)
                         modes.passNextKey = false; // and then let flow continue
-                    else if (key == "<Esc>" || key == "<C-[>" || key == "<C-v>")
+                    else if (isEscapeKey(key) || key == "<C-v>")
                         ; // let flow continue to handle these keys to cancel escape-all-keys mode
                     else
                         stop = true;
@@ -1493,8 +1489,7 @@ function Events() //{{{
                 stop = true; // set to false if we should NOT consume this event but let Firefox handle it
 
                 // just forward event without checking any mappings when the MOW is open
-                if (liberator.mode == modes.COMMAND_LINE &&
-                    (modes.extended & modes.OUTPUT_MULTILINE))
+                if (liberator.mode == modes.COMMAND_LINE && (modes.extended & modes.OUTPUT_MULTILINE))
                 {
                     commandline.onMultilineOutputEvent(event);
                     return void killEvent();
@@ -1511,7 +1506,7 @@ function Events() //{{{
 
                 // TODO: handle middle click in content area
 
-                if (key != "<Esc>" && key != "<C-[>")
+                if (!isEscapeKey(key))
                 {
                     // custom mode...
                     if (liberator.mode == modes.CUSTOM)
@@ -1575,7 +1570,7 @@ function Events() //{{{
                     input.buffer = "";
                     let map = input.pendingArgMap;
                     input.pendingArgMap = null;
-                    if (key != "<Esc>" && key != "<C-[>")
+                    if (!isEscapeKey(key))
                     {
                         if (modes.isReplaying && !waitForPageLoad())
                             return;
@@ -1599,7 +1594,7 @@ function Events() //{{{
                     }
                     else if (input.pendingMotionMap)
                     {
-                        if (key != "<Esc>" && key != "<C-[>")
+                        if (!isEscapeKey(key))
                             input.pendingMotionMap.execute(candidateCommand, input.count, null);
                         input.pendingMotionMap = null;
                     }
@@ -1635,7 +1630,7 @@ function Events() //{{{
                     input.pendingMotionMap = null;
                     input.pendingMap = null;
 
-                    if (key != "<Esc>" && key != "<C-[>")
+                    if (!isEscapeKey(key))
                     {
                         // allow key to be passed to Firefox if we can't handle it
                         stop = false;
