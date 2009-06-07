@@ -214,7 +214,7 @@ function Mappings() //{{{
                             function (count) { events.feedkeys((count > 1 ? count : "") + this.rhs, this.noremap, this.silent); },
                             {
                                 flags: Mappings.flags.COUNT,
-                                rhs: rhs,
+                                rhs: events.canonicalKeys(rhs),
                                 noremap: !!noremap,
                                 silent: "<silent>" in args
                             });
