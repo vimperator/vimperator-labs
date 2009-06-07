@@ -438,7 +438,7 @@ function Events() //{{{
     const key_code = {};
 
     for (let [k, v] in Iterator(KeyEvent))
-        if (/^DOM_VK_/.test(k)) {
+        if (/^DOM_VK_(?![A-Z0-1]$)/.test(k)) {
             k = k.substr(7).toLowerCase();
             let names = [k.replace(/(^|_)(.)/g, function (m, n1, n2) n2.toUpperCase())
                           .replace(/^NUMPAD/, "k")];
@@ -448,6 +448,14 @@ function Events() //{{{
             for (let [,name] in Iterator(names))
                 key_code[name.toLowerCase()] = v
         }
+
+    //HACK: as firefox does not include an event for <, we must add this in manually.
+    if (! ("<" in key_code))
+    {
+        key_code["<"] = 60;
+        key_code["lt"] = 60;
+        code_key[60] = "lt";
+    }
 
     function isFormElemFocused()
     {
@@ -857,7 +865,7 @@ function Events() //{{{
         },
 
         splitKeys: function(keys) {
-            let re = RegExp("<.*?>|[^<]", "g");
+            let re = RegExp("<.*?>|[^<]|<(?!.*>)", "g");
             let match;
             while (match = re.exec(keys))
                 yield match[0];
@@ -868,12 +876,25 @@ function Events() //{{{
             var res = util.map(events.splitKeys(keys), function (key) {
                 let keyCode = 0;
 
+                if (key == "<")
+                    return "<lt>";
+
                 if (key[0] == "<")
                 {
                     let [match, modifier, keyname] = key.toLowerCase().match(/^<((?:[csma]-)*)(.+?)>$/) || [];
                     if (keyname)
                     {
                         modifier = modifier.toUpperCase();
+
+                        if (modifier.length > 0 && keyname.length == 1 && keyname.toUpperCase() != keyname.toLowerCase())
+                        {
+                            if (modifier.indexOf("S-") >= 0)
+                                keyname = keyname.toUpperCase();
+                            else
+                                keyname = keyname.toLowerCase();
+                            modifier = modifier.replace("S-", "");
+                        }
+
                         key = [k + "-" for ([i, k] in Iterator("CASM")) if (modifier.indexOf(k + "-") >= 0)];
                         keyCode = key_code[keyname];
 
@@ -886,8 +907,6 @@ function Events() //{{{
                 }
                 else // a simple key
                 {
-                    if (key != key.toLowerCase())
-                        return ["<S-", key.toUpperCase(), ">"];
                     return key;
                 }
             });
@@ -1072,8 +1091,6 @@ function Events() //{{{
                 modifier += "C-";
             if (event.altKey)
                 modifier += "A-";
-            if (event.shiftKey)
-                modifier += "S-";
             if (event.metaKey)
                 modifier += "M-";
 
@@ -1081,6 +1098,9 @@ function Events() //{{{
             {
                 if (event.charCode == 0)
                 {
+                    if (event.shiftKey)
+                        modifier += "S-";
+
                     if (event.keyCode in code_key)
                         key = code_key[event.keyCode];
                 }
@@ -1116,18 +1136,20 @@ function Events() //{{{
                 // a normal key like a, b, c, 0, etc.
                 else if (event.charCode > 0)
                 {
-                    key = String.fromCharCode(event.charCode).toLowerCase();
-                    if (key in key_code)
+                    key = String.fromCharCode(event.charCode);
+
+                    if (key in key_code) //If a character has a name, use that. Space characters can have S- safely.
+                    {
+                        if (key.match(/^\s$/) && event.shiftKey)
+                            modifier += "S-";
+
                         key = code_key[key_code[key]];
+                    }
+                    else if (modifier.length == 0) //Otherwise, we may be able to just return the character
+                        return key;
                 }
                 if (key == null)
                     return;
-                let k = key.toLowerCase();
-                if (!(k in key_code) || String.fromCharCode(key_code[k]).toLowerCase() == k)
-                {
-                    if (modifier.length == 0)
-                        return k;
-                }
             }
             else if (event.type == "click" || event.type == "dblclick")
             {
