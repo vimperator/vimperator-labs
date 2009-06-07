@@ -972,8 +972,6 @@ function Events() //{{{
                             }
                             else if (keyname == "nop")
                                 string = "<Nop>";
-                            else if (keyname == "space")
-                                ;
                             else if (keyCode = key_code[keyname])
                                 charCode = 0;
                             else // an invalid key like <A-xxx> was found, stop propagation here (like Vim)
@@ -1542,6 +1540,8 @@ function Events() //{{{
                 {
                     map = input.pendingMap;
                     input.pendingMap = null;
+                    if (map && map.flags & Mappings.flags.ARGUMENT)
+                        input.pendingArgMap = map;
                 }
 
                 // counts must be at the start of a complete mapping (10j -> go 10 lines down)
@@ -1558,8 +1558,6 @@ function Events() //{{{
                     input.buffer = "";
                     let map = input.pendingArgMap;
                     input.pendingArgMap = null;
-                    // FIXME.
-                    key = key.replace(/^<S-([A-Z])>$/, "$1");
                     if (key != "<Esc>" && key != "<C-[>")
                     {
                         if (modes.isReplaying && !waitForPageLoaded())
