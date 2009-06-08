@@ -438,7 +438,8 @@ function Events() //{{{
     const key_code = {};
 
     for (let [k, v] in Iterator(KeyEvent))
-        if (/^DOM_VK_(?![A-Z0-9]$)/.test(k)) {
+        if (/^DOM_VK_(?![A-Z0-9]$)/.test(k))
+        {
             k = k.substr(7).toLowerCase();
             let names = [k.replace(/(^|_)(.)/g, function (m, n1, n2) n2.toUpperCase())
                           .replace(/^NUMPAD/, "k")];
@@ -450,7 +451,7 @@ function Events() //{{{
         }
 
     // HACK: as firefox does not include an event for <, we must add this in manually.
-    if (! ("<" in key_code))
+    if (!("<" in key_code))
     {
         key_code["<"] = 60;
         key_code["lt"] = 60;
@@ -944,11 +945,11 @@ function Events() //{{{
                 Mouse: {
                     type: type,
                     bubbles: true, cancelable: true,
-                    view: doc.defaultView, 
+                    view: doc.defaultView,
                     detail: 1,
                     screenX: 0, screenY: 0,
-                    clientX: 0, clientY: 0, 
-                    ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, 
+                    clientX: 0, clientY: 0,
+                    ctrlKey: false, altKey: false, shiftKey: false, metaKey: false,
                     button: 0,
                     relatedTarget: null
                 }

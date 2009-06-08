@@ -2109,7 +2109,8 @@ function StatusLine() //{{{
                 if (sh.index < sh.count -1)
                     modified += "-";
             }
-            if (liberator.has("bookmarks")) {
+            if (liberator.has("bookmarks"))
+            {
                 if (bookmarks.isBookmarked(buffer.URL))
                     modified += "\u2764"; // a heart symbol: ❤
                     //modified += "\u2665"; // a heart symbol: ♥
