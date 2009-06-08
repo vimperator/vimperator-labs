@@ -1038,7 +1038,7 @@ function Events() //{{{
 
                             evt_obj.charCode = keyname.charCodeAt(0);
                         }
-                        else if (keyname == "nop") 
+                        else if (keyname == "nop")
                         {
                             evt_obj.liberatorString = "<Nop>";
                         }
@@ -1146,7 +1146,7 @@ function Events() //{{{
                 {
                     key = String.fromCharCode(event.charCode);
 
-                    if (key in key_code) 
+                    if (key in key_code)
                     {
                         // a named charcode key (<Space> and <lt>) space can be shifted, <lt> must be forced
                         if ((key.match(/^\s$/) && event.shiftKey) || event.liberatorShift)
@@ -1154,13 +1154,13 @@ function Events() //{{{
 
                         key = code_key[key_code[key]];
                     }
-                    else 
+                    else
                     {
                         // a shift modifier is only allowed if the key is alphabetical and used in a C-A-M- mapping in the uppercase,
                         // or if the shift has been forced for a non-alphabetical character by the user while :map-ping
                         if ((key != key.toLowerCase() && (event.ctrlKey || event.altKey || event.metaKey)) || event.liberatorShift)
                             modifier += "S-";
-                        else if  (modifier.length == 0) 
+                        else if  (modifier.length == 0)
                             return key;
                     }
                 }
