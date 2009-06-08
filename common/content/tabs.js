@@ -40,6 +40,7 @@ function Tabs() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     var tabmail;
+    // FIXME: doesn't belong here
     var getBrowser = (function () {
         if (config.hostApplication == "Thunderbird")
         {
@@ -59,15 +60,6 @@ function Tabs() //{{{
         else
             return window.getBrowser;
     })();
-
-    // FIXME: why is this app specific conditional code here?
-    //        Why the distinction? Why not just mStrip? --djk
-    if (config.hostApplication == "Firefox")
-        var tabStrip = getBrowser().mStrip.getElementsByClassName("tabbrowser-tabs")[0];
-    else if (/^(Thunderbird|Songbird)$/.test(config.hostApplication))
-        tabStrip = getBrowser().mStrip;
-    else
-        tabStrip = null;
 
     var alternates = [getBrowser().mCurrentTab, null];
 
@@ -118,7 +110,8 @@ function Tabs() //{{{
         services.get("sessionStore").setTabState(to, tabState);
     }
 
-    // hide tabs initially to prevent flickering when 'stal' is unset
+    // hide tabs initially to prevent flickering when 'stal' would hide them
+    // on startup
     if (config.hasTabbrowser)
         getBrowser().mStrip.collapsed = true;
 
@@ -749,7 +742,7 @@ function Tabs() //{{{
         /**
          * @property {Object} The tab browser strip.
          */
-        get tabStrip() tabStrip,
+        get tabStrip() getBrowser().mStrip,
 
         /**
          * @property {Object[]} The array of closed tabs for the current
