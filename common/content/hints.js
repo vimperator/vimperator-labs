@@ -189,7 +189,7 @@ function Hints() //{{{
                 {
                     if (elem.id)
                     {
-                        //TODO: (possibly) do some guess work for label-like objects
+                        // TODO: (possibly) do some guess work for label-like objects
                         let label = buffer.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
                         if (label)
                             return [label.textContent.toLowerCase(), true];

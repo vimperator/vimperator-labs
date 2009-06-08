@@ -157,7 +157,7 @@ const config = { //{{{
 
     hasTabbrowser: true,
 
-    //TODO : Write intro.html and tutorial.html
+    // TODO : Write intro.html and tutorial.html
     // they are sorted by relevance, not alphabetically
     helpFiles: [
         "intro.html", /*"tutorial.html",*/ "starting.html", "player.html",

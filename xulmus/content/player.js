@@ -626,7 +626,7 @@ function Player() // {{{
                     lastSearchIndex = lastSearchIndex + 1;
             }
 
-            //FIXME: Implement for "?" --ken
+            // FIXME: Implement for "?" --ken
             commandline.echo("/" + lastSearchString, null, commandline.FORCE_SINGLELINE);
             focusTrack(lastSearchView.getItemByIndex(lastSearchIndex));
 

@@ -1030,7 +1030,7 @@ function Buffer() //{{{
                 let selController = this.selectionController;
                 let caretmode = selController.getCaretEnabled();
                 selController.setCaretEnabled(true);
-                //Only move backwards if the previous character is not a space.
+                // Only move backwards if the previous character is not a space.
                 if (range.startOffset > 0 && !/\s/.test(range.startContainer.textContent[range.startOffset - 1]))
                     selController.wordMove(false, false);
 
