@@ -2,6 +2,11 @@ Priority list:
 1-9 as in vim (9=required for next release, 5=would be nice, 1=probably not)
 
 BUGS:
+- several tab related commands like :tab are enabled but don't work
+- MOW is broken - always uses a height of less than one line
+- stal=1 doesn't work
+
+(recent CVS regressions):
 
 FEATURES:
 9 edit messages with vim

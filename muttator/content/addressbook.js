@@ -39,10 +39,6 @@ function Addressbook() //{{{
 
     const kPersonalAddressbookURI = "moz-abmdbdirectory://abook.mab";
 
-    function load()
-    {
-    }
-
     // TODO: add option for a format specifier, like:
     // :set displayname=%l, %f
     function generateDisplayName(firstName, lastName)
@@ -77,10 +73,9 @@ function Addressbook() //{{{
         "Open a prompt to save a new addressbook entry for the sender of the selected message",
         function ()
         {
-            var to;
             try
             {
-                to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+                var to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
             }
             catch (e)
             {
@@ -90,12 +85,12 @@ function Addressbook() //{{{
             if (!to)
                 return;
 
-            var address = to.substring(to.indexOf("<") + 1, to.indexOf(">"));
+            let address = to.substring(to.indexOf("<") + 1, to.indexOf(">"));
 
-            var displayName = to.substr(0, to.indexOf("<") - 1);
+            let displayName = to.substr(0, to.indexOf("<") - 1);
             if (/^\S+\s+\S+\s*$/.test(displayName))
             {
-                var names = displayName.split(/\s+/);
+                let names = displayName.split(/\s+/);
                 displayName = "-firstname=" + names[0].replace(/"/g, "")
                             + " -lastname=" + names[1].replace(/"/g, "");
             }
@@ -113,10 +108,10 @@ function Addressbook() //{{{
         "Add an address book entry",
         function (args)
         {
-            var mailAddr =    args[0]; // TODO: support more than one email address
-            var firstName =   args["-firstname"] || null;
-            var lastName =    args["-lastname"] || null;
-            var displayName = args["-name"] || null;
+            let mailAddr    = args[0]; // TODO: support more than one email address
+            let firstName   = args["-firstname"] || null;
+            let lastName    = args["-lastname"] || null;
+            let displayName = args["-name"] || null;
             if (!displayName)
                 displayName = generateDisplayName(firstName, lastName);
 
@@ -146,8 +141,8 @@ function Addressbook() //{{{
 
         add: function (address, firstname, lastname, displayName)
         {
-            var directory = getDirectoryFromURI(kPersonalAddressbookURI);
-            var card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
+            let directory = getDirectoryFromURI(kPersonalAddressbookURI);
+            let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
                                  .createInstance(Components.interfaces.nsIAbCard);
 
             if (!address || !directory || !card)
@@ -164,19 +159,19 @@ function Addressbook() //{{{
         // TODO: add telephone number support
         list: function (filter, newMail)
         {
-            var addresses = [];
-            var dirs = abManager.directories;
-            var lowerFilter = filter.toLowerCase();
+            let addresses = [];
+            let dirs = abManager.directories;
+            let lowerFilter = filter.toLowerCase();
 
             while (dirs.hasMoreElements())
             {
-                var addrbook = dirs.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
-                var cards = addrbook.childCards;
+                let addrbook = dirs.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+                let cards = addrbook.childCards;
                 while (cards.hasMoreElements())
                 {
-                    var card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-                    var mail = card.primaryEmail || "";
-                    var displayName = card.displayName;
+                    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+                    //var mail = card.primaryEmail || ""; //XXX
+                    let displayName = card.displayName;
                     if (!displayName)
                         displayName = generateDisplayName(card.firstName, card.lastName);
 
@@ -194,21 +189,21 @@ function Addressbook() //{{{
             if (newMail)
             {
                 // Now we have to create a new message
-                var args = {};
+                let args = {};
                 args.to = addresses.map(
                     function (address) "\"" + address[0].replace(/"/g, "") + " <" + address[1] + ">\""
                 ).join(", ");
 
-                liberator.mail.composeNewMail(args);
+                mail.composeNewMail(args);
             }
             else
             {
-                var list = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>" +
+                let list = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>" +
                            "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
                 for (let i = 0; i < addresses.length; i++)
                 {
-                    var displayName = util.escapeHTML(util.clip(addresses[i][0], 50));
-                    var mailAddr = util.escapeHTML(addresses[i][1]);
+                    let displayName = util.escapeHTML(util.clip(addresses[i][0], 50));
+                    let mailAddr = util.escapeHTML(addresses[i][1]);
                     list += "<tr><td>" + displayName + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + mailAddr + "</a></td></tr>";
                 }
                 list += "</table>";
