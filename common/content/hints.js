@@ -806,7 +806,7 @@ function Hints() //{{{
                 ["1", "Follow the selected hint on [m]<Return>[m]."],
                 ["2", "Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected."]
             ],
-            validator: function (value) Option.validateCompleter
+            validator: Option.validateCompleter
         });
 
     options.add(["hintmatching", "hm"],
