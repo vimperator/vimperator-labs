@@ -200,14 +200,17 @@ function Mail() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-//    options.add(["editor"],
-//        "Set the external text editor",
-//        "string", "gvim -f");
-
+    // FIXME: why does this default to "Archive", I don't have one? The default
+    // value won't validate now. mst please fix. --djk
     options.add(["archivefolder"],
         "Set the archive folder",
-        "string", "Archive");
+        "string", "Archive",
+        {
+            completer: function (context) [[f.prettiestName, ""] for ([,f] in Iterator(mail.getFolders()))],
+            validator: Option.validateCompleter
+        });
 
+    // TODO: generate the possible values dynamically from the menu
     options.add(["layout"],
         "Set the layout of the mail window",
         "string", "inherit",
@@ -224,6 +227,12 @@ function Mail() //{{{
 
                 return value;
             },
+            completer: function (context) [
+                ["inherit",  "Default View"], // FIXME: correct description?
+                ["classic",  "Classic View"],
+                ["wide",     "Wide View"],
+                ["vertical", "Vertical View"]
+            ],
             validator: Option.validateCompleter
         });
 
