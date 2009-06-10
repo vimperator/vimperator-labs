@@ -16,6 +16,7 @@ BUGS:
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
 - RC file is sourced once per window
+- :undo seems to be effected by whether the tabstrip state
 
 (recent CVS regressions):
 - visual caret mode is broken, requires a manual page focus first anyway or

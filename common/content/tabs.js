@@ -113,7 +113,7 @@ function Tabs() //{{{
     // hide tabs initially to prevent flickering when 'stal' would hide them
     // on startup
     if (config.hasTabbrowser)
-        getBrowser().mStrip.collapsed = true;
+        getBrowser().mTabContainer.collapsed = true; // FIXME: see 'stal' comment
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -125,15 +125,18 @@ function Tabs() //{{{
         {
             setter: function (value)
             {
-                let tabStrip = tabs.tabStrip;
-
-                if (!tabStrip)
-                    return options["showtabline"]; // XXX
+                // FIXME: we manipulate mTabContainer underneath mStrip so we
+                // don't have to fight against the host app's attempts to keep
+                // it open - hack! Adding a filter watch to mStrip is probably
+                // the cleanest solution.
+                let tabStrip = getBrowser().mTabContainer;
 
                 if (value == 0)
                     tabStrip.collapsed = true;
                 else
                 {
+                    // FIXME: Why are we preferring our own created preference
+                    // here? --djk
                     let pref = "browser.tabStrip.autoHide";
                     if (options.getPref(pref) == null) // Try for FF 3.0 & 3.1
                         pref = "browser.tabs.autoHide";
@@ -738,11 +741,6 @@ function Tabs() //{{{
          *     tab.
          */
         get localStore() this.getLocalStore(),
-
-        /**
-         * @property {Object} The tab browser strip.
-         */
-        get tabStrip() getBrowser().mStrip,
 
         /**
          * @property {Object[]} The array of closed tabs for the current
