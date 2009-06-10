@@ -202,7 +202,7 @@ function Addressbook() //{{{
             }
             else
             {
-                let list = ":" + util.escapeHTML(commandline.getCommand()) + "<br/>" +
+                let list = ":" + util.escapeHTML(commandline.command) + "<br/>" +
                            "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
                 for (let i = 0; i < addresses.length; i++)
                 {
