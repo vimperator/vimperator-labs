@@ -202,16 +202,9 @@ function Addressbook() //{{{
             }
             else
             {
-                let list = ":" + util.escapeHTML(commandline.command) + "<br/>" +
-                           "<table><tr class=\"hl-Title\" align=\"left\"><th>Name</th><th>Address</th></tr>";
-                for (let i = 0; i < addresses.length; i++)
-                {
-                    let displayName = util.escapeHTML(util.clip(addresses[i][0], 50));
-                    let mailAddr = util.escapeHTML(addresses[i][1]);
-                    list += "<tr><td>" + displayName + "</td><td style=\"width: 100%\"><a href=\"#\" class=\"hl-URL\">" + mailAddr + "</a></td></tr>";
-                }
-                list += "</table>";
-
+                let list = template.tabular(["Name", "Address"], [],
+                    [[util.clip(a[0], 50), address[1]] for ([,address] in Iterator(addresses))]
+                );
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
             return true;
