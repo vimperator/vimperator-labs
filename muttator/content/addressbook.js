@@ -180,9 +180,13 @@ function Addressbook() //{{{
                             addresses.push([displayName, card.primaryEmail]);
                 }
             }
+
             if (addresses.length < 1)
             {
-                liberator.echoerr("E94: No matching contact for " + filter, commandline.FORCE_SINGLELINE);
+                if (!filter)
+                    liberator.echoerr("Exxx: No contacts", commandline.FORCE_SINGLELINE);
+                else
+                    liberator.echoerr("Exxx: No contacts matching string '" + filter + "'", commandline.FORCE_SINGLELINE);
                 return false;
             }
 
