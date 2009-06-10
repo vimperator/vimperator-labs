@@ -118,7 +118,7 @@ function Addressbook() //{{{
             if (addressbook.add(mailAddr, firstName, lastName, displayName))
                 liberator.echomsg("Added address: " + displayName + " <" + mailAddr + ">", 1, commandline.FORCE_SINGLELINE);
             else
-                liberator.echoerr("Exxx: Could not add bookmark `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
+                liberator.echoerr("Exxx: Could not add contact `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
 
         },
         {
