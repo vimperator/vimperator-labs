@@ -37,7 +37,7 @@ const config = { //{{{
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
     defaults: {
         guioptions: "mprb",
-        showtabline: 2,
+        showtabline: 2
     },
 
     guioptions: {

@@ -35,7 +35,7 @@ const config = { //{{{
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
         guioptions: "frb",
-        showtabline: 1,
+        showtabline: 1
     },
 
     guioptions: {
@@ -252,13 +252,8 @@ const config = { //{{{
 
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
-            function (args)
-            {
-                window.openOptionsDialog();
-            },
-            {
-                argCount: "0"
-            });
+            function () { window.openOptionsDialog(); },
+            { argCount: "0" });
     }
 }; //}}}
 

@@ -35,7 +35,7 @@ const config = { //{{{
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "tabUndo", "windows"],
     defaults: {
         guioptions: "rb",
-        showtabline: 2,
+        showtabline: 2
     },
 
     guioptions: {
