@@ -105,6 +105,12 @@ const configbase = { //{{{
     name: null,
 
     /**
+     * @property {number} The height (px) that is available to the output
+     *     window.
+     */
+    get outputHeight() getBrowser().mPanelContainer.boxObject.height,
+
+    /**
      * @property {[string]} A list of extra scripts in the liberator or
      *    application namespaces which should be loaded before liberator
      *    initialization.

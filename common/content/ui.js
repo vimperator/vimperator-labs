@@ -1681,11 +1681,10 @@ function CommandLine() //{{{
 
             let doc = multilineOutputWidget.contentDocument;
 
-            let availableHeight = 250;
+            let availableHeight = 250; // Why? --djk
             try
             {
-                availableHeight = getBrowser().mPanelContainer ?
-                    getBrowser().mPanelContainer.boxObject.height : getBrowser().boxObject.height;
+                availableHeight = config.outputHeight;
                 if (!outputContainer.collapsed)
                     availableHeight += parseFloat(outputContainer.height);
             }

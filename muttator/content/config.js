@@ -142,6 +142,25 @@ const config = { //{{{
         ["COMPOSE"]
     ],
 
+    // NOTE: as I don't use TB I have no idea how robust this is. --djk
+    get outputHeight()
+    {
+        if (!this.isComposeWindow)
+        {
+            let container = document.getElementById("tabpanelcontainer").boxObject;
+            let deck      = document.getElementById("displayDeck");
+            let box       = document.getElementById("messagepanebox");
+            let splitter  = document.getElementById("threadpane-splitter").boxObject;
+
+            if (splitter.width > splitter.height)
+                return container.height - deck.minHeight - box.minHeight- splitter.height;
+            else
+                return container.height - Math.max(deck.minHeight, box.minHeight);
+        }
+        else
+            return document.getElementById("appcontent").boxObject.height;
+    },
+
     scripts: [
         "addressbook.js",
         "mail.js",
