@@ -112,42 +112,20 @@ function Mail() //{{{
 
     function moveOrCopy(copy, destinationFolder, operateOnThread)
     {
-        if (!destinationFolder)
-        {
-            liberator.echoerr("E471: Argument required");
-            return false;
-        }
-
         let folders = mail.getFolders(destinationFolder);
         if (folders.length == 0)
-        {
-            liberator.echoerr("E94: No matching folder for " + destinationFolder);
-            return false;
-        }
+            return void liberator.echoerr("Exxx: No matching folder for " + destinationFolder);
         else if (folders.length > 1)
-        {
-            liberator.echoerr("E93: More than one match for " + destinationFolder);
-            return false;
-        }
+            return liberator.echoerr("Exxx: More than one match for " + destinationFolder);
 
         let count = gDBView.selection.count;
         if (!count)
-        {
-            liberator.beep();
-            return false;
-        }
+            return void liberator.beep();
 
-        if (copy)
-        {
-            MsgCopyMessage(folders[0]);
-            setTimeout(function () { liberator.echomsg(count + " message(s) copied to " + folders[0].prettyName, 1); }, 100);
-        }
-        else
-        {
-            MsgMoveMessage(folders[0]);
-            setTimeout(function () { liberator.echomsg(count + " message(s) moved to " + folders[0].prettyName, 1); }, 100);
-        }
-        return true;
+        (copy ? MsgCopyMessage : MsgMoveMessage)(folders[0]);
+        setTimeout(function () {
+            liberator.echomsg(count + " message(s) " + (copy ? "copied" : "moved") + " to " + folders[0].prettyName, 1);
+        }, 100);
     }
 
     function parentIndex(index)
@@ -679,21 +657,22 @@ function Mail() //{{{
         "Select a folder",
         function (args)
         {
-            let count = args.count;
-            args = args.string || "Inbox";
-            count = count > 0 ? (count - 1) : 0;
+            let count = Math.max(0, args.count - 1)
+            let arg = args.literalArg || "Inbox";
 
-            let folder = mail.getFolders(args, true, true)[count];
+            let folder = mail.getFolders(arg, true, true)[count];
             if (!folder)
-                liberator.echoerr("Folder \"" + args + "\" does not exist");
+                liberator.echoerr("Exxx: Folder \"" + arg + "\" does not exist");
             else if (liberator.forceNewTab)
                 MsgOpenNewTabForFolder(folder.URI);
             else
                 SelectFolder(folder.URI);
         },
         {
+            argCount: "?",
             completer: function (context) getFolderCompletions(context),
-            count: true
+            count: true,
+            literal: 0
         });
 
     commands.add(["m[ail]"],
@@ -730,13 +709,21 @@ function Mail() //{{{
 
     commands.add(["copy[to]"],
         "Copy selected messages",
-        function (args) { moveOrCopy(true, args.string); },
-        { completer: function (context) getFolderCompletions(context) });
+        function (args) { moveOrCopy(true, args.literalArg); },
+        {
+            argCount: 1,
+            completer: function (context) getFolderCompletions(context),
+            literal: 0
+        });
 
     commands.add(["move[to]"],
         "Move selected messages",
-        function (args) { moveOrCopy(false, args.string); },
-        { completer: function (context) getFolderCompletions(context) });
+        function (args) { moveOrCopy(false, args.literalArg); },
+        {
+            argCount: 1,
+            completer: function (context) getFolderCompletions(context),
+            literal: 0
+        });
 
     commands.add(["empty[trash]"],
         "Empty trash of the current account",
