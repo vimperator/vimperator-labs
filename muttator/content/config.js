@@ -263,10 +263,33 @@ const config = { //{{{
             liberator.loadModule("hints",       Hints);
         }
 
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// COMMANDS ////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
             function () { window.openOptionsDialog(); },
             { argCount: "0" });
+
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// OPTIONS /////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
+        options.add(["online"],
+            "Set the 'work offline' option",
+            "boolean", true,
+            {
+                setter: function (value)
+                {
+                    if (MailOfflineMgr.isOnline() != value)
+                        MailOfflineMgr.toggleOfflineStatus();
+                    return value;
+                },
+                getter: function () MailOfflineMgr.isOnline()
+            });
+
+        //}}}
     }
 }; //}}}
 

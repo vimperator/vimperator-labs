@@ -515,6 +515,7 @@ const config = { //{{{
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        // TODO: SB doesn't explicitly support an offline mode. Should we? --djk
         options.add(["online"],
             "Set the 'work offline' option",
             "boolean", true,
@@ -523,8 +524,7 @@ const config = { //{{{
                 {
                     const ioService = services.get("io");
                     ioService.offline = !value;
-                    //gPrefService.setBoolPref("browser.offline", ioService.offline);
-                    gPrefs.setBoolPref("browser.offline", ioService.offline);
+                    options.setPref("browser.offline", ioService.offline);
                     return value;
                 },
                 getter: function () !services.get("io").offline

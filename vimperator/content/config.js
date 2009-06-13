@@ -197,7 +197,7 @@ const config = { //{{{
             delete img;
         };
 
-        ////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -470,8 +470,8 @@ const config = { //{{{
                 setter: function (value)
                 {
                     const ioService = services.get("io");
-                    ioService.offline = !value;
-                    gPrefService.setBoolPref("browser.offline", ioService.offline);
+                    if (ioService.offline == value)
+                        BrowserOffline.toggleOfflineStatus();
                     return value;
                 },
                 getter: function () !services.get("io").offline
@@ -504,8 +504,9 @@ const config = { //{{{
         options.add(["urlseparator"],
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");
+
+        //}}}
     }
-    //}}}
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
