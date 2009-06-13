@@ -54,11 +54,11 @@ const config = { //{{{
     get visualbellWindow() document.getElementById(this.mainWindowID),
     styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
 
-    autocommands: [["FolderLoaded",  "Triggered after switching folders in Thunderbird"],
-                   ["PageLoadPre",   "Triggered after a page load is initiated"],
-                   ["PageLoad",      "Triggered when a page gets (re)loaded/opened"],
-                   ["MuttatorEnter", "Triggered after Thunderbird starts"],
-                   ["MuttatorLeave", "Triggered before exiting Thunderbird"],
+    autocommands: [["FolderLoaded",     "Triggered after switching folders in Thunderbird"],
+                   ["PageLoadPre",      "Triggered after a page load is initiated"],
+                   ["PageLoad",         "Triggered when a page gets (re)loaded/opened"],
+                   ["MuttatorEnter",    "Triggered after Thunderbird starts"],
+                   ["MuttatorLeave",    "Triggered before exiting Thunderbird"],
                    ["MuttatorLeavePre", "Triggered before exiting Thunderbird"]],
 
     dialogs: [
@@ -120,12 +120,6 @@ const config = { //{{{
 
     // they are sorted by relevance, not alphabetically
     helpFiles: ["intro.html", "version.html"],
-     /* "tutorial.html", "starting.html",
-        "browsing.html", "buffer.html", "pattern.html", "options.html",
-        "tabs.html", "hints.html", "map.html", "eval.html", "marks.html",
-        "repeat.html", "autocommands.html", "print.html", "developer.html",
-        "various.html"
-        ],*/
 
     get ignoreKeys() {
         delete this.ignoreKeys;
@@ -133,7 +127,7 @@ const config = { //{{{
             "<Return>": modes.NORMAL | modes.INSERT,
             "<Space>": modes.NORMAL | modes.INSERT,
             "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT,
+            "<Down>": modes.NORMAL | modes.INSERT
         }
     },
 
@@ -164,7 +158,7 @@ const config = { //{{{
     scripts: [
         "addressbook.js",
         "mail.js",
-        "tabs.js",
+        "tabs.js"
     ],
 
     init: function ()

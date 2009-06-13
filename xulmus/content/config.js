@@ -467,8 +467,8 @@ const config = { //{{{
             "Redraw the screen",
             function ()
             {
-                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor).
-                                getInterface(Ci.nsIDOMWindowUtils);
+                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
+                               .getInterface(Ci.nsIDOMWindowUtils);
                 wu.redraw();
                 modes.show();
             },

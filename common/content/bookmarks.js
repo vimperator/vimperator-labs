@@ -647,7 +647,8 @@ function Bookmarks() //{{{
                             try
                             {
                                 charset = PlacesUtils.history.getCharsetForURI(makeURI(shortcutURL));
-                            } catch (e) {             }
+                            }
+                            catch (e) {}
                         }
                         var encodedParam = "";
                         if (charset)

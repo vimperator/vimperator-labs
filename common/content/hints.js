@@ -269,7 +269,7 @@ function Hints() //{{{
                     return [leftpos + curleft, toppos + curtop];
             }
         }
-        catch (e) {} //badly formed document, or shape == "default" in which case we don't move the hint
+        catch (e) {} // badly formed document, or shape == "default" in which case we don't move the hint
         return [leftpos, toppos];
     }
 

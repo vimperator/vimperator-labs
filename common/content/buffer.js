@@ -610,7 +610,8 @@ function Buffer() //{{{
                                                .QueryInterface(Ci.nsIInterfaceRequestor)
                                                .getInterface(Ci.nsIDOMWindowUtils)
                                                .getDocumentMetadata("content-disposition");
-            } catch (e) {}
+            }
+            catch (e) {}
 
             window.internalSave(doc.location.href, doc, null, contentDisposition,
                 doc.contentType, false, null, chosenData, doc.referrer ?
