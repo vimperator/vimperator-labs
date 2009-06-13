@@ -147,7 +147,7 @@ function Mail() //{{{
     // does not wrap yet, intentional?
     function selectUnreadFolder(backwards, count)
     {
-        count = (count > 0 ) ? count : 1;
+        count = Math.max(1, count);
         let direction = backwards ? -1 : 1;
         let c = getCurrentFolderIndex();
         let i = direction;
@@ -462,7 +462,7 @@ function Mail() //{{{
         "Select next folder",
         function (count)
         {
-            count = (count > 0 ) ? count : 1;
+            count = Math.max(1, count);
             let newPos = getCurrentFolderIndex() + count;
             if (newPos >= gFolderTreeView.rowCount)
             {
@@ -485,7 +485,7 @@ function Mail() //{{{
         "Select previous folder",
         function (count)
         {
-            count = (count > 0 ) ? count : 1;
+            count = Math.max(1, count);
             let newPos = getCurrentFolderIndex() - count;
             if (newPos < 0)
             {
