@@ -32,6 +32,8 @@ function Mail() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    services.add("smtpService", "@mozilla.org/messengercompose/smtp;1", Ci.nsISmtpService);
+
     // used for asynchronously selecting messages after wrapping folders
     var selectMessageKeys = [];
     var selectMessageCount = 1;
@@ -174,6 +176,7 @@ function Mail() //{{{
         recipient = recipient.replace(/"/g, "");
         return "\"" + recipient + "\"";
     }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -211,6 +214,21 @@ function Mail() //{{{
                 ["wide",     "Wide View"],
                 ["vertical", "Vertical View"]
             ],
+            validator: Option.validateCompleter
+        });
+
+    options.add(["smtpserver", "smtp"],
+        "Set the default SMTP server",
+        "string", services.get("smtpService").defaultServer.key, // TODO: how should we handle these persistent external defaults - "inherit" or null?
+        {
+            getter: function () services.get("smtpService").defaultServer.key,
+            setter: function (value)
+            {
+                let server = mail.smtpServers.filter(function (s) s.key == value)[0];
+                services.get("smtpService").defaultServer = server;
+                return value;
+            },
+            completer: function (context) [[s.key, s.serverURI] for ([,s] in Iterator(mail.smtpServers))],
             validator: Option.validateCompleter
         });
 
@@ -746,9 +764,22 @@ function Mail() //{{{
 
         get currentAccount() this.currentFolder.rootFolder,
 
-        get currentFolder()
+        get currentFolder() gFolderTreeView.getSelectedFolders()[0],
+
+        /** @property {nsISmtpServer[]} The list of configured SMTP servers. */
+        get smtpServers()
         {
-            return gFolderTreeView.getSelectedFolders()[0];
+            let servers = services.get("smtpService").smtpServers;
+            let ret = [];
+
+            while (servers.hasMoreElements())
+            {
+                let server = servers.getNext();
+                if (server instanceof Ci.nsISmtpServer)
+                    ret.push(server);
+            }
+
+            return ret;
         },
 
         composeNewMail: function (args)
