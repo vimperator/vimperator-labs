@@ -165,7 +165,9 @@ function Buffer() //{{{
         "Patterns to use when guessing the 'previous' page in a document sequence",
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
-    options.add(["pageinfo", "pa"], "Desired info on :pa[geinfo]", "charlist", "gfm",
+    options.add(["pageinfo", "pa"],
+        "Desired info on :pa[geinfo]",
+        "charlist", "gfm",
         {
             completer: function (context) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
             validator: Option.validateCompleter
