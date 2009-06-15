@@ -1681,14 +1681,9 @@ function CommandLine() //{{{
 
             let doc = multilineOutputWidget.contentDocument;
 
-            let availableHeight = 250; // Why? --djk
-            try
-            {
-                availableHeight = config.outputHeight;
-                if (!outputContainer.collapsed)
-                    availableHeight += parseFloat(outputContainer.height);
-            }
-            catch (e) {}
+            availableHeight = config.outputHeight;
+            if (!outputContainer.collapsed)
+                availableHeight += parseFloat(outputContainer.height);
             doc.body.style.minWidth = commandlineWidget.scrollWidth + "px";
             outputContainer.height = Math.min(doc.height, availableHeight) + "px";
             doc.body.style.minWidth = "";
