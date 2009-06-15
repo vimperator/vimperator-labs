@@ -32,10 +32,8 @@ function Addressbook() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const abManager = Components.classes["@mozilla.org/abmanager;1"]
-                                .getService(Components.interfaces.nsIAbManager);
-    const rdf = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-                          .getService(Components.interfaces.nsIRDFService);
+    const abManager = Cc["@mozilla.org/abmanager;1"].getService(Ci.nsIAbManager);
+    const rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
 
     const kPersonalAddressbookURI = "moz-abmdbdirectory://abook.mab";
 
@@ -55,7 +53,7 @@ function Addressbook() //{{{
 
     function getDirectoryFromURI(uri)
     {
-       return rdf.GetResource(uri).QueryInterface(Components.interfaces.nsIAbDirectory);
+       return rdf.GetResource(uri).QueryInterface(Ci.nsIAbDirectory);
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -142,8 +140,7 @@ function Addressbook() //{{{
         add: function (address, firstname, lastname, displayName)
         {
             let directory = getDirectoryFromURI(kPersonalAddressbookURI);
-            let card = Components.classes["@mozilla.org/addressbook/cardproperty;1"]
-                                 .createInstance(Components.interfaces.nsIAbCard);
+            let card = Cc["@mozilla.org/addressbook/cardproperty;1"].createInstance(Ci.nsIAbCard);
 
             if (!address || !directory || !card)
                 return false;
@@ -165,11 +162,11 @@ function Addressbook() //{{{
 
             while (dirs.hasMoreElements())
             {
-                let addrbook = dirs.getNext().QueryInterface(Components.interfaces.nsIAbDirectory);
+                let addrbook = dirs.getNext().QueryInterface(Ci.nsIAbDirectory);
                 let cards = addrbook.childCards;
                 while (cards.hasMoreElements())
                 {
-                    let card = cards.getNext().QueryInterface(Components.interfaces.nsIAbCard);
+                    let card = cards.getNext().QueryInterface(Ci.nsIAbCard);
                     //var mail = card.primaryEmail || ""; //XXX
                     let displayName = card.displayName;
                     if (!displayName)

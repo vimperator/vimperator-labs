@@ -231,8 +231,7 @@ const config = { //{{{
             else
             {
                 let pane = document.getElementById(id);
-                let manager = Components.classes['@songbirdnest.com/Songbird/DisplayPane/Manager;1']
-                                        .getService(Components.interfaces.sbIDisplayPaneManager);
+                let manager = Cc['@songbirdnest.com/Songbird/DisplayPane/Manager;1'].getService(Ci.sbIDisplayPaneManager);
                 let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
 
                 if (!paneinfo)

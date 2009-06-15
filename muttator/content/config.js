@@ -71,7 +71,7 @@ const config = { //{{{
         ["checkupdates",     "Check for updates",
             function () { window.checkForUpdates(); }],
         /*["cleardata",        "Clear private data",
-         function () { Components.classes[GLUE_CID].getService(Components.interfaces.nsIBrowserGlue).sanitize(window || null); }],*/
+         function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
             function () { window.toJavaScriptConsole(); }],
         /*["customizetoolbar", "Customize the Toolbar",
@@ -217,9 +217,9 @@ const config = { //{{{
             {
                 QueryInterface: function (id)
                 {
-                    if (id.equals(Components.interfaces.nsIDocumentStateListener))
+                    if (id.equals(Ci.nsIDocumentStateListener))
                         return this;
-                    throw Components.results.NS_NOINTERFACE;
+                    throw Cr.NS_NOINTERFACE;
                 },
 
                 // this is (also) fired once the new compose window loaded the message for the first time

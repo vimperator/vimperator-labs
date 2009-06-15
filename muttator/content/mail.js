@@ -55,7 +55,7 @@ function Mail() //{{{
             {
                 if (folder)
                 {
-                    let msgFolder = folder.QueryInterface(Components.interfaces.nsIMsgFolder);
+                    let msgFolder = folder.QueryInterface(Ci.nsIMsgFolder);
                     autocommands.trigger("FolderLoaded", { url: msgFolder });
 
                     // Jump to a message when requested
@@ -85,9 +85,8 @@ function Mail() //{{{
         }
     };
 
-    var mailSession = Components.classes["@mozilla.org/messenger/services/session;1"]
-                                .getService(Components.interfaces.nsIMsgMailSession);
-    var nsIFolderListener = Components.interfaces.nsIFolderListener;
+    var mailSession = Cc["@mozilla.org/messenger/services/session;1"].getService(Ci.nsIMsgMailSession);
+    var nsIFolderListener = Ci.nsIFolderListener;
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
@@ -784,10 +783,8 @@ function Mail() //{{{
 
         composeNewMail: function (args)
         {
-            let params = Components.classes["@mozilla.org/messengercompose/composeparams;1"]
-                                   .createInstance(Components.interfaces.nsIMsgComposeParams);
-            params.composeFields = Components.classes["@mozilla.org/messengercompose/composefields;1"]
-                                             .createInstance(Components.interfaces.nsIMsgCompFields);
+            let params = Cc["@mozilla.org/messengercompose/composeparams;1"].createInstance(Ci.nsIMsgComposeParams);
+            params.composeFields = Cc["@mozilla.org/messengercompose/composefields;1"].createInstance(Ci.nsIMsgCompFields);
 
             if (args)
             {
@@ -815,18 +812,17 @@ function Mail() //{{{
                         if (!file.exists())
                             return void liberator.echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
 
-                        attachment = Components.classes["@mozilla.org/messengercompose/attachment;1"]
-                                               .createInstance(Components.interfaces.nsIMsgAttachment);
+                        attachment = Cc["@mozilla.org/messengercompose/attachment;1"].createInstance(Ci.nsIMsgAttachment);
                         attachment.url = "file://" + file.path;
                         params.composeFields.addAttachment(attachment);
                     }
                 }
             }
 
-            params.type = Components.interfaces.nsIMsgCompType.New;
+            params.type = Ci.nsIMsgCompType.New;
 
-            const msgComposeService = Components.classes["@mozilla.org/messengercompose;1"].getService();
-            msgComposeService = msgComposeService.QueryInterface(Components.interfaces.nsIMsgComposeService);
+            const msgComposeService = Cc["@mozilla.org/messengercompose;1"].getService();
+            msgComposeService = msgComposeService.QueryInterface(Ci.nsIMsgComposeService);
             msgComposeService.OpenComposeWindowWithParams(null, params);
         },
 
@@ -1029,7 +1025,7 @@ function Mail() //{{{
 
                     while (msgs.hasMoreElements())
                     {
-                        let msg = msgs.getNext().QueryInterface(Components.interfaces.nsIMsgDBHdr);
+                        let msg = msgs.getNext().QueryInterface(Ci.nsIMsgDBHdr);
                         if (validatorFunc(msg))
                         {
                             count--;
