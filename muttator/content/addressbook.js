@@ -35,8 +35,6 @@ function Addressbook() //{{{
     const abManager = Cc["@mozilla.org/abmanager;1"].getService(Ci.nsIAbManager);
     const rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
 
-    const kPersonalAddressbookURI = "moz-abmdbdirectory://abook.mab";
-
     // TODO: add option for a format specifier, like:
     // :set displayname=%l, %f
     function generateDisplayName(firstName, lastName)
@@ -137,17 +135,18 @@ function Addressbook() //{{{
 
     return {
 
-        add: function (address, firstname, lastname, displayName)
+        add: function (address, firstName, lastName, displayName)
         {
-            let directory = getDirectoryFromURI(kPersonalAddressbookURI);
+            const personalAddressbookURI = "moz-abmdbdirectory://abook.mab";
+            let directory = getDirectoryFromURI(personalAddressbookURI);
             let card = Cc["@mozilla.org/addressbook/cardproperty;1"].createInstance(Ci.nsIAbCard);
 
             if (!address || !directory || !card)
                 return false;
 
             card.primaryEmail = address;
-            card.firstName = firstname;
-            card.lastName = lastname;
+            card.firstName = firstName;
+            card.lastName = lastName;
             card.displayName = displayName;
 
             return directory.addCard(card);
