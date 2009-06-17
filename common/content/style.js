@@ -509,7 +509,7 @@ let (array = util.Array)
             catch (e) {}
             context.fork("others", 0, this, function (context) {
                 context.title = ["Site"];
-                context.completions = [[s, ""] for each (s in styles.sites)];
+                context.completions = [[s, ""] for ([,s] in Iterator(styles.sites))];
             });
         }
     });

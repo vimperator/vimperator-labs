@@ -92,9 +92,9 @@ function Bookmarks() //{{{
         this.__defineGetter__("bookmarks", function () this.load());
 
         this.__defineGetter__("keywords",
-            function () [new Keyword(k.keyword, k.title, k.icon, k.url) for each (k in self.bookmarks) if (k.keyword)]);
+            function () [new Keyword(k.keyword, k.title, k.icon, k.url) for ([,k] in Iterator(self.bookmarks)) if (k.keyword)]);
 
-        this.__iterator__ = function () (val for each (val in self.bookmarks));
+        this.__iterator__ = function () (val for ([,val] in Iterator(self.bookmarks)));
 
         function loadBookmark(node)
         {

@@ -1050,7 +1050,7 @@ const liberator = (function () //{{{
             }
 
             liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
-                                + [dir.path.replace(/.plugin$/, "") for each (dir in dirs)].join(",") + '"', 2);
+                                + [dir.path.replace(/.plugin$/, "") for ([,dir] in Iterator(dirs))].join(",") + '"', 2);
 
             dirs.forEach(function (dir) {
                 liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);

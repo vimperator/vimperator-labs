@@ -1091,7 +1091,7 @@ function Commands() //{{{
                           cmd.count ? "0c" : "",
                           completerToString(cmd.completer),
                           cmd.replacementText || "function () { ... }"]
-                         for each (cmd in cmds)));
+                         for ([,cmd] in Iterator(cmds))));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }

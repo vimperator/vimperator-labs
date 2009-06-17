@@ -164,7 +164,7 @@ function Hints() //{{{
             return [elem.value, false];
         else
         {
-            for each (let option in options["hintinputs"].split(","))
+            for (let [,option] in Iterator(options["hintinputs"].split(",")))
             {
                 if (option == "value")
                 {

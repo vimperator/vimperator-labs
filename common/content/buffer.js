@@ -1945,7 +1945,7 @@ function Marks() //{{{
                   Math.round(mark[1].position.x * 100) + "%",
                   Math.round(mark[1].position.y * 100) + "%",
                   mark[1].location]
-                  for each (mark in marks)));
+                 for ([,mark] in Iterator(marks))));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
 
