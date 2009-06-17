@@ -458,30 +458,12 @@ function Events() //{{{
         code_key[60] = "lt";
     }
 
-    function isFormElemFocused()
+    function isInputElemFocused()
     {
         let elem = liberator.focus;
-        if (elem == null)
-            return false;
-
-        try
-        { // sometimes the elem doesn't have .localName
-            let tagname = elem.localName.toLowerCase();
-            let type = elem.type.toLowerCase();
-
-            if ((tagname == "input" && (type != "image")) ||
-                    tagname == "textarea" ||
-                    //            tagName == "SELECT" ||
-                    //            tagName == "BUTTON" ||
-                    tagname == "isindex") // isindex is a deprecated one-line input box
-                return true;
-        }
-        catch (e)
-        {
-            // FIXME: do nothing?
-        }
-
-        return false;
+        return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
+                 elem instanceof HTMLTextAreaElement ||
+                 elem instanceof HTMLIsIndexElement)
     }
 
     function triggerLoadAutocmd(name, doc)
@@ -1659,7 +1641,7 @@ function Events() //{{{
         // this is need for sites like msn.com which focus the input field on keydown
         onKeyUpOrDown: function (event)
         {
-            if (modes.passNextKey ^ modes.passAllKeys || isFormElemFocused())
+            if (modes.passNextKey ^ modes.passAllKeys || isInputElemFocused())
                 return;
 
             event.stopPropagation();
