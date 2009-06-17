@@ -142,13 +142,12 @@ function Hints() //{{{
      * If it finds a hint it returns it, if the hint is not the caption of the
      * element it will return showtext=true.
      *
-     * @param {Object} elem The element.
-     * @param {string} tagname Its tagname.
-     * @param {Document} doc The document it is in.
+     * @param {Object} elem The element used to generate hint text.
+     * @param {Document} doc The containing document.
      *
      * @returns [text, showtext]
      */
-    function getInputHint(elem, tagname, doc)
+    function getInputHint(elem, doc)
     {
         // <input type="submit|button|reset">   Always use the value
         // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
@@ -157,10 +156,10 @@ function Hints() //{{{
         // <input type="image">                 Use the alt text if present (showtext) or label or name
         // <input type="hidden">                Never gets here
         // <select>                             Use the text of the selected item or label or name
-        text = "";
-        let type = elem.type ? elem.type.toLowerCase() : "";
 
-        if (tagname == "input" && (type == "submit" || type == "button" || type == "reset"))
+        let type = elem.type;
+
+        if (elem instanceof HTMLInputElement && /(submit|button|reset)/.test(type))
             return [elem.value, false];
         else
         {
@@ -168,7 +167,7 @@ function Hints() //{{{
             {
                 if (option == "value")
                 {
-                    if (tagname == "select")
+                    if (elem instanceof HTMLSelectElement)
                     {
                         if (elem.selectedIndex >= 0)
                             return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
@@ -199,6 +198,7 @@ function Hints() //{{{
                     return [elem.name.toLowerCase(), true];
             }
         }
+
         return ["", false];
     }
 
@@ -293,7 +293,7 @@ function Hints() //{{{
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
-        let elem, tagname, text, span, rect, showtext;
+        let elem, text, span, rect, showtext;
         let res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
@@ -315,9 +315,8 @@ function Hints() //{{{
             if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
                 continue;
 
-            tagname = elem.localName.toLowerCase();
-            if (tagname == "input" || tagname == "select" || tagname == "textarea")
-                [text, showtext] = getInputHint(elem, tagname, doc);
+            if (elem instanceof HTMLInputElement || elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
+                [text, showtext] = getInputHint(elem, doc);
             else
                 text = elem.textContent.toLowerCase();
 
@@ -326,7 +325,7 @@ function Hints() //{{{
             let leftpos = Math.max((rect.left + scrollX), scrollX);
             let toppos =  Math.max((rect.top + scrollY), scrollY);
 
-            if (tagname == "area")
+            if (elem instanceof HTMLAreaElement)
                 [leftpos, toppos] = getAreaOffset(elem, leftpos, toppos);
 
             span.style.left = leftpos + "px";
@@ -388,7 +387,7 @@ function Hints() //{{{
     function showHints()
     {
 
-        let elem, tagname, text, rect, span, imgspan, _a, _b, showtext;
+        let elem, text, rect, span, imgspan, _a, _b, showtext;
         let hintnum = 1;
         let validHint = hintMatcher(hintString.toLowerCase());
         let activeHint = hintNumber || 1;
@@ -416,7 +415,7 @@ function Hints() //{{{
                     continue inner;
                 }
 
-                if (text == "" && elem.firstChild && elem.firstChild.tagName == "IMG")
+                if (text == "" && elem.firstChild && elem.firstChild instanceof HTMLImageElement)
                 {
                     if (!imgspan)
                     {
