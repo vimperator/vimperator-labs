@@ -1392,7 +1392,7 @@ function Buffer() //{{{
 
             // find all frames - depth-first search
             (function (frame) {
-                if (frame.document.body.localName.toLowerCase() == "body")
+                if (frame.document.body instanceof HTMLBodyElement)
                     frames.push(frame);
                 Array.forEach(frame.frames, arguments.callee);
             })(window.content);
