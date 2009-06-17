@@ -1730,10 +1730,6 @@ function ItemList(id) //{{{
 
     function dom(xml, map) util.xmlToDom(xml, doc, map);
 
-    // Unused.
-    function elemToString(elem) elem.nodeType == elem.TEXT_NODE ? elem.data :
-        "<" + [elem.localName].concat([a.name + "=" + a.value.quote() for ([i, a] in Iterator(elem.attributes))]).join(" ") + ">";
-
     var doc = iframe.contentDocument;
     var container = iframe.parentNode;
 
