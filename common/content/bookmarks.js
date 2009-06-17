@@ -82,7 +82,6 @@ function Bookmarks() //{{{
     function Cache(name, store, serial)
     {
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
-        const sleep = liberator.sleep;
 
         let bookmarks = [];
         let self = this;
@@ -142,7 +141,7 @@ function Bookmarks() //{{{
             if (loading)
             {
                 while (loading)
-                    sleep(10);
+                    liberator.sleep(10);
                 return bookmarks;
             }
 
