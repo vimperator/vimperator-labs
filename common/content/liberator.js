@@ -87,6 +87,72 @@ const liberator = (function () //{{{
         }
     }
 
+    // initially hide all GUI, it is later restored unless the user has :set go= or something
+    // similar in his config
+    function hideGUI()
+    {
+        let guioptions = config.guioptions;
+        for (let option in guioptions)
+        {
+            guioptions[option].forEach(function (elem) {
+                try
+                {
+                    document.getElementById(elem).collapsed = true;
+                }
+                catch (e) {}
+            });
+        }
+    }
+
+    // return the platform normalized to Vim values
+    function getPlatformFeature()
+    {
+        let platform = navigator.platform;
+
+        return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
+    }
+
+    // TODO: move this
+    function getMenuItems()
+    {
+        function addChildren(node, parent)
+        {
+            for (let [,item] in Iterator(node.childNodes))
+            {
+                if (item.childNodes.length == 0 && item.localName == "menuitem"
+                    && !/rdf:http:/.test(item.getAttribute("label"))) // FIXME
+                {
+                    item.fullMenuPath = parent + item.getAttribute("label");
+                    items.push(item);
+                }
+                else
+                {
+                    let path = parent;
+                    if (item.localName == "menu")
+                        path += item.getAttribute("label") + ".";
+                    addChildren(item, path);
+                }
+            }
+        }
+
+        let items = [];
+        addChildren(document.getElementById(config.guioptions["m"][1]), "");
+        return items;
+    }
+
+    // show a usage index either in the MOW or as a full help page
+    function showHelpIndex(tag, items, inMow)
+    {
+        if (inMow)
+            liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
+        else
+            liberator.help(tag);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     // Only general options are added here, which are valid for all Vimperator like extensions
     registerObserver("load_options", function () {
 
@@ -191,6 +257,10 @@ const liberator = (function () //{{{
             });
     });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// MAPPINGS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
     registerObserver("load_mappings", function () {
 
         mappings.add(modes.all, ["<F1>"],
@@ -209,33 +279,9 @@ const liberator = (function () //{{{
             function () { liberator.quit(true); });
     });
 
-    // TODO: move this
-    function getMenuItems()
-    {
-        function addChildren(node, parent)
-        {
-            for (let [,item] in Iterator(node.childNodes))
-            {
-                if (item.childNodes.length == 0 && item.localName == "menuitem"
-                    && !/rdf:http:/.test(item.getAttribute("label"))) // FIXME
-                {
-                    item.fullMenuPath = parent + item.getAttribute("label");
-                    items.push(item);
-                }
-                else
-                {
-                    let path = parent;
-                    if (item.localName == "menu")
-                        path += item.getAttribute("label") + ".";
-                    addChildren(item, path);
-                }
-            }
-        }
-
-        let items = [];
-        addChildren(document.getElementById(config.guioptions["m"][1]), "");
-        return items;
-    }
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMMANDS ////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     registerObserver("load_commands", function () {
 
@@ -544,39 +590,40 @@ const liberator = (function () //{{{
             });
     });
 
-    // initially hide all GUI, it is later restored unless the user has :set go= or something
-    // similar in his config
-    function hideGUI()
-    {
-        let guioptions = config.guioptions;
-        for (let option in guioptions)
-        {
-            guioptions[option].forEach(function (elem) {
-                try
-                {
-                    document.getElementById(elem).collapsed = true;
-                }
-                catch (e) {}
-            });
-        }
-    }
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
-    // return the platform normalized to Vim values
-    function getPlatformFeature()
-    {
-        let platform = navigator.platform;
+    registerObserver("load_completion", function () {
+        completion.dialog = function dialog(context) {
+            context.title = ["Dialog"];
+            context.completions = config.dialogs;
+        };
 
-        return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
-    }
+        completion.help = function help(context) {
+            context.title = ["Help"];
+            context.anchored = false;
+            context.generate = function ()
+            {
+                let res = config.helpFiles.map(function (file) {
+                    let resp = util.httpGet("chrome://liberator/locale/" + file);
+                    if (!resp)
+                        return [];
+                    let doc = resp.responseXML;
+                    return Array.map(doc.getElementsByClassName("tag"),
+                            function (elem) [elem.textContent, file]);
+                });
+                return util.Array.flatten(res);
+            }
+        };
 
-    // show a usage index either in the MOW or as a full help page
-    function showHelpIndex(tag, items, inMow)
-    {
-        if (inMow)
-            liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
-        else
-            liberator.help(tag);
-    }
+        completion.menuItem = function menuItem(context) {
+            context.title = ["Menu Path", "Label"];
+            context.anchored = false;
+            context.keys = { text: "fullMenuPath", description: function (item) item.getAttribute("label") };
+            context.completions = liberator.menuItems;
+        };
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

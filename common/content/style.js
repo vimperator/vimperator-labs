@@ -534,16 +534,9 @@ if (highlight.CSS != Highlights.prototype.CSS)
 liberator.triggerObserver("load_styles", "styles");
 liberator.triggerObserver("load_highlight", "highlight");
 
-liberator.registerObserver("load_completion", function () {
-    completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
-        [ // Prototype: (system, name, filter, css, index)
-            null,
-            function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,
-            function (context, obj, args) styles.completeSite(context, content),
-            null,
-            function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
-        ]);
-});
+/////////////////////////////////////////////////////////////////////////////}}}
+////////////////////// COMMANDS ////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////{{{
 
 liberator.registerObserver("load_commands", function () {
 
@@ -711,5 +704,40 @@ liberator.registerObserver("load_commands", function () {
             ]
         });
 });
+/////////////////////////////////////////////////////////////////////////////}}}
+////////////////////// COMPLETIONS /////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////{{{
+
+liberator.registerObserver("load_completion", function () {
+    completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
+        [ // Prototype: (system, name, filter, css, index)
+            null,
+            function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,
+            function (context, obj, args) styles.completeSite(context, content),
+            null,
+            function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
+        ]);
+
+    completion.colorScheme = function colorScheme(context) {
+        let colors = [];
+
+        io.getRuntimeDirectories("colors").forEach(function (dir) {
+            io.readDirectory(dir).forEach(function (file) {
+                if (/\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))
+                    colors.push(file);
+            });
+        });
+
+        context.title = ["Color Scheme", "Runtime Path"];
+        context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([,c] in Iterator(colors))]
+    };
+
+    // FIXME: extract from :highlight
+    completion.highlightGroup = function highlightGroup(context, args) {
+        return commands.get("highlight").completer(context, args);
+    };
+
+});
+//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

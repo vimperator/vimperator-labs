@@ -566,6 +566,23 @@ function Editor() //{{{
     addAbbreviationCommands("c", "command line");
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.registerObserver("load_completion", function () {
+        // TODO: shouldn't all of these have a standard signature (context, args, ...)? --djk
+        completion.abbreviation = function abbreviation(context, args, mode) {
+            mode = mode || "!";
+
+            if (args.completeArg == 0)
+            {
+                let abbreviations = editor.getAbbreviations(mode);
+                context.completions = [[lhs, ""] for ([, [, lhs,]] in Iterator(abbreviations))];
+            }
+        };
+    });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

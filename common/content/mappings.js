@@ -298,6 +298,23 @@ function Mappings() //{{{
                            [mode.disp.toLowerCase()]);
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.registerObserver("load_completion", function () {
+        completion.userMapping = function userMapping(context, args, modes) {
+            // FIXME: have we decided on a 'standard' way to handle this clash? --djk
+            modes = modes || [modules.modes.NORMAL];
+
+            if (args.completeArg == 0)
+            {
+                let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
+                context.completions = maps;
+            }
+        };
+    });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

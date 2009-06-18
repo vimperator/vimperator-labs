@@ -392,10 +392,6 @@ function Commands() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    liberator.registerObserver("load_completion", function () {
-        completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
-    });
-
     const self = {
 
         // FIXME: remove later, when our option handler is better
@@ -1156,6 +1152,77 @@ function Commands() //{{{
             completer: function (context) completion.userCommand(context)
         });
 
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.registerObserver("load_completion", function () {
+        completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
+
+        completion.command = function command(context) {
+            context.title = ["Command"];
+            context.keys = { text: "longNames", description: "description" };
+            context.completions = [k for (k in commands)];
+        };
+
+        // provides completions for ex commands, including their arguments
+        completion.ex = function ex(context) {
+            // if there is no space between the command name and the cursor
+            // then get completions of the command name
+            let [count, cmd, bang, args] = commands.parseCommand(context.filter);
+            let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
+            context.advance(prefix.length)
+            if (!junk)
+                return context.fork("", 0, this, "command");
+
+            // dynamically get completions as specified with the command's completer function
+            let command = commands.get(cmd);
+            if (!command)
+            {
+                context.highlight(0, cmd.length, "SPELLCHECK");
+                return;
+            }
+
+            [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
+            let cmdContext = context.fork(cmd, prefix.length);
+            let argContext = context.fork("args", prefix.length);
+            args = command.parseArgs(cmdContext.filter, argContext, { count: count, bang: bang });
+            if (args)
+            {
+                // FIXME: Move to parseCommand
+                args.count = count;
+                args.bang = bang;
+                if (!args.completeOpt && command.completer)
+                {
+                    cmdContext.advance(args.completeStart);
+                    cmdContext.quote = args.quote;
+                    cmdContext.filter = args.completeFilter;
+                    try
+                    {
+                        let compObject = command.completer.call(command, cmdContext, args);
+                        if (compObject instanceof Array) // for now at least, let completion functions return arrays instead of objects
+                            compObject = { start: compObject[0], items: compObject[1] };
+                        if (compObject != null)
+                        {
+                            cmdContext.advance(compObject.start);
+                            cmdContext.filterFunc = null;
+                            cmdContext.completions = compObject.items;
+                        }
+                    }
+                    catch (e)
+                    {
+                        liberator.reportError(e);
+                    }
+                }
+            }
+        };
+
+        completion.userCommand = function userCommand(context) {
+            context.title = ["User Command", "Definition"];
+            context.keys = { text: "name", description: "replacementText" };
+            context.completions = commands.getUserCommands();
+        };
+    });
     //}}}
 
     return self;

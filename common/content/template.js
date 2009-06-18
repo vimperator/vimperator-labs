@@ -8,7 +8,7 @@
 
 /** @scope modules */
 
-const template = {
+const template = { //{{{
     add: function add(a, b) a + b,
     join: function join(c) function (a, b) a + c + b,
 
@@ -332,6 +332,6 @@ const template = {
             </table>);
         // </e4x>
     }
-};
+}; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

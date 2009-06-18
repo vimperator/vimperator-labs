@@ -407,6 +407,45 @@ function Player() // {{{
         { argCount: "1" });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    completion.song = function song(context, args) {
+        // TODO: useful descriptions?
+        function map(list) list.map(function (i) [i, ""]);
+        let [artist, album] = [args[0], args[1]];
+
+        if (args.completeArg == 0)
+        {
+            context.title = ["Artists"];
+            context.completions = map(library.getArtists());
+        }
+        else if (args.completeArg == 1)
+        {
+            context.title = ["Albums by " + artist];
+            context.completions = map(library.getAlbums(artist));
+        }
+        else if (args.completeArg == 2)
+        {
+            context.title = ["Tracks from " + album + " by " + artist];
+            context.completions = map(library.getTracks(artist, album));
+        }
+    };
+
+    completion.playlist = function playlist(context, args) {
+        context.title = ["Playlist", "Type"];
+        context.keys = { text: "name", description: "type" };
+        context.completions = player.getPlaylists();
+    };
+
+    completion.mediaView = function mediaView(context) {
+        context.title = ["Media View", "URL"];
+        context.anchored = false;
+        context.keys = { text: "contentTitle", description: "contentUrl" };
+        context.completions = player.getMediaPages();
+    };
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 

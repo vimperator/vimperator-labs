@@ -913,17 +913,84 @@ function Options() //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: Does this belong elsewhere?
     liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
                 [function () services.get("pref")
                                      .getChildList("", { value: 0 })
                                      .map(function (pref) [pref, ""])]);
+
+        completion.option = function option(context, scope) {
+            context.title = ["Option"];
+            context.keys = { text: "names", description: "description" };
+            context.completions = options;
+            if (scope)
+                context.filters.push(function ({ item: opt }) opt.scope & scope);
+        };
+
+        completion.optionValue = function (context, name, op, curValue) {
+            let opt = options.get(name);
+            let completer = opt.completer;
+            if (!completer)
+                return;
+
+            let curValues = curValue != null ? opt.parseValues(curValue) : opt.values;
+            let newValues = opt.parseValues(context.filter);
+
+            let len = context.filter.length;
+            switch (opt.type)
+            {
+                case "boolean":
+                    if (!completer)
+                        completer = function () [["true", ""], ["false", ""]];
+                    break;
+                case "stringlist":
+                    let target = newValues.pop();
+                    len = target ? target.length : 0;
+                    break;
+                case "charlist":
+                    len = 0;
+                    break;
+            }
+            // TODO: Highlight when invalid
+            context.advance(context.filter.length - len);
+
+            context.title = ["Option Value"];
+            let completions = completer(context);
+            if (!completions)
+                return;
+            // Not Vim compatible, but is a significant enough improvement
+            // that it's worth breaking compatibility.
+            if (newValues instanceof Array)
+            {
+                completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);
+                switch (op)
+                {
+                    case "+":
+                        completions = completions.filter(function (val) curValues.indexOf(val[0]) == -1);
+                        break;
+                    case "-":
+                        completions = completions.filter(function (val) curValues.indexOf(val[0]) > -1);
+                        break;
+                }
+            }
+            context.completions = completions;
+        };
+
+        completion.preference = function preference(context) {
+            context.anchored = false;
+            context.title = ["Firefox Preference", "Value"];
+            context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
+            context.completions = services.get("pref").getChildList("", { value: 0 });
+        };
     });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     const self = {
 

@@ -400,6 +400,93 @@ function Bookmarks() //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    completion.bookmark = function bookmark(context, tags, extra) {
+        context.title = ["Bookmark", "Title"];
+        context.format = bookmarks.format;
+        for (let val in Iterator(extra || []))
+        {
+            let [k, v] = val; // Need block scope here for the closure
+            if (v)
+                context.filters.push(function (item) this._match(v, item[k]));
+        }
+        // Need to make a copy because set completions() checks instanceof Array,
+        // and this may be an Array from another window.
+        context.completions = Array.slice(storage["bookmark-cache"].bookmarks);
+        completion.urls(context, tags);
+    };
+
+    completion.search = function search(context, noSuggest) {
+        let [, keyword, space, args] = context.filter.match(/^\s*(\S*)(\s*)(.*)$/);
+        let keywords = bookmarks.getKeywords();
+        let engines = bookmarks.getSearchEngines();
+
+        context.title = ["Search Keywords"];
+        context.completions = keywords.concat(engines);
+        context.keys = { text: 0, description: 1, icon: 2 };
+
+        if (!space || noSuggest)
+            return;
+
+        context.fork("suggest", keyword.length + space.length, this, "searchEngineSuggest",
+                keyword, true);
+
+        let item = keywords.filter(function (k) k.keyword == keyword)[0];
+        if (item && item.url.indexOf("%s") > -1)
+            context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
+                context.format = history.format;
+                context.title = [keyword + " Quick Search"];
+                // context.background = true;
+                context.compare = CompletionContext.Sort.unsorted;
+                context.generate = function () {
+                    let [begin, end] = item.url.split("%s");
+
+                    return history.get({ uri: window.makeURI(begin), uriIsPrefix: true }).map(function (item) {
+                        let rest = item.url.length - end.length;
+                        let query = item.url.substring(begin.length, rest);
+                        if (item.url.substr(rest) == end && query.indexOf("&") == -1)
+                        {
+                            item.url = decodeURIComponent(query);
+                            return item;
+                        }
+                    }).filter(util.identity);
+                };
+            });
+    };
+
+    completion.searchEngineSuggest = function searchEngineSuggest(context, engineAliases, kludge) {
+        if (!context.filter)
+            return;
+
+        let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
+
+        let completions = [];
+        engineList.forEach(function (name) {
+            let engine = services.get("browserSearch").getEngineByAlias(name);
+            if (!engine)
+                return;
+            let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
+            if (!kludge && word == name) // FIXME: Check for matching keywords
+                return;
+            let ctxt = context.fork(name, 0);
+
+            ctxt.title = [engine.description + " Suggestions"];
+            ctxt.compare = CompletionContext.Sort.unsorted;
+            ctxt.incomplete = true;
+            bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
+                ctxt.incomplete = false;
+                ctxt.completions = compl;
+            });
+        });
+    };
+
+    completion.addUrlCompleter("S", "Suggest engines", completion.searchEngineSuggest);
+    completion.addUrlCompleter("b", "Bookmarks", completion.bookmark);
+    completion.addUrlCompleter("s", "Search engines and keyword URLs", completion.search);
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -839,6 +926,23 @@ function History() //{{{
             // completer: function (filter) completion.history(filter)
             options: [[["-max", "-m"], options.OPTION_INT]]
         });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    completion.history = function _history(context, maxItems) {
+        context.format = history.format;
+        context.title = ["History"]
+        context.compare = CompletionContext.Sort.unsorted;
+        //context.background = true;
+        if (context.maxItems == null)
+            context.maxItems = 100;
+        context.regenerate = true;
+        context.generate = function () history.get(context.filter, this.maxItems);
+    };
+
+    completion.addUrlCompleter("h", "History", completion.history);
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

@@ -386,7 +386,7 @@ function IO() //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     liberator.registerObserver("load_completion", function () {
@@ -395,7 +395,99 @@ function IO() //{{{
                 context.quote[2] = "";
                 completion.file(context, true);
             }]);
+
+        completion.charset = function (context) {
+            context.anchored = false;
+            context.generate = function () {
+                let names = util.Array(
+                    "more1 more2 more3 more4 more5 unicode".split(" ").map(function (key)
+                        options.getPref("intl.charsetmenu.browser." + key).split(', '))
+                ).flatten().uniq();
+                let bundle = document.getElementById("liberator-charset-bundle");
+                return names.map(function (name) [name, bundle.getString(name.toLowerCase() + ".title")]);
+            };
+        };
+
+        completion.directory = function directory(context, full) {
+            this.file(context, full);
+            context.filters.push(function ({ item: f }) f.isDirectory());
+        };
+
+        completion.environment = function environment(context) {
+            let command = liberator.has("Win32") ? "set" : "env";
+            let lines = io.system(command).split("\n");
+            lines.pop();
+
+            context.title = ["Environment Variable", "Value"];
+            context.generate = function () lines.map(function (line) (line.match(/([^=]+)=(.+)/) || []).slice(1));
+        };
+
+        // TODO: support file:// and \ or / path separators on both platforms
+        // if "tail" is true, only return names without any directory components
+        completion.file = function file(context, full) {
+            // dir == "" is expanded inside readDirectory to the current dir
+            let [dir] = context.filter.match(/^(?:.*[\/\\])?/);
+
+            if (!full)
+                context.advance(dir.length);
+
+            context.title = [full ? "Path" : "Filename", "Type"];
+            context.keys = {
+                text: !full ? "leafName" : function (f) dir + f.leafName,
+                description: function (f) f.isDirectory() ? "Directory" : "File",
+                isdir: function (f) f.isDirectory(),
+                icon: function (f) f.isDirectory() ? "resource://gre/res/html/folder.png"
+                                                             : "moz-icon://" + f.leafName
+            };
+            context.compare = function (a, b)
+                        b.isdir - a.isdir || String.localeCompare(a.text, b.text);
+
+            if (options["wildignore"])
+            {
+                let wigRegexp = RegExp("(^" + options.get("wildignore").values.join("|") + ")$");
+                context.filters.push(function ({item: f}) f.isDirectory() || !wigRegexp.test(f.leafName));
+            }
+
+            // context.background = true;
+            context.key = dir;
+            context.generate = function generate_file()
+            {
+                try
+                {
+                    return io.readDirectory(dir);
+                }
+                catch (e) {}
+            };
+        };
+
+        completion.shellCommand = function shellCommand(context) {
+            context.title = ["Shell Command", "Path"];
+            context.generate = function ()
+            {
+                let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
+                let commands = [];
+
+                for (let [,dirName] in Iterator(dirNames))
+                {
+                    let dir = io.getFile(dirName);
+                    if (dir.exists() && dir.isDirectory())
+                    {
+                        commands.push([[file.leafName, dir.path] for ([i, file] in Iterator(io.readDirectory(dir)))
+                                            if (file.isFile() && file.isExecutable())]);
+                    }
+                }
+
+                return util.Array.flatten(commands);
+            }
+        };
+
+        completion.addUrlCompleter("f", "Local files", completion.file);
     });
+
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
 
     const self = {
 

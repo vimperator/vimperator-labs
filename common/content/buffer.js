@@ -674,6 +674,61 @@ function Buffer() //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    liberator.registerObserver("load_completion", function () {
+        completion.alternateStyleSheet = function alternateStylesheet(context) {
+            context.title = ["Stylesheet", "Location"];
+
+            // unify split style sheets
+            let styles = {};
+
+            buffer.alternateStyleSheets.forEach(function (style) {
+                if (!(style.title in styles))
+                    styles[style.title] = [];
+
+                styles[style.title].push(style.href || "inline");
+            });
+
+            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
+        };
+
+        completion.buffer = function buffer(context) {
+            filter = context.filter.toLowerCase();
+            context.anchored = false;
+            context.title = ["Buffer", "URL"];
+            context.keys = { text: "text", description: "url", icon: "icon" };
+            context.compare = CompletionContext.Sort.number;
+            let process = context.process[0];
+            context.process = [function (item, text)
+                    <>
+                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
+                        { process.call(this, item, text) }
+                    </>];
+
+            context.completions = util.map(tabs.browsers, function ([i, browser]) {
+                let indicator = " ";
+                if (i == tabs.index())
+                   indicator = "%"
+                else if (i == tabs.index(tabs.alternate))
+                   indicator = "#";
+
+                let tab = tabs.getTab(i);
+                let url = browser.contentDocument.location.href;
+                i = i + 1;
+
+                return {
+                    text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
+                    url:  template.highlightURL(url),
+                    indicator: indicator,
+                    icon: tab.image || DEFAULT_FAVICON
+                };
+            });
+        };
+    });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PAGE INFO ///////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -1768,6 +1823,19 @@ function Marks() //{{{
             let filter = args.replace(/[^a-zA-Z]/g, "");
             marks.list(filter);
         });
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    completion.mark = function mark(context) {
+        function percent(i) Math.round(i * 100);
+
+        // FIXME: Line/Column doesn't make sense with %
+        context.title = ["Mark", "Line Column File"];
+        context.keys.description = function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
+        context.completions = marks.all;
+    };
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

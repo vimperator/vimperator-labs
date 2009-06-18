@@ -505,6 +505,50 @@ const config = { //{{{
             "Set the separator regexp used to separate multiple URL args",
             "string", ",\\s");
 
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// COMPLETIONS /////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
+        completion.location = function location(context) {
+            if (!services.get("autoCompleteSearch"))
+                return;
+
+            context.anchored = false;
+            context.title = ["Smart Completions"];
+            context.keys.icon = 2;
+            context.incomplete = true;
+            context.hasItems = context.completions.length > 0; // XXX
+            context.filterFunc = null;
+            context.cancel = function () services.get("autoCompleteSearch").stopSearch();
+            context.compare = CompletionContext.Sort.unsorted;
+            let timer = new Timer(50, 100, function (result) {
+                context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
+                context.completions = [
+                    [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
+                        for (i in util.range(0, result.matchCount))
+                ];
+            });
+            services.get("autoCompleteSearch").stopSearch();
+            services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
+                onSearchResult: function onSearchResult(search, result) {
+                    context.result = result;
+                    timer.tell(result);
+                    if (result.searchResult <= result.RESULT_SUCCESS)
+                        timer.flush();
+                }
+            });
+        };
+
+        completion.sidebar = function sidebar(context) {
+            let menu = document.getElementById("viewSidebarMenu");
+            context.title = ["Sidebar Panel"];
+            context.completions = Array.map(menu.childNodes, function (n) [n.label, ""]);
+        };
+
+        completion.addUrlCompleter("l",
+            "Firefox location bar entries (bookmarks and history sorted in an intelligent way)",
+            completion.location);
+
         //}}}
     }
 }; //}}}
