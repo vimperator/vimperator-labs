@@ -1176,13 +1176,16 @@ function Buffer() //{{{
                     return true;
                 }
 
+                // TODO: this should probably use the default 'hinttags' value. --djk
                 let res = buffer.evaluateXPath(options["hinttags"], frame.document);
                 for (let [,regex] in Iterator(regexps))
                 {
                     for (let i in util.range(res.snapshotLength, 0, -1))
                     {
                         let elem = res.snapshotItem(i);
-                        if (regex.test(elem.textContent) || Array.some(elem.childNodes, function (child) regex.test(child.alt)))
+                        if (regex.test(elem.textContent) ||
+                            regex.test(elem.title) ||
+                            Array.some(elem.childNodes, function (child) regex.test(child.alt)))
                         {
                             buffer.followLink(elem, liberator.CURRENT_TAB);
                             return true;
