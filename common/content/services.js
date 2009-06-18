@@ -14,7 +14,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 
 /**
- * Cached XPCOM services and instances.
+ * Cached XPCOM services and classes.
  *
  * @constructor
  */
@@ -22,6 +22,7 @@ function Services()
 {
     const classes = {};
     const services = {};
+
     function create(classes, ifaces, meth)
     {
         ifaces = Array.concat(ifaces);
@@ -33,22 +34,59 @@ function Services()
         }
         catch (e) {}
     }
+
     const self = {
+        /* @property {Object} A map of all cached services. */
+        get services() services,
+
+        /* @property {Object} A map of all cached classes. */
+        get classes() classes,
+
+        /**
+         * Adds a new XPCOM service to the cache.
+         *
+         * @param {string} name The service's cache key.
+         * @param {string} class The class's contract ID.
+         * @param {nsISupports|nsISupports[]} ifaces The interface or array of
+         *     interfaces implemented by this service.
+         * @param {string} meth The name of the function used to instanciate
+         *     the service.
+         */
         add: function (name, class, ifaces, meth)
         {
             return services[name] = create(class, ifaces, meth);
         },
+
+        /**
+         * Adds a new XPCOM class to the cache.
+         *
+         * @param {string} name The class's cache key.
+         * @param {string} class The class's contract ID.
+         * @param {nsISupports|nsISupports[]} ifaces The interface or array of
+         *     interfaces implemented by this class.
+         */
         addClass: function (name, class, ifaces)
         {
             return classes[name] = function () create(class, ifaces, "createInstance");
         },
+
+        /**
+         * Returns the cached service with the specified name.
+         *
+         * @param {string} name The service's cache key.
+         */
         get: function (name) services[name],
+
+        /**
+         * Returns a new instance of the cached class with the specified name.
+         *
+         * @param {string} name The class's cache key.
+         */
         create: function (name) classes[name]()
     };
 
     self.add("appStartup",          "@mozilla.org/toolkit/app-startup;1",       Ci.nsIAppStartup);
     self.add("autoCompleteSearch",  "@mozilla.org/browser/global-history;2",    Ci.nsIAutoCompleteSearch);
-    //self.add("autoCompleteSearch",  "@mozilla.org/autocomplete/search;1?name=songbird-autocomplete",    Ci.nsIAutoCompleteSearch);
     self.add("browserSearch",       "@mozilla.org/browser/search-service;1",    Ci.nsIBrowserSearchService);
     self.add("cache",               "@mozilla.org/network/cache-service;1",     Ci.nsICacheService);
     self.add("commandLineHandler",  "@mozilla.org/commandlinehandler/general-startup;1?type=liberator", Ci.nsICommandLineHandler);

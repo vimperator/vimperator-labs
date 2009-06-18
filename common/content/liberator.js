@@ -595,6 +595,9 @@ const liberator = (function () //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     registerObserver("load_completion", function () {
+        completion.setFunctionCompleter(services.get, [function () services.services]);
+        completion.setFunctionCompleter(services.create, [function () [[c, ""] for (c in services.classes)]]);
+
         completion.dialog = function dialog(context) {
             context.title = ["Dialog"];
             context.completions = config.dialogs;
