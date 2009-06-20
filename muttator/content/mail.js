@@ -350,8 +350,8 @@ function Mail() //{{{
         {
           try
           {
-            let to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
-            commandline.open(":", "mail " + to + " -subject=", modes.EX);
+              let to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
+              commandline.open(":", "mail " + to + " -subject=", modes.EX);
           }
           catch (e)
           {
