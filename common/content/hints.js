@@ -63,7 +63,7 @@ function Hints() //{{{
     const Mode = new Struct("prompt", "action", "tags");
     Mode.defaultValue("tags", function () function () options.hinttags);
     function extended() options.extendedhinttags;
-    function images() "//img";
+    function images() "//img | //xhtml:img";
 
     const hintModes = {
         ";": Mode("Focus hint",                        function (elem) buffer.focusElement(elem),                             extended),
@@ -762,9 +762,12 @@ function Hints() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const DEFAULT_HINTTAGS = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link'] | " +
-                             "//input[not(@type='hidden')] | //a | //area | //iframe | //textarea | //button | //select | " +
-                             "//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area | //xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select";
+    // TODO: document class='lk', what is it? --djk
+    const DEFAULT_HINTTAGS =
+        ["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"].reduce(
+            function (path, node) Array.concat(path, node, "xhtml:" + node),
+            "*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link']"
+        ).map(function (node) "//" + node).join(" | ");
 
     function checkXPath(val)
     {
