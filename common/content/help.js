@@ -1,5 +1,7 @@
 
-const win = Cc["@mozilla.org/embedcomp/window-watcher;1"].getService(Ci.nsIWindowWatcher).activeWindow;
+const win = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                      .getService(Ci.nsIWindowWatcher)
+                      .activeWindow;
 const liberator = win.liberator;
 
 let page = liberator.findHelp(decodeURIComponent(document.location.search.substr(1)));
