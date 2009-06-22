@@ -1454,7 +1454,6 @@ function CommandLine() //{{{
                 switch (key)
                 {
                     case "<LeftMouse>":
-                        // FIXME: the :ls output no longer wraps the buffer URL in an anchor element
                         if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list")
                         {
                             event.preventDefault();
