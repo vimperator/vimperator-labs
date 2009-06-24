@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
-     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
-  <Description about="urn:mozilla:install-manifest">
-    <em:id>xulmus@vimperator.org</em:id>
-    <em:type>2</em:type>
-    <em:name>Xulmus</em:name>
-    <em:version>###VERSION###</em:version>
-    <em:creator>Prathyush Thota</em:creator>
-    <em:description>Makes Songbird behave like Vim and CMus.</em:description>
-    <em:targetApplication>
-      <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.8.0pre</em:minVersion>
-        <em:maxVersion>1.2.0a</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+    xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>xulmus@vimperator.org</em:id>
+        <em:type>2</em:type>
+        <em:name>Xulmus</em:name>
+        <em:version>###VERSION###</em:version>
+        <em:creator>Prathyush Thota</em:creator>
+        <em:description>Makes Songbird behave like Vim and CMus.</em:description>
+        <em:optionsURL>chrome://liberator/content/preferences.xul</em:optionsURL>
+        <em:targetApplication>
+            <Description>
+                <em:id>songbird@songbirdnest.com</em:id>
+                <em:minVersion>0.8.0pre</em:minVersion>
+                <em:maxVersion>1.2.0a</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+    </Description>
 </RDF>
+
+<!-- vim: set fdm=marker sw=4 ts=4 et: -->
