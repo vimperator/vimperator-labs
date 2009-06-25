@@ -828,7 +828,6 @@ function Buffer() //{{{
         let lastModVerbose = new Date(doc.lastModified).toLocaleString();
         let lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
 
-        // FIXME: probably not portable across different language versions
         if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
             lastModVerbose = lastMod = null;
 
