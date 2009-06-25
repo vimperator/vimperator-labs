@@ -212,6 +212,14 @@ const liberator = (function () //{{{
             }
         };
 
+        options.add(["fullscreen", "fs"],
+            "Show the current window fullscreen",
+            "boolean", false,
+            {
+                setter: function (value) window.fullScreen = value,
+                getter: function () window.fullScreen
+            });
+
         options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
             "charlist", config.defaults.guioptions || "",

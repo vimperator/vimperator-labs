@@ -147,15 +147,6 @@ function Buffer() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: Most certainly belongs elsewhere.
-    options.add(["fullscreen", "fs"],
-        "Show the current window fullscreen",
-        "boolean", false,
-        {
-            setter: function (value) window.fullScreen = value,
-            getter: function () window.fullScreen
-        });
-
     options.add(["nextpattern"], // \u00BB is » (>> in a single char)
         "Patterns to use when guessing the 'next' page in a document sequence",
         "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
