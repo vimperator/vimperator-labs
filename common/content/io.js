@@ -725,11 +725,7 @@ function IO() //{{{
             file.append(tmpName);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
-            if (file.exists())
-                return file;
-            else
-                return null; // XXX
-
+            return file;
         },
 
         /**
