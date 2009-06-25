@@ -92,6 +92,11 @@ const configbase = { //{{{
     ignoreKeys: {}, // XXX: be aware you can't put useful values in here, as "modes.NORMAL" etc. are not defined at this time
 
     /**
+     * @property {string} The ID of the application's main XUL window.
+     */
+    mainWindowID: document.documentElement.id,
+
+    /**
      * @property {[[]]} An array of application specific mode specifications.
      *     The values of each mode are passed to modes.addMode during
      *     liberator startup.

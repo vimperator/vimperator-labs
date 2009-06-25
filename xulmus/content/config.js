@@ -32,7 +32,7 @@ const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Xulmus",
     hostApplication: "Songbird",
-    //mainWindowID: "mainplayer",
+
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
     defaults: {
@@ -48,7 +48,6 @@ const config = { //{{{
 
     get isPlayerWindow() SBGetBrowser().mCurrentTab == SBGetBrowser().mediaTab,
     // focusContent() focuses this widget gSongbirdWindowController takes care of the focus.
-    get mainWindowID() "mainplayer",
     get visualbellWindow() document.getElementById(this.mainWindowID),
 
     styleableChrome: "chrome://gonzo/content/xul/mainplayer.xul",
@@ -537,8 +536,7 @@ const config = { //{{{
                 {
                     try
                     {
-                        let id = this.mainWindowID || "mainplayer";
-                        document.getElementById(id).setAttribute("titlemodifier", value);
+                        document.getElementById(config.mainWindowID).setAttribute("titlemodifier", value);
                         if (window.content.document.title.length > 0)
                             document.title = window.content.document.title + " - " + value;
                         else

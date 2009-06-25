@@ -30,6 +30,7 @@ const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
+    get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
@@ -50,7 +51,6 @@ const config = { //{{{
     get mailModes() [modes.NORMAL],
     // focusContent() focuses this widget
     get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
-    get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
     get visualbellWindow() document.getElementById(this.mainWindowID),
     styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
 
