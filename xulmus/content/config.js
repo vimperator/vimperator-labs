@@ -528,24 +528,16 @@ const config = { //{{{
                 getter: function () !services.get("io").offline
             });
 
+        // TODO: merge with Vimperator version and add Muttator version
+        // (TB handles this differently).
         options.add(["titlestring"],
             "Change the title of the window",
             "string", "Xulmus",
             {
                 setter: function (value)
                 {
-                    try
-                    {
-                        document.getElementById(config.mainWindowID).setAttribute("titlemodifier", value);
-                        if (window.content.document.title.length > 0)
-                            document.title = window.content.document.title + " - " + value;
-                        else
-                            document.title = value;
-                    }
-                    catch (e)
-                    {
-                        liberator.log("Couldn't set titlestring", 3);
-                    }
+                    document.documentElement.setAttribute("titlemodifier", value);
+                    getBrowser().updateTitlebar();
 
                     return value;
                 }

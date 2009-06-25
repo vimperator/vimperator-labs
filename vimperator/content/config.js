@@ -477,24 +477,24 @@ const config = { //{{{
                 getter: function () !services.get("io").offline
             });
 
+        // TODO: merge with Vimperator version and add Muttator version
+        // (TB handles this differently).
         options.add(["titlestring"],
             "Change the title of the window",
             "string", "Vimperator",
             {
                 setter: function (value)
                 {
-                    try
+                    let elem = document.documentElement;
+
+                    elem.setAttribute("titlemodifier", value);
+                    // TODO: remove this FF3.5 test when we no longer support 3.0
+                    if (Ci.nsIPrivateBrowsingService)
                     {
-                        document.getElementById(config.mainWindowID).setAttribute("titlemodifier", value);
-                        if (window.content.document.title.length > 0)
-                            document.title = window.content.document.title + " - " + value;
-                        else
-                            document.title = value;
+                        elem.setAttribute("titlemodifier_privatebrowsing", value);
+                        elem.setAttribute("titlemodifier_normal", value);
                     }
-                    catch (e)
-                    {
-                        liberator.log("Couldn't set titlestring", 3);
-                    }
+                    getBrowser().updateTitlebar();
 
                     return value;
                 }
