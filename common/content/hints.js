@@ -879,7 +879,7 @@ function Hints() //{{{
                     onChange: function () { modes.pop(); },
                     onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
                 });
-        }, { flags: Mappings.flags.COUNT });
+        }, { count: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////

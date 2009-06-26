@@ -970,7 +970,7 @@ function Commands() //{{{
                 else
                     liberator.echoerr("E30: No previous command line");
             },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}

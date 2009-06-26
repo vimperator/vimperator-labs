@@ -233,17 +233,17 @@ function Tabs() //{{{
             else
                 tabs.select("+1", true);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.NORMAL], ["<C-n>", "<C-Tab>", "<C-PageDown>"],
         "Go to the next tab",
         function (count) { tabs.select("+" + (count < 1 ? 1 : count), true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
        "Go to previous tab",
         function (count) { tabs.select("-" + (count < 1 ? 1 : count), true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     if (config.hasTabbrowser)
     {
@@ -256,7 +256,7 @@ function Tabs() //{{{
                 else
                     commandline.open(":", "buffer! ", modes.EX);
             },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["B"],
             "Show buffer list",
@@ -265,22 +265,22 @@ function Tabs() //{{{
         mappings.add([modes.NORMAL], ["d"],
             "Delete current buffer",
             function (count) { tabs.remove(tabs.getTab(), count, false, 0); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["D"],
             "Delete current buffer, focus tab to the left",
             function (count) { tabs.remove(tabs.getTab(), count, true, 0); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["gb"],
             "Repeat last :buffer[!] command",
             function (count) { tabs.switchTo(null, null, count, false); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["gB"],
             "Repeat last :buffer[!] command in reverse direction",
             function (count) { tabs.switchTo(null, null, count, true); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         // TODO: feature dependencies - implies "session"?
         if (liberator.has("tabUndo"))
@@ -288,7 +288,7 @@ function Tabs() //{{{
             mappings.add([modes.NORMAL], ["u"],
                 "Undo closing of a tab",
                 function (count) { commands.get("undo").execute("", false, count); },
-                { flags: Mappings.flags.COUNT });
+                { count: true });
         }
 
         mappings.add([modes.NORMAL], ["<C-^>", "<C-6>"],
@@ -300,7 +300,7 @@ function Tabs() //{{{
                 else
                     tabs.switchTo(count.toString(), false);
             },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}

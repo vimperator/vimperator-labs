@@ -204,7 +204,7 @@ function Buffer() //{{{
                     mappings.repeat();
             }
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["i", "<Insert>"],
         "Start caret mode",
@@ -223,22 +223,22 @@ function Buffer() //{{{
     mappings.add(myModes, ["j", "<Down>", "<C-e>"],
         "Scroll document down",
         function (count) { buffer.scrollLines(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["k", "<Up>", "<C-y>"],
         "Scroll document up",
         function (count) { buffer.scrollLines(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, liberator.has("mail") ? ["h"] : ["h", "<Left>"],
         "Scroll document to the left",
         function (count) { buffer.scrollColumns(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, liberator.has("mail") ? ["l"] : ["l", "<Right>"],
         "Scroll document to the right",
         function (count) { buffer.scrollColumns(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["0", "^"],
         "Scroll to the absolute left of the document",
@@ -251,12 +251,12 @@ function Buffer() //{{{
     mappings.add(myModes, ["gg", "<Home>"],
         "Go to the top of the document",
         function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, Math.max(count, 0)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["G", "<End>"],
         "Go to the end of the document",
         function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, count >= 0 ? count : 100); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["%"],
         "Scroll to {count} percent of the document",
@@ -267,7 +267,7 @@ function Buffer() //{{{
             else
                 liberator.beep();
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     function scrollByScrollSize(count, direction)
     {
@@ -279,42 +279,42 @@ function Buffer() //{{{
     mappings.add(myModes, ["<C-d>"],
         "Scroll window downwards in the buffer",
         function (count) { scrollByScrollSize(count, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-u>"],
         "Scroll window upwards in the buffer",
         function (count) { scrollByScrollSize(count, false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-b>", "<PageUp>", "<S-Space>"],
         "Scroll up a full page",
         function (count) { buffer.scrollPages(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-f>", "<PageDown>", "<Space>"],
         "Scroll down a full page",
         function (count) { buffer.scrollPages(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["]f"],
         "Focus next frame",
         function (count) { buffer.shiftFrameFocus(Math.max(count, 1), true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["[f"],
         "Focus previous frame",
         function (count) { buffer.shiftFrameFocus(Math.max(count, 1), false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["]]"],
         "Follow the link labeled 'next' or '>' if it exists",
         function (count) { buffer.followDocumentRelationship("next"); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["[["],
         "Follow the link labeled 'prev', 'previous' or '<' if it exists",
         function (count) { buffer.followDocumentRelationship("previous"); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["gf"],
         "View source",
@@ -366,7 +366,7 @@ function Buffer() //{{{
                     liberator.beep();
             }
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["gP"],
         "Open (put) a URL based on the current clipboard contents in a new buffer",
@@ -424,58 +424,58 @@ function Buffer() //{{{
     mappings.add(myModes, ["zi", "+"],
         "Enlarge text zoom of current web page",
         function (count) { buffer.zoomIn(Math.max(count, 1), false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zm"],
         "Enlarge text zoom of current web page by a larger amount",
         function (count) { buffer.zoomIn(Math.max(count, 1) * 3, false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zo", "-"],
         "Reduce text zoom of current web page",
         function (count) { buffer.zoomOut(Math.max(count, 1), false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zr"],
         "Reduce text zoom of current web page by a larger amount",
         function (count) { buffer.zoomOut(Math.max(count, 1) * 3, false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zz"],
         "Set text zoom value of current web page",
         function (count) { buffer.textZoom = count > 1 ? count : 100; },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zI"],
         "Enlarge full zoom of current web page",
         function (count) { buffer.zoomIn(Math.max(count, 1), true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zM"],
         "Enlarge full zoom of current web page by a larger amount",
         function (count) { buffer.zoomIn(Math.max(count, 1) * 3, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zO"],
         "Reduce full zoom of current web page",
         function (count) { buffer.zoomOut(Math.max(count, 1), true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zR"],
         "Reduce full zoom of current web page by a larger amount",
         function (count) { buffer.zoomOut(Math.max(count, 1) * 3, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["zZ"],
         "Set full zoom value of current web page",
         function (count) { buffer.fullZoom = count > 1 ? count : 100; },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // page info
     mappings.add(myModes, ["<C-g>"],
         "Print the current file name",
         function (count) { buffer.showPageInfo(false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["g<C-g>"],
         "Print file information",
@@ -1732,12 +1732,12 @@ function Marks() //{{{
 
             marks.add(arg);
         },
-        { flags: Mappings.flags.ARGUMENT });
+        { arg: true });
 
     mappings.add(myModes,
         ["'", "`"], "Jump to the mark in the current buffer",
         function (arg) { marks.jumpTo(arg); },
-        { flags: Mappings.flags.ARGUMENT });
+        { arg: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////

@@ -114,7 +114,7 @@ function Editor() //{{{
     {
         let extraInfo = {};
         if (hasCount)
-            extraInfo.flags = Mappings.flags.COUNT;
+            extraInfo.count = true;
 
         mappings.add([modes.CARET], keys, "",
             function (count)
@@ -178,7 +178,7 @@ function Editor() //{{{
         mappings.add([modes.TEXTAREA], [key],
             "Motion command",
             function (motion, count) { editor.executeCommandWithMotion(key, motion, count); },
-            { flags: Mappings.flags.MOTION | Mappings.flags.COUNT });
+            { count: true, motion: true });
     }
 
     // For the record, some of this code I've just finished throwing
@@ -350,7 +350,7 @@ function Editor() //{{{
     mappings.add([modes.INSERT],
         ["<Space>", "<Return>"], "Expand insert mode abbreviation",
         function () { editor.expandAbbreviation("i"); },
-        { flags: Mappings.flags.ALLOW_EVENT_ROUTING });
+        { route: true });
 
     mappings.add([modes.INSERT],
         ["<Tab>"], "Expand insert mode abbreviation",
@@ -368,7 +368,7 @@ function Editor() //{{{
             editor.executeCommand("cmd_undo", count);
             liberator.mode = modes.TEXTAREA;
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.TEXTAREA],
         ["<C-r>"], "Redo",
@@ -377,7 +377,7 @@ function Editor() //{{{
             editor.executeCommand("cmd_redo", count);
             liberator.mode = modes.TEXTAREA;
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.TEXTAREA],
         ["D"], "Delete the characters under the cursor until the end of the line",
@@ -405,12 +405,12 @@ function Editor() //{{{
     mappings.add([modes.TEXTAREA],
         ["X"], "Delete character to the left",
         function (count) { editor.executeCommand("cmd_deleteCharBackward", count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.TEXTAREA],
         ["x"], "Delete character to the right",
         function (count) { editor.executeCommand("cmd_deleteCharForward", count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // visual mode
     mappings.add([modes.CARET, modes.TEXTAREA],
@@ -499,7 +499,7 @@ function Editor() //{{{
             if (pos >= 0)
                 editor.moveToPosition(pos, true, liberator.mode == modes.VISUAL);
         },
-        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+        { arg: true, count: true });
 
     mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["F"], "Move to a charater on the current line before the cursor",
@@ -509,7 +509,7 @@ function Editor() //{{{
             if (pos >= 0)
                 editor.moveToPosition(pos, false, liberator.mode == modes.VISUAL);
         },
-        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+        { arg: true, count: true });
 
     mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["t"], "Move before a character on the current line",
@@ -519,7 +519,7 @@ function Editor() //{{{
             if (pos >= 0)
                 editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
         },
-        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+        { arg: true, count: true });
 
     mappings.add([modes.TEXTAREA, modes.VISUAL],
         ["T"], "Move before a character on the current line, backwards",
@@ -529,7 +529,7 @@ function Editor() //{{{
             if (pos >= 0)
                 editor.moveToPosition(pos + 1, false, liberator.mode == modes.VISUAL);
         },
-        { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+        { arg: true, count: true });
 
         // textarea and visual mode
     mappings.add([modes.TEXTAREA, modes.VISUAL],
@@ -555,7 +555,7 @@ function Editor() //{{{
             }
             modes.set(modes.TEXTAREA);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////

@@ -150,22 +150,22 @@ function Player() // {{{
     mappings.add([modes.PLAYER],
         ["h", "<Left>"], "Seek -10s",
         function (count) { player.seekBackward(Math.max(1, count) * 10000); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.PLAYER],
         ["l", "<Right>"], "Seek +10s",
         function (count) { player.seekForward(Math.max(1, count) * 10000); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.PLAYER],
         ["H", "<S-Left>"], "Seek -1m",
         function (count) { player.seekBackward(Math.max(1, count) * 60000); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.PLAYER],
         ["L", "<S-Right>"], "Seek +1m",
         function (count) { player.seekForward(Math.max(1, count) * 60000); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.PLAYER],
          ["=", "+"], "Increase volume by 10%",

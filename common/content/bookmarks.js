@@ -811,22 +811,22 @@ function History() //{{{
     mappings.add(myModes,
         ["<C-o>"], "Go to an older position in the jump list",
         function (count) { history.stepTo(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes,
         ["<C-i>"], "Go to a newer position in the jump list",
         function (count) { history.stepTo(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes,
         ["H", "<A-Left>", "<M-Left>"], "Go back in the browser history",
         function (count) { history.stepTo(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes,
         ["L", "<A-Right>", "<M-Right>"], "Go forward in the browser history",
         function (count) { history.stepTo(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////
@@ -1064,7 +1064,7 @@ function QuickMarks() //{{{
     mappings.add(myModes,
         ["go"], "Jump to a QuickMark",
         function (arg) { quickmarks.jumpTo(arg, liberator.CURRENT_TAB); },
-        { flags: Mappings.flags.ARGUMENT });
+        { arg: true });
 
     mappings.add(myModes,
         ["gn"], "Jump to a QuickMark in a new tab",
@@ -1074,7 +1074,7 @@ function QuickMarks() //{{{
                 /\bquickmark\b/.test(options["activate"]) ?
                 liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
         },
-        { flags: Mappings.flags.ARGUMENT });
+        { arg: true });
 
     mappings.add(myModes,
         ["M"], "Add new QuickMark for current URL",
@@ -1085,7 +1085,7 @@ function QuickMarks() //{{{
 
             quickmarks.add(arg, buffer.URL);
         },
-        { flags: Mappings.flags.ARGUMENT });
+        { arg: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMMANDS ////////////////////////////////////////////////

@@ -273,7 +273,7 @@ function Mail() //{{{
     mappings.add(myModes, ["<Space>"],
         "Scroll message or select next unread one",
         function () true,
-        { flags: Mappings.flags.ALLOW_EVENT_ROUTING });
+        { route: true });
 
     mappings.add(myModes, ["t"],
         "Select thread",
@@ -286,32 +286,32 @@ function Mail() //{{{
     mappings.add(myModes, ["j", "<Right>"],
         "Select next message",
         function (count) { mail.selectMessage(function (msg) true, false, false, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["gj"],
         "Select next message, including closed threads",
         function (count) { mail.selectMessage(function (msg) true, false, true, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["J", "<Tab>"],
         "Select next unread message",
         function (count) { mail.selectMessage(function (msg) !msg.isRead, true, true, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["k", "<Left>"],
         "Select previous message",
         function (count) { mail.selectMessage(function (msg) true, false, false, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["gk"],
         "Select previous message",
         function (count) { mail.selectMessage(function (msg) true, false, true, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["K"],
         "Select previous unread message",
         function (count) { mail.selectMessage(function (msg) !msg.isRead, true, true, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["*"],
         "Select next message from the same sender",
@@ -324,7 +324,7 @@ function Mail() //{{{
             }
             catch (e) { liberator.beep(); }
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["#"],
         "Select previous message from the same sender",
@@ -337,7 +337,7 @@ function Mail() //{{{
             }
             catch (e) { liberator.beep(); }
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // SENDING MESSAGES
     mappings.add(myModes, ["m"],
@@ -379,22 +379,22 @@ function Mail() //{{{
     mappings.add(myModes, ["<Down>"],
         "Scroll message down",
         function (count) { buffer.scrollLines(Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<Up>"],
         "Scroll message up",
         function (count) { buffer.scrollLines(-Math.max(count, 1)); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.MESSAGE], ["<Left>"],
         "Select previous message",
         function (count) { mail.selectMessage(function (msg) true, false, false, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add([modes.MESSAGE], ["<Right>"],
         "Select next message",
         function (count) { mail.selectMessage(function (msg) true, false, false, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // UNDO/REDO
     mappings.add(myModes, ["u"],
@@ -445,22 +445,22 @@ function Mail() //{{{
     mappings.add(myModes, ["]s"],
         "Select next starred message",
         function (count) { mail.selectMessage(function (msg) msg.isFlagged, true, true, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["[s"],
         "Select previous starred message",
         function (count) { mail.selectMessage(function (msg) msg.isFlagged, true, true, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["]a"],
         "Select next message with an attachment",
         function (count) { mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, false, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["[a"],
         "Select previous message with an attachment",
         function (count) { mail.selectMessage(function (msg) gDBView.db.HasAttachments(msg.messageKey), true, true, true, count); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // FOLDER SWITCHING
     mappings.add(myModes, ["gi"],
@@ -473,7 +473,7 @@ function Mail() //{{{
             else
                 liberator.beep();
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-n>"],
         "Select next folder",
@@ -488,7 +488,7 @@ function Mail() //{{{
             }
             gFolderTreeView.selection.timedSelect(newPos, 500);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-N>"],
         "Go to next mailbox with unread messages",
@@ -496,7 +496,7 @@ function Mail() //{{{
         {
             selectUnreadFolder(false, count);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-p>"],
         "Select previous folder",
@@ -511,7 +511,7 @@ function Mail() //{{{
             }
             gFolderTreeView.selection.timedSelect(newPos, 500);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-P>"],
         "Go to previous mailbox with unread messages",
@@ -519,7 +519,7 @@ function Mail() //{{{
         {
             selectUnreadFolder(true, count);
         },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // THREADING
     mappings.add(myModes, ["za"],
@@ -545,22 +545,22 @@ function Mail() //{{{
     mappings.add(myModes, ["<C-i>"],
         "Go forward",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.forward, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["<C-o>"],
         "Go back",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.back, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["gg"],
         "Select first message",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.firstMessage, true); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     mappings.add(myModes, ["G"],
         "Select last message",
         function (count) { if (count < 1) count = 1; while (count--) GoNextMessage(nsMsgNavigationType.lastMessage, false); },
-        { flags: Mappings.flags.COUNT });
+        { count: true });
 
     // tagging messages
     mappings.add(myModes, ["l"],
@@ -583,7 +583,7 @@ function Mail() //{{{
             }
         },
         {
-            flags: Mappings.flags.ARGUMENT
+            arg: true
         });
 
     // TODO: change binding?

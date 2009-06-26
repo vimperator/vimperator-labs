@@ -639,7 +639,7 @@ function Events() //{{{
         mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
             ["q"], "Record a key sequence into a macro",
             function (arg) { events.startRecording(arg); },
-            { flags: Mappings.flags.ARGUMENT });
+            { arg: true });
 
         mappings.add([modes.NORMAL, modes.PLAYER, modes.MESSAGE],
             ["@"], "Play a macro",
@@ -649,7 +649,7 @@ function Events() //{{{
                 while (count-- && events.playMacro(arg))
                     ;
             },
-            { flags: Mappings.flags.ARGUMENT | Mappings.flags.COUNT });
+            { arg: true, count: true });
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -1548,7 +1548,7 @@ function Events() //{{{
                 {
                     map = input.pendingMap;
                     input.pendingMap = null;
-                    if (map && map.flags & Mappings.flags.ARGUMENT)
+                    if (map && map.arg)
                         input.pendingArgMap = map;
                 }
 
@@ -1583,7 +1583,7 @@ function Events() //{{{
                     if (isNaN(input.count))
                         input.count = -1;
                     input.buffer = "";
-                    if (map.flags & Mappings.flags.ARGUMENT)
+                    if (map.arg)
                     {
                         input.buffer = inputStr;
                         input.pendingArgMap = map;
@@ -1595,7 +1595,7 @@ function Events() //{{{
                         input.pendingMotionMap = null;
                     }
                     // no count support for these commands yet
-                    else if (map.flags & Mappings.flags.MOTION)
+                    else if (map.motion)
                     {
                         input.pendingMotionMap = map;
                     }
@@ -1605,7 +1605,7 @@ function Events() //{{{
                             return void killEvent();
 
                         let ret = map.execute(null, input.count);
-                        if (map.flags & Mappings.flags.ALLOW_EVENT_ROUTING && ret)
+                        if (map.route && ret)
                             stop = false;
                     }
                 }

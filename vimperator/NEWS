@@ -1,7 +1,18 @@
 2009-XX-XX:
     * version 2.2a1pre
+    * IMPORTANT: Map.flags has been replaced with individual properties.
+      Mappings defined in plugins with mappings.add will need to be updated.
+      E.g.
+          mappings.add(...,
+              { flags: Mappings.flags.ARGUMENT |
+                       Mappings.flags.COUNT |
+                       Mappings.flags.MOTION |
+                       Mappings.flags.ALLOW_EVENT_ROUTING });
+      is now
+	   mappings.add(...,
+               { arg: true, count: true, motion: true, route: true });
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
-      and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
+      and <C-A> are equivalent, to map the uppercase character use <C-S-A>. - Is this still true, or going to be true? --djk
     * add -description option to :command
     * command-line options are now supported via the host application's
       -liberator option

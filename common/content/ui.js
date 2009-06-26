@@ -911,7 +911,7 @@ function CommandLine() //{{{
             commandline.resetCompletions();
             return editor.expandAbbreviation("c");
         },
-        { flags: Mappings.flags.ALLOW_EVENT_ROUTING });
+        { route: true });
 
     mappings.add(myModes,
         ["<C-]>", "<C-5>"], "Expand command line abbreviation",

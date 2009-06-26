@@ -233,12 +233,12 @@ const config = { //{{{
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
             function (count) { incrementURL(Math.max(count, 1)); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL],
             ["<C-x>"], "Decrement last number in URL",
             function (count) { incrementURL(-Math.max(count, 1)); },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["~"],
             "Open home directory",
@@ -294,7 +294,7 @@ const config = { //{{{
                 else
                     liberator.open(url);
             },
-            { flags: Mappings.flags.COUNT });
+            { count: true });
 
         mappings.add([modes.NORMAL], ["gU"],
             "Go to the root of the website",
