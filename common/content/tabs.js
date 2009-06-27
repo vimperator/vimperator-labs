@@ -184,6 +184,7 @@ function Tabs() //{{{
                 validator: Option.validateCompleter
             });
 
+        // TODO: Is this really applicable to Xulmus?
         options.add(["popups", "pps"],
             "Where to show requested popup windows",
             "number", 1,
@@ -204,7 +205,7 @@ function Tabs() //{{{
                 completer: function (context) [
                     ["0", "Force to open in the current tab"],
                     ["1", "Always open in a new tab"],
-                    ["2", "Open in a new window if it has a specific requested size (default in Firefox)"],
+                    ["2", "Open in a new window if it has a specific requested size (default in " + config.hostApplication + ")"],
                     ["3", "Always open in a new window"],
                     ["4", "Open in the same tab unless it has a specific requested size"]
                 ],

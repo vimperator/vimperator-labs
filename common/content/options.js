@@ -982,7 +982,7 @@ function Options() //{{{
 
         completion.preference = function preference(context) {
             context.anchored = false;
-            context.title = ["Firefox Preference", "Value"];
+            context.title = [config.hostApplication + " Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
             context.completions = services.get("pref").getChildList("", { value: 0 });
         };
