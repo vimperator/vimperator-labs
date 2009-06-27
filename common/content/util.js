@@ -662,7 +662,7 @@ const util = { //{{{
             if (searchURL)
                 return searchURL;
 
-            // Hmm. No defsearch? Let Firefox deal with it, then.
+            // Hmm. No defsearch? Let the host app deal with it, then.
             return url;
         });
     },

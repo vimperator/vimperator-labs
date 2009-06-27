@@ -600,7 +600,7 @@ CompletionContext.prototype = {
 
     highlight: function highlight(start, length, type)
     {
-        try // Firefox <3.1 doesn't have repaintSelection
+        try // Gecko < 1.9.1 doesn't have repaintSelection
         {
             this.selectionTypes[type] = null;
             const selType = Ci.nsISelectionController["SELECTION_" + type];

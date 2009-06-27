@@ -406,7 +406,7 @@ function Events() //{{{
     }
     function exitPopupMode()
     {
-        // gContextMenu is set to NULL by Firefox, when a context menu is closed
+        // gContextMenu is set to NULL, when a context menu is closed
         if (typeof gContextMenu != "undefined" && gContextMenu == null && !activeMenubar)
             modes.remove(modes.MENU);
     }
@@ -463,7 +463,7 @@ function Events() //{{{
                 key_code[name.toLowerCase()] = v
         }
 
-    // HACK: as firefox does not include an event for <, we must add this in manually.
+    // HACK: as Gecko does not include an event for <, we must add this in manually.
     if (!("<" in key_code))
     {
         key_code["<"] = 60;
@@ -522,7 +522,7 @@ function Events() //{{{
             {
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
-                // is not triggered there (Firefox bug?)
+                // is not triggered there (Gecko bug?)
                 setTimeout(statusline.updateUrl, 10);
                 return;
             }
@@ -1482,7 +1482,7 @@ function Events() //{{{
                     return;
                 }
 
-                stop = true; // set to false if we should NOT consume this event but let Firefox handle it
+                stop = true; // set to false if we should NOT consume this event but let the host app handle it
 
                 // just forward event without checking any mappings when the MOW is open
                 if (liberator.mode == modes.COMMAND_LINE && (modes.extended & modes.OUTPUT_MULTILINE))
@@ -1491,8 +1491,9 @@ function Events() //{{{
                     return void killEvent();
                 }
 
-                // XXX: ugly hack for now pass certain keys to Firefox as they are without beeping
-                // also fixes key navigation in combo boxes, submitting forms, etc.
+                // XXX: ugly hack for now pass certain keys to the host app as
+                // they are without beeping also fixes key navigation in combo
+                // boxes, submitting forms, etc.
                 // FIXME: breaks iabbr for now --mst
                 if (key in config.ignoreKeys && (config.ignoreKeys[key] & liberator.mode))
                 {
@@ -1523,7 +1524,7 @@ function Events() //{{{
                             return void killEvent();
                         }
 
-                        // others are left to generate the 'input' event or handled by Firefox
+                        // others are left to generate the 'input' event or handled by the host app
                         return;
                     }
                 }
@@ -1628,7 +1629,7 @@ function Events() //{{{
 
                     if (!isEscapeKey(key))
                     {
-                        // allow key to be passed to Firefox if we can't handle it
+                        // allow key to be passed to the host app if we can't handle it
                         stop = false;
 
                         if (liberator.mode == modes.COMMAND_LINE)

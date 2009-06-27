@@ -1276,7 +1276,7 @@ const liberator = (function () //{{{
         },
 
         /**
-         * Restart the liberator host application.
+         * Restart the Liberator host application.
          */
         restart: function ()
         {

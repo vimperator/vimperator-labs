@@ -569,13 +569,13 @@ function IO() //{{{
         expandPath: IO.expandPath,
 
         // TODO: there seems to be no way, short of a new component, to change
-        // Firefox's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
+        // the process's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
         /**
          * Returns the current working directory.
          *
-         * It's not possible to change the real CWD of Firefox so this state is
-         * maintained internally. External commands run via {@link #system} are
-         * executed in this directory.
+         * It's not possible to change the real CWD of the process so this
+         * state is maintained internally. External commands run via
+         * {@link #system} are executed in this directory.
          *
          * @returns {nsIFile}
          */
@@ -584,7 +584,7 @@ function IO() //{{{
             let dir = self.getFile(cwd.path);
 
             // NOTE: the directory could have been deleted underneath us so
-            // fallback to Firefox's CWD
+            // fallback to the process's CWD
             if (dir.exists() && dir.isDirectory())
                 return dir;
             else

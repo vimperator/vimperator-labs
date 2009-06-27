@@ -615,8 +615,7 @@ function Bookmarks() //{{{
         getSearchEngines: function getSearchEngines()
         {
             let searchEngines = [];
-            let firefoxEngines = services.get("browserSearch").getVisibleEngines({});
-            for (let [,engine] in Iterator(firefoxEngines))
+            for (let [,engine] in Iterator(services.get("browserSearch").getVisibleEngines({})))
             {
                 let alias = engine.alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))

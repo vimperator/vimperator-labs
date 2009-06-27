@@ -715,10 +715,11 @@ function Options() //{{{
     }
 
     //
-    // Firefox preferences which need to be changed to work well with Vimperator
+    // Host application preferences which need to be changed to work well with
+    // Liberator
     //
 
-    // work around Firefox popup blocker
+    // work around the popup blocker
     // TODO: Make this work like safeSetPref
     var popupAllowedEvents = loadPreference("dom.popup_allowed_events", "change click dblclick mouseup reset submit");
     if (!/keypress/.test(popupAllowedEvents))

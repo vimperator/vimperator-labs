@@ -784,7 +784,7 @@ function Editor() //{{{
 
         // This function will move/select up to given "pos"
         // Simple setSelectionRange() would be better, but we want to maintain the correct
-        // order of selectionStart/End (a Firefox bug always makes selectionStart <= selectionEnd)
+        // order of selectionStart/End (a Gecko bug always makes selectionStart <= selectionEnd)
         // Use only for small movements!
         moveToPosition: function (pos, forward, select)
         {

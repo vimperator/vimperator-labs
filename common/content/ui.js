@@ -1370,7 +1370,7 @@ function CommandLine() //{{{
                 {
                     //this.resetCompletions();
                 }
-                return true; // allow this event to be handled by Firefox
+                return true; // allow this event to be handled by the host app
             }
             else if (event.type == "keyup")
             {
