@@ -356,17 +356,8 @@ function Finder() //{{{
          */
         openPrompt: function (mode)
         {
-            if (mode == modes.SEARCH_BACKWARD)
-            {
-                commandline.open("?", "", modes.SEARCH_BACKWARD);
-                backwards = true;
-            }
-            else
-            {
-                commandline.open("/", "", modes.SEARCH_FORWARD);
-                backwards = false;
-            }
-
+            backwards = mode == modes.SEARCH_BACKWARD;
+            commandline.open(backwards ? "?" : "/", mode);
             // TODO: focus the top of the currently visible screen
         },
 
