@@ -296,7 +296,7 @@ function IO() //{{{
                 arguments: [filename + ".local"]
             }));
 
-            lines.push("\n\" vim: set ft=vimperator:");
+            lines.push("\n\" vim: set ft=" + EXTENSION_NAME + ":");
 
             try
             {
