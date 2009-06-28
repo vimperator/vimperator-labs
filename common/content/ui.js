@@ -109,6 +109,8 @@ function CommandLine() //{{{
          */
         save: function ()
         {
+            if (events.feedingKeys)
+                return;
             let str = this.input.value;
             if (/^\s*$/.test(str))
                 return;
