@@ -764,10 +764,12 @@ function Hints() //{{{
 
     // TODO: document class='lk', what is it? --djk
     const DEFAULT_HINTTAGS =
-        ["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"].reduce(
-            function (path, node) Array.concat(path, node, "xhtml:" + node),
-            "*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link']"
-        ).map(function (node) "//" + node).join(" | ");
+        util.Array(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"]).map(
+                function (spec) [spec, "xhtml:" + spec]).flatten()
+            .concat(
+                "*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link']")
+            .map(function (node) "//" + node)
+            .join(" | ");
 
     function checkXPath(val)
     {

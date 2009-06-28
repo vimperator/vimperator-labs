@@ -716,6 +716,7 @@ util.Array = function Array_(ary) {
                 return util.Array(res);
             return res;
         },
+        concat: function() Array.concat.apply(this.__proto__, arguments),
         map: function() this.__noSuchMethod__("map", Array.slice(arguments)),
     };
     return obj;
