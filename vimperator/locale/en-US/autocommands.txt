@@ -10,6 +10,9 @@ Execute commands automatically on events.
 
 [c]:au[tocmd][c] {event} {pat} {cmd}
 
+If the *-javascript* (short name *-js*) option is specified, {cmd} is executed
+as JavaScript code, with any supplied arguments available as variables.
+
 Add {cmd} to the list of commands Vimperator will execute on {event} for a URL matching {pat}:
 
 * [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
@@ -28,6 +31,7 @@ Available {events}:
 *LocationChange*     Triggered when changing tabs or when navigating to a new location
 *PageLoadPre*        Triggered after a page load is initiated
 *PageLoad*           Triggered when a page gets (re)loaded/opened
+*PrivateMode*	     Triggered private mode is activated or deactivated
 *ShellCmdPost*       Triggered after executing a shell command with [c]:![c]#{cmd}
 *VimperatorEnter*    Triggered after Firefox starts
 *VimperatorLeavePre* Triggered before exiting Firefox, just before destroying each module
@@ -49,7 +53,7 @@ The following keywords are available where relevant:
 *<icon>*       The icon associated with <url>. Only for *BookmarkAdd*.
 *<size>*       The size of a downloaded file. Only for *DownloadPost*.
 *<file>*       The target destination of a download. Only for *DownloadPost*.
-*<state>*      The new fullscreen state. Only for *Fullscreen*.
+*<state>*      The new state. Only for *Fullscreen* and *PrivateMode*.
 *<name>*       The color scheme name. Only for *ColorScheme*.
 --------------------------------------------------------------
 

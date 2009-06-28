@@ -13,7 +13,9 @@
                { arg: true, count: true, motion: true, route: true });
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>. - Is this still true, or going to be true? --djk
-    * add 'private' - enter private browsing mode
+    * add '-javascript' flag to :autocommand
+    * add 'private' - enter private browsing mode, matching 'PrivateMode'
+      autocommand
     * add -description option to :command
     * command-line options are now supported via the host application's
       -liberator option

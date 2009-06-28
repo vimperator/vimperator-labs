@@ -87,6 +87,8 @@ function AutoCommands() //{{{
             {
                 if (args.bang)
                     autocommands.remove(event, regex);
+                if (args["-javascript"])
+                    cmd = eval("(function(args) { with(args) {" + cmd + "} })");
                 autocommands.add(events, regex, cmd);
             }
             else
@@ -107,7 +109,8 @@ function AutoCommands() //{{{
         {
             bang: true,
             completer: function (context) completion.autocmdEvent(context),
-            literal: 2
+            literal: 2,
+            options: [[["-javascript", "-js"], commands.OPTION_NOARG]]
         });
 
     // TODO: expand target to all buffers

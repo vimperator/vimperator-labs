@@ -12,6 +12,9 @@ Execute commands automatically on events.
 
 Add {cmd} to the list of commands Xulmus will execute on {event} for a URL matching {pat}:
 
+If the *-javascript* (short name *-js*) option is specified, {cmd} is executed
+as JavaScript code, with any supplied arguments available as variables.
+
 * [c]:autocmd[!][c] {events} {pat}: list/remove autocommands filtered by {events} and {pat}
 * [c]:autocmd[!][c] {events}: list/remove autocommands matching {events}
 * [c]:autocmd[!][c] * {pat}: list/remove autocommands matching {pat}

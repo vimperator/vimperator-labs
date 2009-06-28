@@ -55,6 +55,7 @@ const config = { //{{{
                    ["LocationChange",     "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
+                   ["PrivateMode",        "Triggered private mode is activated or deactivated"],
                    ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
                    ["VimperatorEnter",    "Triggered after Firefox starts"],
                    ["VimperatorLeavePre", "Triggered before exiting Firefox, just before destroying each module"],
@@ -485,17 +486,11 @@ const config = { //{{{
                 "Set the 'private browsing' option",
                 "boolean", false,
                 {
-                    setter: function (value)
-                    {
-                        return services.get("privateBrowsing").privateBrowsingEnabled = value;
-                    },
-                    getter: function ()
-                    {
-                        return services.get("privateBrowsing").privateBrowsingEnabled;
-                    }
+                    setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
+                    getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
                 });
             let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
-            storage.newObject("private-mode-observer", function () {
+            storage.newObject("private-mode", function () {
                 ({
                     init: function () {
                         services.get("observer").addObserver(this, "private-browsing", false);
@@ -508,6 +503,7 @@ const config = { //{{{
                                 storage.privateMode = true;
                             else if (data == "exit")
                                 storage.privateMode = false;
+                            storage.fireEvent("private-mode", "change", storage.privateMode);
                         } else if (topic == "quit-application") {
                             services.get("observer").removeObserver(this, "quit-application");
                             services.get("observer").removeObserver(this, "private-browsing");
@@ -515,6 +511,10 @@ const config = { //{{{
                     },
                 }).init();
             }, false);
+            storage.addObserver("private-mode",
+                function (key, event, value) {
+                    autocommands.trigger("PrivateMode", { state: value });
+                }, window);
         }
 
         // TODO: merge with Vimperator version and add Muttator version
