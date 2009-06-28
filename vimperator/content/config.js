@@ -478,9 +478,9 @@ const config = { //{{{
             });
 
         // only available in FF 3.5
-        if (Ci.nsIPrivateBrowsingService)
+        services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
+        if (services.get("privateBrowsing"))
         {
-            services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
             options.add(["private", "pornmode"],
                 "Set the 'private browsing' option",
                 "boolean", false,
@@ -494,6 +494,27 @@ const config = { //{{{
                         return services.get("privateBrowsing").privateBrowsingEnabled;
                     }
                 });
+            let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
+            storage.newObject("private-mode-observer", function () {
+                ({
+                    init: function () {
+                        services.get("observer").addObserver(this, "private-browsing", false);
+                        services.get("observer").addObserver(this, "quit-application", false);
+                        this.private = services.get("privateBrowsing").privateBrowsingEnabled;
+                    },
+                    observe: function (subject, topic, data) {
+                        if (topic == "private-browsing") {
+                            if (data == "enter")
+                                storage.privateMode = true;
+                            else if (data == "exit")
+                                storage.privateMode = false;
+                        } else if (topic == "quit-application") {
+                            services.get("observer").removeObserver(this, "quit-application");
+                            services.get("observer").removeObserver(this, "private-browsing");
+                        }
+                    },
+                }).init();
+            }, false);
         }
 
         // TODO: merge with Vimperator version and add Muttator version
@@ -508,7 +529,7 @@ const config = { //{{{
 
                     elem.setAttribute("titlemodifier", value);
                     // TODO: remove this FF3.5 test when we no longer support 3.0
-                    if (Ci.nsIPrivateBrowsingService)
+                    if (services.get("privateBrowsing"))
                     {
                         elem.setAttribute("titlemodifier_privatebrowsing", value);
                         elem.setAttribute("titlemodifier_normal", value);

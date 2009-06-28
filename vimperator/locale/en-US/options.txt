@@ -453,9 +453,6 @@ files, cookies, form data, passwords, and download list entries are available
 only for the duration of the private browsing session and deleted when
 returning to normal browsing mode.
 
-Warning: Vimperator specific data like command-line history is not yet purged
-when exiting private browsing mode.
-
 Note: this is only available in FF 3.5.
 ____
 

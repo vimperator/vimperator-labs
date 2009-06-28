@@ -10,7 +10,6 @@ var EXPORTED_SYMBOLS = ["storage", "Timer"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Cr = Components.results;
 const Cu = Components.utils;
 
 // XXX: does not belong here
@@ -154,21 +153,38 @@ function loadPref(name, store, type)
 
 function savePref(obj)
 {
+    if (obj.privateData && storage.privateMode)
+        return;
     if (obj.store && storage.infoPath)
         writeFile(getFile(obj.name), obj.serial);
 }
 
 var prototype = {
+    OPTIONS: ["privateData"],
     fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg) },
     save: function () { savePref(this) },
+    init: function (name, store, data, options)
+    {
+        this.__defineGetter__("store", function () store);
+        this.__defineGetter__("name", function () name);
+        for (let [k, v] in Iterator(options))
+            if (this.OPTIONS.indexOf(k) >= 0)
+                this[k] = v;
+        this.reload();
+    }
 };
 
-function ObjectStore(name, store, data)
+function ObjectStore(name, store, load, options)
 {
-    var object = data || {};
+    var object = {};
 
-    this.__defineGetter__("store", function () store);
-    this.__defineGetter__("name", function () name);
+    this.reload = function reload()
+    {
+        object = load() || {};
+        this.fireEvent("change", null);
+    };
+
+    this.init.apply(this, arguments);
     this.__defineGetter__("serial", function () json.encode(object));
 
     this.set = function set(key, val)
@@ -201,12 +217,17 @@ function ObjectStore(name, store, data)
 }
 ObjectStore.prototype = prototype;
 
-function ArrayStore(name, store, data)
+function ArrayStore(name, store, load, options)
 {
-    var array = data || [];
+    var array = [];
 
-    this.__defineGetter__("store",  function () store);
-    this.__defineGetter__("name",   function () name);
+    this.reload = function reload()
+    {
+        array = load() || [];
+        this.fireEvent("change", null);
+    };
+
+    this.init.apply(this, arguments);
     this.__defineGetter__("serial", function () json.encode(array));
     this.__defineGetter__("length", function () array.length);
 
@@ -266,27 +287,28 @@ var observers = {};
 var timers = {};
 
 var storage = {
-    newObject: function newObject(key, constructor, store, type, reload)
+    newObject: function newObject(key, constructor, store, type, options, reload)
     {
         if (!(key in keys) || reload)
         {
             if (key in this && !reload)
                 throw Error;
-            keys[key] = new constructor(key, store, loadPref(key, store, type || Object));
+            let load = function() loadPref(key, store, type || Object);
+            keys[key] = new constructor(key, store, load, options || {});
             timers[key] = new Timer(1000, 10000, function () storage.save(key));
             this.__defineGetter__(key, function () keys[key]);
         }
         return keys[key];
     },
 
-    newMap: function newMap(key, store)
+    newMap: function newMap(key, store, options)
     {
-        return this.newObject(key, ObjectStore, store);
+        return this.newObject(key, ObjectStore, store, null, options);
     },
 
-    newArray: function newArray(key, store)
+    newArray: function newArray(key, store, options)
     {
-        return this.newObject(key, ArrayStore, store, Array);
+        return this.newObject(key, ArrayStore, store, Array, options);
     },
 
     addObserver: function addObserver(key, callback, ref)
@@ -333,11 +355,19 @@ var storage = {
 
     fireEvent: function fireEvent(key, event, arg)
     {
+        if (!(key in this))
+            return;
         this.removeDeadObservers();
         // Safe, since we have our own Array object here.
         for each (let observer in observers[key])
             observer.callback.get()(key, event, arg);
         timers[key].tell();
+    },
+
+    load: function load(key)
+    {
+        if (this[key].store && this[key].reload)
+            this[key].reload();
     },
 
     save: function save(key)
@@ -347,8 +377,18 @@ var storage = {
 
     saveAll: function storeAll()
     {
-        for each (obj in keys)
+        for each (let obj in keys)
             savePref(obj);
+    },
+
+    _privateMode: false,
+    get privateMode() this._privateMode,
+    set privateMode(val) 
+    {
+        if (!val && this._privateMode)
+            for (let key in keys)
+                this.load(key);
+        return this._privateMode = Boolean(val);
     },
 };
 

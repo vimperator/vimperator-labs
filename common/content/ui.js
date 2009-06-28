@@ -40,8 +40,8 @@ function CommandLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    storage.newArray("history-search", true);
-    storage.newArray("history-command", true);
+    storage.newArray("history-search", true, { privateData: true });
+    storage.newArray("history-command", true, { privateData: true });
 
     var messageHistory = { // {{{
         _messages: [],

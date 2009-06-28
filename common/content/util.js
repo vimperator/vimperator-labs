@@ -706,16 +706,17 @@ const util = { //{{{
 /**
  * Array utility methods.
  */
-util.Array = function Array(ary) {
+util.Array = function Array_(ary) {
     var obj = {
         __proto__: ary,
         __iterator__: function () this.iteritems(),
         __noSuchMethod__: function (meth, args) {
-            let res = util.Array[meth].apply(null, [this.__proto__].concat(args));
+            let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
             if (util.Array.isinstance(res))
                 return util.Array(res);
             return res;
-        }
+        },
+        map: function() this.__noSuchMethod__("map", Array.slice(arguments)),
     };
     return obj;
 }

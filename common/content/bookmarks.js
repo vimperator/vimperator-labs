@@ -79,10 +79,10 @@ function Bookmarks() //{{{
                         ].filter(function (item) item[1]));
 
     const storage = modules.storage;
-    function Cache(name, store, serial)
+    function Cache(name, store)
     {
         const rootFolders = [bookmarksService.toolbarFolder, bookmarksService.bookmarksMenuFolder, bookmarksService.unfiledBookmarksFolder];
-        const sleep = liberator.sleep;
+        const sleep = liberator.sleep; // Storage objects are global to all windows, 'liberator' isn't.
 
         let bookmarks = [];
         let self = this;
@@ -1052,7 +1052,7 @@ function QuickMarks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var qmarks = storage.newMap("quickmarks", true);
+    var qmarks = storage.newMap("quickmarks", true, { privateData: true });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////

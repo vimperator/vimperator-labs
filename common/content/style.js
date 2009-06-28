@@ -135,7 +135,7 @@ Highlights.prototype.CSS = <![CDATA[
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
-function Highlights(name, store, serial)
+function Highlights(name, store)
 {
     let self = this;
     let highlight = {};
@@ -247,7 +247,7 @@ function Highlights(name, store, serial)
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
-function Styles(name, store, serial)
+function Styles(name, store)
 {
     // Can't reference liberator or Components inside Styles --
     // they're members of the window object, which disappear

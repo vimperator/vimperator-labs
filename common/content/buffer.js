@@ -1630,8 +1630,8 @@ function Marks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = storage.newMap("local-marks", true);
-    var urlMarks = storage.newMap("url-marks", true);
+    var localMarks = storage.newMap("local-marks", true, { privateData: true });
+    var urlMarks = storage.newMap("url-marks", true, { privateData: true });
 
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");
