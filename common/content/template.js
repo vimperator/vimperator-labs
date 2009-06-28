@@ -12,7 +12,7 @@ const template = { //{{{
     add: function add(a, b) a + b,
     join: function join(c) function (a, b) a + c + b,
 
-    map: function map(iter, fn, sep, interruptable)
+    map: function map(iter, func, sep, interruptable)
     {
         if (iter.length) // FIXME: Kludge?
             iter = util.Array.itervalues(iter);
@@ -20,7 +20,7 @@ const template = { //{{{
         let n = 0;
         for each (let i in Iterator(iter))
         {
-            let val = fn(i);
+            let val = func(i);
             if (val == undefined)
                 continue;
             if (sep && n++)

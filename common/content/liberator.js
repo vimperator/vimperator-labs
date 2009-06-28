@@ -724,8 +724,8 @@ const liberator = (function () //{{{
         triggerObserver: function (type)
         {
             let args = Array.slice(arguments, 1);
-            for (let [,fn] in Iterator(observers[type] || []))
-                fn.apply(null, args);
+            for (let [,func] in Iterator(observers[type] || []))
+                func.apply(null, args);
         },
 
         /**

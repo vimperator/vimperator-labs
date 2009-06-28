@@ -1039,13 +1039,13 @@ function CommandLine() //{{{
             });
         },
 
-        runSilently: function (fn, self)
+        runSilently: function (func, self)
         {
             let wasSilent = this.silent;
             this.silent = true;
             try
             {
-                fn.call(self);
+                func.call(self);
             }
             finally
             {

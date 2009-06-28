@@ -1353,22 +1353,22 @@ function Options() //{{{
         },
 
         /**
-         * Executes <b>fn</b> with a new preference context. When <b>fn</b>
+         * Executes <b>func</b> with a new preference context. When <b>func</b>
          * returns, the context is popped and any preferences set via
          * {@link #setPref} or {@link #invertPref} are restored to their
          * previous values.
          *
-         * @param {function} fn The function to call.
-         * @param {Object} fn The 'this' object with which to call <b>fn</b>
+         * @param {function} func The function to call.
+         * @param {Object} func The 'this' object with which to call <b>func</b>
          * @see #pushContext
          * @see #popContext
          */
-        withContext: function (fn, self)
+        withContext: function (func, self)
         {
             try
             {
                 this.pushContext();
-                return fn.call(self);
+                return func.call(self);
             }
             finally
             {

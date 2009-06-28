@@ -125,9 +125,9 @@ function Buffer() //{{{
 
     // Holds option: [function, title] to generate :pageinfo sections
     var pageInfo = {};
-    function addPageInfoSection(option, title, fn)
+    function addPageInfoSection(option, title, func)
     {
-        pageInfo[option] = [fn, title];
+        pageInfo[option] = [func, title];
     }
 
     function openUploadPrompt(elem)
@@ -1013,7 +1013,7 @@ function Buffer() //{{{
          * @param {string} option The section's value in 'pageinfo'.
          * @param {string} title The heading for this section's
          *     output.
-         * @param {function} fn The function to generate this
+         * @param {function} func The function to generate this
          *     section's output.
          */
         addPageInfoSection: addPageInfoSection,

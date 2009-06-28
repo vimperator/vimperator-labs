@@ -372,18 +372,18 @@ const util = { //{{{
     }),
 
     /**
-     * Returns the array that results from applying <b>fn</b> to each property
-     * of <b>obj</b>.
+     * Returns the array that results from applying <b>func</b> to each
+     * property of <b>obj</b>.
      *
      * @param {Object} obj
-     * @param {function} fn
+     * @param {function} func
      * @returns {Array}
      */
-    map: function map(obj, fn)
+    map: function map(obj, func)
     {
         let ary = [];
         for (let i in Iterator(obj))
-            ary.push(fn(i));
+            ary.push(func(i));
         return ary;
     },
 

@@ -1181,24 +1181,24 @@ lookup:
 
         /**
          * Creates a temporary file context for executing external commands.
-         * <b>fn</b> is called with a temp file, created with
+         * <b>func</b> is called with a temp file, created with
          * {@link #createTempFile}, for each explicit argument. Ensures that
-         * all files are removed when <b>fn</b> returns.
+         * all files are removed when <b>func</b> returns.
          *
-         * @param {function} fn The function to execute.
-         * @param {Object} self The 'this' object used when executing fn.
+         * @param {function} func The function to execute.
+         * @param {Object} self The 'this' object used when executing func.
          * @returns {boolean} false if temp files couldn't be created,
-         *     otherwise, the return value of <b>fn</b>.
+         *     otherwise, the return value of <b>func</b>.
          */
-        withTempFiles: function (fn, self)
+        withTempFiles: function (func, self)
         {
-            let args = util.map(util.range(0, fn.length), this.createTempFile);
+            let args = util.map(util.range(0, func.length), this.createTempFile);
             if (!args.every(util.identity))
                 return false;
 
             try
             {
-                return fn.apply(self || this, args);
+                return func.apply(self || this, args);
             }
             finally
             {
