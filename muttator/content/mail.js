@@ -90,16 +90,6 @@ function Mail() //{{{
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
-    function getFolderCompletions(context)
-    {
-        let folders = mail.getFolders(context.filter);
-        context.anchored = false;
-        context.quote = false;
-        context.completions = folders.map(function (folder)
-                [folder.server.prettyName + ": " + folder.name,
-                 "Unread: " + folder.getNumUnread(false)]);
-    }
-
     function getCurrentFolderIndex()
     {
         // for some reason, the index is interpreted as a string, therefore the parseInt
@@ -186,7 +176,7 @@ function Mail() //{{{
         "Set the archive folder",
         "string", "Archive",
         {
-            completer: function (context) [[f.prettiestName, ""] for ([,f] in Iterator(mail.getFolders()))],
+            completer: function (context) completion.mailFolder(context),
             validator: Option.validateCompleter
         });
 
@@ -687,7 +677,7 @@ function Mail() //{{{
         },
         {
             argCount: "?",
-            completer: function (context) getFolderCompletions(context),
+            completer: function (context) completion.mailFolder(context),
             count: true,
             literal: 0
         });
@@ -729,7 +719,7 @@ function Mail() //{{{
         function (args) { moveOrCopy(true, args.literalArg); },
         {
             argCount: 1,
-            completer: function (context) getFolderCompletions(context),
+            completer: function (context) completion.mailFolder(context),
             literal: 0
         });
 
@@ -738,7 +728,7 @@ function Mail() //{{{
         function (args) { moveOrCopy(false, args.literalArg); },
         {
             argCount: 1,
-            completer: function (context) getFolderCompletions(context),
+            completer: function (context) completion.mailFolder(context),
             literal: 0
         });
 
@@ -756,10 +746,23 @@ function Mail() //{{{
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// COMPLETIONS /////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    completion.mailFolder = function mailFolder(context) {
+        let folders = mail.getFolders(context.filter);
+        context.anchored = false;
+        context.quote = false;
+        context.completions = folders.map(function (folder)
+                [folder.server.prettyName + ": " + folder.name,
+                 "Unread: " + folder.getNumUnread(false)]);
+    };
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-        return {
+    return {
 
         get currentAccount() this.currentFolder.rootFolder,
 
@@ -910,12 +913,13 @@ function Mail() //{{{
         },
 
         /**
-         * General-purpose method to find messages
+         * General-purpose method to find messages.
          *
-         * @param {function} validatorFunc(msg): return true/false whether msg should be selected or not
-         * @param {boolean} canWrap: when true, wraps around folders
-         * @param {boolean} openThreads: should we open closed threads?
-         * @param {boolean} reverse: change direction of searching
+         * @param {function(nsIMsgDBHdr):boolean} validatorFunc Return
+         *     true/false whether msg should be selected or not.
+         * @param {boolean} canWrap When true, wraps around folders.
+         * @param {boolean} openThreads Should we open closed threads?
+         * @param {boolean} reverse Change direction of searching.
          */
         selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
         {
