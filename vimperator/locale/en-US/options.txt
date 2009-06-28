@@ -445,6 +445,21 @@ Number of Ex commands and search patterns to store in the command-line history.
 ____
 
 
+|\'noprivate'| |\'private'|
+||'private'|| boolean (default: off)
+____
+Set the 'private browsing' option. In private browsing mode history, cache
+files, cookies, form data, passwords, and download list entries are available
+only for the duration of the private browsing session and deleted when
+returning to normal browsing mode.
+
+Warning: Vimperator specific data like command-line history is not yet purged
+when exiting private browsing mode.
+
+Note: this is only available in FF 3.5.
+____
+
+
 |\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'|
 ||'hlsearch' 'hls'|| boolean (default: off)
 ____

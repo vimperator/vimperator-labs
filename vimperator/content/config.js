@@ -477,6 +477,25 @@ const config = { //{{{
                 getter: function () !services.get("io").offline
             });
 
+        // only available in FF 3.5
+        if (Ci.nsIPrivateBrowsingService)
+        {
+            services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
+            options.add(["private", "pornmode"],
+                "Set the 'private browsing' option",
+                "boolean", false,
+                {
+                    setter: function (value)
+                    {
+                        return services.get("privateBrowsing").privateBrowsingEnabled = value;
+                    },
+                    getter: function ()
+                    {
+                        return services.get("privateBrowsing").privateBrowsingEnabled;
+                    }
+                });
+        }
+
         // TODO: merge with Vimperator version and add Muttator version
         // (TB handles this differently).
         options.add(["titlestring"],
