@@ -161,6 +161,9 @@ const config = { //{{{
         "tabs.js"
     ],
 
+    // to allow Vim to :set ft=mail automatically
+    tempFile: "mutt-ator-mail",
+
     init: function ()
     {
         // don't wait too long when selecting new messages

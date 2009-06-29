@@ -141,6 +141,18 @@ const config = { //{{{
         "tabs.js"
     ],
 
+    get tempFile() {
+        let prefix = this.name.toLowerCase();
+
+        try
+        {
+            prefix += "-" + window.content.document.location.hostname;
+        }
+        catch (e) {}
+
+        return prefix + ".tmp";
+    },
+
     init: function ()
     {
         // TODO: support 'nrformats'? -> probably not worth it --mst

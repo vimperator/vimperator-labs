@@ -120,7 +120,14 @@ const configbase = { //{{{
      *    application namespaces which should be loaded before liberator
      *    initialization.
      */
-    scripts: []
+    scripts: [],
+
+    /**
+     * @property {string} The leaf name of any temp files created by
+     *     {@link io.createTempFile}.
+     */
+    get tempFile() this.name.toLowerCase() + ".tmp"
+
 }; //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

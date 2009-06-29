@@ -704,25 +704,9 @@ function IO() //{{{
          */
         createTempFile: function ()
         {
-            let tmpName = EXTENSION_NAME + ".tmp";
-
-            switch (EXTENSION_NAME)
-            {
-                case "muttator":
-                    tmpName = "mutt-ator-mail"; // to allow Vim to :set ft=mail automatically
-                    break;
-                case "vimperator":
-                    try
-                    {
-                        if (window.content.document.location.hostname)
-                            tmpName = EXTENSION_NAME + "-" + window.content.document.location.hostname + ".tmp";
-                    }
-                    catch (e) {}
-                    break;
-            }
-
             let file = services.get("directory").get("TmpD", Ci.nsIFile);
-            file.append(tmpName);
+
+            file.append(config.tempFile);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
             return file;
