@@ -547,6 +547,7 @@ CompletionContext.prototype = {
     /**
      * Gets a key from {@link #cache}, setting it to <b>defVal</b> if it
      * doesn't already exists.
+     *
      * @param {string} key
      * @param defVal
      */

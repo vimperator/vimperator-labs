@@ -200,7 +200,7 @@ function Highlights(name, store)
     this.selector = function (class)
     {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
-        return "[liberator|highlight~=" + hl + "]" + rest
+        return "[liberator|highlight~=" + hl + "]" + rest;
     };
 
     /**

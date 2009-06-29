@@ -6,6 +6,7 @@ ARCHITECTURE:
 	- I made a quick attempt at parameterizing it using attributes but it
 	  breaks Asciidoc formatting in certain unpredictable (to me at least)
 	  contexts. *sigh* --djk
+- decide on how to document Arrays in our jsdoc(ish) documentation.
 
 BUGS:
 - add window resize support to hints

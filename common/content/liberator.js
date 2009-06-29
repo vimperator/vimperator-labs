@@ -26,7 +26,6 @@ the provisions above, a recipient may use your version of this file under
 the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
-
 /** @scope modules */
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
@@ -87,8 +86,8 @@ const liberator = (function () //{{{
         }
     }
 
-    // initially hide all GUI, it is later restored unless the user has :set go= or something
-    // similar in his config
+    // initially hide all GUI elements, they are later restored unless the user
+    // has :set go= or something similar in his config
     function hideGUI()
     {
         let guioptions = config.guioptions;
@@ -108,7 +107,6 @@ const liberator = (function () //{{{
     function getPlatformFeature()
     {
         let platform = navigator.platform;
-
         return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
     }
 
@@ -153,7 +151,7 @@ const liberator = (function () //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // Only general options are added here, which are valid for all Vimperator like extensions
+    // Only general options are added here, which are valid for all Liberator extensions
     registerObserver("load_options", function () {
 
         options.add(["errorbells", "eb"],
@@ -644,7 +642,10 @@ const liberator = (function () //{{{
 
         modules: modules,
 
-        /** @property {number} The current main mode. */
+        /**
+         * @property {number} The current main mode.
+         * @see modes#mainModes
+         */
         get mode()      modes.main,
         set mode(value) modes.main = value,
 
@@ -661,14 +662,13 @@ const liberator = (function () //{{{
 
         forceNewTab: false,
 
-        // these VERSION and DATE tokens are replaced by the Makefile
-        /** @property {string} The liberator application version string. */
-        version: "###VERSION### (created: ###DATE###)",
+        /** @property {string} The Liberator version string. */
+        version: "###VERSION### (created: ###DATE###)", // these VERSION and DATE tokens are replaced by the Makefile
 
         // NOTE: services.get("profile").selectedProfile.name doesn't return
         // what you might expect. It returns the last _actively_ selected
-        // profile (i.e. via the Profile Manager or -p option) rather than the
-        // current one. These will differ if the current process was run
+        // profile (i.e. via the Profile Manager or -P option) rather than the
+        // current profile. These will differ if the current process was run
         // without explicitly selecting a profile.
         /** @property {string} The name of the current user profile. */
         profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
@@ -688,7 +688,7 @@ const liberator = (function () //{{{
             rcFile: null,
             /** @property An Ex command to run before any initialization is performed. */
             preCommand: null,
-            /** @property An Ex command to run after all initialization is performed. */
+            /** @property An Ex command to run after all initialization has been performed. */
             postCommand: null
         },
 
@@ -758,15 +758,39 @@ const liberator = (function () //{{{
             return false; // so you can do: if (...) return liberator.beep();
         },
 
+        /**
+         * Creates a new thread.
+         */
         newThread: function () services.get("threadManager").newThread(0),
 
+        /**
+         * Calls a function asynchronously on a new thread.
+         *
+         * @param {nsIThread} thread The thread to call the function on. If no
+         *     thread is specified a new one is created.
+         * @optional
+         * @param {Object} self The 'this' object used when executing the
+         *     function.
+         * @param {function} func The function to execute.
+         *
+         */
         callAsync: function (thread, self, func)
         {
             thread = thread || services.get("threadManager").newThread(0);
             thread.dispatch(new Runnable(self, func, Array.slice(arguments, 3)), thread.DISPATCH_NORMAL);
         },
 
-        // be sure to call GUI related methods like alert() or dump() ONLY in the main thread
+        /**
+         * Calls a function synchronously on a new thread.
+         *
+         * NOTE: Be sure to call GUI related methods like alert() or dump()
+         * ONLY in the main thread.
+         *
+         * @param {nsIThread} thread The thread to call the function on. If no
+         *     thread is specified a new one is created.
+         * @optional
+         * @param {function} func The function to execute.
+         */
         callFunctionInThread: function (thread, func)
         {
             thread = thread || services.get("threadManager").newThread(0);
@@ -775,10 +799,12 @@ const liberator = (function () //{{{
             thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
         },
 
-        // NOTE: "browser.dom.window.dump.enabled" preference needs to be set
         /**
          * Prints a message to the console. If <b>msg</b> is an object it is
          * pretty printed.
+         *
+         * NOTE: the "browser.dom.window.dump.enabled" preference needs to be
+         * set.
          *
          * @param {string|Object} msg The message to print.
          */
@@ -805,12 +831,26 @@ const liberator = (function () //{{{
             liberator.dump((msg || "Stack") + "\n" + stack);
         },
 
+        /**
+         * Outputs a plain message to the command line.
+         *
+         * @param {string} str The message to output.
+         * @param {number} flags These control the multiline message behaviour.
+         *     See {@link CommandLine#echo}.
+         */
         echo: function (str, flags)
         {
             commandline.echo(str, commandline.HL_NORMAL, flags);
         },
 
         // TODO: Vim replaces unprintable characters in echoerr/echomsg
+        /**
+         * Outputs an error message to the command line.
+         *
+         * @param {string} str The message to output.
+         * @param {number} flags These control the multiline message behaviour.
+         *     See {@link CommandLine#echo}.
+         */
         echoerr: function (str, flags)
         {
             flags |= commandline.APPEND_TO_MESSAGES;
@@ -827,6 +867,16 @@ const liberator = (function () //{{{
         },
 
         // TODO: add proper level constants
+        /**
+         * Outputs an information message to the command line.
+         *
+         * @param {string} str The message to output.
+         * @param {number} verbosity The messages log level (0 - 15). Only
+         *     messages with verbosity less than or equal to the value of the
+         *     'verbosity' option will be output.
+         * @param {number} flags These control the multiline message behaviour.
+         *     See {@link CommandLine#echo}.
+         */
         echomsg: function (str, verbosity, flags)
         {
             // TODO: is there a reason for this? --djk
@@ -851,6 +901,15 @@ const liberator = (function () //{{{
                 commandline.echo(str, commandline.HL_INFOMSG, flags);
         },
 
+        /**
+         * Loads and executes the script referenced by <b>uri</b> in the scope
+         * of the <b>context</b> object.
+         *
+         * @param {string} uri The URI of the script to load. Should be a local
+         *     chrome:, file:, or resource: URL.
+         * @param {Object} context The context object into which the script
+         *     should be loaded.
+         */
         loadScript: function (uri, context)
         {
             services.get("subscriptLoader").loadSubScript(uri, context);
@@ -978,7 +1037,7 @@ const liberator = (function () //{{{
         },
 
         /**
-         * Focus the content window.
+         * Focuses the content window.
          *
          * @param {boolean} clearFocusedElement Remove focus from any focused
          *     element.
@@ -1014,16 +1073,33 @@ const liberator = (function () //{{{
                 elem.focus();
         },
 
-        // does this liberator extension have a certain feature?
+        /**
+         * Returns whether this Liberator extension supports <b>feature</b>.
+         *
+         * @param {string} feature The feature name.
+         * @returns {boolean}
+         */
         has: function (feature) config.features.indexOf(feature) >= 0,
 
+        /**
+         * Returns whether the host application has the specified extension
+         * installed.
+         *
+         * @param {string} name The extension name.
+         * @returns {boolean}
+         */
         hasExtension: function (name)
         {
             let extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-
             return extensions.some(function (e) e.name == name);
         },
 
+        /**
+         * Returns the URL of the specified help <b>topic</b> if it exists.
+         *
+         * @param {string} topic The help topic to lookup.
+         * @returns {string}
+         */
         findHelp: function (topic)
         {
             let items = completion.runCompleter("help", topic);
@@ -1041,9 +1117,17 @@ const liberator = (function () //{{{
 
             if (partialMatch)
                 return format(partialMatch);
-            return null;
+            else
+                return null;
         },
 
+        /**
+         * Opens the help page containing the specified <b>topic</b> if it
+         * exists.
+         *
+         * @param {string} topic The help topic to open.
+         * @returns {string}
+         */
         help: function (topic)
         {
             let where = (options["newtab"] && options.get("newtab").has("all", "help"))
@@ -1069,6 +1153,11 @@ const liberator = (function () //{{{
                 content.postMessage("fragmentChange", "*");
         },
 
+        /**
+         * The map of global variables.
+         *
+         * These are set and accessed with the "g:" prefix.
+         */
         globalVariables: {},
 
         loadModule: function (name, func) { loadModule(name, func); },
@@ -1239,7 +1328,14 @@ const liberator = (function () //{{{
         // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
         plugins: plugins,
 
-        // quit liberator, no matter how many tabs/windows are open
+        /**
+         * Quit the host application, no matter how many tabs/windows are open.
+         *
+         * @param {boolean} saveSession If true the current session will be
+         *     saved and restored when the host application is restarted.
+         * @param {boolean} force Forcibly quit irrespective of whether all
+         *    windows could be closed individually.
+         */
         quit: function (saveSession, force)
         {
             // TODO: Use safeSetPref?
@@ -1254,10 +1350,17 @@ const liberator = (function () //{{{
                 window.goQuitApplication();
         },
 
+        /**
+         * Reports an error to both the console and the host application's
+         * Error Console.
+         *
+         * @param {Object} error The error object.
+         */
         reportError: function (error)
         {
             if (Cu.reportError)
                 Cu.reportError(error);
+
             try
             {
                 let obj = {
@@ -1276,7 +1379,7 @@ const liberator = (function () //{{{
         },
 
         /**
-         * Restart the Liberator host application.
+         * Restart the host application.
          */
         restart: function ()
         {
@@ -1302,7 +1405,16 @@ const liberator = (function () //{{{
             services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
         },
 
-        parseCommandLine: function (commandline)
+        /**
+         * Parses a Liberator command-line string i.e. the value of the
+         * -liberator command-line option.
+         *
+         * @param {string} cmdline The string to parse for command-line
+         *     options.
+         * @returns {Object}
+         * @see Commands#parseArgs
+         */
+        parseCommandLine: function (cmdline)
         {
             const options = [
                 [["+u"], commands.OPTIONS_STRING],
@@ -1310,10 +1422,9 @@ const liberator = (function () //{{{
                 [["++cmd"], commands.OPTIONS_STRING],
                 [["+c"], commands.OPTIONS_STRING]
             ];
-            return commands.parseArgs(commandline, options, "*");
+            return commands.parseArgs(cmdline, options, "*");
         },
 
-        // TODO: move to {muttator,vimperator,...}.js
         // this function is called when the chrome is ready
         startup: function ()
         {

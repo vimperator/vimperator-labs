@@ -179,9 +179,9 @@ const util = { //{{{
     },
 
     /**
-     * Split a string on literal occurances of a marker.
+     * Split a string on literal occurrences of a marker.
      *
-     * Specifically this ignores occurences preceded by a backslash, or
+     * Specifically this ignores occurrences preceded by a backslash, or
      * contained within 'single' or "double" quotes.
      *
      * It assumes backslash escaping on strings, and will thus not count quotes
@@ -703,6 +703,7 @@ const util = { //{{{
     }
 }; //}}}
 
+// TODO: Why don't we just push all util.BuiltinType up into modules? --djk
 /**
  * Array utility methods.
  */

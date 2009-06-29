@@ -812,7 +812,6 @@ function CommandLine() //{{{
              validator: Option.validateCompleter
          });
 
-    // TODO: these belong in ui.js
     options.add(["complete", "cpt"],
         "Items which are completed at the :[tab]open prompt",
         "charlist", "slf",
@@ -1072,7 +1071,7 @@ function CommandLine() //{{{
          * Open the command line. The main mode is set to
          * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
          * Further, callbacks defined for <b>extendedMode</b> are
-         * triggered as appropriate (see {@link Liberator#registerCallback}).
+         * triggered as appropriate (see {@link liberator#registerCallback}).
          *
          * @param {string} prompt
          * @param {string} cmd

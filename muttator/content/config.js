@@ -30,6 +30,7 @@ const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
+                                    // Yes, but it will be localized unlike all other strings. So, it's best left until we i18n liberator. --djk
     get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/

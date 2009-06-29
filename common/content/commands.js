@@ -181,7 +181,7 @@ Command.prototype = {
      * @param {string} args The args to be parsed and passed to
      *     {@link #action}.
      * @param {boolean} bang Whether this command was executed with a trailing
-     *     !.
+     *     bang.
      * @deprecated
      * @param {number} count Whether this command was executed with a leading
      *     count.
@@ -224,7 +224,7 @@ Command.prototype = {
     /**
      * Returns whether this command may be invoked via <b>name</b>.
      *
-     * @param {string} name
+     * @param {string} name The candidate name.
      * @returns {boolean}
      */
     hasName: function (name)

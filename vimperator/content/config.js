@@ -383,7 +383,6 @@ const config = { //{{{
             },
             { argCount: "0" });
 
-        // TODO: move sidebar commands to ui.js?
         commands.add(["sbcl[ose]"],
             "Close the sidebar window",
             function ()

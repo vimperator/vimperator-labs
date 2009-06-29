@@ -217,7 +217,7 @@ function Hints() //{{{
         try
         {
             // Need to add the offset to the area element.
-            // Always try to find the top-left point, as per vimperator default.
+            // Always try to find the top-left point, as per liberator default.
             let shape = elem.getAttribute("shape").toLowerCase();
             let coordstr = elem.getAttribute("coords");
             // Technically it should be only commas, but hey
@@ -352,8 +352,8 @@ function Hints() //{{{
      *
      * By default highlights it green instead of yellow.
      *
-     * @param {Number} newID The hint to make active
-     * @param {Number} oldID The currently active hint
+     * @param {number} newID The hint to make active.
+     * @param {number} oldID The currently active hint.
      */
     function showActiveHint(newID, oldID)
     {
@@ -624,7 +624,7 @@ function Hints() //{{{
          * would match the first letters of words. It will always only match
          * words in order.
          *
-         * @param {String} hintString The string typed by the user.
+         * @param {string} hintString The string typed by the user.
          * @param {boolean} allowWordOverleaping Whether to allow non-contiguous
          *     words to match.
          * @returns {function(String):boolean} A function that will filter only
@@ -893,15 +893,16 @@ function Hints() //{{{
          * Creates a new hint mode.
          *
          * @param {string} mode The letter that identifies this mode.
-         * @param {string} description The description to display to the user
+         * @param {string} prompt The description to display to the user
          *     about this mode.
-         * @param {function(Node)} callback The function to be called with the
+         * @param {function(Node)} action The function to be called with the
          *     element that matches.
-         * @param {function():string} selector The function that returns an
-         *     XPath selector to decide which elements can be hinted (the
+         * @param {function():string} tags The function that returns an
+         *     XPath expression to decide which elements can be hinted (the
          *     default returns options.hinttags).
+         * @optional
          */
-        addMode: function (mode)
+        addMode: function (mode, prompt, action, tags)
         {
             hintModes[mode] = Mode.apply(Mode, Array.slice(arguments, 1));
         },

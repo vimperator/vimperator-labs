@@ -37,7 +37,7 @@ const configbase = { //{{{
     get browserModes() [modes.NORMAL],
 
     /**
-     * @property {object} Application specific defaults for option values. The
+     * @property {Object} Application specific defaults for option values. The
      *     property names must be the options' canonical names, and the values
      *     must be strings as entered via :set.
      */
@@ -86,7 +86,7 @@ const configbase = { //{{{
     init: function () {},
 
     /**
-     * @property {object} A map between key names for key events should be ignored,
+     * @property {Object} A map between key names for key events should be ignored,
      *     and a mask of the modes in which they should be ignored.
      */
     ignoreKeys: {}, // XXX: be aware you can't put useful values in here, as "modes.NORMAL" etc. are not defined at this time

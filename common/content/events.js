@@ -479,7 +479,7 @@ function Events() //{{{
         let elem = liberator.focus;
         return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
                  elem instanceof HTMLTextAreaElement ||
-                 elem instanceof HTMLIsIndexElement)
+                 elem instanceof HTMLIsIndexElement);
     }
 
     function triggerLoadAutocmd(name, doc)
@@ -965,18 +965,21 @@ function Events() //{{{
         },
 
         /**
-         * Converts a user-input string of keys into a canonical representation.
+         * Converts a user-input string of keys into a canonical
+         * representation.
          *
          * <C-A> maps to <C-a>, <C-S-a> maps to <C-S-A>
          * <C- > maps to <C-Space>, <S-a> maps to A
          * << maps to <lt><lt>
          *
-         * <S-@> is preserved, as in vim, to allow untypable key-combinations in macros
+         * <S-@> is preserved, as in vim, to allow untypable key-combinations
+         * in macros.
          *
-         * canonicalKeys(canonicalKeys(x)) == canonicalKeys(x) for all values of x.
+         * canonicalKeys(canonicalKeys(x)) == canonicalKeys(x) for all values
+         * of x.
          *
-         * @param {String} keys  messy form
-         * @returns {String}  canonical form
+         * @param {string} keys Messy form.
+         * @returns {string} Canonical form.
          */
         canonicalKeys: function (keys)
         {
@@ -986,16 +989,18 @@ function Events() //{{{
         /**
          * Converts an event string into an array of pseudo-event objects.
          *
-         * These objects can be used as arguments to events.toString or events.create,
-         * though they are unlikely to be much use for other purposes. They have many
-         * of the properties you'd expect to find on a real event, but none of the methods.
+         * These objects can be used as arguments to events.toString or
+         * events.create, though they are unlikely to be much use for other
+         * purposes. They have many of the properties you'd expect to find on a
+         * real event, but none of the methods.
          *
-         * Also may contain two "special" parameters, .liberatorString and .liberatorShift
-         * these are set for characters that can never by typed, but may appear in mappings,
-         * for example <Nop> is passed as liberatorString, and liberatorShift is set when
-         * a user specifies <S-@> where @ is a non-case-changable, non-space character.
+         * Also may contain two "special" parameters, .liberatorString and
+         * .liberatorShift these are set for characters that can never by
+         * typed, but may appear in mappings, for example <Nop> is passed as
+         * liberatorString, and liberatorShift is set when a user specifies
+         * <S-@> where @ is a non-case-changable, non-space character.
          *
-         * @param {String} keys  The string to parse
+         * @param {string} keys The string to parse.
          * @return {Array[Object]}
          */
         fromString: function (input)
@@ -1082,7 +1087,7 @@ function Events() //{{{
          * @param {Event} event
          * @returns {string}
          */
-        toString: function (event, all)
+        toString: function (event)
         {
             if (!event)
                 return "[object Mappings]";
@@ -1197,6 +1202,7 @@ function Events() //{{{
          * Whether <b>key</b> is a key code defined to accept/execute input on
          * the command line.
          *
+         * @param {string} key The key code to test.
          * @returns {boolean}
          */
         isAcceptKey: function (key) key == "<Return>" || key == "<C-j>" || key == "<C-m>",
@@ -1205,11 +1211,12 @@ function Events() //{{{
          * Whether <b>key</b> is a key code defined to reject/cancel input on
          * the command line.
          *
+         * @param {string} key The key code to test.
          * @returns {boolean}
          */
         isCancelKey: function (key) key == "<Esc>" || key == "<C-[>" || key == "<C-c>",
 
-        /*
+        /**
          * Waits for the current buffer to successfully finish loading. Returns
          * true for a successful page load otherwise false.
          *
@@ -1346,7 +1353,9 @@ function Events() //{{{
             // }
         },
 
-        // global escape handler, is called in ALL modes
+        /**
+         *  The global escape key handler. This is called in ALL modes.
+         */
         onEscape: function ()
         {
             if (modes.passNextKey)
@@ -1665,6 +1674,9 @@ function Events() //{{{
         },
 
         // TODO: move to buffer.js?
+        /**
+         * The liberator document loading progress listener.
+         */
         progressListener: {
             QueryInterface: XPCOMUtils.generateQI([
                 Ci.nsIWebProgressListener,

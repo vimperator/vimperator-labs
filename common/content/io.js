@@ -65,7 +65,7 @@ function IO() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const WINDOWS = liberator.has("Win32");
-    const EXTENSION_NAME = config.name.toLowerCase(); // "vimperator" or "muttator"
+    const EXTENSION_NAME = config.name.toLowerCase();
 
     const downloadManager = Cc["@mozilla.org/download-manager;1"].createInstance(Ci.nsIDownloadManager);
 
@@ -569,7 +569,7 @@ function IO() //{{{
         expandPath: IO.expandPath,
 
         // TODO: there seems to be no way, short of a new component, to change
-        // the process's CWD - see // https://bugzilla.mozilla.org/show_bug.cgi?id=280953
+        // the process's CWD - see https://bugzilla.mozilla.org/show_bug.cgi?id=280953
         /**
          * Returns the current working directory.
          *
@@ -1119,7 +1119,7 @@ lookup:
         },
 
         // TODO: when https://bugzilla.mozilla.org/show_bug.cgi?id=68702 is
-        // fixed is fixed, should use that instead of a tmpfile
+        // fixed use that instead of a tmpfile
         /**
          * Runs <b>command</b> in a subshell and returns the output in a
          * string. The shell used is that specified by the 'shell' option.

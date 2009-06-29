@@ -1028,8 +1028,8 @@ function Buffer() //{{{
          * @default The current document.
          * @param {Node} elem The context element.
          * @default <b>doc</b>
-         * @param {boolean} asIterator Whether to return the results as an XPath
-         *     iterator.
+         * @param {boolean} asIterator Whether to return the results as an
+         *     XPath iterator.
          */
         evaluateXPath: function (expression, doc, elem, asIterator)
         {
@@ -1510,7 +1510,7 @@ function Buffer() //{{{
         /**
          * Displays information about the specified element.
          *
-         * @param {Node} elem
+         * @param {Node} elem The element to query.
          */
         showElementInfo: function (elem)
         {
@@ -1848,7 +1848,8 @@ function Marks() //{{{
          * selected from. If it matches [a-z'"], it's a local mark, and can
          * only be recalled from a buffer with a matching URL.
          *
-         * @param {string} mark
+         * @param {string} mark The mark name.
+         * @param {boolean} silent Whether to output error messages.
          */
         // TODO: add support for frameset pages
         add: function (mark, silent)
