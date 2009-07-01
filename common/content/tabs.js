@@ -588,7 +588,7 @@ function Tabs() //{{{
             function () { tabs.detachTab(null); },
             { argCount: "0" });
 
-        commands.add(["tabd[uplicate]"],
+        commands.add(["tabdu[plicate]"],
             "Duplicate current tab",
             function (args)
             {

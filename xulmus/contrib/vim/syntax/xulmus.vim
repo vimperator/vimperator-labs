@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         xulmus configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Mar 16
+" Last Change:      2009 Jul 1
 
 " TODO: make this xulmus specific
 
@@ -29,7 +29,7 @@ syn keyword xulmusCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] ba[ck
     \ mkv[imperatorrc] no[remap] noh[lsearch] norm[al] o[pen] optionu[sage] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences]
     \ prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sav[eas] sb[ar]
     \ sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal] sideb[ar] so[urce] st[op] sty[le] tN[ext] t[open] tab
-    \ tabN[ext] tabc[lose] tabd[uplicate] tabde[tach] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen
+    \ tabN[ext] tabc[lose] tabdu[plicate] tabde[tach] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen
     \ tabp[revious] tabr[ewind] tabs time tn[ext] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] ve[rsion]
     \ vie[wsource] viu[sage] w[rite] wc[lose] win[open] winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained

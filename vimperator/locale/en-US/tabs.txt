@@ -29,8 +29,8 @@ support it, currently:
 ________________________________________________________________________________
 
 
-|:tabd| |:tabduplicate|
-||:[count]tab[duplicate]|| +
+|:tabdu| |:tabduplicate|
+||:[count]tabdu[plicate]|| +
 ________________________________________________________________________________
 Duplicate the current tab and switch to the duplicate. If [count] is given,
 duplicate the tab [count] times.
