@@ -1452,13 +1452,11 @@ function Events() //{{{
                         modes.isReplaying = false;
                         setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + lastMacro + "'"); }, 100);
                     }
-                    return void killEvent();
                 }
                 else
-                {
                     events.duringFeed.push(event);
-                    return void killEvent();
-                }
+
+                return void killEvent();
             }
 
             try
@@ -1588,8 +1586,7 @@ function Events() //{{{
                 }
                 // only follow a map if there isn't a longer possible mapping
                 // (allows you to do :map z yy, when zz is a longer mapping than z)
-                // TODO: map.rhs is only defined for user defined commands, should add a "isDefault" property
-                else if (map && !event.skipmap && (map.rhs || candidates.length == 0))
+                else if (map && !event.skipmap && candidates.length == 0)
                 {
                     input.pendingMap = null;
                     input.count = parseInt(countStr, 10);
