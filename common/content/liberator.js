@@ -81,7 +81,7 @@ const liberator = (function () //{{{
         catch (e)
         {
             if (nError++ == 0)
-                window.toJavaScriptConsole();
+                toOpenWindowByType("global:console", "chrome://global/content/console.xul");
             liberator.reportError(e);
         }
     }
