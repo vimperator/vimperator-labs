@@ -323,6 +323,20 @@ function Mappings() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     liberator.registerObserver("load_completion", function () {
+        completion.setFunctionCompleter(mappings.get,
+        [
+            null,
+            function (context, obj, args)
+            {
+                let mode = args[0];
+                return util.Array.flatten(
+                [
+                    [[name, map.description] for ([i, name] in Iterator(map.names))]
+                    for ([i, map] in Iterator(user[mode].concat(main[mode])))
+                ]);
+            }
+        ]);
+
         completion.userMapping = function userMapping(context, args, modes) {
             // FIXME: have we decided on a 'standard' way to handle this clash? --djk
             modes = modes || [modules.modes.NORMAL];
@@ -338,22 +352,6 @@ function Mappings() //{{{
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
-
-    liberator.registerObserver("load_completion", function () {
-        completion.setFunctionCompleter(mappings.get,
-        [
-            null,
-            function (context, obj, args)
-            {
-                let mode = args[0];
-                return util.Array.flatten(
-                [
-                    [[name, map.description] for ([i, name] in Iterator(map.names))]
-                    for ([i, map] in Iterator(user[mode].concat(main[mode])))
-                ]);
-            }
-        ]);
-    });
 
     return {
 
