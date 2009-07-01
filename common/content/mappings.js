@@ -39,7 +39,10 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * @param {function} action The action invoked by each key sequence.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         flags   - see {@link Map#flags}
+ *         arg     - see {@link Map#arg}
+ *         count   - see {@link Map#count}
+ *         motion  - see {@link Map#motion}
+ *         route   - see {@link Map#route}
  *         noremap - see {@link Map#noremap}
  *         rhs     - see {@link Map#rhs}
  *         silent  - see {@link Map#silent}
@@ -83,6 +86,12 @@ function Map(modes, keys, description, action, extraInfo) //{{{
     this.silent = extraInfo.silent || false;
     /** @property {string} The literal RHS expansion of this mapping. */
     this.rhs = extraInfo.rhs || null;
+    /**
+     * @property {boolean} Specifies whether this is a user mapping. User
+     *     mappings may be created by plugins, or directly by users. Users and
+     *     plugin authors should create only user mappings.
+     */
+    this.isUserMap = extraInfo.isUserMap || false;
 }
 
 Map.prototype = {
@@ -145,9 +154,9 @@ function Mappings() //{{{
         user[mode] = [];
     }
 
-    function addMap(map, userMap)
+    function addMap(map)
     {
-        let where = userMap ? user : main;
+        let where = map.isUserMap ? user : main;
         map.modes.forEach(function (mode) {
             if (!(mode in where))
                 where[mode] = [];
@@ -375,7 +384,7 @@ function Mappings() //{{{
          */
         add: function (modes, keys, description, action, extra)
         {
-            addMap(new Map(modes, keys, description, action, extra), false);
+            addMap(new Map(modes, keys, description, action, extra));
         },
 
         /**
@@ -393,6 +402,8 @@ function Mappings() //{{{
         addUserMap: function (modes, keys, description, action, extra)
         {
             keys = keys.map(expandLeader);
+            extra = extra || {};
+            extra.isUserCommand = true;
             let map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
@@ -402,7 +413,7 @@ function Mappings() //{{{
                     removeMap(mode, name);
             }
 
-            addMap(map, true);
+            addMap(map);
         },
 
         /**

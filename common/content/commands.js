@@ -370,11 +370,11 @@ function Commands() //{{{
         return [len - str.length, arg, quote];
     }
 
-    function addCommand(command, isUserCommand, replace)
+    function addCommand(command, replace)
     {
         if (exCommands.some(function (c) c.hasName(command.name)))
         {
-            if (isUserCommand && replace)
+            if (command.isUserCommand && replace)
                 commands.removeUserCommand(command.name);
             else
             {
@@ -472,7 +472,7 @@ function Commands() //{{{
          */
         add: function (names, description, action, extra)
         {
-            return addCommand(new Command(names, description, action, extra), false, false);
+            return addCommand(new Command(names, description, action, extra), false);
         },
 
         /**
@@ -493,7 +493,7 @@ function Commands() //{{{
             extra.isUserCommand = true;
             description = description || "User defined command";
 
-            return addCommand(new Command(names, description, action, extra), true, replace);
+            return addCommand(new Command(names, description, action, extra), replace);
         },
 
         /**
