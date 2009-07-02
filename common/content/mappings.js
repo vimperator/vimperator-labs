@@ -156,7 +156,6 @@ function Mappings() //{{{
 
     function addMap(map)
     {
-        liberator.log(map)
         let where = map.isUserMap ? user : main;
         map.modes.forEach(function (mode) {
             if (!(mode in where))
