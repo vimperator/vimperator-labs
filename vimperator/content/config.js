@@ -137,6 +137,7 @@ const config = { //{{{
     },
 
     scripts: [
+        "browser.js",
         "bookmarks.js",
         "tabs.js"
     ],
@@ -155,25 +156,6 @@ const config = { //{{{
 
     init: function ()
     {
-        // TODO: support 'nrformats'? -> probably not worth it --mst
-        function incrementURL(count)
-        {
-            let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
-            if (!matches)
-                return void liberator.beep();
-
-            let [, pre, number, post] = matches;
-            let newNumber = parseInt(number, 10) + count;
-            let newNumberStr = String(newNumber > 0 ? newNumber : 0);
-            if (number.match(/^0/)) // add 0009<C-a> should become 0010
-            {
-                while (newNumberStr.length < number.length)
-                    newNumberStr = "0" + newNumberStr;
-            }
-
-            liberator.open(pre + newNumberStr + post);
-        }
-
         // load Vimperator specific modules
         // FIXME: Why aren't these listed in config.scripts?
         // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
@@ -184,6 +166,7 @@ const config = { //{{{
         //      or we could just make sure that they're all sourced in order.
         //      The scripts could even just instantiate them themselves.
         //        --Kris
+        liberator.loadModule("browser",    Browser);
         liberator.loadModule("finder",     Finder);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
@@ -214,145 +197,9 @@ const config = { //{{{
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        mappings.add([modes.NORMAL],
-            ["y"], "Yank current location to the clipboard",
-            function () { util.copyToClipboard(buffer.URL, true); });
-
-        // opening websites
-        mappings.add([modes.NORMAL],
-            ["o"], "Open one or more URLs",
-            function () { commandline.open(":", "open ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["O"],
-            "Open one or more URLs, based on current location",
-            function () { commandline.open(":", "open " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL], ["t"],
-            "Open one or more URLs in a new tab",
-            function () { commandline.open(":", "tabopen ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["T"],
-            "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL], ["w"],
-            "Open one or more URLs in a new window",
-            function () { commandline.open(":", "winopen ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["W"],
-            "Open one or more URLs in a new window, based on current location",
-            function () { commandline.open(":", "winopen " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL],
-            ["<C-a>"], "Increment last number in URL",
-            function (count) { incrementURL(Math.max(count, 1)); },
-            { count: true });
-
-        mappings.add([modes.NORMAL],
-            ["<C-x>"], "Decrement last number in URL",
-            function (count) { incrementURL(-Math.max(count, 1)); },
-            { count: true });
-
-        mappings.add([modes.NORMAL], ["~"],
-            "Open home directory",
-            function () { liberator.open("~"); });
-
-        mappings.add([modes.NORMAL], ["gh"],
-            "Open homepage",
-            function () { BrowserHome(); });
-
-        mappings.add([modes.NORMAL], ["gH"],
-            "Open homepage in a new tab",
-            function ()
-            {
-                let homepages = gHomeButton.getHomePage();
-                liberator.open(homepages, /\bhomepage\b/.test(options["activate"]) ?
-                        liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
-            });
-
-        mappings.add([modes.NORMAL], ["gu"],
-            "Go to parent directory",
-            function (count)
-            {
-                function isDirectory(url)
-                {
-                    if (/^file:\/|^\//.test(url))
-                    {
-                        let file = io.getFile(url);
-                        return file.exists() && file.isDirectory();
-                    }
-                    else
-                    {
-                        // for all other locations just check if the URL ends with /
-                        return /\/$/.test(url);
-                    }
-                }
-
-                if (count < 1)
-                    count = 1;
-
-                // XXX
-                let url = buffer.URL;
-                for (let i = 0; i < count; i++)
-                {
-                    if (isDirectory(url))
-                        url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/");
-                    else
-                        url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/");
-                }
-                url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
-
-                if (url == buffer.URL)
-                    liberator.beep();
-                else
-                    liberator.open(url);
-            },
-            { count: true });
-
-        mappings.add([modes.NORMAL], ["gU"],
-            "Go to the root of the website",
-            function ()
-            {
-                let uri = content.document.location;
-                if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
-                    return void liberator.beep();
-                liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
-            });
-
-        mappings.add([modes.NORMAL], ["<C-l>"],
-            "Redraw the screen",
-            function () { commands.get("redraw").execute("", false); });
-
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
-
-        commands.add(["downl[oads]", "dl"],
-            "Show progress of current downloads",
-            function ()
-            {
-                liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    options.get("newtab").has("all", "downloads")
-                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
-            },
-            { argCount: "0" });
-
-        commands.add(["o[pen]", "e[dit]"],
-            "Open one or more URLs in the current tab",
-            function (args)
-            {
-                if (args.string)
-                    liberator.open(args.string);
-                else if (args.bang)
-                    BrowserReloadSkipCache();
-                else
-                    BrowserReload();
-            },
-            {
-                bang: true,
-                completer: function (context) completion.url(context),
-                literal: 0
-            });
 
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
@@ -371,17 +218,6 @@ const config = { //{{{
                 argCount: "0",
                 bang: true
             });
-
-        commands.add(["redr[aw]"],
-            "Redraw the screen",
-            function ()
-            {
-                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
-                               .getInterface(Ci.nsIDOMWindowUtils);
-                wu.redraw();
-                modes.show();
-            },
-            { argCount: "0" });
 
         commands.add(["sbcl[ose]"],
             "Close the sidebar window",
@@ -454,27 +290,6 @@ const config = { //{{{
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        options.add(["encoding", "enc"],
-            "Sets the current buffer's character encoding",
-            "string", "UTF-8",
-            {
-                scope: options.OPTION_SCOPE_LOCAL,
-                getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
-                setter: function (val)
-                {
-                    // Stolen from browser.jar/content/browser/browser.js, more or less.
-                    try
-                    {
-                        var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
-                        PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
-                        getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
-                    }
-                    catch (e) { liberator.reportError(e); }
-                },
-                completer: function (context) completion.charset(context),
-                validator: Option.validateCompleter
-            });
-
         options.add(["online"],
             "Set the 'work offline' option",
             "boolean", true,
@@ -500,6 +315,7 @@ const config = { //{{{
                     setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
                     getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
                 });
+
             let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
             storage.newObject("private-mode", function () {
                 ({
@@ -522,6 +338,7 @@ const config = { //{{{
                     },
                 }).init();
             }, false);
+
             storage.addObserver("private-mode",
                 function (key, event, value) {
                     autocommands.trigger("PrivateMode", { state: value });
@@ -550,10 +367,6 @@ const config = { //{{{
                     return value;
                 }
             });
-
-        options.add(["urlseparator"],
-            "Set the separator regexp used to separate multiple URL args",
-            "string", ",\\s");
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMPLETIONS /////////////////////////////////////////////

@@ -180,6 +180,7 @@ const config = { //{{{
     },
 
     scripts: [
+        "browser.js",
         "bookmarks.js",
         "tabs.js",
         "player.js",
@@ -262,15 +263,7 @@ const config = { //{{{
         };
 
         // load Xulmus specific modules
-        // FIXME: Why aren't these listed in config.scripts?
-        // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
-        //      Something like:
-        //          liberator.addModule("search", function Search() { ...
-        //      for all modules, or something similar. For modules which
-        //      require other modules, well, there's addObserver("load_foo",
-        //      or we could just make sure that they're all sourced in order.
-        //      The scripts could even just instantiate them themselves.
-        //        --Kris
+        liberator.loadModule("browser",    Browser);
         liberator.loadModule("finder",     Finder);
         liberator.loadModule("bookmarks",  Bookmarks);
         liberator.loadModule("history",    History);
@@ -303,174 +296,9 @@ const config = { //{{{
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        mappings.add([modes.NORMAL],
-            ["y"], "Yank current location to the clipboard",
-            function () { util.copyToClipboard(buffer.URL, true); });
-
-        // opening websites
-        mappings.add([modes.NORMAL],
-            ["o"], "Open one or more URLs",
-            function () { commandline.open(":", "open ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["O"],
-            "Open one or more URLs, based on current location",
-            function () { commandline.open(":", "open " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL], ["t"],
-            "Open one or more URLs in a new tab",
-            function () { commandline.open(":", "tabopen ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["t"],
-            "Open one or more URLs in a new tab",
-            function () { commandline.open(":", "tabopen ", modes.EX); });
-
-        mappings.add([modes.NORMAL], ["T"],
-            "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL], ["T"],
-            "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
-
-        mappings.add([modes.NORMAL],
-            ["<C-a>"], "Increment last number in URL",
-            function (count) { incrementURL(Math.max(count, 1)); },
-            { count: true });
-
-        mappings.add([modes.NORMAL],
-            ["<C-x>"], "Decrement last number in URL",
-            function (count) { incrementURL(-Math.max(count, 1)); },
-            { count: true });
-
-        mappings.add([modes.NORMAL], ["~"],
-            "Open home directory",
-            function () { liberator.open("~"); });
-
-        mappings.add([modes.NORMAL], ["gh"],
-            "Open homepage",
-            function () { BrowserHome(); });
-
-        mappings.add([modes.NORMAL], ["gH"],
-            "Open homepage in a new tab",
-            function ()
-            {
-                let homepages = gHomeButton.getHomePage();
-                liberator.open(homepages, /\bhomepage\b/.test(options["activate"]) ?
-                        liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
-            });
-
-        mappings.add([modes.NORMAL], ["gu"],
-            "Go to parent directory",
-            function (count)
-            {
-                function isDirectory(url)
-                {
-                    if (/^file:\/|^\//.test(url))
-                    {
-                        let file = io.getFile(url);
-                        return file.exists() && file.isDirectory();
-                    }
-                    else
-                    {
-                        // for all other locations just check if the URL ends with /
-                        return /\/$/.test(url);
-                    }
-                }
-
-                if (count < 1)
-                    count = 1;
-
-                // XXX
-                let url = buffer.URL;
-                for (let i = 0; i < count; i++)
-                {
-                    if (isDirectory(url))
-                        url = url.replace(/^(.*?:)(.*?)([^\/]+\/*)$/, "$1$2/");
-                    else
-                        url = url.replace(/^(.*?:)(.*?)(\/+[^\/]+)$/, "$1$2/");
-                }
-                url = url.replace(/^(.*:\/+.*?)\/+$/, "$1/"); // get rid of more than 1 / at the end
-
-                if (url == buffer.URL)
-                    liberator.beep();
-                else
-                    liberator.open(url);
-            },
-            { count: true });
-
-        mappings.add([modes.NORMAL], ["gU"],
-            "Go to the root of the website",
-            function ()
-            {
-                let uri = content.document.location;
-                if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
-                    return void liberator.beep();
-                liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
-            });
-
-        mappings.add([modes.NORMAL], ["<C-l>"],
-            "Redraw the screen",
-            function () { commands.get("redraw").execute("", false); });
-
-         /////////////////////////////////////////////////////////////////////////////}}}
+        /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
-
-        commands.add(["downl[oads]", "dl"],
-            "Show progress of current downloads",
-            function ()
-            {
-                liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    options.get("newtab").has("all", "downloads")
-                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
-            },
-            { argCount: "0" });
-
-        commands.add(["o[pen]", "e[dit]"],
-            "Open one or more URLs in the current tab",
-            function (args)
-            {
-                if (args.string)
-                    liberator.open(args.string);
-                else if (args.bang)
-                    BrowserReloadSkipCache();
-                else
-                    BrowserReload();
-            },
-            {
-                bang: true,
-                completer: function (context) completion.url(context),
-                literal: 0
-            });
-
-        commands.add(["pref[erences]", "prefs"],
-            "Show " + config.hostApplication + " preferences",
-            function (args)
-            {
-                if (args.bang) // open Songbird settings GUI dialog
-                {
-                    liberator.open("about:config",
-                        (options["newtab"] && options.get("newtab").has("all", "prefs"))
-                                ? liberator.NEW_TAB : liberator.CURRENT_TAB);
-                }
-                else
-                    window.openPreferences();
-            },
-            {
-                argCount: "0",
-                bang: true
-            });
-
-        commands.add(["redr[aw]"],
-            "Redraw the screen",
-            function ()
-            {
-                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
-                               .getInterface(Ci.nsIDOMWindowUtils);
-                wu.redraw();
-                modes.show();
-            },
-            { argCount: "0" });
 
         commands.add(["dpcl[ose]"],
             "Close a display pane",
@@ -509,6 +337,24 @@ const config = { //{{{
                 literal: 0
             });
 
+        commands.add(["pref[erences]", "prefs"],
+            "Show " + config.hostApplication + " preferences",
+            function (args)
+            {
+                if (args.bang) // open Songbird settings GUI dialog
+                {
+                    liberator.open("about:config",
+                        (options["newtab"] && options.get("newtab").has("all", "prefs"))
+                                ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                }
+                else
+                    window.openPreferences();
+            },
+            {
+                argCount: "0",
+                bang: true
+            });
+
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
@@ -543,9 +389,10 @@ const config = { //{{{
                 }
             });
 
-        options.add(["urlseparator"],
-            "Set the separator regexp used to separate multiple URL args",
-            "string", ",\\s");
+        /////////////////////////////////////////////////////////////////////////////}}}
+        ////////////////////// COMPLETIONS /////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////{{{
+
         //}}}
 
         // TODO: mention this to SB devs, they seem keen to provide these
