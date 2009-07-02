@@ -156,6 +156,7 @@ function Mappings() //{{{
 
     function addMap(map)
     {
+        liberator.log(map)
         let where = map.isUserMap ? user : main;
         map.modes.forEach(function (mode) {
             if (!(mode in where))
@@ -401,7 +402,7 @@ function Mappings() //{{{
         {
             keys = keys.map(expandLeader);
             extra = extra || {};
-            extra.isUserCommand = true;
+            extra.isUserMap = true;
             let map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
