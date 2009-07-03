@@ -81,8 +81,8 @@ go somewhere by editing the URL of the current page.
 ________________________________________________________________________________
 
 
-|:tabd| |:tabduplicate|
-||:[count]tabd[uplicate][!]|| +
+|:tabdu| |:tabduplicate|
+||:[count]tabdu[plicate][!]|| +
 ________________________________________________________________________________
 Duplicates current tab [count] times. Uses *tabopen* value of the 'activate'
 option to determine if the last cloned tab should be activated. When used with
