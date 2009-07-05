@@ -57,6 +57,88 @@ function Browser() //{{{
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// OPTIONS /////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    options.add(["encoding", "enc"],
+        "Sets the current buffer's character encoding",
+        "string", "UTF-8",
+        {
+            scope: options.OPTION_SCOPE_LOCAL,
+            getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
+            setter: function (val)
+            {
+                // Stolen from browser.jar/content/browser/browser.js, more or less.
+                try
+                {
+                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
+                    PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
+                    getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
+                }
+                catch (e) { liberator.reportError(e); }
+            },
+            completer: function (context) completion.charset(context),
+            validator: Option.validateCompleter
+        });
+
+    options.add(["online"],
+        "Set the 'work offline' option",
+        "boolean", true,
+        {
+            setter: function (value)
+            {
+                const ioService = services.get("io");
+                if (ioService.offline == value)
+                    BrowserOffline.toggleOfflineStatus();
+                return value;
+            },
+            getter: function () !services.get("io").offline
+        });
+
+    // only available in FF 3.5
+    services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
+    if (services.get("privateBrowsing"))
+    {
+        options.add(["private", "pornmode"],
+            "Set the 'private browsing' option",
+            "boolean", false,
+            {
+                setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
+                getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
+            });
+        let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
+        storage.newObject("private-mode", function () {
+            ({
+                init: function () {
+                    services.get("observer").addObserver(this, "private-browsing", false);
+                    services.get("observer").addObserver(this, "quit-application", false);
+                    this.private = services.get("privateBrowsing").privateBrowsingEnabled;
+                },
+                observe: function (subject, topic, data) {
+                    if (topic == "private-browsing") {
+                        if (data == "enter")
+                            storage.privateMode = true;
+                        else if (data == "exit")
+                            storage.privateMode = false;
+                        storage.fireEvent("private-mode", "change", storage.privateMode);
+                    } else if (topic == "quit-application") {
+                        services.get("observer").removeObserver(this, "quit-application");
+                        services.get("observer").removeObserver(this, "private-browsing");
+                    }
+                },
+            }).init();
+        }, false);
+        storage.addObserver("private-mode",
+            function (key, event, value) {
+                autocommands.trigger("PrivateMode", { state: value });
+            }, window);
+    }
+
+    options.add(["urlseparator"],
+        "Set the separator regexp used to separate multiple URL args",
+        "string", ",\\s");
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// MAPPINGS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
@@ -210,159 +292,6 @@ function Browser() //{{{
             modes.show();
         },
         { argCount: "0" });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    options.add(["encoding", "enc"],
-        "Sets the current buffer's character encoding",
-        "string", "UTF-8",
-        {
-            scope: options.OPTION_SCOPE_LOCAL,
-            getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
-            setter: function (val)
-            {
-                // Stolen from browser.jar/content/browser/browser.js, more or less.
-                try
-                {
-                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
-                    PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
-                    getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
-                }
-                catch (e) { liberator.reportError(e); }
-            },
-            completer: function (context) completion.charset(context),
-            validator: Option.validateCompleter
-        });
-
-    options.add(["online"],
-        "Set the 'work offline' option",
-        "boolean", true,
-        {
-            setter: function (value)
-            {
-                const ioService = services.get("io");
-                if (ioService.offline == value)
-                    BrowserOffline.toggleOfflineStatus();
-                return value;
-            },
-            getter: function () !services.get("io").offline
-        });
-
-    // only available in FF 3.5
-    services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
-    if (services.get("privateBrowsing"))
-    {
-        options.add(["private", "pornmode"],
-            "Set the 'private browsing' option",
-            "boolean", false,
-            {
-                setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
-                getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
-            });
-        let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
-        storage.newObject("private-mode", function () {
-            ({
-                init: function () {
-                    services.get("observer").addObserver(this, "private-browsing", false);
-                    services.get("observer").addObserver(this, "quit-application", false);
-                    this.private = services.get("privateBrowsing").privateBrowsingEnabled;
-                },
-                observe: function (subject, topic, data) {
-                    if (topic == "private-browsing") {
-                        if (data == "enter")
-                            storage.privateMode = true;
-                        else if (data == "exit")
-                            storage.privateMode = false;
-                        storage.fireEvent("private-mode", "change", storage.privateMode);
-                    } else if (topic == "quit-application") {
-                        services.get("observer").removeObserver(this, "quit-application");
-                        services.get("observer").removeObserver(this, "private-browsing");
-                    }
-                },
-            }).init();
-        }, false);
-        storage.addObserver("private-mode",
-            function (key, event, value) {
-                autocommands.trigger("PrivateMode", { state: value });
-            }, window);
-    }
-
-    options.add(["urlseparator"],
-        "Set the separator regexp used to separate multiple URL args",
-        "string", ",\\s");
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// COMMANDS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    commands.add(["downl[oads]", "dl"],
-        "Show progress of current downloads",
-        function ()
-        {
-            liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                options.get("newtab").has("all", "downloads")
-                    ? liberator.NEW_TAB : liberator.CURRENT_TAB);
-        },
-        { argCount: "0" });
-
-    commands.add(["o[pen]", "e[dit]"],
-        "Open one or more URLs in the current tab",
-        function (args)
-        {
-            if (args.string)
-                liberator.open(args.string);
-            else if (args.bang)
-                BrowserReloadSkipCache();
-            else
-                BrowserReload();
-        },
-        {
-            bang: true,
-            completer: function (context) completion.url(context),
-            literal: 0
-        });
-
-    commands.add(["redr[aw]"],
-        "Redraw the screen",
-        function ()
-        {
-            let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
-                           .getInterface(Ci.nsIDOMWindowUtils);
-            wu.redraw();
-            modes.show();
-        },
-        { argCount: "0" });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    options.add(["encoding", "enc"],
-        "Sets the current buffer's character encoding",
-        "string", "UTF-8",
-        {
-            scope: options.OPTION_SCOPE_LOCAL,
-            getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
-            setter: function (val)
-            {
-                // Stolen from browser.jar/content/browser/browser.js, more or less.
-                try
-                {
-                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
-                    PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
-                    getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
-                }
-                catch (e) { liberator.reportError(e); }
-            },
-            completer: function (context) completion.charset(context),
-            validator: Option.validateCompleter
-        });
-
-    options.add(["urlseparator"],
-        "Set the separator regexp used to separate multiple URL args",
-        "string", ",\\s");
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
