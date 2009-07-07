@@ -91,7 +91,7 @@ function Map(modes, keys, description, action, extraInfo) //{{{
      *     mappings may be created by plugins, or directly by users. Users and
      *     plugin authors should create only user mappings.
      */
-    this.isUserMap = extraInfo.isUserMap || false;
+    this.user = extraInfo.user || false;
 }
 
 Map.prototype = {
@@ -156,7 +156,7 @@ function Mappings() //{{{
 
     function addMap(map)
     {
-        let where = map.isUserMap ? user : main;
+        let where = map.user ? user : main;
         map.modes.forEach(function (mode) {
             if (!(mode in where))
                 where[mode] = [];
@@ -401,7 +401,7 @@ function Mappings() //{{{
         {
             keys = keys.map(expandLeader);
             extra = extra || {};
-            extra.isUserMap = true;
+            extra.user = true;
             let map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence

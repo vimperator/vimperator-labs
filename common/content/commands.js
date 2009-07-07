@@ -165,7 +165,7 @@ function Command(specs, description, action, extraInfo) //{{{
      *     unlike basic commands, may be overwritten. Users and plugin authors
      *     should create only user commands.
      */
-    this.isUserCommand = extraInfo.isUserCommand || false;
+    this.user = extraInfo.user || false;
     /**
      * @property {string} For commands defined via :command, contains the Ex
      *     command line to be executed upon invocation.
@@ -374,7 +374,7 @@ function Commands() //{{{
     {
         if (exCommands.some(function (c) c.hasName(command.name)))
         {
-            if (command.isUserCommand && replace)
+            if (command.user && replace)
                 commands.removeUserCommand(command.name);
             else
             {
@@ -490,7 +490,7 @@ function Commands() //{{{
         addUserCommand: function (names, description, action, extra, replace)
         {
             extra = extra || {};
-            extra.isUserCommand = true;
+            extra.user = true;
             description = description || "User defined command";
 
             return addCommand(new Command(names, description, action, extra), replace);
@@ -544,7 +544,7 @@ function Commands() //{{{
          */
         getUserCommand: function (name)
         {
-            return exCommands.filter(function (cmd) cmd.isUserCommand && cmd.hasName(name))[0] || null;
+            return exCommands.filter(function (cmd) cmd.user && cmd.hasName(name))[0] || null;
         },
 
         /**
@@ -554,7 +554,7 @@ function Commands() //{{{
          */
         getUserCommands: function ()
         {
-            return exCommands.filter(function (cmd) cmd.isUserCommand);
+            return exCommands.filter(function (cmd) cmd.user);
         },
 
         // TODO: should it handle comments?
@@ -921,7 +921,7 @@ function Commands() //{{{
          */
         removeUserCommand: function (name)
         {
-            exCommands = exCommands.filter(function (cmd) !(cmd.isUserCommand && cmd.hasName(name)));
+            exCommands = exCommands.filter(function (cmd) !(cmd.user && cmd.hasName(name)));
         },
 
         // FIXME: still belong here? Also used for autocommand parameters.
@@ -1076,7 +1076,7 @@ function Commands() //{{{
 
                 // TODO: using an array comprehension here generates flakey results across repeated calls
                 //     : perhaps we shouldn't allow options in a list call but just ignore them for now
-                let cmds = exCommands.filter(function (c) c.isUserCommand && (!cmd || c.name.match("^" + cmd)));
+                let cmds = exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
 
                 if (cmds.length > 0)
                 {
@@ -1124,7 +1124,7 @@ function Commands() //{{{
                     literalArg: cmd.replacementText
                 }
                 for ([k, cmd] in Iterator(exCommands))
-                if (cmd.isUserCommand && cmd.replacementText)
+                if (cmd.user && cmd.replacementText)
             ]
         });
 
