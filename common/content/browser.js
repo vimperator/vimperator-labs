@@ -81,20 +81,6 @@ function Browser() //{{{
             validator: Option.validateCompleter
         });
 
-    options.add(["online"],
-        "Set the 'work offline' option",
-        "boolean", true,
-        {
-            setter: function (value)
-            {
-                const ioService = services.get("io");
-                if (ioService.offline == value)
-                    BrowserOffline.toggleOfflineStatus();
-                return value;
-            },
-            getter: function () !services.get("io").offline
-        });
-
     // only available in FF 3.5
     services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
     if (services.get("privateBrowsing"))
