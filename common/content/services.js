@@ -99,6 +99,7 @@ function Services()
     self.add("io",                  "@mozilla.org/network/io-service;1",        Ci.nsIIOService);
     self.add("pref",                "@mozilla.org/preferences-service;1",       [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]);
     self.add("profile",             "@mozilla.org/toolkit/profile-service;1",   Ci.nsIToolkitProfileService);
+    self.add("rdf",                 "@mozilla.org/rdf/rdf-service;1",           Ci.nsIRDFService);
     self.add("sessionStore",        "@mozilla.org/browser/sessionstore;1",      Ci.nsISessionStore);
     self.add("subscriptLoader",     "@mozilla.org/moz/jssubscript-loader;1",    Ci.mozIJSSubScriptLoader);
     self.add("threadManager",       "@mozilla.org/thread-manager;1",            Ci.nsIThreadManager);

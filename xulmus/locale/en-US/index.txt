@@ -180,18 +180,6 @@ section:Command-line{nbsp}editing[ex-edit-index]
 
 section:Ex{nbsp}commands[ex-cmd-index,:index]
 
-||[c]:filter[c]|| Filter and show the tracks as a view +
-||[c]:load[c]|| Load a playlist +
-||[c]:mediaview[c]|| Change the media view +
-||[c]:playerplay[c]|| Play the current track +
-||[c]:playerprev[c]|| Play the previous track +
-||[c]:playernext[c]|| Play the next track +
-||[c]:playerpause[c]|| Pause/unpause the current track +
-||[c]:playerstop[c]|| Stop playing the current track +
-||[c]:queue[c]|| Queue tracks by artist/album/track +
-||[c]:seek[c]|| Seek to an absolute or relative position in a track +
-||[c]:volume[c]|| Set the player volume +
-
 ||[c]:![c]|| Run a command +
 ||[c]:abbreviate[c]|| Abbreviate a key sequence +
 ||[c]:abclear[c]|| Remove all abbreviations +
@@ -222,20 +210,26 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:delqmarks[c]|| Delete the specified QuickMarks +
 ||[c]:delstyle[c]|| Delete any matching styles +
 ||[c]:dialog[c]|| Open a Songbird dialog +
+||[c]:displaypane[c]|| Open the specified display pane +
 ||[c]:doautoall[c]|| Apply the autocommands matching the specified URL to all buffers +
 ||[c]:doautocmd[c]|| Apply the autocommands matching the specified URL to the current buffer +
 ||[c]:downloads[c]|| Show progress of current downloads +
-||[c]:displaypane[c]|| Open the specified display pane +
 ||[c]:dpclose[c]|| Close the specified display pane +
 ||[c]:echo[c]|| Echo the expression +
 ||[c]:echoerr[c]|| Echo the expression as an error message +
 ||[c]:echomsg[c]|| Echo the expression as an informational message +
 ||[c]:emenu[c]|| Execute the specified menu item from the command line +
 ||[c]:execute[c]|| Execute the argument as an Ex command +
+||[c]:extadd[c]|| Install an extensions +
+||[c]:extdelete[c]||
+||[c]:extdisable[c]||
+||[c]:extenable[c]||
+||[c]:extensions[c]|| List all installed extensions +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
+||[c]:filter[c]|| Filter and show the tracks as a view +
 ||[c]:finish[c]|| Stop sourcing a script file +
-||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:forward[c]|| Go forward in the browser history +
+||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:hardcopy[c]|| Print current document +
 ||[c]:help[c]|| Display help +
 ||[c]:highlight[c]|| Style Xulmus +
@@ -250,12 +244,14 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:javascript[c]|| Run a JavaScript command through eval() +
 ||[c]:jumps[c]|| Show jumplist +
 ||[c]:let[c]|| Set or list a variable +
+||[c]:load[c]|| Load a playlist +
 ||[c]:loadplugins[c]|| Immediately load all unloaded plugins +
 ||[c]:macros[c]|| List all macros +
 ||[c]:map[c]|| Map a key sequence +
 ||[c]:mapclear[c]|| Remove all mappings +
 ||[c]:mark[c]|| Mark current location within the web page +
 ||[c]:marks[c]|| Show all location marks of current web page +
+||[c]:mediaview[c]|| Change the media view +
 ||[c]:messages[c]|| Display previously given messages +
 ||[c]:messclear[c]|| Clear the message history +
 ||[c]:mkxulmusrc[c]|| Write current key mappings and changed options to the config file +
@@ -267,10 +263,16 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:pageinfo[c]|| Show various page information +
 ||[c]:pagestyle[c]|| Select the author style sheet to apply +
 ||[c]:play[c]|| Replay a recorded macro +
+||[c]:playernext[c]|| Play the next track +
+||[c]:playerpause[c]|| Pause/unpause the current track +
+||[c]:playerplay[c]|| Play the current track +
+||[c]:playerprev[c]|| Play the previous track +
+||[c]:playerstop[c]|| Stop playing the current track +
 ||[c]:preferences[c]|| Show Songbird preferences dialog +
 ||[c]:pwd[c]|| Print the current directory name +
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
+||[c]:queue[c]|| Queue tracks by artist/album/track +
 ||[c]:quit[c]|| Quit current tab +
 ||[c]:quitall[c]|| Quit Xulmus +
 ||[c]:redraw[c]|| Redraw the screen +
@@ -280,17 +282,18 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:runtime[c]|| Source the specified file from each directory in 'runtimepath' +
 ||[c]:saveas[c]|| Save current document to disk +
 ||[c]:scriptnames[c]|| List all sourced script names +
+||[c]:seek[c]|| Seek to an absolute or relative position in a track +
 ||[c]:set[c]|| Set an option +
 ||[c]:setglobal[c]|| Set global option +
 ||[c]:setlocal[c]|| Set local option +
 ||[c]:silent[c]|| Execute a command silently +
-||[c]:style[c]|| Style Xulmus and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
 ||[c]:stop[c]|| Stop loading the current web page +
 ||[c]:stopall[c]|| Stop loading all tab pages +
+||[c]:style[c]|| Style Xulmus and web sites +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
-||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +
+||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabduplicate[c]|| Duplicate current tab +
 ||[c]:tablast[c]|| Switch to the last tab +
 ||[c]:tabmove[c]|| Move the current tab after tab N +
@@ -308,6 +311,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:version[c]|| Show version information +
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
+||[c]:volume[c]|| Set the player volume +
 ||[c]:winclose[c]|| Close window +
 ||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +

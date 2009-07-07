@@ -147,6 +147,43 @@ const liberator = (function () //{{{
             liberator.help(tag);
     }
 
+    function getExtension(name) getExtensions().filter(function (e) e.name == name)[0]
+
+    // TODO: maybe make this a property
+    function getExtensions()
+    {
+        const rdf = services.get("rdf");
+        const extensionManager = services.get("extensionManager");
+
+        let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+
+        function getRdfProperty(item, property)
+        {
+            let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
+            let value = "";
+
+            if (resource)
+            {
+              let target = extensionManager.datasource.GetTarget(resource,
+                               rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
+              if (target && target instanceof Ci.nsIRDFLiteral)
+                value = target.Value;
+            }
+
+            return value;
+        }
+
+        //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
+        return [{
+            id: e.id,
+            name: e.name,
+            description: getRdfProperty(e, "description"),
+            icon: e.iconURL,
+            enabled: getRdfProperty(e, "isDisabled") != "true",
+            version: e.version
+        } for ([,e] in Iterator(extensions))];
+    }
+
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -385,6 +422,107 @@ const liberator = (function () //{{{
                 }
             });
 
+        commands.add(["exta[dd]"],
+            "Install an extension",
+            function (args)
+            {
+                let file = io.getFile(args[0]);
+
+                if (file.exists() && file.isReadable() && file.isFile())
+                    services.get("extensionManager").installItemFromFile(file, "app-profile");
+                else
+                {
+                    if (file.exists() && file.isDirectory())
+                        liberator.echomsg("Cannot install a directory: \"" + file.path + "\"", 0);
+
+                    liberator.echoerr("E484: Can't open file " + file.path);
+                }
+            },
+            {
+                argCount: "1",
+                completer: function (context) {
+                    context.filters.push(function ({ item: f }) f.isDirectory() || /\.xpi$/.test(f.leafName));
+                    completion.file(context);
+                }
+            });
+
+        // TODO: handle extension dependencies
+        [
+            {
+                name: "extde[lete]",
+                description: "Uninstall an extension",
+                action: "uninstallItem"
+            },
+            {
+                name: "exte[nable]",
+                description: "Enable an extension",
+                action: "enableItem"
+            },
+            {
+                name: "extd[isable]",
+                description: "Disable an extension",
+                action: "disableItem"
+            }
+        ].forEach(function (command) {
+            commands.add([command.name],
+                command.description,
+                function (args)
+                {
+                    let name = args[0];
+                    function action(e) { services.get("extensionManager")[command.action](e.id); };
+
+                    if (args.bang)
+                        getExtensions().forEach(function (e) { action(e); });
+                    else
+                    {
+                        if (!name)
+                            return void liberator.echoerr("E471: Argument required"); // XXX
+
+                        let extension = getExtension(name);
+                        if (extension)
+                            action(extension);
+                        else
+                            liberator.echoerr("E474: Invalid argument");
+                    }
+                },
+                {
+                    argCount: "?", // FIXME: should be "1"
+                    bang: true,
+                    completer: function (context) completion.extension(context)
+                });
+        });
+
+        // TODO: maybe indicate pending status too?
+        commands.add(["extens[ions]"],
+            "List available extensions",
+            function (args)
+            {
+                let filter = args[0] || "";
+                let extensions = getExtensions().filter(function (e) e.name.indexOf(filter) >= 0);
+
+                if (extensions.length > 0)
+                {
+                    let list = template.tabular(
+                        ["Name", "Version", "Status", "Description"], [],
+                        ([template.icon(e, e.name),
+                          e.version,
+                          e.enabled ? <span style="color: blue;">enabled</span>
+                                    : <span style="color: red;">disabled</span>,
+                          e.description] for ([,e] in Iterator(extensions)))
+                    );
+
+                    commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+                }
+                else
+                {
+                    if (filter)
+                        liberator.echoerr("Exxx: No extension matching \"" + filter + "\"");
+                    else
+                        liberator.echoerr("No extensions installed");
+                }
+            },
+            { argCount: "?" });
+
         commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
             function (args) { showHelpIndex("ex-cmd-index", commands, args.bang); },
@@ -607,6 +745,13 @@ const liberator = (function () //{{{
         completion.dialog = function dialog(context) {
             context.title = ["Dialog"];
             context.completions = config.dialogs;
+        };
+
+        completion.extension = function extension(context) {
+            context.title = ["Extension"];
+            context.anchored = false;
+            context.keys = { text: "name", description: "description", icon: "icon" },
+            context.completions = getExtensions();
         };
 
         completion.help = function help(context) {

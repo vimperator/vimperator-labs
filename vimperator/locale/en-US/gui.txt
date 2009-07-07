@@ -5,6 +5,8 @@ Ex and Normal mode commands there may be times when directly accessing the GUI
 is required. There are commands for accessing the menu system, standard dialogs
 and the sidebar.
 
+section:Menus[menu]
+
 |:emenu| +
 ||:emenu {menu}||
 ________________________________________________________________________________
@@ -14,6 +16,7 @@ hierarchical path to the menu item with each submenu separated by a period.
 E.g. [c]:emenu File.Open File...[c]
 ________________________________________________________________________________
 
+section:Dialogs[dialogs]
 
 |:addo| |:addons| +
 ||:addo[ns]||
@@ -69,6 +72,49 @@ Show progress of current downloads. Open the original Firefox download dialog
 in a new tab. Here, downloads can be paused, canceled and resumed.
 ________________________________________________________________________________
 
+section:Add-ons[extensions,add-ons]
+
+|:exta| |:extadd| +
+||:exta[dd] {file}||
+________________________________________________________________________________
+Install an extension. {file} is an extension XPInstall file (*.xpi).
+________________________________________________________________________________
+
+
+|:extde| |:extdelete| +
+||:extde[lete] {extension}|| +
+||:extde[lete]!||
+________________________________________________________________________________
+Uninstall an extension. {extension} is the extension's name. When [!] is given
+all extensions are uninstalled.
+________________________________________________________________________________
+
+
+|:extd| |:extdisable| +
+||:extd[isable] {extension}|| +
+||:extd[isable]!||
+________________________________________________________________________________
+Disable an extension. {extension} is the extension's name. When [!] is given
+all extensions are disabled.
+________________________________________________________________________________
+
+
+|:exte| |:extenable| +
+||:exte[nable] {extension}|| +
+||:exte[nable]!||
+________________________________________________________________________________
+Enable an extension. {extension} is the extension's name. When [!] is given all
+extensions are enabled.
+________________________________________________________________________________
+
+
+|:extens| |:extensions| +
+||:extens[ions]||
+________________________________________________________________________________
+List all installed extensions.
+________________________________________________________________________________
+
+section:Sidebar[sidebar]
 
 |:sbcl| |:sbclose| +
 ||:sbcl[ose]||

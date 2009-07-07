@@ -182,10 +182,15 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:echomsg[c]|| Echo the expression as an informational message +
 ||[c]:emenu[c]|| Execute the specified menu item from the command line +
 ||[c]:execute[c]|| Execute the argument as an Ex command +
+||[c]:extadd[c]|| Install an extensions +
+||[c]:extdelete[c]||
+||[c]:extdisable[c]||
+||[c]:extenable[c]||
+||[c]:extensions[c]|| List all installed extensions +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:finish[c]|| Stop sourcing a script file +
-||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:forward[c]|| Go forward in the browser history +
+||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:hardcopy[c]|| Print current document +
 ||[c]:help[c]|| Display help +
 ||[c]:highlight[c]|| Style Vimperator +
@@ -236,13 +241,13 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:setlocal[c]|| Set local option +
 ||[c]:sidebar[c]|| Open the sidebar window +
 ||[c]:silent[c]|| Execute a command silently +
-||[c]:style[c]|| Style Vimperator and web sites +
 ||[c]:source[c]|| Read Ex commands from a file +
 ||[c]:stop[c]|| Stop loading the current web page +
 ||[c]:stopall[c]|| Stop loading all tab pages +
+||[c]:style[c]|| Style Vimperator and web sites +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
-||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +
+||[c]:tabdo[c]|| Execute a command in each tab +
 ||[c]:tabduplicate[c]|| Duplicate current tab +
 ||[c]:tablast[c]|| Switch to the last tab +
 ||[c]:tabmove[c]|| Move the current tab after tab N +

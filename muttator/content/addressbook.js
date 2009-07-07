@@ -49,10 +49,7 @@ function Addressbook() //{{{
             return "";
     }
 
-    function getDirectoryFromURI(uri)
-    {
-       return rdf.GetResource(uri).QueryInterface(Ci.nsIAbDirectory);
-    }
+    function getDirectoryFromURI(uri) services.get("rdf").GetResource(uri).QueryInterface(Ci.nsIAbDirectory)
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////

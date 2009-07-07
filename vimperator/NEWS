@@ -12,7 +12,10 @@
 	   mappings.add(...,
                { arg: true, count: true, motion: true, route: true });
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
-      and <C-A> are equivalent, to map the uppercase character use <C-S-A>. - Is this still true, or going to be true? --djk
+      and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
+
+    * add extension related commands - :extadd, :extdelete, :extdisable,
+      :extenable, :extensions
     * add '-javascript' flag to :autocommand
     * add 'private' - enter private browsing mode, matching 'PrivateMode'
       autocommand
