@@ -416,12 +416,14 @@ const liberator = (function () //{{{
             {
                 name: "exte[nable]",
                 description: "Enable an extension",
-                action: "enableItem"
+                action: "enableItem",
+                filter: function ({ item: e }) !e.enabled
             },
             {
                 name: "extd[isable]",
                 description: "Disable an extension",
-                action: "disableItem"
+                action: "disableItem",
+                filter: function ({ item: e }) e.enabled
             }
         ].forEach(function (command) {
             commands.add([command.name],
@@ -448,7 +450,13 @@ const liberator = (function () //{{{
                 {
                     argCount: "?", // FIXME: should be "1"
                     bang: true,
-                    completer: function (context) completion.extension(context)
+                    completer: function (context)
+                    {
+                        completion.extension(context)
+                        if (command.filter)
+                            context.filters.push(command.filter);
+                    },
+                    literal: 0
                 });
         });
         commands.add(["exto[ptions]", "extp[references]"],
@@ -459,8 +467,7 @@ const liberator = (function () //{{{
                 if (!extension || !extension.options)
                     return void liberator.extension("E474: Invalid argument");
                 if (args.bang)
-                    window.openDialog(extension.options,
-                            "_blank", "chrome");
+                    window.openDialog(extension.options, "_blank", "chrome");
                 else
                     liberator.open(extension.options,
                         options.get("newtab").has("all", "extoptions")
@@ -491,6 +498,7 @@ const liberator = (function () //{{{
                         ["Name", "Version", "Status", "Description"], [],
                         ([template.icon(e, e.name),
                           e.version,
+                          /* XXX: Inline style. */
                           e.enabled ? <span style="color: blue;">enabled</span>
                                     : <span style="color: red;">disabled</span>,
                           e.description] for ([,e] in Iterator(extensions)))
