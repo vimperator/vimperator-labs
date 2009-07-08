@@ -186,6 +186,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:extdelete[c]||
 ||[c]:extdisable[c]||
 ||[c]:extenable[c]||
+||[c]:extoptions[c]||
 ||[c]:extensions[c]|| List all installed extensions +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:finish[c]|| Stop sourcing a script file +

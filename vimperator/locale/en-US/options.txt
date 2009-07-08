@@ -566,6 +566,7 @@ The possible values:
 *all*        All commands
 *addons*     [c]:addo[ns][c] command
 *downloads*  [c]:downl[oads][c] command
+*extoptions* [c]:exto[ptions][c] command
 *help*       [c]:h[elp][c] command
 *javascript* [c]:javascript![c] or [c]:js![c] command
 *prefs*      [c]:pref[erences]![c] or [c]:prefs![c] command

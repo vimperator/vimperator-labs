@@ -30,15 +30,12 @@ the terms of any one of the MPL, the GPL or the LGPL.
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
-const plugins = {};
-plugins.__proto__ = modules;
+const plugins = { __proto__: modules };
+const userContext = { __proto__: modules };
 
 const EVAL_ERROR = "__liberator_eval_error";
 const EVAL_RESULT = "__liberator_eval_result";
 const EVAL_STRING = "__liberator_eval_string";
-const userContext = {
-    __proto__: modules
-};
 
 const liberator = (function () //{{{
 {
@@ -145,43 +142,6 @@ const liberator = (function () //{{{
             liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
         else
             liberator.help(tag);
-    }
-
-    function getExtension(name) getExtensions().filter(function (e) e.name == name)[0]
-
-    // TODO: maybe make this a property
-    function getExtensions()
-    {
-        const rdf = services.get("rdf");
-        const extensionManager = services.get("extensionManager");
-
-        let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-
-        function getRdfProperty(item, property)
-        {
-            let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
-            let value = "";
-
-            if (resource)
-            {
-              let target = extensionManager.datasource.GetTarget(resource,
-                               rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
-              if (target && target instanceof Ci.nsIRDFLiteral)
-                value = target.Value;
-            }
-
-            return value;
-        }
-
-        //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
-        return [{
-            id: e.id,
-            name: e.name,
-            description: getRdfProperty(e, "description"),
-            icon: e.iconURL,
-            enabled: getRdfProperty(e, "isDisabled") != "true",
-            version: e.version
-        } for ([,e] in Iterator(extensions))];
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -472,13 +432,13 @@ const liberator = (function () //{{{
                     function action(e) { services.get("extensionManager")[command.action](e.id); };
 
                     if (args.bang)
-                        getExtensions().forEach(function (e) { action(e); });
+                        liberator.extensions.forEach(function (e) { action(e); });
                     else
                     {
                         if (!name)
                             return void liberator.echoerr("E471: Argument required"); // XXX
 
-                        let extension = getExtension(name);
+                        let extension = liberator.getExtension(name);
                         if (extension)
                             action(extension);
                         else
@@ -491,6 +451,31 @@ const liberator = (function () //{{{
                     completer: function (context) completion.extension(context)
                 });
         });
+        commands.add(["exto[ptions]", "extp[references]"],
+            "Open an extension's preference dialog",
+            function (args)
+            {
+                let extension = liberator.getExtension(args[0]);
+                if (!extension || !extension.options)
+                    return void liberator.extension("E474: Invalid argument");
+                if (args.bang)
+                    window.openDialog(extension.options,
+                            "_blank", "chrome");
+                else
+                    liberator.open(extension.options,
+                        options.get("newtab").has("all", "extoptions")
+                            ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+            },
+            {
+                argCount: "1",
+                bang: true,
+                completer: function (context)
+                {
+                    completion.extension(context);
+                    context.filters.push(function ({ item: e }) e.options);
+                },
+                literal: 0
+            });
 
         // TODO: maybe indicate pending status too?
         commands.add(["extens[ions]"],
@@ -498,7 +483,7 @@ const liberator = (function () //{{{
             function (args)
             {
                 let filter = args[0] || "";
-                let extensions = getExtensions().filter(function (e) e.name.indexOf(filter) >= 0);
+                let extensions = liberator.extensions.filter(function (e) e.name.indexOf(filter) >= 0);
 
                 if (extensions.length > 0)
                 {
@@ -751,7 +736,7 @@ const liberator = (function () //{{{
             context.title = ["Extension"];
             context.anchored = false;
             context.keys = { text: "name", description: "description", icon: "icon" },
-            context.completions = getExtensions();
+            context.completions = liberator.extensions;
         };
 
         completion.help = function help(context) {
@@ -798,6 +783,43 @@ const liberator = (function () //{{{
 
         /** @property {Element} The currently focused element. */
         get focus() document.commandDispatcher.focusedElement,
+
+        get extensions()
+        {
+            const rdf = services.get("rdf");
+            const extensionManager = services.get("extensionManager");
+
+            let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+
+            function getRdfProperty(item, property)
+            {
+                let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
+                let value = "";
+
+                if (resource)
+                {
+                    let target = extensionManager.datasource.GetTarget(resource,
+                        rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
+                    if (target && target instanceof Ci.nsIRDFLiteral)
+                        value = target.Value;
+                }
+
+                return value;
+            }
+
+            //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
+            return extensions.map(function(e) ({
+                id: e.id,
+                name: e.name,
+                description: getRdfProperty(e, "description"),
+                enabled: getRdfProperty(e, "isDisabled") != "true",
+                icon: e.iconURL,
+                options: getRdfProperty(e, "optionsURL"),
+                version: e.version
+            }));
+        },
+
+        getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
 
         // Global constants
         CURRENT_TAB: 1,

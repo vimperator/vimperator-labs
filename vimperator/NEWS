@@ -15,7 +15,7 @@
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
 
     * add extension related commands - :extadd, :extdelete, :extdisable,
-      :extenable, :extensions
+      :extenable, :extensions, :extoptions
     * add '-javascript' flag to :autocommand
     * add 'private' - enter private browsing mode, matching 'PrivateMode'
       autocommand

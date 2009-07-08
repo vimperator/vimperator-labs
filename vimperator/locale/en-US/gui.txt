@@ -114,6 +114,15 @@ ________________________________________________________________________________
 List all installed extensions.
 ________________________________________________________________________________
 
+|:exto| |:extoptions| +
+|:extp| |:extpreferences| +
+||:exto[ptions][!] {extension}|| +
+||:extp[references][!] {extension}|| +
+________________________________________________________________________________
+Open the preferences dialog for an extension. If [!] is given, open a dialog,
+otherwise open a buffer. See also 'newtab'.
+________________________________________________________________________________
+
 section:Sidebar[sidebar]
 
 |:sbcl| |:sbclose| +
