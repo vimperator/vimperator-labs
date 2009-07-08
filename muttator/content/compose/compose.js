@@ -32,7 +32,7 @@ function Compose() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    this.features = ["addressbook"]; // the composer has no special features
+    config.features = ["addressbook"]; // the composer has no special features
 
     var stateListener = {
         QueryInterface: function (id)
