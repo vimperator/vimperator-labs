@@ -73,8 +73,8 @@ FEATURES:
 	  Average time:	2.48	msec
 	  Total time:	0.25	sec
      --Kris
-     
-8 allow for multiple ex commands separated with |
+
+8 allow for multiple ex commands separated with | (see #107)
 8 <C-o>/<C-i> should work as in vim (i.e., save page positions as well as
   locations in the history list).
 7 use ctrl-n/p in insert mode for word completion
