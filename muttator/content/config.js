@@ -158,6 +158,7 @@ const config = { //{{{
 
     scripts: [
         "addressbook.js",
+        "compose/compose.js",
         "mail.js",
         "tabs.js"
     ],
@@ -170,94 +171,10 @@ const config = { //{{{
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
 
-        // 0: never automatically edit externally
-        // 1: automatically edit externally when message window is shown the first time
-        // 2: automatically edit externally, once the message text gets focus (not working currently)
-        options.add(["autoexternal", "ae"],
-            "Edit message with external editor by default",
-            "boolean", false);
-
         // load Muttator specific modules
         if (this.isComposeWindow)
-        {
-            this.features = ["addressbook"]; // the composer has no special features
-            //liberator.loadModule("addressbook", Addressbook);
-
-            // TODO: move mappings elsewhere, probably compose.js
-            mappings.add([modes.COMPOSE],
-                ["e"], "Edit message",
-                function () { editor.editFieldExternally(); });
-
-            mappings.add([modes.COMPOSE],
-                ["y"], "Send message now",
-                function () { window.goDoCommand("cmd_sendNow"); });
-
-            mappings.add([modes.COMPOSE],
-                ["Y"], "Send message later",
-                function () { window.goDoCommand("cmd_sendLater"); });
-
-            // FIXME: does not really work reliably
-            mappings.add([modes.COMPOSE],
-                ["t"], "Select To: field",
-                function () { awSetFocus(0, awGetInputElement(1)); });
-
-            mappings.add([modes.COMPOSE],
-                ["s"], "Select Subject: field",
-                function () { GetMsgSubjectElement().focus(); });
-
-            mappings.add([modes.COMPOSE],
-                ["i"], "Select message body",
-                function () { SetMsgBodyFrameFocus(); });
-
-            mappings.add([modes.COMPOSE],
-                ["q"], "Close composer, ask when for unsaved changes",
-                function () { DoCommandClose(); });
-
-            mappings.add([modes.COMPOSE],
-                ["Q", "ZQ"], "Force closing composer",
-                function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
-
-            var stateListener =
-            {
-                QueryInterface: function (id)
-                {
-                    if (id.equals(Ci.nsIDocumentStateListener))
-                        return this;
-                    throw Cr.NS_NOINTERFACE;
-                },
-
-                // this is (also) fired once the new compose window loaded the message for the first time
-                NotifyDocumentStateChanged: function (nowDirty)
-                {
-                    // only edit with external editor if this window was not cached!
-                    if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
-                    {
-                        window.messageWasEditedExternally = true;
-                        editor.editFieldExternally();
-                    }
-
-                },
-                NotifyDocumentCreated: function () {},
-                NotifyDocumentWillBeDestroyed: function () {}
-            };
-
-            // XXX: Hack!
-            window.document.addEventListener("load", function () {
-                if (window.messageWasEditedExternally === undefined)
-                {
-                    window.messageWasEditedExternally = false;
-                    GetCurrentEditor().addDocumentStateListener(stateListener);
-                }
-            }, true);
-
-            window.addEventListener("compose-window-close", function () {
-                window.messageWasEditedExternally = false;
-            }, true);
-
-            /*window.document.addEventListener("unload", function () {
-                GetCurrentEditor().removeDocumentStateListener(config.stateListener);
-            }, true);*/
-        }
+            // TODO: this should probably be "composer"
+            liberator.loadModule("compose",      Compose);
         else
         {
             liberator.loadModule("mail",        Mail);
@@ -279,6 +196,14 @@ const config = { //{{{
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// OPTIONS /////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
+
+        // FIXME: comment obviously incorrect
+        // 0: never automatically edit externally
+        // 1: automatically edit externally when message window is shown the first time
+        // 2: automatically edit externally, once the message text gets focus (not working currently)
+        options.add(["autoexternal", "ae"],
+            "Edit message with external editor by default",
+            "boolean", false);
 
         options.add(["online"],
             "Set the 'work offline' option",

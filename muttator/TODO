@@ -3,10 +3,10 @@ Priority list:
 
 BUGS:
 - several tab related commands like :tab are enabled but don't work
-- MOW is broken - always uses a height of less than one line
 - stal=1 doesn't work
 
 (recent CVS regressions):
+- 'autoexternal' doesn't work
 
 FEATURES:
 9 edit messages with vim
@@ -14,4 +14,3 @@ FEATURES:
   - currently it archives mail to the first Archive folder found
 7 :set! mailnews.wraplength=140 or similar
 6 add a feature to show emails from threads under each other like in gmail
-
