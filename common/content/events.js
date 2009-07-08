@@ -370,7 +370,8 @@ function Events() //{{{
             tabcontainer.addEventListener("TabSelect", function (event) {
                 // TODO: is all of that necessary?
                 modes.reset();
-                statusline.updateTabCount();
+                // XXX: apparently the tab container hasn't updated mTabs yet
+                setTimeout(function () { statusline.updateTabCount(); }, 0);
                 tabs.updateSelectionHistory();
 
                 if (options["focuscontent"])
