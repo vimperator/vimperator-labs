@@ -353,7 +353,7 @@ function Events() //{{{
     var currentMacro = "";
     var lastMacro = "";
 
-    try // not every extension has a getBrowser() method
+    if (liberator.has("tabs"))
     {
         let tabcontainer = getBrowser().mTabContainer;
         if (tabcontainer) // not every VIM-like extension has a tab container
@@ -391,7 +391,6 @@ function Events() //{{{
             modes.show();
         }, null);
     }
-    catch (e) {}
 
 //    getBrowser().addEventListener("submit", function (event) {
 //        // reset buffer loading state as early as possible, important for macros
