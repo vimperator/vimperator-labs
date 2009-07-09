@@ -1,7 +1,9 @@
 " Vim syntax file
 " Language:         Muttator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Feb 19
+" Last Change:      2009 Jul 9
+
+" TODO: make this muttator specific - shared liberator config?
 
 if exists("b:current_syntax")
   finish
@@ -19,23 +21,24 @@ unlet b:current_syntax
 syn match muttatorCommandStart "\%(^\s*:\=\)\@<=" nextgroup=muttatorCommand,muttatorAutoCmd
 
 syn keyword muttatorCommand ab[breviate] ab[clear] addo[ns] addr[essbook] bN[ext] bd[elete] beep bf[irst] bl[ast] bn[ext]
-    \ bp[revious] br[ewind] bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cm[ap] cmapc[lear] cno[remap] colo[rscheme]
-    \ com[mand] comc[lear] con[tact] contacts copy[to] cu[nmap] cuna[bbrev] delc[ommand] delm[arks] delmac[ros] dels[tyle]
-    \ dia[log] do[autocmd] doautoa[ll] ec[ho] echoe[rr] echom[sg] em[enu] empty[trash] exe[cute] exu[sage] fini[sh] get[messages]
-    \ go[to] h[elp] ha[rdcopy] hi[ghlight] ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap] iuna[bbrev] javas[cript] js
-    \ let loadplugins lpl m[ail] ma[rk] macros map mapc[lear] marks mes[sages] mkm[uttatorrc] mm[ap] mmapc[lear] mu[nmap]
-    \ mno[remap] move[to] no[remap] norm[al] optionu[sage] pa[geinfo] pagest[yle] pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit]
-    \ re[load] res[tart] run runt[ime] sav[eas] scrip[tnames] se[t] setg[lobal] setl[ocal] so[urce] st[op] sty[le] tN[ext] t[open]
-    \ tab tabN[ext] tabc[lose] tabfir[st] tabl[ast] tabn[ext] tabp[revious] tabr[ewind] time tn[ext] tp[revious] una[bbreviate]
-    \ unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] w[rite] zo[om]
+    \ bp[revious] br[ewind] bufd[o] bun[load] bw[ipeout] ca[bbrev] cabc[lear] cd chd[ir] cm[ap] cmapc[lear] cno[remap]
+    \ colo[rscheme] com[mand] comc[lear] con[tact] contacts copy[to] cu[nmap] cuna[bbrev] delc[ommand] delm[arks] delmac[ros]
+    \ dels[tyle] dia[log] do[autocmd] doautoa[ll] ec[ho] echoe[rr] echom[sg] em[enu] empty[trash] exe[cute] exta[dd] extd[isable]
+    \ extde[lete] exte[nable] extens[ions] exto[ptions] extp[references] exu[sage] fini[sh] frameo[nly] get[messages] go[to]
+    \ h[elp] ha[rdcopy] hi[ghlight] ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap] iuna[bbrev] javas[cript] js let
+    \ loadplugins lpl m[ail] ma[rk] macros map mapc[lear] marks mes[sages] messc[lear] mkm[uttatorrc] mm[ap] mmapc[lear]
+    \ mno[remap] move[to] mu[nmap] nm[ap] nmapc[lear] nno[remap] no[remap] norm[al] nu[nmap] optionu[sage] pa[geinfo] pagest[yle]
+    \ pas pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] re[load] res[tart] run runt[ime] sav[eas] scrip[tnames] se[t]
+    \ setg[lobal] setl[ocal] sil[ent] so[urce] st[op] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabfir[st]
+    \ tabl[ast] tabn[ext] tabp[revious] tabr[ewind] time tn[ext] tp[revious] una[bbreviate] unl[et] unm[ap] ve[rsion] vie[wsource]
+    \ viu[sage] vm[ap] vmapc[lear] vno[remap] vu[nmap] w[rite] zo[om]
     \ contained
 
 syn match muttatorCommand "!" contained
 
 syn keyword muttatorAutoCmd au[tocmd] contained nextgroup=muttatorAutoEventList skipwhite
 
-syn keyword muttatorAutoEvent BookmarkAdd DOMLoad LocationChange PageLoadPre PageLoad ShellCmdPost muttatorEnter
-    \ muttatorLeavePre muttatorLeave
+syn keyword muttatorAutoEvent FolderLoaded PageLoadPre PageLoad ShellCmdPost muttatorEnter muttatorLeavePre muttatorLeave
     \ contained
 
 syn match muttatorAutoEventList "\(\a\+,\)*\a\+" contained contains=muttatorAutoEvent
@@ -43,17 +46,17 @@ syn match muttatorAutoEventList "\(\a\+,\)*\a\+" contained contains=muttatorAuto
 syn region muttatorSet matchgroup=muttatorCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
     \ end="$" keepend oneline contains=muttatorOption,muttatorString
 
-syn keyword muttatorOption archivefolder cdpath cd complete cpt editor eventignore ei extendedhinttags eht followhints fh
-    \ guioptions go helpfile hf hintmatching hm hinttags ht hinttimeout hto history hi laststatus ls layout messages msgs
-    \ nextpattern pageinfo pa previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli
-    \ showtabline stal suggestengines urlseparator verbose vbs wildcase wic wildignore wig wildmode wim wildoptions wop
-    \ wordseparators wsp
+syn keyword muttatorOption archivefolder cdpath cd complete cpt editor eventignore ei extendedhinttags eht fileencoding fenc
+    \ followhints fh guioptions go helpfile hf hintinputs hin hintmatching hm hinttags ht hinttimeout hto history hi laststatus ls
+    \ layout maxitems messages msgs nextpattern pageinfo pa previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf
+    \ showstatuslinks ssli showtabline stal smtpserver smtp suggestengines urlseparator verbose vbs wildcase wic wildignore wig
+    \ wildmode wim wildoptions wop wordseparators wsp
     \ contained nextgroup=muttatorSetMod
 
 " toggle options
 syn match muttatorOption "\<\%(no\|inv\)\=\%(autoexternal\|errorbells\|eb\|exrc\|ex\|focuscontent\|fc\|fullscreen\|fs\)\>!\="
     \ contained nextgroup=muttatorSetMod
-syn match muttatorOption "\<\%(no\|inv\)\=\%(insertmode\|im\|loadplugins\|lpl\|more\|showmode\|smd\|visualbell\|vb\)\>!\="
+syn match muttatorOption "\<\%(no\|inv\)\=\%(insertmode\|im\|loadplugins\|lpl\|more\|online\|showmode\|smd\|visualbell\|vb\)\>!\="
     \ contained nextgroup=muttatorSetMod
 syn match muttatorOption "\<\%(no\|inv\)\=\%(usermode\|um\)\>!\="
     \ contained nextgroup=muttatorSetMod

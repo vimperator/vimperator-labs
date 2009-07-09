@@ -1,6 +1,7 @@
 2009-XX-XX
     * version 0.6a1pre
     * add 'online' option
+    * add 'smtpserver' option
 
 2009-03-29
     * version 0.5
