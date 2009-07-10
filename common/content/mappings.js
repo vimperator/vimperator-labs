@@ -221,13 +221,16 @@ function Mappings() //{{{
                 return;
             }
 
-            // ?:\s+ <- don't remember; (...)? optional = rhs
             let [lhs, rhs] = args;
 
             if (!rhs) // list the mapping
                 mappings.list(mode, expandLeader(lhs));
             else
             {
+                // this matches Vim's behaviour
+                if (/^<Nop>$/i.test(rhs))
+                    noremap = true;
+
                 for (let [,m] in Iterator(mode))
                 {
                     mappings.addUserMap([m], [lhs],
