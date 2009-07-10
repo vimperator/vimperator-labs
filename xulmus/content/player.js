@@ -15,9 +15,9 @@ function Player() // {{{
     services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
 
     // Register Callbacks for searching.
-    liberator.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
-    liberator.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
-    liberator.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function () { player.onSearchCancel(); });
+    commandline.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
+    commandline.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
+    commandline.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function () { player.onSearchCancel(); });
 
     // interval (milliseconds)
     function seek(interval, direction)

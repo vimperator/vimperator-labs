@@ -54,7 +54,6 @@ const liberator = (function () //{{{
         run: function () { this.func.apply(this.self, this.args); }
     };
 
-    const callbacks = {};
     const observers = {};
 
     function registerObserver(type, callback)
@@ -867,27 +866,6 @@ const liberator = (function () //{{{
             postCommand: null
         },
 
-        // @param type can be:
-        //  "submit": when the user pressed enter in the command line
-        //  "change"
-        //  "cancel"
-        //  "complete"
-        //  TODO: "zoom": if the zoom value of the current buffer changed
-        //  TODO: move to ui.js?
-        registerCallback: function (type, mode, func)
-        {
-            if (!(type in callbacks))
-                callbacks[type] = {};
-            callbacks[type][mode] = func;
-        },
-
-        triggerCallback: function (type, mode, data)
-        {
-            if (callbacks[type] && callbacks[type][mode])
-                return callbacks[type][mode].call(this, data);
-            return false;
-        },
-
         registerObserver: registerObserver,
 
         unregisterObserver: function (type, callback)
@@ -896,6 +874,7 @@ const liberator = (function () //{{{
                 observers[type] = observers[type].filter(function (c) c != callback);
         },
 
+        // TODO: "zoom": if the zoom value of the current buffer changed
         triggerObserver: function (type)
         {
             let args = Array.slice(arguments, 1);

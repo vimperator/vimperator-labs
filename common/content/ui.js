@@ -40,6 +40,8 @@ function CommandLine() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const callbacks = {};
+
     storage.newArray("history-search", true, { privateData: true });
     storage.newArray("history-command", true, { privateData: true });
 
@@ -126,7 +128,7 @@ function CommandLine() //{{{
         replace: function (val)
         {
             this.input.value = val;
-            liberator.triggerCallback("change", currentExtendedMode, val);
+            commandline.triggerCallback("change", currentExtendedMode, val);
         },
 
         /**
@@ -259,7 +261,7 @@ function CommandLine() //{{{
         {
             this.context.reset();
             this.context.tabPressed = tabPressed;
-            liberator.triggerCallback("complete", currentExtendedMode, this.context);
+            commandline.triggerCallback("complete", currentExtendedMode, this.context);
             this.context.updateAsync = true;
             this.reset(show, tabPressed);
             this.wildIndex = 0;
@@ -521,52 +523,6 @@ function CommandLine() //{{{
         if (completions)
             completions.tab(event.shiftKey);
     });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// CALLBACKS ///////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    var input = {};
-
-    liberator.registerCallback("submit", modes.EX, function (command) {
-        commands.repeat = command;
-        liberator.execute(command);
-    });
-    liberator.registerCallback("complete", modes.EX, function (context) {
-        context.fork("ex", 0, completion, "ex");
-    });
-    liberator.registerCallback("change", modes.EX, function (command) {
-        autocompleteTimer.tell(false);
-    });
-
-    liberator.registerCallback("cancel", modes.PROMPT, cancelPrompt);
-    liberator.registerCallback("submit", modes.PROMPT, closePrompt);
-    liberator.registerCallback("change", modes.PROMPT, function (str) {
-        if (input.complete)
-            autocompleteTimer.tell(false);
-        if (input.change)
-            return input.change.call(commandline, str);
-    });
-    liberator.registerCallback("complete", modes.PROMPT, function (context) {
-        if (input.complete)
-            context.fork("input", 0, commandline, input.complete);
-    });
-
-    function cancelPrompt(value)
-    {
-        let callback = input.cancel;
-        input = {};
-        if (callback)
-            callback.call(commandline, value != null ? value : commandline.command);
-    }
-
-    function closePrompt(value)
-    {
-        let callback = input.submit;
-        input = {};
-        if (callback)
-            callback.call(commandline, value != null ? value : commandline.command);
-    }
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// VARIABLES ///////////////////////////////////////////////
@@ -1007,7 +963,7 @@ function CommandLine() //{{{
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    return {
+    const self = {
 
         HL_NORMAL:     "Normal",
         HL_ERRORMSG:   "ErrorMsg",
@@ -1036,6 +992,25 @@ function CommandLine() //{{{
             Array.forEach(document.getElementById("liberator-commandline").childNodes, function (node) {
                 node.style.opacity = silent ? "0" : "";
             });
+        },
+
+        // @param type can be:
+        //  "submit": when the user pressed enter in the command line
+        //  "change"
+        //  "cancel"
+        //  "complete"
+        registerCallback: function (type, mode, func)
+        {
+            if (!(type in callbacks))
+                callbacks[type] = {};
+            callbacks[type][mode] = func;
+        },
+
+        triggerCallback: function (type, mode, data)
+        {
+            if (callbacks[type] && callbacks[type][mode])
+                return callbacks[type][mode].call(this, data);
+            return false;
         },
 
         runSilently: function (func, self)
@@ -1071,7 +1046,7 @@ function CommandLine() //{{{
          * Open the command line. The main mode is set to
          * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
          * Further, callbacks defined for <b>extendedMode</b> are
-         * triggered as appropriate (see {@link liberator#registerCallback}).
+         * triggered as appropriate (see {@link #registerCallback}).
          *
          * @param {string} prompt
          * @param {string} cmd
@@ -1099,7 +1074,7 @@ function CommandLine() //{{{
 
             // open the completion list automatically if wanted
             if (cmd.length)
-                liberator.triggerCallback("change", currentExtendedMode, cmd);
+                commandline.triggerCallback("change", currentExtendedMode, cmd);
         },
 
         /**
@@ -1111,7 +1086,7 @@ function CommandLine() //{{{
         {
             let mode = currentExtendedMode;
             currentExtendedMode = null;
-            liberator.triggerCallback("cancel", mode);
+            commandline.triggerCallback("cancel", mode);
 
             if (history)
                 history.save();
@@ -1313,7 +1288,7 @@ function CommandLine() //{{{
             else if (event.type == "input")
             {
                 this.resetCompletions();
-                liberator.triggerCallback("change", currentExtendedMode, command);
+                commandline.triggerCallback("change", currentExtendedMode, command);
             }
             else if (event.type == "keypress")
             {
@@ -1333,7 +1308,7 @@ function CommandLine() //{{{
                     currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                     modes.pop(!this.silent);
 
-                    return liberator.triggerCallback("submit", mode, command);
+                    return commandline.triggerCallback("submit", mode, command);
                 }
                 // user pressed UP or DOWN arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
@@ -1363,7 +1338,7 @@ function CommandLine() //{{{
                     // and blur the command line if there is no text left
                     if (command.length == 0)
                     {
-                        liberator.triggerCallback("cancel", currentExtendedMode);
+                        commandline.triggerCallback("cancel", currentExtendedMode);
                         modes.pop();
                     }
                 }
@@ -1702,7 +1677,56 @@ function CommandLine() //{{{
                 history.reset();
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// CALLBACKS ///////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    var input = {};
+
+    self.registerCallback("submit", modes.EX, function (command) {
+        commands.repeat = command;
+        liberator.execute(command);
+    });
+    self.registerCallback("complete", modes.EX, function (context) {
+        context.fork("ex", 0, completion, "ex");
+    });
+    self.registerCallback("change", modes.EX, function (command) {
+        autocompleteTimer.tell(false);
+    });
+
+    self.registerCallback("cancel", modes.PROMPT, cancelPrompt);
+    self.registerCallback("submit", modes.PROMPT, closePrompt);
+    self.registerCallback("change", modes.PROMPT, function (str) {
+        if (input.complete)
+            autocompleteTimer.tell(false);
+        if (input.change)
+            return input.change.call(commandline, str);
+    });
+    self.registerCallback("complete", modes.PROMPT, function (context) {
+        if (input.complete)
+            context.fork("input", 0, commandline, input.complete);
+    });
+
+    function cancelPrompt(value)
+    {
+        let callback = input.cancel;
+        input = {};
+        if (callback)
+            callback.call(commandline, value != null ? value : commandline.command);
+    }
+
+    function closePrompt(value)
+    {
+        let callback = input.submit;
+        input = {};
+        if (callback)
+            callback.call(commandline, value != null ? value : commandline.command);
+    }
     //}}}
+
+    return self;
+
 }; //}}}
 
 /**

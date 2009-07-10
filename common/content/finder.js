@@ -58,13 +58,13 @@ function Finder() //{{{
     var linksOnly = false;           // search is limited to link text only
 
     // Event handlers for search - closure is needed
-    liberator.registerCallback("change", modes.SEARCH_FORWARD, function (str) { finder.onKeyPress(str); });
-    liberator.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { finder.onSubmit(str); });
-    liberator.registerCallback("cancel", modes.SEARCH_FORWARD, function () { finder.onCancel(); });
+    commandline.registerCallback("change", modes.SEARCH_FORWARD, function (str) { finder.onKeyPress(str); });
+    commandline.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { finder.onSubmit(str); });
+    commandline.registerCallback("cancel", modes.SEARCH_FORWARD, function () { finder.onCancel(); });
     // TODO: allow advanced myModes in register/triggerCallback
-    liberator.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { finder.onKeyPress(str); });
-    liberator.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { finder.onSubmit(str); });
-    liberator.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { finder.onCancel(); });
+    commandline.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { finder.onKeyPress(str); });
+    commandline.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { finder.onSubmit(str); });
+    commandline.registerCallback("cancel", modes.SEARCH_BACKWARD, function () { finder.onCancel(); });
 
     // set searchString, searchPattern, caseSensitive, linksOnly
     function processUserPattern(pattern)
