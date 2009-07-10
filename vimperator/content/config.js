@@ -304,47 +304,6 @@ const config = { //{{{
                 getter: function () !services.get("io").offline
             });
 
-        // only available in FF 3.5
-        services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
-        if (services.get("privateBrowsing"))
-        {
-            options.add(["private", "pornmode"],
-                "Set the 'private browsing' option",
-                "boolean", false,
-                {
-                    setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
-                    getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
-                });
-
-            let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
-            storage.newObject("private-mode", function () {
-                ({
-                    init: function () {
-                        services.get("observer").addObserver(this, "private-browsing", false);
-                        services.get("observer").addObserver(this, "quit-application", false);
-                        this.private = services.get("privateBrowsing").privateBrowsingEnabled;
-                    },
-                    observe: function (subject, topic, data) {
-                        if (topic == "private-browsing") {
-                            if (data == "enter")
-                                storage.privateMode = true;
-                            else if (data == "exit")
-                                storage.privateMode = false;
-                            storage.fireEvent("private-mode", "change", storage.privateMode);
-                        } else if (topic == "quit-application") {
-                            services.get("observer").removeObserver(this, "quit-application");
-                            services.get("observer").removeObserver(this, "private-browsing");
-                        }
-                    },
-                }).init();
-            }, false);
-
-            storage.addObserver("private-mode",
-                function (key, event, value) {
-                    autocommands.trigger("PrivateMode", { state: value });
-                }, window);
-        }
-
         // TODO: merge with Vimperator version and add Muttator version
         // (TB handles this differently).
         options.add(["titlestring"],
