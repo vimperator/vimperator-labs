@@ -255,15 +255,14 @@ function Browser() //{{{
         "Open one or more URLs in the current tab",
         function (args)
         {
-            if (args.string)
-                liberator.open(args.string);
-            else if (args.bang)
-                BrowserReloadSkipCache();
+            args = args.string;
+
+            if (args)
+                liberator.open(args);
             else
-                BrowserReload();
+                liberator.open("about:blank");
         },
         {
-            bang: true,
             completer: function (context) completion.url(context),
             literal: 0
         });

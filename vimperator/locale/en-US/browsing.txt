@@ -28,7 +28,7 @@ ________________________________________________________________________________
 section:Opening{nbsp}web{nbsp}pages[opening]
 
 |o| |:o| |:open|
-||:o[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
+||:o[pen] [a][arg1][a], [a][arg2][a], ...|| +
 ||o||
 ________________________________________________________________________________
 Open one or more URLs in the current tab.
@@ -59,8 +59,6 @@ tag "linux" and which contain "torvalds". Note that -tags support is only
 available for tab completion, not for the actual command.
 The items which are completed on [m]<Tab>[m] are specified in the 'complete'
 option.
-Without argument, reloads the current page.
-Without argument but with [!], reloads the current page skipping the cache.
 ________________________________________________________________________________
 
 
