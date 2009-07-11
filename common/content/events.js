@@ -70,7 +70,16 @@ function AutoCommands() //{{{
         function (args)
         {
             let [event, regex, cmd] = args;
-            let events = null;
+            let events = [];
+
+            try
+            {
+                RegExp(regex);
+            }
+            catch (e)
+            {
+                return void liberator.echoerr("E475: Invalid argument: " + regex);
+            }
 
             if (event)
             {
