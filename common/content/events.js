@@ -536,7 +536,7 @@ function Events() //{{{
                 // hacky way to get rid of "Transfering data from ..." on sites with frames
                 // when you click on a link inside a frameset, because asyncUpdateUI
                 // is not triggered there (Gecko bug?)
-                setTimeout(statusline.updateUrl, 10);
+                setTimeout(function () { statusline.updateUrl(); }, 10);
                 return;
             }
 
@@ -1753,7 +1753,7 @@ function Events() //{{{
             // called at the very end of a page load
             asyncUpdateUI: function ()
             {
-                setTimeout(statusline.updateUrl, 100);
+                setTimeout(function () { statusline.updateUrl(); }, 100);
             },
             setOverLink: function (link, b)
             {

@@ -2089,17 +2089,46 @@ function StatusLine() //{{{
          * current tab's history, and when the current URL is bookmarked,
          * respectively.
          *
-         * @param {string} url The URL to display. @default buffer.URL
+         * @param {string} url The URL to display.
+         * @default buffer.URL
          */
         updateUrl: function updateUrl(url)
         {
-            if (typeof url == "string")
-            {
-                urlWidget.value = url;
-                return;
-            }
+            // ripped from Firefox
+            if (!window.losslessDecodeURI)
+                window.losslessDecodeURI = function (aURL, aPostDataRef) {
+                    var value = aURI.spec;
+                    // Try to decode as UTF-8 if there's no encoding sequence that we would break.
+                    if (!/%25(?:3B|2F|3F|3A|40|26|3D|2B|24|2C|23)/i.test(value))
+                        try {
+                            value = decodeURI(value)
+                            // 1. decodeURI decodes %25 to %, which creates unintended
+                            //    encoding sequences. Re-encode it, unless it's part of
+                            //    a sequence that survived decodeURI, i.e. one for:
+                            //    ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '#'
+                            //    (RFC 3987 section 3.2)
+                            // 2. Re-encode whitespace so that it doesn't get eaten away
+                            //    by the location bar (bug 410726).
+                            .replace(/%(?!3B|2F|3F|3A|40|26|3D|2B|24|2C|23)|[\r\n\t]/ig,
+                                encodeURIComponent);
+                        } catch (e) {}
 
-            url = buffer.URL;
+                    // Encode invisible characters (soft hyphen, zero-width space, BOM,
+                    // line and paragraph separator, word joiner, invisible times,
+                    // invisible separator, object replacement character) (bug 452979)
+                    value = value.replace(/[\v\x0c\x1c\x1d\x1e\x1f\u00ad\u200b\ufeff\u2028\u2029\u2060\u2062\u2063\ufffc]/g,
+                        encodeURIComponent);
+
+                    // Encode bidirectional formatting characters.
+                    // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
+                    value = value.replace(/[\u200e\u200f\u202a\u202b\u202c\u202d\u202e]/g,
+                        encodeURIComponent);
+                    return value;
+                }
+
+            if (url == null)
+                // TODO: this probably needs a more general solution.
+                url = losslessDecodeURI(util.newURI(buffer.URL));
 
             // make it even more Vim-like
             if (url == "about:blank")
@@ -2113,7 +2142,8 @@ function StatusLine() //{{{
                 url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)"), "$1 [Help]");
             }
 
-            // when session information is available, add [+] when we can go backwards
+            // when session information is available, add [+] when we can go
+            // backwards, [-] when we can go forwards
             let modified = "";
             if (window.getWebNavigation)
             {
