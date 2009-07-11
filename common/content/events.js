@@ -551,14 +551,14 @@ function Events() //{{{
             if (doc == getBrowser().contentDocument)
             {
                 // we want to stay in command mode after a page has loaded
-                // TODO: move somehwere else, as focusing can already happen earlier than on "load"
+                // TODO: move somewhere else, as focusing can already happen earlier than on "load"
                 if (options["focuscontent"])
                 {
                     setTimeout(function () {
                         let focused = liberator.focus;
-                        if (focused && (focused.value !== undefined) && focused.value.length == 0)
+                        if (focused && (focused.value != null) && focused.value.length == 0)
                             focused.blur();
-                    }, 100);
+                    }, 0);
                 }
             }
             else // background tab
