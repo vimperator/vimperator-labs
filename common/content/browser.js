@@ -121,7 +121,7 @@ function Browser() //{{{
     }
 
     options.add(["urlseparator"],
-        "Set the separator regexp used to separate multiple URL args",
+        "Set the separator regex used to separate multiple URL args",
         "string", ",\\s");
 
     /////////////////////////////////////////////////////////////////////////////}}}

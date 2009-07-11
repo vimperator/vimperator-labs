@@ -2,7 +2,7 @@ heading:Text{nbsp}search{nbsp}commands[text-search-commands]
 
 Vimperator provides a Vim-like interface to Firefox's standard text search
 functionality. There is no support for using regular expressions in search
-commands as Firefox does not provide native regexp support. It is unlikely that
+commands as Firefox does not provide native regex support. It is unlikely that
 this will ever be available.
 
 |/| +

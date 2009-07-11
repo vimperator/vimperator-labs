@@ -321,7 +321,7 @@ section:Options[option-index]
 ||'smartcase'|| Override the 'ignorecase' option if the pattern contains uppercase characters +
 ||'suggestengines'|| Engine Alias which has a feature of suggest +
 ||'titlestring'|| Change the title of the window +
-||'urlseparator'|| Set the separator regexp used to separate multiple URL args +
+||'urlseparator'|| Set the separator regex used to separate multiple URL args +
 ||'usermode'|| Show current website with a minimal style sheet to make it easily accessible +
 ||'verbose'|| Define which info messages are displayed +
 ||'visualbell'|| Use visual bell instead of beeping on errors +

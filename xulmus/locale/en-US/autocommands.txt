@@ -47,7 +47,7 @@ Available {events}:
 
 {pat} is a regular expression, use .* if you want to match all URLs.
 
-Note: This differs from Vim which uses a glob rather than a regexp for {pat}.
+Note: This differs from Vim which uses a glob rather than a regex for {pat}.
 
 The following keywords are available where relevant:
 

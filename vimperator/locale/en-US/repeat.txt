@@ -35,7 +35,7 @@ ____________________________________________________________________________
 ||:mac[ros] [a][pat][a]|| +
 ________________________________________________________________________________
 List recorded macros matching the optional regular expression [a][pat][a]. If
-no regexp is given, list all macros.
+no regex is given, list all macros.
 ________________________________________________________________________________
 
 

@@ -167,7 +167,7 @@
     * add :pagestyle command to allow for switching between alternate style sheets
     * add :b# to select the alternate buffer
     * add :tabduplicate command
-    * new 'urlseparator' option for specifying the regexp used to split the arg to
+    * new 'urlseparator' option for specifying the regex used to split the arg to
       :open, :tabopen and :winopen
     * :set editor now accepts quoting/escaping to use an editor with spaces in the path
     * support for :%foo as a count for commands (not yet widely used)

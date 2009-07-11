@@ -1137,7 +1137,7 @@ function Buffer() //{{{
          */
         followDocumentRelationship: function (rel)
         {
-            let regexps = options.get(rel + "pattern").values
+            let regexes = options.get(rel + "pattern").values
                                  .map(function (re) RegExp(re, "i"));
 
             function followFrame(frame)
@@ -1167,7 +1167,7 @@ function Buffer() //{{{
 
                 // TODO: this should probably use the default 'hinttags' value. --djk
                 let res = buffer.evaluateXPath(options["hinttags"], frame.document);
-                for (let [,regex] in Iterator(regexps))
+                for (let [,regex] in Iterator(regexes))
                 {
                     for (let i in util.range(res.snapshotLength, 0, -1))
                     {
