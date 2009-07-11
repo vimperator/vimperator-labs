@@ -510,8 +510,9 @@ function Events() //{{{
 
     function onDOMContentLoaded(event)
     {
-        if (event.originalTarget instanceof HTMLDocument)
-            triggerLoadAutocmd("DOMLoad", event.originalTarget);
+        let doc = event.originalTarget;
+        if (doc instanceof HTMLDocument && !doc.defaultView.frameElement)
+            triggerLoadAutocmd("DOMLoad", doc);
     }
 
     // TODO: see what can be moved to onDOMContentLoaded()
@@ -531,9 +532,6 @@ function Events() //{{{
             }
 
             // code which should happen for all (also background) newly loaded tabs goes here:
-
-            let url = doc.location.href;
-            let title = doc.title;
 
             // mark the buffer as loaded, we can't use buffer.loaded
             // since that always refers to the current buffer, while doc can be
@@ -555,7 +553,7 @@ function Events() //{{{
                 }
             }
             else // background tab
-                liberator.echomsg("Background tab loaded: " + title || url, 3);
+                liberator.echomsg("Background tab loaded: " + doc.title || doc.location.href, 3);
 
             triggerLoadAutocmd("PageLoad", doc);
         }
