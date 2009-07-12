@@ -759,7 +759,8 @@ Set the separator regex used to separate multiple URL args. Multiple arguments
 can be specified for [c]:open[c], and similar commands, using this regex as
 the separator. Using whitespace alone is not generally useful since it is often
 contained in a single argument. E.g. [c]:open linus torvalds[c] should perform
-a single search for the key words "linus" and "torvalds"
+a single search for the key words "linus" and "torvalds". If this is set to the
+empty string then these arguments will never be split.
 ____
 
 
