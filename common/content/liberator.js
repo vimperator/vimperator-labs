@@ -1811,7 +1811,7 @@ window.liberator = liberator;
 window.addEventListener("liberatorHelpLink", function (event) {
         let elem = event.target;
 
-        if (/^(option|mapping|command)$/.test(elem.className))
+        if (/^(option|mapping|command|jump)$/.test(elem.className))
             var tag = elem.textContent.replace(/\s.*/, "");
         if (/^(mapping|command)$/.test(elem.className))
             tag = tag.replace(/^\d+/, "");

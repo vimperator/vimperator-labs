@@ -10,7 +10,7 @@ E.g firefox -liberator "\++cmd=\'set exrc' +u=\'tempRcFile' \++noplugin"
 ||+c={command}||
 ________________________________________________________________________________
 Execute a single Ex command after all initialization has been performed. See
-help:initialization[starting.html#Initialization].
+[j]initialization[j].
 ________________________________________________________________________________
 
 
@@ -18,7 +18,7 @@ ________________________________________________________________________________
 ||\++cmd={command}||
 ________________________________________________________________________________
 Execute a single Ex command before any initialization has been performed. See
-help:initialization[starting.html#Initialization].
+[j]initialization[j].
 ________________________________________________________________________________
 
 

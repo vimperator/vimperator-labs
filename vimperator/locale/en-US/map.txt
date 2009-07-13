@@ -3,7 +3,7 @@ heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}c
 section:Key{nbsp}mapping[key-mapping,mapping,map,macro]
 
 The key mapping commands can be used to either redefine the standard key
-bindings or define new ones. A mapping consists of a key, or [o]key-sequence[o],
+bindings or define new ones. A mapping consists of a key, or [j]key-sequence[j],
 which is translated to a string of characters. Example:
 
 \{nbsp}[c]:map <F2> :echo new Date().toDateString()<CR>[c]
@@ -16,7 +16,7 @@ Keys can be mapped in four distinct modes:
 * Normal mode: When browsing normally --
 * Visual mode: When selecting text with the cursor keys --
 * Insert mode: When interacting with text fields on a website --
-* Command-line mode: When typing into the vimperator command line. --
+* Command-line mode: When typing into the Vimperator command line. --
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
@@ -34,7 +34,7 @@ subsection:Map{nbsp}commands[:map-commands]
 |:cm| |:cmap|
 ||:cm[ap] {lhs} {rhs}|| +
 ________________________________________________________________________________
-Map the [o]key-sequence[o] {lhs} to {rhs} for the applicable mode(s). The {rhs} is
+Map the [j]key-sequence[j] {lhs} to {rhs} for the applicable mode(s). The {rhs} is
 remapped, allowing for nested and recursive mappings.
 ________________________________________________________________________________
 
@@ -50,7 +50,7 @@ ________________________________________________________________________________
 |:cno| |:cnoremap|
 ||:cno[remap] {lhs} {rhs}|| +
 ________________________________________________________________________________
-Map the [o]key-sequence[o] {lhs} to {rhs} for the applicable mode(s). No remapping of
+Map the [j]key-sequence[j] {lhs} to {rhs} for the applicable mode(s). No remapping of
 the {rhs} is performed.
 ________________________________________________________________________________
 
@@ -142,7 +142,7 @@ number of keys to be used in mappings.
 
  * [c]<lt>[c], [c]\<[c], [c]<Space>[c], [c]\ [c] allow a literal [c]<[c] or space character.
  * [c]\'[c], [c]\"[c] and [c]\\[c] must be used to avoid escaping issues when mapping a quote or backslash.
- * [c]<Left>[c] [c]<Right>[c] [c]<Up>[c] [c]<Down>[c] [c]<PageUp>[c] [c]<PageDown>[c] [c]<Esc>[c] [c]<CR>[c] (for carraige return/enter)
+ * [c]<Left>[c] [c]<Right>[c] [c]<Up>[c] [c]<Down>[c] [c]<PageUp>[c] [c]<PageDown>[c] [c]<Esc>[c] [c]<CR>[c] (for carriage return/enter)
  * [c]<CapsLock>[c] [c]<NumLock>[c] [c]<Ins>[c] [c]<Del>[c] [c]<Tab>[c] [c]<BS>[c] (for a backspace)
  * [c]<F1>[c] through [c]<F12>[c] work as expected
 
