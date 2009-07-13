@@ -1,26 +1,25 @@
 heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands.[]
 
-section:Key{nbsp}mapping[key-mapping,mapping,macro]
+section:Key{nbsp}mapping[key-mapping,mapping,map,macro]
 
 The key mapping commands can be used to either redefine the standard key
-bindings or define new ones. A mapping consists of a key, or sequence of keys,
-which are translated to a string of characters. Example:
+bindings or define new ones. A mapping consists of a key, or [o]key-sequence[o],
+which is translated to a string of characters. Example:
 
 \{nbsp}[c]:map <F2> :echo new Date().toDateString()<CR>[c]
 
 will echo the current date to the command line when [m]<F2>[m] is pressed.
 
-There are separate key mapping tables for each of the Normal, Insert, and
-Command-line modes.
+|:map-modes| +
+Keys can be mapped in four distinct modes:
 
-Please note that, like Vim and other applications, modifier mappings containing
-the Shift key are specified with a [m]S-[m] modifier. For example, [m]<C-N>[m]
-is exactly the same as [m]<C-n>[m], it represents holding the Control key and a
-lowercase [m]n[m]. In order to map the Control key with an uppercase [m]N[m], either
-[m]<C-S-N>[m] or [m]<C-S-n>[m] can be used. For numbers and punctuation characters that 
-cannot change case, the [m]S-[m] is not used, even if you need to hold shift to type 
-that character. The mapping [m]<S-1>[m] can never be typed on a keyboard, but can 
-be used to create a mapping that can be activated by another map.
+* Normal mode: When browsing normally --
+* Visual mode: When selecting text with the cursor keys --
+* Insert mode: When interacting with text fields on a website --
+* Command-line mode: When typing into the vimperator command line. --
+
+Warning: Mappings are NOT saved between sessions, make sure you put them in your
+vimperatorrc file!
 
 subsection:Map{nbsp}commands[:map-commands]
 
@@ -35,11 +34,8 @@ subsection:Map{nbsp}commands[:map-commands]
 |:cm| |:cmap|
 ||:cm[ap] {lhs} {rhs}|| +
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} for the applicable mode(s). The {rhs} is
+Map the [o]key-sequence[o] {lhs} to {rhs} for the applicable mode(s). The {rhs} is
 remapped, allowing for nested and recursive mappings.
-
-Warning: Mappings are NOT saved between sessions, make sure you put them in your
-vimperatorrc file!
 ________________________________________________________________________________
 
 
@@ -54,7 +50,7 @@ ________________________________________________________________________________
 |:cno| |:cnoremap|
 ||:cno[remap] {lhs} {rhs}|| +
 ________________________________________________________________________________
-Map the key sequence {lhs} to {rhs} for the applicable mode(s). No remapping of
+Map the [o]key-sequence[o] {lhs} to {rhs} for the applicable mode(s). No remapping of
 the {rhs} is performed.
 ________________________________________________________________________________
 
@@ -127,16 +123,6 @@ When the first argument to one of the mapping commands is [c]<silent>[c], {rhs}
 is not echoed to the command line, nor, for that matter, anything else until
 the command has completed.
 
-subsection:Mapping{nbsp}and{nbsp}modes[:map-modes]
-
-Keys can be mapped in four distinct modes:
-
-  * Normal mode
-  * Visual mode
-  * Insert mode
-  * Command-line mode
-
-|map-overview| |map-modes| +
 
 Below is an overview of which modes each map command applies to:
 
@@ -148,7 +134,46 @@ Below is an overview of which modes each map command applies to:
 :imap  :inoremap  :iunmap  :imapclear - Insert mode
 :cmap  :cnoremap  :cunmap  :cmapclear - Command-line mode
 
-subsection:Special{nbsp}characters[:map-special-chars]
+subsection:Key{nbsp}sequences[:<>,key-sequence]
+
+For most keys, the key-sequence is the same as the character you see when you
+type that key, however there are some exceptions which allow for a much larger
+number of keys to be used in mappings. 
+
+ * [c]<lt>[c], [c]\<[c], [c]<Space>[c], [c]\ [c] allow a literal [c]<[c] or space character.
+ * [c]\'[c], [c]\"[c] and [c]\\[c] must be used to avoid escaping issues when mapping a quote or backslash.
+ * [c]<Left>[c] [c]<Right>[c] [c]<Up>[c] [c]<Down>[c] [c]<PageUp>[c] [c]<PageDown>[c] [c]<Esc>[c] [c]<CR>[c] (for carraige return/enter)
+ * [c]<CapsLock>[c] [c]<NumLock>[c] [c]<Ins>[c] [c]<Del>[c] [c]<Tab>[c] [c]<BS>[c] (for a backspace)
+ * [c]<F1>[c] through [c]<F12>[c] work as expected
+
+Most keyboards have some modifiers such as the control, alt or meta keys. In
+order to create a mapping that uses these keys the correct prefix must be used
+within the angle brackets. 
+
+ * [c]<C-x>[c]: The control or ctrl key.
+ * [c]<A-x>[c]: The alt key.
+ * [c]<M-x>[c]: The meta key, windows key, or command key
+ * [c]<S-x>[c]: The shift key.
+
+These prefixes can be combined however you see fit, though you should note that
+within angle brackets all alphabetic characters are read as lowercase. In order
+to force them to be uppercase, you must specify the S- prefix as well. 
+Additionally, you should never use the S- prefix with a number of piece of
+punctuation, even if you require a shift to type that character; doing so will
+give you a mapping that cannot be typed. With non-character keys, tab and
+space, the S- modifier works just like C- A- and M-. Some examples may clarify
+the situation:
+
+ * [c]xc[c]: type x, and then type c
+ * [c]<C-x>c[c]: hold control and type x, then type c without control
+ * [c]<C-2>[c]: type 2 while holding control
+ * [c]<C-@>[c]: type @ while holding control
+ * [c]<S-Space>[c]: press space while holding shift
+ * [c]<C-A-j>[c]: press j while holding control and alt
+ * [c]<C-A-J>[c]: exactly the same as above
+ * [c]<C-A-S-j>[c]: press J while holding control and alt
+
+subsection:Special{nbsp}Characters[map-special-chars]
 
 |<Nop>| +
 ||<Nop>||
