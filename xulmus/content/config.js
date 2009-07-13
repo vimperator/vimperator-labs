@@ -279,7 +279,7 @@ const config = { //{{{
         /////////////////////////////////////////////////////////////////////////////{{{
 
         let img = Image();
-        img.src = "chrome://xulmus/content/xulmus.png";
+        img.src = "chrome://xulmus/content/logo.png";
         img.onload = function () {
             styles.addSheet(true, "logo", "chrome://liberator/locale/*",
                 ".xulmus-logo {" + <>

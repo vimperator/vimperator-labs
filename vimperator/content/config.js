@@ -180,7 +180,7 @@ const config = { //{{{
         /////////////////////////////////////////////////////////////////////////////{{{
 
         let img = Image();
-        img.src = "chrome://vimperator/content/vimperator.png";
+        img.src = "chrome://vimperator/content/logo.png";
         img.onload = function () {
             styles.addSheet(true, "logo", "chrome://liberator/locale/*",
                 ".vimperator-logo {" + <>
