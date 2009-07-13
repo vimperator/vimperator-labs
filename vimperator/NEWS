@@ -2,6 +2,7 @@
     * version 2.2a1pre
     * IMPORTANT: Map.flags has been replaced with individual properties.
       Mappings defined in plugins with mappings.add will need to be updated.
+...................................
       E.g.
           mappings.add(...,
               { flags: Mappings.flags.ARGUMENT |
@@ -11,383 +12,387 @@
       is now
 	   mappings.add(...,
                { arg: true, count: true, motion: true, route: true });
+...................................
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
 
-    * make :open behavior match that of :tabopen and :winopen when no argument
-      is specified
-    * add extension related commands - :extadd, :extdelete, :extdisable,
-      :extenable, :extensions, :extoptions
-    * add '-javascript' flag to :autocommand
-    * add 'private' - enter private browsing mode, matching 'PrivateMode'
+    * make [c]:open[c] behavior match that of [c]:tabopen[c] and [c]:winopen[c]
+      when no argument is specified
+    * add extension related commands - [c]:extadd[c], [c]:extdelete[c],
+      [c]:extdisable[c], [c]:extenable[c], [c]:extensions[c], [c]:extoptions[c]
+    * add *-javascript* flag to [c]:autocommand[c]
+    * add 'private' - enter private browsing mode, matching *PrivateMode*
       autocommand
-    * add -description option to :command
+    * add *-description* option to [c]:command[c]
     * command-line options are now supported via the host application's
-      -liberator option
-    * add ;i and ;I for opening image location (in new tab)
-    * add all.html to show all help sections in a single page - available via
-      :help all
-    * add ;c extended hint mode - open the context menu
-    * add @: mapping - repeat the last Ex command
-    * add \ mapping - toggle between rendered and source view
+      *-liberator* option
+    * add [m];i[m] and [m];I[m] for opening image location (in new tab)
+    * add [j]all.html[j] to show all help sections in a single page - available via
+      [c]:help all[c]
+    * add [m];c[m] extended hint mode - open the context menu
+    * add [m]@:[m] mapping - repeat the last Ex command
+    * add [m]\[m] mapping - toggle between rendered and source view
 
 2009-05-21:
     * version 2.1
-    * IMPORTANT: Default value of 'complete' has been changed from 'sfl' to 'slf'
-    * massively speed up :open completions
+    * IMPORTANT: Default value of 'complete' has been changed from "sfl" to "slf"
+    * massively speed up [c]:open[c] completions
     * TabMixPlus (and other tab extensions) should work much better now
-      together with Vimperator unless you :set guioptions+=[nN]
-    * remove 'preload' option. You can fake it by some custom javascript in your init file
-    * add :frameonly
-    * add :stopall
-    * add :tabdo
+      together with Vimperator unless you [c]:set guioptions+=[nN][c]
+    * remove 'preload' option. You can fake it by some custom JavaScript in your RC file.
+    * add [c]:frameonly[c]
+    * add [c]:stopall[c]
+    * add [c]:tabdo[c]
     * add 'encoding'
     * add 'hintinputs'
-    * add :silent
-    * add $MY_VIMPERATORRC
+    * add [c]:silent[c]
+    * add [j]$MY_VIMPERATORRC[j]
     * add ' and " local marks
-    * add "w" and "W" Normal mode mappings for symmetry with o/O and t/T
-    * add :messclear
+    * add [m]w[m] and [m]W[m] Normal mode mappings for symmetry with
+      [m]o[m]/[m]O[m] and [m]t[m]/[m]T[m]
+    * add [c]:messclear[c]
     * add 'maxitems'
     * as usual many small bug fixes
 
 2009-03-28:
     * version 2.0
-    * IMPORTANT: For compatibility with vim, guioptions=b has been renamed
-      'B'. 'b' now represents the bottom scrollbar.
-    * IMPORTANT: :set now sets multiple options, as in Vim. Spaces in values
+    * IMPORTANT: For compatibility with Vim, the 'guioptions' "b" value has been renamed
+      "B". "b" now represents the bottom scrollbar.
+    * IMPORTANT: [c]:set[c] now sets multiple options, as in Vim. Spaces in values
       must be quoted or escaped.
     * IMPORTANT: Due to much improved autocompletion, changed default 'complete' option
-      value to 'sfl', listing intelligent Firefox location bar results. Using 'b' or 'h'
+      value to "sfl", listing intelligent Firefox location bar results. Using "b" or "h"
       might cause problems/massive slowdowns, use with care!
-    * IMPORTANT: AlwaysHint mode with ;F mode changed the semantics slightly.
+    * IMPORTANT: AlwaysHint mode with [m];F[m] mode changed the semantics slightly.
     * IMPORTANT: command actions now take an args object, returned from
       commands.parseArgs, as their first argument. This will break any commands
       not using the args parser explicitly.  The old string value is now
       available via args.string.
     * IMPORTANT: 'verbose' is now used for message levels. Logging is
-      controlled by the extensions.liberator.loglevel preference.
-    * IMPORTANT: :viusage and :exusage now jump to the help index, use the
+      controlled by the *extensions.liberator.loglevel* preference.
+    * IMPORTANT: [c]:viusage[c] and [c]:exusage[c] now jump to the help index, use the
       special versions for the old behavior.
-    * IMPORTANT: renamed Startup and Quit autocmd events to VimperatorEnter and
-      VimperatorLeave respectively.
+    * IMPORTANT: renamed Startup and Quit autocmd events to *VimperatorEnter* and
+      *VimperatorLeave* respectively.
     * IMPORTANT: 'verbose' is now by default at 1, set to 0 to not show any status messages.
     * IMPORTANT: $VIMPERATOR_HOME is no longer used.
 
-    * Selecting an <input type="file"> with hints now causes the commandline to prompt
+    * Selecting an <input type="file"> with hints now causes the command line to prompt
       for file input (instead of doing nothing).
-    * [count]<C-n> now goes to the [count]th next tab rather than the [count]th tab.
+    * [count][m]<C-n>[m] now goes to the [count]th next tab rather than the [count]th tab.
     * add ~/.vimperator/info/{profile}/, similar to viminfo
-    * add $VIMPERATOR_RUNTIME, $VIMPERATOR_INIT
-    * :hardcopy now supports output redirection to a file on Unix and MacUnix
-    * add ";f" extended hint mode to focus a frame
+    * add [j]$VIMPERATOR_RUNTIME[j], [j]$VIMPERATOR_INIT[j]
+    * [c]:hardcopy[c] now supports output redirection to a file on Unix and MacUnix
+    * add [m];f[m] extended hint mode to focus a frame
     * add "r", "l", and "b" to 'guioptions' to toggle the scrollbars.
     * remove spaces and newlines when open urls starting with http:// or similar
       before :o http://linux .com would search for http://linux and for .com, now
-      it just opens linux.com. Also handy when pasting broken urls with p or P.
+      it just opens linux.com. Also handy when pasting broken urls with [m]p[m] or [m]P[m].
     * add 'wildcase' option
     * 'linkbgcolor', 'linkfgcolor', ... have been replaced with highlight
-      groups, HintElem and HintActive
+      groups, *HintElem* and *HintActive*
     * new 'followhints' option
-    * :buffers supports a filter now to only list buffers matching filter (vim
+    * [c]:buffers[c] supports a filter now to only list buffers matching filter (Vim
       incompatible, but consistent with other commands)
     * Favicon support in many places
-    * add 'Fullscreen' autocommmand
-    * add :colorscheme
+    * add *Fullscreen* autocommmand
+    * add [c]:colorscheme[c]
     * multibyte support for hints (thanks Xie&Tian)
     * add 'exrc'
     * add 'errorbells'
-    * add shell command completion for :!
-    * add :map <silent> to prevent a mapping from being echoed (might be slow currently, however)
+    * add shell command completion for [c]:![c]
+    * add [c]:map <silent>[c] to prevent a mapping from being echoed (might be slow currently, however)
     * add guioptions=nN to number tabs
-    * add :loadplugins command
-    * add . mapping
-    * add N% normal mode command
-    * add interpolation for items such as <url> to autocommands
-    * add -nargs, -complete, -bang, and -count attribute support to :command
+    * add [c]:loadplugins[c] command
+    * add [m].[m] mapping
+    * add [m]N%[m] normal mode command
+    * add interpolation for items such as *<url>* to autocommands
+    * add *-nargs*, *-complete*, *-bang*, and *-count* attribute support to [c]:command[c]
     * much improved completion support, including javascript, option, and search keyword
-    * add <PageUp>/<S-Up> and <PageDown>/<S-Down> command-line mappings for
+    * add [m]<PageUp>[m]/[m]<S-Up>[m] and [m]<PageDown>[m]/[m]<S-Down>[m] command-line mappings for
       selecting the previous and next history items
     * remove 'hintstyle', 'hlsearchstyle', 't_vb' and 'visualbellstyle' - use
-      :highlight {Hint,Search,Bell}
-    * add :highlight
-    * add :optionusage
-    * add :doautocmd and :doautoall
-    * add :style and :delstyle commands, allow :so to source stylesheets
-    * add DOMLoad autocmd event
-    * add :messages and 'messages'
-    * add :runtime
+      [c]:highlight {Hint,Search,Bell}[c]
+    * add [c]:highlight[c]
+    * add [c]:optionusage[c]
+    * add [c]:doautocmd[c] and [c]:doautoall[c]
+    * add [c]:style[c] and [c]:delstyle[c] commands, allow [c]:so[c] to source stylesheets
+    * add *DOMLoad* autocmd event
+    * add [c]:messages[c] and 'messages'
+    * add [c]:runtime[c]
     * add 'runtimepath'
-    * allow ; hints to work in the multiline output widget
-    * add :scriptnames
-    * add commandline completion to 'activate', 'cpt', 'defsearch', 'pageinfo',
+    * allow [m];[m] hints to work in the multiline output widget
+    * add [c]:scriptnames[c]
+    * add command-line completion to 'activate', 'cpt', 'defsearch', 'pageinfo',
       'newtab' and 'popups'
     * add 'helpfile' option
     * add 'wildignore' option
-    * add :finish command
-    * new events BookmarkAdd, ShellCmdPost, VimperatorLeavePre, DownloadPost
+    * add [c]:finish[c] command
+    * new events *BookmarkAdd*, *ShellCmdPost*, *VimperatorLeavePre*, *DownloadPost*
     * add 'cdpath' option
-    * allow :dialog to open the cookies manager
+    * allow [c]:dialog[c] to open the cookies manager
     * add 'loadplugins' option
-    * add count support to C-^ (Kazuo)
+    * add count support to [m]<C-^>[m] (Kazuo)
     * add 'eventignore' option
-    * add :tabdetach command
-    * new ;b extended hint mode (thanks Daniel Schaffrath)
-    * :qa! and :q! quit forcefully, as in vim
-    * stop macro playback on <C-c>
-    * :bmark now updates a bookmark, if possible. :bmark! adds a new one
-    * :dialog and :sidebar arguments are now case-insensitive
+    * add [c]:tabdetach[c] command
+    * new [m];b[m] extended hint mode (thanks Daniel Schaffrath)
+    * [c]:qa![c] and [c]:q![c] quit forcefully, as in Vim
+    * stop macro playback on [m]<C-c>[m]
+    * [c]:bmark[c] now updates a bookmark, if possible. [c]:bmark![c] adds a new one
+    * [c]:dialog[c] and [c]:sidebar[c] arguments are now case-insensitive
     * many bug fixes
 
 2008-08-16:
     * version 1.2
-    * IMPORTANT: changed :command to behave like Vim's version.
+    * IMPORTANT: changed [c]:command[c] to behave like Vim's version.
+...................................
       Eg. An alert command specified previously as
           :command AlertMe alert(args)
       should now be defined as
           :command AlertMe :js alert(<args>)
+...................................
     * IMPORTANT: changed (again) the default keybinding to temporarily disable all
-      Vimperator keybindings from ctrl-q to ctrl-z since many users complained
-      about hitting ctrl-q twice and exiting vimperator
-    * IMPORTANT: removed old :buffers! buffer window, as it was ugly and slightly broken
-      use "B" or :buffers instead
+      Vimperator keybindings from [m]<C-q>[m] to [m]<C-z>[m] since many users complained
+      about hitting [m]<C-q>[m] twice and exiting Vimperator
+    * IMPORTANT: removed old [c]:buffers![c] buffer window, as it was ugly and slightly broken
+      use [m]B[m] or [c]:buffers[c] instead
     * IMPORTANT: input fields are not blured anymore by default after a page has loaded
-      use :set [no]focuscontent to control the behavior (thanks Paul Sobey for the
+      use [c]:set [no]focuscontent[c] to control the behavior (thanks Paul Sobey for the
       generous donation which made this behavior possible)
-    * IMPORTANT: ctrl-x/a never take possible negative URLs into account, it was just
+    * IMPORTANT: [m]<C-x>[m]/[m]<C-a>[m] never take possible negative URLs into account, it was just
       too unpredictable
     * performance fix by using cached history, should save about 5ms on each pageload
-    * add :emenu for accessing the Firefox main menu items from the command line
+    * add [c]:emenu[c] for accessing the Firefox main menu items from the command line
     * add 'shell' and 'shellcmdflag' options
-    * :tabprevious, :bprevious, :tabnext, :bnext and friends now accept a prefix count
-    * add :comclear and :delcommand
-    * add a special version to :hardcopy to skip the Print dialog
-    * add :bl[ast], :bf[irst], :br[ewind] to go to first/last tab
-    * add :bn[ext], :bp[revious], :bN[ext] to switch to next/previous tab
-    * add :pagestyle command to allow for switching between alternate style sheets
-    * add :b# to select the alternate buffer
-    * add :tabduplicate command
+    * [c]:tabprevious[c], [c]:bprevious[c], [c]:tabnext[c], [c]:bnext[c] and friends now accept a prefix count
+    * add [c]:comclear[c] and [c]:delcommand[c]
+    * add a special version to [c]:hardcopy[c] to skip the Print dialog
+    * add [c]:bl[ast][c], [c]:bf[irst][c], [c]:br[ewind][c] to go to first/last tab
+    * add [c]:bn[ext][c], [c]:bp[revious][c], [c]:bN[ext][c] to switch to next/previous tab
+    * add [c]:pagestyle[c] command to allow for switching between alternate style sheets
+    * add [c]:b[c]# to select the alternate buffer
+    * add [c]:tabduplicate[c] command
     * new 'urlseparator' option for specifying the regex used to split the arg to
-      :open, :tabopen and :winopen
-    * :set editor now accepts quoting/escaping to use an editor with spaces in the path
-    * support for :%foo as a count for commands (not yet widely used)
+      [c]:open[c], [c]:tabopen[c] and [c]:winopen[c]
+    * 'editor' now accepts quoting/escaping to use an editor with spaces in the path
+    * support for *:%foo* as a count for commands (not yet widely used)
     * show informative message when a background tab was loaded, especially useful
       with a hidden tab bar.
     * new "l" flag for 'complete' to reuse the Firefox awesome bar for getting better
-      completions for :open. Works only when 'wildoptions' contains "auto" and can
+      completions for [c]:open[c]. Works only when 'wildoptions' contains "auto" and can
       be a little buggy if you are typing too fast.
-    * new wildoptions=auto option (default off for now), to automatically list
+    * new 'wildoptions' option (default off for now), to automatically list
       completions without the need to press the tab key
-    * new argument parser for ex commands, should tell better error messages when
-      you do things like :bmark -tag=a,b instead of :bmark -tags=a,b
-    * some option values can be tab-completed now; e.g., :set wim=<tab>
-    * :bdelete accepts an optional argument now
-    * renamed some :autocmd, mainly BrowserStartup -> Startup and BrowserExit -> Quit
-    * don't pass certain keys like ctrl-o or ctrl-n to firefox in insert mode
-    * keywords in :open <arg> have higher priority than local files now
-    * add :set online to control the "work offline" menu item
-    * add :jumps command to list current tab's history
-    * add :setlocal & :setglobal commands, so options can be local (per tab) & global
+    * new argument parser for Ex commands, should tell better error messages when
+      you do things like [c]:bmark -tag=a,b[c] instead of [c]:bmark -tags=a,b[c]
+    * some option values can be tab-completed now; e.g., [c]:set wim=<tab>[c]
+    * [c]:bdelete[c] accepts an optional argument now
+    * renamed some [c]:autocmd[c], mainly BrowserStartup -> Startup and BrowserExit -> Quit
+    * don't pass certain keys like [m]<C-o>[m] or [m]<C-n>[m] to Firefox in insert mode
+    * keywords in [c]:open <arg>[c] have higher priority than local files now
+    * add 'online' to control the "work offline" menu item
+    * add [c]:jumps[c] command to list current tab's history
+    * add [c]:setlocal[c] & [c]:setglobal[c] commands, so options can be local (per tab) & global
     * many small bug fixes
 
 2008-06-03:
     * version 1.1
     * IMPORTANT: security update for suggest engines
-    * try to add .exe automatically to filenames on windows, so :set editor=gvim -f
+    * try to add .exe automatically to filenames on windows, so [c]:set editor=gvim -f[c]
       will automatically invoke gvim.exe (if it's in the path). Thanks to
       Guido Van Hoecke
-    * readded visualbellstyle (thanks mauke)
-    * new popups=4 option
+    * readded 'visualbellstyle' (thanks mauke)
+    * new 'popups' option
     * many bug fixes as usual
 
 2008-05-14:
     * version 1.0
     * IMPORTANT: THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
     * IMPORTANT: Major hints rewrite
-      read up the new help for the f, F and ; commands for details
+      read up the new help for the [m]f[m], [m]F[m] and [m];[m] commands for details
       removed the following hint options: 'hintchars' 'maxhints'
       added the following hint options: 'hinttimeout', 'hintmatching', 'wordseperators'
-    * IMPORTANT: changed 'I' key to Ctrl-Q to also work in textboxes
-    * IMPORTANT: :bmarks! and :history! open the matching items now in a tab, instead
+    * IMPORTANT: changed [m]I[m] key to [m]<C-q>[m] to also work in textboxes
+    * IMPORTANT: [c]:bmarks[c]! and [c]:history[c]! open the matching items now in a tab, instead
       of bringing up the bookmarks/history window
-    * IMPORTANT: "B" mapping now works just like :buffers, old bufferwindow will be removed
+    * IMPORTANT: [m]B[m] mapping now works just like [c]:buffers[c], old bufferwindow will be removed
       at some time. Use B5gt to jump to the 5th tab.
     * also go to INSERT mode for HTMLSelectElements, so you can type text to go to element
       in drop down boxes
-    * new "S" flag for "complete" to list google suggestions in :open vimp and
+    * new "S" flag for 'complete' to list google suggestions in [c]:open vimp[c] and
       pressing tab (disabled by default). Also added new 'suggestengines' option.
-    * gi accepts now a count to jump to the nth input field
-    * ctrl-t on input fields starts a very basic vi-mode
-    * :play for playing a recorded macro
-    * :[del]macros [regex] for listing/deleting recorded macros
-    * :set! now lets you change about:config prefs similar to :set
-    * new :command to add user defined commands
+    * [m]gi[m] accepts now a count to jump to the nth input field
+    * [m]<C-t>[m] on input fields starts a very basic vi-mode
+    * [c]:play[c] for playing a recorded macro
+    * [c]:[del]macros [regex][c] for listing/deleting recorded macros
+    * [c]:set![c] now lets you change about:config prefs similar to [c]:set[c]
+    * new [c]:command[c] to add user defined commands
     * new setCustomMode for plugin writers
-    * :au[tocmd] executes commands on events (only 'PageLoad' actually) on websites
-    * @@ to repeat last macro
-    * new macro commands q[a-z0-9] and @[a-z0-9] to replay them (thanks Marco!)
-    * scroll commands like j/k/gg/etc. have a much better heuristic to find a scrollable frame
-    * imap, inoremap, iunmap and imapclear added
-    * new g0 and g$ mappings to go to the first/last tab
-    * new gf and gF mappings and ;v and ;V hints mode to view the source code
+    * [c]:au[tocmd][c] executes commands on events (only 'PageLoad' actually) on websites
+    * [m]@@[m] to repeat last macro
+    * new macro commands [m]q[a-z0-9][m] and [m]@[a-z0-9][m] to replay them (thanks Marco!)
+    * scroll commands like [m]j[m]/[m]k[m]/[m]gg[m]/etc. have a much better heuristic to find a scrollable frame
+    * [c]:imap[c], [c]:inoremap[c], [c]:iunmap[c] and [c]:imapclear[c] added
+    * new [m]g0[m] and [m]g$[m] mappings to go to the first/last tab
+    * new [m]gf[m] and [m]gF[m] mappings and [m];v[m] and [m];V[m] hints mode to view the source code
     * new 'history' option for specifying the number of Ex commands and
-      search patterns to store in the commandline history
-    * new ctrl-x and ctrl-a mappings to increment the last number in the URL
+      search patterns to store in the command-line history
+    * new [m]<C-x>[m] and [m]<C-a>[m] mappings to increment the last number in the URL
     * new ~ mapping to open the home directory
-    * :open tries to open a relative filename now, if you do a :open foo.html
-      or :open ../hello.txt;
-    * new :cd and :pwd commands
-    * new :dialog command to open various firefox dialogs
-    * new a and A mappings to deal with bookmarks
-    * added ]] and [[ to navigate to the next/previous document based on
-      the regexp specified in 'nextpattern' and 'previouspattern' (thanks kidd)
-    * abbreviations for text fields (:abbr etc.) (thanks calmar)
-    * you can edit textfields with Ctrl-i now using an external editor (thanks to Joseph Xu)
-    * :open, :bmarks, etc. filter on space separated tokens now, so you can
-      search with :open linux windows &lt;tab&gt; all your bookmarks/history
+    * [c]:open[c] tries to open a relative filename now, if you do a [c]:open foo.html[c]
+      or [c]:open ../hello.txt[c]
+    * new [c]:cd[c] and [c]:pwd[c] commands
+    * new [c]:dialog[c] command to open various Firefox dialogs
+    * new [m]a[m] and [m]A[m] mappings to deal with bookmarks
+    * added [m]+++]]+++[m] and [m][[[m] to navigate to the next/previous document based on
+      the regex specified in 'nextpattern' and 'previouspattern' (thanks kidd)
+    * abbreviations for text fields ([c]:abbr[c] etc.) (thanks calmar)
+    * you can edit textfields with [m]<C-i>[m] now using an external editor (thanks to Joseph Xu)
+    * [c]:open[c], [c]:bmarks[c], etc. filter on space separated tokens now, so you can
+      search with [c]:open linux windows <Tab>[c] all your bookmarks/history
       which contain linux AND windows in the url or title
-    * tags and keyword support for :bmark
+    * tags and keyword support for [c]:bmark[c]
     * added full zoom, and changed keybindings slightly for text zoom
     * improvements for scrollable -- more -- prompt
     * sites like msn.com or yahoo.com don't focus search field anymore on keydown
     * new gi browser command to focus last used (or the first as a fallback) input box
-    * edit TEXTAREAs with many vim commands in a vim and even visual mode if you :set noinsertmode
-    * support for emacs/bash-like ctrl-e/a/u/k/h keys in single line text fields
-    * support for * and # mappings to search for the text selection or the text under the cursor
+    * edit TEXTAREAs with many Vim commands in a Vim and even visual mode if you set 'noinsertmode'
+    * support for emacs/bash-like [m]<C-e>[m]/[m]a[m]/[m]u[m]/[m]k[m]/[m]h[m] keys in single line text fields
+    * support for [m]*[m] and [m]#[m] mappings to search for the text selection or the text under the cursor
     * Escape finally clears any selection made in the document
-    * initial start of caret mode. Start with 'i', stop with Escape;
-    * new "newtab" option for opening the command output in a new tab and better :tab support
+    * initial start of caret mode. Start with [m]i[m], stop with [m]<Esc>[m]
+    * new 'newtab' option for opening the command output in a new tab and better [c]:tab[c] support
     * many small bug fixes and enhancements
 
 2007-12-21:
     * version 0.5.3
     * IMPORTANT: options are no longer automatically stored - use the
       ~/.vimperatorrc file instead for persistent options
-    * :tabnext and :tabprevious now accept an argument
-    * the count to gT now specifies a relative tab motion like Vim
-    * new :pa[geinfo] command, and ctrl-g and g,ctrl-g mappings (thanks Marco Candrian)
-    * added new :mkvimperatorrc command
-    * remove :redraw and Ctrl-L commands as they rely on FF3 features
-    * :ls, :history and :bmarks output is now hyperlinked
-    * new gb and gB mappings to repeat the last :buffer[!] command,
-    * :q doesn't close the whole browser, if there are more than one windows
-    * new :winclose command
-    * b calls :buffer! now instead of :buffer
+    * [c]:tabnext[c] and [c]:tabprevious[c] now accept an argument
+    * the count to [m]gT[m] now specifies a relative tab motion like Vim
+    * new [c]:pa[geinfo][c] command, and [m]<C-g>[m] and [m]g<C-g>[m] mappings (thanks Marco Candrian)
+    * added new [c]:mkvimperatorrc[c] command
+    * remove [c]:redraw[c] and [m]<C-L>[m] commands as they rely on FF3 features
+    * [c]:ls[c], [c]:history[c] and [c]:bmarks[c] output is now hyperlinked
+    * new [m]gb[m] and [m]gB[m] mappings to repeat the last [c]:buffer[!][c] command,
+    * [c]:q[c] doesn't close the whole browser, if there are more than one windows
+    * new [c]:winclose[c] command
+    * [m]b[m] calls [c]:buffer![c] now instead of [c]:buffer[c]
     * [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
-    * :set showtabline now finally works as expected for all values
+    * [c]:set showtabline[c] now finally works as expected for all values
     * many other small bug fixes
 
 2007-10-11:
     * version 0.5.2
-    * changed semantics of :set[!] and :prefs[!] a little, :set shows now all non-default
-      options, use :prefs! to get the about:config window
+    * changed semantics of [c]:set[!][c] and [c]:prefs[!][c] a little, [c]:set[c] shows now all non-default
+      options, use [c]:prefs![c] to get the about:config window
     * added "s" and "a" mappings to extended hints mode for saving hint targets
-    * "d", "D" and :bdelete support count now
-    * :back/:forward can use tabcompletion
-    * :undoall support, and tabcompletion for :undo <tab>
-    * new :redraw and Ctrl-L commands for forced redrawing of the screen
+    * [m]d[m], [m]D[m] and [c]:bdelete[c] support count now
+    * [c]:back[c]/[c]:forward[c] can use tab-completion
+    * [c]:undoall[c] support, and tab-completion for [c]:undo <Tab>[c]
+    * new [c]:redraw[c] and [m]<C-L>[m] commands for forced redrawing of the screen
     * added new 'laststatus' option and removed "s" value from 'guioptions'
-    * Tab-completion improvements for :javascript and :open
-    * IMPORTANT: changed semantics of :echo and :echoerr: Strings must be quoted with " or ' now,
-      but you can do things like :echo 3+2 or :echo window.document now
+    * Tab-completion improvements for [c]:javascript[c] and [c]:open[c]
+    * IMPORTANT: changed semantics of [c]:echo[c] and [c]:echoerr:[c] strings must be quoted with " or ' now,
+      but you can do things like [c]:echo 3+2[c] or [c]:echo window.document[c] now
     * statusline is now white on black with bold font by default (like in (g)vim)
-      (change with userChrome.css if you don't like it until we have :colorscheme)
-    * :let mapleader=","  and <Leader> in :map support
-    * added new :let and :unlet commands
-    * :b2 now allowed, no space required before the 2 anymore
-    * :! to run commands through system()
+      (change with userChrome.css if you don't like it until we have [c]:colorscheme[c])
+    * [c]:let mapleader=","[c]  and [m]<Leader>[m] in [c]:map[c] support
+    * added new [c]:let[c] and [c]:unlet[c] commands
+    * [c]:b2[c] now allowed, no space required before the 2 anymore
+    * [c]:![c] to run commands through system()
     * separated search and Ex command history
     * added 'visualbellstyle' for styling/hiding the visual bell
     * merge the existing status bar with the standard FF status bar so that
       security information and extension buttons are included
-    * :buffer partial_string works now as in vim, and with ! even better
-    * new :time command for profiling
-    * added new :sidebar and :sbclose commands
+    * [c]:buffer[c] partial_string works now as in Vim, and with ! even better
+    * new [c]:time[c] command for profiling
+    * added new [c]:sidebar[c] and [c]:sbclose[c] commands
     * added 'more' and standard more-prompt key mappings to control
       behaviour of the message list pager
     * added 'hlsearchstyle' option to allow for user CSS styling of the
       highlighted text strings when 'hlsearch' is set
-    * added 'linksearch' option to restrict page searches to link text - \L
-      and \l can be used in the search pattern to override 'linksearch'
-    * vimperator trys to stay in command mode after loading pages instead
+    * added 'linksearch' option to restrict page searches to link text - *\L*
+      and *\l* can be used in the search pattern to override 'linksearch'
+    * Vimperator trys to stay in command mode after loading pages instead
       of having a text field focused
     * added a visual bell and replaced 'beep' with 'visualbell'
-    * added vimperator logo (can be seen in the addons manager)
+    * added Vimperator logo (can be seen in the addons manager)
     * added 'hlsearch','incsearch', 'ignorecase' and 'smartcase' options
     * many small bug fixes and enhancments
 
 2007-09-03:
     * version 0.5.1
-    * native / and ? search and n and N working again
+    * native [m]/[m] and [m]?[m] search and [m]n[m] and [m]N[m] working again
     * the URL in the status line can be selected with the mouse again
     * the Windows default RC file is now ~/_vimperatorrc and the plugin
       directory is ~/vimperator/plugin
-    * commandline history now works properly on Windows
+    * command-line history now works properly on Windows
     * filename completion now works on Windows
     * the Bookmarks Toolbar Folder is now read when bookmarks are first
       loaded - it was skipped entirely in the past
-    * fixed search for :open (previously needed to do :o <tab> ONCE to
+    * fixed search for [c]:open[c] (previously needed to do [c]:o <Tab>[c] ONCE to
       initialize them)
-    * added :set {option}! support to toggle a boolean option's value
-    * added :set all and :set all& support to show the current value of all
+    * added [c]:set {option}![c] support to toggle a boolean option's value
+    * added [c]:set all[c] and [c]:set all&[c] support to show the current value of all
       options and to reset all options to their default value
-    * :tabmove! wrapping works again
+    * [c]:tabmove![c] wrapping works again
 
 2007-08-16:
     * version 0.5
-    * :map support (also :noremap, :unmap)
-    * :bmarks and :history now use the multiline message window for output
-    * rename :bm, :bmadd, and :bmdel to :bmarks, :bmark, and :delbmarks respectively
-    * new :normal command
+    * [c]:map[c] support (also [c]:noremap[c], [c]:unmap[c])
+    * [c]:bmarks[c] and [c]:history[c] now use the multiline message window for output
+    * rename [c]:bm[c], [c]:bmadd[c], and [c]:bmdel[c] to [c]:bmarks[c], [c]:bmark[c], and [c]:delbmarks[c] respectively
+    * new [c]:normal[c] command
     * the command line keeps focus now, even when clicking outside of it
     * vimperator.events.feedkeys("2zi") support for scripts
-    * Ctrl-U/Ctrl-D for scrolling the window up/down and the associated
-    'scroll' option
+    * [m]<C-u>[m]/[m]<C-d>[m] for scrolling the window up/down and the associated
+      'scroll' option
     * files in ~/.vimperator/plugin/ are auto-sourced
-    * :winopen support (multiple windows still very very experimental)
+    * [c]:winopen[c] support (multiple windows still very very experimental)
     * 'activate' option implemented
     * search engines which use POST instead of GET work now
-    * :javascript <<EOF uses a better multiline input widget now
-    * new :map, :noremap, :mapclear and :unmap commands
-    * :saveas finally works (by calmar)
-    * Shift-insert pastes the X11 selection content in text fields now
-    * Changed "|" to ", " as a url seperator in :open
-    * Ctrl-^ mapping for selecting the alternate tab/buffer
-    * QuickMarks support (new commands :qmark/:qmarks/:delqmarks and
-      mappings go{a-z}, gn{a-z} and M{a-z}
+    * [c]:javascript <<EOF[c] uses a better multiline input widget now
+    * new [c]:map[c], [c]:noremap[c], [c]:mapclear[c] and [c]:unmap[c] commands
+    * [c]:saveas[c] finally works (by calmar)
+    * [m]<S-Insert>[m] pastes the X11 selection content in text fields now
+    * Changed "|" to ", " as a URL seperator in [c]:open[c]
+    * [m]<C-^>[m] mapping for selecting the alternate tab/buffer
+    * QuickMarks support (new commands [c]:qmark[c]/[c]:qmarks[c]/[c]:delqmarks[c] and
+      mappings [m]go{a-z}[m], [m]gn{a-z}[m] and [m]M{a-z}[m]
     * Multiline echo support
-    * Command line is now cleared on most redraws like in vim
+    * Command line is now cleared on most redraws like in Vim
     * The RSS feed button in the address bar works again
     * reload/stop buttons update enabled state again
     * added local/url marks support (thanks Viktor Kojouharov)
-    * temporary shortcut Y to yank current selection (for non X11-users)
-    * Flashing frame with ]f now works as expected
+    * temporary shortcut [m]Y[m] to yank current selection (for non X11-users)
+    * Flashing frame with [m]]f[m] now works as expected
     * many help fixes (most of them by Doug Kearns)
-    * new :reloadall command
-    * :hardcopy works now and shows the printing dialog
-    * changed "R" to reload without cache instead of reload all due to popular request
+    * new [c]:reloadall[c] command
+    * [c]:hardcopy[c] works now and shows the printing dialog
+    * changed [m]R[m] to reload without cache instead of reload all due to popular request
     * changed secure sites -> green, broken sites -> red in the statusbar
     * Vimperator now sets the window title, so it's "vimperator.mozdev.org -
       Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
-      Use :set titlestring=... to change it back (help from Hannes Rist)
-    * :tabmove command (by Doug Kearns)
+      Use [c]:set titlestring=...[c] to change it back (help from Hannes Rist)
+    * [c]:tabmove[c] command (by Doug Kearns)
     * 'showstatuslinks' option to control where/if we show the destination of
     a hovered link
-    * :version! shows firefox version page
+    * [c]:version![c] shows Firefox version page
     * hovered links appear in the command line again, not statusbar
-    * :help now opens in the current tab even for xhtml pages like "about:"
+    * [c]:help[c] now opens in the current tab even for XHTML pages like "about:"
     * hints work on xhtml pages now (you need to reset the 'hinttags' and
-      'extendedhinttags' settings with :set hinttags& and :set extendedhinttags&)
-    * :set option& resets the option to the default value
-    * added :tabonly and :tabrewind and :tablast commands and some futher aliases :tabNext, etc. (by Doug Kearns)
+      'extendedhinttags' settings with [c]:set hinttags&[c] and [c]:set extendedhinttags&[c])
+    * [c]:set option&[c] resets the option to the default value
+    * added [c]:tabonly[c] and [c]:tabrewind[c] and [c]:tablast[c] commands and some futher aliases [c]:tabNext[c], etc. (by Doug Kearns)
     * added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
-    * Added keyword support for bookmarks to the :[tab]open commands
+    * Added keyword support for bookmarks to the [c]:[tab]open[c] commands
     * many small bug fixes and enhancements
 
 2007-05-02:
     * version 0.4.1
-    * Fixed bug that :open google.com/mail opened ".com/mail" in google search
-    * made <tab> <up> <down> etc. perform the default action, so menus kinda
+    * Fixed bug that [c]:open google.com/mail[c] opened ".com/mail" in google search
+    * made [m]<Tab>[m], [m]<Up>[m], [m]<Down>[m] etc. perform the default action, so menus kinda
     work, and it doesn't beep anymore on tab.
     * added 'defsearch' setting for setting default search engine
 
@@ -395,54 +400,56 @@
     * version 0.4
     * extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
       TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
-    * support for internal search engines was dropped. Now we use Firefox search engines
+    * support for internal search engines was dropped. Now we use Firefox search engines.
     * support for 'wildmode' completion setting with support for matching the
-      longest common substring. Also new 'wildoptions' setting
-    * added 'f' to the 'complete' option to allow listing of filenames in :open prompt
-    * changed regexp search to normal text search for completion -> massive speedup, but limited functionality
-    * support for :open ./ , :open .. and :open ... (patch from Lee Hinman)
-      'gu' and <BackSpace> goes up a directory component, gU and <C-BackSpace> to the root directory
-    * Esc now doesn't stop loading the webpage, use Ctrl-c instead, :stop command added
-    * changed hinttags to work with dict.leo.org and hintstyle to work with digg.com
-    * :back! goes to beginning of history now
-    * diabled firefox 3.0 support for now, as there are just too many small
+      longest common substring. Also new 'wildoptions' setting.
+    * added "f" to the 'complete' option to allow listing of filenames in [c]:open[c] prompt
+    * changed regex search to normal text search for completion -> massive speedup, but limited functionality
+    * support for [c]:open ./[c] , [c]:open ..[c] and [c]:open ...[c] (patch from Lee Hinman)
+      [m]gu[m] and [m]<BS>[m] goes up a directory component, [m]gU[m] and [m]<C-BS>[m] to the root directory
+    * [m]<Esc>[m] now doesn't stop loading the webpage, use [m]<C-c>[m] instead, [c]:stop [c]command added
+    * changed 'hinttags' to work with dict.leo.org and hintstyle to work with digg.com
+    * [c]:back![c] goes to beginning of history now
+    * disabled Firefox 3.0 support for now, as there are just too many small
       bugs
     * new Makefile instead of build.sh (only important for developers)
     * newly designed help page
-    * :help section supported, :help :set will show help for the :set command
+    * [c]:help section[c] supported, [c]:help :set[c] will show help for the [c]:set[c] command
       (patch from Viktor Kojouharov)
-    * :source support, and auto-sourcing ~/.vimperatorrc on startup
-    * :javascript <<EOF support to execute multiline javascript code
-      also changed :exec to behave more vim like
+    * [c]:source[c] support, and auto-sourcing ~/.vimperatorrc on startup
+    * [c]:javascript <<EOF[c] support to execute multiline JavaScript code
+      also changed [c]:exec[c] to behave more Vim like
     * fixed saving of session
     * fixed hints display when zooming in/out of a web page
-    * added 'B' command for continous buffer display
-    * changed hintsize to 12px by default
+    * added [m]B[m] command for continous buffer display
+    * changed 'hintsize' to 12px by default
     * 'previewheight' setting to set the maximum size for the preview window
     * showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
-    * gh goes home :) gH in a new tab
-    * :open! bypasses cache
-    * :buffer and :buffers support (patch from Lars Kindler)
-    * added :edit, :e and :tabedit aliases for :open, :tabopen
-    * settings can now be changed with += and -= like in vim (patch from Виктор Кожухаров)
-    * Support for space/shift-space/alt-left/alt-right keys without beeping
-    * :open without argument reloads current page, :tabopen opens an empty tab
-    * added 'n' and 'N' to repeat a search
+    * [m]gh[m] goes home :) [m]gH[m] in a new tab
+    * [c]:open![c] bypasses cache
+    * [c]:buffer[c] and [c]:buffers[c] support (patch from Lars Kindler)
+    * added [c]:edit[c], [c]:e[c] and [c]:tabedit[c] aliases for [c]:open[c], [c]:tabopen[c]
+    * settings can now be changed with += and -= like in Vim (patch from Виктор Кожухаров)
+    * Support for [m]<Space>[m]/[m]<S-Space>[m]/[m]<A-Left>[m]/[m]<A-Right>[m] keys without beeping
+    * [c]:open[c] without argument reloads current page, [c]:tabopen[c] opens an empty tab
+    * added [m]n[m] and [m]N[m] to repeat a search
     * many small bug fixes
 
 2007-04-17:
     * version 0.3
-    * added Ctrl-v support to pass one key to firefox (patch by Muthu Kannan)
-    * also 'I' will go to 'ignorekeys' mode until esc is pressed, presenting a workaround
-      for many javascript form fields like GMail, until something better comes along.
-    * Vimperator can now be automatically updated in the :addons screen like other extensions
-    * fixed :tabnext/:tabprevious commands
-    * documented 's' and 'b' guioptions flag for statusbar/bookmark bar
-    * implemented the possibility to use CTRL-[ as an alternative to ESC, to leave the command line
-    * added Ctrl-Tab and Ctrl-Shift-Tab support for switching tabs without beeping
-    * ability to use shift and ctrl with special keys like F1 in mappings
+    * added [m]<C-v>[m] support to pass one key to Firefox (patch by Muthu Kannan)
+    * also [m]I[m] will go to "ignorekeys" mode until [m]<Esc>[m] is pressed, presenting a workaround
+      for many JavaScript form fields like GMail, until something better comes along
+    * Vimperator can now be automatically updated in the [c]:addons[c] screen like other extensions
+    * fixed [c]:tabnext[c]/[c]:tabprevious[c] commands
+    * documented "s" and "b" 'guioptions' flags for statusbar/bookmark bar
+    * implemented the possibility to use [m]<C-[>[m] as an alternative to [m]<Esc>[m], to leave the command line
+    * added [m]<C-Tab>[m] and [m]<C-S-Tab>[m] support for switching tabs without beeping
+    * ability to use shift and ctrl with special keys like [m]<F1>[m] in mappings
     * small documentation and other fixes
 
 2007-04-11:
     * version 0.2
     * first public release
+
+// vim: set filetype=asciidoc:
