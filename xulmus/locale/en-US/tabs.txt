@@ -37,7 +37,7 @@ duplicate the tab [count] times.
 ________________________________________________________________________________
 
 //TODO: should the tab commands be moved back here?
-See help::open[browsing.html#opening] for other ways to open new tabs.
+See [j]opening[j] for other ways to open new tabs.
 
 section:Changing{nbsp}tabs[changing-tabs]
 

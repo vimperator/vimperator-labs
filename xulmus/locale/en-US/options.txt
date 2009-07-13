@@ -554,6 +554,7 @@ The possible values:
 *all*        All commands
 *addons*     [c]:addo[ns][c] command
 *downloads*  [c]:downl[oads][c] command
+*extoptions* [c]:exto[ptions][c] command
 *help*       [c]:h[elp][c] command
 *javascript* [c]:javascript![c] or [c]:js![c] command
 *prefs*      [c]:pref[erences]![c] or [c]:prefs![c] command
@@ -766,7 +767,8 @@ Set the separator regex used to separate multiple URL args. Multiple arguments
 can be specified for [c]:open[c], and similar commands, using this regex as
 the separator. Using whitespace alone is not generally useful since it is often
 contained in a single argument. E.g. [c]:open linus torvalds[c] should perform
-a single search for the key words "linus" and "torvalds"
+a single search for the key words "linus" and "torvalds". If this is set to the
+empty string then these arguments will never be split.
 ____
 
 

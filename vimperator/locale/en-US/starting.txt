@@ -96,7 +96,7 @@ section:Restarting[restarting]
 |:res| |:restart| +
 ||:res[tart]||
 ________________________________________________________________________________
-Force the browser to restart. Useful when installing extensions.
+Force Firefox to restart. Useful when installing extensions.
 ________________________________________________________________________________
 
 // vim: set filetype=asciidoc:

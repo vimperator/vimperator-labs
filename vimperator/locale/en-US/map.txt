@@ -138,7 +138,7 @@ subsection:Key{nbsp}sequences[:<>,key-sequence]
 
 For most keys, the key-sequence is the same as the character you see when you
 type that key, however there are some exceptions which allow for a much larger
-number of keys to be used in mappings. 
+number of keys to be used in mappings.
 
  * [c]<lt>[c], [c]\<[c], [c]<Space>[c], [c]\ [c] allow a literal [c]<[c] or space character.
  * [c]\'[c], [c]\"[c] and [c]\\[c] must be used to avoid escaping issues when mapping a quote or backslash.
@@ -148,7 +148,7 @@ number of keys to be used in mappings.
 
 Most keyboards have some modifiers such as the control, alt or meta keys. In
 order to create a mapping that uses these keys the correct prefix must be used
-within the angle brackets. 
+within the angle brackets.
 
  * [c]<C-x>[c]: The control or ctrl key.
  * [c]<A-x>[c]: The alt key.
@@ -157,7 +157,7 @@ within the angle brackets.
 
 These prefixes can be combined however you see fit, though you should note that
 within angle brackets all alphabetic characters are read as lowercase. In order
-to force them to be uppercase, you must specify the S- prefix as well. 
+to force them to be uppercase, you must specify the S- prefix as well.
 Additionally, you should never use the S- prefix with a number of piece of
 punctuation, even if you require a shift to type that character; doing so will
 give you a mapping that cannot be typed. With non-character keys, tab and
@@ -173,7 +173,7 @@ the situation:
  * [c]<C-A-J>[c]: exactly the same as above
  * [c]<C-A-S-j>[c]: press J while holding control and alt
 
-subsection:Special{nbsp}Characters[map-special-chars]
+subsection:Special{nbsp}characters[:map-special-chars]
 
 |<Nop>| +
 ||<Nop>||

@@ -100,7 +100,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]o[m]|| Open one or more URLs +
 ||[m]p[m]|| Open (put) a URL based on the current clipboard contents in the current buffer +
 ||[m]q[m]|| Record a key sequence into a macro +
-||[m]r[m]|| Reload current web page +
+||[m]r[m]|| Reload the current web page +
 ||[m]t[m]|| Open one or more URLs in a new tab +
 ||[m]u[m]|| Undo closing of a tab +
 ||[m]y[m]|| Yank current location to the clipboard +
@@ -225,6 +225,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:extdisable[c]||
 ||[c]:extenable[c]||
 ||[c]:extensions[c]|| List all installed extensions +
+||[c]:extoptions[c]||
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:filter[c]|| Filter and show the tracks as a view +
 ||[c]:finish[c]|| Stop sourcing a script file +

@@ -21,7 +21,7 @@ section:Dialogs[dialogs]
 |:addo| |:addons| +
 ||:addo[ns]||
 ________________________________________________________________________________
-Show available browser Extensions and Themes.
+Show available Firefox Extensions and Themes.
 You can add/remove/disable browser extensions from this dialog.
 Be aware that not all Firefox extensions work, because Vimperator overrides
 some key bindings and changes Firefox's GUI.
