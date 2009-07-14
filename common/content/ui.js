@@ -2096,7 +2096,7 @@ function StatusLine() //{{{
         {
             // ripped from Firefox
             if (!window.losslessDecodeURI)
-                window.losslessDecodeURI = function (aURL, aPostDataRef) {
+                window.losslessDecodeURI = function (aURI, aPostDataRef) {
                     var value = aURI.spec;
                     // Try to decode as UTF-8 if there's no encoding sequence that we would break.
                     if (!/%25(?:3B|2F|3F|3A|40|26|3D|2B|24|2C|23)/i.test(value))
