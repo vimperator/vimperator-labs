@@ -285,7 +285,7 @@ function Tabs() //{{{
             { count: true });
 
         // TODO: feature dependencies - implies "session"?
-        if (liberator.has("tabUndo"))
+        if (liberator.has("tabs_undo"))
         {
             mappings.add([modes.NORMAL], ["u"],
                 "Undo closing of a tab",
@@ -609,7 +609,7 @@ function Tabs() //{{{
             });
     }
 
-    if (liberator.has("tabUndo"))
+    if (liberator.has("tabs_undo"))
     {
         commands.add(["u[ndo]"],
             "Undo closing of a tab",
