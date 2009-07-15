@@ -37,7 +37,8 @@ const config = { //{{{
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
     defaults: {
         guioptions: "mprb",
-        showtabline: 2
+        showtabline: 2,
+        titlestring: "Xulmus"
     },
 
     guioptions: {
@@ -372,21 +373,6 @@ const config = { //{{{
                     return value;
                 },
                 getter: function () !services.get("io").offline
-            });
-
-        // TODO: merge with Vimperator version and add Muttator version
-        // (TB handles this differently).
-        options.add(["titlestring"],
-            "Change the title of the window",
-            "string", "Xulmus",
-            {
-                setter: function (value)
-                {
-                    document.documentElement.setAttribute("titlemodifier", value);
-                    getBrowser().updateTitlebar();
-
-                    return value;
-                }
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}

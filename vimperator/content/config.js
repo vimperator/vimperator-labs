@@ -35,7 +35,8 @@ const config = { //{{{
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "tabUndo", "windows"],
     defaults: {
         guioptions: "rb",
-        showtabline: 2
+        showtabline: 2,
+        titlestring: "Vimperator"
     },
 
     guioptions: {
@@ -302,29 +303,6 @@ const config = { //{{{
                     return value;
                 },
                 getter: function () !services.get("io").offline
-            });
-
-        // TODO: merge with Vimperator version and add Muttator version
-        // (TB handles this differently).
-        options.add(["titlestring"],
-            "Change the title of the window",
-            "string", "Vimperator",
-            {
-                setter: function (value)
-                {
-                    let elem = document.documentElement;
-
-                    elem.setAttribute("titlemodifier", value);
-                    // TODO: remove this FF3.5 test when we no longer support 3.0
-                    if (services.get("privateBrowsing"))
-                    {
-                        elem.setAttribute("titlemodifier_privatebrowsing", value);
-                        elem.setAttribute("titlemodifier_normal", value);
-                    }
-                    getBrowser().updateTitlebar();
-
-                    return value;
-                }
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}

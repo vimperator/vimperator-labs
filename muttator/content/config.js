@@ -37,7 +37,8 @@ const config = { //{{{
     features: ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
         guioptions: "frb",
-        showtabline: 1
+        showtabline: 1,
+        titlestring: "Muttator"
     },
 
     guioptions: {

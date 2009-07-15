@@ -242,6 +242,42 @@ const liberator = (function () //{{{
             "Load plugin scripts when starting up",
             "boolean", true);
 
+        options.add(["titlestring"],
+            "Change the title of the window",
+            "string", config.defaults.titlestring || config.hostApplication,
+            {
+                setter: function (value)
+                {
+                    let win = document.documentElement;
+                    function updateTitle(old, current)
+                    {
+                        document.title = document.title.replace(RegExp("(.*)" + util.escapeRegex(old)), "$1" + current);
+                    }
+
+                    // TODO: remove this FF3.5 test when we no longer support 3.0
+                    //     : make this a config feature
+                    if (services.get("privateBrowsing"))
+                    {
+                        let oldValue = win.getAttribute("titlemodifier_normal");
+                        let suffix = win.getAttribute("titlemodifier_privatebrowsing").substr(oldValue.length);
+
+                        win.setAttribute("titlemodifier_normal", value);
+                        win.setAttribute("titlemodifier_privatebrowsing", value + suffix);
+
+                        if (services.get("privateBrowsing").privateBrowsingEnabled)
+                        {
+                            updateTitle(oldValue + suffix, value + suffix);
+                            return value;
+                        }
+                    }
+
+                    updateTitle(win.getAttribute("titlemodifier"), value);
+                    win.setAttribute("titlemodifier", value);
+
+                    return value;
+                }
+            });
+
         options.add(["verbose", "vbs"],
             "Define which info messages are displayed",
             "number", 1,

@@ -1,5 +1,6 @@
 2009-XX-XX
     * version 0.6a1pre
+    * add 'titlestring' option
     * rename FolderLoaded autocommand event to FolderLoad
     * add the DOMLoad autocommand event
     * add 'online' option
