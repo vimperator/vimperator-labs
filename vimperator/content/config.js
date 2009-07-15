@@ -56,7 +56,7 @@ const config = { //{{{
                    ["LocationChange",     "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
-                   ["PrivateMode",        "Triggered private mode is activated or deactivated"],
+                   ["PrivateMode",        "Triggered when private mode is activated or deactivated"],
                    ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
                    ["VimperatorEnter",    "Triggered after Firefox starts"],
                    ["VimperatorLeavePre", "Triggered before exiting Firefox, just before destroying each module"],
