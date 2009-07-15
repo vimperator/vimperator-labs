@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         Muttator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Jul 9
+" Last Change:      2009 Jul 15
 
 " TODO: make this muttator specific - shared liberator config?
 
@@ -38,7 +38,7 @@ syn match muttatorCommand "!" contained
 
 syn keyword muttatorAutoCmd au[tocmd] contained nextgroup=muttatorAutoEventList skipwhite
 
-syn keyword muttatorAutoEvent FolderLoaded PageLoadPre PageLoad ShellCmdPost muttatorEnter muttatorLeavePre muttatorLeave
+syn keyword muttatorAutoEvent FolderLoad PageLoadPre PageLoad ShellCmdPost muttatorEnter muttatorLeavePre muttatorLeave
     \ contained
 
 syn match muttatorAutoEventList "\(\a\+,\)*\a\+" contained contains=muttatorAutoEvent
@@ -49,8 +49,8 @@ syn region muttatorSet matchgroup=muttatorCommand start="\%(^\s*:\=\)\@<=\<\%(se
 syn keyword muttatorOption archivefolder cdpath cd complete cpt editor eventignore ei extendedhinttags eht fileencoding fenc
     \ followhints fh guioptions go helpfile hf hintinputs hin hintmatching hm hinttags ht hinttimeout hto history hi laststatus ls
     \ layout maxitems messages msgs nextpattern pageinfo pa previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf
-    \ showstatuslinks ssli showtabline stal smtpserver smtp suggestengines urlseparator verbose vbs wildcase wic wildignore wig
-    \ wildmode wim wildoptions wop wordseparators wsp
+    \ showstatuslinks ssli showtabline stal smtpserver smtp suggestengines titlestring urlseparator verbose vbs wildcase wic
+    \ wildignore wig wildmode wim wildoptions wop wordseparators wsp
     \ contained nextgroup=muttatorSetMod
 
 " toggle options
