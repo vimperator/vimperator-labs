@@ -294,10 +294,8 @@ function Bookmarks() //{{{
         "Show jumplist",
         function ()
         {
-            let sh = window.getWebNavigation().sessionHistory;
-
-            let entries = [sh.getEntryAtIndex(i, false) for (i in util.range(0, sh.count))];
-            let list = template.jumps(sh.index, entries);
+            let sh = history.session;
+            let list = template.jumps(sh.index, sh);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         },
         { argCount: "0" });
@@ -843,15 +841,13 @@ function History() //{{{
             {
                 if (url)
                 {
-                    let sh = window.getWebNavigation().sessionHistory;
-                    for (let i in util.range(sh.index, 0, -1))
-                    {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
-                        {
-                            window.getWebNavigation().gotoIndex(i);
-                            return;
-                        }
-                    }
+                    let sh = history.session;
+                    if (/^\d+(:|$)/.test(url) && sh.index - parseInt(url) in sh)
+                        return void window.getWebNavigation().gotoIndex(sh.index - parseInt(url));
+
+                    for (let [i, ent] in Iterator(sh.slice(0, sh.index).reverse()))
+                        if (ent.URI.spec == url)
+                            return void window.getWebNavigation().gotoIndex(i);
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
@@ -863,12 +859,13 @@ function History() //{{{
             bang: true,
             completer: function completer(context)
             {
-                let sh = window.getWebNavigation().sessionHistory;
+                let sh = history.session;
 
                 context.anchored = false;
-                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index, 0, -1))];
-                context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.completions = sh.slice(0, sh.index).reverse();
+                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title" };
                 context.compare = CompletionContext.Sort.unsorted;
+                context.filters = [CompletionContext.Filter.textDescription];
             },
             count: true,
             literal: 0
@@ -886,15 +883,13 @@ function History() //{{{
             {
                 if (url)
                 {
-                    let sh = window.getWebNavigation().sessionHistory;
-                    for (let i in util.range(sh.index + 1, sh.count))
-                    {
-                        if (sh.getEntryAtIndex(i, false).URI.spec == url)
-                        {
-                            window.getWebNavigation().gotoIndex(i);
-                            return;
-                        }
-                    }
+                    let sh = history.session;
+                    if (/^\d+(:|$)/.test(url) && sh.index + parseInt(url) in sh)
+                        return void window.getWebNavigation().gotoIndex(sh.index + parseInt(url));
+
+                    for (let [i, ent] in Iterator(sh.slice(sh.index + 1)))
+                        if (ent.URI.spec == url)
+                            return void window.getWebNavigation().gotoIndex(i);
                     liberator.echoerr("Exxx: URL not found in history");
                 }
                 else
@@ -906,12 +901,13 @@ function History() //{{{
             bang: true,
             completer: function completer(context)
             {
-                let sh = window.getWebNavigation().sessionHistory;
+                let sh = history.session;
 
                 context.anchored = false;
-                context.completions = [sh.getEntryAtIndex(i, false) for (i in util.range(sh.index + 1, sh.count))];
-                context.keys = { text: function (item) item.URI.spec, description: "title" };
+                context.completions = sh.slice(sh.index + 1);
+                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title" };
                 context.compare = CompletionContext.Sort.unsorted;
+                context.filters = [CompletionContext.Filter.textDescription];
             },
             count: true,
             literal: 0
@@ -983,6 +979,17 @@ function History() //{{{
             root.containerOpen = false; // close a container after using it!
 
             return items;
+        },
+
+        get session()
+        {
+            let sh = window.getWebNavigation().sessionHistory;
+            let obj = [];
+            obj.index = sh.index;
+            obj.__iterator__ = function() util.Array.iteritems(this)
+            for (let i in util.range(0, sh.count))
+                obj[i] = { index: i, __proto__: sh.getEntryAtIndex(i, false) };
+            return obj;
         },
 
         // TODO: better names

@@ -133,18 +133,7 @@ function CompletionContext(editor, name, offset) //{{{
          * @property {Array} An array of predicates on which to filter the
          *     results.
          */
-        this.filters = [function (item) {
-            let text = Array.concat(item.text);
-            for (let [i, str] in Iterator(text))
-            {
-                if (this.match(String(str)))
-                {
-                    item.text = String(text[i]);
-                    return true;
-                }
-            }
-            return false;
-        }];
+        this.filters = [CompletionContext.Filter.text];
         /**
          * @property {boolean} Specifies whether this context results must
          *     match the filter at the beginning of the string.
@@ -223,6 +212,24 @@ CompletionContext.Sort = {
     number: function (a, b) parseInt(b) - parseInt(a) || String.localeCompare(a, b),
 
     unsorted: null
+};
+
+CompletionContext.Filter = {
+    text: function (item) {
+        let text = Array.concat(item.text);
+        for (let [i, str] in Iterator(text))
+        {
+            if (this.match(String(str)))
+            {
+                item.text = String(text[i]);
+                return true;
+            }
+        }
+        return false;
+    },
+    textDescription: function (item) {
+        return CompletionContext.Filter.text.call(this, item) || this.match(item.description);
+    }
 };
 
 CompletionContext.prototype = {
