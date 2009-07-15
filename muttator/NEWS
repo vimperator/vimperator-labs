@@ -1,61 +1,61 @@
 2009-XX-XX
     * version 0.6a1pre
     * add 'titlestring' option
-    * rename FolderLoaded autocommand event to FolderLoad
-    * add the DOMLoad autocommand event
+    * rename *FolderLoaded* autocommand event to *FolderLoad*
+    * add the *DOMLoad* autocommand event
     * add 'online' option
     * add 'smtpserver' option
 
 2009-03-29
     * version 0.5
     * fixes for recent TB nightly changes
-    * new "threads" option (non-functional for now)
-    * new "archivefolder" option
+    * new 'threads' option (non-functional for now)
+    * new 'archivefolder' option
     * small bug fixes
 
 2008-08-03:
     * version 0.4
-    * new 'autoexternal' option to edit new messages/reply with the external editor by default
+    * new 'autoexternal' option to edit new messages/reply with the external editor by default.
       NOTE: You must set this option in your .muttatorrc, as options are not shared between the
       main thunderbird window and the compose window!
-    * various "l" mappings for labeling messages
-    * "p" to open RSS message in browser
-    * "y" to yank sender or RSS URL
-    * "Y" to yank subject
-    * "R" to reply to all
-    * new compose mappings: s, t and i: Focus subject:, To: or message body
-    * q quits composer now
-    * new "x" mapping to toggle HTML display (is there a need for "simple HTML"?)
-    * new "h" mapping to toggle headers
+    * various *l* mappings for labeling messages
+    * [m]p[m] to open RSS message in browser
+    * [m]y[m] to yank sender or RSS URL
+    * [m]Y[m] to yank subject
+    * [m]R[m] to reply to all
+    * new compose mappings: [m]s[m], [m]t[m] and [m]i[m] - Focus subject:, To: or message body
+    * [m]q[m] quits composer now
+    * new [m]x[m] mapping to toggle HTML display (is there a need for "simple HTML"?)
+    * new [m]h[m] mapping to toggle headers
 
 2008-06-04:
     * version 0.3
     * new tab related mappings + commands
-    * new :contacts and :contact commands for address book operations
-    * new :message command
-    * new -- COMPOSE -- mode with mutt-like keybindings (y to send message, e to edit message)
+    * new [c]:contacts[c] and [c]:contact[c] commands for address book operations
+    * new [c]:message[c] command
+    * new -- COMPOSE -- mode with mutt-like keybindings ([m]y[m] to send message, [m]e[m] to edit message)
     * external editor support for sending messages
-    * m to open a new message compose window
-    * new M command to send a new message to the sender of the currently selected message
-    * completions for :{go,copy,move}to commands
-    * :emptytrash command
-    * new * and # mappings to select next/prev message from same author (not perfect matching however)
-    * J, K, ]s, etc. search in closed threads now
-    * gj and gk to select messages in closed threads
-    * "t" to select current thread, use "lr" now to label a message as read
-    * KMail-like mode-independent scrolling with left/right and up/down
+    * [m]m[m] to open a new message compose window
+    * new [m]M[m] command to send a new message to the sender of the currently selected message
+    * completions for [c]:goto[c], [c]:copyto[c], [c]:moveto[c] commands
+    * [c]:emptytrash[c] command
+    * new [m]*[m] and [m]#[m] mappings to select next/prev message from same author (not perfect matching however)
+    * [m]J[m], [m]K[m], [m]]s[m], etc. search in closed threads now
+    * [m]gj[m] and [m]gk[m] to select messages in closed threads
+    * [m]t[m] to select current thread, use [m]lr[m] now to label a message as read
+    * KMail-like mode-independent scrolling with [m]<Left>[m]/[m]<Right>[m] and [m]<Up>[m]/[m]<Down>[m]
     * many small improvements
 
 2008-04-30:
     * version 0.2
-    * ctrl-s mappings to move messages to an "Archive" folder (inspired by gmail)
-    * new :moveto and :copyto commands
-    * u and ctrl-r mappings to undo/redo
-    * new muttator specific :help screen
+    * [m]<C-s>[m] mappings to move messages to an "Archive" folder (inspired by gmail)
+    * new [c]:moveto[c] and [c]:copyto[c] commands
+    * [m]u[m] and [m]<C-r>[m] mappings to undo/redo
+    * new Muttator specific :help screen
     * small bug fixes
 
 2008-04-29:
     * version 0.1
-    * first public release, straight port from vimperator with many basic mappings
+    * first public release, straight port from Vimperator with many basic mappings
 
-<!-- vim: set sw=4 ts=4 et: -->
+// vim: set filetype=asciidoc:

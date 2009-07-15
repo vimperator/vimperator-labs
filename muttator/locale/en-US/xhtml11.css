@@ -1,3 +1,6 @@
+/* keep the mozdev header */
+/* @import url(http://www.mozdev.org/skin/color/mozdev2k.css); */
+
 /*
   CSS stylesheet for XHTML produced by DocBook XSL stylesheets.
   Tested with XSL stylesheets 1.61.2, 1.67.2
@@ -308,6 +311,10 @@ span.warning {
   font-weight: bold;
   color: red;
 }
+span.info {
+  font-weight: bold;
+  color: blue;
+}
 fieldset.paypal {
     border: none;
 }
@@ -318,6 +325,7 @@ fieldset.paypal {
 .command {
     font-weight: bold;
     color: #632610;
+    white-space: nowrap;
 }
 .mapping {
     font-weight: bold;
@@ -327,6 +335,14 @@ fieldset.paypal {
     font-weight: bold;
     color: #106326;
 }
+
+.option, .mapping, .command {
+    text-decoration: none;
+}
+.option:hover, .mapping:hover, .command:hover {
+    text-decoration: underline;
+}
+
 .quoteblock {
 	margin-left: 140px;
 	padding-bottom: 10px;
