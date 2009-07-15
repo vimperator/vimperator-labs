@@ -1,5 +1,6 @@
 2009-XX-XX
     * version 0.6a1pre
+    * add a DOMLoad autocommand event
     * add 'online' option
     * add 'smtpserver' option
 

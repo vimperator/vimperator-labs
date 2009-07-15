@@ -364,19 +364,20 @@ function Events() //{{{
 
     if (liberator.has("tabs"))
     {
-        let tabcontainer = getBrowser().mTabContainer;
-        if (tabcontainer) // not every VIM-like extension has a tab container
-        {
-            tabcontainer.addEventListener("TabMove", function (event) {
+        // FIXME: most of this doesn't work for Muttator yet.
+        liberator.registerObserver("load_tabs", function () {
+            let tabContainer = tabs.getBrowser().mTabContainer;
+
+            tabContainer.addEventListener("TabMove", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabOpen", function (event) {
+            tabContainer.addEventListener("TabOpen", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabClose", function (event) {
+            tabContainer.addEventListener("TabClose", function (event) {
                 statusline.updateTabCount();
             }, false);
-            tabcontainer.addEventListener("TabSelect", function (event) {
+            tabContainer.addEventListener("TabSelect", function (event) {
                 // TODO: is all of that necessary?
                 modes.reset();
                 // XXX: apparently the tab container hasn't updated mTabs yet
@@ -386,19 +387,19 @@ function Events() //{{{
                 if (options["focuscontent"])
                     setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
             }, false);
-        }
 
-        getBrowser().addEventListener("DOMContentLoaded", onDOMContentLoaded, true);
+            tabs.getBrowser().addEventListener("DOMContentLoaded", onDOMContentLoaded, true);
 
-        // this adds an event which is is called on each page load, even if the
-        // page is loaded in a background tab
-        getBrowser().addEventListener("load", onPageLoad, true);
+            // this adds an event which is is called on each page load, even if the
+            // page is loaded in a background tab
+            tabs.getBrowser().addEventListener("load", onPageLoad, true);
 
-        // called when the active document is scrolled
-        getBrowser().addEventListener("scroll", function (event) {
-            statusline.updateBufferPosition();
-            modes.show();
-        }, null);
+            // called when the active document is scrolled
+            tabs.getBrowser().addEventListener("scroll", function (event) {
+                statusline.updateBufferPosition();
+                modes.show();
+            }, null);
+        });
     }
 
 //    getBrowser().addEventListener("submit", function (event) {

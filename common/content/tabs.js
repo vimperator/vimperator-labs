@@ -721,6 +721,8 @@ function Tabs() //{{{
             return store.options;
         },
 
+        getBrowser: getBrowser,
+
         /**
          * Returns the local state store for the tab at the specified
          * <b>tabIndex</b>. If <b>tabIndex</b> is not specified then the
