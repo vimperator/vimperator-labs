@@ -56,7 +56,7 @@ const config = { //{{{
     styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
 
     autocommands: [["DOMLoad",          "Triggered when a page's DOM content has fully loaded"],
-                   ["FolderLoaded",     "Triggered after switching folders in Thunderbird"],
+                   ["FolderLoad",       "Triggered after switching folders in Thunderbird"],
                    ["PageLoadPre",      "Triggered after a page load is initiated"],
                    ["PageLoad",         "Triggered when a page gets (re)loaded/opened"],
                    ["MuttatorEnter",    "Triggered after Thunderbird starts"],

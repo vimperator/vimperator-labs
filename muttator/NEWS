@@ -1,6 +1,7 @@
 2009-XX-XX
     * version 0.6a1pre
-    * add a DOMLoad autocommand event
+    * rename FolderLoaded autocommand event to FolderLoad
+    * add the DOMLoad autocommand event
     * add 'online' option
     * add 'smtpserver' option
 
