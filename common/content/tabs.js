@@ -39,27 +39,7 @@ function Tabs() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var tabmail;
-    // FIXME: doesn't belong here
-    var getBrowser = (function () {
-        if (config.hostApplication == "Thunderbird")
-        {
-            return function () {
-                if (!tabmail)
-                {
-                    tabmail = document.getElementById("tabmail");
-                    tabmail.__defineGetter__("mTabContainer", function () this.tabContainer);
-                    tabmail.__defineGetter__("mTabs", function () this.tabContainer.childNodes);
-                    tabmail.__defineGetter__("mCurrentTab", function () this.tabContainer.selectedItem);
-                    tabmail.__defineGetter__("mStrip", function () this.tabStrip);
-                    tabmail.__defineGetter__("browsers", function () [browser for (browser in Iterator(this.mTabs))]);
-                }
-                return tabmail;
-            };
-        }
-        else
-            return window.getBrowser;
-    })();
+    var getBrowser = config.getBrowser || window.getBrowser;
 
     var alternates = [getBrowser().mCurrentTab, null];
 
