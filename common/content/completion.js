@@ -1354,7 +1354,11 @@ function Completion() //{{{
         {
             let numLocationCompletions = 0; // how many async completions did we already return to the caller?
             let start = 0;
-            let skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
+            let skip = 0;
+            
+            if (options["urlseparator"])
+                skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
+
             if (skip)
                 context.advance(skip[0].length);
 
