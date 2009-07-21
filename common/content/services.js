@@ -94,6 +94,7 @@ function Services()
     self.add("directory",           "@mozilla.org/file/directory_service;1",    Ci.nsIProperties);
     self.add("environment",         "@mozilla.org/process/environment;1",       Ci.nsIEnvironment);
     self.add("extensionManager",    "@mozilla.org/extensions/manager;1",        Ci.nsIExtensionManager);
+    self.add("favicon",             "@mozilla.org/browser/favicon-service;1",   Ci.nsIFaviconService);
     self.add("json",                "@mozilla.org/dom/json;1",                  Ci.nsIJSON, "createInstance");
     self.add("observer",            "@mozilla.org/observer-service;1",          Ci.nsIObserverService);
     self.add("io",                  "@mozilla.org/network/io-service;1",        Ci.nsIIOService);

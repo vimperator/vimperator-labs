@@ -60,7 +60,7 @@ function Bookmarks() //{{{
     const historyService   = PlacesUtils.history;
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
-    const faviconService   = Cc["@mozilla.org/browser/favicon-service;1"].getService(Ci.nsIFaviconService);
+    const faviconService   = services.get("favicon");
 
     // XXX for strange Firefox bug :(
     // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
@@ -863,7 +863,7 @@ function History() //{{{
 
                 context.anchored = false;
                 context.completions = sh.slice(0, sh.index).reverse();
-                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title" };
+                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
             },
@@ -905,7 +905,7 @@ function History() //{{{
 
                 context.anchored = false;
                 context.completions = sh.slice(sh.index + 1);
-                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title" };
+                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
             },
@@ -988,7 +988,11 @@ function History() //{{{
             obj.index = sh.index;
             obj.__iterator__ = function() util.Array.iteritems(this)
             for (let i in util.range(0, sh.count))
+            {
                 obj[i] = { index: i, __proto__: sh.getEntryAtIndex(i, false) };
+                util.memoize(obj[i], "icon",
+                    function (obj) services.get("favicon").getFaviconImageForPage(obj.URI).spec);
+            }
             return obj;
         },
 

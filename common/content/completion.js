@@ -1232,7 +1232,7 @@ function Completion() //{{{
                     {
                         let arg = str.substring(prev + 1, idx);
                         prev = idx;
-                        args.__defineGetter__(i, function () self.eval(arg));
+                        util.memoize(args, i, function () self.eval(arg));
                     }
                     let key = getKey();
                     args.push(key + string);

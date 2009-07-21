@@ -179,6 +179,25 @@ const util = { //{{{
     },
 
     /**
+     * Memoize the lookup of a property in an object.
+     *
+     * @param {object} obj The object to alter.
+     * @param {string} key The name of the property to memoize.
+     * @param {function} getter A function of zero to two arguments which
+     *          will return the property's value. <b>obj</b> is
+     *          passed as the first argument, <b>key</b> as the
+     *          second.
+     */
+    memoize: function memoize(obj, key, getter)
+    {
+        obj.__defineGetter__(key, function() {
+            delete obj[key]
+            obj[key] = getter(obj, key);
+            return obj[key];
+        });
+    },
+
+    /**
      * Split a string on literal occurrences of a marker.
      *
      * Specifically this ignores occurrences preceded by a backslash, or
