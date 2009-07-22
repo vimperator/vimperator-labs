@@ -190,8 +190,8 @@ const util = { //{{{
      */
     memoize: function memoize(obj, key, getter)
     {
-        obj.__defineGetter__(key, function() {
-            delete obj[key]
+        obj.__defineGetter__(key, function () {
+            delete obj[key];
             obj[key] = getter(obj, key);
             return obj[key];
         });
