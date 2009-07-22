@@ -135,4 +135,24 @@ Open the specified display pane. {pane} is any of "service pane left", "service
 pane bottom", "content pane bottom" or "right sidebar".
 ________________________________________________________________________________
 
+section:Toolbars[toolbar]
+
+|:tbs| |:tbshow| |:toolbars| |:toolbarshow| +
+||:toolbarshow {name}||
+________________________________________________________________________________
+Shows the named toolbar.
+________________________________________________________________________________
+
+|:tbh| |:tbhide| |:toolbarh|  |:toolbarhide| +
+||:toolbarhide {name}||
+________________________________________________________________________________
+Hides the named toolbar.
+________________________________________________________________________________
+
+|:tbt| |:tbtoggle| |:toolbart| |:toolbartoggle| +
+||:toolbartoggle {name}||
+________________________________________________________________________________
+Toggles the named toolbar.
+________________________________________________________________________________
+
 // vim: set filetype=asciidoc:

@@ -675,13 +675,13 @@ const liberator = (function () //{{{
                     });
             }
 
-            tbcmd(["toolbarshow", "tbshow"], "Show the named toolbar",
+            tbcmd(["toolbars[how]", "tbs[how]"], "Show the named toolbar",
                 function (toolbar) toolbar.collapsed = false,
                 function (item) item.item.collapsed);
-            tbcmd(["toolbarhide", "tbhide"], "Hide the named toolbar",
+            tbcmd(["toolbarh[ide]", "tbh[ide]"], "Hide the named toolbar",
                 function (toolbar) toolbar.collapsed = true,
                 function (item) !item.item.collapsed);
-            tbcmd(["toolbartoggle", "tbtoggle"], "Toggle the named toolbar",
+            tbcmd(["toolbart[oggle]", "tbt[oggle]"], "Toggle the named toolbar",
                 function (toolbar) toolbar.collapsed = !toolbar.collapsed);
         }
 
