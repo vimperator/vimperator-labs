@@ -321,6 +321,8 @@ const liberator = (function () //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    var toolbox;
+
     registerObserver("load_commands", function () {
 
         commands.add(["addo[ns]"],
@@ -644,6 +646,45 @@ const liberator = (function () //{{{
             function () { liberator.restart(); },
             { argCount: "0" });
 
+        toolbox = document.getElementById("navigator-toolbox");
+        if (toolbox)
+        {
+            function findToolbar(name) buffer.evaluateXPath(
+                "./*[@toolbarname=" + util.escapeString(name, "'") + "]",
+                document, toolbox).snapshotItem(0);
+
+            let tbcmd = function (names, desc, action, filter)
+            {
+                commands.add(names, desc,
+                    function (args)
+                    {
+                        let toolbar = findToolbar(args[0]);
+                        if (!toolbar)
+                            return void liberator.echoerr("E474: Invalid argument");
+                        action(toolbar);
+                    },
+                    {
+                        argcount: "1",
+                        completer: function (context)
+                        {
+                            completion.toolbar(context)
+                            if (filter)
+                                context.filters.push(filter);
+                        },
+                        literal: 0
+                    });
+            }
+
+            tbcmd(["toolbarshow", "tbshow"], "Show the named toolbar",
+                function (toolbar) toolbar.collapsed = false,
+                function (item) item.item.collapsed);
+            tbcmd(["toolbarhide", "tbhide"], "Hide the named toolbar",
+                function (toolbar) toolbar.collapsed = true,
+                function (item) !item.item.collapsed);
+            tbcmd(["toolbartoggle", "tbtoggle"], "Toggle the named toolbar",
+                function (toolbar) toolbar.collapsed = !toolbar.collapsed);
+        }
+
         commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
             function (args)
@@ -805,6 +846,12 @@ const liberator = (function () //{{{
             context.keys = { text: "fullMenuPath", description: function (item) item.getAttribute("label") };
             context.completions = liberator.menuItems;
         };
+
+        completion.toolbar = function toolbar(context) {
+            context.title = ["Toolbar"];
+            context.keys = { text: function (item) item.getAttribute("toolbarname"), description: function () "" };
+            context.completions = buffer.evaluateXPath("./*[@toolbarname]", document, toolbox);
+        }
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}

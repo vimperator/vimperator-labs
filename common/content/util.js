@@ -463,7 +463,7 @@ const util = { //{{{
             [XHTML, 'html'],
             [XUL, 'xul']
         ]);
-        if (object instanceof Node && !(object instanceof Document))
+        if (object instanceof Element)
         {
             let elem = object;
             if (elem.nodeType == elem.TEXT_NODE)
