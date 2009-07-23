@@ -38,35 +38,39 @@ it, recommend it and like it :)
 section:Help{nbsp}topics[overview]
 
 //- help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
-- help:Initialization[starting.html]: How Xulmus starts up, where it reads
-  the config file...
-- help:Player[player.html]: Interacting with the media player.
+- help:Starting{nbsp}Xulmus[starting.html]: How Xulmus starts up, where it
+  reads the config file...
+- help:Player{nbsp}mode[player.html]: Interacting with the media player.
 - help:Browsing[browsing.html]: Basic mappings and commands needed for a
   browsing session (how to open a web page or go back in history).
-- help:Buffer{nbsp}commands[buffer.html]: Operations on the current document
-  like scrolling or copying text.
-- help:Command-line[cmdline.html]: Command-line editing.
-- help:Insert-mode[insert.html]: Insert-mode editing.
+- help:Buffer[buffer.html]: Operations on the current document like scrolling
+  or copying text.
+- help:Command-line{nbsp}mode[cmdline.html]: Command-line editing.
+- help:Insert{nbsp}mode[insert.html]: Insert-mode editing.
 - help:Options[options.html]: A description of all options.
-- help:Search{nbsp}commands[pattern.html]: Searching for text in the
+- help:Text{nbsp}search{nbsp}commands[pattern.html]: Searching for text in the
   current buffer.
 - help:Tabs[tabs.html]: Managing your tabbed browsing session.
-- help:Hints[hints.html]: Selecting hyperlinks.
-- help:Key{nbsp}mapping{nbsp}and{nbsp}abbreviations[map.html]: Defining new key
-  mappings, abbreviations and user commands.
+- help:Hints[hints.html]: Selecting hyperlinks and other page elements.
+- help:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands[map.html]:
+  Defining new key mappings, abbreviations and user commands.
 - help:Expression{nbsp}evaluation[eval.html]: Executing JavaScript.
 - help:Marks[marks.html]: Using bookmarks, QuickMarks, history and local marks.
-- help:Repeating{nbsp}commands[repeat.html]: Using macros to repeat recurring workflows.
-- help:Autocommands[autocommands.html]: Automatically executing code on certain
-  events.
-- help:Print[print.html]: Printing pages.
-- help:GUI[gui.html]: Accessing Songbird menus, dialogs and the sidebar.
-- help:Styling[styling.html]: Changing the styling of content pages and Xulmus itself.
-- help:Messages[message.html]: A description of messages and error messages.
+- help:Repeating{nbsp}commands[repeat.html]: Using macros to repeat recurring
+  workflows.
+- help:Automatic{nbsp}commands[autocommands.html]: Automatically executing code
+  on certain events.
+- help:Printing[print.html]: Printing pages.
+- help:Xulmus's{nbsp}GUI[gui.html]: Accessing Songbird menus, dialogs and the
+  display panels.
+- help:Styling{nbsp}the{nbsp}GUI{nbsp}and{nbsp}web{nbsp}pages[styling.html]:
+  Changing the styling of content pages and Xulmus itself.
+- help:Error{nbsp}and{nbsp}informational{nbsp}messages[message.html]: A
+  description of messages and error messages.
 - help:Developer{nbsp}information[developer.html]: How to write docs or
   plugins.
-- help:Various[various.html]: Other help which didn't fit into any other
-  category.
+- help:Various{nbsp}commands[various.html]: Other help which didn't fit into
+  any other category.
 - help:Index[index.html]: An index of all commands and options.
 
 You can also jump directly to the help of a specific command with [c]:help o[c]
@@ -74,30 +78,37 @@ or [c]:help :set[c].
 
 section:Features[features]
 
-* Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m],
-  [m]gg[m], [m]G[m], [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
+// TODO: make Xulmus specific
+* Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m], [m]gg[m], [m]G[m],
+  [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
 * Ex commands ([c]:quit[c], [c]:open www.foo.com[c], ...)
-* Tab completion available for all commands with support for 'longest' matching when set in 'wildmode'
+* Tab completion available for all commands with support for "longest" matching
+  when set in 'wildmode'
 * Hit-a-hint like navigation of links (start with [m]f[m] to follow a link)
-* Advanced completion of bookmark and history URLs (searching also in title, not only URL)
-* Vim-like statusline with a wget-like progress bar
-* Minimal GUI (easily hide useless menubar and toolbar with [c]:set guioptions=[c])
-* Ability to [c]:source[c] JavaScript files, and to use a [a]~/.xulmusrc[a] file
-  with syntax highlighting if you install scripts/xulmus.vim
+* Advanced completion of bookmark and history URLs (searching also in title,
+  not only URL)
+* Vim-like statusline with a Wget-like progress bar
+* Minimal GUI (easily hide useless menubar and toolbar with
+  [c]:set guioptions=[c])
+* Ability to [c]:source[c] JavaScript files, and to use a [a]~/.xulmusrc[a]
+  file with syntax highlighting if you install
+  http://vimperator.org/trac/ticket/327[xulmus.vim]
 * Easy quick searches ([c]:open foo[c] will search for "foo" in google,
   [c]:open ebay terminator[c] will search for "terminator" on ebay)
-  with support for Songbird keyword bookmarks and search engines
+  with support for Firefox keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
-* Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to go there)
-* QuickMarks support (quickly go to previously marked web pages with [m]go[m][a]\\{a-zA-Z0-9\\}[a])
+* Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to
+  go there)
+* QuickMarks support (quickly go to previously marked web pages with
+  [m]go[m][a]\\{a-zA-Z0-9\\}[a])
 * [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
 * Move the text cursor and select text with Vim keys and a Visual mode
 * External editor support
 * Macros to replay key strokes
-* AutoCommands to execute action on certain events
-* A comprehensive help file, explaining all commands, mappings and options.
+* AutoCommands to execute actions on certain events
+* A comprehensive help system, explaining all commands, mappings and options
 
 section:Contact[contact]
 

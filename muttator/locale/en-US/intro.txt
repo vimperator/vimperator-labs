@@ -79,10 +79,14 @@ section:Features[features]
 * Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m],
   [m]gg[m], [m]G[m], [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
 * Ex-commands ([c]:quit[c], [c]:goto Inbox[c], ...)
-* Tab completion available for all commands with support for 'longest' matching when set in 'wildmode'
+* Tab completion available for all commands with support for "longest" matching
+  when set in 'wildmode'
 * Hit-a-hint like navigation of links (start with [m]f[m] to follow a link)
-* Minimal GUI (easily hide useless menubar and toolbar with [c]:set guioptions=f[c])
-* Ability to [c]:source[c] javascript files, and to use a [a]~/.muttatorrc[a] file
+* Minimal GUI (easily hide useless menubar and toolbar with
+  [c]:set guioptions=f[c])
+* Ability to [c]:source[c] JavaScript files, and to use a [a]~/.muttatorrc[a]
+  file with syntax highlighting if you install
+  http://vimperator.org/trac/ticket/328[muttator.vim]
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 messages)
 * Beep on errors
 * [c]:map[c] support (and feedkeys() for script writers)

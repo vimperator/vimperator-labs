@@ -1,4 +1,4 @@
-heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands.[]
+heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands[]
 
 section:Key{nbsp}mapping[key-mapping,mapping,map,macro]
 
