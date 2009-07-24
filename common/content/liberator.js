@@ -502,7 +502,7 @@ const liberator = (function () //{{{
             {
                 let extension = liberator.getExtension(args[0]);
                 if (!extension || !extension.options)
-                    return void liberator.extension("E474: Invalid argument");
+                    return void liberator.echoerr("E474: Invalid argument");
                 if (args.bang)
                     window.openDialog(extension.options, "_blank", "chrome");
                 else
