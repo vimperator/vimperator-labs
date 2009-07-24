@@ -325,7 +325,7 @@ section:Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
 ||'cdpath'|| List of directories searched when executing [c]:cd[c] +
-||'complete'|| Items which are completed at the [c]:[tab]open[c] prompt +
+||'complete'|| Items which are completed at the [c]:open[c] prompts +
 ||'defsearch'|| Set the default search engine +
 ||'editor'|| Set the external text editor +
 ||'encoding'|| Changes the character encoding of the current buffer +
@@ -357,7 +357,7 @@ section:Options[option-index]
 ||'newtab'|| Define which commands should output in a new tab by default +
 ||'nextpattern'|| Patterns to use when guessing the \'next' page in a document sequence +
 ||'online'|| Set the \'work offline' option +
-||'pageinfo'|| Desired info on [c]:pa[geinfo][c] +
+||'pageinfo'|| Desired info in the [c]:pageinfo[c] output +
 ||'popups'|| Where to show requested popup windows +
 ||'previouspattern'|| Patterns to use when guessing the \'previous' page in a document sequence +
 ||'repeat'|| Set the playback repeat mode +

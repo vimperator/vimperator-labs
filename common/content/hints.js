@@ -803,9 +803,9 @@ function Hints() //{{{
         "number", 0,
         {
             completer: function () [
-                ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on [m]<Return>[m]."],
-                ["1", "Follow the selected hint on [m]<Return>[m]."],
-                ["2", "Follow the selected hint on [m]<Return>[m] only it's been [m]<Tab>[m]-selected."]
+                ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on <Return>."],
+                ["1", "Follow the selected hint on <Return>."],
+                ["2", "Follow the selected hint on <Return> only it's been <Tab>-selected."]
             ],
             validator: Option.validateCompleter
         });

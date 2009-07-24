@@ -769,7 +769,7 @@ function CommandLine() //{{{
          });
 
     options.add(["complete", "cpt"],
-        "Items which are completed at the :[tab]open prompt",
+        "Items which are completed at the :open prompts",
         "charlist", "slf",
         {
             completer: function (context) [k for each (k in completion.urlCompleters)],

@@ -223,7 +223,7 @@ ____
 |\'cpt'| |\'complete'|
 ||'complete' 'cpt'|| charlist (default: slf)
 ____
-Items which are completed at the [c]:[tab]open[c] prompt. Available items:
+Items which are completed at the [c]:open[c] prompts. Available items:
 
 `---`--------------------------------------------------------------------------------
 *s* Search engines and keyword URLs
@@ -586,7 +586,7 @@ ____
 ||'pageinfo' 'pa'||
 charlist (default: gfm)
 ____
-Desired info on [c]:pa[geinfo][c]. Available items:
+Desired info in the [c]:pageinfo[c] output. Available items:
 
 .--------`----------------
 *g*      General info

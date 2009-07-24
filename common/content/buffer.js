@@ -156,7 +156,7 @@ function Buffer() //{{{
         "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
     options.add(["pageinfo", "pa"],
-        "Desired info on :pa[geinfo]",
+        "Desired info in the :pageinfo output",
         "charlist", "gfm",
         {
             completer: function (context) [[k, v[1]] for ([k, v] in Iterator(pageInfo))],
