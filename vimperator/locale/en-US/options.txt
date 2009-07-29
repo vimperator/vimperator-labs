@@ -372,6 +372,8 @@ Show or hide certain GUI elements like the menu or toolbar. Supported characters
 ----------------
 
 You can also hide the tab bar with [c]:set showtabline=0[c].
+
+Note: scrollbar changes require a page reload to take effect.
 ____
 
 
