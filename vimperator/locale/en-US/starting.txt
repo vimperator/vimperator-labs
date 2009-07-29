@@ -50,7 +50,7 @@ further locations are tried.
   a. |$VIMPERATOR_INIT|
      _$VIMPERATOR_INIT_ -- May contain a single Ex command (e.g.,
                            "[c]:source {file}[c]").
-  b. _\~/_vimperatorrc_ -- Windows only. If this file exists, its contents
+  b. _\~/\_vimperatorrc_ -- Windows only. If this file exists, its contents
 	are executed and _$MY_VIMPERATORRC_ set to its path.
   c. _\~/.vimperatorrc_ -- If this file exists, its contents are executed.
 
