@@ -1491,7 +1491,20 @@ const liberator = (function () //{{{
             // convert the string to an array of converted URLs
             // -> see util.stringToURLArray for more details
             if (typeof urls == "string")
+            {
+                // rather switch to the tab instead of opening a new url in case of "12: Tab Title" like "urls"
+                if (liberator.has("tabs"))
+                {
+                    let matches = urls.match(/^(\d+):/);
+                    if (matches)
+                    {
+                        tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
+                        return;
+                    }
+                }
+
                 urls = util.stringToURLArray(urls);
+            }
 
             if (urls.length > 20 && !force)
             {

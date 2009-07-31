@@ -770,7 +770,7 @@ function CommandLine() //{{{
 
     options.add(["complete", "cpt"],
         "Items which are completed at the :open prompts",
-        "charlist", "slf",
+        "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
         {
             completer: function (context) [k for each (k in completion.urlCompleters)],
             validator: Option.validateCompleter

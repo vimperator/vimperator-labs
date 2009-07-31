@@ -59,6 +59,12 @@ tag "linux" and which contain "torvalds". Note that -tags support is only
 available for tab completion, not for the actual command.
 The items which are completed on [m]<Tab>[m] are specified in the 'complete'
 option.
+
+Sometimes, you might not be aware if you already have a certain page loaded in
+some background tab or not. Therefore you can just type [c]:open facebook<Tab>[c]
+and switch to it if Facebook is already open, or otherwise open it (if you
+have Facebook in your bookmarks or history cache). This behavior can be turned
+off by removing "t" from your 'complete' option.
 ________________________________________________________________________________
 
 

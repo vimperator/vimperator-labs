@@ -34,6 +34,7 @@ const config = { //{{{
     /*** optional options, there are checked for existence and a fallback provided  ***/
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "tabs_undo", "windows"],
     defaults: {
+        complete: "stlf",
         guioptions: "rb",
         showtabline: 2,
         titlestring: "Vimperator"

@@ -1,5 +1,6 @@
 2009-XX-XX:
     * version 2.2a1pre
+    * IMPORTANT: the 'complete' option's default has changed (again) to "stlf"
     * IMPORTANT: Map.flags has been replaced with individual properties.
       Mappings defined in plugins with mappings.add will need to be updated.
 ...................................
@@ -15,7 +16,10 @@
 ...................................
     * IMPORTANT: shifted key notation now matches Vim's behaviour. E.g. <C-a>
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
+      (this might change again, as this is REALLY inconsistent, and i don't
+       know if I like copying bugs)
 
+    * new "t" option for 'complete' to also switch to open tabs with :open
     * add [c]:toolbaropen[c], [c]:toolbarclose[c], and [c]:toolbartoggle[c]
     * make [c]:open[c] behavior match that of [c]:tabopen[c] and [c]:winopen[c]
       when no argument is specified

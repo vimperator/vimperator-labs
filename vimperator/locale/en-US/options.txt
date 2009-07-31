@@ -221,7 +221,7 @@ ____
 
 
 |\'cpt'| |\'complete'|
-||'complete' 'cpt'|| charlist (default: slf)
+||'complete' 'cpt'|| charlist (default: stlf)
 ____
 Items which are completed at the [c]:open[c] prompts. Available items:
 
@@ -231,7 +231,8 @@ Items which are completed at the [c]:open[c] prompts. Available items:
 *l* Firefox location bar entries (bookmarks and history sorted in an intelligent way)
 *b* Bookmarks
 *h* History
-*S* Suggest engines
+*S* Search engine suggestions
+*t* Open tabs
 -------------------------------------------------------------------------------------
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
