@@ -373,37 +373,20 @@ CompletionContext.prototype = {
     {
         this.hasItems = true;
         this._generate = arg;
-        //**/ liberator.dump(this.name + ": set generate()");
         if (this.background && this.regenerate)
         {
-            //**/ this.__i = (this.__i || 0) + 1;
-            //**/ let self = this;
-            //**/ function dump(msg) liberator.callInMainThread(function () liberator.dump(self.name + ":" + self.__i + ": " + msg));
-            //**/ dump("set generate() regenerating");
-
             let lock = {};
             this.cache.backgroundLock = lock;
             this.incomplete = true;
             let thread = this.getCache("backgroundThread", liberator.newThread);
-            //**/ dump(thread);
             liberator.callAsync(thread, this, function () {
-                //**/ dump("In async");
                 if (this.cache.backgroundLock != lock)
-                {
-                    //**/ dump("Lock !ok");
                     return;
-                }
                 let items = this.generate();
-                //**/ dump("Generated");
                 if (this.cache.backgroundLock != lock)
-                {
-                    //**/ dump("Lock !ok");
                     return;
-                }
                 this.incomplete = false;
-                //**/ dump("completions=");
                 this.completions = items;
-                //**/ dump("completions==");
             });
         }
     },
@@ -1124,11 +1107,12 @@ function Completion() //{{{
                         //  Constants are unsorted, and appear before other non-null strings.
                         //  Other strings are sorted in the default manner.
                         let compare = context.compare;
+                        function isnan(item) item != '' && isNaN(item);
                         context.compare = function (a, b)
                         {
-                            if (!isNaN(a.item.key) && !isNaN(b.item.key))
+                            if (!isnan(a.item.key) && !isnan(b.item.key))
                                 return a.item.key - b.item.key;
-                            return isNaN(b.item.key) - isNaN(a.item.key) || compare(a.item.key, b.item.key);
+                            return isnan(b.item.key) - isnan(a.item.key) || compare(a, b);
                         }
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));

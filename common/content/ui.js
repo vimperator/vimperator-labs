@@ -1743,6 +1743,8 @@ function ItemList(id) //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
+    const WAITING_MESSAGE = "Generating results...";
+
     var completionElements = [];
 
     var iframe = document.getElementById(id);
@@ -1817,7 +1819,7 @@ function ItemList(id) //{{{
                     <div key="message" highlight="CompMsg"/>
                     <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
-                    <div key="waiting" highlight="CompMsg">Waiting...</div>
+                    <div key="waiting" highlight="CompMsg">{WAITING_MESSAGE}</div>
                     <div key="down" highlight="CompMore"/>
                 </div>, context.cache.nodes);
             divNodes.completions.appendChild(context.cache.nodes.root);
@@ -1848,13 +1850,13 @@ function ItemList(id) //{{{
         function getRows(context)
         {
             function fix(n) util.Math.constrain(n, 0, len);
-            end -= !!context.message + context.incomplete;
             let len = context.items.length;
             let start = off;
+            end -= !!context.message + context.incomplete;
             off += len;
-            let res = [fix(offset - start), fix(end - start)];
-            res[2] = (context.incomplete && res[1] >= offset && off - 1 < end);
-            return res;
+
+            let s = fix(offset - start), e = fix(end - start);
+            return [s, e, context.incomplete && e >= offset && off - 1 < end];
         }
 
         items.contextList.forEach(function fill_eachContext(context) {
