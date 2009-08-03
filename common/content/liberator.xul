@@ -95,8 +95,8 @@ the terms of any one of the MPL, the GPL or the LGPL.
             </hbox>
         </stack>
 
-        <vbox class="liberator-container" hidden="false" collapsed="false">
-            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
+        <vbox class="liberator-container" hidden="false" collapsed="false" liberator:highlight="CmdLine">
+            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true" liberator:highlight="Normal"
                 onkeypress="liberator.modules.commandline.onMultilineInputEvent(event);"
                 oninput="liberator.modules.commandline.onMultilineInputEvent(event);"
                 onblur="liberator.modules.commandline.onMultilineInputEvent(event);"/>
