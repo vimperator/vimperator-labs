@@ -246,8 +246,8 @@ ____
 ||'defsearch' 'ds'|| string (default: "google")
 ____
 Sets the default search engine. The default search engine name is used in the
-[c]:[tab]open [arg][c] command if [a][arg][a] neither looks like a URL or like
-a specified search engine/keyword.
+[c]:open [arg][c] command if [a][arg][a] neither looks like a URL nor like a
+specified search engine/keyword.
 
 This means that if you set 'defsearch' to "youtube", then [c]:open arnold
 schwarzenegger[c] will be exactly the same as [c]:open youtube arnold
