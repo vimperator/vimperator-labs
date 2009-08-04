@@ -302,7 +302,7 @@ const liberator = (function () //{{{
     registerObserver("load_mappings", function () {
 
         mappings.add(modes.all, ["<F1>"],
-            "Open help window",
+            "Open the help page",
             function () { liberator.help(); });
 
         if (liberator.has("session"))
@@ -561,21 +561,34 @@ const liberator = (function () //{{{
                 bang: true
             });
 
-        commands.add(["h[elp]"],
-            "Display help",
-            function (args)
+        [
             {
-                if (args.bang)
-                    return void liberator.echoerr("E478: Don't panic!");
-
-                liberator.help(args.literalArg);
+                name: "h[elp]",
+                description: "Open the help page"
             },
             {
-                argCount: "?",
-                bang: true,
-                completer: function (context) completion.help(context),
-                literal: 0
-            });
+                name: "helpa[ll]",
+                description: "Open the single unchunked help page"
+            }
+        ].forEach(function (command) {
+            let unchunked = command.name == "helpa[ll]";
+
+            commands.add([command.name],
+                command.description,
+                function (args)
+                {
+                    if (args.bang)
+                        return void liberator.echoerr("E478: Don't panic!");
+
+                    liberator.help(args.literalArg, unchunked);
+                },
+                {
+                    argCount: "?",
+                    bang: true,
+                    completer: function (context) completion.help(context, unchunked),
+                    literal: 0
+                });
+        });
 
         commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
@@ -823,12 +836,14 @@ const liberator = (function () //{{{
             context.completions = liberator.extensions;
         };
 
-        completion.help = function help(context) {
+        completion.help = function help(context, unchunked) {
             context.title = ["Help"];
             context.anchored = false;
+            context.key = unchunked;
             context.generate = function ()
             {
-                let res = config.helpFiles.map(function (file) {
+                let files = unchunked ? ["all.html"] : config.helpFiles;
+                let res = files.map(function (file) {
                     let resp = util.httpGet("chrome://liberator/locale/" + file);
                     if (!resp)
                         return [];
@@ -1335,11 +1350,13 @@ const liberator = (function () //{{{
          * Returns the URL of the specified help <b>topic</b> if it exists.
          *
          * @param {string} topic The help topic to lookup.
+         * @param {boolean} unchunked Whether to search the unchunked help page.
          * @returns {string}
          */
-        findHelp: function (topic)
+        findHelp: function (topic, unchunked)
         {
-            let items = completion.runCompleter("help", topic);
+            unchunked = !!unchunked;
+            let items = completion.runCompleter("help", topic, null, unchunked);
             let partialMatch = null;
 
             function format(item) item[1] + "#" + encodeURIComponent(item[0]);
@@ -1363,14 +1380,15 @@ const liberator = (function () //{{{
          * exists.
          *
          * @param {string} topic The help topic to open.
+         * @param {boolean} unchunked Whether to use the unchunked help page.
          * @returns {string}
          */
-        help: function (topic)
+        help: function (topic, unchunked)
         {
             let where = (options["newtab"] && options.get("newtab").has("all", "help"))
                             ? liberator.NEW_TAB : liberator.CURRENT_TAB;
 
-            if (!topic)
+            if (!topic && !unchunked)
             {
                 let helpFile = options["helpfile"];
 
@@ -1381,7 +1399,7 @@ const liberator = (function () //{{{
                 return;
             }
 
-            let page = this.findHelp(topic);
+            let page = this.findHelp(topic, unchunked);
             if (page == null)
                 return void liberator.echoerr("E149: Sorry, no help for " + topic);
 
@@ -1915,14 +1933,15 @@ window.addEventListener("liberatorHelpLink", function (event) {
             tag = tag.replace(/\[.*?\]/g, "").replace(/!$/, "");
 
         if (tag)
-            var page = liberator.findHelp(tag);
-
-        if (page)
         {
-            elem.href = "chrome://liberator/locale/" + page;
-            if (buffer.URL.replace(/#.*/, "") == elem.href.replace(/#.*/, "")) // XXX
-                setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
+            let page = liberator.findHelp(tag, /\/all.html($|#)/.test(elem.ownerDocument.location.href));
+            if (page)
+                elem.href = "chrome://liberator/locale/" + page;
         }
+
+        // TODO: use HashChange event in Gecko 1.9.2
+        if (elem.href)
+            setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
     }, true, true);
 
 // called when the chrome is fully loaded and before the main window is shown

@@ -232,7 +232,8 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:forward[c]|| Go forward in the browser history +
 ||[c]:frameonly[c]|| Show only the current frame's page +
 ||[c]:hardcopy[c]|| Print current document +
-||[c]:help[c]|| Display help +
+||[c]:help[c]|| Open the help page +
+||[c]:helpall[c]|| Open the single unchunked help page +
 ||[c]:highlight[c]|| Style Xulmus +
 ||[c]:history[c]|| Show recently visited URLs +
 ||[c]:iabbrev[c]|| Abbreviate a key sequence in Insert mode +

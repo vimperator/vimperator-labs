@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         Muttator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Jul 22
+" Last Change:      2009 Aug 3
 
 " TODO: make this muttator specific - shared liberator config?
 
@@ -25,8 +25,8 @@ syn keyword muttatorCommand ab[breviate] ab[clear] addo[ns] addr[essbook] bN[ext
     \ colo[rscheme] com[mand] comc[lear] con[tact] contacts copy[to] cu[nmap] cuna[bbrev] delc[ommand] delm[arks] delmac[ros]
     \ dels[tyle] dia[log] do[autocmd] doautoa[ll] ec[ho] echoe[rr] echom[sg] em[enu] empty[trash] exe[cute] exta[dd] extd[isable]
     \ extde[lete] exte[nable] extens[ions] exto[ptions] extp[references] exu[sage] fini[sh] frameo[nly] get[messages] go[to]
-    \ h[elp] ha[rdcopy] hi[ghlight] ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap] iuna[bbrev] javas[cript] js let
-    \ loadplugins lpl m[ail] ma[rk] macros map mapc[lear] marks mes[sages] messc[lear] mkm[uttatorrc] mm[ap] mmapc[lear]
+    \ h[elp] helpa[ll] ha[rdcopy] hi[ghlight] ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap] iuna[bbrev] javas[cript]
+    \ js let loadplugins lpl m[ail] ma[rk] macros map mapc[lear] marks mes[sages] messc[lear] mkm[uttatorrc] mm[ap] mmapc[lear]
     \ mno[remap] move[to] mu[nmap] nm[ap] nmapc[lear] nno[remap] no[remap] norm[al] nu[nmap] optionu[sage] pa[geinfo] pagest[yle]
     \ pas pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] re[load] res[tart] run runt[ime] sav[eas] scrip[tnames] se[t]
     \ setg[lobal] setl[ocal] sil[ent] so[urce] st[op] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabfir[st]

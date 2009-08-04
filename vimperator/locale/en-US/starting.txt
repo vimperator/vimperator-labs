@@ -27,9 +27,8 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 The file {rcfile} is used for user initialization commands. If {rcfile} is
 "NORC" then no startup initialization is performed except for the loading of
-plugins, i.e. steps 1. and 2. in
-help:initialization[starting.html#Initialization] are skipped. If {rcfile} is
-"NONE" then plugin loading is also skipped.
+plugins, i.e. steps 1. and 2. in [j]initialization[j] are skipped. If {rcfile}
+is "NONE" then plugin loading is also skipped.
 ________________________________________________________________________________
 
 

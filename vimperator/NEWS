@@ -33,7 +33,7 @@
       *-liberator* option
     * add [m];i[m] and [m];I[m] for opening image location (in new tab)
     * add [j]all.html[j] to show all help sections in a single page - available via
-      [c]:help all[c]
+      [c]:helpall[c]
     * add [m];c[m] extended hint mode - open the context menu
     * add [m]@:[m] mapping - repeat the last Ex command
     * add [m]\[m] mapping - toggle between rendered and source view

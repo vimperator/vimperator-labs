@@ -10,7 +10,7 @@ _make doc_. Please refer to the
 http://www.methods.co.nz/asciidoc/userguide.html[asciidoc documentation] above
 for details. Usually you can just write text as is, and mostly it will be
 interpreted correctly. The only difficult part is to write special sections
-like for help::help[various.html#online-help].
+like for help::help[various.html,online-help].
 
 ----------------------------------------------------------------------------------
 |<F1>| |:help| |:h| |help|
@@ -64,7 +64,7 @@ Vimperator documentation:
 
 - *$$section:Writing{nbsp}documentation[writing-docs,documentation]$$* Creates
   a new section like _Writing Documentation_ in this help file with 2 tags.
-- *$$help:developer{nbsp}information[developer.html#documentation]$$* creates
+- *$$help:developer{nbsp}information[developer.html,documentation]$$* creates
   a link with text _developer information_ to the tag _documentation_ in
   the file _developer.html_.
 
@@ -72,7 +72,7 @@ Vimperator documentation:
 If you don't know in which file/section you should put some documentation, ask
 on the mailing list or on #vimperator. Usually help should be grouped together
 in logically connected subject areas like
-help:opening{nbsp}web{nbsp}pages[browsing.html#opening].
+help:opening{nbsp}web{nbsp}pages[browsing.html,opening].
 
 section:Generating{nbsp}documentation[generating-docs]
 

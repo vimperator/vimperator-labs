@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Jul 22
+" Last Change:      2009 Aug 3
 
 " TODO: make this vimperator specific - shared liberator config?
 
@@ -25,16 +25,16 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] b
     \ cno[remap] colo[rscheme] com[mand] comc[lear] cu[nmap] cuna[bbrev] delbm[arks] delc[ommand] delm[arks] delmac[ros]
     \ delqm[arks] dels[tyle] dia[log] dl do[autocmd] doautoa[ll] downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute]
     \ exta[dd] extd[isable] extde[lete] exte[nable] extens[ions] exto[ptions] extp[references] exu[sage] files fini[sh] fo[rward]
-    \ frameo[nly] fw h[elp] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap]
-    \ iuna[bbrev] javas[cript] js ju[mps] let loadplugins lpl ls ma[rk] macros map mapc[lear] marks mes[sages] messc[lear]
-    \ mkv[imperatorrc] nm[ap] nmapc[lear] nno[remap] no[remap] noh[lsearch] norm[al] nu[nmap] o[pen] optionu[sage] pa[geinfo]
-    \ pagest[yle] pas pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load]
-    \ reloada[ll] res[tart] run runt[ime] sav[eas] sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal] sideb[ar]
-    \ sil[ent] so[urce] st[op] stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach] tabdu[plicate]
-    \ tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tbh[ide] tbs[how]
-    \ tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et]
-    \ unm[ap] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose] win[open] winc[lose]
-    \ wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
+    \ frameo[nly] fw h[elp] helpa[ll] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap]
+    \ iu[nmap] iuna[bbrev] javas[cript] js ju[mps] let loadplugins lpl ls ma[rk] macros map mapc[lear] marks mes[sages]
+    \ messc[lear] mkv[imperatorrc] nm[ap] nmapc[lear] nno[remap] no[remap] noh[lsearch] norm[al] nu[nmap] o[pen] optionu[sage]
+    \ pa[geinfo] pagest[yle] pas pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw]
+    \ re[load] reloada[ll] res[tart] run runt[ime] sav[eas] sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal]
+    \ sideb[ar] sil[ent] so[urce] st[op] stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach]
+    \ tabdu[plicate] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs
+    \ tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate]
+    \ undoa[ll] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose] win[open]
+    \ winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained
 
 syn match vimperatorCommand "!" contained

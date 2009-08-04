@@ -125,7 +125,7 @@ const config = { //{{{
         "pattern.html", "tabs.html", "hints.html", "map.html", "eval.html",
         "marks.html", "repeat.html", "autocommands.html", "print.html",
         "gui.html", "styling.html", "message.html", "developer.html",
-        "various.html", "version.html", "index.html", "all.html"
+        "various.html", "version.html", "index.html"
     ],
 
     get ignoreKeys() {

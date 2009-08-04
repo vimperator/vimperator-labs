@@ -451,7 +451,7 @@ ____
 |\'noprivate'| |\'private'|
 ||'private'|| boolean (default: off)
 ____
-Set the 'private browsing' option. In private browsing mode history, cache
+Set the "private browsing" option. In private browsing mode history, cache
 files, cookies, form data, passwords, and download list entries are available
 only for the duration of the private browsing session and deleted when
 returning to normal browsing mode.
