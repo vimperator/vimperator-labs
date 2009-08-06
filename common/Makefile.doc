@@ -58,9 +58,9 @@ heading:Version{nbsp}information[version-information]' \
 		-e '/^[0-9]/d' \
 		-e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section:Version{nbsp}\1[version-\1]\
 /' ../../NEWS | \
-		${ASCIIDOC} -f asciidoc.conf -a doctitle=version.html -o version.html -
+		${ASCIIDOC} -f $(BASE)/asciidoc.conf -a doctitle=version.html -o version.html -
 
 $(FILES): %.html: %.txt $(BASE)/Makefile.doc $(DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
-	$(ASCIIDOC) --unsafe -a linkcss -a quirks! -a lang=$(DOCLANG) -a doctitle="$$(basename $@)" -o $@ $<
+	$(ASCIIDOC) -f $(BASE)/asciidoc.conf -a configname=$(NAME) --unsafe -a linkcss -a quirks! -a lang=$(DOCLANG) -a doctitle="$$(basename $@)" -o $@ $<
 

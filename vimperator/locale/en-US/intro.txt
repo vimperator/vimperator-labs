@@ -1,4 +1,4 @@
-LOGO
+logo:[]
 
 +++<div style="text-align: center;">+++
 *First there was a Navigator, then there was an Explorer.
@@ -6,7 +6,7 @@ Later it was time for a Konqueror. Now it's time for an Imperator, the
 VIMperator :)*
 +++</div>+++
 
-section::Introduction[intro]
+heading::Introduction[intro]
 
 http://vimperator.org[Vimperator] is a free browser add-on for Firefox,
 which makes it look and behave like the http://www.vim.org[Vim]
