@@ -1,6 +1,6 @@
-heading:Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands[]
+heading::Key{nbsp}mappings,{nbsp}abbreviations,{nbsp}and{nbsp}user-defined{nbsp}commands[]
 
-section:Key{nbsp}mapping[key-mapping,mapping,map,macro]
+section::Key{nbsp}mapping[key-mapping,mapping,map,macro]
 
 The key mapping commands can be used to either redefine the standard key
 bindings or define new ones. A mapping consists of a key, or [j]key-sequence[j],
@@ -21,7 +21,7 @@ Keys can be mapped in four distinct modes:
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
 
-subsection:Map{nbsp}commands[:map-commands]
+subsection::Map{nbsp}commands[:map-commands]
 
 |:map|
 ||:map {lhs} {rhs}|| +
@@ -115,7 +115,7 @@ List all mappings starting with {lhs} for the applicable mode(s).
 ________________________________________________________________________________
 
 
-subsection:Special{nbsp}arguments{nbsp}[:map-arguments]
+subsection::Special{nbsp}arguments{nbsp}[:map-arguments]
 
 |:map-<silent>| +
 
@@ -134,13 +134,13 @@ Below is an overview of which modes each map command applies to:
 :imap  :inoremap  :iunmap  :imapclear - Insert mode
 :cmap  :cnoremap  :cunmap  :cmapclear - Command-line mode
 
-subsection:Key{nbsp}sequences[:<>,key-sequence]
+subsection::Key{nbsp}sequences[:&lt;>,key-sequence]
 
 For most keys, the key-sequence is the same as the character you see when you
 type that key, however there are some exceptions which allow for a much larger
 number of keys to be used in mappings.
 
- * *<lt>*, *\<*, *<Space>*, *\ * allow a literal *<* or space character.
+ * *<lt>*, *\<*, *<Space>*, *$$\ $$* allow a literal *<* or space character.
  * *\'*, *\"* and *\\* must be used to avoid escaping issues when mapping a quote or backslash.
  * *<Left>* *<Right>* *<Up>* *<Down>* *<PageUp>* *<PageDown>* *<Esc>* *<CR>* (for carriage return/enter)
  * *<CapsLock>* *<NumLock>* *<Ins>* *<Del>* *<Tab>* *<BS>* (for a backspace)
@@ -173,7 +173,7 @@ the situation:
  * *<C-A-J>*: exactly the same as above
  * *<C-A-S-j>*: press J while holding control and alt
 
-subsection:Special{nbsp}characters[:map-special-chars]
+subsection::Special{nbsp}characters[:map-special-chars]
 
 |<Nop>| +
 ||<Nop>||
@@ -206,7 +206,7 @@ it works like +
 \{nbsp}[c]:map ,h :echo "Hello"<CR>[c]
 ________________________________________________________________________________
 
-section:Abbreviations[abbreviations]
+section::Abbreviations[abbreviations]
 
 Vimperator can automatically replace words identified as abbreviations,
 which may be used to save typing or to correct commonly misspelled
@@ -303,7 +303,7 @@ ________________________________________________________________________________
 Remove all abbreviations for Insert mode.
 ________________________________________________________________________________
 
-section:User-defined{nbsp}commands[user-commands]
+section::User-defined{nbsp}commands[user-commands]
 
 |:com| |:command|
 ||:com[mand]|| +
@@ -444,7 +444,7 @@ ________________________________________________________________________________
 Delete the user-defined command {cmd}.
 ________________________________________________________________________________
 
-section:Examples[command-examples]
+section::Examples[command-examples]
 
 Add a :Google command to search via google:
 

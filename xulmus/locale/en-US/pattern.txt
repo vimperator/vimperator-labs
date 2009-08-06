@@ -1,4 +1,4 @@
-heading:Text{nbsp}search{nbsp}commands[text-search-commands]
+heading::Text{nbsp}search{nbsp}commands[text-search-commands]
 
 Xulmus provides a Vim-like interface to Songbird's standard text search
 functionality. There is no support for using regular expressions in search
@@ -44,15 +44,15 @@ opposite direction.
 ________________________________________________________________________________
 
 
-|\*| +
-||\*||
+|$$*$$| +
+||$$*$$||
 ________________________________________________________________________________
 Search forward for the next word under the cursor.
 ________________________________________________________________________________
 
 
-|\#| +
-||\#||
+|$$#$$| +
+||$$#$$||
 ________________________________________________________________________________
 Search backward for the previous word under the cursor.
 ________________________________________________________________________________

@@ -1,4 +1,4 @@
-heading:Options[options]
+heading::Options[options]
 
 Vimperator has a number of internal variables and switches which can be set to
 achieve special effects. These options come in 5 forms:
@@ -10,7 +10,7 @@ achieve special effects. These options come in 5 forms:
 *stringlist* a comma-separated list of strings
 -------------------------------------------------------
 
-section:Setting{nbsp}options[set-option,E764]
+section::Setting{nbsp}options[set-option,E764]
 
 |:set| |:se| +
 ||:se[t]||
@@ -153,7 +153,7 @@ Environment variables are expanded for path options like 'cdpath' and
 'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
 character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
 
-section:Setting{nbsp}Firefox{nbsp}options[firefox-options,preferences]
+section::Setting{nbsp}Firefox{nbsp}options[firefox-options,preferences]
 
 Firefox options can be viewed and set with the following commands:
 
@@ -193,7 +193,7 @@ The following preferences are set:
 
 // TODO: others?
 
-section:List{nbsp}of{nbsp}options[list-options]
+section::List{nbsp}of{nbsp}options[list-options]
 
 |\'act'| |\'activate'|
 ||'activate' 'act'|| stringlist (default: "homepage,quickmark,tabopen,paste")
@@ -636,16 +636,16 @@ ____
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
 ____
-(default: _$VIMPERATOR_RUNTIME_ or Unix, Mac: "\~/.vimperator", Windows: "\~/vimperator")
+(default: _$VIMPERATOR_RUNTIME_ or $$Unix, Mac: "~/.vimperator", Windows: "~/vimperator"$$)
 
 List of directories searched for runtime files: +
 colors/ +
 macros/ +
 plugin/ +
 
-Example: [c]:set runtimepath=\~/myvimperator,\~/.vimperator[c] +
-This will search for plugins in both "\~/myvimperator/plugin" and
-"\~/.vimperator/plugin"
+Example: [c]:set runtimepath=$$~/myvimperator,~/.vimperator$$[c] +
+This will search for plugins in both $$"~/myvimperator/plugin" and
+"~/.vimperator/plugin"$$
 
 On startup, if the environment variable _$VIMPERATOR_RUNTIME_ does not
 exist, Vimperator will set it to match this value.
@@ -785,8 +785,8 @@ ____
 Use visual bell instead of beeping on errors. The visual bell style is
 controlled by [c]:hi Bell[c].
 
-To disable both the audible and visual bells use [c]:set visualbell[c] and
-[c]:hi Bell display: none;[c]
+To disable both the audible and visual bells use [c]:set visualbell[c]
+and [c]:hi Bell display: none;[c]
 ____
 
 

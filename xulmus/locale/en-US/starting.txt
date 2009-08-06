@@ -1,10 +1,10 @@
-heading:Starting{nbsp}Xulmus[starting]
+heading::Starting{nbsp}Xulmus[starting]
 
 |startup-options| +
 
 Command-line options can be passed to Xulmus via the -liberator Firefox
 option. These are passed as single string argument.
-E.g firefox -liberator "\++cmd=\'set exrc' +u=\'tempRcFile' \++noplugin"
+E.g firefox -liberator "$$++cmd='set exrc' +u='tempRcFile' ++noplugin$$"
 
 |+c| +
 ||+c={command}||
@@ -14,8 +14,8 @@ Execute a single Ex command after all initialization has been performed. See
 ________________________________________________________________________________
 
 
-|\++cmd| +
-||\++cmd={command}||
+|$$++cmd$$| +
+||$$++cmd={command}$$||
 ________________________________________________________________________________
 Execute a single Ex command before any initialization has been performed. See
 [j]initialization[j].
@@ -32,13 +32,13 @@ is "NONE" then plugin loading is also skipped.
 ________________________________________________________________________________
 
 
-|\++noplugin| +
-||\++noplugin||
+|$$++noplugin$$| +
+||$$++noplugin$$||
 ________________________________________________________________________________
 Prevents plugin scripts from being loaded at startup. See 'loadplugins'.
 ________________________________________________________________________________
 
-section:Initialization[initialization,startup]
+section::Initialization[initialization,startup]
 
 At startup, Xulmus completes the following tasks in order.
 
@@ -49,9 +49,9 @@ further locations are tried.
   a. |$XULMUS_INIT|
      _$XULMUS_INIT_ -- May contain a single Ex command (e.g.,
                            "[c]:source {file}[c]").
-  b. [a]\~/_xulmusrc[a] -- Windows only. If this file exists, its contents
+  b. _$$~/_xulmusrc$$_ -- Windows only. If this file exists, its contents
 	are executed and _$MY_XULMUSRC_ set to its path.
-  c. [a]\~/.xulmusrc[a] -- If this file exists, its contents are executed.
+  c. _$$~/.xulmusrc$$_ -- If this file exists, its contents are executed.
 
 2. If 'exrc' is set and the +u command-line option was not specified, then any
 RC file in the current directory is also sourced.
@@ -63,7 +63,7 @@ subdirectories) are sourced alphabetically. No plugins will be sourced
 if:
 
   * 'noloadplugins' is set.
-  * the \++noplugin command-line option was specified.
+  * the $$++noplugin$$ command-line option was specified.
   * the +u=NONE command-line option specified set.
 
 Any particular plugin will not be loaded if it has already been loaded (e.g.,
@@ -76,7 +76,7 @@ The user's ~ (i.e., "home") directory is determined as follows:
 _%USERPROFILE%_, and then _%HOMEDRIVE%%HOMEPATH%_. It uses the first one
 it finds.
 
-section:Saving{nbsp}settings[save-settings]
+section::Saving{nbsp}settings[save-settings]
 
 |:mkx| |:mkxulmusrc|
 ||:mkx[ulmusrc][!] [a][file][a]|| +
@@ -90,7 +90,7 @@ Warning: this differs from Vim's behavior which defaults to writing the file
 in the current directory.
 ________________________________________________________________________________
 
-section:Restarting[restarting]
+section::Restarting[restarting]
 
 |:res| |:restart| +
 ||:res[tart]||

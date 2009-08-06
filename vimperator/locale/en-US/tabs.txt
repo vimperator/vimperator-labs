@@ -1,10 +1,10 @@
-heading:Tabs[tabs]
+heading::Tabs[tabs]
 
 Tabs are used to be able to view many web pages at the same time. Each tab
 contains exactly one buffer -- multiple buffers per tab are not supported. As a
 result many buffer and tab commands are interchangeable.
 
-section:Listing{nbsp}tabs[listing-tabs]
+section::Listing{nbsp}tabs[listing-tabs]
 
 |B| |:tabs| |:ls| |:files| |:buffers|
 ||:buffers [a][filter][a]|| +
@@ -14,7 +14,7 @@ Show a list of buffers (=tabs) matching [a][filter][a]. Without [a][filter][a]
 list all tabs.
 ________________________________________________________________________________
 
-section:Opening{nbsp}tabs[opening-tabs]
+section::Opening{nbsp}tabs[opening-tabs]
 
 |:tab| +
 ||:tab {cmd}||
@@ -39,7 +39,7 @@ ________________________________________________________________________________
 //TODO: should the tab commands be moved back here?
 See [j]opening[j] for other ways to open new tabs.
 
-section:Changing{nbsp}tabs[changing-tabs]
+section::Changing{nbsp}tabs[changing-tabs]
 
 |gb| +
 ||[count]gb||
@@ -99,7 +99,7 @@ buffer, it is selected. With [!] the next buffer matching the argument is
 selected, even if it cannot be identified uniquely. Use [m]b[m] as a
 shortcut to open this prompt.
 
-If argument is [a]\#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
+If argument is [a]#[a], the alternate buffer will be selected (see [m]<C-^>[m]).
 
 If no argument is given the current buffer remains current.
 ________________________________________________________________________________
@@ -132,7 +132,7 @@ ________________________________________________________________________________
 Detach the current tab, and open it in its own window.
 ________________________________________________________________________________
 
-section:Reordering{nbsp}tabs[reordering-tabs]
+section::Reordering{nbsp}tabs[reordering-tabs]
 
 |:tabm| |:tabmove|
 ||:tabm[ove] [a][N][a]|| +
@@ -174,7 +174,7 @@ Switch to the previous tab or go [count] tabs back. Wraps around from the
 first tab to the last tab.
 ________________________________________________________________________________
 
-section:Closing{nbsp}tabs[closing-tabs]
+section::Closing{nbsp}tabs[closing-tabs]
 
 |d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
 ||:[count]bd[elete][!] [a][arg][a]|| +
@@ -213,7 +213,7 @@ after a browser restart.
 ________________________________________________________________________________
 
 
-section:Looping{nbsp}over{nbsp}tabs[looping-over-tabs]
+section::Looping{nbsp}over{nbsp}tabs[looping-over-tabs]
 
 |:tabd| |:tabdo| |:bufd| |:bufdo| +
 ||:tabd[o] {cmd}||

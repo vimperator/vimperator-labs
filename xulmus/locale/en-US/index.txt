@@ -1,9 +1,9 @@
-heading:Index[index]
+heading::Index[index]
 
 This file contains a list of all available commands, mappings and options.
 HEADER
 
-section:Player{nbsp}mode[player-index]
+section::Player{nbsp}mode[player-index]
 
 ||[m]x[m]|| Play the current track +
 ||[m]z[m]|| Play the previous track +
@@ -38,12 +38,12 @@ section:Player{nbsp}mode[player-index]
 ||<C-4>|| Rate the current track with 4 stars +
 ||<C-5>|| Rate the current track with 5 stars +
 
-section:Insert{nbsp}mode[insert-index]
+section::Insert{nbsp}mode[insert-index]
 
 ||[m]<C-i>[m]|| Launch the external editor +
 ||[m]<C-]>[m]|| Expand an Insert-mode abbreviation +
 
-section:Normal{nbsp}mode[normal-index]
+section::Normal{nbsp}mode[normal-index]
 
 ||[m]<C-^>[m]|| Select the alternate tab or the [count]th tab +
 ||[m]<C-a>[m]|| Increment last number in URL +
@@ -166,7 +166,7 @@ section:Normal{nbsp}mode[normal-index]
 ||[m]zr[m]|| Reduce text zoom of current web page by a larger amount +
 ||[m]zz[m]|| Set text zoom value of current web page +
 
-section:Command-line{nbsp}editing[ex-edit-index]
+section::Command-line{nbsp}editing[ex-edit-index]
 
 ||[m]<C-c>[m]|| Quit Command-line mode without executing +
 
@@ -178,7 +178,7 @@ section:Command-line{nbsp}editing[ex-edit-index]
 ||[m]<Tab>[m]|| Complete the word in front of the cursor according to the behavior specified in 'wildmode' +
 ||[m]<S-Tab>[m]|| Complete the previous full match when 'wildmode' contains "full" +
 
-section:Ex{nbsp}commands[ex-cmd-index,:index]
+section::Ex{nbsp}commands[ex-cmd-index,:index]
 
 ||[c]:![c]|| Run a command +
 ||[c]:abbreviate[c]|| Abbreviate a key sequence +
@@ -322,7 +322,7 @@ section:Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +
 
-section:Options[option-index]
+section::Options[option-index]
 
 ||'activate'|| Define when tabs are automatically activated +
 ||'cdpath'|| List of directories searched when executing [c]:cd[c] +

@@ -1,4 +1,4 @@
-heading:Command-line{nbsp}mode[Command-line-mode,Command-line,mode-cmdline]
+heading::Command-line{nbsp}mode[Command-line-mode,Command-line,mode-cmdline]
 
 Command-line mode is used to enter Ex commands ("[m]:[m]") and text search patterns
 ("[m]/[m]" and "[m]?[m]").
@@ -11,7 +11,7 @@ commands, which may require arguments.
 ________________________________________________________________________________
 
 
-section:Command-line{nbsp}editing[cmdline-editing]
+section::Command-line{nbsp}editing[cmdline-editing]
 
 |c_<C-c>| +
 ||<C-c>||
@@ -58,7 +58,7 @@ ________________________________________________________________________________
 Recall the next command line from the history list.
 ________________________________________________________________________________
 
-section:Command-line{nbsp}completion[cmdline-completion]
+section::Command-line{nbsp}completion[cmdline-completion]
 
 |c_<Tab>| +
 ||<Tab>||

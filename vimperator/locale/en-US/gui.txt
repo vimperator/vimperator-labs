@@ -1,11 +1,11 @@
-heading:Vimperator's{nbsp}GUI[gui]
+heading::Vimperator's{nbsp}GUI[gui]
 
 Although Vimperator offers the most frequently used Firefox functionality via
 Ex and Normal mode commands there may be times when directly accessing the GUI
 is required. There are commands for accessing the menu system, standard dialogs
 and the sidebar.
 
-section:Menus[menu]
+section::Menus[menu]
 
 |:emenu| +
 ||:emenu {menu}||
@@ -16,7 +16,7 @@ hierarchical path to the menu item with each submenu separated by a period.
 E.g. [c]:emenu File.Open File...[c]
 ________________________________________________________________________________
 
-section:Dialogs[dialogs]
+section::Dialogs[dialogs]
 
 |:addo| |:addons| +
 ||:addo[ns]||
@@ -72,7 +72,7 @@ Show progress of current downloads. Open the original Firefox download dialog
 in a new tab. Here, downloads can be paused, canceled and resumed.
 ________________________________________________________________________________
 
-section:Add-ons[extensions,add-ons]
+section::Add-ons[extensions,add-ons]
 
 |:exta| |:extadd| +
 ||:exta[dd] {file}||
@@ -123,7 +123,7 @@ Open the preferences dialog for an extension. If [!] is given, open a dialog,
 otherwise open a buffer. See also 'newtab'.
 ________________________________________________________________________________
 
-section:Sidebar[sidebar]
+section::Sidebar[sidebar]
 
 |:sbcl| |:sbclose| +
 ||:sbcl[ose]||
@@ -140,7 +140,7 @@ standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
 also available in the sidebar.
 ________________________________________________________________________________
 
-section:Toolbars[toolbar]
+section::Toolbars[toolbar]
 
 |:tbs| |:tbshow| |:toolbars| |:toolbarshow| +
 ||:toolbarshow {name}||

@@ -1,6 +1,6 @@
 LOGO
 
-section:Introduction[intro]
+section::Introduction[intro]
 
 http://vimperator.org/Xulmus[Xulmus] is a free media player add-on for
 Songbird, which combines the best features of the
@@ -35,7 +35,7 @@ Of course as a believer in free open source software, only make a donation
 if you really like Xulmus and the money doesn't hurt -- otherwise just use
 it, recommend it and like it :)
 
-section:Help{nbsp}topics[overview]
+section::Help{nbsp}topics[overview]
 
 //- help:Tutorial[tutorial.html]: A quick-start tutorial for new users.
 - help:Starting{nbsp}Xulmus[starting.html]: How Xulmus starts up, where it
@@ -76,7 +76,7 @@ section:Help{nbsp}topics[overview]
 You can also jump directly to the help of a specific command with [c]:help o[c]
 or [c]:help :set[c].
 
-section:Features[features]
+section::Features[features]
 
 // TODO: make Xulmus specific
 * Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m], [m]gg[m], [m]G[m],
@@ -101,7 +101,7 @@ section:Features[features]
 * Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to
   go there)
 * QuickMarks support (quickly go to previously marked web pages with
-  [m]go[m][a]\\{a-zA-Z0-9\\}[a])
+  [m]go[m][a]{a-zA-Z0-9}[a])
 * [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
 * Move the text cursor and select text with Vim keys and a Visual mode
@@ -110,7 +110,7 @@ section:Features[features]
 * AutoCommands to execute actions on certain events
 * A comprehensive help system, explaining all commands, mappings and options
 
-section:Contact[contact]
+section::Contact[contact]
 
 Please send comments/bug reports/patches to the mailing list, where we will
 properly answer any questions. You can also join the

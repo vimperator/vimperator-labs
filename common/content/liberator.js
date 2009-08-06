@@ -1930,7 +1930,7 @@ window.addEventListener("liberatorHelpLink", function (event) {
         if (/^(mapping|command)$/.test(elem.className))
             tag = tag.replace(/^\d+/, "");
         if (elem.className == "command")
-            tag = tag.replace(/\[.*?\]/g, "").replace(/!$/, "");
+            tag = tag.replace(/\[.*?\]/g, "").replace(/(\w+)!$/, "$1");
 
         if (tag)
         {

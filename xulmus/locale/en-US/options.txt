@@ -1,4 +1,4 @@
-heading:Options[options]
+heading::Options[options]
 
 Xulmus has a number of internal variables and switches which can be set to
 achieve special effects. These options come in 5 forms:
@@ -10,7 +10,7 @@ achieve special effects. These options come in 5 forms:
 *stringlist* a comma-separated list of strings
 -------------------------------------------------------
 
-section:Setting{nbsp}options[set-option,E764]
+section::Setting{nbsp}options[set-option,E764]
 
 |:set| |:se| +
 ||:se[t]||
@@ -153,7 +153,7 @@ Environment variables are expanded for path options like 'cdpath' and
 'runtimepath'. The variable notation is _$VAR_ (terminated by a non-word
 character) or _$\\{VAR}_. _%VAR%_ is also supported on Windows.
 
-section:Setting{nbsp}Songbird{nbsp}options[songbird-options,preferences]
+section::Setting{nbsp}Songbird{nbsp}options[songbird-options,preferences]
 
 Songbird options can be viewed and set with the following commands:
 
@@ -193,7 +193,7 @@ The following preferences are set:
 
 // TODO: others?
 
-section:List{nbsp}of{nbsp}options[list-options]
+section::List{nbsp}of{nbsp}options[list-options]
 
 |\'act'| |\'activate'|
 ||'activate' 'act'|| stringlist (default: "homepage,quickmark,tabopen,paste")
@@ -637,16 +637,16 @@ ____
 |\'rtp'| |\'runtimepath'|
 ||'runtimepath' 'rtp'|| stringlist
 ____
-(default: _$XULMUS_RUNTIME_ or Unix, Mac: "\~/.xulmus", Windows: "\~/xulmus")
+(default: _$XULMUS_RUNTIME_ or $$Unix, Mac: "~/.xulmus", Windows: "~/xulmus"$$)
 
 List of directories searched for runtime files: +
 colors/ +
 macros/ +
 plugin/ +
 
-Example: [c]:set runtimepath=\~/myxulmus,\~/.xulmus[c] +
-This will search for plugins in both "\~/myxulmus/plugin" and
-"\~/.xulmus/plugin"
+Example: [c]:set runtimepath=$$~/myxulmus,~/.xulmus$$[c] +
+This will search for plugins in both $$"~/myxulmus/plugin" and
+"~/.xulmus/plugin"$$
 
 On startup, if the environment variable _$XULMUS_RUNTIME_ does not
 exist, Xulmus will set it to match this value.
@@ -792,8 +792,8 @@ ____
 Use visual bell instead of beeping on errors. The visual bell style is
 controlled by [c]:hi Bell[c].
 
-To disable both the audible and visual bells use [c]:set visualbell[c] and
-[c]:hi Bell display: none;[c]
+To disable both the audible and visual bells use [c]:set visualbell[c]
+and [c]:hi Bell display: none;[c]
 ____
 
 

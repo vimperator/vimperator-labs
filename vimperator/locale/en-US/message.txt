@@ -1,4 +1,4 @@
-heading:Error{nbsp}and{nbsp}informational{nbsp}messages[messages]
+heading::Error{nbsp}and{nbsp}informational{nbsp}messages[messages]
 
 |message-history| +
 

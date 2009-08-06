@@ -6,7 +6,7 @@ Later it was time for a Konqueror. Now it's time for an Imperator, the
 VIMperator :)*
 +++</div>+++
 
-section:Introduction[intro]
+section::Introduction[intro]
 
 http://vimperator.org[Vimperator] is a free browser add-on for Firefox,
 which makes it look and behave like the http://www.vim.org[Vim]
@@ -47,7 +47,7 @@ t-shirts or mugs. Of course, as we believe in free, open source software, only
 support us financially if you really like Vimperator and the money doesn't hurt
 - otherwise just use it, recommend it, and like it :)
 
-section:Help{nbsp}topics[overview]
+section::Help{nbsp}topics[overview]
 
 - help:Quick-start{nbsp}tutorial[tutorial.html]: A quick-start tutorial for new
   users.
@@ -86,7 +86,7 @@ section:Help{nbsp}topics[overview]
 You can also jump directly to the help of a specific command with [c]:help o[c]
 or [c]:help :set[c].
 
-section:Features[features]
+section::Features[features]
 
 * Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m], [m]gg[m], [m]G[m],
   [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
@@ -110,7 +110,7 @@ section:Features[features]
 * Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to
   go there)
 * QuickMarks support (quickly go to previously marked web pages with
-  [m]go[m][a]\\{a-zA-Z0-9\\}[a])
+  [m]go[m][a]{a-zA-Z0-9}[a])
 * [c]:map[c] and [c]:command[c] support (and feedkeys() for script writers)
 * [c]:time[c] support for profiling
 * Move the text cursor and select text with Vim keys and a Visual mode
@@ -119,7 +119,7 @@ section:Features[features]
 * AutoCommands to execute actions on certain events
 * A comprehensive help system, explaining all commands, mappings and options
 
-section:Contact[contact]
+section::Contact[contact]
 
 Please send comments/bug reports/patches to the mailing list, where we will
 properly answer any questions. You can also join the

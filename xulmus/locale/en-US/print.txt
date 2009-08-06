@@ -1,4 +1,4 @@
-heading:Printing[printing]
+heading::Printing[printing]
 
 |:ha| |:hardcopy| +
 ||:ha[rdcopy][!]||
@@ -16,7 +16,7 @@ As above, but write the output to {filename}.
 Note: Not available on Windows.
 ________________________________________________________________________________
 
-section:Songbird{nbsp}printing{nbsp}dialogs[songbird-print-dialogs]
+section::Songbird{nbsp}printing{nbsp}dialogs[songbird-print-dialogs]
 
 The "Print Preview" and "Page Setup" dialogs can be opened via the [c]:dialog[c]
 command

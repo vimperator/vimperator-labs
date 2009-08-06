@@ -1,9 +1,9 @@
-heading:Player{nbsp}mode[player-mode,player]
+heading::Player{nbsp}mode[player-mode,player]
 
 The following features apply to Player mode which is activated when the media
 tab has focus.
 
-section:Playing{nbsp}tracks[playing-tracks]
+section::Playing{nbsp}tracks[playing-tracks]
 
 |p_x| |:playerp| |:playerplay|
 ||:playerp[lay]|| +
@@ -64,7 +64,7 @@ ________________________________________________________________________________
 Select the currently playing track.
 ________________________________________________________________________________
 
-section:Queueing{nbsp}tracks[queue,queueing]
+section::Queueing{nbsp}tracks[queue,queueing]
 
 |p_f| |:f| |:filter|
 ||:f[ilter] {artist} [a][album][a] [a][track][a]|| +
@@ -77,7 +77,7 @@ specified with [a][track][a].
 ________________________________________________________________________________
 
 
-section:Filtering{nbsp}the{nbsp}library[filter,filtering]
+section::Filtering{nbsp}the{nbsp}library[filter,filtering]
 
 |p_F| |:F| |:Filter|
 ||:F[ilter] {keywords}|| +
@@ -88,7 +88,7 @@ provided as arguments. This text search applies over the default filter
 properties, namely: Genre, Artist, Album and Track.
 ________________________________________________________________________________
 
-section:Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
+section::Seeking{nbsp}to{nbsp}a{nbsp}track{nbsp}position[seeking]
 
 |p_<Left>| |p_h|
 ||[count]h||
@@ -130,7 +130,7 @@ seconds is assumed. The position is absolute unless the value is prefixed with
 Positions may also be specified in [a][HH:]MM:SS[a] format.
 ________________________________________________________________________________
 
-section:Adjusting{nbsp}the{nbsp}volume[volume]
+section::Adjusting{nbsp}the{nbsp}volume[volume]
 
 |p_+| |p_=|
 ||+|| +
@@ -155,7 +155,7 @@ Set the player volume. {value} can be an absolute value between 0 and 100% or a
 relative value if prefixed with "-" or "+".
 ________________________________________________________________________________
 
-section:Managing{nbsp}playlists[playlists]
+section::Managing{nbsp}playlists[playlists]
 
 |:load|
 ||:load [a][playlist][a]|| +
@@ -164,7 +164,7 @@ Load [a][playlist][a]. If no playlist is specified then the main library view
 is loaded.
 ________________________________________________________________________________
 
-section:Changing{nbsp}media{nbsp}views[media-view,view]
+section::Changing{nbsp}media{nbsp}views[media-view,view]
 
 |:mediav| |:mediaview|
 ||:mediav[iew] {view}|| +
@@ -173,7 +173,7 @@ Change the media view to {view}. This can only be run when the media tab is the
 current tab.
 ________________________________________________________________________________
 
-section:Search{nbsp}commands[search]
+section::Search{nbsp}commands[search]
 
 |p_/|
 ||/{pattern}<CR>|| +
@@ -201,7 +201,7 @@ Find the previous track. Repeats the last search in the opposite direction. If
 the search hits TOP of the view, it continues from BOTTTOM.
 ________________________________________________________________________________
 
-section:Rating{nbsp}tracks[rating]
+section::Rating{nbsp}tracks[rating]
 
 |p_<C-5>| |p_<C-4>| |p_<C-3>| |p_<C-2>| |p_<C-1>| |p_<C-0>|
 ||<C-0>|| +

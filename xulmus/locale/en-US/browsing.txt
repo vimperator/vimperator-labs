@@ -1,4 +1,4 @@
-heading:Browsing[surfing,browsing]
+heading::Browsing[surfing,browsing]
 
 |surfing| |browsing| +
 
@@ -27,7 +27,7 @@ Xulmus mode is temporarily disabled with [m]<C-z>[m], [m]<C-v>[m] will pass
 the next key to Xulmus instead of the web page.
 ________________________________________________________________________________
 
-section:Opening{nbsp}web{nbsp}pages[opening]
+section::Opening{nbsp}web{nbsp}pages[opening]
 
 |o| |:o| |:open|
 ||:o[pen] [a][arg1][a], [a][arg2][a], ...|| +
@@ -157,14 +157,14 @@ Increments the last number in URL by 1, or by [count] if given.
 ________________________________________________________________________________
 
 
-|\~| +
-||\~||
+|$$~$$| +
+||$$~$$||
 ________________________________________________________________________________
 Open home directory. You can also use the hints and have the probably fastest
 file browser on earth. :)
 ________________________________________________________________________________
 
-section:Navigating[navigating]
+section::Navigating[navigating]
 
 |H| |<C-o>| |CTRL-O| |:ba| |:back|
 ||:[count]ba[ck] [a][url][a]|| +
@@ -233,7 +233,7 @@ _http://www.example.com/_.
 When browsing a local directory, it goes to the root directory.
 ________________________________________________________________________________
 
-section:Reloading[reloading]
+section::Reloading[reloading]
 
 |r|
 ||r||
@@ -263,7 +263,7 @@ ________________________________________________________________________________
 Reload all pages. Forces reloading of all pages. If [!] is given, skip the cache.
 ________________________________________________________________________________
 
-section:Stopping[stopping]
+section::Stopping[stopping]
 
 |<C-c>|
 ||<C-c>||
@@ -284,7 +284,7 @@ ________________________________________________________________________________
 Stop loading all web pages.
 ________________________________________________________________________________
 
-section:Writing[writing,save-file]
+section::Writing[writing,save-file]
 
 |:w| |:write| |:sav| |:saveas| +
 ||:sav[eas][!] [a][file][a]||
@@ -293,7 +293,7 @@ Save current web page to disk. If [a][file][a] is omitted, save to the page's
 default filename. Existing documents will only be overwritten if [!] is given.
 ________________________________________________________________________________
 
-section:Quitting[quitting,save-session]
+section::Quitting[quitting,save-session]
 
 |:q| |:quit| +
 ||:q[uit]||
@@ -337,7 +337,7 @@ Quit and save the session. Quit Xulmus, no matter how many tabs/windows
 are open. The session is stored. Works like [c]:xall[c].
 ________________________________________________________________________________
 
-section:The{nbsp}current{nbsp}directory[current-directory]
+section::The{nbsp}current{nbsp}directory[current-directory]
 
 |:chd| |:chdir| |:cd|
 ||:cd [-|path]||

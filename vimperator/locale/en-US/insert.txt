@@ -1,4 +1,4 @@
-heading:Insert{nbsp}mode[Insert-mode,Insert,mode-insert]
+heading::Insert{nbsp}mode[Insert-mode,Insert,mode-insert]
 
 Insert mode is used to enter text in text boxes and text areas. When
 'insertmode' is set, focusing on a text area immediately switches to
@@ -11,7 +11,7 @@ Starts Insert mode in text areas when 'insertmode' is not set.
 ________________________________________________________________________________
 
 
-section:Insert-mode{nbsp}special{nbsp}keys[ins-special-keys]
+section::Insert-mode{nbsp}special{nbsp}keys[ins-special-keys]
 
 |i_<C-i>| +
 ||<C-i>||

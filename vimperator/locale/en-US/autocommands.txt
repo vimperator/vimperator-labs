@@ -1,4 +1,4 @@
-heading:Automatic{nbsp}commands[autocommands]
+heading::Automatic{nbsp}commands[autocommands]
 
 Autocommands are a way to automatically execute code when certain events
 happen.
@@ -32,7 +32,7 @@ Available {events}:
 *PageLoadPre*        Triggered after a page load is initiated
 *PageLoad*           Triggered when a page gets (re)loaded/opened
 *PrivateMode*	     Triggered when private mode is activated or deactivated
-*ShellCmdPost*       Triggered after executing a shell command with [c]:![c]#{cmd}
+*ShellCmdPost*       Triggered after executing a shell command with [c]:![c]{cmd}
 *VimperatorEnter*    Triggered after Firefox starts
 *VimperatorLeavePre* Triggered before exiting Firefox, just before destroying each module
 *VimperatorLeave*    Triggered before exiting Firefox
@@ -76,7 +76,7 @@ Apply the autocommands matching the specified URL to the current buffer. If no
 [a][url][a] is specified use the current URL.
 ________________________________________________________________________________
 
-section:Examples[autocmd-examples]
+section::Examples[autocmd-examples]
 
 Enable _passthrough_ mode on all Google sites:
 

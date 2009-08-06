@@ -1,8 +1,8 @@
-heading:Repeating{nbsp}commands[repeating]
+heading::Repeating{nbsp}commands[repeating]
 
 Xulmus can repeat a number of commands and record macros.
 
-section:Single{nbsp}repeats[single-repeat]
+section::Single{nbsp}repeats[single-repeat]
 
 |.|
 ||[count].||
@@ -19,7 +19,7 @@ ____________________________________________________________________________
 Repeat the last Ex command [count] times.
 ____________________________________________________________________________
 
-section:Macros[macros,complex-repeat]
+section::Macros[macros,complex-repeat]
 
 |q|
 ||q\\{0-9a-zA-Z}|| +
@@ -63,7 +63,7 @@ Replay the last executed macro [count] times.
 ____________________________________________________________________________
 
 
-section:Using{nbsp}scripts[using-scripts]
+section::Using{nbsp}scripts[using-scripts]
 
 |:so| |:source|
 ||:so[urce][!] {file}|| +
@@ -92,7 +92,7 @@ function hello2() {
 are only available within the scope of the script.
 
 The _.xulmusrc_ file in your home directory and any files in
-_\~/.xulmus/plugin/_ are always sourced at startup. \~ is supported as a
+_$$~/.xulmus/plugin/$$_ are always sourced at startup. $$~$$ is supported as a
 shortcut for the _$HOME_ directory. If [!] is specified, errors are not
 printed.
 ________________________________________________________________________________
@@ -133,7 +133,7 @@ Stop sourcing a script file. This can only be called from within a Xulmus
 script file.
 ________________________________________________________________________________
 
-section:Profiling[profile,profiling]
+section::Profiling[profile,profiling]
 
 |:time|
 ||:[count]time[!] {code|:command}|| +

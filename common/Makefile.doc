@@ -47,8 +47,8 @@ distclean: clean
 asciidoc: check-asciidoc $(DOC_FILES)
 
 check-asciidoc:
-	@$(ASCIIDOC) --version | $(AWK) '{ exit $$2 !~ /^8\.2\./ }' || \
-		echo >&2 "Warning: asciidoc versions other than 8.2.x are unsupported"
+	@$(ASCIIDOC) --version | $(AWK) '{ exit $$2 !~ /^8\.4\./ }' || \
+		echo >&2 "Warning: asciidoc versions other than 8.4.x are unsupported"
 
 version.html: ../../NEWS $(BASE)/Makefile.doc $(DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"

@@ -1,9 +1,9 @@
-heading:Buffer[buffer,document]
+heading::Buffer[buffer,document]
 
 Vimperator holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.
 
-section:Buffer{nbsp}information[buffer-information]
+section::Buffer{nbsp}information[buffer-information]
 
 |<C-g>| +
 ||<C-g>||
@@ -60,7 +60,7 @@ Toggle between rendered and source view. Alternates the page in the current tab
 between a normally rendered view and the internal editor source view.
 ________________________________________________________________________________
 
-section:Motion{nbsp}commands[motion,scrolling]
+section::Motion{nbsp}commands[motion,scrolling]
 
 |^| |0| +
 ||0||
@@ -170,7 +170,7 @@ ________________________________________________________________________________
 Scroll down a full page. Scroll window [count] pages Forwards (downwards) in the buffer.
 ________________________________________________________________________________
 
-section:Jumping{nbsp}to{nbsp}elements[jumping]
+section::Jumping{nbsp}to{nbsp}elements[jumping]
 
 |<Tab>| +
 ||<Tab>||
@@ -228,7 +228,7 @@ browsing forums or documentation. Change 'previouspattern' to modify its
 behavior. It follows relations between files too.
 ________________________________________________________________________________
 
-section:Zooming[zooming,zoom]
+section::Zooming[zooming,zoom]
 
 The zooming commands are dependent on two properties -- a zoom range and a
 series of levels within that range.
@@ -333,7 +333,7 @@ Normally this command operates on the text zoom; if used with [!], it
 operates on full zoom.
 ________________________________________________________________________________
 
-section:Working{nbsp}with{nbsp}frames[frames]
+section::Working{nbsp}with{nbsp}frames[frames]
 
 |:frameo| |:frameonly|
 ||:frameo[nly]|| +
@@ -341,7 +341,7 @@ ________________________________________________________________________________
 Show only the current frame's page.
 ________________________________________________________________________________
 
-section:Copying{nbsp}text[copying,yanking]
+section::Copying{nbsp}text[copying,yanking]
 
 When running in X11, the text of the following commands is not only
 copied to the clipboard but is also put into the X11 selection, which
@@ -361,7 +361,7 @@ ________________________________________________________________________________
 Copy currently selected text to the system clipboard.
 ________________________________________________________________________________
 
-section:Alternate{nbsp}style{nbsp}sheets[alternate-stylesheet]
+section::Alternate{nbsp}style{nbsp}sheets[alternate-stylesheet]
 
 Page authors may specify alternate style sheets for an HTML document. Users can
 then switch between these various style sheets, selecting their favorite.

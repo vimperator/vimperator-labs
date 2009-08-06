@@ -1,4 +1,4 @@
-heading:Automatic{nbsp}commands[autocommands]
+heading::Automatic{nbsp}commands[autocommands]
 
 Autocommands are a way to automatically execute code when certain events
 happen.
@@ -85,7 +85,7 @@ Apply the autocommands matching the specified URL to the current buffer. If no
 [a][url][a] is specified use the current URL.
 ________________________________________________________________________________
 
-section:Examples[autocmd-examples]
+section::Examples[autocmd-examples]
 
 Enable _passthrough_ mode on all Google sites:
 

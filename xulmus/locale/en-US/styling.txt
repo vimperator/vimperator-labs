@@ -1,4 +1,4 @@
-heading:Styling{nbsp}the{nbsp}GUI{nbsp}and{nbsp}web{nbsp}pages[styling]
+heading::Styling{nbsp}the{nbsp}GUI{nbsp}and{nbsp}web{nbsp}pages[styling]
 
 Xulmus allows you to style both the player and any web pages you view. All
 styling is specified via CSS. Although you may style any user interface element
@@ -102,7 +102,7 @@ ________________________________________________________________________________
 ||:sty[le][!] [-name={name}] [-append] {filter} [{css}]|| +
 ________________________________________________________________________________
 Add CSS styles to the player or to web pages. {filter} is a comma
-separated list of URLs to match. URLs ending with *\** are matched as
+separated list of URLs to match. URLs ending with *** are matched as
 prefixes, URLs not containing any *:* or */* characters are
 matched as domains. If {name} (short option: *-n*) is provided, any
 existing style with the same name is overridden, and the style may later

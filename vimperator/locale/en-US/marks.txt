@@ -1,4 +1,4 @@
-heading:Marks[different-marks,marks]
+heading::Marks[different-marks,marks]
 
 Vimperator supports a number of different marks:
 
@@ -10,7 +10,7 @@ Vimperator supports a number of different marks:
 - History is also a special type of marks, as Vimperator automatically
   remembers sites which you have visited in the past.
 
-section:Bookmarks[bookmarks]
+section::Bookmarks[bookmarks]
 
 |a| |:bma| |:bmark|
 ||:bma[rk][!] [a][-title=title][a] [a][-keyword=kw][a] [a][-tags=tag1,tag2][a] [a][url][a]|| +
@@ -72,7 +72,7 @@ The following options WILL be interpreted in the future:
 * [!] a special version to delete ALL bookmarks
 ________________________________________________________________________________
 
-section:History[history]
+section::History[history]
 
 |<C-o>| +
 ||[count]<C-o>||
@@ -135,21 +135,21 @@ Filter can also contain the following options: +
 -max=N (short options: -m)
 ________________________________________________________________________________
 
-section:QuickMarks[quickmarks]
+section::QuickMarks[quickmarks]
 
 |go| +
-||go[a]\\{a-zA-Z0-9\\}[a]||
+||go[a]{a-zA-Z0-9}[a]||
 ________________________________________________________________________________
 Jump to a QuickMark in the current tab. Open any QuickMark in the current tab.
-You can mark any URLs with [m]M[m][a]\\{a-zA-Z0-9\\}[a]. These QuickMarks are
+You can mark any URLs with [m]M[m][a]{a-zA-Z0-9}[a]. These QuickMarks are
 persistent across browser sessions.
 ________________________________________________________________________________
 
 
 |gn| +
-||gn[a]\\{a-zA-Z0-9\\}[a]||
+||gn[a]{a-zA-Z0-9}[a]||
 ________________________________________________________________________________
-Jump to a QuickMark in a new tab. Works like [m]go[m][a]\\{a-zA-Z0-9\\}[a] but
+Jump to a QuickMark in a new tab. Works like [m]go[m][a]{a-zA-Z0-9}[a] but
 opens the QuickMark in a new tab. Whether the new tab is activated or not
 depends on the 'activate' option. +
 Mnemonic: Go in a new tab. [m]gt[m] would make more sense but is already
@@ -158,11 +158,11 @@ ________________________________________________________________________________
 
 
 |M| +
-||M[a]\\{a-zA-Z0-9\\}[a]||
+||M[a]{a-zA-Z0-9}[a]||
 ________________________________________________________________________________
 Add new QuickMark for current URL. You can go to a marked URL in the current
-tab with [m]go[m][a]\\{a-zA-Z0-9\\}[a] or in a new tab with
-[m]gn[m][a]\\{a-zA-Z0-9\\}[a]. These QuickMarks are persistent across browser
+tab with [m]go[m][a]{a-zA-Z0-9}[a] or in a new tab with
+[m]gn[m][a]{a-zA-Z0-9}[a]. These QuickMarks are persistent across browser
 sessions.
 ________________________________________________________________________________
 
@@ -185,8 +185,9 @@ ________________________________________________________________________________
 |:qma| |:qmark|
 ||:qma[rk] {a-zA-Z0-9} [a][url][a]|| +
 ________________________________________________________________________________
-Mark a URL with a letter for quick access. You can also mark whole groups like this: +
-[c]:qmark f +++http://forum1.com+++, +++http://forum2.com+++, imdb some artist[c]
+Mark a URL with a letter for quick access. You can also mark whole groups
+like this: +
+ [c]:qmark f +++http://forum1.com+++, +++http://forum2.com+++, imdb some artist[c]
 ________________________________________________________________________________
 
 
@@ -197,18 +198,18 @@ Show all QuickMarks. If [a][arg][a] is specified then limit the list to those
 QuickMarks mentioned.
 ________________________________________________________________________________
 
-section:Local{nbsp}marks[localmarks]
+section::Local{nbsp}marks[localmarks]
 
 |m| +
-||m[a]\\{a-zA-Z\\}[a]||
+||m[a]{a-zA-Z}[a]||
 ________________________________________________________________________________
 Set mark at the cursor position. Marks a-z are local to the buffer, whereas
 A-Z are valid between buffers.
 ________________________________________________________________________________
 
 
-|\`| |\'| +
-||\'[a]\\{a-zA-Z\\}[a]||
+|$$`$$| |$$'$$| +
+||'[a]{a-zA-Z}[a]||
 ________________________________________________________________________________
 Jump to the mark in the current buffer. Marks a-z are local to the buffer,
 whereas A-Z are valid between buffers.
