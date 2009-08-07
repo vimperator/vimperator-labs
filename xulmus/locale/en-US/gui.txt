@@ -34,29 +34,31 @@ ________________________________________________________________________________
 Open a Songbird dialog.
 
 Available dialogs:
-`------------------`-----------------------------------
-*about*            About Songbird
-*addons*           Manage Add-ons
-*checkupdates*     Check for updates
-*cleardata*        Clear private data
-*cookies*          List your cookies
-*console*          JavaScript console
-*dominspector*     DOM Inspector
-*downloads*        Manage Downloads
-*jumpto*           Jump to a media item
-*newsmartplaylist* Create a new smart playlist
-*openfile*         Open the file selector dialog
-*pagesource*       View page source
-*places*           Places Organizer: Manage your bookmarks and history
-*preferences*      Show Songbird preferences dialog
-*printsetup*       Setup the page size and orientation before printing
-*print*            Show print dialog
-*saveframe*        Save frame to disk
-*savepage*         Save page to disk
-*searchengines*    Manage installed search engines
-*selectionsource*  View selection source
-*subscribe*        Add a new subscription
--------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*about*           |About Songbird
+|*addons*          |Manage Add-ons
+|*checkupdates*    |Check for updates
+|*cleardata*       |Clear private data
+|*cookies*         |List your cookies
+|*console*         |JavaScript console
+|*dominspector*    |DOM Inspector
+|*downloads*       |Manage Downloads
+|*jumpto*          |Jump to a media item
+|*newsmartplaylist*|Create a new smart playlist
+|*openfile*        |Open the file selector dialog
+|*pagesource*      |View page source
+|*places*          |Places Organizer: Manage your bookmarks and history
+|*preferences*     |Show Songbird preferences dialog
+|*printsetup*      |Setup the page size and orientation before printing
+|*print*           |Show print dialog
+|*saveframe*       |Save frame to disk
+|*savepage*        |Save page to disk
+|*searchengines*   |Manage installed search engines
+|*selectionsource* |View selection source
+|*subscribe*       |Add a new subscription
+|===============================================================================
 
 ________________________________________________________________________________
 

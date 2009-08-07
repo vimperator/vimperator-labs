@@ -34,33 +34,35 @@ ________________________________________________________________________________
 Open a Firefox dialog.
 
 Available dialogs:
-`------------------`-----------------------------------
-*about*            About Mozilla Firefox
-*addbookmark*      Add bookmark for the current page
-*addons*           Manage Add-ons
-*bookmarks*        List your bookmarks
-*checkupdates*     Check for updates
-*cleardata*        Clear private data
-*cookies*          List your cookies
-*console*          JavaScript console
-*customizetoolbar* Customize the Toolbar
-*dominspector*     DOM Inspector
-*downloads*        Manage Downloads
-*history*          List your history
-*import*           Import Preferences, Bookmarks, History, etc. from other browsers
-*openfile*         Open the file selector dialog
-*pageinfo*         Show information about the current page
-*pagesource*       View page source
-*places*           Places Organizer: Manage your bookmarks and history
-*preferences*      Show Firefox preferences dialog
-*printpreview*     Preview the page before printing
-*printsetup*       Setup the page size and orientation before printing
-*print*            Show print dialog
-*saveframe*        Save frame to disk
-*savepage*         Save page to disk
-*searchengines*    Manage installed search engines
-*selectionsource*  View selection source
--------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*about*           |About Mozilla Firefox
+|*addbookmark*     |Add bookmark for the current page
+|*addons*          |Manage Add-ons
+|*bookmarks*       |List your bookmarks
+|*checkupdates*    |Check for updates
+|*cleardata*       |Clear private data
+|*cookies*         |List your cookies
+|*console*         |JavaScript console
+|*customizetoolbar*|Customize the Toolbar
+|*dominspector*    |DOM Inspector
+|*downloads*       |Manage Downloads
+|*history*         |List your history
+|*import*          |Import Preferences, Bookmarks, History, etc. from other browsers
+|*openfile*        |Open the file selector dialog
+|*pageinfo*        |Show information about the current page
+|*pagesource*      |View page source
+|*places*          |Places Organizer: Manage your bookmarks and history
+|*preferences*     |Show Firefox preferences dialog
+|*printpreview*    |Preview the page before printing
+|*printsetup*      |Setup the page size and orientation before printing
+|*print*           |Show print dialog
+|*saveframe*       |Save frame to disk
+|*savepage*        |Save page to disk
+|*searchengines*   |Manage installed search engines
+|*selectionsource* |View selection source
+|===============================================================================
 
 ________________________________________________________________________________
 

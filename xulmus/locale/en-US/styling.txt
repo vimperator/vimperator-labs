@@ -25,64 +25,66 @@ be any valid CSS selector, such as [c]:hover[c], and, if provided, will
 restrict the match to matching elements.
 
 Valid groups are:
-`--------------------`-----------------------------------
-*Bell*               Xulmus's visual bell
-*Boolean*            A JavaScript Boolean object
-*CmdLine*            The command line
-*CmdOutput*
-*CompDesc*           The description column of the completion list
-*CompGroup*
-*CompIcon*           The favicon of a completion row
-*CompItem*           A row of completion list
-*CompItem[selected]* A selected row of completion list
-*CompLess*           The indicator shown when completions may be scrolled up
-*CompLess::after*    The character of indicator shown when completions may be scrolled up
-*CompMore*           The indicator shown when completions may be scrolled down
-*CompMore::after*    The character of indicator shown when completions may be scrolled down
-*CompMsg*
-*CompResult*         The result column of the completion list
-*CompTitle*          Completion row titles
-*ErrorMsg*           Error messages
-*Filter*             The matching text in a completion list
-*FrameIndicator*     The indicator shown when a new frame is selected
-*Function*           A JavaScript Function object
-*Gradient*
-*GradientLeft*
-*GradientRight*
-*Hint*               A hint indicator. See [c]:help hints[c]
-*HintActive*         The hint element of link which will be followed by <Enter>
-*HintElem*           The hintable element
-*HintImage*          The indicator which floats above hinted images
-*Indicator*
-*InfoMsg*            Information messages
-*Keyword*            A bookmark keyword for a URL
-*LineNr*             The line number of an error
-*Message*
-*ModeMsg*            The mode indicator in the command line
-*MoreMsg*            The indicator that there is more text to view
-*NonText*
-*Normal*             Normal text in the command line
-*Null*               A JavaScript Null object
-*Number*             A JavaScript Number object
-*Object*             A JavaScript Object
-*Preview*
-*Question*           A prompt for a decision
-*Search*             Highlighted search results in a web page
-*StatusLine*         The status bar
-*StatusLineBroken*   The status bar for a broken web page
-*StatusLineSecure*   The status bar for a secure web page
-*StatusLineExtended* The status bar for a secure web page with an Extended Validation(EV) certificate
-*String*             A JavaScript String object
-*TabClose*           The close button of a browser tab
-*TabIcon*            The icon of a browser tab
-*TabIconNumber*      The number of a browser tab, over its icon
-*TabNumber*          The number of a browser tab, next to its icon
-*TabText*            The text of a browser tab
-*Tag*                A bookmark tag for a URL
-*Title*              The title of a listing, including [c]:pageinfo[c], [c]:jumps[c]
-*URL*                A URL
-*WarningMsg*         A warning message
--------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*Bell*              |Xulmus's visual bell
+|*Boolean*           |A JavaScript Boolean object
+|*CmdLine*           |The command line
+|*CmdOutput*         |
+|*CompDesc*          |The description column of the completion list
+|*CompGroup*         |
+|*CompIcon*          |The favicon of a completion row
+|*CompItem*          |A row of completion list
+|*CompItem[selected]*|A selected row of completion list
+|*CompLess*          |The indicator shown when completions may be scrolled up
+|*CompLess::after*   |The character of indicator shown when completions may be scrolled up
+|*CompMore*          |The indicator shown when completions may be scrolled down
+|*CompMore::after*   |The character of indicator shown when completions may be scrolled down
+|*CompMsg*           |
+|*CompResult*        |The result column of the completion list
+|*CompTitle*         |Completion row titles
+|*ErrorMsg*          |Error messages
+|*Filter*            |The matching text in a completion list
+|*FrameIndicator*    |The indicator shown when a new frame is selected
+|*Function*          |A JavaScript Function object
+|*Gradient*          |
+|*GradientLeft*      |
+|*GradientRight*     |
+|*Hint*              |A hint indicator. See [c]:help hints[c]
+|*HintActive*        |The hint element of link which will be followed by <Enter>
+|*HintElem*          |The hintable element
+|*HintImage*         |The indicator which floats above hinted images
+|*Indicator*         |
+|*InfoMsg*           |Information messages
+|*Keyword*           |A bookmark keyword for a URL
+|*LineNr*            |The line number of an error
+|*Message*           |
+|*ModeMsg*           |The mode indicator in the command line
+|*MoreMsg*           |The indicator that there is more text to view
+|*NonText*           |
+|*Normal*            |Normal text in the command line
+|*Null*              |A JavaScript Null object
+|*Number*            |A JavaScript Number object
+|*Object*            |A JavaScript Object
+|*Preview*           |
+|*Question*          |A prompt for a decision
+|*Search*            |Highlighted search results in a web page
+|*StatusLine*        |The status bar
+|*StatusLineBroken*  |The status bar for a broken web page
+|*StatusLineSecure*  |The status bar for a secure web page
+|*StatusLineExtended*|The status bar for a secure web page with an Extended Validation(EV) certificate
+|*String*            |A JavaScript String object
+|*TabClose*          |The close button of a browser tab
+|*TabIcon*           |The icon of a browser tab
+|*TabIconNumber*     |The number of a browser tab, over its icon
+|*TabNumber*         |The number of a browser tab, next to its icon
+|*TabText*           |The text of a browser tab
+|*Tag*               |A bookmark tag for a URL
+|*Title*             |The title of a listing, including [c]:pageinfo[c], [c]:jumps[c]
+|*URL*               |A URL
+|*WarningMsg*        |A warning message
+|===============================================================================
 
 Every invocation completely replaces the styling of any previous invocation,
 unless *-append* (short option: *-a*) is provided, in which case {css} is

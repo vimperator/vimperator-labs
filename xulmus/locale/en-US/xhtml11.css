@@ -1,3 +1,7 @@
+/* TODO: this file is a total debacle. Find out exactly which version it was
+ * based on and extract the Vimperator required modifications to a separate
+ * file. It's not called "Cascading" for nothing! --djk */
+
 /* keep the mozdev header */
 /* @import url(http://www.mozdev.org/skin/color/mozdev2k.css); */
 
@@ -347,3 +351,10 @@ fieldset.paypal {
 	margin-left: 140px;
 	padding-bottom: 10px;
 }
+
+/* FIXME: hack to match old table formatting with new table syntax - a possibly vain attempt to stop dpb's whinging. --djk */
+p.table {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+/* vim: set fdm=marker sw=4 ts=4 et: */

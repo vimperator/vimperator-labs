@@ -335,13 +335,15 @@ By default user commands accept no arguments. This can be changed by specifying
 the -nargs attribute.
 
 The valid values are:
-`----------`--------------------------------------------------------------------
-*-nargs=0* No arguments are allowed (default)
-*-nargs=1* One argument is allowed
-*-nargs=** Zero or more arguments are allowed
-*-nargs=?* Zero or one argument is allowed
-*-nargs=+* One or more arguments are allowed
---------------------------------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*-nargs=0*|No arguments are allowed (default)
+|*-nargs=1*|One argument is allowed
+|*-nargs=**|Zero or more arguments are allowed
+|*-nargs=?*|Zero or one argument is allowed
+|*-nargs=+*|One or more arguments are allowed
+|===============================================================================
 
 |E180| |E181| |:command-complete| +
 Argument completion
@@ -349,32 +351,34 @@ Argument completion
 Completion for arguments to user defined commands is not available by default.
 Completion can be enabled by specifying one of the following arguments to the
 -complete option when defining the command.
-`----------------`--------------------------------------------------------------
-*altstyle*       alternate author style sheets
-*bookmark*       bookmarks
-*buffer*         buffers
-*color*          color schemes
-*command*        Ex commands
-*dialog*         Firefox dialogs
-*dir*            directories
-*environment*    environment variables
-*event*          autocommand events
-*file*           files
-*help*           help tags
-*highlight*      highlight groups
-*javascript*     JavaScript expressions
-*macro*          named macros
-*mapping*        user mappings
-*menu*           menu items
-*option*         Vimperator options
-*preference*     Firefox preferences
-*search*         search engines and keywords
-*shellcmd*       shell commands
-*sidebar*        sidebar panels
-*url*            URLs
-*usercommand*    user commands
-*custom,{func}*  custom completion, provided by {func}
---------------------------------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*altstyle*     |alternate author style sheets
+|*bookmark*     |bookmarks
+|*buffer*       |buffers
+|*color*        |color schemes
+|*command*      |Ex commands
+|*dialog*       |Firefox dialogs
+|*dir*          |directories
+|*environment*  |environment variables
+|*event*        |autocommand events
+|*file*         |files
+|*help*         |help tags
+|*highlight*    |highlight groups
+|*javascript*   |JavaScript expressions
+|*macro*        |named macros
+|*mapping*      |user mappings
+|*menu*         |menu items
+|*option*       |Vimperator options
+|*preference*   |Firefox preferences
+|*search*       |search engines and keywords
+|*shellcmd*     |shell commands
+|*sidebar*      |sidebar panels
+|*url*          |URLs
+|*usercommand*  |user commands
+|*custom,{func}*|custom completion, provided by {func}
+|===============================================================================
 
 |E467| |E468| |:command-completion-custom| +
 Custom completion
@@ -419,12 +423,14 @@ replaced with values from the user-entered command line. The resulting string
 is then executed as an Ex command.
 
 The valid escape sequences are:
-`----------`--------------------------------------------------------------------
-*<args>*   The command arguments exactly as supplied
-*<count>*  Any supplied count, e.g. 5
-*<bang>*   ! if the command was executed with the ! modifier
-*<lt>*     A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
---------------------------------------------------------------------------------
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*<args>* |The command arguments exactly as supplied
+|*<count>*|Any supplied count, e.g. 5
+|*<bang>* |! if the command was executed with the ! modifier
+|*<lt>*   |A literal '<' character to allow for a literal copy of one of the escape sequences. E.g. <lt>args> will expand to a literal <args>
+|===============================================================================
 
 "q-" can be prefixed to the escape sequence so that the value is quoted, making
 it suitable for expression evaluation. Example: <q-args>
