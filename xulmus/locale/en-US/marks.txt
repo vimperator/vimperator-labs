@@ -62,14 +62,13 @@ ________________________________________________________________________________
 
 |:delbm| |:delbmarks|
 ||:delbm[arks] [a][url][a]|| +
+||:delbm[arks]!||
 ________________________________________________________________________________
 Delete a bookmark. Deletes *all* bookmarks which match the [a][url][a]. If
 omitted, [a][url][a] defaults to the URL of the current buffer. Use [m]<Tab>[m]
 key on a string to complete the URL which you want to delete.
 
-The following options WILL be interpreted in the future:
-
-* [!] a special version to delete ALL bookmarks
+If ! is specified then all bookmarks will be deleted.
 ________________________________________________________________________________
 
 section::History[history]

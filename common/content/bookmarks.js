@@ -387,13 +387,30 @@ function Bookmarks() //{{{
         "Delete a bookmark",
         function (args)
         {
-            let url = args.string || buffer.URL;
-            let deletedCount = bookmarks.remove(url);
+            if (args.bang)
+            {
+                commandline.input("This will delete all bookmarks. Would you like to continue? (yes/[no]) ",
+                    function (resp)
+                    {
+                        if (resp && resp.match(/^y(es)?$/i))
+                        {
+                            bookmarks.get("").forEach(function (bmark) { bookmarks.remove(bmark.url); });
+                            liberator.echomsg("All bookmarks deleted", 1, commandline.FORCE_SINGLELINE);
+                        }
+                    });
+            }
+            else
+            {
+                let url = args.string || buffer.URL;
+                let deletedCount = bookmarks.remove(url);
 
-            liberator.echomsg(deletedCount + " bookmark(s) with url `" + url + "' deleted", 1, commandline.FORCE_SINGLELINE);
+                liberator.echomsg(deletedCount + " bookmark(s) with url `" + url + "' deleted", 1, commandline.FORCE_SINGLELINE);
+            }
+
         },
         {
             argCount: "?",
+            bang: true,
             completer: function completer(context) completion.bookmark(context),
             literal: 0
         });

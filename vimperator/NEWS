@@ -19,6 +19,7 @@
       (this might change again, as this is REALLY inconsistent, and i don't
        know if I like copying bugs)
 
+    * add ! version of :delbmarks to delete all bookmarks.
     * new "t" option for 'complete' to also switch to open tabs with :open
     * add [c]:toolbaropen[c], [c]:toolbarclose[c], and [c]:toolbartoggle[c]
     * make [c]:open[c] behavior match that of [c]:tabopen[c] and [c]:winopen[c]
