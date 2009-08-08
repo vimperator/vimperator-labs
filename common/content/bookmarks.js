@@ -277,9 +277,26 @@ function Bookmarks() //{{{
         function ()
         {
             let title = "";
-            if (buffer.title != buffer.URL)
-                title = " -title=\"" + buffer.title + "\"";
-            commandline.open(":", "bmark " + buffer.URL + title, modes.EX);
+            let keyword = "";
+            let tags = "";
+
+            let bmark = bookmarks.get(buffer.URL)[0];
+            if (bmark)
+            {
+                title = " -title=\"" + bmark.title + "\"";
+                if (bmark.keyword)
+                    keyword = " -keyword=\"" + bmark.keyword + "\"";
+                if (bmark.tags.length > 0)
+                    tags = " -tags=\"" + bmark.tags.join(", ") + "\"";
+
+            }
+            else
+            {
+                if (buffer.title != buffer.URL)
+                    title = " -title=\"" + buffer.title + "\"";
+            }
+
+            commandline.open(":", "bmark " + buffer.URL + title + keyword + tags, modes.EX);
         });
 
     mappings.add(myModes, ["A"],
@@ -524,6 +541,7 @@ function Bookmarks() //{{{
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
+        // FIXME: tags are not updated differentially
         add: function add(starOnly, title, url, keyword, tags, force)
         {
             try
@@ -552,7 +570,11 @@ function Bookmarks() //{{{
                 if (keyword)
                     bookmarksService.setKeywordForBookmark(id, keyword);
                 if (tags)
+                {
+                    // TODO: presumably this needs to be done in two Places transactions *double yawn* --djk
+                    //taggingService.untagURI(uri, null);
                     taggingService.tagURI(uri, tags);
+                }
             }
             catch (e)
             {
