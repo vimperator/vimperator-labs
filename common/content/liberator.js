@@ -411,7 +411,7 @@ const liberator = (function () //{{{
                 try
                 {
                     let cmd = liberator.eval(args.string);
-                    liberator.execute(cmd);
+                    liberator.execute(cmd, null, true);
                 }
                 catch (e)
                 {
