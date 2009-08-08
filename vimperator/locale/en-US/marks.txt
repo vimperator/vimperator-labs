@@ -71,6 +71,7 @@ key on a string to complete the URL which you want to delete.
 If ! is specified then all bookmarks will be deleted.
 ________________________________________________________________________________
 
+// TODO: why is this duplicated in browsing?
 section::History[history]
 
 |<C-o>| +
@@ -105,7 +106,8 @@ ________________________________________________________________________________
 
 
 |:ba| |:back|
-||:[count]ba[ck][!] [a][url][a]|| +
+||:[count]ba[ck] [a][url][a]|| +
+||:[count]ba[ck]!|| +
 ________________________________________________________________________________
 Go back in the browser history. If [count] is specified go back [count] pages. +
 The special version [c]:back![c] goes to the beginning of the browser history.
@@ -113,7 +115,8 @@ ________________________________________________________________________________
 
 
 |:fw| |:fo| |:forward|
-||:[count]fo[rward][!] [a][url][a]|| +
+||:[count]fo[rward] [a][url][a]|| +
+||:[count]fo[rward]!|| +
 ________________________________________________________________________________
 Go forward in the browser history. If [count] is specified go forward [count]
 pages. +
