@@ -145,6 +145,7 @@ section::Command-line{nbsp}editing[ex-edit-index]
 section::Ex{nbsp}commands[ex-cmd-index,:index]
 
 ||[c]:![c]|| Run a command +
+||[c]:!![c]|| Repeat last [c]:!{cmd}[c] +
 ||[c]:abbreviate[c]|| Abbreviate a key sequence +
 ||[c]:abclear[c]|| Remove all abbreviations +
 ||[c]:addons[c]|| Manage available Extensions and Themes +
