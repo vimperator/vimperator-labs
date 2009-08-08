@@ -211,8 +211,8 @@ ________________________________________________________________________________
 |$$`$$| |$$'$$| +
 ||'[a]{a-zA-Z}[a]||
 ________________________________________________________________________________
-Jump to the mark in the current buffer. Marks a-z are local to the buffer,
-whereas A-Z are valid between buffers.
+Jump to the mark. Marks a-z are local to the buffer, whereas A-Z are valid
+between buffers.
 ________________________________________________________________________________
 
 

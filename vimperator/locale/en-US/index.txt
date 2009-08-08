@@ -85,7 +85,7 @@ section::Normal{nbsp}mode[normal-index]
 
 ||[m]N%[m]|| Scroll to {count} percent of the document +
 
-||[m]'[m]|| Jump to the mark in the current buffer +
+||[m]'[m]|| Jump to the mark +
 
 ||[m]@[m]|| Play a macro +
 
