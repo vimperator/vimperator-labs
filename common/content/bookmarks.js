@@ -280,15 +280,17 @@ function Bookmarks() //{{{
             let keyword = "";
             let tags = "";
 
-            let bmark = bookmarks.get(buffer.URL)[0];
-            if (bmark)
+            let bmarks = bookmarks.get(buffer.URL).filter(function (bmark) bmark.url == buffer.URL);
+
+            if (bmarks.length == 1)
             {
+                let bmark = bmarks[0];
+
                 title = " -title=\"" + bmark.title + "\"";
                 if (bmark.keyword)
                     keyword = " -keyword=\"" + bmark.keyword + "\"";
                 if (bmark.tags.length > 0)
                     tags = " -tags=\"" + bmark.tags.join(", ") + "\"";
-
             }
             else
             {
