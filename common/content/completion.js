@@ -128,7 +128,7 @@ function CompletionContext(editor, name, offset) //{{{
                 return this.filters.
                     reduce(function (res, filter) res.filter(function (item) filter.call(self, item)),
                             items);
-        }
+        };
         /**
          * @property {Array} An array of predicates on which to filter the
          *     results.
@@ -256,12 +256,12 @@ CompletionContext.prototype = {
                 let prefix = self.value.substring(minStart, context.offset);
                 return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
             });
-            return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring }
+            return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring };
         }
         catch (e)
         {
             liberator.reportError(e);
-            return { start: 0, items: [], longestAllSubstring: "" }
+            return { start: 0, items: [], longestAllSubstring: "" };
         }
     },
     // Temporary
@@ -306,7 +306,7 @@ CompletionContext.prototype = {
         this._completions = items;
         let self = this;
         if (this.updateAsync && !this.noUpdate)
-            liberator.callInMainThread(function () { self.onUpdate.call(self) });
+            liberator.callInMainThread(function () { self.onUpdate.call(self); });
     },
 
     get createRow() this._createRow || template.completionRow, // XXX
@@ -319,7 +319,7 @@ CompletionContext.prototype = {
     set filter(val)
     {
         delete this._ignoreCase;
-        return this._filter = val
+        return this._filter = val;
     },
 
     get format() ({
@@ -347,7 +347,7 @@ CompletionContext.prototype = {
             let [k, v] = i;
             let _k = "_" + k;
             if (typeof v == "string" && /^[.[]/.test(v))
-                v = eval("(function (i) i" + v + ")")
+                v = eval("(function (i) i" + v + ")");
             if (typeof v == "function")
                 res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = v(this.item)));
             else
@@ -358,7 +358,7 @@ CompletionContext.prototype = {
     },
 
     get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
-    set regenerate(val) { if (val) delete this.itemCache[this.key] },
+    set regenerate(val) { if (val) delete this.itemCache[this.key]; },
 
     get generate() !this._generate ? null : function ()
     {
@@ -438,7 +438,7 @@ CompletionContext.prototype = {
             filtered.forEach(function (item) {
                 item.unquoted = item.text;
                 item.text = quote[0] + quote[1](item.text) + quote[2];
-            })
+            });
         return this.cache.filtered = filtered;
     },
 
@@ -573,7 +573,7 @@ CompletionContext.prototype = {
     fork: function fork(name, offset, self, completer)
     {
         if (typeof completer == "string")
-            completer = self[completer]
+            completer = self[completer];
         let context = new CompletionContext(this, name, offset);
         this.contextList.push(context);
         if (completer)
@@ -762,7 +762,7 @@ function Completion() //{{{
             }
             catch (e) {}
             return iterator;
-        }
+        };
 
         // Search the object for strings starting with @key.
         // If @last is defined, key is a quoted string, it's
@@ -812,7 +812,7 @@ function Completion() //{{{
             });
 
             return compl;
-        }
+        };
 
         this.eval = function eval(arg, key, tmp)
         {
@@ -837,7 +837,7 @@ function Completion() //{{{
             {
                 delete context[EVAL_TMP];
             }
-        }
+        };
 
         // Get an element from the stack. If @n is negative,
         // count from the top of the stack, otherwise, the bottom.
@@ -851,7 +851,7 @@ function Completion() //{{{
             if (m == null)
                 return a;
             return a[a.length - m - 1];
-        }
+        };
 
         function buildStack(filter)
         {
@@ -862,7 +862,7 @@ function Completion() //{{{
                 top = [i, arg, [i], [], [], [], []];
                 last = top[CHAR];
                 stack.push(top);
-            }
+            };
             let pop = function pop(arg)
             {
                 if (top[CHAR] != arg)
@@ -882,7 +882,7 @@ function Completion() //{{{
                 last = top[CHAR];
                 let ret = stack.pop();
                 return ret;
-            }
+            };
 
             let i = 0, c = "";     // Current index and character, respectively.
 
@@ -1056,7 +1056,7 @@ function Completion() //{{{
                     prev = dot + 1;
                     obj = self.eval(s, cacheKey, obj);
                 }
-                return [[obj, cacheKey]]
+                return [[obj, cacheKey]];
             }
 
             function getObjKey(frame)
@@ -1113,13 +1113,13 @@ function Completion() //{{{
                             if (!isnan(a.item.key) && !isnan(b.item.key))
                                 return a.item.key - b.item.key;
                             return isnan(b.item.key) - isnan(a.item.key) || compare(a, b);
-                        }
+                        };
                         if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                             context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
                         if (obj == cache.evalContext)
                             context.regenerate = true;
                         context.generate = function () self.objectKeys(obj);
-                    }
+                    };
                 }
                 // TODO: Make this a generic completion helper function.
                 let filter = key + (string || "");
@@ -1226,7 +1226,7 @@ function Completion() //{{{
                         let res = completer.call(self, context, func, obj, args);
                         if (res)
                             context.completions = res;
-                    }
+                    };
 
                     obj[0][1] += "." + func + "(... [" + args.length + "]";
                     return complete.call(this, obj, key, compl, string, last);
@@ -1346,7 +1346,7 @@ function Completion() //{{{
             let numLocationCompletions = 0; // how many async completions did we already return to the caller?
             let start = 0;
             let skip = 0;
-            
+
             if (options["urlseparator"])
                 skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
 
@@ -1372,7 +1372,7 @@ function Completion() //{{{
         urls: function (context, tags)
         {
             let compare = String.localeCompare;
-            let contains = String.indexOf
+            let contains = String.indexOf;
             if (context.ignoreCase)
             {
                 compare = util.compareIgnoreCase;

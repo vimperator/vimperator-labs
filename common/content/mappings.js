@@ -266,7 +266,7 @@ function Mappings() //{{{
                         }
                         for (map in mappingsIterator(modes, user))
                         if (map.rhs && map.noremap == noremap)
-                    ]
+                    ];
                 }
         };
 

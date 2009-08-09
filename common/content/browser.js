@@ -71,7 +71,7 @@ function Browser() //{{{
                 // Stolen from browser.jar/content/browser/browser.js, more or less.
                 try
                 {
-                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val
+                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val;
                     PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
                     getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                 }
@@ -95,19 +95,24 @@ function Browser() //{{{
         let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
         storage.newObject("private-mode", function () {
             ({
-                init: function () {
+                init: function ()
+                {
                     services.get("observer").addObserver(this, "private-browsing", false);
                     services.get("observer").addObserver(this, "quit-application", false);
                     this.private = services.get("privateBrowsing").privateBrowsingEnabled;
                 },
-                observe: function (subject, topic, data) {
-                    if (topic == "private-browsing") {
+                observe: function (subject, topic, data)
+                {
+                    if (topic == "private-browsing")
+                    {
                         if (data == "enter")
                             storage.privateMode = true;
                         else if (data == "exit")
                             storage.privateMode = false;
                         storage.fireEvent("private-mode", "change", storage.privateMode);
-                    } else if (topic == "quit-application") {
+                    }
+                    else if (topic == "quit-application")
+                    {
                         services.get("observer").removeObserver(this, "quit-application");
                         services.get("observer").removeObserver(this, "private-browsing");
                     }

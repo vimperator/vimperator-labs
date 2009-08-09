@@ -193,7 +193,7 @@ function Player() // {{{
             mappings.add([modes.PLAYER],
                  ["<C-" + rating + ">"], "Rate the current media item " + rating,
                  function () { player.rateMediaItem(rating); });
-        }
+        };
     }
 
     ////////////////// ///////////////////////////////////////////////////////////}}}
@@ -306,9 +306,9 @@ function Player() // {{{
             }
 
             if (/^[-+]/.test(arg))
-                arg[0] == "-" ? player.seekBackward(value) : player.seekForward(value)
+                arg[0] == "-" ? player.seekBackward(value) : player.seekForward(value);
             else
-                player.seekTo(value)
+                player.seekTo(value);
 
         },
         { argCount: "1" });

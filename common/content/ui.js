@@ -363,7 +363,7 @@ function CommandLine() //{{{
             {
                 case this.UP:
                     if (this.selected == null)
-                        idx = -2
+                        idx = -2;
                     else
                         idx = this.selected - 1;
                     break;
@@ -2126,7 +2126,7 @@ function StatusLine() //{{{
                     value = value.replace(/[\u200e\u200f\u202a\u202b\u202c\u202d\u202e]/g,
                         encodeURIComponent);
                     return value;
-                }
+                };
 
             if (url == null)
                 // TODO: this probably needs a more general solution.

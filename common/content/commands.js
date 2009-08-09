@@ -1171,7 +1171,7 @@ function Commands() //{{{
             // then get completions of the command name
             let [count, cmd, bang, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
-            context.advance(prefix.length)
+            context.advance(prefix.length);
             if (!junk)
                 return context.fork("", 0, this, "command");
 

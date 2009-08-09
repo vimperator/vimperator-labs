@@ -970,7 +970,7 @@ function History() //{{{
 
     completion.history = function _history(context, maxItems) {
         context.format = history.format;
-        context.title = ["History"]
+        context.title = ["History"];
         context.compare = CompletionContext.Sort.unsorted;
         //context.background = true;
         if (context.maxItems == null)
@@ -1027,7 +1027,7 @@ function History() //{{{
             let sh = window.getWebNavigation().sessionHistory;
             let obj = [];
             obj.index = sh.index;
-            obj.__iterator__ = function() util.Array.iteritems(this)
+            obj.__iterator__ = function () util.Array.iteritems(this);
             for (let i in util.range(0, sh.count))
             {
                 obj[i] = { index: i, __proto__: sh.getEntryAtIndex(i, false) };

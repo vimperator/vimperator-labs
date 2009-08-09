@@ -97,7 +97,7 @@ function AutoCommands() //{{{
                 if (args.bang)
                     autocommands.remove(event, regex);
                 if (args["-javascript"])
-                    cmd = eval("(function(args) { with(args) {" + cmd + "} })");
+                    cmd = eval("(function (args) { with(args) {" + cmd + "} })");
                 autocommands.add(events, regex, cmd);
             }
             else
@@ -351,7 +351,7 @@ function Events() //{{{
         pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
         pendingArgMap: null,       // pending map storage for commands like m{a-z}
         count: -1                  // parsed count from the input buffer
-    }
+    };
 
     var fullscreen = window.fullScreen;
 
@@ -471,9 +471,9 @@ function Events() //{{{
                           .replace(/^NUMPAD/, "k")];
             if (k in keyTable)
                 names = keyTable[k];
-            code_key[v] = names[0]
+            code_key[v] = names[0];
             for (let [,name] in Iterator(names))
-                key_code[name.toLowerCase()] = v
+                key_code[name.toLowerCase()] = v;
         }
 
     // HACK: as Gecko does not include an event for <, we must add this in manually.
@@ -1013,7 +1013,7 @@ function Events() //{{{
          */
         fromString: function (input)
         {
-            let out = []
+            let out = [];
 
             let re = RegExp("<.*?>?>|[^<]|<(?!.*>)", "g");
             let match;
@@ -1042,7 +1042,7 @@ function Events() //{{{
                         {
                             if (evt_obj.shiftKey)
                             {
-                                keyname = keyname.toUpperCase()
+                                keyname = keyname.toUpperCase();
                                 if (keyname == keyname.toLowerCase())
                                     evt_obj.liberatorShift = true;
                             }
@@ -1062,7 +1062,7 @@ function Events() //{{{
                         }
                         else // spaces, control characters, and <
                         {
-                            evt_obj.keyCode = key_code[keyname]
+                            evt_obj.keyCode = key_code[keyname];
                             evt_obj.charCode = 0;
                         }
                     }
@@ -1079,7 +1079,7 @@ function Events() //{{{
                 if (evt_obj.keyCode == 32 || evt_obj.charCode == 32)
                     evt_obj.charCode = evt_obj.keyCode = 32; // <Space>
                 if (evt_obj.keyCode == 60 || evt_obj.charCode == 60)
-                    evt_obj.charCode = evt_obj.keyCode = 60 // <lt>
+                    evt_obj.charCode = evt_obj.keyCode = 60; // <lt>
 
                 out.push(evt_obj);
             }
@@ -1321,7 +1321,7 @@ function Events() //{{{
                 if (config.focusChange)
                     return void config.focusChange(win);
 
-                urlbar = document.getElementById("urlbar");
+                let urlbar = document.getElementById("urlbar");
                 if (elem == null && urlbar && urlbar.inputField == lastFocus)
                     liberator.threadYield(true);
 

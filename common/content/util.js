@@ -524,7 +524,7 @@ const util = { //{{{
 
                 value = template.highlight(value, true, 150);
                 // FIXME: Inline style.
-                key = <span style="font-weight: bold;">{i}</span>;
+                let key = <span style="font-weight: bold;">{i}</span>;
                 if (!isNaN(i))
                     i = parseInt(i);
                 else if (/^[A-Z_]+$/.test(i))
@@ -649,7 +649,7 @@ const util = { //{{{
         if (options["urlseparator"])
             urls = util.splitLiteral(str, RegExp("\\s*" + options["urlseparator"] + "\\s*"));
         else
-            urls = [str]
+            urls = [str];
 
         return urls.map(function (url) {
             try
@@ -741,8 +741,8 @@ util.Array = function Array_(ary) {
                 return util.Array(res);
             return res;
         },
-        concat: function() [].concat.apply(this.__proto__, arguments),
-        map: function() this.__noSuchMethod__("map", Array.slice(arguments)),
+        concat: function () [].concat.apply(this.__proto__, arguments),
+        map: function () this.__noSuchMethod__("map", Array.slice(arguments)),
     };
     return obj;
 }

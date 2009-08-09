@@ -762,7 +762,7 @@ function Options() //{{{
                             return <tr>
                                         <td style="width: 200px;">{i}</td>
                                         <td>{prefix}{value}</td>
-                                   </tr>
+                                   </tr>;
                         })
                     }
                     </table>;

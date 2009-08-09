@@ -259,7 +259,7 @@ const modes = (function () //{{{
         set main(value) { this.set(value); },
 
         get extended() extended,
-        set extended(value) { this.set(null, value) }
+        set extended(value) { this.set(null, value); }
 
     };
 

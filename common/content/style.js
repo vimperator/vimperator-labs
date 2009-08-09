@@ -306,7 +306,7 @@ function Styles(name, store)
             {
                 this.registerSheet(cssUri(wrapCSS(sheet)));
                 if (sheet.agent)
-                    this.registerAgentSheet(cssUri(wrapCSS(sheet)))
+                    this.registerAgentSheet(cssUri(wrapCSS(sheet)));
             }
             catch (e)
             {
@@ -335,7 +335,7 @@ function Styles(name, store)
         let names = system ? systemNames : userNames;
         if (typeof sheet === "number")
             return sheets[sheet];
-        return names[sheet]
+        return names[sheet];
     };
 
     /**

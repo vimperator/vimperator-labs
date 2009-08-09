@@ -818,7 +818,7 @@ function Hints() //{{{
                 ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
                 ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
                 ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
-                ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
+                ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"]
             ],
             validator: Option.validateCompleter
         });

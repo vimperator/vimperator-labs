@@ -478,7 +478,7 @@ function IO() //{{{
                 }
 
                 return util.Array.flatten(commands);
-            }
+            };
         };
 
         completion.addUrlCompleter("f", "Local files", completion.file);

@@ -251,7 +251,7 @@ function Mail() //{{{
         function ()
         {
             if (gDBView && gDBView.selection.count < 1)
-                return liberator.beep();
+                return void liberator.beep();
 
             MsgOpenNewTabForMessage();
         });
@@ -558,7 +558,7 @@ function Mail() //{{{
         function (arg)
         {
             if (!GetSelectedMessages())
-                return liberator.beep();
+                return void liberator.beep();
 
             switch (arg)
             {
@@ -664,7 +664,7 @@ function Mail() //{{{
         "Select a folder",
         function (args)
         {
-            let count = Math.max(0, args.count - 1)
+            let count = Math.max(0, args.count - 1);
             let arg = args.literalArg || "Inbox";
 
             let folder = mail.getFolders(arg, true, true)[count];

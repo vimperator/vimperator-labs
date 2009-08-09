@@ -489,7 +489,7 @@ const liberator = (function () //{{{
                     bang: true,
                     completer: function (context)
                     {
-                        completion.extension(context)
+                        completion.extension(context);
                         if (command.filter)
                             context.filters.push(command.filter);
                     },
@@ -852,7 +852,7 @@ const liberator = (function () //{{{
                             function (elem) [elem.textContent, file]);
                 });
                 return util.Array.flatten(res);
-            }
+            };
         };
 
         completion.menuItem = function menuItem(context) {
@@ -866,7 +866,7 @@ const liberator = (function () //{{{
             context.title = ["Toolbar"];
             context.keys = { text: function (item) item.getAttribute("toolbarname"), description: function () "" };
             context.completions = buffer.evaluateXPath("./*[@toolbarname]", document, toolbox);
-        }
+        };
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -913,7 +913,7 @@ const liberator = (function () //{{{
             }
 
             //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
-            return extensions.map(function(e) ({
+            return extensions.map(function (e) ({
                 id: e.id,
                 name: e.name,
                 description: getRdfProperty(e, "description"),
