@@ -961,7 +961,7 @@ function History() //{{{
             bang: true,
             completer: function (context) { context.quote = null; completion.history(context); },
             // completer: function (filter) completion.history(filter)
-            options: [[["-max", "-m"], options.OPTION_INT]]
+            options: [[["-max", "-m"], commands.OPTION_INT]]
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
