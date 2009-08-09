@@ -583,7 +583,7 @@ liberator.registerObserver("load_commands", function () {
                     if (sheet)
                     {
                         filter = sheet.sites.concat(filter).join(",");
-                        css = sheet.css.replace(/;?\s*$/, "; " + css);
+                        css = sheet.css + " " + css;
                     }
                 }
                 let err = styles.addSheet(false, name, filter, css);

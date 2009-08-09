@@ -15,13 +15,15 @@ The ColorScheme autocommand is triggered after the color scheme has been
 sourced.
 ________________________________________________________________________________
 
+
 |:hi| |:highlight| +
 ||:hi[ghlight][!] [-append] {group} [[{selector}] {css}]|| +
 ________________________________________________________________________________
-Highlight {group} with {css}. Normally, {css} is checked for valid
-syntax before it's applied. Once you're certain it's valid, [!] can be
-used to skip the check to speed up Vimperator startup. {selector} can
-be any valid CSS selector, such as [c]:hover[c], and, if provided, will
+Highlight {group} with {css}. {css} is one or more comma separated CSS
+declarations (E.g. *color: blue; background-color: red*). Normally, {css} is
+checked for valid syntax before it's applied. Once you're certain it's valid,
+[!] can be used to skip the check to speed up Vimperator startup. {selector}
+can be any valid CSS selector, such as [c]:hover[c], and, if provided, will
 restrict the match to matching elements.
 
 Valid groups are:
@@ -92,6 +94,7 @@ appended to its current value. If {css} is not provided, any styles matching
 {group} are listed, or all styles if no {group} provided.
 ________________________________________________________________________________
 
+
 |:highlight-clear| +
 ||:hi[ghlight] clear [{group} [{selector}]]|| +
 ________________________________________________________________________________
@@ -103,17 +106,19 @@ ________________________________________________________________________________
 |:sty| |:style| +
 ||:sty[le][!] [-name={name}] [-append] {filter} [{css}]|| +
 ________________________________________________________________________________
-Add CSS styles to the player or to web pages. {filter} is a comma
-separated list of URLs to match. URLs ending with *** are matched as
-prefixes, URLs not containing any *:* or */* characters are
-matched as domains. If {name} (short option: *-n*) is provided, any
-existing style with the same name is overridden, and the style may later
-be deleted using {name}. If *-append* (short option: *-a*) is provided
-along with *-name*, {css} and {filter} are appended to its current
-value.
+Add CSS styles to the browser or to web pages. {filter} is a comma separated
+list of URLs to match. URLs ending with *** are matched as prefixes, URLs not
+containing any *:* or */* characters are matched as domains. {css} is a full
+CSS rule set (E.g. *body { color: blue; }*).
+
+If {name} (short option: *-n*) is provided, any existing style with the same
+name is overridden, and the style may later be deleted using {name}. If
+*-append* (short option: *-a*) is provided along with *-name*, {css} and
+{filter} are appended to its current value.
 
 If {css} isn't provided, matching styles are listed.
 ________________________________________________________________________________
+
 
 |:dels| |:delstyle| +
 ||:dels[tyle] [-name={name}] [-index={index}] [{filter}] [{css}]|| +
