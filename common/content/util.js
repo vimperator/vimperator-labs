@@ -420,7 +420,7 @@ const util = { //{{{
          * @param {number} max The maximum constraint.
          * @returns {number}
          */
-        constrain: function constrain(value, min, max) Math.min(Math.max(min, value), max),
+        constrain: function constrain(value, min, max) Math.min(Math.max(min, value), max)
     },
 
     /**
@@ -742,7 +742,7 @@ util.Array = function Array_(ary) {
             return res;
         },
         concat: function () [].concat.apply(this.__proto__, arguments),
-        map: function () this.__noSuchMethod__("map", Array.slice(arguments)),
+        map: function () this.__noSuchMethod__("map", Array.slice(arguments))
     };
     return obj;
 }

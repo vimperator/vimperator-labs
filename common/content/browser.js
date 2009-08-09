@@ -90,7 +90,7 @@ function Browser() //{{{
             "boolean", false,
             {
                 setter: function (value) services.get("privateBrowsing").privateBrowsingEnabled = value,
-                getter: function () services.get("privateBrowsing").privateBrowsingEnabled,
+                getter: function () services.get("privateBrowsing").privateBrowsingEnabled
             });
         let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
         storage.newObject("private-mode", function () {
@@ -116,7 +116,7 @@ function Browser() //{{{
                         services.get("observer").removeObserver(this, "quit-application");
                         services.get("observer").removeObserver(this, "private-browsing");
                     }
-                },
+                }
             }).init();
         }, false);
         storage.addObserver("private-mode",
