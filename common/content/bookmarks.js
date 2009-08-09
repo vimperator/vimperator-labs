@@ -537,13 +537,14 @@ function Bookmarks() //{{{
         // if "bypassCache" is true, it will force a reload of the bookmarks database
         // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
         // takes about 1 sec
+        // Huh? --djk
+        // TODO: why is this a filter? --djk
         get: function get(filter, tags, maxItems, extra)
         {
             return completion.runCompleter("bookmark", filter, maxItems, tags, extra);
         },
 
         // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
-        // FIXME: tags are not updated differentially
         add: function add(starOnly, title, url, keyword, tags, force)
         {
             try
@@ -573,8 +574,7 @@ function Bookmarks() //{{{
                     bookmarksService.setKeywordForBookmark(id, keyword);
                 if (tags)
                 {
-                    // TODO: presumably this needs to be done in two Places transactions *double yawn* --djk
-                    //taggingService.untagURI(uri, null);
+                    taggingService.untagURI(uri, null);
                     taggingService.tagURI(uri, tags);
                 }
             }
