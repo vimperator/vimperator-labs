@@ -132,7 +132,9 @@ function Finder() //{{{
      *       Ehsan Akhgari <ehsan.akhgari@gmail.com>
      *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
      */
-    var highlightObj = {
+    var highlighter = {
+
+        doc: null,
 
         spans: [],
 
@@ -143,16 +145,14 @@ function Finder() //{{{
                 finder.caseSensitive = matchCase;
 
             var range;
-            while ((range = finder.Find(aWord,
-                                        this.searchRange,
-                                        this.startPt,
-                                        this.endPt)))
+            while ((range = finder.Find(aWord, this.searchRange, this.startPt, this.endPt)))
                 yield range;
         },
 
         highlightDoc: function highlightDoc(win, aWord)
         {
-            Array.forEach(win.frames, function (frame) highlightObj.highlightDoc(frame, aWord));
+            this.doc = content.document; // XXX
+            Array.forEach(win.frames, function (frame) highlighter.highlightDoc(frame, aWord));
 
             var doc = win.document;
             if (!doc || !(doc instanceof HTMLDocument))
@@ -160,7 +160,7 @@ function Finder() //{{{
 
             if (!aWord)
             {
-                let elems = highlightObj.getSpans(doc);
+                let elems = highlighter.spans;
                 for (let i = elems.length; --i >= 0;)
                 {
                     let elem = elems[i];
@@ -249,7 +249,7 @@ function Finder() //{{{
             this.spans = [];
         },
 
-        getSpans: function (doc) this.spans
+        isHighlighted: function (doc) this.doc == doc && this.spans.length > 0
     };
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -490,14 +490,13 @@ function Finder() //{{{
             if (config.name == "Muttator")
                 return;
 
-            // already highlighted?
-            if (highlightObj.getSpans(content.document).length > 0)
+            if (highlighter.isHighlighted(content.document))
                 return;
 
             if (!str)
                 str = lastSearchString;
 
-            highlightObj.highlightDoc(window.content, str);
+            highlighter.highlightDoc(window.content, str);
 
             // recreate selection since _highlightDoc collapses the selection backwards
             getBrowser().fastFind.findAgain(false, linksOnly);
@@ -510,7 +509,7 @@ function Finder() //{{{
          */
         clear: function ()
         {
-            highlightObj.clear();
+            highlighter.clear();
         }
     };
     //}}}
