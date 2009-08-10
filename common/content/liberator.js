@@ -496,6 +496,7 @@ const liberator = (function () //{{{
                     literal: 0
                 });
         });
+
         commands.add(["exto[ptions]", "extp[references]"],
             "Open an extension's preference dialog",
             function (args)
@@ -814,6 +815,7 @@ const liberator = (function () //{{{
                 argCount: "0",
                 bang: true
             });
+
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -933,6 +935,7 @@ const liberator = (function () //{{{
         NEW_WINDOW: 4,
 
         forceNewTab: false,
+        forceNewWindow: false,
 
         /** @property {string} The Liberator version string. */
         version: "###VERSION### (created: ###DATE###)", // these VERSION and DATE tokens are replaced by the Makefile
@@ -1576,6 +1579,8 @@ const liberator = (function () //{{{
 
             if (liberator.forceNewTab)
                 where = liberator.NEW_TAB;
+            else if (liberator.forceNewWindow)
+                where = liberator.NEW_WINDOW;
             else if (!where)
                 where = liberator.CURRENT_TAB;
 

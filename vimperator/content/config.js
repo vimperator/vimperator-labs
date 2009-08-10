@@ -267,6 +267,20 @@ const config = { //{{{
                 literal: 0
             });
 
+        commands.add(["wind[ow]"],
+            "Execute a command and tell it to output in a new window",
+            function (args)
+            {
+                liberator.forceNewWindow = true;
+                liberator.execute(args.string, null, true);
+                liberator.forceNewWindow = false;
+            },
+            {
+                argCount: "+",
+                completer: function (context) completion.ex(context),
+                literal: 0
+            });
+
         commands.add(["winc[lose]", "wc[lose]"],
             "Close window",
             function () { window.close(); },
