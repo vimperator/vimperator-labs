@@ -272,6 +272,7 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
 ||[c]:winclose[c]|| Close window +
+||[c]:window[c]|| Execute a command and tell it to output in a new window +
 ||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +
