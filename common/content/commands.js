@@ -907,11 +907,11 @@ function Commands() //{{{
             return [count, cmd, !!special, args || ""];
         },
 
-        /** @property @private */
-        get complQuote() complQuote, // XXX: needed?
+        /** @property */
+        get complQuote() complQuote,
 
-        /** @property @private */
-        get quoteArg() quoteArg, // XXX: needed?
+        /** @property */
+        get quoteArg() quoteArg, // XXX: better somewhere else?
 
         /**
          * Remove the user-defined command with matching <b>name</b>.

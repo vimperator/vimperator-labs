@@ -276,6 +276,8 @@ function Bookmarks() //{{{
         "Open a prompt to bookmark the current URL",
         function ()
         {
+            function quote(str) commands.quoteArg['"'](str)
+
             let title = "";
             let keyword = "";
             let tags = "";
@@ -286,7 +288,7 @@ function Bookmarks() //{{{
             {
                 let bmark = bmarks[0];
 
-                title = " -title=\"" + bmark.title + "\"";
+                title = " -title=" + quote(bmark.title);
                 if (bmark.keyword)
                     keyword = " -keyword=\"" + bmark.keyword + "\"";
                 if (bmark.tags.length > 0)
@@ -295,7 +297,7 @@ function Bookmarks() //{{{
             else
             {
                 if (buffer.title != buffer.URL)
-                    title = " -title=\"" + buffer.title + "\"";
+                    title = " -title=" + quote(buffer.title);
             }
 
             commandline.open(":", "bmark " + buffer.URL + title + keyword + tags, modes.EX);
