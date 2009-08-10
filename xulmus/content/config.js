@@ -34,7 +34,7 @@ const config = { //{{{
     hostApplication: "Songbird",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "windows", "player"],
+    features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "player"],
     defaults: {
         guioptions: "mprb",
         showtabline: 2,

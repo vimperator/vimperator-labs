@@ -98,22 +98,6 @@ go somewhere by editing the URL of the current page.
 ________________________________________________________________________________
 
 
-|:winopen| |:wopen| |:winedit|
-||:wino[pen][!] [a][arg1][a], [a][arg2][a], ...|| +
-||w||
-________________________________________________________________________________
-Just like [c]:tabopen[c] but opens the resulting web page(s) in a new window.
-________________________________________________________________________________
-
-
-|W| +
-||W||
-________________________________________________________________________________
-Open one or more URLs in a new window based on current location. Works like
-[m]w[m] but preselects current URL in the [c]:winopen[c] query.
-________________________________________________________________________________
-
-
 |<MiddleMouse>| |p| +
 ||p||
 ________________________________________________________________________________
