@@ -49,7 +49,7 @@ const config = { //{{{
 
     get isPlayerWindow() SBGetBrowser().mCurrentTab == SBGetBrowser().mediaTab,
     // focusContent() focuses this widget gSongbirdWindowController takes care of the focus.
-    get visualbellWindow() document.getElementById(this.mainWindowID),
+    get visualbellWindow() document.getElementById(this.mainWindowId),
 
     styleableChrome: "chrome://gonzo/content/xul/mainplayer.xul",
 

@@ -43,7 +43,7 @@ function Buffer() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // FIXME: This doesn't belong here.
-    let fontSize = util.computedStyle(document.getElementById(config.mainWindowID)).fontSize;
+    let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;
 
     styles.registerSheet("chrome://liberator/skin/liberator.css");
     let error = styles.addSheet(true, "font-size", "chrome://liberator/content/buffer.xhtml",

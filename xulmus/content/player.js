@@ -754,12 +754,12 @@ function Player() // {{{
 
             while (propEnumerator.hasMore())
             {
-                let propertyID = propEnumerator.getNext();
+                let propertyId = propEnumerator.getNext();
 
-                if (propManager.getPropertyInfo(propertyID).userViewable)
+                if (propManager.getPropertyInfo(propertyId).userViewable)
                 {
-                    liberator.dump("PropertyID - "+propManager.getPropertyInfo(propertyID).id);
-                    properties.push(propManager.getPropertyInfo(propertyID).displayName);
+                    //liberator.dump("propertyId - " + propManager.getPropertyInfo(propertyId).id);
+                    properties.push(propManager.getPropertyInfo(propertyId).displayName);
                 }
             }
 

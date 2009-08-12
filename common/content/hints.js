@@ -352,16 +352,16 @@ function Hints() //{{{
      *
      * By default highlights it green instead of yellow.
      *
-     * @param {number} newID The hint to make active.
-     * @param {number} oldID The currently active hint.
+     * @param {number} newId The hint to make active.
+     * @param {number} oldId The currently active hint.
      */
-    function showActiveHint(newID, oldID)
+    function showActiveHint(newId, oldId)
     {
-        let oldElem = validHints[oldID - 1];
+        let oldElem = validHints[oldId - 1];
         if (oldElem)
             setClass(oldElem, false);
 
-        let newElem = validHints[newID - 1];
+        let newElem = validHints[newId - 1];
         if (newElem)
             setClass(newElem, true);
     }
@@ -986,7 +986,7 @@ function Hints() //{{{
                     if (hintNumber == 0)
                         hintNumber = 1;
 
-                    let oldID = hintNumber;
+                    let oldId = hintNumber;
                     if (key == "<Tab>")
                     {
                         if (++hintNumber > validHints.length)
@@ -997,7 +997,7 @@ function Hints() //{{{
                         if (--hintNumber < 1)
                             hintNumber = validHints.length;
                     }
-                    showActiveHint(hintNumber, oldID);
+                    showActiveHint(hintNumber, oldId);
                     updateStatusline();
                     return;
 

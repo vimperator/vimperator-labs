@@ -94,7 +94,7 @@ const configbase = { //{{{
     /**
      * @property {string} The ID of the application's main XUL window.
      */
-    mainWindowID: document.documentElement.id,
+    mainWindowId: document.documentElement.id,
 
     /**
      * @property {[[]]} An array of application specific mode specifications.

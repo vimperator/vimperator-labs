@@ -45,7 +45,7 @@ const config = (function () //{{{
         name: name,
         hostApplication: host, // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
                                         // Yes, but it will be localized unlike all other strings. So, it's best left until we i18n liberator. --djk
-        get mainWindowID() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
+        get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
         /*** optional options, there are checked for existence and a fallback provided  ***/
         features: ["hints", "mail", "marks", "addressbook", "tabs"],
@@ -67,7 +67,7 @@ const config = (function () //{{{
         get mailModes() [modes.NORMAL],
         // focusContent() focuses this widget
         get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
-        get visualbellWindow() document.getElementById(this.mainWindowID),
+        get visualbellWindow() document.getElementById(this.mainWindowId),
         styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
 
         autocommands: [["DOMLoad",         "Triggered when a page's DOM content has fully loaded"],
