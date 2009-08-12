@@ -22,10 +22,12 @@ ________________________________________________________________________________
 Execute {cmd} and tell it to output in a new tab. Works only for commands that
 support it, currently:
 
-* [c]:tab help[c]
-* [c]:tab prefs[!][c]
 * [c]:tab addons[c]
 * [c]:tab downloads[c]
+* [c]:tab extoptions[c]
+* [c]:tab help[c]
+* [c]:tab javascript![c]
+* [c]:tab preferences![c]
 ________________________________________________________________________________
 
 

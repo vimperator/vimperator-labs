@@ -263,7 +263,7 @@ raw [a][arg][a].
 ____
 
 
-|\'editor'| |i_<C-i>|
+|\'editor'|
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
@@ -746,7 +746,7 @@ ____
 
 
 |\'suggestengines'|
-||'suggestengines' || stringlist (default: "google")
+||'suggestengines'|| stringlist (default: "google")
 ____
 Set the search engines which can be used for completion suggestions.
 Add "S" to the 'complete' option if you want to use this feature.

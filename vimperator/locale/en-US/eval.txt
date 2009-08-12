@@ -41,7 +41,7 @@ ________________________________________________________________________________
 
 |:js| |:javas| |:javascript|
 ||:javas[cript] {cmd}|| +
-||:javascript <<{endpattern}\n{empty}{script}\n{empty}{endpattern} || +
+||:javascript <<{endpattern}\n{empty}{script}\n{empty}{endpattern}|| +
 ||:javascript[!]||
 ________________________________________________________________________________
 Run any JavaScript command through eval(). Acts as a JavaScript interpreter by

@@ -16,7 +16,7 @@ Keys can be mapped in four distinct modes:
 * Normal mode: When browsing normally --
 * Visual mode: When selecting text with the cursor keys --
 * Insert mode: When interacting with text fields on a website --
-* Command-line mode: When typing into the Vimperator command line. --
+* Command-line mode: When typing into the Vimperator command line --
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
 vimperatorrc file!
@@ -85,30 +85,25 @@ Remove all mappings for the applicable mode(s). All user-defined mappings are
 cleared.
 ________________________________________________________________________________
 
-|:map|
 ||:map|| +
-|:nm| |:nmap|
 ||:nm[ap]|| +
-|:vm| |:vmap|
 ||:vm[ap]|| +
-|:im| |:imap|
 ||:im[ap]|| +
-|:cm| |:cmap|
 ||:cm[ap]|| +
 ________________________________________________________________________________
 List all mappings for the applicable mode(s).
 ________________________________________________________________________________
 
 
-|:map|
+|:map_l|
 ||:map {lhs}|| +
-|:nm| |:nmap|
+|:nmap_l|
 ||:nm[ap] {lhs}|| +
-|:vm| |:vmap|
+|:vmap_l|
 ||:vm[ap] {lhs}|| +
-|:im| |:imap|
+|:imap_l|
 ||:im[ap] {lhs}|| +
-|:cm| |:cmap|
+|:cmap_l|
 ||:cm[ap] {lhs}|| +
 ________________________________________________________________________________
 List all mappings starting with {lhs} for the applicable mode(s).

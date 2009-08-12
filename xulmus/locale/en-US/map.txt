@@ -16,7 +16,8 @@ Keys can be mapped in four distinct modes:
 * Normal mode: When browsing normally --
 * Visual mode: When selecting text with the cursor keys --
 * Insert mode: When interacting with text fields on a website --
-* Command-line mode: When typing into the Xulmus command line. --
+* Command-line mode: When typing into the Xulmus command line --
+* Player mode: When the main player tab is active --
 
 Warning: Mappings are NOT saved between sessions, make sure you put them in your
 xulmusrc file!
@@ -33,6 +34,8 @@ subsection::Map{nbsp}commands[:map-commands]
 ||:im[ap] {lhs} {rhs}|| +
 |:cm| |:cmap|
 ||:cm[ap] {lhs} {rhs}|| +
+|:pm| |:pmap|
+||:pm[ap] {lhs} {rhs}|| +
 ________________________________________________________________________________
 Map the [j]key-sequence[j] {lhs} to {rhs} for the applicable mode(s). The {rhs} is
 remapped, allowing for nested and recursive mappings.
@@ -49,6 +52,8 @@ ________________________________________________________________________________
 ||:ino[remap] {lhs} {rhs}|| +
 |:cno| |:cnoremap|
 ||:cno[remap] {lhs} {rhs}|| +
+|:pno| |:pnoremap|
+||:pno[remap] {lhs} {rhs}|| +
 ________________________________________________________________________________
 Map the [j]key-sequence[j] {lhs} to {rhs} for the applicable mode(s). No remapping of
 the {rhs} is performed.
@@ -65,6 +70,8 @@ ________________________________________________________________________________
 ||:iu[nmap] {lhs} {rhs}|| +
 |:cu| |:cunmap|
 ||:cu[nmap] {lhs} {rhs}|| +
+|:pu| |:cunmap|
+||:pu[nmap] {lhs} {rhs}|| +
 ________________________________________________________________________________
 Remove the mapping of {lhs} for the applicable mode(s).
 ________________________________________________________________________________
@@ -80,36 +87,36 @@ ________________________________________________________________________________
 ||:imapc[lear]|| +
 |:cmapc| |:cmapclear|
 ||:cmapc[lear]|| +
+|:pmapc| |:pmapclear|
+||:pmapc[lear]|| +
 ________________________________________________________________________________
 Remove all mappings for the applicable mode(s). All user-defined mappings are
 cleared.
 ________________________________________________________________________________
 
-|:map|
 ||:map|| +
-|:nm| |:nmap|
 ||:nm[ap]|| +
-|:vm| |:vmap|
 ||:vm[ap]|| +
-|:im| |:imap|
 ||:im[ap]|| +
-|:cm| |:cmap|
 ||:cm[ap]|| +
+||:pm[ap]|| +
 ________________________________________________________________________________
 List all mappings for the applicable mode(s).
 ________________________________________________________________________________
 
 
-|:map|
+|:map_l|
 ||:map {lhs}|| +
-|:nm| |:nmap|
+|:nmap_l|
 ||:nm[ap] {lhs}|| +
-|:vm| |:vmap|
+|:vmap_l|
 ||:vm[ap] {lhs}|| +
-|:im| |:imap|
+|:imap_l|
 ||:im[ap] {lhs}|| +
-|:cm| |:cmap|
+|:cmap_l|
 ||:cm[ap] {lhs}|| +
+|:pmap_l|
+||:pm[ap] {lhs}|| +
 ________________________________________________________________________________
 List all mappings starting with {lhs} for the applicable mode(s).
 ________________________________________________________________________________
