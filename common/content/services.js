@@ -32,7 +32,11 @@ function Services()
             ifaces.forEach(function (iface) res.QueryInterface(iface));
             return res;
         }
-        catch (e) {}
+        catch (e)
+        {
+            // liberator.log() is not defined at this time, so just dump any error
+            dump("Service creation failed for '" + classes + "': " + e);
+        }
     }
 
     const self = {
@@ -86,7 +90,7 @@ function Services()
     };
 
     self.add("appStartup",          "@mozilla.org/toolkit/app-startup;1",       Ci.nsIAppStartup);
-    self.add("autoCompleteSearch",  "@mozilla.org/browser/global-history;2",    Ci.nsIAutoCompleteSearch);
+    self.add("autoCompleteSearch",  "@mozilla.org/autocomplete/search;1?name=history", Ci.nsIAutoCompleteSearch);
     self.add("browserSearch",       "@mozilla.org/browser/search-service;1",    Ci.nsIBrowserSearchService);
     self.add("cache",               "@mozilla.org/network/cache-service;1",     Ci.nsICacheService);
     self.add("commandLineHandler",  "@mozilla.org/commandlinehandler/general-startup;1?type=liberator", Ci.nsICommandLineHandler);
