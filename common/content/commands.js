@@ -1100,7 +1100,12 @@ function Commands() //{{{
             completer: function (context) completion.userCommand(context),
             options: [
                 [["-nargs"], self.OPTION_STRING,
-                     function (arg) /^[01*?+]$/.test(arg), ["0", "1", "*", "?", "+"]],
+                function (arg) /^[01*?+]$/.test(arg),
+                [["0", "No arguments are allowed (default)"],
+                 ["1", "One argument is allowed"],
+                 ["*", "Zero or more arguments are allowed"],
+                 ["?", "Zero or one argument is allowed"],
+                 ["+", "One or more arguments is allowed"]]],
                 [["-bang"], self.OPTION_NOARG],
                 [["-count"], self.OPTION_NOARG],
                 [["-description"], self.OPTION_STRING],
