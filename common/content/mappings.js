@@ -526,16 +526,13 @@ function Mappings() //{{{
         list: function (modes, filter)
         {
             let modeSign = "";
-            modes.forEach(function (mode)
-            {
-                if (mode == modes.NORMAL)
-                    modeSign += "n";
-                if ((mode == modes.INSERT || mode == modes.TEXTAREA) && modeSign.indexOf("i") == -1)
-                    modeSign += "i";
-                if (mode == modes.COMMAND_LINE)
-                    modeSign += "c";
-                if (mode == modes.MESSAGRE)
-                    modeSign += "m";
+
+            // TODO: Vim hides "nv" in a :map and "v" and "n" in :vmap and
+            //       :nmap respectively if the map is not exclusive.
+            modes.forEach(function (mode) {
+                for (let m in modules.modes.mainModes)
+                    if (mode == m.mask && modeSign.indexOf(m.char) == -1)
+                        modeSign += m.char;
             });
 
             let maps = mappingsIterator(modes, user);
