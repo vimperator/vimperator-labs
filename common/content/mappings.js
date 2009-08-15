@@ -213,40 +213,45 @@ function Mappings() //{{{
         // 0 args -> list all maps
         // 1 arg  -> list the maps starting with args
         // 2 args -> map arg1 to arg*
-        function map(args, mode, noremap)
+        function map(args, modes, noremap)
         {
             if (!args.length)
             {
-                mappings.list(mode);
+                mappings.list(modes);
                 return;
             }
 
             let [lhs, rhs] = args;
 
             if (!rhs) // list the mapping
-                mappings.list(mode, expandLeader(lhs));
+                mappings.list(modes, expandLeader(lhs));
             else
             {
                 // this matches Vim's behaviour
                 if (/^<Nop>$/i.test(rhs))
                     noremap = true;
 
-                for (let [,m] in Iterator(mode))
-                {
-                    mappings.addUserMap([m], [lhs],
-                            "User defined mapping",
-                            function (count) { events.feedkeys((count > -1 ? count : "") + this.rhs, this.noremap, this.silent); },
-                            {
-                                count: true,
-                                rhs: events.canonicalKeys(rhs),
-                                noremap: !!noremap,
-                                silent: "<silent>" in args
-                            });
-                }
+                mappings.addUserMap(modes, [lhs],
+                    "User defined mapping",
+                    function (count) { events.feedkeys((count > -1 ? count : "") + this.rhs, this.noremap, this.silent); },
+                    {
+                        count: true,
+                        rhs: events.canonicalKeys(rhs),
+                        noremap: !!noremap,
+                        silent: "<silent>" in args
+                    });
             }
         }
 
         modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
+
+        // :map, :noremap => NORMAL + VISUAL modes
+        function isMultiMode(map, cmd)
+        {
+            return map.modes.indexOf(modules.modes.NORMAL) >= 0
+                && map.modes.indexOf(modules.modes.VISUAL) >= 0
+                && /^[nv](nore)?map$/.test(cmd);
+        }
 
         const opts = {
                 completer: function (context, args) completion.userMapping(context, args, modes),
@@ -265,7 +270,7 @@ function Mappings() //{{{
                             literalArg: map.rhs
                         }
                         for (map in mappingsIterator(modes, user))
-                        if (map.rhs && map.noremap == noremap)
+                        if (map.rhs && map.noremap == noremap && !isMultiMode(map, this.name))
                     ];
                 }
         };
