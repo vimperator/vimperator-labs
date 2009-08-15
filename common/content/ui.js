@@ -1300,7 +1300,10 @@ function CommandLine() //{{{
                     event.preventDefault();
                     event.stopPropagation();
 
-                    history.select(/Up/.test(key), !/(Page|S-)/.test(key));
+                    if (history)
+                        history.select(/Up/.test(key), !/(Page|S-)/.test(key));
+                    else
+                        liberator.beep();
                     return false;
                 }
                 // user pressed TAB to get completions of a command
