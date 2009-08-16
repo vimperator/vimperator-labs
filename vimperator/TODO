@@ -7,7 +7,8 @@ ARCHITECTURE:
 	  breaks Asciidoc formatting in certain unpredictable (to me at least)
 	  contexts. *sigh* --djk
         - move as much as possible to common/*
-- decide on how to document Arrays in our jsdoc(ish) documentation.
+- decide on how to document Arrays in our jsdoc(ish) documentation. Is there
+  even a documentation tool that can parse our source sensibly?
 
 BUGS:
 - add window resize support to hints
@@ -25,12 +26,10 @@ BUGS:
   else it chucks, I haven't investigated --djk
 - messages is still broken in several ways - needs testing.
   => :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
+  (NOTE: an intentional design decision by MS - Boo!)
   => it often overwrites the open command line while editing etc.
 - <tags> and <keyword> autocmd 'keywords' are not available when adding a
   bookmark - they're being set after the observer triggers the autocmd event.
-- MOW rendering is broken for multiple commands when open (E.g. :ls | ls) This
-  appears to be the result of using the Message class when appending multiline
-  output to an open MOW.
 - :messages is _very_ slow for message history of several thousand lines ->
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 - The MOW shouldn't close when executing hints and ;F isn't working.

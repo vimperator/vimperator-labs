@@ -910,7 +910,6 @@ function CommandLine() //{{{
         {
             // TODO: are all messages single line? Some display an aggregation
             //       of single line messages at least. E.g. :source
-            // FIXME: I retract my retraction, this command-line/MOW mismatch _is_ really annoying -- djk
             if (messageHistory.length == 1)
             {
                 let message = messageHistory.messages[0];
@@ -1115,7 +1114,8 @@ function CommandLine() //{{{
          *
          * @param {string} str
          * @param {string} highlightGroup The Highlight group for the
-         *     message. @default "Normal"
+         *     message.
+         * @default "Normal"
          * @param {number} flags Changes the behavior as follows:
          *   commandline.APPEND_TO_MESSAGES - Causes message to be added to the
          *          messages history, and shown by :messages.
@@ -1131,7 +1131,7 @@ function CommandLine() //{{{
         {
             // liberator.echo uses different order of flags as it omits the highlight group, change commandline.echo argument order? --mst
             if (silent)
-                return false;
+                return;
 
             highlightGroup = highlightGroup || this.HL_NORMAL;
 
@@ -1141,11 +1141,15 @@ function CommandLine() //{{{
             // The DOM isn't threadsafe. It must only be accessed from the main thread.
             liberator.callInMainThread(function ()
             {
-                let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
+                if ((flags & this.DISALLOW_MULTILINE) && !outputContainer.collapsed)
+                    return;
 
+                let single = flags & (this.FORCE_SINGLELINE | this.DISALLOW_MULTILINE);
                 let action = echoLine;
 
-                if (!single && (!outputContainer.collapsed || messageBox.value == lastEcho))
+                // TODO: this is all a bit convoluted - clean up.
+                // assume that FORCE_MULTILINE output is fully styled
+                if (!(flags & this.FORCE_MULTILINE) && !single && (!outputContainer.collapsed || messageBox.value == lastEcho))
                 {
                     highlightGroup += " Message";
                     action = echoMultiline;
@@ -1153,9 +1157,6 @@ function CommandLine() //{{{
 
                 if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || typeof str == "xml") && !(flags & this.FORCE_SINGLELINE))
                     action = echoMultiline;
-
-                if ((flags & this.DISALLOW_MULTILINE) && !outputContainer.collapsed)
-                    return;
 
                 if (single)
                     lastEcho = null;
@@ -1170,8 +1171,6 @@ function CommandLine() //{{{
                 if (action)
                     action(str, highlightGroup, single);
             }, this);
-
-            return true;
         },
 
         /**
