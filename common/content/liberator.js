@@ -1692,8 +1692,8 @@ const liberator = (function () //{{{
             const options = [
                 [["+u"], commands.OPTIONS_STRING],
                 [["++noplugin"], commands.OPTIONS_NOARG],
-                [["++cmd"], commands.OPTIONS_STRING],
-                [["+c"], commands.OPTIONS_STRING]
+                [["++cmd"], commands.OPTIONS_STRING, null, null, true],
+                [["+c"], commands.OPTIONS_STRING, null, null, true]
             ];
             return commands.parseArgs(cmdline, options, "*");
         },
@@ -1746,8 +1746,8 @@ const liberator = (function () //{{{
                 let args = liberator.parseCommandLine(commandline);
                 liberator.commandLineOptions.rcFile = args["+u"];
                 liberator.commandLineOptions.noPlugins = "++noplugin" in args;
-                liberator.commandLineOptions.postCommand = args["+c"];
-                liberator.commandLineOptions.preCommand = args["++cmd"];
+                liberator.commandLineOptions.postCommands = args["+c"];
+                liberator.commandLineOptions.preCommands = args["++cmd"];
                 liberator.dump("Processing command-line option: " + commandline);
             }
 
@@ -1769,8 +1769,10 @@ const liberator = (function () //{{{
             // TODO: we should have some class where all this guioptions stuff fits well
             hideGUI();
 
-            if (liberator.commandLineOptions.preCommand)
-                liberator.execute(liberator.commandLineOptions.preCommand);
+            if (liberator.commandLineOptions.preCommands)
+                liberator.commandLineOptions.preCommands.forEach(function (cmd) {
+                    liberator.execute(cmd);
+                });
 
             // finally, read the RC file and source plugins
             // make sourcing asynchronous, otherwise commands that open new tabs won't work
@@ -1827,8 +1829,10 @@ const liberator = (function () //{{{
                         option.value = option.value;
                 }
 
-                if (liberator.commandLineOptions.postCommand)
-                    liberator.execute(liberator.commandLineOptions.postCommand);
+                if (liberator.commandLineOptions.postCommands)
+                    liberator.commandLineOptions.postCommands.forEach(function (cmd) {
+                        liberator.execute(cmd);
+                    });
 
                 liberator.triggerObserver("enter", null);
                 autocommands.trigger(config.name + "Enter", {});

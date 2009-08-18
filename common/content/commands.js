@@ -585,13 +585,27 @@ function Commands() //{{{
          * @param {string} str The Ex command-line string to parse. E.g.
          *     "-x=foo -opt=bar arg1 arg2"
          * @param {Array} options The options accepted. These are specified as
-         *     an array [name, type, validator, completions]. E.g.
+         *     an array [names, type, validator, completions, multiple].
+         *         names - an array of option names. The first name is the
+         *             canonical option name.
+         *         type - the option's value type. This is one of:
+         *             (@link Commands#OPTION_NOARG),
+         *             (@link Commands#OPTION_STRING),
+         *             (@link Commands#OPTION_BOOL),
+         *             (@link Commands#OPTION_INT),
+         *             (@link Commands#OPTION_FLOAT),
+         *             (@link Commands#OPTION_LIST),
+         *             (@link Commands#OPTION_ANY)
+         *         validator - a validator function
+         *         completer - a list of completions, or a completion function
+         *         multiple - whether this option can be specified multiple times
+         *     E.g.
          *     options = [[["-force"], OPTION_NOARG],
          *                [["-fullscreen", "-f"], OPTION_BOOL],
          *                [["-language"], OPTION_STRING, validateFunc, ["perl", "ruby"]],
          *                [["-speed"], OPTION_INT],
          *                [["-acceleration"], OPTION_FLOAT],
-         *                [["-accessories"], OPTION_LIST, null, ["foo", "bar"]],
+         *                [["-accessories"], OPTION_LIST, null, ["foo", "bar"], true],
          *                [["-other"], OPTION_ANY]];
          * @param {string} argCount The number of arguments accepted.
          *            "0": no arguments
@@ -769,7 +783,12 @@ function Commands() //{{{
                                         }
                                     }
 
-                                    args[opt[0][0]] = opt[1] == this.OPTION_NOARG || arg; // always use the first name of the option
+                                    // option allowed multiple times
+                                    if (!!opt[4])
+                                        args[opt[0][0]] = (args[opt[0][0]] || []).concat(arg);
+                                    else
+                                        args[opt[0][0]] = opt[1] == this.OPTION_NOARG || arg;
+
                                     i += optname.length + count;
                                     if (i == str.length)
                                         break outer;

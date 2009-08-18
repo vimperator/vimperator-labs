@@ -11,6 +11,8 @@ E.g firefox -liberator "$$++cmd='set exrc' +u='tempRcFile' ++noplugin$$"
 ________________________________________________________________________________
 Execute a single Ex command after all initialization has been performed. See
 [j]initialization[j].
+
+This option can be specified multiple times.
 ________________________________________________________________________________
 
 
@@ -19,6 +21,8 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 Execute a single Ex command before any initialization has been performed. See
 [j]initialization[j].
+
+This option can be specified multiple times.
 ________________________________________________________________________________
 
 
