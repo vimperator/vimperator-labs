@@ -197,6 +197,9 @@ const config = (function () //{{{
 
         init: function ()
         {
+            services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=muttator",
+                Ci.nsICommandLineHandler);
+
             // don't wait too long when selecting new messages
             // GetThreadTree()._selectDelay = 300; // TODO: make configurable
 

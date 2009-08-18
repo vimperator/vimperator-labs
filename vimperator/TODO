@@ -5,10 +5,13 @@ ARCHITECTURE:
 - modular help system
 	- I made a quick attempt at parameterizing it using attributes but it
 	  breaks Asciidoc formatting in certain unpredictable (to me at least)
-	  contexts. *sigh* --djk
+	  contexts. --djk
         - move as much as possible to common/*
 - decide on how to document Arrays in our jsdoc(ish) documentation. Is there
   even a documentation tool that can parse our source sensibly?
+- update build system to generate config specific components from templates in
+  common/components/* and copy others -
+  a739cdeab8f1648fd771f17d8a4885533032376f attempt at linking didn't work.
 
 BUGS:
 - add window resize support to hints

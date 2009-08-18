@@ -7,15 +7,15 @@ function CommandLineHandler()
 
 CommandLineHandler.prototype = {
 
-    classDescription: "Liberator Command-line Handler",
+    classDescription: "Muttator Command-line Handler",
 
-    classID: Components.ID("{16dc34f7-6d22-4aa4-a67f-2921fb5dcb69}"),
+    classID: Components.ID("{6e03e01a-3e2c-4a59-ac45-f1b4efb02ddb}"),
 
-    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=liberator",
+    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=muttator",
 
     _xpcom_categories: [{
         category: "command-line-handler",
-        entry: "m-liberator"
+        entry: "m-muttator"
     }],
 
     QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsICommandLineHandler]),
@@ -25,11 +25,11 @@ CommandLineHandler.prototype = {
         // TODO: handle remote launches differently?
         try
         {
-            this.optionValue = commandLine.handleFlagWithParam("liberator", false);
+            this.optionValue = commandLine.handleFlagWithParam("muttator", false);
         }
         catch (e)
         {
-            //"liberator: option -liberator requires an argument"
+            //"muttator: option -muttator requires an argument"
         }
     }
 };

@@ -7,15 +7,15 @@ function CommandLineHandler()
 
 CommandLineHandler.prototype = {
 
-    classDescription: "Liberator Command-line Handler",
+    classDescription: "Xulmus Command-line Handler",
 
-    classID: Components.ID("{16dc34f7-6d22-4aa4-a67f-2921fb5dcb69}"),
+    classID: Components.ID("{155807a6-02da-4812-981c-e910aa7eba42}"),
 
-    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=liberator",
+    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=xulmus",
 
     _xpcom_categories: [{
         category: "command-line-handler",
-        entry: "m-liberator"
+        entry: "m-xulmus"
     }],
 
     QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsICommandLineHandler]),
@@ -25,11 +25,11 @@ CommandLineHandler.prototype = {
         // TODO: handle remote launches differently?
         try
         {
-            this.optionValue = commandLine.handleFlagWithParam("liberator", false);
+            this.optionValue = commandLine.handleFlagWithParam("xulmus", false);
         }
         catch (e)
         {
-            //"liberator: option -liberator requires an argument"
+            //"xulmus: option -xulmus requires an argument"
         }
     }
 };

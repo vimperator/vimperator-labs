@@ -196,6 +196,9 @@ const config = { //{{{
 
     init: function ()
     {
+        services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=xulmus",
+            Ci.nsICommandLineHandler);
+
         // Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
 

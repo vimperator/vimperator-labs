@@ -93,7 +93,6 @@ function Services()
     self.add("autoCompleteSearch",  "@mozilla.org/autocomplete/search;1?name=history", Ci.nsIAutoCompleteSearch);
     self.add("browserSearch",       "@mozilla.org/browser/search-service;1",    Ci.nsIBrowserSearchService);
     self.add("cache",               "@mozilla.org/network/cache-service;1",     Ci.nsICacheService);
-    self.add("commandLineHandler",  "@mozilla.org/commandlinehandler/general-startup;1?type=liberator", Ci.nsICommandLineHandler);
     self.add("console",             "@mozilla.org/consoleservice;1",            Ci.nsIConsoleService);
     self.add("directory",           "@mozilla.org/file/directory_service;1",    Ci.nsIProperties);
     self.add("environment",         "@mozilla.org/process/environment;1",       Ci.nsIEnvironment);

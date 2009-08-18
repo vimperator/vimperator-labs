@@ -7,15 +7,15 @@ function CommandLineHandler()
 
 CommandLineHandler.prototype = {
 
-    classDescription: "Liberator Command-line Handler",
+    classDescription: "Vimperator Command-line Handler",
 
     classID: Components.ID("{16dc34f7-6d22-4aa4-a67f-2921fb5dcb69}"),
 
-    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=liberator",
+    contractID: "@mozilla.org/commandlinehandler/general-startup;1?type=vimperator",
 
     _xpcom_categories: [{
         category: "command-line-handler",
-        entry: "m-liberator"
+        entry: "m-vimperator"
     }],
 
     QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsICommandLineHandler]),
@@ -25,11 +25,11 @@ CommandLineHandler.prototype = {
         // TODO: handle remote launches differently?
         try
         {
-            this.optionValue = commandLine.handleFlagWithParam("liberator", false);
+            this.optionValue = commandLine.handleFlagWithParam("vimperator", false);
         }
         catch (e)
         {
-            //"liberator: option -liberator requires an argument"
+            //"vimperator: option -vimperator requires an argument"
         }
     }
 };

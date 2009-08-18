@@ -2,12 +2,12 @@ heading::Starting{nbsp}Xulmus[starting]
 
 |startup-options| +
 
-Command-line options can be passed to Xulmus via the -liberator Firefox
+Command-line options can be passed to Xulmus via the -xulmus Songbird
 option. These are passed as single string argument.
-E.g firefox -liberator "$$++cmd='set exrc' +u='tempRcFile' ++noplugin$$"
+E.g songbird -xulmus "$$++cmd 'set exrc' +u 'tempRcFile' ++noplugin$$"
 
 |+c| +
-||+c={command}||
+||+c {command}||
 ________________________________________________________________________________
 Execute a single Ex command after all initialization has been performed. See
 [j]initialization[j].
@@ -17,7 +17,7 @@ ________________________________________________________________________________
 
 
 |$$++cmd$$| +
-||$$++cmd={command}$$||
+||$$++cmd {command}$$||
 ________________________________________________________________________________
 Execute a single Ex command before any initialization has been performed. See
 [j]initialization[j].
@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
 
 |+u| +
-||+u={rcfile}||
+||+u {rcfile}||
 ________________________________________________________________________________
 The file {rcfile} is used for user initialization commands. If {rcfile} is
 "NORC" then no startup initialization is performed except for the loading of
