@@ -276,11 +276,7 @@ function Bookmarks() //{{{
         "Open a prompt to bookmark the current URL",
         function ()
         {
-            function quote(str) commands.quoteArg['"'](str)
-
-            let title = "";
-            let keyword = "";
-            let tags = "";
+            let options = {};
 
             let bmarks = bookmarks.get(buffer.URL).filter(function (bmark) bmark.url == buffer.URL);
 
@@ -288,19 +284,21 @@ function Bookmarks() //{{{
             {
                 let bmark = bmarks[0];
 
-                title = " -title=" + quote(bmark.title);
+                options["-title"] = bmark.title;
                 if (bmark.keyword)
-                    keyword = " -keyword=\"" + bmark.keyword + "\"";
+                    options["-keyword"] = bmark.keyword;
                 if (bmark.tags.length > 0)
-                    tags = " -tags=\"" + bmark.tags.join(", ") + "\"";
+                    options["-tags"] = bmark.tags.join(", ");
             }
             else
             {
                 if (buffer.title != buffer.URL)
-                    title = " -title=" + quote(buffer.title);
+                    options["-title"] = buffer.title;
             }
 
-            commandline.open(":", "bmark " + buffer.URL + title + keyword + tags, modes.EX);
+            commandline.open(":",
+                commands.commandToString({ command: "bmark", options: options, arguments: [buffer.URL], bang: bmarks.length == 1 }),
+                modes.EX);
         });
 
     mappings.add(myModes, ["A"],

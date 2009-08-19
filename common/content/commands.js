@@ -506,13 +506,14 @@ function Commands() //{{{
         commandToString: function (args)
         {
             let res = [args.command + (args.bang ? "!" : "")];
-            function quote(str) quoteArg[/\s/.test(str) ? '"' : ""](str);
+            function quote(str) quoteArg[/[\s"'\\]|^$/.test(str) ? '"' : ""](str);
 
             for (let [opt, val] in Iterator(args.options || {}))
             {
-                res.push(opt);
+                let char = /^-.$/.test(opt) ? " " : "=";
                 if (val != null)
-                    res.push(quote(val));
+                    opt += char + quote(val)
+                res.push(opt);
             }
             for (let [,arg] in Iterator(args.arguments || []))
                 res.push(quote(arg));
