@@ -160,9 +160,9 @@ const util = { //{{{
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
-    extend: function extend(dest) {
-        Array.slice(arguments, 1).filter(util.identity).forEach(function (src)
-        {
+    extend: function extend(dest)
+    {
+        Array.slice(arguments, 1).filter(util.identity).forEach(function (src) {
             for (let [k, v] in Iterator(src))
             {
                 let get = src.__lookupGetter__(k),
@@ -735,7 +735,8 @@ util.Array = function Array_(ary) {
     var obj = {
         __proto__: ary,
         __iterator__: function () this.iteritems(),
-        __noSuchMethod__: function (meth, args) {
+        __noSuchMethod__: function (meth, args)
+        {
             let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
             if (util.Array.isinstance(res))
                 return util.Array(res);
