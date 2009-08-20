@@ -934,7 +934,7 @@ function CommandLine() //{{{
         "Run a command silently",
         function (args)
         {
-            commandline.runSilently(function () liberator.execute(args[0]));
+            commandline.runSilently(function () liberator.execute(args[0], null, true));
         },
         {
             completer: function (context) completion.ex(context),

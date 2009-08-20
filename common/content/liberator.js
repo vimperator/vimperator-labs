@@ -708,7 +708,7 @@ const liberator = (function () //{{{
                 args = args.string;
 
                 if (args[0] == ":")
-                    var method = function () liberator.execute(args);
+                    var method = function () liberator.execute(args, null, true);
                 else
                     method = liberator.eval("(function () {" + args + "})");
 

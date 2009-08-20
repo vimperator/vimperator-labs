@@ -359,7 +359,7 @@ function Tabs() //{{{
         function (args)
         {
             liberator.forceNewTab = true;
-            liberator.execute(args.string);
+            liberator.execute(args.string, null, true);
             liberator.forceNewTab = false;
         },
         {
@@ -375,7 +375,7 @@ function Tabs() //{{{
             for (let i = 0; i < tabs.count; i++)
             {
                 tabs.select(i);
-                liberator.execute(args.string);
+                liberator.execute(args.string, null, true);
             }
         },
         {
