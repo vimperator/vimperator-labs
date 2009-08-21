@@ -736,6 +736,7 @@ function Options() //{{{
         // TODO: maybe reset in .destroy()?
         // TODO: move to buffer.js
         // we have our own typeahead find implementation
+        // See: https://bugzilla.mozilla.org/show_bug.cgi?id=348187
         options.safeSetPref("accessibility.typeaheadfind.autostart", false);
         options.safeSetPref("accessibility.typeaheadfind", false); // actually the above setting should do it, but has no effect in Firefox
     });
