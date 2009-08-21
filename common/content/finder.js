@@ -37,7 +37,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //     : changing any search settings should also update the search state including highlighting
 //     : incremental searches shouldn't permanently update search modifiers
 
-// make sure you only create this object when the "liberator" object is ready
 /**
  * @instance finder
  */
@@ -315,10 +314,7 @@ function Finder() //{{{
         function ()
         {
             found = false;
-            let word = buffer.getCurrentWord();
-            // A hacky way to move after the current match before searching forwards
-            window.content.getSelection().getRangeAt(0).collapse(false);
-            finder.onSubmit(word, false);
+            finder.onSubmit(buffer.getCurrentWord(), false);
         });
 
     mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
@@ -326,10 +322,7 @@ function Finder() //{{{
         function ()
         {
             found = false;
-            let word = buffer.getCurrentWord();
-            // A hacky way to move before the current match before searching backwards
-            window.content.getSelection().getRangeAt(0).collapse(true);
-            finder.onSubmit(word, true);
+            finder.onSubmit(buffer.getCurrentWord(), true);
         });
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -377,8 +370,6 @@ function Finder() //{{{
 
             if (!found)
                 setTimeout(function () liberator.echoerr("E486: Pattern not found: " + searchPattern, commandline.FORCE_SINGLELINE), 0);
-
-            return found;
         },
 
         /**
@@ -394,7 +385,7 @@ function Finder() //{{{
             // we typed /foo<esc> after the original search.  Since searchString is
             // readonly we have to call find() again to update it.
             if (getBrowser().fastFind.searchString != lastSearchString)
-                this.find(lastSearchString, false);
+                this.find(lastSearchString);
 
             let up = reverse ? !lastSearchBackwards : lastSearchBackwards;
             let result = getBrowser().fastFind.findAgain(up, linksOnly);
@@ -428,7 +419,7 @@ function Finder() //{{{
         onKeyPress: function (str)
         {
             if (options["incsearch"])
-                this.find(str, backwards);
+                this.find(str);
         },
 
         /**
@@ -445,18 +436,30 @@ function Finder() //{{{
             if (typeof forcedBackward === "boolean")
                 backwards = forcedBackward;
 
-            // Allow /<CR> to work.
-            if (!str)
-                str = lastSearchPattern;
+            if (str)
+                var pattern = str;
+            else
+            {
+                if (lastSearchPattern)
+                    pattern = lastSearchPattern;
+                else
+                    return void liberator.echoerr("E35: No previous search pattern");
+            }
 
             this.clear();
 
-            if (!options["incsearch"] || !found)
-                this.find(str, backwards);
+            if (!(options["incsearch"] && str))
+            {
+                // prevent any current match from matching again
+                if (!window.content.getSelection().isCollapsed)
+                    window.content.getSelection().getRangeAt(0).collapse(backwards);
+
+                this.find(pattern);
+            }
 
             lastSearchBackwards = backwards;
-            //lastSearchPattern = str.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
-            lastSearchPattern = str;
+            //lastSearchPattern = pattern.replace(backwards ? /\?.*/ : /\/.*/, ""); // XXX
+            lastSearchPattern = pattern;
             lastSearchString = searchString;
 
             // TODO: move to find() when reverse incremental searching is kludged in
@@ -479,14 +482,14 @@ function Finder() //{{{
             // TODO: code to reposition the document to the place before search started
         },
 
-        // FIXME: Thunderbird incompatible
         /**
          * Highlights all occurances of <b>str</b> in the buffer.
          *
-         * @param str The string to highlight.
+         * @param {string} str The string to highlight.
          */
         highlight: function (str)
         {
+            // FIXME: Thunderbird incompatible
             if (config.name == "Muttator")
                 return;
 
@@ -498,8 +501,9 @@ function Finder() //{{{
 
             highlighter.highlightDoc(window.content, str);
 
-            // recreate selection since _highlightDoc collapses the selection backwards
-            getBrowser().fastFind.findAgain(false, linksOnly);
+            // recreate selection since highlightDoc collapses the selection
+            if (window.content.getSelection().isCollapsed)
+                getBrowser().fastFind.findAgain(backwards, linksOnly);
 
             // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [type="simple"])
         },
