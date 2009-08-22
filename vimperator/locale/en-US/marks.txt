@@ -49,7 +49,8 @@ ________________________________________________________________________________
 ________________________________________________________________________________
 List or open multiple bookmarks. Open the message window at the bottom of the
 screen with all bookmarks which match [a][filter][a] either in the title or
-URL.
+URL. You can then use extended hint commands like [m];o[m] to open the desired
+bookmark.
 
 The special version [c]:bmarks![c] works the same as [c]:bmarks[c] except it
 opens all the found bookmarks in new tabs.
