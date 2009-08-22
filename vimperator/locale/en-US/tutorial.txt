@@ -52,8 +52,9 @@ by typing
 \{nbsp}[c]:help :help<CR>[c]
 
 Similarly, help on configurable options is available with [c]:help
-'{option_name}'[c]. (Note the single quotes around the option name as in Vim.)
-Information on all available options is, predictably, [c]:help options[c].
+$$'{option_name}'$$[c]. (Note the single quotes around the option name as in
+Vim.) Information on all available options is, predictably, [c]:help
+options[c].
 
 And you can find out about the [m]gt[m] and [m]gT[m] mapping with
 
