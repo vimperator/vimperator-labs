@@ -27,4 +27,33 @@ Redisplay the last command output. Only the most recent command's output is
 available.
 ________________________________________________________________________________
 
+
+|pager| |more-prompt| +
+
+ -- More --
+ -- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit
+
+This message is given when the message window is filled with messages. It is
+only given when the 'more' option is on. It is highlighted with the *MoreMsg*
+group.
+
+[frame="none",grid="none",cols="1,2",options="header"]
+|===============================================================================
+|Type                       |effect
+|<CR> or j or <Down>        |one more line
+|d                          |down a page (half a screen)
+|<Space> or <PageDown>      |down a screen
+|G                          |down all the way, until the hit-enter prompt
+|
+|<BS> or k or <Up>          |one line back
+|u                          |up a page (half a screen)
+|b or <PageUp>              |back a screen
+|g                          |back to the start
+|
+|q, <Esc> or CTRL-C         |stop the listing
+|:                          |stop the listing and enter a command-line
+|;                          |start an [j]extended-hints[j] command
+|<C-Y>                      |yank (copy) a modeless selection to the clipboard
+|===============================================================================
+
 // vim: set filetype=asciidoc:
