@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         Muttator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Aug 3
+" Last Change:      2009 Aug 23
 
 " TODO: make this muttator specific - shared liberator config?
 
@@ -31,8 +31,8 @@ syn keyword muttatorCommand ab[breviate] ab[clear] addo[ns] addr[essbook] bN[ext
     \ pas pc[lose] pl[ay] pref[erences] prefs pw[d] q[uit] re[load] res[tart] run runt[ime] sav[eas] scrip[tnames] se[t]
     \ setg[lobal] setl[ocal] sil[ent] so[urce] st[op] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabfir[st]
     \ tabl[ast] tabn[ext] tabp[revious] tabr[ewind] tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how]
-    \ toolbart[oggle] tp[revious] una[bbreviate] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] vm[ap] vmapc[lear] vno[remap]
-    \ vu[nmap] w[rite] zo[om]
+    \ toolbart[oggle] tp[revious] una[bbreviate] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource] viu[sage] vm[ap] vmapc[lear]
+    \ vno[remap] vu[nmap] w[rite] zo[om]
     \ contained
 
 syn match muttatorCommand "!" contained

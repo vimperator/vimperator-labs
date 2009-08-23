@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Aug 10
+" Last Change:      2009 Aug 23
 
 " TODO: make this vimperator specific - shared liberator config?
 
@@ -33,8 +33,8 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] b
     \ sideb[ar] sil[ent] so[urce] st[op] stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach]
     \ tabdu[plicate] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs
     \ tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate]
-    \ undoa[ll] unl[et] unm[ap] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose] win[open]
-    \ winc[lose] wind[ow] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
+    \ undoa[ll] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose]
+    \ win[open] winc[lose] wind[ow] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained
 
 syn match vimperatorCommand "!" contained

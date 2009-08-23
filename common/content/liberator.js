@@ -794,6 +794,30 @@ const liberator = (function () //{{{
                 literal: 0
             });
 
+        commands.add(["verb[ose]"],
+            "Execute a command with 'verbose' set",
+            function (args)
+            {
+                let vbs = options.get("verbose");
+                let value = vbs.value;
+
+                try
+                {
+                    vbs.set(args.count > -1 ? args.count : 1);
+                    liberator.execute(args[0], null, true);
+                }
+                finally
+                {
+                    vbs.set(value);
+                }
+            },
+            {
+                argCount: "+",
+                completer: function (context) completion.ex(context),
+                count: true,
+                literal: 0
+            });
+
         commands.add(["ve[rsion]"],
             "Show version information",
             function (args)
