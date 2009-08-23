@@ -20,7 +20,7 @@ JAR_BINS      = png
 JAR           = chrome/$(NAME).jar
 
 XPI_BASES     = $(JAR_BASES) $(TOP)/..
-XPI_FILES     = install.rdf TODO AUTHORS Donators NEWS License.txt
+XPI_FILES     = install.rdf TODO AUTHORS Donors NEWS License.txt
 XPI_DIRS      = modules components chrome
 XPI_TEXTS     = js jsm
 XPI_BINS      = jar
