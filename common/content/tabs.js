@@ -595,12 +595,12 @@ function Tabs() //{{{
             "Undo closing of a tab",
             function (args)
             {
-                let count = args.count;
-                args = args[0];
+                if (args.length)
+                    args = args[0];
+                else
+                    args = Math.max(args.count, 0);
 
-                if (count < 1)
-                    count = 1;
-
+                let m;
                 if (m = /^(\d+)(:|$)/.exec(args || '1'))
                     window.undoCloseTab(Number(m[1]) - 1);
                 else if (args)
