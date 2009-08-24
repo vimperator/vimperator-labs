@@ -891,11 +891,6 @@ function Options() //{{{
         "Delete a variable",
         function (args)
         {
-            //let names = args.split(/ /);
-            //if (typeof names == "string") names = [names];
-
-            //let length = names.length;
-            //for (let i = 0, name = names[i]; i < length; name = names[++i])
             for (let [,name] in args)
             {
                 let reference = liberator.variableReference(name);
