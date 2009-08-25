@@ -1009,6 +1009,7 @@ function Commands() //{{{
     }
 
     // TODO: offer completion.ex?
+    //     : make this config specific
     var completeOptionMap = {
         abbreviation: "abbreviation", altstyle: "alternateStyleSheet",
         bookmark: "bookmark", buffer: "buffer", color: "colorScheme",
@@ -1058,7 +1059,7 @@ function Commands() //{{{
                             }
                             catch (e)
                             {
-                                // FIXME: should be pushed to the MOW
+                                liberator.echo(":" + this.name + " ...");
                                 liberator.echoerr("E117: Unknown function: " + completeOpt);
                                 liberator.log(e);
                                 return undefined;
