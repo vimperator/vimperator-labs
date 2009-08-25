@@ -45,7 +45,7 @@ function Script(file)
     this.__context__ = this;
 
     // This belongs elsewhere
-    for (let [,dir] in Iterator(io.getRuntimeDirectories("plugin")))
+    for (let [, dir] in Iterator(io.getRuntimeDirectories("plugin")))
     {
         if (dir.contains(file, false))
             plugins[this.NAME] = this;
@@ -230,7 +230,7 @@ function IO() //{{{
                 let dirs = getPathsFromPathList(options["cdpath"]);
                 let found = false;
 
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     dir = joinPaths(dir, arg);
 
@@ -467,7 +467,7 @@ function IO() //{{{
                 let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
-                for (let [,dirName] in Iterator(dirNames))
+                for (let [, dirName] in Iterator(dirNames))
                 {
                     let dir = io.getFile(dirName);
                     if (dir.exists() && dir.isDirectory())
@@ -884,7 +884,7 @@ function IO() //{{{
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
 
 lookup:
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     file = joinPaths(dir, program);
                     try
@@ -897,7 +897,7 @@ lookup:
                         if (WINDOWS)
                         {
                             let extensions = services.get("environment").get("PATHEXT").split(";");
-                            for (let [,extension] in Iterator(extensions))
+                            for (let [, extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
                                 if (file.exists())
@@ -942,9 +942,9 @@ lookup:
             liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
-            for (let [,dir] in Iterator(dirs))
+            for (let [, dir] in Iterator(dirs))
             {
-                for (let [,path] in Iterator(paths))
+                for (let [, path] in Iterator(paths))
                 {
                     let file = joinPaths(dir, path);
 

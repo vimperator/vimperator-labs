@@ -249,7 +249,7 @@ const config = { //{{{
 
                 let menu = document.getElementById("viewSidebarMenu");
 
-                for (let [,panel] in Iterator(menu.childNodes))
+                for (let [, panel] in Iterator(menu.childNodes))
                 {
                     if (compare(panel.label, arg))
                     {

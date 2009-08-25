@@ -170,7 +170,7 @@ commands.addUserCommand(["regr[essions]"],
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-                for (let [,cmd] in Iterator(test.cmds))
+                for (let [, cmd] in Iterator(test.cmds))
                 {
                     if (skipTests.indexOf(cmd) != -1)
                     {

@@ -168,7 +168,7 @@ function Mappings() //{{{
     {
         let maps = stack[mode] || [];
 
-        for (let [,map] in Iterator(maps))
+        for (let [, map] in Iterator(maps))
         {
             if (map.hasName(cmd))
                 return map;
@@ -297,7 +297,7 @@ function Mappings() //{{{
                 args = args[0];
 
                 let found = false;
-                for (let [,mode] in Iterator(modes))
+                for (let [, mode] in Iterator(modes))
                 {
                     if (mappings.hasMap(mode, args))
                     {
@@ -413,9 +413,9 @@ function Mappings() //{{{
             let map = new Map(modes, keys, description || "User defined mapping", action, extra);
 
             // remove all old mappings to this key sequence
-            for (let [,name] in Iterator(map.names))
+            for (let [, name] in Iterator(map.names))
             {
-                for (let [,mode] in Iterator(map.modes))
+                for (let [, mode] in Iterator(map.modes))
                     removeMap(mode, name);
             }
 
@@ -461,9 +461,9 @@ function Mappings() //{{{
             let mappings = user[mode].concat(main[mode]);
             let matches = [];
 
-            for (let [,map] in Iterator(mappings))
+            for (let [, map] in Iterator(mappings))
             {
-                for (let [,name] in Iterator(map.names))
+                for (let [, name] in Iterator(map.names))
                 {
                     if (name.indexOf(prefix) == 0 && name.length > prefix.length)
                     {

@@ -66,26 +66,26 @@ function Hints() //{{{
     function images() "//img | //xhtml:img";
 
     const hintModes = {
-        ";": Mode("Focus hint",                        function (elem) buffer.focusElement(elem),                             extended),
-        "?": Mode("Show information for hint",         function (elem) buffer.showElementInfo(elem),                          extended),
-        s: Mode("Save hint",                           function (elem) buffer.saveLink(elem, true)),
-        a: Mode("Save hint with prompt",               function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                         function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
-        o: Mode("Follow hint",                         function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
-        t: Mode("Follow hint in a new tab",            function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
-        b: Mode("Follow hint in a background tab",     function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
-        w: Mode("Follow hint in a new window",         function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Open multiple hints in tabs",         followAndReshow),
-        O: Mode("Generate an ':open URL' using hint",  function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Generate a ':tabopen URL' using hint",function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Generate a ':winopen URL' using hint",function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
-        v: Mode("View hint source",                    function (elem, loc) buffer.viewSource(loc, false),                    extended),
-        V: Mode("View hint source in external editor", function (elem, loc) buffer.viewSource(loc, true),                     extended),
-        y: Mode("Yank hint location",                  function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",               function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
-        c: Mode("Open context menu",                   function (elem) buffer.openContextMenu(elem), extended),
-        i: Mode("Show image",                          function (elem) liberator.open(elem.src), images),
-        I: Mode("Show image in a new tab",             function (elem) liberator.open(elem.src, liberator.NEW_TAB), images)
+        ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
+        "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
+        s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
+        a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
+        f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
+        o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
+        t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
+        b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
+        w: Mode("Follow hint in a new window",          function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
+        F: Mode("Open multiple hints in tabs",          followAndReshow),
+        O: Mode("Generate an ':open URL' using hint",   function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+        T: Mode("Generate a ':tabopen URL' using hint", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+        W: Mode("Generate a ':winopen URL' using hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+        v: Mode("View hint source",                     function (elem, loc) buffer.viewSource(loc, false),                    extended),
+        V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
+        y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
+        Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+        c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem), extended),
+        i: Mode("Show image",                           function (elem) liberator.open(elem.src), images),
+        I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB), images)
     };
 
     /**
@@ -163,7 +163,7 @@ function Hints() //{{{
             return [elem.value, false];
         else
         {
-            for (let [,option] in Iterator(options["hintinputs"].split(",")))
+            for (let [, option] in Iterator(options["hintinputs"].split(",")))
             {
                 if (option == "value")
                 {
@@ -435,7 +435,7 @@ function Hints() //{{{
                     setClass(imgspan, activeHint == hintnum);
                 }
 
-                span.setAttribute("number", showtext ? hintnum + ": " + text.substr(0,50): hintnum);
+                span.setAttribute("number", showtext ? hintnum + ": " + text.substr(0, 50) : hintnum);
                 if (imgspan)
                     imgspan.setAttribute("number", hintnum);
                 else
@@ -712,7 +712,7 @@ function Hints() //{{{
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
             {
                 let strIdx = 0;
-                for (let [,word] in Iterator(words))
+                for (let [, word] in Iterator(words))
                 {
                     if (word.length == 0)
                         continue;

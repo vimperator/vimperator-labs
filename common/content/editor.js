@@ -78,12 +78,12 @@ function Editor() //{{{
     let keyword = "[^" + nonkw + "]";
     let nonkeyword = "[" + nonkw + "]";
 
-    let full_id = keyword + "+";
-    let end_id = nonkeyword + "+" + keyword;
-    let non_id = "\\S*" + nonkeyword;
+    let fullId = keyword + "+";
+    let endId = nonkeyword + "+" + keyword;
+    let nonId = "\\S*" + nonkeyword;
 
     // Used in addAbbrevation and expandAbbreviation
-    var abbrevmatch = full_id + "|" + end_id + "|" + non_id;
+    var abbrevmatch = fullId + "|" + endId + "|" + nonId;
 
     function getEditor() liberator.focus;
 
@@ -186,7 +186,7 @@ function Editor() //{{{
     function abbrevs()
     {
         for (let [lhs, abbr] in Iterator(abbreviations))
-            for (let [,rhs] in Iterator(abbr))
+            for (let [, rhs] in Iterator(abbr))
                 yield [lhs, rhs];
     }
 
@@ -206,7 +206,7 @@ function Editor() //{{{
                     liberator.echoerr("E474: Invalid argument");
                     return false;
                 }
-                let [,lhs,rhs] = matches;
+                let [, lhs, rhs] = matches;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
                 else

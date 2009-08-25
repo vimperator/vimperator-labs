@@ -306,7 +306,7 @@ function AutoCommands() //{{{
             let lastPattern = null;
             let url = args.url || "";
 
-            for (let [,autoCmd] in Iterator(autoCmds))
+            for (let [, autoCmd] in Iterator(autoCmds))
             {
                 if (autoCmd.pattern.test(url))
                 {
@@ -472,7 +472,7 @@ function Events() //{{{
             if (k in keyTable)
                 names = keyTable[k];
             code_key[v] = names[0];
-            for (let [,name] in Iterator(names))
+            for (let [, name] in Iterator(names))
                 key_code[name.toLowerCase()] = v;
         }
 
@@ -581,7 +581,7 @@ function Events() //{{{
 
             if (dirs.length > 0)
             {
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
 
@@ -882,7 +882,7 @@ function Events() //{{{
             {
                 liberator.threadYield(1, true);
 
-                for (let [,evt_obj] in Iterator(events.fromString(keys)))
+                for (let [, evt_obj] in Iterator(events.fromString(keys)))
                 {
                     let elem = liberator.focus || window.content;
                     let evt = events.create(doc, "keypress", evt_obj);
@@ -922,7 +922,7 @@ function Events() //{{{
                 {
                     let duringFeed = this.duringFeed;
                     this.duringFeed = [];
-                    for (let [,evt] in Iterator(duringFeed))
+                    for (let [, evt] in Iterator(duringFeed))
                         evt.target.dispatchEvent(evt);
                 }
             }
@@ -1021,8 +1021,8 @@ function Events() //{{{
             while (match = re.exec(input))
             {
                 let evt_str = match[0];
-                let evt_obj = {ctrlKey:false, shiftKey:false,altKey:false, metaKey: false,
-                               keyCode: 0, charCode: 0, type: "keypress"};
+                let evt_obj = { ctrlKey: false, shiftKey: false, altKey: false, metaKey: false,
+                                keyCode: 0, charCode: 0, type: "keypress" };
 
                 if (evt_str.length > 1) // <.*?>
                 {

@@ -327,7 +327,7 @@ function Player() // {{{
             {
                 let pages = player.getMediaPages();
 
-                for ([,page] in Iterator(pages))
+                for ([, page] in Iterator(pages))
                 {
                     if (util.compareIgnoreCase(arg, page.contentTitle) == 0)
                     {

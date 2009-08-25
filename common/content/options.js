@@ -128,7 +128,7 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
     if (this.type == "boolean")
     {
         this.names = []; // reset since order is important
-        for (let [,name] in Iterator(names))
+        for (let [, name] in Iterator(names))
         {
             this.names.push(name);
             this.names.push("no" + name);
@@ -556,7 +556,7 @@ function Options() //{{{
         if (!args.length)
             args[0] = "";
 
-        for (let [,arg] in args)
+        for (let [, arg] in args)
         {
             if (bang)
             {
@@ -908,7 +908,7 @@ function Options() //{{{
         "Delete a variable",
         function (args)
         {
-            for (let [,name] in args)
+            for (let [, name] in args)
             {
                 let reference = liberator.variableReference(name);
                 if (!reference[0])
@@ -1192,7 +1192,7 @@ function Options() //{{{
             let prefArray = services.get("pref").getChildList("", { value: 0 });
             prefArray.sort();
             let prefs = function () {
-                for (let [,pref] in Iterator(prefArray))
+                for (let [, pref] in Iterator(prefArray))
                 {
                     let userValue = services.get("pref").prefHasUserValue(pref);
                     if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)

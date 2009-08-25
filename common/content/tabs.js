@@ -1014,7 +1014,7 @@ function Tabs() //{{{
          */
         stopAll: function ()
         {
-            for (let [,browser] in this.browsers)
+            for (let [, browser] in this.browsers)
                 browser.stop();
         },
 

@@ -217,7 +217,7 @@ function Mail() //{{{
                 services.get("smtpService").defaultServer = server;
                 return value;
             },
-            completer: function (context) [[s.key, s.serverURI] for ([,s] in Iterator(mail.smtpServers))],
+            completer: function (context) [[s.key, s.serverURI] for ([, s] in Iterator(mail.smtpServers))],
             validator: Option.validateCompleter
         });
 

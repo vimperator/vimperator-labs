@@ -92,9 +92,9 @@ function Bookmarks() //{{{
         this.__defineGetter__("bookmarks", function () this.load());
 
         this.__defineGetter__("keywords",
-            function () [new Keyword(k.keyword, k.title, k.icon, k.url) for ([,k] in Iterator(self.bookmarks)) if (k.keyword)]);
+            function () [new Keyword(k.keyword, k.title, k.icon, k.url) for ([, k] in Iterator(self.bookmarks)) if (k.keyword)]);
 
-        this.__iterator__ = function () (val for ([,val] in Iterator(self.bookmarks)));
+        this.__iterator__ = function () (val for ([, val] in Iterator(self.bookmarks)));
 
         function loadBookmark(node)
         {
@@ -502,7 +502,7 @@ function Bookmarks() //{{{
             let engine = services.get("browserSearch").getEngineByAlias(name);
             if (!engine)
                 return;
-            let [,word] = /^\s*(\S+)/.exec(context.filter) || [];
+            let [, word] = /^\s*(\S+)/.exec(context.filter) || [];
             if (!kludge && word == name) // FIXME: Check for matching keywords
                 return;
             let ctxt = context.fork(name, 0);
@@ -654,7 +654,7 @@ function Bookmarks() //{{{
         getSearchEngines: function getSearchEngines()
         {
             let searchEngines = [];
-            for (let [,engine] in Iterator(services.get("browserSearch").getVisibleEngines({})))
+            for (let [, engine] in Iterator(services.get("browserSearch").getVisibleEngines({})))
             {
                 let alias = engine.alias;
                 if (!alias || !/^[a-z0-9_-]+$/.test(alias))

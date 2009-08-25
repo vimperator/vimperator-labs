@@ -71,7 +71,7 @@ function Command(specs, description, action, extraInfo) //{{{
         let longNames = [];
         let shortNames = [];
 
-        for (let [,spec] in Iterator(specs))
+        for (let [, spec] in Iterator(specs))
         {
             let matches = spec.match(/(\w+)\[(\w+)\](\w*)/);
 
@@ -229,7 +229,7 @@ Command.prototype = {
      */
     hasName: function (name)
     {
-        for (let [,spec] in Iterator(this.specs))
+        for (let [, spec] in Iterator(this.specs))
         {
             let fullName = spec.replace(/\[(\w+)]$/, "$1");
             let index = spec.indexOf("[");
@@ -515,7 +515,7 @@ function Commands() //{{{
                     opt += char + quote(val)
                 res.push(opt);
             }
-            for (let [,arg] in Iterator(args.arguments || []))
+            for (let [, arg] in Iterator(args.arguments || []))
                 res.push(quote(arg));
 
             let str = args.literalArg;
@@ -712,9 +712,9 @@ function Commands() //{{{
                 var optname = "";
                 if (!onlyArgumentsRemaining)
                 {
-                    for (let [,opt] in Iterator(options))
+                    for (let [, opt] in Iterator(options))
                     {
-                        for (let [,optname] in Iterator(opt[0]))
+                        for (let [, optname] in Iterator(opt[0]))
                         {
                             if (sub.indexOf(optname) == 0)
                             {
@@ -1107,7 +1107,7 @@ function Commands() //{{{
                           cmd.count ? "0c" : "",
                           completerToString(cmd.completer),
                           cmd.replacementText || "function () { ... }"]
-                         for ([,cmd] in Iterator(cmds))));
+                         for ([, cmd] in Iterator(cmds))));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }

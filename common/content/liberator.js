@@ -111,7 +111,7 @@ const liberator = (function () //{{{
     {
         function addChildren(node, parent)
         {
-            for (let [,item] in Iterator(node.childNodes))
+            for (let [, item] in Iterator(node.childNodes))
             {
                 if (item.childNodes.length == 0 && item.localName == "menuitem"
                     && !/rdf:http:/.test(item.getAttribute("label"))) // FIXME
@@ -163,7 +163,7 @@ const liberator = (function () //{{{
                 opts: config.guioptions,
                 setter: function (opts)
                 {
-                    for (let [opt, [,ids]] in Iterator(this.opts))
+                    for (let [opt, [, ids]] in Iterator(this.opts))
                     {
                         ids.map(function (id) document.getElementById(id))
                            .forEach(function (elem)
@@ -220,7 +220,7 @@ const liberator = (function () //{{{
             {
                 setter: function (value)
                 {
-                    for (let [,group] in Iterator(groups))
+                    for (let [, group] in Iterator(groups))
                         group.setter(value);
                     return value;
                 },
@@ -351,7 +351,7 @@ const liberator = (function () //{{{
                     // TODO: why are these sorts of properties arrays? --djk
                     let dialogs = config.dialogs;
 
-                    for (let [,dialog] in Iterator(dialogs))
+                    for (let [, dialog] in Iterator(dialogs))
                     {
                         if (util.compareIgnoreCase(arg, dialog[0]) == 0)
                         {
@@ -387,7 +387,7 @@ const liberator = (function () //{{{
                 if (!items.some(function (i) i.fullMenuPath == arg))
                     return void liberator.echoerr("E334: Menu not found: " + arg);
 
-                for (let [,item] in Iterator(items))
+                for (let [, item] in Iterator(items))
                 {
                     if (item.fullMenuPath == arg)
                         item.doCommand();
@@ -539,7 +539,7 @@ const liberator = (function () //{{{
                           /* XXX: Inline style. */
                           e.enabled ? <span style="color: blue;">enabled</span>
                                     : <span style="color: red;">disabled</span>,
-                          e.description] for ([,e] in Iterator(extensions)))
+                          e.description] for ([, e] in Iterator(extensions)))
                     );
 
                     commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -1004,7 +1004,7 @@ const liberator = (function () //{{{
         triggerObserver: function (type)
         {
             let args = Array.slice(arguments, 1);
-            for (let [,func] in Iterator(observers[type] || []))
+            for (let [, func] in Iterator(observers[type] || []))
                 func.apply(null, args);
         },
 
@@ -1480,7 +1480,7 @@ const liberator = (function () //{{{
             }
 
             liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
-                                + [dir.path.replace(/.plugin$/, "") for ([,dir] in Iterator(dirs))].join(",") + '"', 2);
+                                + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"', 2);
 
             dirs.forEach(function (dir) {
                 liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
@@ -1609,7 +1609,7 @@ const liberator = (function () //{{{
             else if (!where)
                 where = liberator.CURRENT_TAB;
 
-            for (let [,url] in Iterator(urls))
+            for (let [, url] in Iterator(urls))
             {
                 open(url, where);
                 where = liberator.NEW_BACKGROUND_TAB;

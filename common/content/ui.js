@@ -398,7 +398,7 @@ function CommandLine() //{{{
                 try
                 {
                     this.waiting = true;
-                    for (let [,context] in Iterator(list))
+                    for (let [, context] in Iterator(list))
                     {
                         function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
                         while (context.incomplete && !done())

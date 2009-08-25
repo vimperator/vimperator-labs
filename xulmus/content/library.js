@@ -21,7 +21,7 @@ function Library() // {{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     // TODO: return some actually useful objects. ;-)
-	return {
+    return {
 
         /**
          * Returns an array of all the artist names in the main library.
@@ -65,7 +65,7 @@ function Library() // {{{
                        .map(function (track) track.getProperty(SBProperties.trackName));
         }
 
-	};
+    };
     //}}}
 } // }}}
 
