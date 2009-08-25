@@ -1028,13 +1028,15 @@ lookup:
                     let heredocEnd = null; // the string which ends the heredoc
                     let lines = str.split(/\r\n|[\r\n]/);
 
+                    function execute(args) { command.execute(args, special, count, { setFrom: file }); }
+
                     for (let [i, line] in Iterator(lines))
                     {
                         if (heredocEnd) // we already are in a heredoc
                         {
                             if (heredocEnd.test(line))
                             {
-                                command.execute(heredoc, special, count);
+                                execute(heredoc);
                                 heredoc = "";
                                 heredocEnd = null;
                             }
@@ -1079,15 +1081,11 @@ lookup:
                                         heredocEnd = RegExp("^" + matches[2] + "$", "m");
                                         if (matches[1])
                                             heredoc = matches[1] + "\n";
+                                        continue;
                                     }
-                                    else
-                                        command.execute(args, special, count);
                                 }
-                                else
-                                {
-                                    // execute a normal liberator command
-                                    liberator.execute(line, null, true);
-                                }
+
+                                execute(args);
                             }
                         }
                     }
@@ -1095,7 +1093,7 @@ lookup:
                     // if no heredoc-end delimiter is found before EOF then
                     // process the heredoc anyway - Vim compatible ;-)
                     if (heredocEnd)
-                        command.execute(heredoc, special, count);
+                        execute(heredoc);
                 }
 
                 if (scriptNames.indexOf(file.path) == -1)

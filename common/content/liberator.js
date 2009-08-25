@@ -804,6 +804,7 @@ const liberator = (function () //{{{
                 try
                 {
                     vbs.set(args.count > -1 ? args.count : 1);
+                    vbs.setFrom = null;
                     liberator.execute(args[0], null, true);
                 }
                 finally

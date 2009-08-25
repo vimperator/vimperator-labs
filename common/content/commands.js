@@ -204,7 +204,7 @@ Command.prototype = {
                 return;
             args.count = count;
             args.bang = bang;
-            self.action.call(self, args, bang, count, modifiers);
+            self.action.call(self, args, modifiers);
         }
 
         if (this.hereDoc)
