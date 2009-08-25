@@ -47,7 +47,7 @@ const config = { //{{{
     },
 
     get visualbellWindow() getBrowser().mPanelContainer,
-    styleableChrome: "chrome://browser/content/browser.xul",
+    styleableChrome: ["chrome://browser/content/browser.xul"],
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
                    ["ColorScheme",        "Triggered after a color scheme has been loaded"],

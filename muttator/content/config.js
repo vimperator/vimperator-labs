@@ -68,7 +68,8 @@ const config = (function () //{{{
         // focusContent() focuses this widget
         get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
         get visualbellWindow() document.getElementById(this.mainWindowId),
-        styleableChrome: "chrome://messenger/content/messenger.xul,chrome://messenger/content/messengercompose/messengercompose.xul",
+        styleableChrome: ["chrome://messenger/content/messenger.xul",
+                          "chrome://messenger/content/messengercompose/messengercompose.xul"],
 
         autocommands: [["DOMLoad",         "Triggered when a page's DOM content has fully loaded"],
                        ["FolderLoad",      "Triggered after switching folders in " + host],

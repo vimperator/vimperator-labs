@@ -142,7 +142,7 @@ function Highlights(name, store)
     let styles = storage.styles;
 
     const Highlight = Struct("class", "selector", "filter", "default", "value");
-    Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
+    Highlight.defaultValue("filter", function () ["chrome://liberator/content/buffer.xhtml"].concat(config.styleableChrome).join(","));
     Highlight.defaultValue("selector", function () self.selector(this.class));
     Highlight.defaultValue("value", function () this.default);
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");

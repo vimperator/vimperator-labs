@@ -51,7 +51,7 @@ const config = { //{{{
     // focusContent() focuses this widget gSongbirdWindowController takes care of the focus.
     get visualbellWindow() document.getElementById(this.mainWindowId),
 
-    styleableChrome: "chrome://gonzo/content/xul/mainplayer.xul",
+    styleableChrome: ["chrome://gonzo/content/xul/mainplayer.xul"],
 
     autocommands: [["BookmarkAdd",    "Triggered after a page is bookmarked"],
                    ["ColorScheme",    "Triggered after a color scheme has been loaded"],
