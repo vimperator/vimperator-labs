@@ -1017,8 +1017,10 @@ function CommandLine() //{{{
                 // completion preview.
                 return commandWidget.inputField.editor.rootElement.firstChild.textContent;
             }
-            catch (e) {}
-            return commandWidget.value;
+            catch (e)
+            {
+                return commandWidget.value;
+            }
         },
         set command(cmd) commandWidget.value = cmd,
 
