@@ -986,9 +986,9 @@ const liberator = (function () //{{{
             /** @property An RC file to use rather than the default. */
             rcFile: null,
             /** @property An Ex command to run before any initialization is performed. */
-            preCommand: null,
+            preCommands: null,
             /** @property An Ex command to run after all initialization has been performed. */
-            postCommand: null
+            postCommands: null
         },
 
         registerObserver: registerObserver,
