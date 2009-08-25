@@ -439,10 +439,6 @@ function Events() //{{{
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
     window.addEventListener("resize", onResize, true);
 
-    // window.document.addEventListener("DOMTitleChanged", function (event) {
-    //     liberator.log("titlechanged");
-    // }, null);
-
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
     //       want to refer to within liberator's source code for

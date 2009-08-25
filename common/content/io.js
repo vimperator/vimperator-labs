@@ -743,7 +743,7 @@ function IO() //{{{
             }
             else
                 return []; // XXX: or should it throw an error, probably yes?
-                           //  Yes --djk
+                           //  Yes, though frankly this should be a precondition so... --djk
         },
 
         /**
