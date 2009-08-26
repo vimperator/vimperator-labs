@@ -562,6 +562,9 @@ function Commands() //{{{
         //     : it might be nice to be able to specify that certain quoting
         //     should be disabled E.g. backslash without having to resort to
         //     using literal etc.
+        //     : error messages should be configurable or else we can ditch
+        //     Vim compatibility but it actually gives useful messages
+        //     sometimes rather than just "Invalid arg"
         //     : I'm not sure documenting the returned object here, and
         //     elsewhere, as type Args rather than simply Object makes sense,
         //     especially since it is further augmented for use in

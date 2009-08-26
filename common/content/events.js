@@ -122,55 +122,58 @@ function AutoCommands() //{{{
             options: [[["-javascript", "-js"], commands.OPTION_NOARG]]
         });
 
-    // TODO: expand target to all buffers
-    commands.add(["doauto[all]"],
-        "Apply the autocommands matching the specified URL pattern to all buffers",
-        function (args)
+    [
         {
-            commands.get("doautocmd").action.call(this, args);
+            name: "do[autocmd]",
+            description: "Apply the autocommands matching the specified URL pattern to the current buffer"
         },
         {
-            completer: function (context) completion.autocmdEvent(context),
-            literal: 0
+            name: "doautoa[ll]",
+            description: "Apply the autocommands matching the specified URL pattern to all buffers"
         }
-    );
-
-    // TODO: restrict target to current buffer
-    commands.add(["do[autocmd]"],
-        "Apply the autocommands matching the specified URL pattern to the current buffer",
-        function (args)
-        {
-            args = args.string;
-            if (/^\s*$/.test(args))
+    ].forEach(function (command) {
+        commands.add([command.name],
+            command.description,
+            // TODO: Perhaps this should take -args to pass to the command?
+            function (args)
             {
-                liberator.echomsg("No matching autocommands");
-                return;
-            }
+                // Vim compatible
+                if (args.length == 0)
+                    return void liberator.echomsg("No matching autocommands");
 
-            let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
-            url = url || buffer.URL;
+                let [event, url] = args;
+                let defaultURL = url || buffer.URL;
+                let validEvents = config.autocommands.map(function (e) e[0]);
 
-            let validEvents = config.autocommands.map(function (e) e[0]);
+                // TODO: add command validators
+                if (event == "*")
+                    return void liberator.echoerr("E217: Can't execute autocommands for ALL events");
+                else if (validEvents.indexOf(event) == -1)
+                    return void liberator.echoerr("E216: No such group or event: " + args);
+                else if (!autocommands.get(event).some(function (c) c.pattern.test(defaultURL)))
+                    return void liberator.echomsg("No matching autocommands");
 
-            if (event == "*")
-                liberator.echoerr("E217: Can't execute autocommands for ALL events");
-            else if (validEvents.indexOf(event) == -1)
-                liberator.echoerr("E216: No such group or event: " + args);
-            else
-            {
-                // TODO: perhaps trigger could return the number of autocmds triggered
-                // TODO: Perhaps this should take -args to pass to the command?
-                if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
-                    liberator.echomsg("No matching autocommands");
+                if (this.name == "doautoall" && liberator.has("tabs"))
+                {
+                    let current = tabs.index();
+
+                    for (let i = 0; i < tabs.count; i++)
+                    {
+                        tabs.select(i);
+                        // if no url arg is specified use the current buffer's URL
+                        autocommands.trigger(event, { url: url || buffer.URL });
+                    }
+
+                    tabs.select(current);
+                }
                 else
-                    autocommands.trigger(event, { url: url });
-            }
-        },
-        {
-            completer: function (context) completion.autocmdEvent(context),
-            literal: 0
-        }
-    );
+                    autocommands.trigger(event, { url: defaultURL });
+            },
+            {
+                argCount: "*", // FIXME: kludged for proper error message should be "1".
+                completer: function (context) completion.autocmdEvent(context)
+            });
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMPLETIONS /////////////////////////////////////////////
