@@ -471,13 +471,13 @@ CompletionContext.prototype = {
         let filter = fixCase(this.filter);
         if (this.anchored)
         {
-            function compare (text, s) text.substr(0, s.length) == s;
+            function compare(text, s) text.substr(0, s.length) == s;
             substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
         else
         {
-            function compare (text, s) text.indexOf(s) >= 0;
+            function compare(text, s) text.indexOf(s) >= 0;
             substrings = [];
             let start = 0;
             let idx;

@@ -150,7 +150,7 @@ commands.addUserCommand(["regr[essions]"],
             commandline.updateOutputHeight = updateOutputHeight;
         }
 
-        function run ()
+        function run()
         {
             let now = Date.now();
             let totalTests = tests.length + functions.length;

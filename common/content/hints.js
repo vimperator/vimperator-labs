@@ -449,7 +449,7 @@ function Hints() //{{{
         {
             let css = [];
             // FIXME: Broken for imgspans.
-            for (let [,{ doc: doc }] in Iterator(docs))
+            for (let [, { doc: doc }] in Iterator(docs))
             {
                 for (let elem in buffer.evaluateXPath("//*[@liberator:highlight and @number]", doc))
                 {
@@ -560,7 +560,7 @@ function Hints() //{{{
      *
      * @param {Event} event The keypress event.
      */
-    function onInput (event)
+    function onInput(event)
     {
         prevInput = "text";
 

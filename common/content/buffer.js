@@ -1667,7 +1667,7 @@ function Marks() //{{{
         if (localmark)
         {
             let win = window.content;
-            for (let [i,] in Iterator(localmark))
+            for (let [i, ] in Iterator(localmark))
             {
                 if (localmark[i].location == win.location.href)
                 {
@@ -1903,17 +1903,17 @@ function Marks() //{{{
             if (special)
             {
                 // :delmarks! only deletes a-z marks
-                for (let [mark,] in localMarks)
+                for (let [mark, ] in localMarks)
                     removeLocalMark(mark);
             }
             else
             {
-                for (let [mark,] in urlMarks)
+                for (let [mark, ] in urlMarks)
                 {
                     if (filter.indexOf(mark) >= 0)
                         removeURLMark(mark);
                 }
-                for (let [mark,] in localMarks)
+                for (let [mark, ] in localMarks)
                 {
                     if (filter.indexOf(mark) >= 0)
                         removeLocalMark(mark);

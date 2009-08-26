@@ -1072,7 +1072,7 @@ function Tabs() //{{{
             let lowerBuffer = buffer.toLowerCase();
             let first = tabs.index() + (reverse ? 0 : 1);
             let nbrowsers = getBrowser().browsers.length;
-            for (let [i,] in tabs.browsers)
+            for (let [i, ] in tabs.browsers)
             {
                 let index = (i + first) % nbrowsers;
                 let url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;

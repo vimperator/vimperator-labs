@@ -842,7 +842,7 @@ function Events() //{{{
         {
             let re = RegExp(filter);
 
-            for (let [item,] in macros)
+            for (let [item, ] in macros)
             {
                 if (re.test(item) || !filter)
                     macros.remove(item);

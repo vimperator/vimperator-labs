@@ -2085,7 +2085,8 @@ function StatusLine() //{{{
                     var value = aURI.spec;
                     // Try to decode as UTF-8 if there's no encoding sequence that we would break.
                     if (!/%25(?:3B|2F|3F|3A|40|26|3D|2B|24|2C|23)/i.test(value))
-                        try {
+                        try
+                        {
                             value = decodeURI(value)
                             // 1. decodeURI decodes %25 to %, which creates unintended
                             //    encoding sequences. Re-encode it, unless it's part of
@@ -2096,7 +2097,8 @@ function StatusLine() //{{{
                             //    by the location bar (bug 410726).
                             .replace(/%(?!3B|2F|3F|3A|40|26|3D|2B|24|2C|23)|[\r\n\t]/ig,
                                 encodeURIComponent);
-                        } catch (e) {}
+                        }
+                        catch (e) {}
 
                     // Encode invisible characters (soft hyphen, zero-width space, BOM,
                     // line and paragraph separator, word joiner, invisible times,

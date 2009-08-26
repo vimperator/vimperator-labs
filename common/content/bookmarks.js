@@ -1207,7 +1207,7 @@ function QuickMarks() //{{{
         {
             let pattern = RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
-            for (let [qmark,] in qmarks)
+            for (let [qmark, ] in qmarks)
             {
                 if (pattern.test(qmark))
                     qmarks.remove(qmark);

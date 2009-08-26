@@ -609,7 +609,7 @@ function Player() // {{{
             return tracksList;
         },
 
-        searchView: function searchView (args)
+        searchView: function searchView(args)
         {
             let currentView = _SBGetCurrentView();
             let mediaItemList = currentView.mediaList;
