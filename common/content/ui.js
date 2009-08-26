@@ -871,7 +871,7 @@ function CommandLine() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var echoCommands = [
+    [
         {
             name: "ec[ho]",
             description: "Echo the expression",
@@ -887,9 +887,7 @@ function CommandLine() //{{{
             description: "Echo the expression as an informational message",
             action: liberator.echomsg
         }
-    ];
-
-    echoCommands.forEach(function (command) {
+    ].forEach(function (command) {
         commands.add([command.name],
             command.description,
             function (args)
