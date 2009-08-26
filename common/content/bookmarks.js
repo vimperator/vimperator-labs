@@ -534,10 +534,6 @@ function Bookmarks() //{{{
             process: [template.icon, template.bookmarkDescription]
         }),
 
-        // if "bypassCache" is true, it will force a reload of the bookmarks database
-        // on my PC, it takes about 1ms for each bookmark to load, so loading 1000 bookmarks
-        // takes about 1 sec
-        // Huh? --djk
         // TODO: why is this a filter? --djk
         get: function get(filter, tags, maxItems, extra)
         {

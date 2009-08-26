@@ -1059,9 +1059,6 @@ lookup:
                             {
                                 let lineNumber = i + 1;
 
-                                // TODO: messages need to be able to specify
-                                // whether they can be cleared/overwritten or
-                                // should be appended to and the MOW opened
                                 liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);
                                 commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR, commandline.APPEND_TO_MESSAGES);
                                 liberator.echoerr("E492: Not an editor command: " + line);
