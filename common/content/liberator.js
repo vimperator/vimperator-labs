@@ -800,6 +800,7 @@ const liberator = (function () //{{{
             {
                 let vbs = options.get("verbose");
                 let value = vbs.value;
+                let setFrom = vbs.setFrom;
 
                 try
                 {
@@ -810,6 +811,7 @@ const liberator = (function () //{{{
                 finally
                 {
                     vbs.set(value);
+                    vbs.setFrom = setFrom;
                 }
             },
             {
