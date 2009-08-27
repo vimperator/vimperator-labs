@@ -48,9 +48,10 @@ do
         do
             [ -f "$f" ] && copytext "$f" "$stage/$f"
         done
-    )
+	true
+    ) || exit 1
 done
 
-(cd $stage; zip -r "$top/$jar" *)
+(cd $stage; zip -r "$top/$jar" *) || exit 1
 rm -rf "$stage"
 
