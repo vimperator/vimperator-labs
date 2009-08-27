@@ -19,6 +19,7 @@
       (this might change again, as this is REALLY inconsistent, and i don't
        know if I like copying bugs)
 
+    * add [c]:verbose[c]
     * add [c]:window[c] to run a command in a new window
     * add ! version of :delbmarks to delete all bookmarks.
     * new "t" option for 'complete' to also switch to open tabs with :open

@@ -122,55 +122,58 @@ function AutoCommands() //{{{
             options: [[["-javascript", "-js"], commands.OPTION_NOARG]]
         });
 
-    // TODO: expand target to all buffers
-    commands.add(["doauto[all]"],
-        "Apply the autocommands matching the specified URL pattern to all buffers",
-        function (args)
+    [
         {
-            commands.get("doautocmd").action.call(this, args);
+            name: "do[autocmd]",
+            description: "Apply the autocommands matching the specified URL pattern to the current buffer"
         },
         {
-            completer: function (context) completion.autocmdEvent(context),
-            literal: 0
+            name: "doautoa[ll]",
+            description: "Apply the autocommands matching the specified URL pattern to all buffers"
         }
-    );
-
-    // TODO: restrict target to current buffer
-    commands.add(["do[autocmd]"],
-        "Apply the autocommands matching the specified URL pattern to the current buffer",
-        function (args)
-        {
-            args = args.string;
-            if (/^\s*$/.test(args))
+    ].forEach(function (command) {
+        commands.add([command.name],
+            command.description,
+            // TODO: Perhaps this should take -args to pass to the command?
+            function (args)
             {
-                liberator.echomsg("No matching autocommands");
-                return;
-            }
+                // Vim compatible
+                if (args.length == 0)
+                    return void liberator.echomsg("No matching autocommands");
 
-            let [, event, url] = args.match(/^(\S+)(?:\s+(\S+))?$/);
-            url = url || buffer.URL;
+                let [event, url] = args;
+                let defaultURL = url || buffer.URL;
+                let validEvents = config.autocommands.map(function (e) e[0]);
 
-            let validEvents = config.autocommands.map(function (e) e[0]);
+                // TODO: add command validators
+                if (event == "*")
+                    return void liberator.echoerr("E217: Can't execute autocommands for ALL events");
+                else if (validEvents.indexOf(event) == -1)
+                    return void liberator.echoerr("E216: No such group or event: " + args);
+                else if (!autocommands.get(event).some(function (c) c.pattern.test(defaultURL)))
+                    return void liberator.echomsg("No matching autocommands");
 
-            if (event == "*")
-                liberator.echoerr("E217: Can't execute autocommands for ALL events");
-            else if (validEvents.indexOf(event) == -1)
-                liberator.echoerr("E216: No such group or event: " + args);
-            else
-            {
-                // TODO: perhaps trigger could return the number of autocmds triggered
-                // TODO: Perhaps this should take -args to pass to the command?
-                if (!autocommands.get(event).some(function (c) c.pattern.test(url)))
-                    liberator.echomsg("No matching autocommands");
+                if (this.name == "doautoall" && liberator.has("tabs"))
+                {
+                    let current = tabs.index();
+
+                    for (let i = 0; i < tabs.count; i++)
+                    {
+                        tabs.select(i);
+                        // if no url arg is specified use the current buffer's URL
+                        autocommands.trigger(event, { url: url || buffer.URL });
+                    }
+
+                    tabs.select(current);
+                }
                 else
-                    autocommands.trigger(event, { url: url });
-            }
-        },
-        {
-            completer: function (context) completion.autocmdEvent(context),
-            literal: 0
-        }
-    );
+                    autocommands.trigger(event, { url: defaultURL });
+            },
+            {
+                argCount: "*", // FIXME: kludged for proper error message should be "1".
+                completer: function (context) completion.autocmdEvent(context)
+            });
+    });
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// COMPLETIONS /////////////////////////////////////////////
@@ -306,7 +309,7 @@ function AutoCommands() //{{{
             let lastPattern = null;
             let url = args.url || "";
 
-            for (let [,autoCmd] in Iterator(autoCmds))
+            for (let [, autoCmd] in Iterator(autoCmds))
             {
                 if (autoCmd.pattern.test(url))
                 {
@@ -439,10 +442,6 @@ function Events() //{{{
     window.addEventListener("DOMMenuBarInactive", exitMenuMode, true);
     window.addEventListener("resize", onResize, true);
 
-    // window.document.addEventListener("DOMTitleChanged", function (event) {
-    //     liberator.log("titlechanged");
-    // }, null);
-
     // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
     //       matters, so use that string as the first item, that you
     //       want to refer to within liberator's source code for
@@ -472,7 +471,7 @@ function Events() //{{{
             if (k in keyTable)
                 names = keyTable[k];
             code_key[v] = names[0];
-            for (let [,name] in Iterator(names))
+            for (let [, name] in Iterator(names))
                 key_code[name.toLowerCase()] = v;
         }
 
@@ -581,7 +580,7 @@ function Events() //{{{
 
             if (dirs.length > 0)
             {
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
 
@@ -846,7 +845,7 @@ function Events() //{{{
         {
             let re = RegExp(filter);
 
-            for (let [item,] in macros)
+            for (let [item, ] in macros)
             {
                 if (re.test(item) || !filter)
                     macros.remove(item);
@@ -882,7 +881,7 @@ function Events() //{{{
             {
                 liberator.threadYield(1, true);
 
-                for (let [,evt_obj] in Iterator(events.fromString(keys)))
+                for (let [, evt_obj] in Iterator(events.fromString(keys)))
                 {
                     let elem = liberator.focus || window.content;
                     let evt = events.create(doc, "keypress", evt_obj);
@@ -922,7 +921,7 @@ function Events() //{{{
                 {
                     let duringFeed = this.duringFeed;
                     this.duringFeed = [];
-                    for (let [,evt] in Iterator(duringFeed))
+                    for (let [, evt] in Iterator(duringFeed))
                         evt.target.dispatchEvent(evt);
                 }
             }
@@ -1021,8 +1020,8 @@ function Events() //{{{
             while (match = re.exec(input))
             {
                 let evt_str = match[0];
-                let evt_obj = {ctrlKey:false, shiftKey:false,altKey:false, metaKey: false,
-                               keyCode: 0, charCode: 0, type: "keypress"};
+                let evt_obj = { ctrlKey: false, shiftKey: false, altKey: false, metaKey: false,
+                                keyCode: 0, charCode: 0, type: "keypress" };
 
                 if (evt_str.length > 1) // <.*?>
                 {

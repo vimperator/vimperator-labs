@@ -91,6 +91,6 @@ Enable _passthrough_ mode on *some* Google sites:
 Set the filetype to mail when editing email at Gmail:
 
 \{nbsp}[c]:autocmd LocationChange .* :set editor=gvim\ -f[c] +
-\{nbsp}[c]:autocmd LocationChange mail\.google\.com :set editor="gvim -f -c 'set ft=mail'"[c]
+\{nbsp}[c]:autocmd LocationChange mail\.google\.com :set editor="gvim -f -c $$'set ft=mail'$$"[c]
 
 // vim: set filetype=asciidoc:

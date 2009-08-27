@@ -111,18 +111,24 @@ function Option(names, description, type, defaultValue, extraInfo) //{{{
      * @see #has
      */
     this.checkHas = extraInfo.checkHas || null;
+
     /**
      * @property {boolean} Set to true whenever the option is first set. This
      * is useful to see whether it was changed from its default value
      * interactively or by some RC file.
      */
     this.hasChanged = false;
+    /**
+     * @property {nsIFile} The script in which this option was last set. null
+     *     implies an interactive command.
+     */
+    this.setFrom = null;
 
     // add no{option} variant of boolean {option} to this.names
     if (this.type == "boolean")
     {
         this.names = []; // reset since order is important
-        for (let [,name] in Iterator(names))
+        for (let [, name] in Iterator(names))
         {
             this.names.push(name);
             this.names.push("no" + name);
@@ -550,7 +556,7 @@ function Options() //{{{
         if (!args.length)
             args[0] = "";
 
-        for (let [,arg] in args)
+        for (let [, arg] in args)
         {
             if (bang)
             {
@@ -572,6 +578,7 @@ function Options() //{{{
                 }
 
                 if (name == "all" && reset)
+                    // TODO: Why? --djk
                     liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
                 else if (name == "all")
                     options.listPrefs(onlyNonDefault, "");
@@ -620,7 +627,10 @@ function Options() //{{{
                         option.reset();
                 }
                 else
+                {
+                    option.setFrom = modifiers.setFrom || null;
                     option.reset();
+                }
             }
             // read access
             else if (opt.get)
@@ -630,9 +640,15 @@ function Options() //{{{
                 else
                 {
                     if (option.type == "boolean")
-                        liberator.echo((opt.optionValue ? "  " : "no") + option.name);
+                        var msg = (opt.optionValue ? "  " : "no") + option.name;
                     else
-                        liberator.echo("  " + option.name + "=" + opt.optionValue);
+                        msg = "  " + option.name + "=" + opt.optionValue;
+
+                    if (options["verbose"] > 0 && option.setFrom)
+                        msg += "\n        Last set from " + option.setFrom.path;
+
+                    // FIXME: Message highlight group wrapping messes up the indent up for multi-arg verbose :set queries
+                    liberator.echo(<span highlight="CmdOutput">{msg}</span>);
                 }
             }
             // write access
@@ -640,6 +656,8 @@ function Options() //{{{
             // improved. i.e. Vim's behavior is pretty sloppy to no real benefit
             else
             {
+                option.setFrom = modifiers.setFrom || null;
+
                 if (opt.option.type == "boolean")
                 {
                     if (opt.valueGiven)
@@ -832,9 +850,10 @@ function Options() //{{{
 
     commands.add(["setl[ocal]"],
         "Set local option",
-        function (args)
+        function (args, modifiers)
         {
-            return setAction(args, { scope: options.OPTION_SCOPE_LOCAL });
+            modifiers.scope = options.OPTION_SCOPE_LOCAL;
+            setAction(args, modifiers);
         },
         {
             bang: true,
@@ -849,9 +868,10 @@ function Options() //{{{
 
     commands.add(["setg[lobal]"],
         "Set global option",
-        function (args)
+        function (args, modifiers)
         {
-            return setAction(args, { scope: options.OPTION_SCOPE_GLOBAL });
+            modifiers.scope = options.OPTION_SCOPE_GLOBAL;
+            setAction(args, modifiers);
         },
         {
             bang: true,
@@ -866,10 +886,7 @@ function Options() //{{{
 
     commands.add(["se[t]"],
         "Set an option",
-        function (args)
-        {
-            return setAction(args);
-        },
+        function (args, modifiers) { setAction(args, modifiers); },
         {
             bang: true,
             completer: function (context, args)
@@ -891,12 +908,7 @@ function Options() //{{{
         "Delete a variable",
         function (args)
         {
-            //let names = args.split(/ /);
-            //if (typeof names == "string") names = [names];
-
-            //let length = names.length;
-            //for (let i = 0, name = names[i]; i < length; name = names[++i])
-            for (let [,name] in args)
+            for (let [, name] in args)
             {
                 let reference = liberator.variableReference(name);
                 if (!reference[0])
@@ -1180,7 +1192,7 @@ function Options() //{{{
             let prefArray = services.get("pref").getChildList("", { value: 0 });
             prefArray.sort();
             let prefs = function () {
-                for (let [,pref] in Iterator(prefArray))
+                for (let [, pref] in Iterator(prefArray))
                 {
                     let userValue = services.get("pref").prefHasUserValue(pref);
                     if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)

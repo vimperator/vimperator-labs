@@ -817,13 +817,13 @@ util.Array.uniq = function uniq(ary, unsorted)
     let ret = [];
     if (unsorted)
     {
-        for (let [,item] in Iterator(ary))
+        for (let [, item] in Iterator(ary))
             if (ret.indexOf(item) == -1)
                 ret.push(item);
     }
     else
     {
-        for (let [,item] in Iterator(ary.sort()))
+        for (let [, item] in Iterator(ary.sort()))
         {
             if (item != last || !ret.length)
                 ret.push(item);
@@ -889,8 +889,8 @@ Struct.prototype = {
 
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or
 // get length() won't work.
-for (let [,k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
-                           "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
+for (let [, k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
+                            "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
     Struct.prototype[k] = Array.prototype[k];
 
 // vim: set fdm=marker sw=4 ts=4 et:

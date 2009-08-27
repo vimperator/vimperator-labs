@@ -398,7 +398,7 @@ function CommandLine() //{{{
                 try
                 {
                     this.waiting = true;
-                    for (let [,context] in Iterator(list))
+                    for (let [, context] in Iterator(list))
                     {
                         function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
                         while (context.incomplete && !done())
@@ -871,7 +871,7 @@ function CommandLine() //{{{
     ////////////////////// COMMANDS ////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var echoCommands = [
+    [
         {
             name: "ec[ho]",
             description: "Echo the expression",
@@ -887,9 +887,7 @@ function CommandLine() //{{{
             description: "Echo the expression as an informational message",
             action: liberator.echomsg
         }
-    ];
-
-    echoCommands.forEach(function (command) {
+    ].forEach(function (command) {
         commands.add([command.name],
             command.description,
             function (args)
@@ -991,8 +989,7 @@ function CommandLine() //{{{
         triggerCallback: function (type, mode, data)
         {
             if (callbacks[type] && callbacks[type][mode])
-                return callbacks[type][mode].call(this, data);
-            return false;
+                callbacks[type][mode].call(this, data);
         },
 
         runSilently: function (func, self)
@@ -1017,8 +1014,10 @@ function CommandLine() //{{{
                 // completion preview.
                 return commandWidget.inputField.editor.rootElement.firstChild.textContent;
             }
-            catch (e) {}
-            return commandWidget.value;
+            catch (e)
+            {
+                return commandWidget.value;
+            }
         },
         set command(cmd) commandWidget.value = cmd,
 
@@ -1278,10 +1277,10 @@ function CommandLine() //{{{
                 if (completions)
                     completions.previewClear();
                 if (!currentExtendedMode)
-                    return true;
+                    return;
 
-                // user pressed ENTER to carry out a command
-                // user pressing ESCAPE is handled in the global onEscape
+                // user pressed <Enter> to carry out a command
+                // user pressing <Esc> is handled in the global onEscape
                 //   FIXME: <Esc> should trigger "cancel" event
                 if (events.isAcceptKey(key))
                 {
@@ -1289,10 +1288,9 @@ function CommandLine() //{{{
                     keepCommand = true;
                     currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                     modes.pop(!this.silent);
-
-                    return commandline.triggerCallback("submit", mode, command);
+                    commandline.triggerCallback("submit", mode, command);
                 }
-                // user pressed UP or DOWN arrow to cycle history completion
+                // user pressed <Up> or <Down> arrow to cycle history completion
                 else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key))
                 {
                     // prevent tab from moving to the next field
@@ -1303,9 +1301,8 @@ function CommandLine() //{{{
                         history.select(/Up/.test(key), !/(Page|S-)/.test(key));
                     else
                         liberator.beep();
-                    return false;
                 }
-                // user pressed TAB to get completions of a command
+                // user pressed <Tab> to get completions of a command
                 else if (key == "<Tab>" || key == "<S-Tab>")
                 {
                     // prevent tab from moving to the next field
@@ -1313,7 +1310,6 @@ function CommandLine() //{{{
                     event.stopPropagation();
 
                     tabTimer.tell(event);
-                    return false;
                 }
                 else if (key == "<BS>")
                 {
@@ -1331,7 +1327,7 @@ function CommandLine() //{{{
                 {
                     //this.resetCompletions();
                 }
-                return true; // allow this event to be handled by the host app
+                // allow this event to be handled by the host app
             }
             else if (event.type == "keyup")
             {
@@ -2087,7 +2083,8 @@ function StatusLine() //{{{
                     var value = aURI.spec;
                     // Try to decode as UTF-8 if there's no encoding sequence that we would break.
                     if (!/%25(?:3B|2F|3F|3A|40|26|3D|2B|24|2C|23)/i.test(value))
-                        try {
+                        try
+                        {
                             value = decodeURI(value)
                             // 1. decodeURI decodes %25 to %, which creates unintended
                             //    encoding sequences. Re-encode it, unless it's part of
@@ -2098,7 +2095,8 @@ function StatusLine() //{{{
                             //    by the location bar (bug 410726).
                             .replace(/%(?!3B|2F|3F|3A|40|26|3D|2B|24|2C|23)|[\r\n\t]/ig,
                                 encodeURIComponent);
-                        } catch (e) {}
+                        }
+                        catch (e) {}
 
                     // Encode invisible characters (soft hyphen, zero-width space, BOM,
                     // line and paragraph separator, word joiner, invisible times,

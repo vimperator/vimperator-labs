@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         Xulmus configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Aug 3
+" Last Change:      2009 Aug 27
 
 " TODO: make this xulmus specific - shared liberator config?
 
@@ -29,14 +29,14 @@ syn keyword xulmusCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] ba[ck
     \ hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap] iu[nmap] iuna[bbrev] javas[cript] js ju[mps] let load
     \ loadplugins lpl ls ma[rk] macros map mapc[lear] marks mediav[iew] mes[sages] messc[lear] mkv[imperatorrc] mkx[ulmusrc]
     \ nm[ap] nmap[clear] nno[remap] no[remap] noh[lsearch] norm[al] nu[nmap] o[pen] optionu[sage] pa[geinfo] pagest[yle] pas
-    \ pc[lose] pl[ay] playern[ext] playerp[lay] playerpa[use] playerpr[ev] players[top] pm[ap] pmap[clear] pno[remap]
-    \ pref[erences] prefs pu[nmap] pw[d] q[uit] qa[ll] qma[rk] qmarks queue quita[ll] re[draw] re[load] reloada[ll] res[tart] run
-    \ runt[ime] sav[eas] sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] see[k] setg[lobal] setl[ocal] sideb[ar] sil[ent] sort[view]
-    \ so[urce] st[op] stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach] tabdu[plicate] tabe[dit]
-    \ tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tbh[ide] tbs[how]
-    \ tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et]
-    \ unm[ap] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vol[ume] vu[nmap] w[rite] wc[lose] win[open]
-    \ winc[lose] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
+    \ pl[ay] playern[ext] playerp[lay] playerpa[use] playerpr[ev] players[top] pm[ap] pmap[clear] pno[remap] pref[erences] prefs
+    \ pu[nmap] pw[d] q[uit] qa[ll] qma[rk] qmarks queue quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sav[eas]
+    \ sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] see[k] setg[lobal] setl[ocal] sideb[ar] sil[ent] sort[view] so[urce] st[op]
+    \ stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach] tabdu[plicate] tabe[dit] tabfir[st] tabl[ast]
+    \ tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tbh[ide] tbs[how] tbt[oggle] time tn[ext]
+    \ toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] verb[ose] ve[rsion]
+    \ vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vol[ume] vu[nmap] w[rite] wc[lose] win[open] winc[lose] wine[dit]
+    \ wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained
 
 syn match xulmusCommand "!" contained

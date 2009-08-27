@@ -2,17 +2,17 @@
 
 #### configuration
 
-ASCIIDOC      = asciidoc
-AWK           = awk
+ASCIIDOC  = asciidoc
+AWK       = awk
 
-LOCALE   = $(shell basename `pwd`)
-DOCLANG  = $(shell basename `pwd` | $(AWK) -F- '{ print ($$1 ~ /^[a-z][a-z]$$/) ? $$1 : "en" }')
+LOCALE    = $(shell basename `pwd`)
+DOCLANG   = $(shell basename `pwd` | $(AWK) -F- '{ print ($$1 ~ /^[a-z][a-z]$$/) ? $$1 : "en" }')
 
 SRC_FILES = $(wildcard *.txt)
 FILES     = $(SRC_FILES:%.txt=%.html)
-DEPS      = $(wildcard asciidoc.conf lang-$(DOCLANG).conf)
+DEPS      = $(wildcard lang-$(DOCLANG).conf) ${BASE}/asciidoc.conf $(BASE)/Makefile.doc
 
-DOC_FILES     = $(FILES) version.html
+DOC_FILES = $(FILES) version.html
 
 .SILENT:
 
@@ -50,7 +50,9 @@ check-asciidoc:
 	@$(ASCIIDOC) --version | $(AWK) '{ exit $$2 !~ /^8\.4\./ }' || \
 		echo >&2 "Warning: asciidoc versions other than 8.4.x are unsupported"
 
-version.html: ../../NEWS $(BASE)/Makefile.doc $(DEPS)
+all.html: $(SRC_FILES)
+
+version.html: ../../NEWS $(DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
 	# NOTE: asciidoc doesn't source the conf file implicitly when processing stdin
 	sed -e '1i\
@@ -60,7 +62,7 @@ heading:Version{nbsp}information[version-information]' \
 /' ../../NEWS | \
 		${ASCIIDOC} -f $(BASE)/asciidoc.conf -a doctitle=version.html -o version.html -
 
-$(FILES): %.html: %.txt $(BASE)/Makefile.doc $(DEPS)
+$(FILES): %.html: %.txt $(DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
 	$(ASCIIDOC) -f $(BASE)/asciidoc.conf -a configname=$(NAME) --unsafe -a linkcss -a quirks! -a lang=$(DOCLANG) -a doctitle="$$(basename $@)" -o $@ $<
 

@@ -327,7 +327,7 @@ function Player() // {{{
             {
                 let pages = player.getMediaPages();
 
-                for ([,page] in Iterator(pages))
+                for ([, page] in Iterator(pages))
                 {
                     if (util.compareIgnoreCase(arg, page.contentTitle) == 0)
                     {
@@ -609,7 +609,7 @@ function Player() // {{{
             return tracksList;
         },
 
-        searchView: function searchView (args)
+        searchView: function searchView(args)
         {
             let currentView = _SBGetCurrentView();
             let mediaItemList = currentView.mediaList;

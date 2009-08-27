@@ -1,4 +1,4 @@
-LOGO
+logo:[]
 
 section::Introduction[intro]
 

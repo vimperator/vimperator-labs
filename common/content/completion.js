@@ -471,13 +471,13 @@ CompletionContext.prototype = {
         let filter = fixCase(this.filter);
         if (this.anchored)
         {
-            function compare (text, s) text.substr(0, s.length) == s;
+            function compare(text, s) text.substr(0, s.length) == s;
             substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
         else
         {
-            function compare (text, s) text.indexOf(s) >= 0;
+            function compare(text, s) text.indexOf(s) >= 0;
             substrings = [];
             let start = 0;
             let idx;
@@ -527,7 +527,7 @@ CompletionContext.prototype = {
 
     cancelAll: function ()
     {
-        for (let [,context] in Iterator(this.contextList))
+        for (let [, context] in Iterator(this.contextList))
         {
             if (context.cancel)
                 context.cancel();
@@ -1006,7 +1006,7 @@ function Completion() //{{{
             // Find any complete statements that we can eval before we eval our object.
             // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
             let prev = 0;
-            for (let [,v] in Iterator(get(0)[FULL_STATEMENTS]))
+            for (let [, v] in Iterator(get(0)[FULL_STATEMENTS]))
             {
                 let key = str.substring(prev, v + 1);
                 if (checkFunction(prev, v, key))
@@ -1123,14 +1123,14 @@ function Completion() //{{{
                 }
                 // TODO: Make this a generic completion helper function.
                 let filter = key + (string || "");
-                for (let [,obj] in Iterator(objects))
+                for (let [, obj] in Iterator(objects))
                 {
                     this.context.fork(obj[1], top[OFFSET], this, fill,
                         obj[0], obj[1], compl, compl != orig, filter, last, key.length);
                 }
                 if (orig)
                     return;
-                for (let [,obj] in Iterator(objects))
+                for (let [, obj] in Iterator(objects))
                 {
                     obj[1] += " (substrings)";
                     this.context.fork(obj[1], top[OFFSET], this, fill,
@@ -1283,7 +1283,7 @@ function Completion() //{{{
         setFunctionCompleter: function setFunctionCompleter(funcs, completers)
         {
             funcs = Array.concat(funcs);
-            for (let [,func] in Iterator(funcs))
+            for (let [, func] in Iterator(funcs))
             {
                 func.liberatorCompleter = function liberatorCompleter(context, func, obj, args) {
                     let completer = completers[args.length - 1];

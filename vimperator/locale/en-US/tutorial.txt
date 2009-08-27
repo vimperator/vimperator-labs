@@ -2,10 +2,12 @@
 
 heading::Quick-start{nbsp}tutorial[tutorial]
 
-+++<div style="text-align: center;">+++
-*This is a quickstart tutorial to help get new users up and running in
-Vimperator. It is not intended as a full reference explaining all features.*
-+++</div>+++
+++++++
+<p style="text-align: center; font-weight: bold;">
+This is a quickstart tutorial to help get new users up and running in
+Vimperator. It is not intended as a full reference explaining all features.
+</p>
+++++++
 
 If you've started using Vimperator from scratch (i.e., without any
 customization), you should be looking at this help page in a relatively

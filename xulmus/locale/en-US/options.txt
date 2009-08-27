@@ -537,7 +537,7 @@ ____
 |\'nomore'| |\'more'|
 ||'more'|| boolean (default: on)
 ____
-Pause the message list window when more than one screen of listings is displayed
+Pause the message list window when more than one screen of listings is displayed.
 ____
 
 

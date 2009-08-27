@@ -45,7 +45,7 @@ function Script(file)
     this.__context__ = this;
 
     // This belongs elsewhere
-    for (let [,dir] in Iterator(io.getRuntimeDirectories("plugin")))
+    for (let [, dir] in Iterator(io.getRuntimeDirectories("plugin")))
     {
         if (dir.contains(file, false))
             plugins[this.NAME] = this;
@@ -230,7 +230,7 @@ function IO() //{{{
                 let dirs = getPathsFromPathList(options["cdpath"]);
                 let found = false;
 
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     dir = joinPaths(dir, arg);
 
@@ -467,7 +467,7 @@ function IO() //{{{
                 let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
                 let commands = [];
 
-                for (let [,dirName] in Iterator(dirNames))
+                for (let [, dirName] in Iterator(dirNames))
                 {
                     let dir = io.getFile(dirName);
                     if (dir.exists() && dir.isDirectory())
@@ -743,7 +743,7 @@ function IO() //{{{
             }
             else
                 return []; // XXX: or should it throw an error, probably yes?
-                           //  Yes --djk
+                           //  Yes, though frankly this should be a precondition so... --djk
         },
 
         /**
@@ -884,7 +884,7 @@ function IO() //{{{
                     dirs = [io.getCurrentDirectory().path].concat(dirs);
 
 lookup:
-                for (let [,dir] in Iterator(dirs))
+                for (let [, dir] in Iterator(dirs))
                 {
                     file = joinPaths(dir, program);
                     try
@@ -897,7 +897,7 @@ lookup:
                         if (WINDOWS)
                         {
                             let extensions = services.get("environment").get("PATHEXT").split(";");
-                            for (let [,extension] in Iterator(extensions))
+                            for (let [, extension] in Iterator(extensions))
                             {
                                 file = joinPaths(dir, program + extension);
                                 if (file.exists())
@@ -942,9 +942,9 @@ lookup:
             liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
 
             outer:
-            for (let [,dir] in Iterator(dirs))
+            for (let [, dir] in Iterator(dirs))
             {
-                for (let [,path] in Iterator(paths))
+                for (let [, path] in Iterator(paths))
                 {
                     let file = joinPaths(dir, path);
 
@@ -1028,13 +1028,15 @@ lookup:
                     let heredocEnd = null; // the string which ends the heredoc
                     let lines = str.split(/\r\n|[\r\n]/);
 
+                    function execute(args) { command.execute(args, special, count, { setFrom: file }); }
+
                     for (let [i, line] in Iterator(lines))
                     {
                         if (heredocEnd) // we already are in a heredoc
                         {
                             if (heredocEnd.test(line))
                             {
-                                command.execute(heredoc, special, count);
+                                execute(heredoc);
                                 heredoc = "";
                                 heredocEnd = null;
                             }
@@ -1057,9 +1059,6 @@ lookup:
                             {
                                 let lineNumber = i + 1;
 
-                                // TODO: messages need to be able to specify
-                                // whether they can be cleared/overwritten or
-                                // should be appended to and the MOW opened
                                 liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);
                                 commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR, commandline.APPEND_TO_MESSAGES);
                                 liberator.echoerr("E492: Not an editor command: " + line);
@@ -1079,15 +1078,11 @@ lookup:
                                         heredocEnd = RegExp("^" + matches[2] + "$", "m");
                                         if (matches[1])
                                             heredoc = matches[1] + "\n";
+                                        continue;
                                     }
-                                    else
-                                        command.execute(args, special, count);
                                 }
-                                else
-                                {
-                                    // execute a normal liberator command
-                                    liberator.execute(line, null, true);
-                                }
+
+                                execute(args);
                             }
                         }
                     }
@@ -1095,7 +1090,7 @@ lookup:
                     // if no heredoc-end delimiter is found before EOF then
                     // process the heredoc anyway - Vim compatible ;-)
                     if (heredocEnd)
-                        command.execute(heredoc, special, count);
+                        execute(heredoc);
                 }
 
                 if (scriptNames.indexOf(file.path) == -1)

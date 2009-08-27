@@ -71,7 +71,7 @@ function Command(specs, description, action, extraInfo) //{{{
         let longNames = [];
         let shortNames = [];
 
-        for (let [,spec] in Iterator(specs))
+        for (let [, spec] in Iterator(specs))
         {
             let matches = spec.match(/(\w+)\[(\w+)\](\w*)/);
 
@@ -204,7 +204,7 @@ Command.prototype = {
                 return;
             args.count = count;
             args.bang = bang;
-            self.action.call(self, args, bang, count, modifiers);
+            self.action.call(self, args, modifiers);
         }
 
         if (this.hereDoc)
@@ -229,7 +229,7 @@ Command.prototype = {
      */
     hasName: function (name)
     {
-        for (let [,spec] in Iterator(this.specs))
+        for (let [, spec] in Iterator(this.specs))
         {
             let fullName = spec.replace(/\[(\w+)]$/, "$1");
             let index = spec.indexOf("[");
@@ -515,7 +515,7 @@ function Commands() //{{{
                     opt += char + quote(val)
                 res.push(opt);
             }
-            for (let [,arg] in Iterator(args.arguments || []))
+            for (let [, arg] in Iterator(args.arguments || []))
                 res.push(quote(arg));
 
             let str = args.literalArg;
@@ -562,6 +562,9 @@ function Commands() //{{{
         //     : it might be nice to be able to specify that certain quoting
         //     should be disabled E.g. backslash without having to resort to
         //     using literal etc.
+        //     : error messages should be configurable or else we can ditch
+        //     Vim compatibility but it actually gives useful messages
+        //     sometimes rather than just "Invalid arg"
         //     : I'm not sure documenting the returned object here, and
         //     elsewhere, as type Args rather than simply Object makes sense,
         //     especially since it is further augmented for use in
@@ -712,9 +715,9 @@ function Commands() //{{{
                 var optname = "";
                 if (!onlyArgumentsRemaining)
                 {
-                    for (let [,opt] in Iterator(options))
+                    for (let [, opt] in Iterator(options))
                     {
-                        for (let [,optname] in Iterator(opt[0]))
+                        for (let [, optname] in Iterator(opt[0]))
                         {
                             if (sub.indexOf(optname) == 0)
                             {
@@ -1009,6 +1012,7 @@ function Commands() //{{{
     }
 
     // TODO: offer completion.ex?
+    //     : make this config specific
     var completeOptionMap = {
         abbreviation: "abbreviation", altstyle: "alternateStyleSheet",
         bookmark: "bookmark", buffer: "buffer", color: "colorScheme",
@@ -1058,7 +1062,7 @@ function Commands() //{{{
                             }
                             catch (e)
                             {
-                                // FIXME: should be pushed to the MOW
+                                liberator.echo(":" + this.name + " ...");
                                 liberator.echoerr("E117: Unknown function: " + completeOpt);
                                 liberator.log(e);
                                 return undefined;
@@ -1107,7 +1111,7 @@ function Commands() //{{{
                           cmd.count ? "0c" : "",
                           completerToString(cmd.completer),
                           cmd.replacementText || "function () { ... }"]
-                         for ([,cmd] in Iterator(cmds))));
+                         for ([, cmd] in Iterator(cmds))));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }

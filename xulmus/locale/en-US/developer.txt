@@ -30,8 +30,8 @@ is displayed as:
 class="hiddentag">:help</span> <span class="hiddentag">:h</span> <span
 class="hiddentag">help</span>
 
-<div class="key">:h[elp] <span class="argument">&#123;subject&#125;</span></div><br />
-<div class="key">&lt;F1&gt;</div></p>
+<span class="key">:h[elp] <span class="argument">&#123;subject&#125;</span></span><br />
+<span class="key">&lt;F1&gt;</span></p>
 <div class="quoteblock">
 <div class="quoteblock-content">
 <p>Open help window.

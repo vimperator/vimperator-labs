@@ -142,7 +142,7 @@ function Highlights(name, store)
     let styles = storage.styles;
 
     const Highlight = Struct("class", "selector", "filter", "default", "value");
-    Highlight.defaultValue("filter", function () "chrome://liberator/content/buffer.xhtml" + "," + config.styleableChrome);
+    Highlight.defaultValue("filter", function () ["chrome://liberator/content/buffer.xhtml"].concat(config.styleableChrome).join(","));
     Highlight.defaultValue("selector", function () self.selector(this.class));
     Highlight.defaultValue("value", function () this.default);
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
@@ -395,7 +395,7 @@ function Styles(name, store)
         if (matches.length == 0)
             return;
 
-        for (let [,sheet] in Iterator(matches.reverse()))
+        for (let [, sheet] in Iterator(matches.reverse()))
         {
             if (name)
             {
@@ -509,7 +509,7 @@ let (array = util.Array)
             catch (e) {}
             context.fork("others", 0, this, function (context) {
                 context.title = ["Site"];
-                context.completions = [[s, ""] for ([,s] in Iterator(styles.sites))];
+                context.completions = [[s, ""] for ([, s] in Iterator(styles.sites))];
             });
         }
     });
@@ -729,7 +729,7 @@ liberator.registerObserver("load_completion", function () {
         });
 
         context.title = ["Color Scheme", "Runtime Path"];
-        context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([,c] in Iterator(colors))]
+        context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([, c] in Iterator(colors))]
     };
 
     // FIXME: extract from :highlight

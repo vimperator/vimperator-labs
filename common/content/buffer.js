@@ -774,7 +774,7 @@ function Buffer() //{{{
 
         // put feeds rss into pageFeeds[]
         let nFeed = 0;
-        for (let [,link] in Iterator(doc.getElementsByTagName("link")))
+        for (let [, link] in Iterator(doc.getElementsByTagName("link")))
         {
             if (!link.href)
                 return;
@@ -1167,7 +1167,7 @@ function Buffer() //{{{
 
                 // TODO: this should probably use the default 'hinttags' value. --djk
                 let res = buffer.evaluateXPath(options["hinttags"], frame.document);
-                for (let [,regex] in Iterator(regexes))
+                for (let [, regex] in Iterator(regexes))
                 {
                     for (let i in util.range(res.snapshotLength, 0, -1))
                     {
@@ -1667,7 +1667,7 @@ function Marks() //{{{
         if (localmark)
         {
             let win = window.content;
-            for (let [i,] in Iterator(localmark))
+            for (let [i, ] in Iterator(localmark))
             {
                 if (localmark[i].location == win.location.href)
                 {
@@ -1697,7 +1697,7 @@ function Marks() //{{{
     function localMarkIter()
     {
         for (let [mark, value] in localMarks)
-            for (let [,val] in Iterator(value))
+            for (let [, val] in Iterator(value))
                 yield [mark, val];
     }
 
@@ -1825,7 +1825,7 @@ function Marks() //{{{
 
         // FIXME: Line/Column doesn't make sense with %
         context.title = ["Mark", "Line Column File"];
-        context.keys.description = function ([,m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
+        context.keys.description = function ([, m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
         context.completions = marks.all;
     };
 
@@ -1903,17 +1903,17 @@ function Marks() //{{{
             if (special)
             {
                 // :delmarks! only deletes a-z marks
-                for (let [mark,] in localMarks)
+                for (let [mark, ] in localMarks)
                     removeLocalMark(mark);
             }
             else
             {
-                for (let [mark,] in urlMarks)
+                for (let [mark, ] in urlMarks)
                 {
                     if (filter.indexOf(mark) >= 0)
                         removeURLMark(mark);
                 }
-                for (let [mark,] in localMarks)
+                for (let [mark, ] in localMarks)
                 {
                     if (filter.indexOf(mark) >= 0)
                         removeLocalMark(mark);
@@ -1965,7 +1965,7 @@ function Marks() //{{{
                 let win = window.content;
                 let slice = localMarks.get(mark) || [];
 
-                for (let [,lmark] in Iterator(slice))
+                for (let [, lmark] in Iterator(slice))
                 {
                     if (win.location.href == lmark.location)
                     {
@@ -2006,7 +2006,7 @@ function Marks() //{{{
                   Math.round(mark[1].position.x * 100) + "%",
                   Math.round(mark[1].position.y * 100) + "%",
                   mark[1].location]
-                 for ([,mark] in Iterator(marks))));
+                 for ([, mark] in Iterator(marks))));
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
 

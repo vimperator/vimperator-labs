@@ -129,7 +129,8 @@ Below is an overview of which modes each map command applies to:
 :imap  :inoremap  :iunmap  :imapclear - Insert mode
 :cmap  :cnoremap  :cunmap  :cmapclear - Command-line mode
 
-subsection::Key{nbsp}sequences[:&lt;>,key-sequence]
+// |<>| breaks doc validation
+subsection::Key{nbsp}sequences[key-notation,key-sequence]
 
 For most keys, the key-sequence is the same as the character you see when you
 type that key, however there are some exceptions which allow for a much larger

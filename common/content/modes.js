@@ -216,6 +216,7 @@ const modes = (function () //{{{
         },
 
         // TODO: Deprecate this in favor of addMode? --Kris
+        //       Ya --djk
         setCustomMode: function (modestr, oneventfunc, stopfunc)
         {
             // TODO this.plugin[id]... ('id' maybe submode or what..)

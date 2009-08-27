@@ -1,10 +1,12 @@
 logo:[]
 
-+++<div style="text-align: center;">+++
-*First there was a Navigator, then there was an Explorer.
+++++++
+<p style="text-align: center; font-weight: bold;">
+First there was a Navigator, then there was an Explorer.
 Later it was time for a Konqueror. Now it's time for an Imperator, the
-VIMperator :)*
-+++</div>+++
+VIMperator :)
+</p>
+++++++
 
 heading::Introduction[intro]
 

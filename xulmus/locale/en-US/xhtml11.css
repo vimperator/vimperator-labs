@@ -304,7 +304,7 @@ td span.tag {
 	padding-top: 25px !important;
 }
 
-div.key {
+span.key {
     color: rgb(255, 0, 255); /* magenta */
     min-width: 120px; /* with 20px padding actually 140px */
 	/*padding-bottom: 5px;*/

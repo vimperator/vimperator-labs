@@ -196,7 +196,7 @@ function Addressbook() //{{{
             else
             {
                 let list = template.tabular(["Name", "Address"], [],
-                    [[util.clip(a[0], 50), address[1]] for ([,address] in Iterator(addresses))]
+                    [[util.clip(a[0], 50), address[1]] for ([, address] in Iterator(addresses))]
                 );
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
