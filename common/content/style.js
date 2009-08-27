@@ -732,11 +732,10 @@ liberator.registerObserver("load_completion", function () {
         context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([, c] in Iterator(colors))]
     };
 
-    // FIXME: extract from :highlight
-    completion.highlightGroup = function highlightGroup(context, args) {
-        return commands.get("highlight").completer(context, args);
+    completion.highlightGroup = function highlightGroup(context) {
+        context.title = ["Highlight Group", "Value"];
+        context.completions = [[v.class, v.value] for (v in highlight)];
     };
-
 });
 //}}}
 
