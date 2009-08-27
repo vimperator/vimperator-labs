@@ -23,7 +23,7 @@ ________________________________________________________________________________
 |:pa| |:pageinfo| +
 ||:pa[geinfo]||
 ________________________________________________________________________________
-Show various page information. See [c]:help 'pageinfo'[c] for available options.
+Show various page information. See [c]:help $$'pageinfo'$$[c] for available options.
 ________________________________________________________________________________
 
 
