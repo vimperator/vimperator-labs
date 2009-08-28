@@ -273,6 +273,13 @@ function Hints() //{{{
         return [leftpos, toppos];
     }
 
+    function getBodyOffsets(doc)
+    {
+        let bodyRect = (doc.body || doc.documentElement).getBoundingClientRect();
+        return [doc.defaultView.scrollX - bodyRect.left,
+                doc.defaultView.scrollY - bodyRect.top];
+    }
+
     /**
      * Generate the hints in a window.
      *
@@ -288,8 +295,7 @@ function Hints() //{{{
         let doc = win.document;
         let height = win.innerHeight;
         let width  = win.innerWidth;
-        let scrollX = doc.defaultView.scrollX;
-        let scrollY = doc.defaultView.scrollY;
+        let [scrollX, scrollY] = getBodyOffsets(doc);
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
@@ -395,8 +401,7 @@ function Hints() //{{{
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
-            let scrollX = doc.defaultView.scrollX;
-            let scrollY = doc.defaultView.scrollY;
+            let [scrollX, scrollY] = getBodyOffsets(doc);
 
         inner:
             for (let i in (util.interruptibleRange(start, end + 1, 500)))
