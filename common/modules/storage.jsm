@@ -22,7 +22,7 @@ function Timer(minInterval, maxInterval, callback)
     {
         timer.cancel();
         this.latest = 0;
-        /* minInterval is the time between the completion of the command and the next firing. */
+        // minInterval is the time between the completion of the command and the next firing
         this.doneAt = Date.now() + minInterval;
 
         try
@@ -145,7 +145,7 @@ function loadPref(name, store, type)
     if (pref)
     {
         prefService.clearUserPref(name);
-        savePref({ name: name, store: true, serial: pref })
+        savePref({ name: name, store: true, serial: pref });
     }
     if (result instanceof type)
         return result;
@@ -161,8 +161,8 @@ function savePref(obj)
 
 var prototype = {
     OPTIONS: ["privateData"],
-    fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg) },
-    save: function () { savePref(this) },
+    fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg); },
+    save: function () { savePref(this); },
     init: function (name, store, data, options)
     {
         this.__defineGetter__("store", function () store);
@@ -293,7 +293,7 @@ var storage = {
         {
             if (key in this && !reload)
                 throw Error;
-            let load = function() loadPref(key, store, type || Object);
+            let load = function () loadPref(key, store, type || Object);
             keys[key] = new constructor(key, store, load, options || {});
             timers[key] = new Timer(1000, 10000, function () storage.save(key));
             this.__defineGetter__(key, function () keys[key]);
@@ -345,7 +345,7 @@ var storage = {
     {
         for (let [key, ary] in Iterator(observers))
         {
-            observers[key] = ary = ary.filter(function (o) o.callback.get() && (!o.ref || o.ref.get() && o.ref.get().liberatorStorageRefs))
+            observers[key] = ary = ary.filter(function (o) o.callback.get() && (!o.ref || o.ref.get() && o.ref.get().liberatorStorageRefs));
             if (!ary.length)
                 delete observers[key];
         }
@@ -383,7 +383,7 @@ var storage = {
 
     _privateMode: false,
     get privateMode() this._privateMode,
-    set privateMode(val) 
+    set privateMode(val)
     {
         if (!val && this._privateMode)
             for (let key in keys)
