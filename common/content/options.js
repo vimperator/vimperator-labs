@@ -1269,6 +1269,21 @@ function Options() //{{{
             return ret;
         },
 
+        /**
+         * Remove the option with matching <b>name</b>.
+         *
+         * @param {string} name The name of the option to remove. This can be
+         *     any of the options's names.
+         */
+        remove: function (name)
+        {
+            for each (let option in optionHash)
+            {
+                if (option.hasName(name))
+                    delete optionHash[option.name];
+            }
+        },
+
         /** @property {Object} The options store. */
         get store() storage.options,
 
