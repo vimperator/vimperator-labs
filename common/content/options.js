@@ -457,7 +457,8 @@ function Options() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const SAVED = "liberator.saved.";
+    // TODO: migrate liberator.saved.* prefs to extensions.liberator.saved.*
+    const SAVED = "extensions.liberator.saved.";
 
     const optionHash = {};
 
