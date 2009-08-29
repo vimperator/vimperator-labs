@@ -276,8 +276,7 @@ function Hints() //{{{
     function getBodyOffsets(doc)
     {
         let bodyRect = (doc.body || doc.documentElement).getBoundingClientRect();
-        return [doc.defaultView.scrollX - bodyRect.left,
-                doc.defaultView.scrollY - bodyRect.top];
+        return [-bodyRect.left, -bodyRect.top];
     }
 
     /**
