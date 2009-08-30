@@ -221,12 +221,12 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:echomsg[c]|| Echo the expression as an informational message +
 ||[c]:emenu[c]|| Execute the specified menu item from the command line +
 ||[c]:execute[c]|| Execute the argument as an Ex command +
-||[c]:extadd[c]|| Install an extensions +
-||[c]:extdelete[c]||
-||[c]:extdisable[c]||
-||[c]:extenable[c]||
+||[c]:extadd[c]|| Install an extension +
+||[c]:extdelete[c]|| Uninstall an extension +
+||[c]:extdisable[c]|| Disable an extension +
+||[c]:extenable[c]|| Enable an extension +
 ||[c]:extensions[c]|| List all installed extensions +
-||[c]:extoptions[c]||
+||[c]:extoptions[c]|| Open an extension's preference dialog +
 ||[c]:exusage[c]|| List all Ex commands with a short description +
 ||[c]:filter[c]|| Filter and show the tracks as a view +
 ||[c]:finish[c]|| Stop sourcing a script file +
