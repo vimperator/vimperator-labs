@@ -664,6 +664,48 @@ exist, Vimperator will set it to match this value.
 ____
 
 
+|\'si'| |\'sanitizeitems'|
+||'sanitizeitems' 'si'|| stringlist
+____
+(default: "history,formdata,cookies,cache,sessions,commandline")
+
+The default list of private items to sanitize.
+
+[frame="topbot",grid="none",cols="1,4"]
+|===============================================================================
+|*cache*         |Cache
+|*commandline*   |Command-line history
+|*cookies*       |Cookies
+|*downloads*     |Download history
+|*formdata*      |Saved form and search history
+|*history*       |Browsing history
+|*offlineapps*   |Offline website data
+|*passwords*     |Saved passwords
+|*sessions*      |Authenticated sessions
+|*sitesettings*  |Site preferences
+|===============================================================================
+____
+
+
+|\'sts'| |\'sanitizetimespan'|
+||'sanitizetimespan' 'sts'|| number (default: 1)
+____
+The default sanitizer time span. Only items created within this timespan are
+deleted.
+
+Note: This only applies to *cookies*, *history*, *formdata*, and *downloads*.
+
+[frame="topbot",grid="none",cols="1,10"]
+|===============================================================================
+|*0*|Everything
+|*1*|Last hour
+|*2*|Last two hours
+|*3*|Last four hours
+|*4*|Today
+|===============================================================================
+____
+
+
 |\'scr'| |\'scroll'|
 ||'scroll' 'scr'|| number (default: 0)
 ____

@@ -47,6 +47,21 @@ Repeat last [c]:!{cmd}[c].
 ________________________________________________________________________________
 
 
+|:sa| |:sanitize| +
+||:sa[nitize] [-timespan={timespan}] {item} ...|| +
+||:sa[nitize]! [-timespan={timespan}]|| +
+________________________________________________________________________________
+Clear private data items. Where {item} ... is a list of private items to
+delete. These may be any of the items valid for 'sanitizeitems'.
+
+If [!] is specified then 'sanitizeitems' is used for the list of items to
+delete.
+
+If {timespan} is specified then only items within that timespan are deleted,
+otherwise the value of 'sanitizetimespan' is used.
+________________________________________________________________________________
+
+
 |:sil| |:silent| +
 ||:sil[ent] {command}||
 ________________________________________________________________________________
@@ -56,7 +71,7 @@ history.
 ________________________________________________________________________________
 
 
-|:verb| |:verbose +
+|:verb| |:verbose| +
 ||:[count]verb[ose] {command}||
 ________________________________________________________________________________
 Execute a command with 'verbose' set to [count]. If [count] is not specified

@@ -32,7 +32,7 @@ const config = { //{{{
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "session", "tabs", "tabs_undo", "windows"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows"],
     defaults: {
         complete: "stlf",
         guioptions: "rb",
@@ -141,6 +141,7 @@ const config = { //{{{
     scripts: [
         "browser.js",
         "bookmarks.js",
+        "sanitizer.js",
         "tabs.js"
     ],
 
@@ -179,6 +180,7 @@ const config = { //{{{
         liberator.loadModule("marks",      Marks);
         liberator.loadModule("quickmarks", QuickMarks);
         liberator.loadModule("hints",      Hints);
+        liberator.loadModule("sanitizer",  Sanitizer);
 
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
