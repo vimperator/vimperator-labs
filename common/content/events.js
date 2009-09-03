@@ -1529,6 +1529,8 @@ function Events() //{{{
                         return void killEvent();
                     }
 
+                    // All of these special cases for hint mode are driving
+                    // me insane! -Kris
                     if (modes.extended & modes.HINTS)
                     {
                         // under HINT mode, certain keys are redirected to hints.onEvent
@@ -1538,6 +1540,7 @@ function Events() //{{{
                             || (/^[0-9]$/.test(key) && !hints.escNumbers))
                         {
                             hints.onEvent(event);
+                            input.buffer = null;
                             return void killEvent();
                         }
 
@@ -1664,7 +1667,8 @@ function Events() //{{{
             finally
             {
                 let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
-                statusline.updateInputBuffer(motionMap + input.buffer);
+                if (input.buffer !== null)
+                    statusline.updateInputBuffer(motionMap + input.buffer);
             }
         },
 

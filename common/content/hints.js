@@ -556,6 +556,23 @@ function Hints() //{{{
         return true;
     }
 
+    function checkUnique()
+    {
+        if (hintNumber > validHints.length)
+            return void liberator.beep();
+
+        // if we write a numeric part like 3, but we have 45 hints, only follow
+        // the hint after a timeout, as the user might have wanted to follow link 34
+        if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
+        {
+            let timeout = options["hinttimeout"];
+            if (timeout > 0)
+                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+        }
+        else // we have a unique hint
+            processHints(true);
+    }
+
     /**
      * Handle user input.
      *
@@ -942,15 +959,11 @@ function Hints() //{{{
             {
                 liberator.beep();
                 modes.reset();
-                return false;
             }
             else if (validHints.length == 1)
-            {
                 processHints(false);
-                return false;
-            }
-            else // still hints visible
-                return true;
+            else
+                checkUnique();
         },
 
         /**
@@ -1054,22 +1067,10 @@ function Hints() //{{{
                         }
                         showActiveHint(hintNumber, oldHintNumber || 1);
 
-                        if (hintNumber == 0 || hintNumber > validHints.length)
+                        if (hintNumber == 0)
                             return void liberator.beep();
 
-                        // if we write a numeric part like 3, but we have 45 hints, only follow
-                        // the hint after a timeout, as the user might have wanted to follow link 34
-                        if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
-                        {
-                            let timeout = options["hinttimeout"];
-                            if (timeout > 0)
-                                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
-
-                            return false;
-                        }
-                        // we have a unique hint
-                        processHints(true);
-                        return;
+                        checkUnique();
                     }
             }
 
