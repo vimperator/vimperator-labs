@@ -45,6 +45,37 @@ function CommandLine() //{{{
     storage.newArray("history-search", true, { privateData: true });
     storage.newArray("history-command", true, { privateData: true });
 
+    // Really inideal.
+    let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
+    storage.newObject("sanitize", function () {
+        ({
+            CLEAR: "browser:purge-session-history",
+            init: function ()
+            {
+                services.get("observer").addObserver(this, this.CLEAR, false);
+                services.get("observer").addObserver(this, "quit-application", false);
+            },
+            observe: function (subject, topic, data)
+            {
+                if (topic == this.CLEAR)
+                {
+                    ["search", "command"].forEach(function (mode) {
+                        History(null, mode).sanitize();
+                    });
+                }
+                else if (topic == "quit-application")
+                {
+                    services.get("observer").removeObserver(this, this.CLEAR);
+                    services.get("observer").removeObserver(this, "quit-application");
+                }
+            }
+        }).init();
+    }, false);
+    storage.addObserver("sanitize",
+        function (key, event, value) {
+            autocommands.trigger("Sanitize", {});
+        }, window);
+
     var messageHistory = { // {{{
         _messages: [],
         get messages()
@@ -93,6 +124,7 @@ function CommandLine() //{{{
         if (!(this instanceof arguments.callee))
             return new arguments.callee(inputField, mode);
 
+        this.mode = mode;
         this.input = inputField;
         this.store = storage["history-" + mode];
         this.reset();
@@ -116,9 +148,29 @@ function CommandLine() //{{{
             let str = this.input.value;
             if (/^\s*$/.test(str))
                 return;
-            this.store.mutate("filter", function (line) line != str);
-            this.store.push(str);
+            this.store.mutate("filter", function (line) (line.value || line) != str);
+            this.store.push({ value: str, timestamp: Date.now(), privateData: this.checkPrivate(str) });
             this.store.truncate(options["history"], true);
+        },
+        /**
+         * @property {function} Returns whether a data item should be
+         * considered private.
+         */
+        checkPrivate: function (str)
+        {
+            // Not really the ideal place for this check.
+            if (this.mode == "command")
+                return (commands.get(str.replace("^[\s:]*", "").split(/[\s!]+/)[0]) || {})
+                        .privateData;
+            return false;
+        },
+        /**
+         * Removes any private data from this history.
+         */
+        sanitize: function ()
+        {
+            // TODO: Respect privacy.item.timeSpan
+            this.store.mutate("filter", function (line) !line.privateData);
         },
         /**
          * Replace the current input field value.
@@ -172,6 +224,7 @@ function CommandLine() //{{{
                 }
 
                 let hist = this.store.get(this.index);
+                hist = (hist.value || hist);
 
                 // user pressed DOWN when there is no newer history item
                 if (hist == null)

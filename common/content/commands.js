@@ -41,14 +41,15 @@ the terms of any one of the MPL, the GPL or the LGPL.
  * @param {function} action The action invoked by this command when executed.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         argCount  - see {@link Command#argCount}
- *         bang      - see {@link Command#bang}
- *         completer - see {@link Command#completer}
- *         count     - see {@link Command#count}
- *         heredoc   - see {@link Command#heredoc}
- *         literal   - see {@link Command#literal}
- *         options   - see {@link Command#options}
- *         serial    - see {@link Command#serial}
+ *         argCount    - see {@link Command#argCount}
+ *         bang        - see {@link Command#bang}
+ *         completer   - see {@link Command#completer}
+ *         count       - see {@link Command#count}
+ *         heredoc     - see {@link Command#heredoc}
+ *         literal     - see {@link Command#literal}
+ *         options     - see {@link Command#options}
+ *         serial      - see {@link Command#serial}
+ *         privateData - see {@link Command#privateData}
  * @optional
  * @private
  */
@@ -158,6 +159,12 @@ function Command(specs, description, action, extraInfo) //{{{
      *     startups.
      */
     this.serial = extraInfo.serial;
+    /**
+     * @property {boolean} When true, invocations of this command
+     *     may contain private data which should be purged from
+     *     saved histories when clearing private data.
+     */
+    this.privateData = Boolean(extraInfo.privateData);
 
     /**
      * @property {boolean} Specifies whether this is a user command.  User

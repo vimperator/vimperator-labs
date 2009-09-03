@@ -60,7 +60,7 @@ function Browser() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    options.add(["encoding", "enc"],
+    options.add(["enc[oding]"],
         "Sets the current buffer's character encoding",
         "string", "UTF-8",
         {
@@ -68,10 +68,13 @@ function Browser() //{{{
             getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
             setter: function (val)
             {
+                if (options["encoding"] == val)
+                    return val;
+
                 // Stolen from browser.jar/content/browser/browser.js, more or less.
                 try
                 {
-                    var docCharset = getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val;
+                    getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset = val;
                     PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
                     getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                 }
@@ -269,7 +272,8 @@ function Browser() //{{{
         },
         {
             completer: function (context) completion.url(context),
-            literal: 0
+            literal: 0,
+            privateData: true,
         });
 
     commands.add(["redr[aw]"],

@@ -302,7 +302,8 @@ const config = { //{{{
             },
             {
                 completer: function (context) completion.url(context),
-                literal: 0
+                literal: 0,
+                privateData: true
             });
 
         /////////////////////////////////////////////////////////////////////////////}}}
