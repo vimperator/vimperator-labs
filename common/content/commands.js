@@ -921,7 +921,7 @@ function Commands() //{{{
             str.replace(/\s*".*$/, "");
 
             // 0 - count, 1 - cmd, 2 - special, 3 - args
-            let matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
+            let matches = str.match(/^[:\s]*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
             //var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
             if (!matches)
                 return [null, null, null, null];
