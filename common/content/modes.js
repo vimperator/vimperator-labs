@@ -137,6 +137,8 @@ const modes = (function () //{{{
 
         get mainModes() (mode for ([k, mode] in Iterator(modeMap)) if (!mode.extended && mode.name == k)),
 
+        get mainMode() modeMap[main],
+
         addMode: function (name, extended, options)
         {
             let disp = name.replace("_", " ", "g");
@@ -148,6 +150,8 @@ const modes = (function () //{{{
             }
             modeMap[name] = modeMap[this[name]] = util.extend({
                 extended: extended,
+                count: true,
+                input: false,
                 mask: this[name],
                 name: name,
                 disp: disp
@@ -269,13 +273,14 @@ const modes = (function () //{{{
     var modeMap = {};
 
     // main modes, only one should ever be active
-    self.addMode("NORMAL", { char: "n", display: -1 });
-    self.addMode("INSERT", { char: "i" });
-    self.addMode("VISUAL", { char: "v", display: function () "VISUAL" + (extended & modes.LINE ? " LINE" : "") });
-    self.addMode("COMMAND_LINE", { char: "c" });
+    self.addMode("NORMAL",   { char: "n", display: -1 });
+    self.addMode("INSERT",   { char: "i", input: true });
+    self.addMode("VISUAL",   { char: "v", display: function () "VISUAL" + (extended & modes.LINE ? " LINE" : "") });
+    self.addMode("COMMAND_LINE", { char: "c", input: true });
     self.addMode("CARET"); // text cursor is visible
-    self.addMode("TEXTAREA", { char: "i" }); // text cursor is in a HTMLTextAreaElement
-    self.addMode("CUSTOM",  { display: function () plugins.mode });
+    self.addMode("TEXTAREA", { char: "i", input: true }); // text cursor is in a HTMLTextAreaElement
+    self.addMode("EMBED",    { input: true });
+    self.addMode("CUSTOM",   { display: function () plugins.mode });
     // extended modes, can include multiple modes, and even main modes
     self.addMode("EX", true);
     self.addMode("HINTS", true);

@@ -488,7 +488,9 @@ function Events() //{{{
         let elem = liberator.focus;
         return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
                  elem instanceof HTMLTextAreaElement ||
-                 elem instanceof HTMLIsIndexElement);
+                 elem instanceof HTMLIsIndexElement ||
+                 elem instanceof HTMLObjectElement ||
+                 elem instanceof HTMLEmbedElement);
     }
 
     function triggerLoadAutocmd(name, doc)
@@ -1303,6 +1305,11 @@ function Events() //{{{
                         buffer.lastInputField = elem;
                     return;
                 }
+                if (elem instanceof HTMLEmbedElement || elem instanceof HTMLObjectElement)
+                {
+                    liberator.mode = modes.EMBED;
+                    return;
+                }
 
                 if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable == "true"))
                 {
@@ -1577,7 +1584,7 @@ function Events() //{{{
                 if (countStr && !candidateCommand)
                 {
                     // no count for insert mode mappings
-                    if (liberator.mode == modes.INSERT || liberator.mode == modes.COMMAND_LINE)
+                    if (!modes.mainMode.count && !modes.mainMode.input)
                         stop = false;
                     else
                         input.buffer = inputStr;
@@ -1656,7 +1663,7 @@ function Events() //{{{
                             if (!(modes.extended & modes.INPUT_MULTILINE))
                                 commandline.onEvent(event); // reroute event in command line mode
                         }
-                        else if (liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA)
+                        else if (!modes.mainMode.input)
                             liberator.beep();
                     }
                 }
