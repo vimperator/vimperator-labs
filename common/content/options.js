@@ -1413,6 +1413,6 @@ function Options() //{{{
 
     return self;
 
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -826,7 +826,7 @@ function Bookmarks() //{{{
         }
     };
     //}}}
-}; //}}}
+} //}}}
 
 function History() //{{{
 {
@@ -1092,7 +1092,7 @@ function History() //{{{
         }
     };
     //}}}
-}; //}}}
+} //}}}
 
 function QuickMarks() //{{{
 {
@@ -1253,6 +1253,6 @@ function QuickMarks() //{{{
         }
     };
     //}}}
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -1188,7 +1188,7 @@ lookup:
 
     return self;
 
-}; //}}}
+} //}}}
 
 IO.PATH_SEP = (function () {
     let f = services.get("directory").get("CurProcD", Ci.nsIFile);

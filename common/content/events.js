@@ -338,7 +338,7 @@ function AutoCommands() //{{{
         }
     };
     //}}}
-}; //}}}
+} //}}}
 
 /**
  * @instance events
@@ -1835,6 +1835,6 @@ function Events() //{{{
 
     return self;
 
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

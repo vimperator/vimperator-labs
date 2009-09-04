@@ -1768,7 +1768,7 @@ function CommandLine() //{{{
 
     return self;
 
-}; //}}}
+} //}}}
 
 /**
  * The list which is used for the completion box (and QuickFix window in
@@ -2042,7 +2042,7 @@ function ItemList(id) //{{{
         onEvent: function onEvent(event) false
     };
     //}}}
-}; //}}}
+} //}}}
 
 function StatusLine() //{{{
 {
@@ -2326,6 +2326,6 @@ function StatusLine() //{{{
 
     };
     //}}}
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

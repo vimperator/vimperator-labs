@@ -1619,7 +1619,7 @@ function Buffer() //{{{
         }
     };
     //}}}
-}; //}}}
+} //}}}
 
 /**
  * @instance marks
@@ -2012,6 +2012,6 @@ function Marks() //{{{
 
     };
     //}}}
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

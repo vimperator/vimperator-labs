@@ -117,7 +117,7 @@ function Services()
     self.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);
 
     return self;
-};
+}
 
 var services = Services();
 

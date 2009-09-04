@@ -295,6 +295,6 @@ function Browser() //{{{
         // TODO: extract browser-specific functionality from liberator
     };
     //}}}
-}; //}}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:
