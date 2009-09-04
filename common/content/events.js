@@ -1584,7 +1584,7 @@ function Events() //{{{
                 if (countStr && !candidateCommand)
                 {
                     // no count for insert mode mappings
-                    if (!modes.mainMode.count && !modes.mainMode.input)
+                    if (!modes.mainMode.count || modes.mainMode.input)
                         stop = false;
                     else
                         input.buffer = inputStr;
