@@ -684,6 +684,9 @@ The default list of private items to sanitize.
 |*sessions*      |Authenticated sessions
 |*sitesettings*  |Site preferences
 |===============================================================================
+
+When history items are sanitized [c]:open[c], [c]:tabopen[c] and [c]:winopen[c]
+command-line history entries are also removed.
 ____
 
 
