@@ -60,7 +60,7 @@ function Browser() //{{{
     ////////////////////// OPTIONS /////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    options.add(["enc[oding]"],
+    options.add(["encoding", "enc"],
         "Sets the current buffer's character encoding",
         "string", "UTF-8",
         {
