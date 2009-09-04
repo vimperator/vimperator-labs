@@ -865,7 +865,7 @@ function Events() //{{{
          *     command line.
          * @returns {boolean}
          */
-        feedkeys: function (keys, noremap, silent)
+        feedkeys: function (keys, noremap, quiet)
         {
             let doc = window.document;
             let view = window.document.defaultView;
@@ -873,9 +873,9 @@ function Events() //{{{
             let wasFeeding = this.feedingKeys;
             this.feedingKeys = true;
             this.duringFeed = this.duringFeed || [];
-            let wasSilent = commandline.silent;
-            if (silent)
-                commandline.silent = silent;
+            let wasQuiet  = commandline.quiet;
+            if (quiet)
+                commandline.quiet = quiet;
 
             try
             {
@@ -914,8 +914,8 @@ function Events() //{{{
             finally
             {
                 this.feedingKeys = wasFeeding;
-                if (silent)
-                    commandline.silent = wasSilent;
+                if (quiet)
+                    commandline.quiet = wasQuiet;
 
                 if (this.duringFeed.length)
                 {

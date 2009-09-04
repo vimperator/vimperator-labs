@@ -110,6 +110,7 @@ function CommandLine() //{{{
     var lastMowOutput = null;
 
     var silent = false;
+    var quiet = false;
     var keepCommand = false;
     var lastEcho = null;
 
@@ -1022,8 +1023,14 @@ function CommandLine() //{{{
         set silent(val)
         {
             silent = val;
+            this.quiet = this.quiet;
+        },
+        get quiet() quiet,
+        set quiet(val)
+        {
+            quiet = val;
             Array.forEach(document.getElementById("liberator-commandline").childNodes, function (node) {
-                node.style.opacity = silent ? "0" : "";
+                node.style.opacity = quiet || silent ? "0" : "";
             });
         },
 
