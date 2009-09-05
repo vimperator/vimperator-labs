@@ -962,8 +962,9 @@ function Hints() //{{{
             }
             else if (validHints.length == 1)
                 processHints(false);
-            else
-                checkUnique();
+            // FIXME: I don't understand the intent here --djk
+            //else
+            //    checkUnique();
         },
 
         /**
