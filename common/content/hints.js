@@ -558,6 +558,8 @@ function Hints() //{{{
 
     function checkUnique()
     {
+        if (hintNumber == 0)
+            return;
         if (hintNumber > validHints.length)
             return void liberator.beep();
 
@@ -962,9 +964,8 @@ function Hints() //{{{
             }
             else if (validHints.length == 1)
                 processHints(false);
-            // FIXME: I don't understand the intent here --djk
-            //else
-            //    checkUnique();
+            else // Ticket #185
+                checkUnique();
         },
 
         /**
