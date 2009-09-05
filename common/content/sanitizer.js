@@ -30,7 +30,6 @@ the terms of any one of the MPL, the GPL or the LGPL.
 //   - should all storage items with the privateData flag be sanitizeable? i.e.
 //     local-marks, url-marks, quick-marks, macros. Bookmarks et al aren't
 //     sanitizeable in FF.
-//   - timestamp the command-line history?
 //   - add warning for TIMESPAN_EVERYTHING?
 //   - respect privacy.clearOnShutdown et al or recommend VimperatorLeave autocommand?
 //   - add support for :set sanitizeitems=all like 'eventignore'?
@@ -215,8 +214,19 @@ function Sanitizer() //{{{
         canClear: true,
         clear: function ()
         {
-            storage["history-command"].truncate(0);
-            storage["history-search"].truncate(0);
+            let stores = ["command", "search"];
+
+            if (self.range)
+            {
+                stores.forEach(function (store) {
+                    storage["history-" + store].mutate("filter", function (item) {
+                        let timestamp = item.timestamp * 1000;
+                        return timestamp < self.range[0] || timestamp > self.range[1];
+                    });
+                });
+            }
+            else
+                stores.forEach(function (store) { storage["history-" + store].truncate(0); });
         }
     };
 
@@ -244,6 +254,7 @@ function Sanitizer() //{{{
                 return branch2.getBoolPref(name);
             }
         }
+
         // Cache the range of times to clear
         if (this.ignoreTimespan)
             var range = null;  // If we ignore timespan, clear everything

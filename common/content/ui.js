@@ -161,8 +161,7 @@ function CommandLine() //{{{
         {
             // Not really the ideal place for this check.
             if (this.mode == "command")
-                return (commands.get(str.replace("^[\s:]*", "").split(/[\s!]+/)[0]) || {})
-                        .privateData;
+                return (commands.get(commands.parseCommand(str)[1]) || {}).privateData;
             return false;
         },
         /**
@@ -170,7 +169,7 @@ function CommandLine() //{{{
          */
         sanitize: function ()
         {
-            // TODO: Respect privacy.item.timeSpan
+            // TODO: Respect privacy.item.timeSpan (options["sts"])
             this.store.mutate("filter", function (line) !line.privateData);
         },
         /**
