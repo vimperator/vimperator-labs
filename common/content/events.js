@@ -1331,7 +1331,7 @@ function Events() //{{{
                 if (elem == null && urlbar && urlbar.inputField == lastFocus)
                     liberator.threadYield(true);
 
-                if (liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.VISUAL))
+                if (liberator.mode & (modes.EMBED | modes.INSERT | modes.TEXTAREA | modes.VISUAL))
                      modes.reset();
             }
             finally
