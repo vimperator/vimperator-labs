@@ -115,7 +115,7 @@ function Sanitizer() //{{{
                 options.setPref("privacy.sanitize.timeSpan", value);
                 return value;
             },
-            getter: function () options.getPref("privacy.sanitize.timeSpan"),
+            getter: function () options.getPref("privacy.sanitize.timeSpan", this.defaultValue),
             completer: function (value) [
                 ["0", "Everything"],
                 ["1", "Last hour"],
