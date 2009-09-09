@@ -22,7 +22,7 @@
     * add [c]:sanitize[c], 'sanitizetimespan' and 'sanitizeitems'
     * add [c]:verbose[c]
     * add [c]:window[c] to run a command in a new window
-    * add ! version of :delbmarks to delete all bookmarks.
+    * add ! version of [c]:delbmarks[c] to delete all bookmarks
     * new "t" option for 'complete' to also switch to open tabs with :open
     * add [c]:toolbaropen[c], [c]:toolbarclose[c], and [c]:toolbartoggle[c]
     * make [c]:open[c] behavior match that of [c]:tabopen[c] and [c]:winopen[c]
@@ -407,7 +407,7 @@
 
 2007-05-01:
     * version 0.4
-    * extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
+    * extension GUID was changed to \'vimperator@mozdev.net' -> YOU WILL HAVE
       TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
     * support for internal search engines was dropped. Now we use Firefox search engines.
     * support for 'wildmode' completion setting with support for matching the

@@ -56,9 +56,9 @@ version.html: ../../NEWS $(DEPS)
 	@echo "DOC locale/$(LOCALE)/$@"
 	# NOTE: asciidoc doesn't source the conf file implicitly when processing stdin
 	sed -e '1i\
-heading:Version{nbsp}information[version-information]' \
+heading::Version{nbsp}information[version-information]' \
 		-e '/^[0-9]/d' \
-		-e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section:Version{nbsp}\1[version-\1]\
+		-e '/^ \+\* version /s/.*version \+\([0-9.]\+\).*/section::Version{nbsp}\1[version-\1]\
 /' ../../NEWS | \
 		${ASCIIDOC} -f $(BASE)/asciidoc.conf -a doctitle=version.html -o version.html -
 
