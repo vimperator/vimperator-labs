@@ -235,6 +235,8 @@ function Sanitizer() //{{{
     if (options.getPref(self.prefDomain2 + "commandLine") == null)
         options.setPref(self.prefDomain2 + "commandLine", false)
 
+    self.getClearRange = Sanitizer.getClearRange;
+
     // Largely ripped from from browser/base/content/sanitize.js so we can override
     // the pref strategy without stepping on the global prefs namespace.
     self.sanitize = function () {

@@ -167,10 +167,16 @@ function CommandLine() //{{{
         /**
          * Removes any private data from this history.
          */
-        sanitize: function ()
+        sanitize: function (timespan)
         {
-            // TODO: Respect privacy.item.timeSpan (options["sts"])
-            this.store.mutate("filter", function (line) !line.privateData);
+            let range = [0, Number.MAX_VALUE];
+            if (liberator.has("sanitizer") && (timespan || options["sanitizetimespan"]))
+                range = sanitizer.getClearRange(timespan || options["sanitizetimespan"]);
+
+            this.store.mutate("filter", function (item) {
+                let timestamp = (item.timestamp || Date.now()/1000) * 1000;
+                return !line.privateData || timestamp < self.range[0] || timestamp > self.range[1];
+            });
         },
         /**
          * Replace the current input field value.
