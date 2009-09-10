@@ -1147,7 +1147,7 @@ function CommandLine() //{{{
             multilineInputWidget.collapsed = true;
             completionList.hide();
 
-            if (!keepCommand || this.silent)
+            if (!keepCommand || this.silent || this.quiet)
             {
                 outputContainer.collapsed = true;
                 commandline.updateMorePrompt();
