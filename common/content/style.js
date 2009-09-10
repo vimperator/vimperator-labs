@@ -252,6 +252,7 @@ function Styles(name, store)
     // Can't reference liberator or Components inside Styles --
     // they're members of the window object, which disappear
     // with this window.
+    const self = this;
     const util = modules.util;
     const sleep = liberator.sleep;
     const storage = modules.storage;
@@ -260,7 +261,35 @@ function Styles(name, store)
     const namespace = '@namespace html "' + XHTML + '";\n' +
                       '@namespace xul "' + XUL + '";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
-    const Sheet = new Struct("name", "sites", "css", "ref", "agent");
+
+    const Sheet = new Struct("name", "id", "sites", "css", "system", "agent");
+    Sheet.prototype.__defineGetter__("fullCSS", function wrapCSS() {
+            let filter = this.sites;
+            let css = this.css;
+            if (filter[0] == "*")
+                return namespace + css;
+            let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
+                                                        /[\/:]/.test(part)  ? "url"
+                                                                            : "domain")
+                                                + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
+                                  .join(", ");
+            return namespace + "/* Liberator style #" + this.id + " */ @-moz-document " + selectors + "{\n" + css + "\n}\n";
+        });
+    Sheet.prototype.__defineGetter__("enabled", function () this._enabled);
+    Sheet.prototype.__defineSetter__("enabled", function (on) {
+        this._enabled = Boolean(on);
+        if (on)
+        {
+            self.registerSheet(cssUri(this.fullCSS));
+            if (this.agent)
+                self.registerSheet(cssUri(this.fullCSS), true);
+        }
+        else
+        {
+            self.unregisterSheet(cssUri(this.fullCSS));
+            self.unregisterSheet(cssUri(this.fullCSS), true);
+        }
+    });
 
     let cssUri = function (css) "chrome-data:text/css," + window.encodeURI(css);
 
@@ -268,6 +297,8 @@ function Styles(name, store)
     let systemSheets = [];
     let userNames = {};
     let systemNames = {};
+
+    let id = 0;
 
     this.__iterator__ = function () Iterator(userSheets.concat(systemSheets));
     this.__defineGetter__("systemSheets", function () Iterator(systemSheets));
@@ -295,30 +326,20 @@ function Styles(name, store)
         if (name && name in names)
             this.removeSheet(system, name);
 
-        let sheet = sheets.filter(function (s) s.sites.join(",") == filter && s.css == css)[0];
-        if (!sheet)
-            sheet = new Sheet(name, filter.split(",").filter(util.identity), css, null, agent);
+        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), css, null, system, agent);
 
-        if (sheet.ref == null) // Not registered yet
+        try
         {
-            sheet.ref = [];
-            try
-            {
-                this.registerSheet(cssUri(wrapCSS(sheet)));
-                if (sheet.agent)
-                    this.registerAgentSheet(cssUri(wrapCSS(sheet)));
-            }
-            catch (e)
-            {
-                return e.echoerr || e;
-            }
-            sheets.push(sheet);
+            sheet.enabled = true;
         }
+        catch (e)
+        {
+            return e.echoerr || e;
+        }
+        sheets.push(sheet);
+
         if (name)
-        {
-            sheet.ref.push(name);
             names[name] = sheet;
-        }
         return null;
     };
 
@@ -381,6 +402,11 @@ function Styles(name, store)
     this.removeSheet = function (system, name, filter, css, index)
     {
         let self = this;
+        if (arguments.length == 0)
+        {
+            var matches = [system];
+            system = sheet.system;
+        }
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
 
@@ -391,25 +417,20 @@ function Styles(name, store)
         if (filter == undefined)
             filter = "";
 
-        let matches = this.findSheets(system, name, filter, css, index);
+        if (!matches)
+            matches = this.findSheets(system, name, filter, css, index);
         if (matches.length == 0)
             return;
 
         for (let [, sheet] in Iterator(matches.reverse()))
         {
+            sheet.enabled = false;
             if (name)
-            {
-                if (sheet.ref.indexOf(name) > -1)
-                    sheet.ref.splice(sheet.ref.indexOf(name), 1);
                 delete names[name];
-            }
-            if (!sheet.ref.length)
-            {
-                this.unregisterSheet(cssUri(wrapCSS(sheet)));
-                this.unregisterAgentSheet(cssUri(wrapCSS(sheet)));
-                if (sheets.indexOf(sheet) > -1)
-                    sheets.splice(sheets.indexOf(sheet), 1);
-            }
+            if (sheets.indexOf(sheet) > -1)
+                sheets.splice(sheets.indexOf(sheet), 1);
+
+            /* Re-add if we're only changing the site filter. */
             if (filter)
             {
                 let sites = sheet.sites.filter(function (f) f != filter);
@@ -424,16 +445,17 @@ function Styles(name, store)
      * Register a user style sheet at the given URI.
      *
      * @param {string} uri The URI of the sheet to register.
+     * @param {boolean} agent If true, sheet is registered as an agent sheet.
      * @param {boolean} reload Whether to reload any sheets that are
      *     already registered.
      */
-    this.registerSheet = function (uri, reload)
+    this.registerSheet = function (uri, agent, reload)
     {
         if (reload)
-            this.unregisterSheet(uri);
+            this.unregisterSheet(uri, agent);
         uri = ios.newURI(uri, null, null);
-        if (reload || !sss.sheetRegistered(uri, sss.USER_SHEET))
-            sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+        if (reload || !sss.sheetRegistered(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET))
+            sss.loadAndRegisterSheet(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET);
     };
 
     /**
@@ -441,53 +463,12 @@ function Styles(name, store)
      *
      * @param {string} uri The URI of the sheet to unregister.
      */
-    this.unregisterSheet = function (uri)
+    this.unregisterSheet = function (uri, agent)
     {
         uri = ios.newURI(uri, null, null);
-        if (sss.sheetRegistered(uri, sss.USER_SHEET))
-            sss.unregisterSheet(uri, sss.USER_SHEET);
+        if (sss.sheetRegistered(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET))
+            sss.unregisterSheet(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET);
     };
-
-    // FIXME
-    /**
-     * Register an agent style sheet.
-     *
-     * @param {string} uri The URI of the sheet to register.
-     * @deprecated
-     */
-    this.registerAgentSheet = function (uri)
-    {
-        this.unregisterAgentSheet(uri);
-        uri = ios.newURI(uri, null, null);
-        sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
-    };
-
-    /**
-     * Unregister an agent style sheet.
-     *
-     * @param {string} uri The URI of the sheet to unregister.
-     * @deprecated
-     */
-    this.unregisterAgentSheet = function (uri)
-    {
-        uri = ios.newURI(uri, null, null);
-        if (sss.sheetRegistered(uri, sss.AGENT_SHEET))
-            sss.unregisterSheet(uri, sss.AGENT_SHEET);
-    };
-
-    function wrapCSS(sheet)
-    {
-        let filter = sheet.sites;
-        let css = sheet.css;
-        if (filter[0] == "*")
-            return namespace + css;
-        let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
-                                                    /[\/:]/.test(part)  ? "url"
-                                                                        : "domain")
-                                            + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
-                              .join(", ");
-        return namespace + "@-moz-document " + selectors + "{\n" + css + "\n}\n";
-    }
 }
 let (array = util.Array)
 {
@@ -567,12 +548,17 @@ liberator.registerObserver("load_commands", function () {
             if (!css)
             {
                 let list = Array.concat([i for (i in styles.userNames)],
-                                        [i for (i in styles.userSheets) if (!i[1].ref.length)]);
-                let str = template.tabular(["", "Filter", "CSS"],
-                    ["padding: 0 1em 0 1ex; vertical-align: top", "padding: 0 1em 0 0; vertical-align: top"],
-                    ([k, v[1].join(","), v[2]]
-                     for ([i, [k, v]] in Iterator(list))
-                     if ((!filter || v[1].indexOf(filter) >= 0) && (!name || v[0] == name))));
+                                        [i for (i in styles.userSheets) if (!i[1].name)]);
+                let str = template.tabular(["", "Name", "Filter", "CSS"],
+                    ["min-width: 1em; text-align: center; color: red; font-weight: bold;",
+                     "padding: 0 1em 0 1ex; vertical-align: top;",
+                     "padding: 0 1em 0 0; vertical-align: top;"],
+                    ([sheet.enabled ? "" : "\u00d7",
+                      key,
+                      sheet.sites.join(","),
+                      sheet.css]
+                     for ([i, [key, sheet]] in Iterator(list))
+                     if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
                 commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
             else
@@ -620,18 +606,52 @@ liberator.registerObserver("load_commands", function () {
             ]
         });
 
-    commands.add(["dels[tyle]"],
-        "Remove a user style sheet",
-        function (args)
+    [
         {
-            styles.removeSheet(false, args["-name"], args[0], args.literalArg, args["-index"]);
+            name: ["stylee[nable]", "stye[nable]"],
+            desc: "Enable a user style sheet",
+            action: function (sheet) sheet.enabled = true,
+            filter: function (sheet) !sheet.enabled
         },
+        {
+            name: ["styled[isable]", "styd[isable]"],
+            desc: "Disable a user style sheet",
+            action: function (sheet) sheet.enabled = false,
+            filter: function (sheet) sheet.enabled
+        },
+        {
+            name: ["stylet[oggle]", "styt[oggle]"],
+            desc: "Toggle a user style sheet",
+            action: function (sheet) sheet.enabled = !sheet.enabled
+        },
+        {
+            name: ["dels[tyle]"],
+            desc: "Remove a user style sheet",
+            action: function (sheet) styles.removeSheet(sheet)
+        }
+    ].forEach(function (cmd) {
+        commands.add(cmd.name, cmd.desc,
+            function (args)
+            {
+                styles.findSheets(false, args["-name"], args[0], args.literalArg, args["-index"])
+                      .forEach(cmd.action);
+            },
         {
             completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
             literal: 1,
-            options: [[["-index", "-i"], commands.OPTION_INT, null, function () [[i, <>{s.sites.join(",")}: {s.css.replace("\n", "\\n")}</>] for ([i, s] in styles.userSheets)]],
-                      [["-name", "-n"],  commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]]]
+            options: [[["-index", "-i"], commands.OPTION_INT, null,
+                        function (context) {
+                            context.compare = CompletionContext.Sort.number;
+                            return [[i, <>{sheet.sites.join(",")}: {sheet.css.replace("\n", "\\n")}</>]
+                                    for ([i, sheet] in styles.userSheets)
+                                    if (!cmd.filter || cmd.filter(sheet))]
+                        }],
+                      [["-name", "-n"],  commands.OPTION_STRING, null,
+                        function () [[name, sheet.css]
+                                     for ([name, sheet] in Iterator(styles.userNames))
+                                     if (!cmd.filter || cmd.filter(sheet))]]]
         });
+    });
 
     commands.add(["hi[ghlight]"],
         "Set the style of certain display elements",

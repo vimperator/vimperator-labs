@@ -1021,7 +1021,7 @@ lookup:
                     }
                 }
                 else if (/\.css$/.test(filename))
-                    storage.styles.registerSheet(uri.spec, true);
+                    storage.styles.registerSheet(uri.spec, false, true);
                 else
                 {
                     let heredoc = "";

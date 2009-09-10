@@ -133,4 +133,25 @@ style for [a]www.google.com,mozilla.org[a], will result in a style for
                  (short option: *-i*)
 ________________________________________________________________________________
 
+|:styleenable| |:stylee| +
+|:styenable| |:stye| +
+||:styled[isable] [-name={name} [-index={index}] [{filter}] [{css}]|| +
+________________________________________________________________________________
+Enable any matching styles. Arguments are the same as for [c]:delstyle[c].
+________________________________________________________________________________
+
+|:styledisable| |:styled| +
+|:stydisable| |:styd| +
+||:stylee[nable] [-name={name} [-index={index}] [{filter}] [{css}]|| +
+________________________________________________________________________________
+Disable any matching styles. Arguments are the same as for [c]:delstyle[c].
+________________________________________________________________________________
+
+|:styletoggle| |:stylet| +
+|:stytoggle| |:styt| +
+||:stylet[oggle] [-name={name} [-index={index}] [{filter}] [{css}]|| +
+________________________________________________________________________________
+Toggle any matching styles. Arguments are the same as for [c]:delstyle[c].
+________________________________________________________________________________
+
 // vim: set filetype=asciidoc:
