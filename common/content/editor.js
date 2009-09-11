@@ -894,12 +894,12 @@ function Editor() //{{{
             if (!(config.isComposeWindow))
                 textBox = liberator.focus;
 
-			if (textBox.type == "password")
-			{
+            if (textBox.type == "password")
+            {
                 liberator.beep();
-			    liberator.echoerr("Cannot edit password fields");
-			    return false;
-			}
+                liberator.echoerr("Cannot edit password fields");
+                return false;
+            }
 
             let text = ""; // XXX
             if (textBox)
