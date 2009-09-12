@@ -41,3 +41,4 @@ Patches (in no special order):
   * Štěpán Němec (help copy-editing and favicon support)
   * Jarkko Oranen ('maxitems' option)
   * Gary Katsevman ('private' option)
+  * Srinath Krishna (disable password field editing)
