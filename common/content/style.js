@@ -470,7 +470,7 @@ function Styles(name, store)
             sss.unregisterSheet(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET);
     };
 }
-let (array = util.Array)
+let (array = Array_)
 {
     util.extend(Styles.prototype, {
         get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,

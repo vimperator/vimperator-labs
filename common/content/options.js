@@ -378,11 +378,11 @@ Option.prototype = {
                 switch (operator)
                 {
                     case "+":
-                        newValue = util.Array.uniq(Array.concat(this.values, values), true);
+                        newValue = Array_(this.values).concat(values).uniq(true);
                         break;
                     case "^":
                         // NOTE: Vim doesn't prepend if there's a match in the current value
-                        newValue = util.Array.uniq(Array.concat(values, this.values), true);
+                        newValue = Array_(values).concat(this.values).uniq(true);
                         break;
                     case "-":
                         newValue = this.values.filter(function (item) values.indexOf(item) == -1);

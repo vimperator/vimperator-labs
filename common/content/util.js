@@ -183,10 +183,9 @@ const util = { //{{{
      *
      * @param {object} obj The object to alter.
      * @param {string} key The name of the property to memoize.
-     * @param {function} getter A function of zero to two arguments which
-     *          will return the property's value. <b>obj</b> is
-     *          passed as the first argument, <b>key</b> as the
-     *          second.
+     * @param {function} getter A function of zero to two arguments which will
+     *     return the property's value. <b>obj</b> is passed as the first
+     *     argument, <b>key</b> as the second.
      */
     memoize: function memoize(obj, key, getter)
     {
@@ -407,23 +406,6 @@ const util = { //{{{
     },
 
     /**
-     * Math utility methods.
-     * @singleton
-     */
-    Math: {
-        /**
-         * Returns the specified <b>value</b> constrained to the range <b>min</b> -
-         * <b>max</b>.
-         *
-         * @param {number} value The value to constrain.
-         * @param {number} min The minimum constraint.
-         * @param {number} max The maximum constraint.
-         * @returns {number}
-         */
-        constrain: function constrain(value, min, max) Math.min(Math.max(min, value), max)
-    },
-
-    /**
      * Converts a URI string into a URI object.
      *
      * @param {string} uri
@@ -458,7 +440,7 @@ const util = { //{{{
         if (typeof object != "object")
             return false;
 
-        const NAMESPACES = util.Array.toObject([
+        const NAMESPACES = Array_.toObject([
             [NS, 'liberator'],
             [XHTML, 'html'],
             [XUL, 'xul']
@@ -477,7 +459,7 @@ const util = { //{{{
             }
             let tag = "<" + [namespaced(elem)].concat(
                 [namespaced(a) + "=" +  template.highlight(a.value, true)
-                 for ([i, a] in util.Array.iteritems(elem.attributes))]).join(" ");
+                 for ([i, a] in Array_.iteritems(elem.attributes))]).join(" ");
 
             if (!elem.firstChild || /^\s*$/.test(elem.firstChild) && !elem.firstChild.nextSibling)
                 tag += '/>';
@@ -727,19 +709,18 @@ const util = { //{{{
     }
 }; //}}}
 
-// TODO: Why don't we just push all util.BuiltinType up into modules? --djk
 /**
  * Array utility methods.
  */
-util.Array = function Array_(ary) {
+var Array_ = function Array_(ary) {
     var obj = {
         __proto__: ary,
         __iterator__: function () this.iteritems(),
         __noSuchMethod__: function (meth, args)
         {
-            let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
-            if (util.Array.isinstance(res))
-                return util.Array(res);
+            let res = (Array_[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
+            if (Array_.isinstance(res))
+                return Array_(res);
             return res;
         },
         concat: function () [].concat.apply(this.__proto__, arguments),
@@ -747,7 +728,7 @@ util.Array = function Array_(ary) {
     };
     return obj;
 }
-util.Array.isinstance = function isinstance(obj) {
+Array_.isinstance = function isinstance(obj) {
     return Object.prototype.toString.call(obj) == "[object Array]";
 };
 /**
@@ -760,7 +741,7 @@ util.Array.isinstance = function isinstance(obj) {
  * @... {string} 0 - Key
  * @...          1 - Value
  */
-util.Array.toObject = function toObject(assoc)
+Array_.toObject = function toObject(assoc)
 {
     let obj = {};
     assoc.forEach(function ([k, v]) { obj[k] = v; });
@@ -775,7 +756,7 @@ util.Array.toObject = function toObject(assoc)
  * @param {Array} ary
  * @returns {Array}
  */
-util.Array.flatten = function flatten(ary) Array.concat.apply([], ary),
+Array_.flatten = function flatten(ary) Array.concat.apply([], ary),
 
 /**
  * Returns an Iterator for an array's values.
@@ -783,7 +764,7 @@ util.Array.flatten = function flatten(ary) Array.concat.apply([], ary),
  * @param {Array} ary
  * @returns {Iterator(Object)}
  */
-util.Array.itervalues = function itervalues(ary)
+Array_.itervalues = function itervalues(ary)
 {
     let length = ary.length;
     for (let i = 0; i < length; i++)
@@ -796,7 +777,7 @@ util.Array.itervalues = function itervalues(ary)
  * @param {Array} ary
  * @returns {Iterator([{number}, {Object}])}
  */
-util.Array.iteritems = function iteritems(ary)
+Array_.iteritems = function iteritems(ary)
 {
     let length = ary.length;
     for (let i = 0; i < length; i++)
@@ -812,7 +793,7 @@ util.Array.iteritems = function iteritems(ary)
  * @param {boolean} unsorted
  * @returns {Array}
  */
-util.Array.uniq = function uniq(ary, unsorted)
+Array_.uniq = function uniq(ary, unsorted)
 {
     let ret = [];
     if (unsorted)
@@ -831,6 +812,24 @@ util.Array.uniq = function uniq(ary, unsorted)
         }
     }
     return ret;
+};
+
+/**
+ * Math utility methods.
+ * @singleton
+ */
+var Math_ = {
+    __proto__ : Math,
+    /**
+     * Returns the specified <b>value</b> constrained to the range <b>min</b> -
+     * <b>max</b>.
+     *
+     * @param {number} value The value to constrain.
+     * @param {number} min The minimum constraint.
+     * @param {number} max The maximum constraint.
+     * @returns {number}
+     */
+    constrain: function constrain(value, min, max) Math.min(Math.max(min, value), max)
 };
 
 function Struct()

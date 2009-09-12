@@ -256,7 +256,7 @@ CompletionContext.prototype = {
                 let prefix = self.value.substring(minStart, context.offset);
                 return context.items.map(function makeItem(item) ({ text: prefix + item.text, item: item.item }));
             });
-            return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring };
+            return { start: minStart, items: Array_.flatten(items), longestSubstring: this.longestAllSubstring };
         }
         catch (e)
         {
@@ -279,7 +279,7 @@ CompletionContext.prototype = {
                 lists.pop());
         if (!substrings) // FIXME: How is this undefined?
             return [];
-        return util.Array.uniq(substrings);
+        return Array_.uniq(substrings);
     },
     // Temporary
     get longestAllSubstring()

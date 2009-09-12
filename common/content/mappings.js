@@ -337,7 +337,7 @@ function Mappings() //{{{
             function (context, obj, args)
             {
                 let mode = args[0];
-                return util.Array.flatten(
+                return Array_.flatten(
                 [
                     [[name, map.description] for ([i, name] in Iterator(map.names))]
                     for ([i, map] in Iterator(user[mode].concat(main[mode])))

@@ -283,7 +283,7 @@ function IO() //{{{
 
             // TODO: Use a set/specifiable list here:
             let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
-            lines = util.Array.flatten(lines);
+            lines = Array_.flatten(lines);
 
             // source a user .vimperatorrc file
             lines.unshift('"' + liberator.version + "\n");
@@ -399,7 +399,7 @@ function IO() //{{{
         completion.charset = function (context) {
             context.anchored = false;
             context.generate = function () {
-                let names = util.Array(
+                let names = Array_(
                     "more1 more2 more3 more4 more5 unicode".split(" ").map(function (key)
                         options.getPref("intl.charsetmenu.browser." + key).split(', '))
                 ).flatten().uniq();
@@ -477,7 +477,7 @@ function IO() //{{{
                     }
                 }
 
-                return util.Array.flatten(commands);
+                return Array_.flatten(commands);
             };
         };
 

@@ -786,7 +786,7 @@ function Hints() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const DEFAULT_HINTTAGS =
-        util.Array(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
+        Array_(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
             .map(function (spec) [spec, "xhtml:" + spec]).flatten()
             .concat("*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']")
             .map(function (node) "//" + node).join(" | ");

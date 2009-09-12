@@ -216,7 +216,7 @@ function CommandLine() //{{{
                 this.index += diff;
                 if (this.index < 0 || this.index > this.store.length)
                 {
-                    this.index = util.Math.constrain(this.index, 0, this.store.length);
+                    this.index = Math_.constrain(this.index, 0, this.store.length);
                     liberator.beep();
                     // I don't know why this kludge is needed. It
                     // prevents the caret from moving to the end of
@@ -436,7 +436,7 @@ function CommandLine() //{{{
                     idx = null;
                     break;
                 default:
-                    idx = util.Math.constrain(idx, 0, this.items.length - 1);
+                    idx = Math_.constrain(idx, 0, this.items.length - 1);
                     break;
             }
 
@@ -525,7 +525,7 @@ function CommandLine() //{{{
                 if (this.type.list)
                     completionList.show();
 
-                this.wildIndex = util.Math.constrain(this.wildIndex + 1, 0, this.wildtypes.length - 1);
+                this.wildIndex = Math_.constrain(this.wildIndex + 1, 0, this.wildtypes.length - 1);
                 this.preview();
 
                 statusTimer.tell();
@@ -1895,7 +1895,7 @@ function ItemList(id) //{{{
         let end = startIndex + options["maxitems"];
         function getRows(context)
         {
-            function fix(n) util.Math.constrain(n, 0, len);
+            function fix(n) Math_.constrain(n, 0, len);
             let len = context.items.length;
             let start = off;
             end -= !!context.message + context.incomplete;
@@ -1924,7 +1924,7 @@ function ItemList(id) //{{{
 
             for (let [i, row] in Iterator(context.getRows(start, end, doc)))
                 nodes[i] = row;
-            for (let [i, row] in util.Array.iteritems(nodes))
+            for (let [i, row] in Array_.iteritems(nodes))
             {
                 if (!row)
                     continue;
@@ -2285,7 +2285,7 @@ function StatusLine() //{{{
             // tab numbers set
             if (options.get("guioptions").has("n", "N"))
             {
-                for (let [i, tab] in util.Array.iteritems(getBrowser().mTabs))
+                for (let [i, tab] in Array_.iteritems(getBrowser().mTabs))
                     tab.setAttribute("ordinal", i + 1);
             }
 
