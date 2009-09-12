@@ -617,7 +617,7 @@ function Options() //{{{
 
             let option = opt.option;
             if (option == null && !opt.all)
-                return void liberator.echoerr("No such option: " + opt.name);
+                return void liberator.echoerr("E518: Unknown option: " + arg);
 
             // reset a variable to its default value
             if (opt.reset)
@@ -1218,7 +1218,7 @@ function Options() //{{{
         },
 
         /**
-         * Parses a :set command.
+         * Parses a :set command's argument string.
          *
          * @param {string} args The :set command's argument string.
          * @param {Object} modifiers A hash of parsing modifiers. These are:
