@@ -26,12 +26,12 @@ Show all options.
 ____
 
 |E518| |E519|
-||:se[t] {option}?||
+||:se[t] {option}?|| +
 ____
 Show value of {option}.
 ____
 
-||:se[t] {option} [...]||
+||:se[t] {option} [...]|| +
 ____
 Toggle option: set, switch it on. +
 Number option: show value. +
@@ -63,7 +63,7 @@ results in +
 ____
 
 |:set-default|
-||:se[t] {option}& [...]||
+||:se[t] {option}& [...]|| +
 ____
 Reset option to its default value.
 ____
@@ -159,7 +159,7 @@ section::Setting{nbsp}Songbird{nbsp}options[songbird-options,preferences]
 
 Songbird options can be viewed and set with the following commands:
 
-|:prefs| |:preferences|
+|:prefs| |:preferences| +
 ||:pref[erences]||
 ________________________________________________________________________________
 Show the Songbird preferences dialog. You can change the player preferences
@@ -167,7 +167,7 @@ from this dialog. Be aware that not all Songbird preferences work, because
 Xulmus overrides some key bindings and changes Songbird's GUI.
 ________________________________________________________________________________
 
-|:prefs!| |:preferences!|
+|:prefs!| |:preferences!| +
 ||:pref[erences]!||
 ________________________________________________________________________________
 Opens about:config in the current tab where you can change advanced Songbird
@@ -197,7 +197,7 @@ The following preferences are set:
 
 section::List{nbsp}of{nbsp}options[list-options]
 
-|\'act'| |\'activate'|
+|\'act'| |\'activate'| +
 ||'activate' 'act'|| stringlist (default: "homepage,quickmark,tabopen,paste")
 ____
 Define when tabs are automatically activated. Available items:
@@ -214,7 +214,7 @@ ____
 
 
 |$CDPATH|
-|\'cd'| |\'cdpath'|
+|\'cd'| |\'cdpath'| +
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
 List of directories searched when executing the [c]:cd[c] command. This is
@@ -223,7 +223,7 @@ is ignored.
 ____
 
 
-|\'cpt'| |\'complete'|
+|\'cpt'| |\'complete'| +
 ||'complete' 'cpt'|| charlist (default: slf)
 ____
 Items which are completed at the [c]:open[c] prompts. Available items:
@@ -236,6 +236,7 @@ Items which are completed at the [c]:open[c] prompts. Available items:
 |*b*|Bookmarks
 |*h*|History
 |*S*|Suggest engines
+|*t*|Open tabs
 |===============================================================================
 
 The order is important, so [c]:set complete=bs[c] would list bookmarks first,
@@ -246,7 +247,7 @@ items.
 ____
 
 
-|\'ds'| |\'defsearch'|
+|\'ds'| |\'defsearch'| +
 ||'defsearch' 'ds'|| string (default: "google")
 ____
 Sets the default search engine. The default search engine name is used in the
@@ -263,7 +264,7 @@ raw [a][arg][a].
 ____
 
 
-|\'editor'|
+|\'editor'| +
 ||'editor'|| string (default: "gvim -f")
 ____
 Set the external text editor.
@@ -274,14 +275,16 @@ Warning: Xulmus will not behave correctly if the editor forks its own
 process, such as with gvim without the -f argument.
 ____
 
-|\'noex'| |\'noexrc'| |\'ex'| |\'exrc'|
+
+|\'noex'| |\'noexrc'| |\'ex'| |\'exrc'| +
 ||'exrc' 'ex'|| boolean (default: off)
 ____
 Allow reading of an RC file in the current directory. This file is sourced in
 addition to, and after, your default RC file.
 ____
 
-|\'eht'| |\'extendedhinttags'|
+
+|\'eht'| |\'extendedhinttags'| +
 ||'extendedhinttags' 'eht'|| string
 ____
 (default: +++//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
@@ -294,21 +297,21 @@ The XPath string of hintable elements activated by [m];[m].
 ____
 
 
-|\'noeb'| |\'noerrorbells'| |\'eb'| |\'errorbells'|
+|\'noeb'| |\'noerrorbells'| |\'eb'| |\'errorbells'| +
 ||'errorbells' 'eb'|| boolean (default: off)
 ____
 Ring the bell when an error message is displayed.
 ____
 
 
-|\'ei'| |\'eventignore'|
+|\'ei'| |\'eventignore'| +
 ||'eventignore'|| stringlist (default: "")
 ____
 A list of autocommand event names which should be ignored. If the list contains
 the value "all" then all events are ignored.
 ____
 
-|\'enc'| |\'encoding'|
+|\'enc'| |\'encoding'| +
 ||'encoding'|| string (default: "UTF-8")
 ____
 Changes the character encoding of the current buffer. Valid only for the
@@ -316,14 +319,14 @@ current page.
 ____
 
 
-|\'fenc'| |\'fileencoding'|
+|\'fenc'| |\'fileencoding'| +
 ||'fileencoding'|| string (default: "UTF-8")
 ____
 Changes the character encoding that Xulmus uses to read and write files.
 ____
 
 
-|\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'|
+|\'nofc'| |\'nofocuscontent'| |\'fc'| |\'focuscontent'| +
 ||'focuscontent' 'fc'|| boolean (default: off)
 ____
 Focus the content after a page has loaded. This is useful if you always
@@ -335,7 +338,7 @@ first input field, you can use [m]gi[m] to jump to it.
 ____
 
 
-|\'fh'| |\'followhints'|
+|\'fh'| |\'followhints'| +
 ||'followhints' 'fh'|| number (default: 0)
 ____
 
@@ -351,7 +354,7 @@ Change the behaviour of [m]<Return>[m] in Hints mode. Possible values:
 ____
 
 
-|\'nofs'| |\'nofullscreen'| |\'fs'| |\'fullscreen'|
+|\'nofs'| |\'nofullscreen'| |\'fs'| |\'fullscreen'| +
 ||'fullscreen' 'fs'|| boolean (default: off)
 ____
 Show the current window fullscreen. Also hide certain GUI elements like the
@@ -360,7 +363,7 @@ statusline.
 ____
 
 
-|\'go'| |\'guioptions'|
+|\'go'| |\'guioptions'| +
 ||'guioptions' 'go'|| charlist (default: "")
 ____
 Show or hide certain GUI elements like the menu or toolbar. Supported characters:
@@ -383,7 +386,7 @@ Note: scrollbar changes require a page reload to take effect.
 ____
 
 
-|\'hf'| |\'helpfile'|
+|\'hf'| |\'helpfile'| +
 ||'helpfile' 'hf'|| string (default: "intro.html")
 ____
 Name of the main help file. This is the tail component of the chrome URL as
@@ -391,7 +394,7 @@ displayed in the status line when viewing the page.
 ____
 
 
-|\'hin'| |\'hintinputs'|
+|\'hin'| |\'hintinputs'| +
 ||'hintinputs' 'hin'|| stringlist (default: "label,value")
 ____
 When generating hints for input elements that do not have an explicit caption,
@@ -408,7 +411,7 @@ options in the order that you give, and uses the first that it finds.
 ____
 
 
-|\'hm'| |\'hintmatching'|
+|\'hm'| |\'hintmatching'| +
 ||'hintmatching' 'hm'|| string (default: contains)
 ____
 
@@ -425,7 +428,7 @@ Change the hint matching algorithm during Hints mode. Possible values:
 ____
 
 
-|\'ht'| |\'hinttags'|
+|\'ht'| |\'hinttags'| +
 ||'hinttags' 'ht'|| string
 ____
 (default: +++//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
@@ -438,7 +441,7 @@ XPath string of hintable elements activated by [m]f[m] and [m]F[m]
 ____
 
 
-|\'hto'| |\'hinttimeout'|
+|\'hto'| |\'hinttimeout'| +
 ||'hinttimeout' 'hto'|| number (default: 0)
 ____
 Timeout before automatically following a non-unique numerical hint. Set to 0
@@ -447,28 +450,28 @@ when the hint is unique.
 ____
 
 
-|\'hi'| |\'history'|
+|\'hi'| |\'history'| +
 ||'history' 'hi'|| number (default: 500)
 ____
 Number of Ex commands and search patterns to store in the command-line history.
 ____
 
 
-|\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'|
+|\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'| +
 ||'hlsearch' 'hls'|| boolean (default: off)
 ____
 Highlight previous search pattern matches
 ____
 
 
-|\'noic'| |\'noignorecase'| |\'ic'| |\'ignorecase'|
+|\'noic'| |\'noignorecase'| |\'ic'| |\'ignorecase'| +
 ||'ignorecase' 'ic'|| boolean (default: on)
 ____
 Ignore case in search patterns.
 ____
 
 
-|\'nois'| |\'noincsearch'| |\'is'| |\'incsearch'|
+|\'nois'| |\'noincsearch'| |\'is'| |\'incsearch'| +
 ||'incsearch' 'is'|| boolean (default: on)
 ____
 Show where the search pattern matches as it is typed.
@@ -477,7 +480,7 @@ Note: Incremental searching currently only works in the forward direction.
 ____
 
 
-|\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'|
+|\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'| +
 ||'insertmode' 'im'|| boolean (default: on)
 ____
 Use Insert mode as the default for text areas.
@@ -486,7 +489,7 @@ Useful if you want to use Xulmus as a modeless editor, keeping the known Songbir
 ____
 
 
-|\'ls'| |\'laststatus'|
+|\'ls'| |\'laststatus'| +
 ||'laststatus' 'ls'|| number (default: 2)
 ____
 Determines when the last window will have a status line. Possible values:
@@ -502,7 +505,7 @@ Note: laststatus=1 not implemented yet.
 ____
 
 
-|\'nolks'| |\'nolinksearch'| |\'lks'| |\'linksearch'|
+|\'nolks'| |\'nolinksearch'| |\'lks'| |\'linksearch'| +
 ||'linksearch' 'lks'|| boolean (default: off)
 ____
 Limit the search to hyperlink text.
@@ -510,7 +513,7 @@ This includes (X)HTML elements with an "href" atrribute and XLink "simple" links
 ____
 
 
-|\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'|
+|\'nolpl'| |\'lpl'| |\'noloadplugins'| |\'loadplugins'| +
 ||'loadplugins' 'lpl'|| boolean (default: on)
 ____
 Load plugin scripts when starting up. When on, yet unloaded plugins are
@@ -520,31 +523,30 @@ xulmusrc.
 ____
 
 
-|\'maxitems'|
+|\'maxitems'| +
 ||'maxitems'|| number (default: 20)
 ____
 Maximum number of items to display at once in a listing.
 ____
 
 
-|\'msgs'| |\'messages'|
+|\'msgs'| |\'messages'| +
 ||'messages' 'msgs'|| number (default: 100)
 ____
 Number of messages to store in the message history.
 ____
 
 
-|\'nomore'| |\'more'|
+|\'nomore'| |\'more'| +
 ||'more'|| boolean (default: on)
 ____
 Pause the message list window when more than one screen of listings is displayed.
 ____
 
 
-|\'nextpattern'|
-||'nextpattern'|| stringlist
+|\'nextpattern'| +
+||'nextpattern'|| stringlist (default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 ____
-(default: \bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b)
 
 Patterns to use when guessing the \'next' page in a document sequence when the
 user hits [c]]][c]. Each pattern, in order, is matched against all links in the
@@ -553,7 +555,7 @@ expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
-|\'newtab'|
+|\'newtab'| +
 ||'newtab'|| stringlist (default: "")
 ____
 Define which Ex commands output the result in a new tab automatically. You can
@@ -575,14 +577,14 @@ The possible values:
 ____
 
 
-|\'noonline'| |\'online'|
+|\'noonline'| |\'online'| +
 ||'online'|| boolean (default: on)
 ____
 Show and set the \'work offline' behavior.
 ____
 
 
-|\'pageinfo' \'pa'|
+|\'pageinfo' \'pa'| +
 ||'pageinfo' 'pa'||
 charlist (default: gfm)
 ____
@@ -599,7 +601,7 @@ The order matters.
 ____
 
 
-|\'pps'| |\'popups'|
+|\'pps'| |\'popups'| +
 ||'popups' 'pps'|| number (default: 1)
 ____
 Define where to show requested popup windows.
@@ -619,10 +621,9 @@ Note: This option does not change the popup blocker of Songbird in any way.
 ____
 
 
-|\'previouspattern'|
-||'previouspattern'|| stringlist
+|\'previouspattern'| +
+||'previouspattern'|| stringlist (default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 ____
-(default: \bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$)
 
 Patterns to use when guessing the \'previous' page in a document sequence when
 the user hits [c][[[c]. Each pattern, in order, is matched against all links
@@ -631,7 +632,7 @@ regular expressions and the link elements are those defined by 'hinttags'.
 ____
 
 
-|\'repeat'|
+|\'repeat'| +
 ||'repeat'|| number (default: 0)
 ____
 Set the playback repeat mode.
@@ -647,7 +648,7 @@ ____
 
 
 |$XULMUS_RUNTIME|
-|\'rtp'| |\'runtimepath'|
+|\'rtp'| |\'runtimepath'| +
 ||'runtimepath' 'rtp'|| stringlist
 ____
 (default: _$XULMUS_RUNTIME_ or $$Unix, Mac: "~/.xulmus", Windows: "~/xulmus"$$)
@@ -666,7 +667,7 @@ exist, Xulmus will set it to match this value.
 ____
 
 
-|\'scr'| |\'scroll'|
+|\'scr'| |\'scroll'| +
 ||'scroll' 'scr'|| number (default: 0)
 ____
 Number of lines to scroll with [m]<C-u>[m] and [m]<C-d>[m] commands.
@@ -677,14 +678,14 @@ value can be reset to half the window height with [c]:set scroll=0[c].
 ____
 
 
-|\'shell'| |\'sh'|
+|\'shell'| |\'sh'| +
 ||'shell' 'sh'|| string (default: _$SHELL_ or "sh", Win32: "cmd.exe")
 ____
 Shell to use for executing [c]:![c] and [c]:run[c] commands.
 ____
 
 
-|\'shellcmdflag'| |\'shcf'|
+|\'shellcmdflag'| |\'shcf'| +
 ||'shellcmdflag' 'shcf'|| string (default: "-c", Win32: "/c")
 ____
 Flag passed to shell when executing [c]:![c] and [c]:run[c] commands.
@@ -693,14 +694,14 @@ E.g. "bash -c gvim"
 ____
 
 
-|\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'|
+|\'nosmd'| |\'noshowmode'| |\'smd'| |\'showmode'| +
 ||'showmode' 'smd'|| boolean (default: on)
 ____
 Show the current mode in the command line.
 ____
 
 
-|\'ssli'| |\'showstatuslinks'|
+|\'ssli'| |\'showstatuslinks'| +
 ||'showstatuslinks' 'ssli'|| number (default: 1)
 ____
 Show the destination of the link under the cursor in the status bar.
@@ -716,7 +717,7 @@ Also links which are focused by keyboard commands like [m]<Tab>[m] are shown. Po
 ____
 
 
-|\'stal'| |\'showtabline'|
+|\'stal'| |\'showtabline'| +
 ||'showtabline' 'stal'|| number (default: 2)
 ____
 Control when to show the tab bar of opened web pages. Possible values:
@@ -731,13 +732,13 @@ Control when to show the tab bar of opened web pages. Possible values:
 ____
 
 
-|\'shuffle'|
+|\'shuffle'| +
 ||'shuffle'|| boolean (default: false)
 ____
 Play tracks in shuffled order.
 ____
 
-|\'noscs'| |\'nosmartcase'| |\'scs'| |\'smartcase'|
+|\'noscs'| |\'nosmartcase'| |\'scs'| |\'smartcase'| +
 ||'smartcase' 'scs'|| boolean (default: on)
 ____
 Override the 'ignorecase' option if the pattern contains uppercase characters.
@@ -745,7 +746,7 @@ This is only used if the 'ignorecase' option is set.
 ____
 
 
-|\'suggestengines'|
+|\'suggestengines'| +
 ||'suggestengines'|| stringlist (default: "google")
 ____
 Set the search engines which can be used for completion suggestions.
@@ -756,7 +757,7 @@ wait for changes, so use it only if you have a fast internet connection.
 ____
 
 
-|\'titlestring'|
+|\'titlestring'| +
 ||'titlestring'|| string (default: "Xulmus")
 ____
 Change the title of the player window.
@@ -767,7 +768,7 @@ If you don't like that, you can restore it with:
 ____
 
 
-|\'noum'| |\'nousermode'| |\'um'| |\'usermode'|
+|\'noum'| |\'nousermode'| |\'um'| |\'usermode'| +
 ||'usermode' 'um'|| boolean (default: off)
 ____
 Show current website with a minimal style sheet to make it easily accessible.
@@ -777,7 +778,7 @@ future.
 ____
 
 
-|\'urlseparator'|
+|\'urlseparator'| +
 ||'urlseparator'|| string (default: ",\s")
 ____
 Set the separator regex used to separate multiple URL args. Multiple arguments
@@ -789,7 +790,7 @@ empty string then these arguments will never be split.
 ____
 
 
-|\'verbose', \'vbs'|
+|\'verbose', \'vbs'| +
 ||'verbose' 'vbs'|| number (default: 1)
 ____
 Define which info messages are displayed.
@@ -801,7 +802,7 @@ TODO: list levels and associated messages
 ____
 
 
-|\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'|
+|\'novb'| |\'novisualbell'| |\'vb'| |\'visualbell'| +
 ||'visualbell' 'vb'|| boolean (default: off)
 ____
 Use visual bell instead of beeping on errors. The visual bell style is
@@ -812,7 +813,7 @@ and [c]:hi Bell display: none;[c]
 ____
 
 
-|\'wildcase'| |\'wic'|
+|\'wildcase'| |\'wic'| +
 ||'wildcase' 'wic'|| string (default: "smart")
 ____
 Defines how completions are matched with regard to character case. Possible values:
@@ -827,7 +828,7 @@ Defines how completions are matched with regard to character case. Possible valu
 ____
 
 
-|\'wildignore'| |\'wig'|
+|\'wildignore'| |\'wig'| +
 ||'wildignore' 'wig'|| stringlist (default: "")
 ____
 List of file patterns to ignore when completing files. E.g. to ignore object
@@ -837,7 +838,7 @@ Note: Unlike Vim each pattern is a regex rather than a glob.
 ____
 
 
-|\'wim'| |\'wildmode'|
+|\'wim'| |\'wildmode'| +
 ||'wildmode' 'wim'|| stringlist (default: "list:full")
 ____
 Defines how command-line completion works.
@@ -863,7 +864,7 @@ These are the possible values for each part:
 ____
 
 
-|\'wop'| |\'wildoptions'|
+|\'wop'| |\'wildoptions'| +
 ||'wildoptions' 'wop'|| stringlist (default: "")
 ____
 A list of words that change how command-line completion is done.
@@ -880,9 +881,8 @@ ____
 
 
 |\'wsp'| |\'wordseparators'| +
-||'wordseparators' 'wsp'|| string
+||'wordseparators' 'wsp'|| string (default: [\.,!\?:;/\\"\^\$%&?\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
 ____
-(default: [\.,!\?:;/\\"\^\$%&?\(\)\[\]\\{\\}<>#\\*\+\\|=~ _\\-])
 
 A regex which defines the word separators which are used for the
 'hintmatching' types "wordstartswith" and "firstletters" to split the words in
