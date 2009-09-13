@@ -1,6 +1,5 @@
 2009-XX-XX:
     * version 2.2a1pre
-    * IMPORTANT: the 'complete' option's default has changed (again) to "stlf"
     * IMPORTANT: Map.flags has been replaced with individual properties.
       Mappings defined in plugins with mappings.add will need to be updated.
 ...................................
