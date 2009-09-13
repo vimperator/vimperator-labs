@@ -230,11 +230,11 @@ function CommandLine() //{{{
                 }
 
                 let hist = this.store.get(this.index);
-                hist = (hist.value || hist);
-
                 // user pressed DOWN when there is no newer history item
-                if (hist == null)
+                if (!hist)
                     hist = this.original;
+                else
+                    hist = (hist.value || hist);
 
                 if (!matchCurrent || hist.substr(0, this.original.length) == this.original)
                 {
