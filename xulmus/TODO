@@ -3,7 +3,6 @@ Priority list:
 
 BUGS:
 - broken commands:
-  - SB doesn't support tab-undo yet so :undo and "u" etc don't work
   - :tabduplicate
   - :open songbird-internal-search searchString (broken because SB intercepts queries to this engine)
   - <C-^> is off by one when alternating with the media tab
