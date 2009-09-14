@@ -725,8 +725,6 @@ function IO() //{{{
         {
             if (typeof dir == "string")
                 dir = self.getFile(dir);
-            else if (!(dir instanceof Ci.nsILocalFile))
-                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (dir.isDirectory())
             {
@@ -762,9 +760,6 @@ function IO() //{{{
                 encoding = options["fileencoding"];
             if (typeof file == "string")
                 file = self.getFile(file);
-            else if (!(file instanceof Ci.nsILocalFile))
-                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
-                // How would you expect it to work? It's an integer. --Kris
 
             ifstream.init(file, -1, 0, 0);
             icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
@@ -818,8 +813,6 @@ function IO() //{{{
                 encoding = options["fileencoding"];
             if (typeof file == "string")
                 file = self.getFile(file);
-            else if (!(file instanceof Ci.nsILocalFile))
-                throw Cr.NS_ERROR_INVALID_ARG; // FIXME: does not work as expected, just shows undefined: undefined
 
             if (mode == ">>")
                 mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_APPEND;
