@@ -67,7 +67,7 @@ hint mode. Then press [a]24[a] to copy the hint location.
 * |;I| [m]I[m] to open an image in a new tab.
 
 Depending on the value of 'complete', you can get a list of extended hint
-modes by pressing [m]<Tab>[m] from the [m];[,] prompt.
+modes by pressing [m]<Tab>[m] from the [m];[m] prompt.
 
 Hintable elements for all extended hint modes can be set in the
 'extendedhinttags' XPath string.
