@@ -12,6 +12,21 @@ section::Listing{nbsp}tabs[listing-tabs]
 ________________________________________________________________________________
 Show a list of buffers (=tabs) matching [a][filter][a]. Without [a][filter][a]
 list all tabs.
+
+A buffer may be marked with one of the following indicators:
+
+[frame="topbot",grid="none",cols="1,10"]
+|===============================================================================
+|*%*|The current buffer
+|*#*|The alternate buffer for [c]:e #[c] and [m]<C-^>[m]
+|===============================================================================
+________________________________________________________________________________
+
+
+|:keepa| |:keepalt|
+||:keepa[lt] {cmd}||
+________________________________________________________________________________
+Execute a command without changing the current alternate buffer.
 ________________________________________________________________________________
 
 section::Opening{nbsp}tabs[opening-tabs]

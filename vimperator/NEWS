@@ -18,6 +18,7 @@
       (this might change again, as this is REALLY inconsistent, and i don't
        know if I like copying bugs)
 
+    * add [c]:keepalt[c]
     * add [c]:styledisable[c], [c]:styleenable[c], and [c]:styletoggle[c]
     * add [c]:sanitize[c], 'sanitizetimespan' and 'sanitizeitems'
     * add [c]:verbose[c]

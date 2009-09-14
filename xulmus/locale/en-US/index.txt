@@ -246,6 +246,7 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:iunmap[c]|| Remove a mapping in Insert mode +
 ||[c]:javascript[c]|| Run a JavaScript command through eval() +
 ||[c]:jumps[c]|| Show jumplist +
+||[c]:keepalt[c]|| Execute a command without changing the current alternate buffer +
 ||[c]:let[c]|| Set or list a variable +
 ||[c]:load[c]|| Load a playlist +
 ||[c]:loadplugins[c]|| Immediately load all unloaded plugins +

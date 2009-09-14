@@ -353,6 +353,27 @@ function Tabs() //{{{
             literal: 0
         });
 
+    commands.add(["keepa[lt]"],
+        "Execute a command without changing the current alternate buffer",
+        function (args)
+        {
+            let alternate = tabs.alternate;
+
+            try
+            {
+                liberator.execute(args[0], null, true);
+            }
+            finally
+            {
+                tabs.updateSelectionHistory([tabs.getTab(), alternate]);
+            }
+        },
+        {
+            argCount: "+",
+            completer: function (context) completion.ex(context),
+            literal: 0
+        });
+
     // TODO: this should open in a new tab positioned directly after the current one, not at the end
     commands.add(["tab"],
         "Execute a command and tell it to output in a new tab",
@@ -1167,12 +1188,15 @@ function Tabs() //{{{
         // alternate after a restart is often incorrectly tab 1 when there
         // shouldn't be one yet.
         /**
-         * Called on each TabSelect event to update the tab selection history.
+         * Sets the current and alternate tabs, updating the tab selection
+         * history.
+         *
+         * @param {Array(Object)} tabs The current and alternate tab.
          * @see tabs#alternate
          */
-        updateSelectionHistory: function ()
+        updateSelectionHistory: function (tabs)
         {
-            alternates = [this.getTab(), alternates[0]];
+            alternates = tabs || [this.getTab(), alternates[0]];
         }
     };
     //}}}
