@@ -1155,11 +1155,7 @@ function Tabs() //{{{
             if (!tab)
                 tab = getBrowser().mTabContainer.selectedItem;
 
-            window.open();
-            let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
-
-            copyTab(win.getBrowser().mCurrentTab, tab);
-            this.remove(tab, 1, false, 1);
+            getBrowser().replaceTabWithWindow(tab);
         },
 
         /**
