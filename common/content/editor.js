@@ -273,13 +273,13 @@ function Editor() //{{{
     addMovementMap(["0", "^", "<Home>"],         false, "intraLineMove", false, "cmd_beginLine",    "cmd_selectBeginLine");
     addMovementMap(["$", "<End>"],               false, "intraLineMove", true,  "cmd_endLine" ,     "cmd_selectEndLine" );
 
-    addBeginInsertModeMap(["i", "<Insert"], []);
-    addBeginInsertModeMap(["a"],            ["cmd_charNext"]);
-    addBeginInsertModeMap(["I", "gI"],      ["cmd_beginLine"]);
-    addBeginInsertModeMap(["A"],            ["cmd_endLine"]);
-    addBeginInsertModeMap(["s"],            ["cmd_deleteCharForward"]);
-    addBeginInsertModeMap(["S"],            ["cmd_deleteToEndOfLine", "cmd_deleteToBeginningOfLine"]);
-    addBeginInsertModeMap(["C"],            ["cmd_deleteToEndOfLine"]);
+    addBeginInsertModeMap(["i", "<Insert>"], []);
+    addBeginInsertModeMap(["a"],             ["cmd_charNext"]);
+    addBeginInsertModeMap(["I", "gI"],       ["cmd_beginLine"]);
+    addBeginInsertModeMap(["A"],             ["cmd_endLine"]);
+    addBeginInsertModeMap(["s"],             ["cmd_deleteCharForward"]);
+    addBeginInsertModeMap(["S"],             ["cmd_deleteToEndOfLine", "cmd_deleteToBeginningOfLine"]);
+    addBeginInsertModeMap(["C"],             ["cmd_deleteToEndOfLine"]);
 
     addMotionMap("d"); // delete
     addMotionMap("c"); // change
