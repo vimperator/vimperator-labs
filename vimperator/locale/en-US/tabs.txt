@@ -155,7 +155,9 @@ ________________________________________________________________________________
 |:tabde| |:tabdetach| +
 ||:tabde[tach]||
 ________________________________________________________________________________
-Detach the current tab, and open it in its own window.
+Detach the current tab, and open it in its own window. As each window must
+contain at least one tab it is not possible to detach the only tab in a window.
+Use [c]:tabduplicate[c] to copy the tab then call [c]:tabdetach[c].
 ________________________________________________________________________________
 
 section::Reordering{nbsp}tabs[reordering-tabs]

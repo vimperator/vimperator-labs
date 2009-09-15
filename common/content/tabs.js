@@ -588,7 +588,13 @@ function Tabs() //{{{
 
         commands.add(["tabde[tach]"],
             "Detach current tab to its own window",
-            function () { tabs.detachTab(null); },
+            function ()
+            {
+                if (tabs.count == 1)
+                    return void liberator.echoerr("Can't detach the last tab");
+
+                tabs.detachTab(null);
+            },
             { argCount: "0" });
 
         commands.add(["tabdu[plicate]"],
