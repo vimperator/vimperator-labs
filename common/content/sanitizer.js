@@ -190,7 +190,7 @@ function Sanitizer() //{{{
                 context.completions = options.get("sanitizeitems").completer();
             },
             options: [
-                [["-timespan"],
+                [["-timespan", "-t"],
                  commands.OPTION_INT,
                  function (arg) /^[0-4]$/.test(arg),
                  function () options.get("sanitizetimespan").completer()]
