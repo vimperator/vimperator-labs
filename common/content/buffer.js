@@ -71,7 +71,7 @@ function Buffer() //{{{
     {
         let values = ZoomManager.zoomValues;
         let cur = values.indexOf(ZoomManager.snap(ZoomManager.zoom));
-        let i = Math_.constrain(cur + steps, 0, values.length - 1);
+        let i = util.Math.constrain(cur + steps, 0, values.length - 1);
 
         if (i == cur && fullZoom == ZoomManager.useFullZoom)
             liberator.beep();
@@ -96,7 +96,7 @@ function Buffer() //{{{
         if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
             return win;
 
-        for (let frame in Array_.itervalues(win.frames))
+        for (let frame in util.Array.itervalues(win.frames))
             if (frame.scrollMaxX > 0 || frame.scrollMaxY > 0)
                 return frame;
 
@@ -359,7 +359,7 @@ function Buffer() //{{{
 
                 if (elements.length > 0)
                 {
-                    count = Math_.constrain(count, 1, elements.length);
+                    count = util.Math.constrain(count, 1, elements.length);
                     buffer.focusElement(elements[count - 1]);
                 }
                 else
@@ -648,7 +648,7 @@ function Buffer() //{{{
                     level = buffer.textZoom + parseInt(arg, 10);
 
                 // relative args shouldn't take us out of range
-                level = Math_.constrain(level, ZOOM_MIN, ZOOM_MAX);
+                level = util.Math.constrain(level, ZOOM_MIN, ZOOM_MAX);
             }
             else
                 return void liberator.echoerr("E488: Trailing characters");
@@ -805,7 +805,7 @@ function Buffer() //{{{
         const ACCESS_READ = Ci.nsICache.ACCESS_READ;
         let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
-        for (let proto in Array_.itervalues(["HTTP", "FTP"]))
+        for (let proto in util.Array.itervalues(["HTTP", "FTP"]))
         {
             try
             {

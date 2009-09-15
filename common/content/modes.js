@@ -129,7 +129,7 @@ const modes = (function () //{{{
 
         NONE: 0,
 
-        __iterator__: function () Array_.itervalues(this.all),
+        __iterator__: function () util.Array.itervalues(this.all),
 
         get all() mainModes.slice(),
 

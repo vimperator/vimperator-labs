@@ -328,7 +328,7 @@ function Bookmarks() //{{{
         args.completeFilter = have.pop();
 
         let prefix = filter.substr(0, filter.length - args.completeFilter.length);
-        let tags = Array_([b.tags for ([k, b] in Iterator(cache.bookmarks))]).flatten().uniq();
+        let tags = util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(cache.bookmarks))]));
 
         return [[prefix + tag, tag] for ([i, tag] in Iterator(tags)) if (have.indexOf(tag) < 0)];
     }
@@ -1023,7 +1023,7 @@ function History() //{{{
             let sh = window.getWebNavigation().sessionHistory;
             let obj = [];
             obj.index = sh.index;
-            obj.__iterator__ = function () Array_.iteritems(this);
+            obj.__iterator__ = function () util.Array.iteritems(this);
             for (let i in util.range(0, sh.count))
             {
                 obj[i] = { index: i, __proto__: sh.getEntryAtIndex(i, false) };
@@ -1044,7 +1044,7 @@ function History() //{{{
                 liberator.beep();
             else
             {
-                let index = Math_.constrain(current + steps, start, end);
+                let index = util.Math.constrain(current + steps, start, end);
                 window.getWebNavigation().gotoIndex(index);
             }
         },

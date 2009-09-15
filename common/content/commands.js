@@ -460,7 +460,7 @@ function Commands() //{{{
         __iterator__: function ()
         {
             let sorted = exCommands.sort(function (a, b) a.name > b.name);
-            return Array_.itervalues(sorted);
+            return util.Array.itervalues(sorted);
         },
 
         /** @property {string} The last executed Ex command line. */
@@ -652,7 +652,7 @@ function Commands() //{{{
                 argCount = "*";
 
             var args = [];       // parsed options
-            args.__iterator__ = function () Array_.iteritems(this);
+            args.__iterator__ = function () util.Array.iteritems(this);
             args.string = str;   // for access to the unparsed string
             args.literalArg = "";
 
@@ -1150,7 +1150,7 @@ function Commands() //{{{
                 {
                     command: this.name,
                     bang: true,
-                    options: Array_.toObject(
+                    options: util.Array.toObject(
                         [[v, typeof cmd[k] == "boolean" ? null : cmd[k]]
                          // FIXME: this map is expressed multiple times
                          for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count", description: "-description" }))

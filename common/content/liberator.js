@@ -228,7 +228,7 @@ const liberator = (function () //{{{
                 {
                     let opts = [v.opts for ([k, v] in Iterator(groups))];
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
-                    return Array_.flatten(opts);
+                    return util.Array.flatten(opts);
                 },
                 validator: function (val) Option.validateCompleter.call(this, val) &&
                         [v for ([k, v] in Iterator(groups))].every(function (g) !g.validator || g.validator(val))
@@ -880,7 +880,7 @@ const liberator = (function () //{{{
                     return Array.map(doc.getElementsByClassName("tag"),
                             function (elem) [elem.textContent, file]);
                 });
-                return Array_.flatten(res);
+                return util.Array.flatten(res);
             };
         };
 

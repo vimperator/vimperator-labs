@@ -42,7 +42,7 @@ function Library() // {{{
         {
             let albums = toJSArray(MAIN_LIBRARY.getItemsByProperty(SBProperties.artistName, artist))
                              .map(function (track) track.getProperty(SBProperties.albumName));
-            return Array_.uniq(albums);
+            return util.Array.uniq(albums);
         },
 
         /**

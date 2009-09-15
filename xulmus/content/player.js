@@ -402,7 +402,7 @@ function Player() // {{{
             if (/^[+-]/.test(arg))
                 level = player.volume + level;
 
-            player.volume = Math_.constrain(level, 0, 1);
+            player.volume = util.Math.constrain(level, 0, 1);
         },
         { argCount: "1" });
 
@@ -567,7 +567,7 @@ function Player() // {{{
             let min = 0;
             let max = gMM.playbackControl.duration - 5000; // TODO: 5s buffer like cmus desirable?
 
-            gMM.playbackControl.position = Math_.constrain(position, min, max);
+            gMM.playbackControl.position = util.Math.constrain(position, min, max);
         },
 
         // FIXME: 10% ?
