@@ -665,23 +665,26 @@ ____
 
 
 |\'si'| |\'sanitizeitems'| +
-||'sanitizeitems' 'si'|| stringlist (default: "history,formdata,cookies,cache,sessions,commandline")
+||'sanitizeitems' 'si'|| stringlist
 ____
+(default: "cache,commandline,cookies,formdata,history,marks,sessions")
 
 The default list of private items to sanitize.
 
 [frame="topbot",grid="none",cols="1,4"]
 |===============================================================================
-|*cache*         |Cache
-|*commandline*   |Command-line history
-|*cookies*       |Cookies
-|*downloads*     |Download history
-|*formdata*      |Saved form and search history
-|*history*       |Browsing history
-|*offlineapps*   |Offline website data
-|*passwords*     |Saved passwords
-|*sessions*      |Authenticated sessions
-|*sitesettings*  |Site preferences
+|*cache*       |Cache
+|*commandline* |Command-line history
+|*cookies*     |Cookies
+|*downloads*   |Download history
+|*formdata*    |Saved form and search history
+|*history*     |Browsing history
+|*marks*       |Local and URL marks
+|*macros*      |Saved macros
+|*offlineapps* |Offline website data
+|*passwords*   |Saved passwords
+|*sessions*    |Authenticated sessions
+|*sitesettings*|Site preferences
 |===============================================================================
 
 When history items are sanitized [c]:open[c], [c]:tabopen[c] and [c]:winopen[c]

@@ -27,16 +27,14 @@ the terms of any one of the MPL, the GPL or the LGPL.
 }}} ***** END LICENSE BLOCK *****/
 
 // TODO:
-//   - should all storage items with the privateData flag be sanitizeable? i.e.
-//     local-marks, url-marks, quick-marks, macros. Bookmarks et al aren't
-//     sanitizeable in FF.
+//   - fix Sanitize autocommand
 //   - add warning for TIMESPAN_EVERYTHING?
 //   - respect privacy.clearOnShutdown et al or recommend VimperatorLeave autocommand?
 //   - add support for :set sanitizeitems=all like 'eventignore'?
 //   - integrate with the Clear Private Data dialog?
 
 // FIXME:
-//   - finish FF 3.0 support if we're going to support that in Vimperator 2.2
+//   - finish 1.9.0 support if we're going to support sanitizing in Xulmus
 
 function Sanitizer() //{{{
 {
@@ -48,21 +46,17 @@ function Sanitizer() //{{{
     services.get("subscriptLoader").loadSubScript("chrome://browser/content/sanitize.js", local);
     const Sanitizer = local.Sanitizer;
 
-    var prefToArgMap = {
-        cache: "cache",
-        cookies: "cookies",
-        offlineApps: "offlineapps",
-        history: "history",
-        formdata: "formdata",
-        downloads: "downloads",
-        passwords: "passwords",
-        sessions: "sessions",
-        siteSettings: "sitesettings",
-        commandLine: "commandline"
-    };
+    var prefArgList = [["commandLine",  "commandline"],
+                       ["offlineApps",  "offlineapps"],
+                       ["siteSettings", "sitesettings"]];
 
-    function prefToArg(pref) prefToArgMap[pref.replace(/.*\./, "")]
-    function argToPref(arg) [p for ([p, a] in Iterator(prefToArgMap)) if (a == arg)][0]
+    function prefToArg(pref)
+    {
+        let pref = pref.replace(/.*\./, "");
+        return util.Array.toObject(prefArgList)[pref] || pref;
+    }
+
+    function argToPref(arg) [k for ([, [k, v]] in Iterator(prefArgList)) if (v == arg)][0] || arg
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// OPTIONS /////////////////////////////////////////////////
@@ -70,7 +64,7 @@ function Sanitizer() //{{{
 
     options.add(["sanitizeitems", "si"],
         "The default list of private items to sanitize",
-        "stringlist", "history,formdata,cookies,cache,sessions,commandline",
+        "stringlist", "cache,commandline,cookies,formdata,history,marks,sessions",
         {
             setter: function (values)
             {
@@ -93,15 +87,17 @@ function Sanitizer() //{{{
             getter: function () sanitizer.prefNames.filter(function (pref) options.getPref(pref)).map(prefToArg).join(","),
             completer: function (value) [
                 ["cache", "Cache"],
+                ["commandline", "Command-line history"],
                 ["cookies", "Cookies"],
-                ["offlineapps", "Offline website data"],
-                ["history", "Browsing history"],
-                ["formdata", "Saved form and search history"],
                 ["downloads", "Download history"],
+                ["formdata", "Saved form and search history"],
+                ["history", "Browsing history"],
+                ["macros", "Saved macros"],
+                ["marks", "Local and URL marks"],
+                ["offlineapps", "Offline website data"],
                 ["passwords", "Saved passwords"],
                 ["sessions", "Authenticated sessions"],
                 ["sitesettings", "Site preferences"],
-                ["commandline", "Command-line history"]
             ],
             validator: Option.validateCompleter
         });
@@ -210,30 +206,51 @@ function Sanitizer() //{{{
         self.prefDomain = "privacy.item.";
 
     self.prefDomain2 = "extensions.liberator.privacy.cpd.";
-    self.items.commandLine = {
-        canClear: true,
-        clear: function ()
+
+    // add liberator-specific private items
+    [
         {
-            let stores = ["command", "search"];
-
-            if (self.range)
+            name: "commandLine",
+            action: function ()
             {
-                stores.forEach(function (store) {
-                    storage["history-" + store].mutate("filter", function (item) {
-                        let timestamp = item.timestamp * 1000;
-                        return timestamp < self.range[0] || timestamp > self.range[1];
-                    });
-                });
-            }
-            else
-                stores.forEach(function (store) { storage["history-" + store].truncate(0); });
-        }
-    };
+                let stores = ["command", "search"];
 
-    // FIXME
-    // create liberator-specific sanitize prefs
-    if (options.getPref(self.prefDomain2 + "commandLine") == null)
-        options.setPref(self.prefDomain2 + "commandLine", false)
+                if (self.range)
+                {
+                    stores.forEach(function (store) {
+                        storage["history-" + store].mutate("filter", function (item) {
+                            let timestamp = item.timestamp * 1000;
+                            return timestamp < self.range[0] || timestamp > self.range[1];
+                        });
+                    });
+                }
+                else
+                    stores.forEach(function (store) { storage["history-" + store].truncate(0); });
+            }
+        },
+        {
+            name: "macros",
+            action: function () { storage["macros"].clear(); }
+        },
+        {
+            name: "marks",
+            action: function ()
+            {
+                storage["local-marks"].clear();
+                storage["url-marks"].clear();
+            }
+        }
+    ].forEach(function (item) {
+        let pref = self.prefDomain2 + item.name;
+
+        if (options.getPref(pref) == null)
+            options.setPref(pref, false);
+
+        self.items[item.name] = {
+            canClear: true,
+            clear: item.action
+        }
+    });
 
     self.getClearRange = Sanitizer.getClearRange;
 
