@@ -166,6 +166,7 @@ function Sanitizer() //{{{
                     {
                         try
                         {
+                            sanitizer.items[item].range = sanitizer.range;
                             sanitizer.clearItem(item);
                         }
                         catch (e)
