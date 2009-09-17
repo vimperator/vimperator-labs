@@ -29,7 +29,7 @@ Highlights.prototype.CSS = <![CDATA[
     Object      color: maroon;
     String      color: green;
 
-    Enabled     color: green;
+    Enabled     color: blue;
     Disabled    color: red;
 
     Normal      color: black; background: white;

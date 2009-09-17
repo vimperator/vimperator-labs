@@ -136,19 +136,23 @@ function setCharPref(name, value)
 
 function loadPref(name, store, type)
 {
-    if (store)
-        var pref = getCharPref(name);
-    if (!pref && storage.infoPath)
-        var file = readFile(getFile(name));
-    if (pref || file)
-        var result = json.decode(pref || file);
-    if (pref)
+    try
     {
-        prefService.clearUserPref(name);
-        savePref({ name: name, store: true, serial: pref });
+        if (store)
+            var pref = getCharPref(name);
+        if (!pref && storage.infoPath)
+            var file = readFile(getFile(name));
+        if (pref || file)
+            var result = json.decode(pref || file);
+        if (pref)
+        {
+            prefService.clearUserPref(name);
+            savePref({ name: name, store: true, serial: pref });
+        }
+        if (result instanceof type)
+            return result;
     }
-    if (result instanceof type)
-        return result;
+    catch (e) {}
 }
 
 function savePref(obj)
