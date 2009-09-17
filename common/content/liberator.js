@@ -1527,7 +1527,7 @@ const liberator = (function () //{{{
          *       ["url1", "url2", "url3", ...]
          *     or:
          *       [["url1", postdata1], ["url2", postdata2], ...]
-         * @param {number} where If ommited, CURRENT_TAB is assumed but NEW_TAB
+         * @param {number|Object} where If ommited, CURRENT_TAB is assumed but NEW_TAB
          *     is set when liberator.forceNewTab is true.
          * @param {boolean} force Don't prompt whether to open more than 20
          *     tabs.
@@ -1563,6 +1563,15 @@ const liberator = (function () //{{{
                 return true;
             }
 
+            let flags = 0;
+            if (where instanceof Object)
+            {
+                for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
+                    if (where[opt])
+                        flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
+                where = liberator.CURRENT_TAB;
+            }
+
             if (urls.length == 0)
                 return false;
 
@@ -1577,7 +1586,7 @@ const liberator = (function () //{{{
                 switch (where)
                 {
                     case liberator.CURRENT_TAB:
-                        browser.loadURIWithFlags(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, postdata);
+                        browser.loadURIWithFlags(url, flags, null, null, postdata);
                         break;
 
                     case liberator.NEW_BACKGROUND_TAB:

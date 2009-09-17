@@ -326,15 +326,7 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["\\"],
         "Toggle between rendered and source view",
-        function ()
-        {
-            const scheme = "view-source";
-
-            if (util.newURI(buffer.URL).scheme == scheme)
-                liberator.open(buffer.URL.substr(scheme.length + 1));
-            else
-                liberator.open(scheme + ":" + buffer.URL);
-        });
+        function () { buffer.viewSource(null, false); });
 
     mappings.add(myModes, ["gi"],
         "Focus last used input field",
@@ -1593,7 +1585,14 @@ function Buffer() //{{{
             if (useExternalEditor)
                 editor.editFileExternally(url);
             else
-                liberator.open("view-source:" + url);
+            {
+                const PREFIX = "view-source:";
+                if (url.indexOf(PREFIX) == 0)
+                    url = url.substr(PREFIX.length);
+                else
+                    url = PREFIX + url;
+                liberator.open(url, { hide: true });
+            }
         },
 
         /**
