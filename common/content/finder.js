@@ -448,7 +448,7 @@ function Finder() //{{{
 
             this.clear();
 
-            if (!(options["incsearch"] && str))
+            if (!options["incsearch"] || !str || !found)
             {
                 // prevent any current match from matching again
                 if (!window.content.getSelection().isCollapsed)
