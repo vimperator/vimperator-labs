@@ -613,7 +613,7 @@ ____
 
 
 |\'pps'| |\'popups'| +
-||'popups' 'pps'|| number (default: 1)
+||'popups' 'pps'|| stringlist (default: tab)
 ____
 Define where to show requested popup windows.
 Does not apply to windows which are opened by middle clicking a link,
@@ -621,12 +621,14 @@ they always open in a new tab. Possible values:
 
 [frame="topbot",grid="none",cols="1,10"]
 |===============================================================================
-|*0*|Force to open in the current tab (Warning: this can stop some web sites from working correctly!)
-|*1*|Always open in a new tab
-|*2*|Open in a new window if it has a specific requested size (default in Firefox)
-|*3*|Always open in a new window
-|*4*|Open in the same tab unless it has a specific requested size
+|*tab*     | Open popups in a new tab
+|*window*  | Open popups in a new window
+|*resized* | Open resized popups in a new window
 |===============================================================================
+
+If neither *tab* nor *window* is provided, all popups open in the current tab.
+*tab* and *window* are mutually exclusive, and the last one listed is
+effective.
 
 Note: This option does not change the popup blocker of Firefox in any way.
 ____

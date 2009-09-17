@@ -17,6 +17,7 @@
       and <C-A> are equivalent, to map the uppercase character use <C-S-A>.
       (this might change again, as this is REALLY inconsistent, and i don't
        know if I like copying bugs)
+    * IMPORTANT: 'popups' now takes a stringlist rather than a number.
 
     * add [c]:keepalt[c]
     * add [c]:styledisable[c], [c]:styleenable[c], and [c]:styletoggle[c]

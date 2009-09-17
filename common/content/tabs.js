@@ -168,27 +168,29 @@ function Tabs() //{{{
         // TODO: Is this really applicable to Xulmus?
         options.add(["popups", "pps"],
             "Where to show requested popup windows",
-            "number", 1,
+            "stringlist", "tab",
             {
                 setter: function (value)
                 {
-                    let values = [[0, 1], // always in current tab
-                                  [0, 3], // in a new tab
-                                  [2, 3], // in a new window if it has specified sizes
-                                  [1, 2], // always in new window
-                                  [2, 1]];// current tab unless it has specified sizes
+                    let [open, restriction] = [1, 0];
+                    for (let [, opt] in value)
+                    {
+                        if (opt == "tab")
+                            open = 3;
+                        else if (opt == "window")
+                            open = 2;
+                        else if (opt == "resized")
+                            resized = 2;
+                    }
 
-                    options.safeSetPref("browser.link.open_newwindow.restriction", values[value][0]);
-                    options.safeSetPref("browser.link.open_newwindow", values[value][1]);
-
+                    options.safeSetPref("browser.link.open_newwindow", open);
+                    options.safeSetPref("browser.link.open_newwindow.restriction", resized);
                     return value;
                 },
                 completer: function (context) [
-                    ["0", "Force to open in the current tab"],
-                    ["1", "Always open in a new tab"],
-                    ["2", "Open in a new window if it has a specific requested size (default in " + config.hostApplication + ")"],
-                    ["3", "Always open in a new window"],
-                    ["4", "Open in the same tab unless it has a specific requested size"]
+                    ["tab",     "Open popups in a new tab"],
+                    ["window",  "Open popups in a new window"],
+                    ["resized", "Open resized popups in a new window"]
                 ],
                 validator: Option.validateCompleter
             });
