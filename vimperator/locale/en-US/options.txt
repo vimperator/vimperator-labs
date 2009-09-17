@@ -461,11 +461,10 @@ ____
 ||'private'|| boolean (default: off)
 ____
 Set the "private browsing" option. In private browsing mode history, cache
-files, cookies, form data, passwords, and download list entries are available
-only for the duration of the private browsing session and deleted when
-returning to normal browsing mode.
-
-Note: this is only available in FF 3.5.
+files, cookies, form data, passwords, download list entries, local and URL
+marks, command-line history and macros are available only for the duration of
+the private browsing session and deleted when returning to normal browsing
+mode.
 ____
 
 
