@@ -536,9 +536,8 @@ const liberator = (function () //{{{
                         ["Name", "Version", "Status", "Description"], [],
                         ([template.icon(e, e.name),
                           e.version,
-                          /* XXX: Inline style. */
-                          e.enabled ? <span style="color: blue;">enabled</span>
-                                    : <span style="color: red;">disabled</span>,
+                          e.enabled ? <span highlight="Enabled">enabled</span>
+                                    : <span highlight="Disabled">disabled</span>,
                           e.description] for ([, e] in Iterator(extensions)))
                     );
 

@@ -29,6 +29,9 @@ Highlights.prototype.CSS = <![CDATA[
     Object      color: maroon;
     String      color: green;
 
+    Enabled     color: green;
+    Disabled    color: red;
+
     Normal      color: black; background: white;
     ErrorMsg    color: white; background: red; font-weight: bold;
     InfoMsg     color: black; background: white;
