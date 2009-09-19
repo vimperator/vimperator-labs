@@ -180,11 +180,11 @@ function Tabs() //{{{
                         else if (opt == "window")
                             open = 2;
                         else if (opt == "resized")
-                            resized = 2;
+                            restriction = 2;
                     }
 
                     options.safeSetPref("browser.link.open_newwindow", open);
-                    options.safeSetPref("browser.link.open_newwindow.restriction", resized);
+                    options.safeSetPref("browser.link.open_newwindow.restriction", restriction);
                     return value;
                 },
                 completer: function (context) [
