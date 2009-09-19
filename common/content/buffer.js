@@ -1157,8 +1157,7 @@ function Buffer() //{{{
                     return true;
                 }
 
-                // TODO: this should probably use the default 'hinttags' value. --djk
-                let res = buffer.evaluateXPath(options["hinttags"], frame.document);
+                let res = buffer.evaluateXPath(options.get("hinttags").defaultValue, frame.document);
                 for (let [, regex] in Iterator(regexes))
                 {
                     for (let i in util.range(res.snapshotLength, 0, -1))
