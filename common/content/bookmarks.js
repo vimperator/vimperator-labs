@@ -606,8 +606,7 @@ function Bookmarks() //{{{
         {
             try
             {
-                let uri = util.newURI(url);
-                return (bookmarksService.getBookmarkedURIFor(uri) != null);
+                return bookmarksService.isBookmarked(util.newURI(url));
             }
             catch (e)
             {
