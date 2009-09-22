@@ -251,16 +251,7 @@ Option.prototype = {
             return null;
 
         if (this.setter)
-        {
-            let tmpValue = newValue;
-            newValue = this.setter.call(this, newValue);
-
-            if (newValue === undefined)
-            {
-                newValue = tmpValue;
-                liberator.log("DEPRECATED: '" + this.name + "' setter should return a value");
-            }
-        }
+            newValue = this.setter(newValue);
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
