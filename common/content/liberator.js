@@ -185,7 +185,8 @@ const liberator = (function () //{{{
                         styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true);
                     else
                         styles.removeSheet(true, "scrollbar");
-                    options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2);
+                    options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2,
+                        "See 'guioptions' scrollbar flags.");
                 },
                 validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
             },
@@ -289,7 +290,8 @@ const liberator = (function () //{{{
             {
                 setter: function (value)
                 {
-                    options.safeSetPref("accessibility.typeaheadfind.enablesound", !value);
+                    options.safeSetPref("accessibility.typeaheadfind.enablesound", !value,
+                        "See 'visualbell' option");
                     return value;
                 }
             });

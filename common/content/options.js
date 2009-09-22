@@ -251,16 +251,7 @@ Option.prototype = {
             return null;
 
         if (this.setter)
-        {
-            let tmpValue = newValue;
-            newValue = this.setter.call(this, newValue);
-
-            if (newValue === undefined)
-            {
-                newValue = tmpValue;
-                liberator.log("DEPRECATED: '" + this.name + "' setter should return a value");
-            }
-        }
+            newValue = this.setter(newValue);
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
@@ -1308,13 +1299,18 @@ function Options() //{{{
          * @param {value} value The new preference value.
          */
         // FIXME: Well it used to. I'm looking at you mst! --djk
-        safeSetPref: function (name, value)
+        safeSetPref: function (name, value, message)
         {
             let val = loadPreference(name, null, false);
             let def = loadPreference(name, null, true);
             let lib = loadPreference(SAVED + name);
             if (lib == null && val != def || val != lib)
-                liberator.echomsg("Warning: setting preference " + name + ", but it's changed from its default value.");
+            {
+                let msg = "Warning: setting preference " + name + ", but it's changed from its default value.";
+                if (message)
+                    msg += " " + message;
+                liberator.echomsg(msg);
+            }
             storePreference(name, value);
             storePreference(SAVED + name, value);
         },
