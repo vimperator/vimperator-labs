@@ -72,7 +72,7 @@ function Sanitizer() //{{{
                 {
                     options.setPref(pref, false);
 
-                    for (let [, value] in Iterator(values.split(",")))
+                    for (let [, value] in Iterator(this.parseValues(values)))
                     {
                         if (prefToArg(pref) == value)
                         {
