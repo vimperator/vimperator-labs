@@ -311,15 +311,8 @@ function Sanitizer() //{{{
         return errors;
     };
 
-    self.__defineGetter__("prefNames", function () {
-        let ret = [];
-
-        [self.prefDomain, self.prefDomain2].forEach(function (branch) {
-            ret = ret.concat(services.get("pref").getBranch(branch).getChildList("", {}).map(function (pref) branch + pref));
-        });
-
-        return ret;
-    });
+    self.__defineGetter__("prefNames",
+        function () util.Array.flatten([self.prefDomain, self.prefDomain2].map(options.allPrefs)));
     //}}}
 
     return self;

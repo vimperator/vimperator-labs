@@ -1187,7 +1187,7 @@ function Options() //{{{
             if (!filter)
                 filter = "";
 
-            let prefArray = services.get("pref").getChildList("", { value: 0 });
+            let prefArray = options.allPrefs();
             prefArray.sort();
             let prefs = function () {
                 for (let [, pref] in Iterator(prefArray))
