@@ -448,8 +448,8 @@ function Options() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: migrate liberator.saved.* prefs to extensions.liberator.saved.*
     const SAVED = "extensions.liberator.saved.";
+    const OLD_SAVED = "liberator.saved.";
 
     const optionHash = {};
 
@@ -925,9 +925,7 @@ function Options() //{{{
     liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
-                [function () services.get("pref")
-                                     .getChildList("", { value: 0 })
-                                     .map(function (pref) [pref, ""])]);
+                [function () options.allPrefs().map(function (pref) [pref, ""])]);
 
         completion.option = function option(context, scope) {
             context.title = ["Option"];
@@ -990,7 +988,7 @@ function Options() //{{{
             context.anchored = false;
             context.title = [config.hostApplication + " Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = services.get("pref").getChildList("", { value: 0 });
+            context.completions = options.allPrefs();
         };
     });
 
@@ -1094,6 +1092,14 @@ function Options() //{{{
             optionHash[option.name] = option;
             return true;
         },
+
+        /**
+         * Returns the names of all preferences.
+         *
+         * @param {string} branch The branch in which to search preferences.
+         *     @default ""
+         */
+        allPrefs: function (branch) services.get("pref").getChildList(branch || "", { value: 0 }),
 
         /**
          * Returns the option with <b>name</b> in the specified <b>scope</b>.
@@ -1401,6 +1407,14 @@ function Options() //{{{
             }
         }
     }; //}}}
+
+    for (let [, pref] in Iterator(self.allPrefs(OLD_SAVED)))
+    {
+        let saved = SAVED + pref.substr(OLD_SAVED.length)
+        if (!self.getPref(saved))
+            self.setPref(saved, self.getPref(pref));
+        self.resetPref(pref);
+    }
 
     self.prefObserver.register();
     liberator.registerObserver("shutdown", function () {
