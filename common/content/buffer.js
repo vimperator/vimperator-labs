@@ -336,24 +336,16 @@ function Buffer() //{{{
                 buffer.focusElement(buffer.lastInputField);
             else
             {
-                let elements = [];
-                let matches = buffer.evaluateXPath(
-                    "//input[not(@type) or @type='text' or @type='password' or @type='file'] | //textarea[not(@disabled) and not(@readonly)] |" +
-                    "//xhtml:input[not(@type) or @type='text' or @type='password' or @type='file'] | //xhtml:textarea[not(@disabled) and not(@readonly)]"
-                );
+                let xpath = util.makeXPath(["input[not(@type) or @type='text' or @type='password' or @type='file']",
+                                            "textarea[not(@disabled) and not(@readonly)]"]);
 
-                for (let match in matches)
-                {
+                let elements = [m for (m in buffer.evaluateXPath(xpath))].filter(function (match) {
                     let computedStyle = util.computedStyle(match);
-                    if (computedStyle.visibility != "hidden" && computedStyle.display != "none")
-                        elements.push(match);
-                }
+                    return computedStyle.visibility != "hidden" && computedStyle.display != "none";
+                });
 
                 if (elements.length > 0)
-                {
-                    count = util.Math.constrain(count, 1, elements.length);
-                    buffer.focusElement(elements[count - 1]);
-                }
+                    buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
                 else
                     liberator.beep();
             }

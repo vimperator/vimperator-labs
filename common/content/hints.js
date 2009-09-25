@@ -63,14 +63,14 @@ function Hints() //{{{
     const Mode = new Struct("prompt", "action", "tags");
     Mode.defaultValue("tags", function () function () options.hinttags);
     function extended() options.extendedhinttags;
-    function images() "//img | //xhtml:img";
+    function images() util.makeXPath(["img"]);
 
     const hintModes = {
         ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
         "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
         s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
         a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () "//body | //xhtml:body"),
+        f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () util.makeXPath(["body"])),
         o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
         t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
         b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
@@ -786,10 +786,8 @@ function Hints() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const DEFAULT_HINTTAGS =
-        util.Array(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
-            .map(function (spec) [spec, "xhtml:" + spec]).flatten()
-            .concat("*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']")
-            .map(function (node) "//" + node).join(" | ");
+        util.makeXPath(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
+            + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']";
 
     function checkXPath(val)
     {

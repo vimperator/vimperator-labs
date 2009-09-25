@@ -179,6 +179,20 @@ const util = { //{{{
     },
 
     /**
+     * Returns an XPath union expression constructed from the specified node
+     * tests. An expression is built with node tests for both the null and
+     * XHTML namespaces. See {@link Buffer#evaluateXPath}.
+     *
+     * @param nodes {Array(string)}
+     * @returns {string}
+     */
+    makeXPath: function makeXPath(nodes)
+    {
+        return util.Array(nodes).map(function (node) [node, "xhtml:" + node]).flatten()
+                                .map(function (node) "//" + node).join(" | ");
+    },
+
+    /**
      * Memoize the lookup of a property in an object.
      *
      * @param {object} obj The object to alter.
