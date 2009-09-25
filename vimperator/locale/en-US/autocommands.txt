@@ -58,7 +58,7 @@ The following keywords are available where relevant:
 |*<size>*   |The size of a downloaded file. Only for *DownloadPost*.
 |*<file>*   |The target destination of a download. Only for *DownloadPost*.
 |*<state>*  |The new state. Only for *Fullscreen* and *PrivateMode*.
-|*<name>*   |The color scheme name. Only for *ColorScheme*.
+|*<name>*   |The name of the item. Only for *ColorScheme* and *Sanitize*.
 |===============================================================================
 
 ________________________________________________________________________________

@@ -253,6 +253,21 @@ function Sanitizer() //{{{
         }
     });
 
+    // call Sanitize autocommand
+    for (let [name, item] in Iterator(self.items))
+    {
+        let arg = prefToArg(name);
+
+        if (item.clear)
+        {
+            let func = item.clear;
+            item.clear = function () {
+                autocommands.trigger("Sanitize", { name: arg })
+                func.call(item);
+            }
+        }
+    }
+
     self.getClearRange = Sanitizer.getClearRange;
 
     // Largely ripped from from browser/base/content/sanitize.js so we can override
