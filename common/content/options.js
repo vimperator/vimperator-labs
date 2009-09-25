@@ -340,10 +340,11 @@ Option.prototype = {
                 break;
 
             case "number":
-                let value = Number(values); // deduce radix
+                // TODO: support floats? Validators need updating.
+                if (!/^[+-]?(?:0x[0-9a-f]+|0[0-7]+|0|[1-9]\d*)$/i.test(values))
+                    return "E521: Number required after := " + this.name + "=" + values;
 
-                if (isNaN(value) || value != parseInt(value))
-                    return "E521: Number required";
+                let value = parseInt(values/* deduce radix */);
 
                 switch (operator)
                 {
@@ -411,7 +412,7 @@ Option.prototype = {
                 break;
 
             default:
-                return "E685: Internal error: option type `" + option.type + "' not supported";
+                return "E685: Internal error: option type `" + this.type + "' not supported";
         }
 
         if (newValue == null)
