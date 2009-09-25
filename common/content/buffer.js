@@ -1004,8 +1004,8 @@ function Buffer() //{{{
 
         /**
          * Evaluates an XPath expression in the current or provided
-         * document. It provides the xhtml and liberator XML namespaces. The
-         * result may be used as an iterator.
+         * document. It provides the xhtml, xhtml2 and liberator XML
+         * namespaces. The result may be used as an iterator.
          *
          * @param {string} expression The XPath expression to evaluate.
          * @param {Document} doc The document to evaluate the expression in.
@@ -1027,6 +1027,7 @@ function Buffer() //{{{
                 {
                     return {
                         xhtml: "http://www.w3.org/1999/xhtml",
+                        xhtml2: "http://www.w3.org/2002/06/xhtml2",
                         liberator: NS.uri
                     }[prefix] || null;
                 },
