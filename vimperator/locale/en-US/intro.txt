@@ -25,7 +25,7 @@ If you don't like Vimperator at all, you can uninstall it by typing
 If you like it but can't remember the shortcuts, then press [m]<F1>[m] or
 [c]:help[c] to get this help window back.
 
-|author| |donation| +
+|author| |donation| |sponsor| +
 Vimperator was initially written by mailto:stubenschrott@vimperator.org[Martin
 Stubenschrott] but has found many other
 http://vimperator.org/trac/wiki/Vimperator/Authors[contributors] in the
