@@ -1140,7 +1140,7 @@ function Options() //{{{
             if (!scope)
                 scope = options.OPTION_SCOPE_BOTH;
 
-            let opts = function (opt) {
+            function opts(opt) {
                 for (let opt in Iterator(options))
                 {
                     let option = {
@@ -1189,7 +1189,7 @@ function Options() //{{{
 
             let prefArray = options.allPrefs();
             prefArray.sort();
-            let prefs = function () {
+            function prefs() {
                 for (let [, pref] in Iterator(prefArray))
                 {
                     let userValue = services.get("pref").prefHasUserValue(pref);
