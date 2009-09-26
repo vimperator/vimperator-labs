@@ -53,8 +53,8 @@ editor.
 ________________________________________________________________________________
 
 
-|\| +
-||\||
+|$$|$$| +
+|||||
 ________________________________________________________________________________
 Toggle between rendered and source view. Alternates the page in the current tab
 between a normally rendered view and the internal editor source view.

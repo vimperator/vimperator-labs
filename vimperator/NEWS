@@ -41,7 +41,7 @@
       [c]:helpall[c]
     * add [m];c[m] extended hint mode - open the context menu
     * add [m]@:[m] mapping - repeat the last Ex command
-    * add [m]\[m] mapping - toggle between rendered and source view
+    * add [m]|[m] mapping - toggle between rendered and source view
 
 2009-05-21:
     * version 2.1

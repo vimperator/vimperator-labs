@@ -324,7 +324,7 @@ function Buffer() //{{{
         "View source with an external editor",
         function () { buffer.viewSource(null, true); });
 
-    mappings.add(myModes, ["\\"],
+    mappings.add(myModes, ["|"],
         "Toggle between rendered and source view",
         function () { buffer.viewSource(null, false); });
 
