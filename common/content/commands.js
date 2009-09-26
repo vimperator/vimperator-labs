@@ -1128,7 +1128,13 @@ function Commands() //{{{
         },
         {
             bang: true,
-            completer: function (context) completion.userCommand(context),
+            completer: function (context, args)
+            {
+                if (args.completeArg == 0)
+                    completion.userCommand(context);
+                else
+                    completion.ex(context);
+            },
             options: [
                 [["-nargs"], self.OPTION_STRING,
                 function (arg) /^[01*?+]$/.test(arg),
