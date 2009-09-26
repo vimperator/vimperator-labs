@@ -448,8 +448,8 @@ function Options() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // TODO: migrate liberator.saved.* prefs to extensions.liberator.saved.*
     const SAVED = "extensions.liberator.saved.";
+    const OLD_SAVED = "liberator.saved.";
 
     const optionHash = {};
 
@@ -925,9 +925,7 @@ function Options() //{{{
     liberator.registerObserver("load_completion", function () {
         completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
         completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
-                [function () services.get("pref")
-                                     .getChildList("", { value: 0 })
-                                     .map(function (pref) [pref, ""])]);
+                [function () options.allPrefs().map(function (pref) [pref, ""])]);
 
         completion.option = function option(context, scope) {
             context.title = ["Option"];
@@ -990,7 +988,7 @@ function Options() //{{{
             context.anchored = false;
             context.title = [config.hostApplication + " Preference", "Value"];
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
-            context.completions = services.get("pref").getChildList("", { value: 0 });
+            context.completions = options.allPrefs();
         };
     });
 
@@ -1096,6 +1094,14 @@ function Options() //{{{
         },
 
         /**
+         * Returns the names of all preferences.
+         *
+         * @param {string} branch The branch in which to search preferences.
+         *     @default ""
+         */
+        allPrefs: function (branch) services.get("pref").getChildList(branch || "", { value: 0 }),
+
+        /**
          * Returns the option with <b>name</b> in the specified <b>scope</b>.
          *
          * @param {string} name The option's name.
@@ -1134,7 +1140,7 @@ function Options() //{{{
             if (!scope)
                 scope = options.OPTION_SCOPE_BOTH;
 
-            let opts = function (opt) {
+            function opts(opt) {
                 for (let opt in Iterator(options))
                 {
                     let option = {
@@ -1181,9 +1187,9 @@ function Options() //{{{
             if (!filter)
                 filter = "";
 
-            let prefArray = services.get("pref").getChildList("", { value: 0 });
+            let prefArray = options.allPrefs();
             prefArray.sort();
-            let prefs = function () {
+            function prefs() {
                 for (let [, pref] in Iterator(prefArray))
                 {
                     let userValue = services.get("pref").prefHasUserValue(pref);
@@ -1299,13 +1305,18 @@ function Options() //{{{
          * @param {value} value The new preference value.
          */
         // FIXME: Well it used to. I'm looking at you mst! --djk
-        safeSetPref: function (name, value)
+        safeSetPref: function (name, value, message)
         {
             let val = loadPreference(name, null, false);
             let def = loadPreference(name, null, true);
             let lib = loadPreference(SAVED + name);
             if (lib == null && val != def || val != lib)
-                liberator.echomsg("Warning: setting preference " + name + ", but it's changed from its default value.");
+            {
+                let msg = "Warning: setting preference " + name + ", but it's changed from its default value.";
+                if (message)
+                    msg += " " + message;
+                liberator.echomsg(msg);
+            }
             storePreference(name, value);
             storePreference(SAVED + name, value);
         },
@@ -1396,6 +1407,14 @@ function Options() //{{{
             }
         }
     }; //}}}
+
+    for (let [, pref] in Iterator(self.allPrefs(OLD_SAVED)))
+    {
+        let saved = SAVED + pref.substr(OLD_SAVED.length)
+        if (!self.getPref(saved))
+            self.setPref(saved, self.getPref(pref));
+        self.resetPref(pref);
+    }
 
     self.prefObserver.register();
     liberator.registerObserver("shutdown", function () {

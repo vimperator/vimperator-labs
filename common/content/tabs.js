@@ -183,8 +183,8 @@ function Tabs() //{{{
                             restriction = 2;
                     }
 
-                    options.safeSetPref("browser.link.open_newwindow", open);
-                    options.safeSetPref("browser.link.open_newwindow.restriction", restriction);
+                    options.safeSetPref("browser.link.open_newwindow", open, "See 'popups' option.");
+                    options.safeSetPref("browser.link.open_newwindow.restriction", restriction, "See 'popups' option.");
                     return value;
                 },
                 completer: function (context) [

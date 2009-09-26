@@ -885,7 +885,7 @@ function Editor() //{{{
         },
 
         // TODO: clean up with 2 functions for textboxes and currentEditor?
-        editFieldExternally: function ()
+        editFieldExternally: function (forceEditing)
         {
             if (!options["editor"])
                 return false;
@@ -894,11 +894,15 @@ function Editor() //{{{
             if (!(config.isComposeWindow))
                 textBox = liberator.focus;
 
-            if (textBox.type == "password")
+            if (!forceEditing && textBox && textBox.type == "password")
             {
-                liberator.beep();
-                liberator.echoerr("Cannot edit password fields");
-                return false;
+                commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
+                    function (resp)
+                    {
+                        if (resp && resp.match(/^y(es)?$/i))
+                            return editor.editFieldExternally(true);
+                    });
+                    return;
             }
 
             let text = ""; // XXX
