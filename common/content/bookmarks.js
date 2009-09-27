@@ -124,7 +124,7 @@ function Bookmarks() //{{{
             return bookmarks.length < length;
         }
 
-        function findRoot(id)
+        this.findRoot = function findRoot(id)
         {
             do
             {
@@ -133,6 +133,8 @@ function Bookmarks() //{{{
             } while (id != bookmarksService.placesRoot && id != root);
             return root;
         }
+
+        this.isBookmark = function (id) rootFolders.indexOf(self.findRoot(id)) >= 0;
 
         // since we don't use a threaded bookmark loading (by set preload)
         // anymore, is this loading synchronization still needed? --mst
@@ -189,7 +191,7 @@ function Bookmarks() //{{{
                 // liberator.dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
                 if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK)
                 {
-                    if (rootFolders.indexOf(findRoot(itemId)) >= 0)
+                    if (self.isBookmark(itemId))
                     {
                         let bmark = loadBookmark(readBookmark(itemId));
                         storage.fireEvent(name, "add", bmark);
@@ -606,7 +608,8 @@ function Bookmarks() //{{{
         {
             try
             {
-                return bookmarksService.isBookmarked(util.newURI(url));
+                return bookmarksService.getBookmarkIdsForURI(makeURI(url), {})
+                    .some(cache.isBookmark);
             }
             catch (e)
             {

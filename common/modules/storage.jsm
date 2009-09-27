@@ -305,7 +305,7 @@ var observers = {};
 var timers = {};
 
 var storage = {
-    alwaysReload: [],
+    alwaysReload: {},
     newObject: function newObject(key, constructor, store, type, options, reload)
     {
         if (!(key in keys) || reload || key in this.alwaysReload)

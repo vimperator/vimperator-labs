@@ -173,7 +173,7 @@ function Tabs() //{{{
                 setter: function (value)
                 {
                     let [open, restriction] = [1, 0];
-                    for (let [, opt] in Iterator(this.parseValue(value)))
+                    for (let [, opt] in Iterator(this.parseValues(value)))
                     {
                         if (opt == "tab")
                             open = 3;
