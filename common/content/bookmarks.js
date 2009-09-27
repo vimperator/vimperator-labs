@@ -1096,6 +1096,11 @@ function History() //{{{
     //}}}
 } //}}}
 
+/** @scope modules */
+
+/**
+ * @instance quickmarks
+ */
 function QuickMarks() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -1199,12 +1204,27 @@ function QuickMarks() //{{{
 
     return {
 
+        /**
+         * Adds a new quickmark with name <b>qmark</b> referencing
+         * the URL <b>location</b>. Any existing quickmark with the same name
+         * will be replaced.
+         *
+         * @param {string} qmark The name of the quickmark {A-Z}.
+         * @param {string} location The URL accessed by this quickmark.
+         */
         add: function add(qmark, location)
         {
             qmarks.set(qmark, location);
             liberator.echomsg("Added Quick Mark '" + qmark + "': " + location, 1);
         },
 
+        /**
+         * Deletes the specified quickmarks. The <b>filter</b> is a list of
+         * quickmarks and ranges are supported. Eg. "ab c d e-k".
+         *
+         * @param {string} filter The list of quickmarks to delete.
+         *
+         */
         remove: function remove(filter)
         {
             let pattern = RegExp("[" + filter.replace(/\s+/g, "") + "]");
@@ -1216,11 +1236,21 @@ function QuickMarks() //{{{
             }
         },
 
+        /**
+         * Removes all quickmarks.
+         */
         removeAll: function removeAll()
         {
             qmarks.clear();
         },
 
+        /**
+         * Opens the URL referenced by the specified <b>qmark</b>.
+         *
+         * @param {string} qmark The quickmark to open.
+         * @param {number} where A constant describing where to open the page.
+         *     See {@link Liberator#open}.
+         */
         jumpTo: function jumpTo(qmark, where)
         {
             let url = qmarks.get(qmark);
@@ -1231,6 +1261,13 @@ function QuickMarks() //{{{
                 liberator.echoerr("E20: QuickMark not set");
         },
 
+        /**
+         * Lists all quickmarks matching <b>filter</b> in the message window.
+         *
+         * @param {string} filter The list of quickmarks to display. Eg. "abc"
+         * Ranges are not supported.
+         */
+        // FIXME: filter should match that of quickmarks.remove or vice versa
         list: function list(filter)
         {
             let marks = [k for ([k, v] in qmarks)];
