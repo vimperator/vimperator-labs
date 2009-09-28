@@ -259,6 +259,7 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:tabonly[c]|| Close all other tabs +
 ||[c]:tabopen[c]|| Open one or more URLs in a new tab +
 ||[c]:tabprevious[c]|| Switch to the previous tab or go [count] tabs back +
+||[c]:tabreattach[c]|| Reattach the current tab to another window +
 ||[c]:tabrewind[c]|| Switch to the first tab +
 ||[c]:time[c]|| Profile a piece of code or run a command multiple times +
 ||[c]toolbarhide[c]|| Hide the named toolbar +

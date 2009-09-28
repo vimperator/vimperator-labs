@@ -897,6 +897,11 @@ const liberator = (function () //{{{
             context.keys = { text: function (item) item.getAttribute("toolbarname"), description: function () "" };
             context.completions = buffer.evaluateXPath("./*[@toolbarname]", document, toolbox);
         };
+
+        completion.window = function window(context) {
+            context.title = ["Window", "Title"]
+            context.completions = [[i, win.document.title] for ([i, win] in Iterator(liberator.windows))];
+        };
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}

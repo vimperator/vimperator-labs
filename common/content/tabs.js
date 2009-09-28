@@ -617,6 +617,43 @@ function Tabs() //{{{
                 bang: true,
                 count: true
             });
+
+        // TODO: match window by title too?
+        //     : accept the full :tabmove arg spec for the tab index arg?
+        //     : better name or merge with :tabmove?
+        commands.add(["tabrea[ttach]"],
+            "Reattach the current tab to another window",
+            function (args)
+            {
+                if (args.length > 2 || args.some(function (i) i && !/^\d+$/.test(i)))
+                    return void liberator.echoerr("E488: Trailing characters");
+
+                let [winIndex, tabIndex] = args;
+                let win = liberator.windows[winIndex];
+
+                if (!win)
+                    return void liberator.echoerr("Window " + winIndex + " does not exist");
+                else if (win == window)
+                    return void liberator.echoerr("Can't reattach to the same window");
+
+                let browser = win.getBrowser();
+                let dummy = browser.addTab("about:blank");
+                let last = browser.mTabs.length - 1;
+
+                browser.moveTabTo(dummy, util.Math.constrain(tabIndex || last, 0, last));
+                browser.selectedTab = dummy; // required
+                browser.stop();
+                browser.docShell;
+                browser.swapBrowsersAndCloseOther(dummy, getBrowser().mCurrentTab);
+            },
+            {
+                argCount: "+",
+                completer: function (context, args)
+                {
+                    if (args.completeArg == 0)
+                        completion.window(context);
+                }
+            });
     }
 
     if (liberator.has("tabs_undo"))

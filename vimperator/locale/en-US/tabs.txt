@@ -160,6 +160,16 @@ contain at least one tab it is not possible to detach the only tab in a window.
 Use [c]:tabduplicate[c] to copy the tab then call [c]:tabdetach[c].
 ________________________________________________________________________________
 
+
+|:tabrea| |:tabreattach|
+||:tabrea[ttach] {window-index} [tab-index]|| +
+________________________________________________________________________________
+Reattach the current tab to another window. {window-index} is an index into the
+list of open windows and [a][tab-index][a] is the index at which to insert the
+tab in the other window's tab list. If this is the last tab in a window, the
+window will be closed.
+________________________________________________________________________________
+
 section::Reordering{nbsp}tabs[reordering-tabs]
 
 |:tabm| |:tabmove|
