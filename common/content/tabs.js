@@ -621,15 +621,15 @@ function Tabs() //{{{
         // TODO: match window by title too?
         //     : accept the full :tabmove arg spec for the tab index arg?
         //     : better name or merge with :tabmove?
-        commands.add(["tabrea[ttach]"],
-            "Reattach the current tab to another window",
+        commands.add(["taba[ttach]"],
+            "Attach the current tab to another window",
             function (args)
             {
                 if (args.length > 2 || args.some(function (i) i && !/^\d+$/.test(i)))
                     return void liberator.echoerr("E488: Trailing characters");
 
-                let [winIndex, tabIndex] = args;
-                let win = liberator.windows[winIndex];
+                let [winIndex, tabIndex] = args.map(parseInt);
+                let win = liberator.windows[winIndex - 1];
 
                 if (!win)
                     return void liberator.echoerr("Window " + winIndex + " does not exist");
@@ -638,12 +638,16 @@ function Tabs() //{{{
 
                 let browser = win.getBrowser();
                 let dummy = browser.addTab("about:blank");
+                browser.stop();
+                // XXX: the implementation of DnD in tabbrowser.xml suggests
+                // that we may not be guaranteed of having a docshell here
+                // without this reference?
+                browser.docShell;
+
                 let last = browser.mTabs.length - 1;
 
                 browser.moveTabTo(dummy, util.Math.constrain(tabIndex || last, 0, last));
                 browser.selectedTab = dummy; // required
-                browser.stop();
-                browser.docShell;
                 browser.swapBrowsersAndCloseOther(dummy, getBrowser().mCurrentTab);
             },
             {
@@ -651,7 +655,10 @@ function Tabs() //{{{
                 completer: function (context, args)
                 {
                     if (args.completeArg == 0)
+                    {
+                        context.filters.push(function ({ item: win }) win != window);
                         completion.window(context);
+                    }
                 }
             });
     }

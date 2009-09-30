@@ -900,7 +900,8 @@ const liberator = (function () //{{{
 
         completion.window = function window(context) {
             context.title = ["Window", "Title"]
-            context.completions = [[i, win.document.title] for ([i, win] in Iterator(liberator.windows))];
+            context.keys = { text: function (win) liberator.windows.indexOf(win) + 1, description: function (win) win.document.title };
+            context.completions = liberator.windows;
         };
     });
 
