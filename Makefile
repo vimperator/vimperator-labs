@@ -1,5 +1,4 @@
-
- DIRS = muttator vimperator xulmus
+DIRS = muttator vimperator xulmus
 TARGETS = clean distclean doc help info jar release xpi
 .SILENT:
 
