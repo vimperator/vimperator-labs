@@ -1547,7 +1547,7 @@ function Events() //{{{
                             || (/^[0-9]$/.test(key) && !hints.escNumbers))
                         {
                             hints.onEvent(event);
-                            input.buffer = null;
+                            input.buffer = "";
                             return void killEvent();
                         }
 
@@ -1674,8 +1674,7 @@ function Events() //{{{
             finally
             {
                 let motionMap = (input.pendingMotionMap && input.pendingMotionMap.names[0]) || "";
-                if (input.buffer !== null)
-                    statusline.updateInputBuffer(motionMap + input.buffer);
+                statusline.updateInputBuffer(motionMap + input.buffer);
             }
         },
 
