@@ -276,8 +276,6 @@ function Hints() //{{{
     // the containing block offsets with respect to the viewport
     function getContainerOffsets(doc)
     {
-        let body = (doc.body || doc.documentElement);
-
         if (/^(absolute|fixed|relative)$/.test(util.computedStyle(body)["position"]))
         {
             let bodyRect = (doc.body || doc.documentElement).getClientRects()[0];
