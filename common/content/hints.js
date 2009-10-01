@@ -273,10 +273,18 @@ function Hints() //{{{
         return [leftpos, toppos];
     }
 
-    function getBodyOffsets(doc)
+    // the containing block offsets with respect to the viewport
+    function getContainerOffsets(doc)
     {
-        let bodyRect = (doc.body || doc.documentElement).getBoundingClientRect();
-        return [-bodyRect.left, -bodyRect.top];
+        let body = (doc.body || doc.documentElement);
+
+        if (/^(absolute|fixed|relative)$/.test(util.computedStyle(body)["position"]))
+        {
+            let bodyRect = (doc.body || doc.documentElement).getClientRects()[0];
+            return [-bodyRect.left, -bodyRect.top];
+        }
+        else
+            return [doc.defaultView.scrollX, doc.defaultView.scrollY];
     }
 
     /**
@@ -294,7 +302,7 @@ function Hints() //{{{
         let doc = win.document;
         let height = win.innerHeight;
         let width  = win.innerWidth;
-        let [scrollX, scrollY] = getBodyOffsets(doc);
+        let [offsetX, offsetY] = getContainerOffsets(doc);
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
@@ -327,8 +335,8 @@ function Hints() //{{{
 
             span = baseNodeAbsolute.cloneNode(true);
 
-            let leftpos = Math.max((rect.left + scrollX), scrollX);
-            let toppos =  Math.max((rect.top + scrollY), scrollY);
+            let leftpos = Math.max((rect.left + offsetX), offsetX);
+            let toppos =  Math.max((rect.top + offsetY), offsetY);
 
             if (elem instanceof HTMLAreaElement)
                 [leftpos, toppos] = getAreaOffset(elem, leftpos, toppos);
@@ -400,7 +408,7 @@ function Hints() //{{{
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
-            let [scrollX, scrollY] = getBodyOffsets(doc);
+            let [offsetX, offsetY] = getContainerOffsets(doc);
 
         inner:
             for (let i in (util.interruptibleRange(start, end + 1, 500)))
@@ -429,8 +437,8 @@ function Hints() //{{{
 
                         imgspan = util.xmlToDom(<span highlight="Hint"/>, doc);
                         imgspan.setAttributeNS(NS.uri, "class", "HintImage");
-                        imgspan.style.left = (rect.left + scrollX) + "px";
-                        imgspan.style.top = (rect.top + scrollY) + "px";
+                        imgspan.style.left = (rect.left + offsetX) + "px";
+                        imgspan.style.top = (rect.top + offsetY) + "px";
                         imgspan.style.width = (rect.right - rect.left) + "px";
                         imgspan.style.height = (rect.bottom - rect.top) + "px";
                         hint[IMGSPAN] = imgspan;
