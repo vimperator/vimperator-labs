@@ -209,6 +209,17 @@ const config = { //{{{
         ////////////////////// COMMANDS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
+        commands.add(["on[ly]"],
+            "Close all other windows",
+            function ()
+            {
+                liberator.windows.forEach(function (win) {
+                    if (win != window)
+                        win.close();
+                });
+            },
+            { argCount: "0" });
+
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
             function (args)

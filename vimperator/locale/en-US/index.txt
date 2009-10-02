@@ -221,6 +221,7 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
 ||[c]:normal[c]|| Execute Normal mode commands +
+||[c]:only[c]|| Close all other windows +
 ||[c]:open[c]|| Open one or more URLs in the current tab +
 ||[c]:optionusage[c]|| List all options with a short description +
 ||[c]:pageinfo[c]|| Show various page information +
