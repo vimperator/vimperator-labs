@@ -1,3 +1,9 @@
+// Copyright (c) 2008-2009 Kris Maglione <maglione.k at Gmail>
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the LICENSE.txt file included with this file.
+
+
 /* Adds support for data: URIs with chrome privileges
  * and fragment identifiers.
  *
@@ -5,7 +11,6 @@
  *
  * By Kris Maglione, ideas from Ed Anuff's nsChromeExtensionHandler.
  *
- * ©2008-2009 Kris Maglione <maglione.k at Gmail>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),

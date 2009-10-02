@@ -1,3 +1,8 @@
+// Copyright (c) 2009 by Kris Maglione <maglione.k at Gmail>
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the LICENSE.txt file included with this file.
+
 
 const win = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
                       .getService(Ci.nsIWindowWatcher)

@@ -1,3 +1,9 @@
+// Copyright (c) 2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the LICENSE.txt file included with this file.
+
+
 // Script to find regressions
 //
 // It should use as few liberator methods as possible, but fall back to standard mozilla/DOM methods

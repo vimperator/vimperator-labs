@@ -1,5 +1,7 @@
 2009-XX-XX:
     * version 2.2a1pre
+    * IMPORTANT: Vimperator is from now on ONLY licensed unter the MIT
+      license, if you need a GPL, LGPL or MPL version, please use Vimperator 2.1
     * IMPORTANT: Map.flags has been replaced with individual properties.
       Mappings defined in plugins with mappings.add will need to be updated.
 ...................................
