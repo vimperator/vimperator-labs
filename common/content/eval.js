@@ -7,7 +7,7 @@ catch (e)
 // IMPORTANT: The eval statement *must* remain on the first line
 // in order for line numbering in any errors to remain correct.
 
-// Copyright (c) 2008-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
