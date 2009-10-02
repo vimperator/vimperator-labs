@@ -63,7 +63,6 @@ Available dialogs:
 |*searchengines*   |Manage installed search engines
 |*selectionsource* |View selection source
 |===============================================================================
-
 ________________________________________________________________________________
 
 
@@ -141,6 +140,34 @@ Open the sidebar window. {name} is any of the menu items listed under the
 standard Firefox View->Sidebar menu. Add-ons, Preferences and Downloads are
 also available in the sidebar.
 ________________________________________________________________________________
+
+section::Status{nbsp}line[status-line,status-bar]
+
+The status line appears at the bottom of each window. The 'laststatus' option
+can be used to specify when the status line appears.
+
+The status line contains several fields that provide information about the
+state of the current buffer. These are, in order:
+
+* URL: The URL of the currently loaded page. While the page is loading progress
+  messages are also output to this field.
+* History and bookmark status ([+-❤]): The position of the current page in
+  the tab's session history; + and - indicate that it's possible to move
+  backwards and forwards through the history respectively. ❤ indicates that
+  the current page is bookmarked.
+* Tab index ([N/M]): N is the index of the currently selected tab and M is the
+  total number of tabs in the current window.
+* Vertical scroll: The vertical scroll percentage of the current buffer. This
+  is a percentage or Top for 0% and Bot for 100%.
+* Security: The security information button is displayed when appropriate as
+  per Firefox. The color of the status bar also changes to reflect the current
+  security status of the loaded page.
+    - black - the site's identity is unverified and the connection is unencrypted
+    - blue - the site's domain has been verified and the connection is encrypted
+    - green - the site's domain and owner have been fully verified via an
+      Extended Validation certificate and the connection is encrypted
+* Extensions: Any extension buttons that would normally be installed to the
+  Firefox status bar are appended to the end of the status line.
 
 section::Toolbars[toolbar]
 
