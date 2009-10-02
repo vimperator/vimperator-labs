@@ -213,13 +213,15 @@ function Highlights(name, store)
     };
 
     /**
-     * Reloads the values in {@link #CSS}.
+     * Bulk loads new CSS rules.
+     *
+     * @param {string} css The rules to load. See {@link Highlights#css}.
      */
-    this.reload = function ()
+    this.loadCSS = function (css)
     {
-        this.CSS.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
-                .split("\n").filter(function (s) /\S/.test(s))
-                .forEach(function (style)
+        css.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
+           .split("\n").filter(function (s) /\S/.test(s))
+           .forEach(function (style)
         {
             style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
             if (/^[>+ ]/.test(style.selector))
@@ -236,7 +238,7 @@ function Highlights(name, store)
                 this.set(class);
         }
     };
-    this.reload();
+    this.loadCSS(this.CSS);
 }
 
 /**
@@ -325,7 +327,7 @@ function Styles(name, store)
         if (name && name in names)
             this.removeSheet(system, name);
 
-        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), css, null, system, agent);
+        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), String(css), null, system, agent);
 
         try
         {
@@ -508,7 +510,7 @@ const highlight = storage.newObject("highlight", Highlights, false);
 if (highlight.CSS != Highlights.prototype.CSS)
 {
     highlight.CSS = Highlights.prototype.CSS;
-    highlight.reload();
+    highlight.loadCSS(highlight.CSS);
 }
 
 liberator.triggerObserver("load_styles", "styles");
