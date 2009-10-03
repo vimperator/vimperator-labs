@@ -12,7 +12,7 @@
     height: 440px;
     border: 5px solid black;
     background-repeat: no-repeat;
-    background-image: url(chrome://vimperator/content/about_background.jpg);
+    background-image: url(chrome://vimperator/content/about_background.png);
     background-color: green;
     border-spacing: 0px 10px;
     -moz-border-radius: 10px;
