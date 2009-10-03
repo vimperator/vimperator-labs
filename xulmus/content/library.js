@@ -4,7 +4,7 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function Library() // {{{
+function Library() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -73,6 +73,6 @@ function Library() // {{{
 
     };
     //}}}
-} // }}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

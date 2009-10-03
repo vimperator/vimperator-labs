@@ -4,7 +4,7 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function Player() // {{{
+function Player() //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
@@ -799,6 +799,6 @@ function Player() // {{{
 
     };
     //}}}
-} // }}}
+} //}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

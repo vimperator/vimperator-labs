@@ -53,7 +53,7 @@ function CommandLine() //{{{
             autocommands.trigger("Sanitize", {});
         }, window);
 
-    var messageHistory = { // {{{
+    var messageHistory = { //{{{
         _messages: [],
         get messages()
         {
@@ -83,7 +83,7 @@ function CommandLine() //{{{
 
             this._messages.push(message);
         }
-    }; // }}}
+    }; //}}}
     var lastMowOutput = null;
 
     var silent = false;
@@ -97,7 +97,7 @@ function CommandLine() //{{{
      * @param {HTMLInputElement} inputField
      * @param {string} mode The mode for which we need history.
      */
-    function History(inputField, mode) // {{{
+    function History(inputField, mode) //{{{
     {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(inputField, mode);
@@ -220,14 +220,14 @@ function CommandLine() //{{{
                 }
             }
         }
-    }; // }}}
+    }; //}}}
 
     /**
      * A class for tab completions on an input field.
      *
      * @param {Object} input
      */
-    function Completions(input) // {{{
+    function Completions(input) //{{{
     {
         if (!(this instanceof arguments.callee))
             return new arguments.callee(input);
@@ -511,7 +511,7 @@ function CommandLine() //{{{
             if (this.items.length == 0)
                 liberator.beep();
         }
-    }; // }}}
+    }; //}}}
 
     /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// TIMERS //////////////////////////////////////////////////

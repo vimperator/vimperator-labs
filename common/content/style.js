@@ -265,17 +265,17 @@ function Styles(name, store)
 
     const Sheet = new Struct("name", "id", "sites", "css", "system", "agent");
     Sheet.prototype.__defineGetter__("fullCSS", function wrapCSS() {
-            let filter = this.sites;
-            let css = this.css;
-            if (filter[0] == "*")
-                return namespace + css;
-            let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
-                                                        /[\/:]/.test(part)  ? "url"
-                                                                            : "domain")
-                                                + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
-                                  .join(", ");
-            return namespace + "/* Liberator style #" + this.id + " */ @-moz-document " + selectors + "{\n" + css + "\n}\n";
-        });
+        let filter = this.sites;
+        let css = this.css;
+        if (filter[0] == "*")
+            return namespace + css;
+        let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
+                                                    /[\/:]/.test(part)  ? "url"
+                                                                        : "domain")
+                                            + '("' + part.replace(/"/g, "%22").replace(/[*]$/, "") + '")')
+                              .join(", ");
+        return namespace + "/* Liberator style #" + this.id + " */ @-moz-document " + selectors + "{\n" + css + "\n}\n";
+    });
     Sheet.prototype.__defineGetter__("enabled", function () this._enabled);
     Sheet.prototype.__defineSetter__("enabled", function (on) {
         this._enabled = Boolean(on);
