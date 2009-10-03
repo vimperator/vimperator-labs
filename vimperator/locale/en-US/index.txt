@@ -221,7 +221,6 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
 ||[c]:normal[c]|| Execute Normal mode commands +
-||[c]:only[c]|| Close all other windows +
 ||[c]:open[c]|| Open one or more URLs in the current tab +
 ||[c]:optionusage[c]|| List all options with a short description +
 ||[c]:pageinfo[c]|| Show various page information +
@@ -277,6 +276,7 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:viusage[c]|| List all mappings with a short description +
 ||[c]:winclose[c]|| Close window +
 ||[c]:window[c]|| Execute a command and tell it to output in a new window +
+||[c]:winonly[c]|| Close all other windows +
 ||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
 ||[c]:zoom[c]|| Set zoom value of current web page +

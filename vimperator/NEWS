@@ -21,7 +21,7 @@
        know if I like copying bugs)
     * IMPORTANT: 'popups' now takes a stringlist rather than a number.
 
-    * add [c]:only[c]
+    * add [c]:winonly[c]
     * add [c]:tabattach[c]
     * add [c]:keepalt[c]
     * add [c]:styledisable[c], [c]:styleenable[c], and [c]:styletoggle[c]
