@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:         VIMperator configuration file
 " Maintainer:       Doug Kearns <dougkearns@gmail.com>
-" Last Change:      2009 Sep 7
+" Last Change:      2009 Oct 3
 
 " TODO: make this vimperator specific - shared liberator config?
 
@@ -26,15 +26,16 @@ syn keyword vimperatorCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] b
     \ delqm[arks] dels[tyle] dia[log] dl do[autocmd] doautoa[ll] downl[oads] e[dit] ec[ho] echoe[rr] echom[sg] em[enu] exe[cute]
     \ exta[dd] extd[isable] extde[lete] exte[nable] extens[ions] exto[ptions] extp[references] exu[sage] files fini[sh] fo[rward]
     \ frameo[nly] fw h[elp] helpa[ll] ha[rdcopy] hi[ghlight] hist[ory] hs ia[bbrev] iabc[lear] im[ap] imapc[lear] ino[remap]
-    \ iu[nmap] iuna[bbrev] javas[cript] js ju[mps] let loadplugins lpl ls ma[rk] macros map mapc[lear] marks mes[sages]
+    \ iu[nmap] iuna[bbrev] javas[cript] js ju[mps] keepa[lt] let loadplugins lpl ls ma[rk] macros map mapc[lear] marks mes[sages]
     \ messc[lear] mkv[imperatorrc] nm[ap] nmapc[lear] nno[remap] no[remap] noh[lsearch] norm[al] nu[nmap] o[pen] optionu[sage]
     \ pa[geinfo] pagest[yle] pas pl[ay] pref[erences] prefs pw[d] q[uit] qa[ll] qma[rk] qmarks quita[ll] re[draw] re[load]
     \ reloada[ll] res[tart] run runt[ime] sa[nitize] sav[eas] sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] setg[lobal] setl[ocal]
-    \ sideb[ar] sil[ent] so[urce] st[op] stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach]
-    \ tabdu[plicate] tabe[dit] tabfir[st] tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs
-    \ tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate]
-    \ undoa[ll] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose]
-    \ win[open] winc[lose] wind[ow] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
+    \ sideb[ar] sil[ent] so[urce] st[op] stopa[ll] sty[le] styd[isable] styled[isable] stye[nable] stylee[nable] styt[oggle]
+    \ stylet[oggle] tN[ext] t[open] tab taba[ttach] tabN[ext] tabc[lose] tabd[o] tabde[tach] tabdu[plicate] tabe[dit] tabfir[st]
+    \ tabl[ast] tabm[ove] tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tbh[ide] tbs[how] tbt[oggle] time
+    \ tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] verb[ose]
+    \ ve[rsion] vie[wsource] viu[sage] vm[ap] vmap[clear] vno[remap] vu[nmap] w[rite] wc[lose] win[open] winc[lose] wind[ow]
+    \ winon[ly] wine[dit] wo[pen] wq wqa[ll] xa[ll] zo[om]
     \ contained
 
 syn match vimperatorCommand "!" contained
@@ -42,7 +43,7 @@ syn match vimperatorCommand "!" contained
 syn keyword vimperatorAutoCmd au[tocmd] contained nextgroup=vimperatorAutoEventList skipwhite
 
 syn keyword vimperatorAutoEvent BookmarkAdd ColorSheme DOMLoad DownloadPost Fullscreen LocationChange PageLoadPre PageLoad
-    \ PrivateMode ShellCmdPost VimperatorEnter VimperatorLeavePre VimperatorLeave
+    \ PrivateMode Sanitize ShellCmdPost VimperatorEnter VimperatorLeavePre VimperatorLeave
     \ contained
 
 syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperatorAutoEvent
