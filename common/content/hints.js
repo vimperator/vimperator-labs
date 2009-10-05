@@ -252,11 +252,13 @@ function Hints() //{{{
     function getContainerOffsets(doc)
     {
         let body = doc.body || doc.documentElement;
+        // TODO: getComputedStyle returns null for Facebook channel_iframe doc - probable Gecko bug.
+        let style = util.computedStyle(body);
 
-        if (/^(absolute|fixed|relative)$/.test(util.computedStyle(body)["position"]))
+        if (style && /^(absolute|fixed|relative)$/.test(style.position))
         {
-            let bodyRect = body.getClientRects()[0];
-            return [-bodyRect.left, -bodyRect.top];
+            let rect = body.getClientRects()[0];
+            return [-rect.left, -rect.top];
         }
         else
             return [doc.defaultView.scrollX, doc.defaultView.scrollY];
