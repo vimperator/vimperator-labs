@@ -110,8 +110,6 @@ const modes = (function () //{{{
 
         get all() mainModes.slice(),
 
-        get inputMode() main & (this.COMMAND_LINE | this.INPUT | this.TEXTAREA | this.COMPOSE),
-
         get mainModes() (mode for ([k, mode] in Iterator(modeMap)) if (!mode.extended && mode.name == k)),
 
         get mainMode() modeMap[main],

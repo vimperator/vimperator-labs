@@ -940,17 +940,8 @@ function Buffer() //{{{
          * @property {Node} The last focused input field in the buffer. Used
          *     by the "gi" key binding.
          */
-        get lastInputField()
-        {
-            if (window.content.document.lastInputField)
-                return window.content.document.lastInputField;
-            else
-                return null;
-        },
-        set lastInputField(value)
-        {
-            window.content.document.lastInputField = value;
-        },
+        get lastInputField() window.content.document.lastInputField || null,
+        set lastInputField(value) { window.content.document.lastInputField = value; },
 
         /**
          * @property {string} The current top-level document's URL.
