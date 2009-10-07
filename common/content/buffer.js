@@ -81,18 +81,83 @@ function Buffer() //{{{
         return win;
     }
 
-    // both values are given in percent, -1 means no change
+    function findScrollable(dir, horiz)
+    {
+        let pos = "scrollTop", size = "clientHeight", max = "scrollHeight";
+        if (horiz)
+            pos = "scrollLeft", size = "clientWidth", max = "scrollWidth";
+
+        function find(elem)
+        {
+            for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode)
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] + elem[size] < elem[max])
+                    break;
+            return elem;
+        }
+        if (content.getSelection().rangeCount)
+            var elem = find(content.getSelection().getRangeAt(0).startContainer);
+        if (!(elem instanceof Element))
+        {
+            let doc = findScrollableWindow().document;
+            elem = find(doc.body ||
+                        buffer.evaluateXPath("//body || //xhtml:body", doc).snapshotItem(0) ||
+                        doc.documentElement);
+        }
+        return elem;
+    }
+
+    function scrollVert(elem, type, num)
+    {
+        elem = elem || findScrollable(num, false);
+        let fontSize = parseInt(util.computedStyle(elem).fontSize);
+        let increment;
+        if (type == "lines")
+            increment = fontSize;
+        else if (type == "pages")
+            increment = elem.clientHeight - fontSize;
+        else
+            throw Error()
+
+        elem.scrollTop += num * increment;
+    }
+    function scrollHoriz(elem, type, num)
+    {
+        elem = elem || findScrollable(num, true);
+        let fontSize = parseInt(util.computedStyle(elem).fontSize);
+        let increment;
+        if (type == "columns")
+            increment = fontSize; // Good enough, I suppose.
+        else if (type == "pages")
+            increment = elem.clientWidth - fontSize;
+        else
+            throw Error()
+
+        elem.scrollLeft += num * increment;
+    }
+
+    function scrollElemToPercentiles(elem, horizontal, vertical)
+    {
+        elem = elem || findScrollable();
+        marks.add("'", true);
+
+        if (horizontal != null)
+            elem.scrollLeft = (elem.scrollWidth - elem.clientWidth) * (horizontal / 100);
+
+        if (vertical != null)
+            elem.scrollTop = (elem.scrollHeight - elem.clientHeight) * (vertical / 100);
+    }
+
     function scrollToPercentiles(horizontal, vertical)
     {
         let win = findScrollableWindow();
         let h, v;
 
-        if (horizontal < 0)
+        if (horizontal == null)
             h = win.scrollX;
         else
             h = win.scrollMaxX / 100 * horizontal;
 
-        if (vertical < 0)
+        if (vertical == null)
             v = win.scrollY;
         else
             v = win.scrollMaxY / 100 * vertical;
@@ -1268,7 +1333,7 @@ function Buffer() //{{{
          */
         scrollBottom: function ()
         {
-            scrollToPercentiles(-1, 100);
+            scrollToPercentiles(null, 100);
         },
 
         /**
@@ -1279,13 +1344,7 @@ function Buffer() //{{{
          */
         scrollColumns: function (cols)
         {
-            let win = findScrollableWindow();
-            const COL_WIDTH = 20;
-
-            if (cols > 0 && win.scrollX >= win.scrollMaxX || cols < 0 && win.scrollX == 0)
-                liberator.beep();
-
-            win.scrollBy(COL_WIDTH * cols, 0);
+            scrollHoriz(null, "columns", cols);
         },
 
         /**
@@ -1293,7 +1352,7 @@ function Buffer() //{{{
          */
         scrollEnd: function ()
         {
-            scrollToPercentiles(100, -1);
+            scrollToPercentiles(100, null);
         },
 
         /**
@@ -1304,9 +1363,7 @@ function Buffer() //{{{
          */
         scrollLines: function (lines)
         {
-            let win = findScrollableWindow();
-            checkScrollYBounds(win, lines);
-            win.scrollByLines(lines);
+            scrollVert(null, "lines", lines);
         },
 
         /**
@@ -1317,9 +1374,7 @@ function Buffer() //{{{
          */
         scrollPages: function (pages)
         {
-            let win = findScrollableWindow();
-            checkScrollYBounds(win, pages);
-            win.scrollByPages(pages);
+            scrollVert(null, "pages", pages);
         },
 
         /**
@@ -1372,7 +1427,7 @@ function Buffer() //{{{
          */
         scrollStart: function ()
         {
-            scrollToPercentiles(0, -1);
+            scrollToPercentiles(0, null);
         },
 
         /**
@@ -1380,7 +1435,7 @@ function Buffer() //{{{
          */
         scrollTop: function ()
         {
-            scrollToPercentiles(-1, 0);
+            scrollToPercentiles(null, 0);
         },
 
         // TODO: allow callback for filtering out unwanted frames? User defined?

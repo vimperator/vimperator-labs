@@ -1079,8 +1079,7 @@ const liberator = (function () //{{{
         {
             if (typeof msg == "object")
                 msg = util.objectToString(msg);
-            else
-                msg += "\n";
+            msg = String.replace(msg, /\n?$/, "\n");
             window.dump(msg.replace(/^./gm, ("config" in modules && config.name.toLowerCase()) + ": $&"));
         },
 
