@@ -134,6 +134,8 @@ const modes = (function () //{{{
             modeMap[name].display = modeMap[name].display || function () disp;
             if (!extended)
                 mainModes.push(this[name]);
+            if ("mappings" in modules)
+                mappings.addMode(this[name]);
         },
 
         getMode: function (name) modeMap[name],

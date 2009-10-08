@@ -355,6 +355,15 @@ function Mappings() //{{{
          */
         getUserIterator: function (mode) mappingsIterator(mode, user),
 
+        addMode: function (mode)
+        {
+            if (!(mode in user || mode in main))
+            {
+                main[mode] = [];
+                user[mode] = [];
+            }
+        },
+
         /**
          * Adds a new default key mapping.
          *
