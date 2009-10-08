@@ -83,9 +83,9 @@ function Buffer() //{{{
 
     function findScrollable(dir, horiz)
     {
-        let pos = "scrollTop", size = "offsetHeight", max = "scrollHeight";
+        let pos = "scrollTop", size = "clientHeight", max = "scrollHeight";
         if (horiz)
-            pos = "scrollLeft", size = "offsetWidth", max = "scrollWidth";
+            pos = "scrollLeft", size = "clientWidth", max = "scrollWidth";
 
         function find(elem)
         {
@@ -106,36 +106,36 @@ function Buffer() //{{{
         return elem;
     }
 
-    function scrollVertical(elem, increment, number)
+    function scrollVert(elem, type, num)
     {
-        elem = elem || findScrollable(number, false);
+        elem = elem || findScrollable(num, false);
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         let increment;
-        if (increment == "lines")
+        if (type == "lines")
             increment = fontSize;
-        else if (increment == "pages")
+        else if (type == "pages")
             increment = elem.clientHeight - fontSize;
         else
             throw Error()
 
-        elem.scrollTop += number * increment;
+        elem.scrollTop += num * increment;
     }
-    function scrollHorizontal(elem, increment, number)
+    function scrollHoriz(elem, type, num)
     {
-        elem = elem || findScrollable(number, true);
+        elem = elem || findScrollable(num, true);
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         let increment;
-        if (increment == "columns")
+        if (type == "columns")
             increment = fontSize; // Good enough, I suppose.
-        else if (increment == "pages")
+        else if (type == "pages")
             increment = elem.clientWidth - fontSize;
         else
             throw Error()
 
-        elem.scrollLeft += number * increment;
+        elem.scrollLeft += num * increment;
     }
 
-    function scrollElemToPercent(elem, horizontal, vertical)
+    function scrollElemToPercentiles(elem, horizontal, vertical)
     {
         elem = elem || findScrollable();
         marks.add("'", true);
@@ -147,7 +147,7 @@ function Buffer() //{{{
             elem.scrollTop = (elem.scrollHeight - elem.clientHeight) * (vertical / 100);
     }
 
-    function scrollToPercent(horizontal, vertical)
+    function scrollToPercentiles(horizontal, vertical)
     {
         let win = findScrollableWindow();
         let h, v;
@@ -293,12 +293,12 @@ function Buffer() //{{{
 
     mappings.add(myModes, ["gg", "<Home>"],
         "Go to the top of the document",
-        function (count) { buffer.scrollToPercent(buffer.scrollXPercent, Math.max(count, 0)); },
+        function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, Math.max(count, 0)); },
         { count: true });
 
     mappings.add(myModes, ["G", "<End>"],
         "Go to the end of the document",
-        function (count) { buffer.scrollToPercent(buffer.scrollXPercent, count >= 0 ? count : 100); },
+        function (count) { buffer.scrollToPercentiles(buffer.scrollXPercent, count >= 0 ? count : 100); },
         { count: true });
 
     mappings.add(myModes, ["%"],
@@ -306,7 +306,7 @@ function Buffer() //{{{
         function (count)
         {
             if (count > 0 && count <= 100)
-                buffer.scrollToPercent(buffer.scrollXPercent, count);
+                buffer.scrollToPercentiles(buffer.scrollXPercent, count);
             else
                 liberator.beep();
         },
@@ -1324,7 +1324,7 @@ function Buffer() //{{{
          */
         scrollBottom: function ()
         {
-            scrollToPercent(null, 100);
+            scrollToPercentiles(null, 100);
         },
 
         /**
@@ -1335,7 +1335,7 @@ function Buffer() //{{{
          */
         scrollColumns: function (cols)
         {
-            scrollHorizontal(null, "columns", cols);
+            scrollHoriz(null, "columns", cols);
         },
 
         /**
@@ -1343,7 +1343,7 @@ function Buffer() //{{{
          */
         scrollEnd: function ()
         {
-            scrollToPercent(100, null);
+            scrollToPercentiles(100, null);
         },
 
         /**
@@ -1354,7 +1354,7 @@ function Buffer() //{{{
          */
         scrollLines: function (lines)
         {
-            scrollVertical(null, "lines", lines);
+            scrollVert(null, "lines", lines);
         },
 
         /**
@@ -1365,7 +1365,7 @@ function Buffer() //{{{
          */
         scrollPages: function (pages)
         {
-            scrollVertical(null, "pages", pages);
+            scrollVert(null, "pages", pages);
         },
 
         /**
@@ -1396,9 +1396,9 @@ function Buffer() //{{{
          * @param {number} x The horizontal page percentile.
          * @param {number} y The vertical page percentile.
          */
-        scrollToPercent: function (x, y)
+        scrollToPercentiles: function (x, y)
         {
-            scrollToPercent(x, y);
+            scrollToPercentiles(x, y);
         },
 
         /**
@@ -1418,7 +1418,7 @@ function Buffer() //{{{
          */
         scrollStart: function ()
         {
-            scrollToPercent(0, null);
+            scrollToPercentiles(0, null);
         },
 
         /**
@@ -1426,7 +1426,7 @@ function Buffer() //{{{
          */
         scrollTop: function ()
         {
-            scrollToPercent(null, 0);
+            scrollToPercentiles(null, 0);
         },
 
         // TODO: allow callback for filtering out unwanted frames? User defined?
@@ -1661,7 +1661,7 @@ function Marks() //{{{
         {
             if (win && win.location.href == mark.location)
             {
-                buffer.scrollToPercent(mark.position.x * 100, mark.position.y * 100);
+                buffer.scrollToPercentiles(mark.position.x * 100, mark.position.y * 100);
                 pendingJumps.splice(i, 1);
                 return;
             }
@@ -1970,7 +1970,7 @@ function Marks() //{{{
                             return;
                         }
                         liberator.log("Jumping to URL mark: " + markToString(mark, slice), 5);
-                        buffer.scrollToPercent(slice.position.x * 100, slice.position.y * 100);
+                        buffer.scrollToPercentiles(slice.position.x * 100, slice.position.y * 100);
                         ok = true;
                     }
                 }
@@ -1985,7 +1985,7 @@ function Marks() //{{{
                     if (win.location.href == lmark.location)
                     {
                         liberator.log("Jumping to local mark: " + markToString(mark, lmark), 5);
-                        buffer.scrollToPercent(lmark.position.x * 100, lmark.position.y * 100);
+                        buffer.scrollToPercentiles(lmark.position.x * 100, lmark.position.y * 100);
                         ok = true;
                         break;
                     }
