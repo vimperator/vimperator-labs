@@ -23,7 +23,7 @@ A buffer may be marked with one of the following indicators:
 ________________________________________________________________________________
 
 
-|:keepa| |:keepalt|
+|:keepa| |:keepalt| +
 ||:keepa[lt] {cmd}||
 ________________________________________________________________________________
 Execute a command without changing the current alternate buffer.
@@ -81,6 +81,7 @@ Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th tab.
 ________________________________________________________________________________
 
+
 |<C-PageDown>| |<C-Tab>| |<C-n>| +
 ||[count]<C-n>||
 ________________________________________________________________________________
@@ -88,11 +89,34 @@ Go to the next tab. Cycles to the first tab when the last is selected. +
 If [count] is specified go to the [count]th next tab.
 ________________________________________________________________________________
 
+
 |<C-PageUp>| |<C-S-Tab>| |<C-p>| |gT| +
 ||[count]gT||
 ________________________________________________________________________________
 Go to the previous tab. Cycles to the last tab when the first is selected. +
 If [count] is specified go to the [count]th previous tab.
+________________________________________________________________________________
+
+
+|:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
+||:[count]tabn[ext] [count]|| +
+||:[count]tn[ext] [count]|| +
+||:[count]bn[ext] [count]|| +
+________________________________________________________________________________
+Switch to the next or [count]th tab. Cycles to the first tab when the last is
+selected and [count] is not specified.
+________________________________________________________________________________
+
+
+|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious| +
+||:[count]tabp[revious] [count]|| +
+||:[count]tp[revious] [count]|| +
+||:[count]tabN[ext] [count]|| +
+||:[count]bp[revious] [count]|| +
+||:[count]bN[ext] [count]|| +
+________________________________________________________________________________
+Switch to the previous tab or go [count] tabs back. Wraps around from the
+first tab to the last tab.
 ________________________________________________________________________________
 
 
@@ -175,34 +199,6 @@ tab list.
 ________________________________________________________________________________
 
 
-|:bn| |:bnext| |:tn| |:tnext| |:tabn| |:tabnext|
-||:[count]tabn[ext] [count]|| +
-||:[count]tn[ext] [count]|| +
-||:[count]bn[ext] [count]|| +
-________________________________________________________________________________
-Switch to the next or [count]th tab. Cycles to the first tab when the last is
-selected and [count] is not specified.
-________________________________________________________________________________
-
-
-|:tabo| |:tabonly|
-||:tabo[nly]||
-________________________________________________________________________________
-Close all other tabs.
-________________________________________________________________________________
-
-
-|:bN| |:bNext| |:bp| |:bprevious| |:tN| |:tNext| |:tabN| |:tabNext| |:tp| |:tprevious| |:tabp| |:tabprevious| +
-||:[count]tabp[revious] [count]|| +
-||:[count]tp[revious] [count]|| +
-||:[count]tabN[ext] [count]|| +
-||:[count]bp[revious] [count]|| +
-||:[count]bN[ext] [count]|| +
-________________________________________________________________________________
-Switch to the previous tab or go [count] tabs back. Wraps around from the
-first tab to the last tab.
-________________________________________________________________________________
-
 section::Closing{nbsp}tabs[closing-tabs]
 
 |d| |:tabc| |:tabclose| |:bun| |:bunload| |:bw| |:bwipeout| |:bd| |:bdelete|
@@ -222,6 +218,13 @@ ________________________________________________________________________________
 ||[count]D||
 ________________________________________________________________________________
 Like [m]d[m] but selects the tab to the left of the deleted tab.
+________________________________________________________________________________
+
+
+|:tabo| |:tabonly|
+||:tabo[nly]||
+________________________________________________________________________________
+Close all other tabs.
 ________________________________________________________________________________
 
 
