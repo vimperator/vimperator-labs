@@ -1075,10 +1075,13 @@ const liberator = (function () //{{{
          *
          * @param {string|Object} msg The message to print.
          */
-        dump: function (msg)
+        dump: function ()
         {
-            if (typeof msg == "object")
-                msg = util.objectToString(msg);
+            let msg = Array.map(arguments, function (msg) {
+                if (typeof msg == "object")
+                    msg = util.objectToString(msg);
+                return msg;
+            }).join(", ");
             msg = String.replace(msg, /\n?$/, "\n");
             window.dump(msg.replace(/^./gm, ("config" in modules && config.name.toLowerCase()) + ": $&"));
         },
