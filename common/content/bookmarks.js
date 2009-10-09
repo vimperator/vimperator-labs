@@ -703,7 +703,6 @@ function Bookmarks() //{{{
         getSearchURL: function getSearchURL(text, useDefsearch)
         {
             let url = null;
-            let postData = {};
             let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user
@@ -711,74 +710,66 @@ function Bookmarks() //{{{
             this.getSearchEngines();
 
             // ripped from Firefox
-            if (!window.getShortcutOrURI)
-                window.getShortcutOrURI = function (aURL, aPostDataRef) {
-                    var shortcutURL = null;
-                    var keyword = aURL;
-                    var param = "";
-                    var searchService = Cc['@mozilla.org/browser/search-service;1'].getService(Ci.nsIBrowserSearchService);
-                    var offset = aURL.indexOf(" ");
-                    if (offset > 0)
-                    {
-                        keyword = aURL.substr(0, offset);
-                        param = aURL.substr(offset + 1);
-                    }
-                    if (!aPostDataRef)
-                        aPostDataRef = {};
-                    var engine = searchService.getEngineByAlias(keyword);
-                    if (engine)
-                    {
-                        var submission = engine.getSubmission(param, null);
-                        aPostDataRef.value = submission.postData;
-                        return submission.uri.spec;
-                    }
-                    [shortcutURL, aPostDataRef.value] = PlacesUtils.getURLAndPostDataForKeyword(keyword);
-                    if (!shortcutURL)
-                        return aURL;
-                    var postData = "";
-                    if (aPostDataRef.value)
-                        postData = unescape(aPostDataRef.value);
-                    if (/%s/i.test(shortcutURL) || /%s/i.test(postData))
-                    {
-                        var charset = "";
-                        const re = /^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/;
-                        var matches = shortcutURL.match(re);
-                        if (matches)
-                            [, shortcutURL, charset] = matches;
-                        else
-                        {
-                            try
-                            {
-                                charset = PlacesUtils.history.getCharsetForURI(makeURI(shortcutURL));
-                            }
-                            catch (e) {}
-                        }
-                        var encodedParam = "";
-                        if (charset)
-                            encodedParam = escape(convertFromUnicode(charset, param));
-                        else
-                            encodedParam = encodeURIComponent(param);
-                        shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);
-                        if (/%s/i.test(postData))
-                            aPostDataRef.value = getPostDataStream(postData, param, encodedParam, "application/x-www-form-urlencoded");
-                    }
-                    else if (param)
-                    {
-                        aPostDataRef.value = null;
-                        return aURL;
-                    }
-                    return shortcutURL;
+            function getShortcutOrURI(url) {
+                var shortcutURL = null;
+                var keyword = url;
+                var param = "";
+                var offset = url.indexOf(" ");
+                if (offset > 0)
+                {
+                    keyword = url.substr(0, offset);
+                    param = url.substr(offset + 1);
                 }
 
-            url = window.getShortcutOrURI(searchString, postData);
+                var engine = services.get("browserSearch").getEngineByAlias(keyword);
+                if (engine)
+                {
+                    var submission = engine.getSubmission(param, null);
+                    return [submission.uri.spec, submission.postData];
+                }
+
+                [shortcutURL, postData] = PlacesUtils.getURLAndPostDataForKeyword(keyword);
+                if (!shortcutURL)
+                    return [url, null];
+
+                let data = unescape(postData || "");
+                if (/%s/i.test(shortcutURL) || /%s/i.test(pdata))
+                {
+                    var charset = "";
+                    var matches = shortcutURL.match(/^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/);
+                    if (matches)
+                        [, shortcutURL, charset] = matches;
+                    else
+                    {
+                        try
+                        {
+                            charset = PlacesUtils.history.getCharsetForURI(window.makeURI(shortcutURL));
+                        }
+                        catch (e) {}
+                    }
+                    var encodedParam;
+                    if (charset)
+                        encodedParam = escape(window.convertFromUnicode(charset, param));
+                    else
+                        encodedParam = encodeURIComponent(param);
+                    shortcutURL = shortcutURL.replace(/%s/g, encodedParam).replace(/%S/g, param);
+                    if (/%s/i.test(data))
+                        postData = window.getPostDataStream(data, param, encodedParam, "application/x-www-form-urlencoded");
+                }
+                else if (param)
+                {
+                    return [url, null];
+                }
+                return [shortcutURL, postData];
+            }
+
+            let [url, postData] = getShortcutOrURI(searchString);
 
             if (url == searchString)
-                url = null;
-
-            if (postData && postData.value)
-                return [url, postData.value];
-            else
-                return url; // can be null
+                return null;
+            if (postData)
+                return [url, postData];
+            return url; // can be null
         },
 
         // if openItems is true, open the matching bookmarks items in tabs rather than display
