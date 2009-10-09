@@ -13,7 +13,8 @@ To provide the most authentic CMus/Vim experience, the Songbird toolbar
 is hidden. +
 If you really need it, type: [c]:set guioptions+=T[c] to get it back. +
 If you don't like Xulmus at all, you can uninstall it by typing
-[c]:addons[c] and remove/disable it. +
+[c]:extdelete Xulmus[c] to uninstall it or [c]:extdisable Xulmus[c] to disable
+it. +
 If you like it but can't remember the shortcuts, then press [m]F1[m] or
 [c]:help[c] to get this help window back.
 

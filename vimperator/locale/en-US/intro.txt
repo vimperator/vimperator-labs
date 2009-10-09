@@ -21,7 +21,8 @@ To provide the most authentic Vim experience, the Firefox menubar and toolbar
 are hidden. +
 If you really need them, type: [c]:set guioptions+=mT[c] to get them back. +
 If you don't like Vimperator at all, you can uninstall it by typing
-[c]:addons[c] and remove/disable it. +
+[c]:extdelete Vimperator[c] to uninstall it or [c]:extdisable Vimperator[c] to
+disable it. +
 If you like it but can't remember the shortcuts, then press [m]<F1>[m] or
 [c]:help[c] to get this help window back.
 
