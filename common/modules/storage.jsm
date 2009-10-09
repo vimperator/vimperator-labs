@@ -308,10 +308,10 @@ var storage = {
     alwaysReload: {},
     newObject: function newObject(key, constructor, store, type, options, reload)
     {
-        if (!(key in keys) || reload || key in this.alwaysReload)
+        if (!(key in keys) || reload || this.alwaysReload[key])
         {
-            if (key in this && !reload)
-                throw Error;
+            if (key in this && !(reload || this.alwaysReload[key]))
+                throw Error();
             let load = function () loadPref(key, store, type || Object);
             keys[key] = new constructor(key, store, load, options || {});
             timers[key] = new Timer(1000, 10000, function () storage.save(key));

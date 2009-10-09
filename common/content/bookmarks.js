@@ -39,6 +39,7 @@ function Bookmarks() //{{{
     const bookmarksService = PlacesUtils.bookmarks;
     const taggingService   = PlacesUtils.tagging;
     const faviconService   = services.get("favicon");
+    const livemarkService  = services.get("livemark");
 
     // XXX for strange Firefox bug :(
     // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
@@ -113,6 +114,18 @@ function Bookmarks() //{{{
         }
 
         this.isBookmark = function (id) rootFolders.indexOf(self.findRoot(id)) >= 0;
+
+        this.isRegularBookmark = function findRoot(id)
+        {
+            do
+            {
+                var root = id;
+                if (livemarkService && livemarkService.isLivemark(id))
+                    return false;
+                id = bookmarksService.getFolderIdForItem(id);
+            } while (id != bookmarksService.placesRoot && id != root);
+            return rootFolders.indexOf(root) >= 0;
+        }
 
         // since we don't use a threaded bookmark loading (by set preload)
         // anymore, is this loading synchronization still needed? --mst
@@ -389,11 +402,10 @@ function Bookmarks() //{{{
             if (args.bang)
             {
                 commandline.input("This will delete all bookmarks. Would you like to continue? (yes/[no]) ",
-                    function (resp)
-                    {
+                    function (resp) {
                         if (resp && resp.match(/^y(es)?$/i))
                         {
-                            bookmarks.get("").forEach(function (bmark) { bookmarks.remove(bmark.url); });
+                            cache.bookmarks.forEach(function (bmark) { bookmarksService.removeItem(bmark.id); });
                             liberator.echomsg("All bookmarks deleted", 1, commandline.FORCE_SINGLELINE);
                         }
                     });
@@ -403,7 +415,7 @@ function Bookmarks() //{{{
                 let url = args.string || buffer.URL;
                 let deletedCount = bookmarks.remove(url);
 
-                liberator.echomsg(deletedCount + " bookmark(s) with url `" + url + "' deleted", 1, commandline.FORCE_SINGLELINE);
+                liberator.echomsg(deletedCount + " bookmark(s) with url " + url.quote() + " deleted", 1, commandline.FORCE_SINGLELINE);
             }
 
         },
@@ -587,7 +599,7 @@ function Bookmarks() //{{{
             try
             {
                 return bookmarksService.getBookmarkIdsForURI(makeURI(url), {})
-                    .some(cache.isBookmark);
+                                       .some(cache.isRegularBookmark);
             }
             catch (e)
             {
@@ -598,29 +610,19 @@ function Bookmarks() //{{{
         // returns number of deleted bookmarks
         remove: function remove(url)
         {
-            if (!url)
-                return 0;
-
-            let i = 0;
             try
             {
                 let uri = util.newURI(url);
-                var count = {};
-                let bmarks = bookmarksService.getBookmarkIdsForURI(uri, count);
-
-                for (; i < bmarks.length; i++)
-                    bookmarksService.removeItem(bmarks[i]);
+                let bmarks = bookmarksService.getBookmarkIdsForURI(uri, {})
+                                             .filter(cache.isRegularBookmark);
+                bmarks.forEach(bookmarksService.removeItem);
+                return bmarks.length;
             }
             catch (e)
             {
                 liberator.log(e, 0);
-                return i;
+                return 0;
             }
-
-            // update the display of our "bookmarked" symbol
-            statusline.updateUrl();
-
-            return count.value;
         },
 
         getFavicon: function (url) getFavicon(url),

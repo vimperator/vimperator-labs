@@ -97,6 +97,7 @@ function Services()
     self.add("extensionManager",    "@mozilla.org/extensions/manager;1",                Ci.nsIExtensionManager);
     self.add("favicon",             "@mozilla.org/browser/favicon-service;1",           Ci.nsIFaviconService);
     self.add("json",                "@mozilla.org/dom/json;1",                          Ci.nsIJSON, "createInstance");
+    self.add("livemark",            "@mozilla.org/browser/livemark-service;2",          Ci.nsILivemarkService);
     self.add("observer",            "@mozilla.org/observer-service;1",                  Ci.nsIObserverService);
     self.add("io",                  "@mozilla.org/network/io-service;1",                Ci.nsIIOService);
     self.add("pref",                "@mozilla.org/preferences-service;1",               [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]);

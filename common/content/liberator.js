@@ -1661,7 +1661,7 @@ const liberator = (function () //{{{
             {
                 let obj = {
                     toString: function () error.toString(),
-                    stack: <>{error.stack.replace(/^/mg, "\t")}</>
+                    stack: <>{(error.stack || Error().stack).replace(/^/mg, "\t")}</>
                 };
                 for (let [k, v] in Iterator(error))
                 {
@@ -1671,7 +1671,7 @@ const liberator = (function () //{{{
                 liberator.dump(obj);
                 liberator.dump("");
             }
-            catch (e) {}
+            catch (e) { window.dump(e) }
         },
 
         /**
