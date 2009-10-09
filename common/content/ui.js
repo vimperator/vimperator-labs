@@ -5,6 +5,13 @@
 
 /** @scope modules */
 
+let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;
+
+styles.registerSheet("chrome://liberator/skin/liberator.css");
+let error = styles.addSheet(true, "font-size", "chrome://liberator/content/buffer.xhtml",
+    "body { font-size: " + fontSize + "; }");
+
+
 /**
  * This class is used for prompting of user input and echoing of messages.
  *

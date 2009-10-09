@@ -679,7 +679,8 @@ liberator.registerObserver("load_commands", function () {
             {
                 // List matching keys
                 let str = template.tabular(["Key", "Sample", "CSS"],
-                    ["padding: 0 1em 0 0; vertical-align: top", "text-align: center"],
+                    ["padding: 0 1em 0 0; vertical-align: top",
+                     "text-align: center"],
                     ([h.class,
                       <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
                       template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g)]

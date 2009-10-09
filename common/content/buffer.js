@@ -20,13 +20,6 @@ function Buffer() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    // FIXME: This doesn't belong here.
-    let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;
-
-    styles.registerSheet("chrome://liberator/skin/liberator.css");
-    let error = styles.addSheet(true, "font-size", "chrome://liberator/content/buffer.xhtml",
-        "body { font-size: " + fontSize + "; }");
-
     if ("ZoomManager" in window)
     {
         const ZOOM_MIN = Math.round(ZoomManager.MIN * 100);
@@ -186,14 +179,16 @@ function Buffer() //{{{
     function openUploadPrompt(elem)
     {
         commandline.input("Upload file: ", function (path) {
-                let file = io.getFile(path);
+            let file = io.getFile(path);
+            if (!file.exists())
+                return void liberator.beep();
 
-                if (!file.exists())
-                    return liberator.beep();
-
-                elem.value = file.path;
+            elem.value = file.path;
         },
-        { completer: completion.file, default: elem.value });
+        {
+            completer: completion.file,
+            default: elem.value
+        });
     }
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -780,13 +775,11 @@ function Buffer() //{{{
                 var type = data.type && data.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
-                isFeed = (type == "application/rss+xml" || type == "application/atom+xml");
+                isFeed = ["application/rss+xml", "application/atom+xml"].indexOf(type) >= 0;
                 if (!isFeed)
                 {
                     // really slimy: general XML types with magic letters in the title
-                    const titleRegex = /(^|\s)rss($|\s)/i;
-                    isFeed = ((type == "text/xml" || type == "application/rdf+xml" || type == "application/xml")
-                        && titleRegex.test(data.title));
+                    isFeed = type in feedTypes && /\brss\b/i.test(data.title);
                 }
             }
 
@@ -824,7 +817,7 @@ function Buffer() //{{{
                 if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
                 {
                     nFeed++;
-                    let type = feedTypes[feed.type] || feedTypes["application/rss+xml"];
+                    let type = feedTypes[feed.type] || "RSS";
                     if (verbose)
                         yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
                 }
@@ -971,45 +964,27 @@ function Buffer() //{{{
         /**
          * @property {number} The buffer's height in pixels.
          */
-        get pageHeight()
-        {
-            return window.content.innerHeight;
-        },
+        get pageHeight() window.content.innerHeight,
 
         /**
          * @property {number} The current browser's text zoom level, as a
          *     percentage with 100 as 'normal'. Only affects text size.
          */
-        get textZoom()
-        {
-            return getBrowser().markupDocumentViewer.textZoom * 100;
-        },
-        set textZoom(value)
-        {
-            setZoom(value, false);
-        },
+        get textZoom() getBrowser().markupDocumentViewer.textZoom * 100,
+        set textZoom(value) { setZoom(value, false); },
 
         /**
          * @property {number} The current browser's text zoom level, as a
          *     percentage with 100 as 'normal'. Affects text size, as well as
          *     image size and block size.
          */
-        get fullZoom()
-        {
-            return getBrowser().markupDocumentViewer.fullZoom * 100;
-        },
-        set fullZoom(value)
-        {
-            setZoom(value, true);
-        },
+        get fullZoom() getBrowser().markupDocumentViewer.fullZoom * 100,
+        set fullZoom(value) { setZoom(value, true); },
 
         /**
          * @property {string} The current document's title.
          */
-        get title()
-        {
-            return window.content.document.title;
-        },
+        get title() window.content.document.title,
 
         /**
          * @property {number} The buffer's horizontal scroll percentile.
@@ -2025,8 +2000,9 @@ function Marks() //{{{
                     return void liberator.echoerr("E283: No marks matching " + filter.quote());
             }
 
-            let list = template.tabular(["mark", "line", "col", "file"],
-                ["", "text-align: right", "text-align: right", "color: green"],
+            let list = template.tabular(
+                ["Mark",   "Line",              "Column",            "File"],
+                ["",       "text-align: right", "text-align: right", "color: green"],
                 ([mark[0],
                   Math.round(mark[1].position.x * 100) + "%",
                   Math.round(mark[1].position.y * 100) + "%",
