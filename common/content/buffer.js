@@ -86,12 +86,12 @@ function Buffer() //{{{
         {
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode)
             {
-                let size = elem[size];
+                let realSize = elem[size];
                 let style = util.computedStyle(elem);
                 // Stupid Gecko eccentricities. May fail for quirks mode documents.
                 if (style[overflow] == "hidden")
-                    size += parseInt(style[border1]) + style[border2];
-                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] + size < elem[max])
+                    realSize += parseInt(style[border1]) + style[border2];
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] + realSize < elem[max])
                     break;
             }
             return elem;
