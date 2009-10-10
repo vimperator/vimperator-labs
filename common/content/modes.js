@@ -255,7 +255,7 @@ const modes = (function () //{{{
     self.addMode("VISUAL",   { char: "v", display: function () "VISUAL" + (extended & modes.LINE ? " LINE" : "") });
     self.addMode("COMMAND_LINE", { char: "c", input: true });
     self.addMode("CARET"); // text cursor is visible
-    self.addMode("TEXTAREA", { char: "i", input: true }); // text cursor is in a HTMLTextAreaElement
+    self.addMode("TEXTAREA", { char: "i" });
     self.addMode("EMBED",    { input: true });
     self.addMode("CUSTOM",   { display: function () plugins.mode });
     // extended modes, can include multiple modes, and even main modes
