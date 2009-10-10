@@ -494,10 +494,13 @@ ____
 |\'noim'| |\'noinsertmode'| |\'im'| |\'insertmode'| +
 ||'insertmode' 'im'|| boolean (default: on)
 ____
-Use Insert mode as the default for text areas.
-Makes Vimperator work in a way that Insert mode is the default mode for text areas.
-Useful if you want to use Vimperator as a modeless editor, keeping the known Firefox interface for editing text areas.
+Use Insert mode as the default for text areas. This is useful if you want to
+use the known Firefox interface for editing text areas. Input fields default to
+this behaviour irrespective of this option's setting.
+
+Textarea mode can be entered with *<C-t>* from Insert mode.
 ____
+// TODO: <C-t> is not hyperlinked as it's not documented yet.
 
 
 |\'ls'| |\'laststatus'| +

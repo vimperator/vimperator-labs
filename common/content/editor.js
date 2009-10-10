@@ -320,7 +320,7 @@ function Editor() //{{{
 
     // FIXME: <esc> does not work correctly
     mappings.add([modes.INSERT],
-        ["<C-t>"], "Edit text field in vi mode",
+        ["<C-t>"], "Edit text field in Vi mode",
         function () { liberator.mode = modes.TEXTAREA; });
 
     mappings.add([modes.INSERT],

@@ -38,6 +38,7 @@ BUGS:
 - The MOW shouldn't close when executing hints and ;F isn't working.
 
 FEATURES:
+8 Document Textarea, Caret and Visual modes.
 8 Incremental searches should retreat to their starting position on <Backspace>
 8 Replace config.name tests in liberator with more specific feature
   tests or overridable APIs where at all feasible.

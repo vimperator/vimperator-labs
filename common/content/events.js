@@ -1314,7 +1314,7 @@ function Events() //{{{
                 if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable == "true"))
                 {
                     if (options["insertmode"])
-                        modes.set(modes.INSERT, modes.TEXTAREA);
+                        modes.set(modes.INSERT);
                     else if (elem.selectionEnd - elem.selectionStart > 0)
                         modes.set(modes.VISUAL, modes.TEXTAREA);
                     else
@@ -1374,6 +1374,7 @@ function Events() //{{{
         {
             if (modes.passNextKey)
                 return;
+
             if (modes.passAllKeys)
             {
                 modes.passAllKeys = false;
@@ -1403,12 +1404,35 @@ function Events() //{{{
 
                 case modes.CARET:
                     // setting this option will trigger an observer which will
-                    // care about all other details like setting the NORMAL mode
+                    // take care of all other details like setting the NORMAL
+                    // mode
                     options.setPref("accessibility.browsewithcaret", false);
                     break;
 
+                case modes.TEXTAREA:
+                    // TODO: different behaviour for text areas and other input
+                    // fields seems unnecessarily complicated. If the user
+                    // likes Vi-mode then they probably like it for all input
+                    // fields, if not they can enter it explicitly for only
+                    // text areas.  The mode name TEXTAREA is confusing and
+                    // would be better replaced with something indicating that
+                    // it's a Vi editing mode. Extended modes really need to be
+                    // displayed too. --djk
+                    function isInputField()
+                    {
+                        let elem = liberator.focus;
+                        return ((elem instanceof HTMLInputElement && !/image/.test(elem.type))
+                              || elem instanceof HTMLIsIndexElement);
+                    }
+
+                    if (options["insertmode"] || isInputField())
+                        liberator.mode = modes.INSERT;
+                    else
+                        modes.reset();
+                    break;
+
                 case modes.INSERT:
-                    if ((modes.extended & modes.TEXTAREA) && !options["insertmode"])
+                    if ((modes.extended & modes.TEXTAREA))
                         liberator.mode = modes.TEXTAREA;
                     else
                         modes.reset();
