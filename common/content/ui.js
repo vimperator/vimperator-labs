@@ -34,23 +34,25 @@ function CommandLine() //{{{
     storage.newObject("sanitize", function () {
         ({
             CLEAR: "browser:purge-session-history",
+            QUIT:  "quit-application",
             init: function ()
             {
                 services.get("observer").addObserver(this, this.CLEAR, false);
-                services.get("observer").addObserver(this, "quit-application", false);
+                services.get("observer").addObserver(this, this.QUIT, false);
             },
             observe: function (subject, topic, data)
             {
-                if (topic == this.CLEAR)
+                switch (topic)
                 {
-                    ["search", "command"].forEach(function (mode) {
-                        History(null, mode).sanitize();
-                    });
-                }
-                else if (topic == "quit-application")
-                {
-                    services.get("observer").removeObserver(this, this.CLEAR);
-                    services.get("observer").removeObserver(this, "quit-application");
+                    case this.CLEAR:
+                        ["search", "command"].forEach(function (mode) {
+                            History(null, mode).sanitize();
+                        });
+                        break;
+                    case this.QUIT:
+                        services.get("observer").removeObserver(this, this.CLEAR);
+                        services.get("observer").removeObserver(this, this.QUIT);
+                        break;
                 }
             }
         }).init();
@@ -2253,32 +2255,24 @@ function StatusLine() //{{{
         /**
          * Display the correct tabcount (e.g., [1/5]) on the status bar.
          *
-         * @param {number} currentIndex The 1-based index of the
-         *     currently selected tab. @optional
-         * @param {number} totalTabs The total number of tabs. @optional
+         * @param {bool} delayed When true, update count after a
+         *      brief timeout. Useful in the many cases when an
+         *      event that triggers an update is broadcast before
+         *      the tab state is fully updated.
          */
-        updateTabCount: function updateTabCount(currentIndex, totalTabs)
+        updateTabCount: function updateTabCount(delayed)
         {
-            if (!liberator.has("tabs"))
+            if (liberator.has("tabs"))
             {
-                tabCountWidget = "";
-                return;
-            }
+                if (delayed)
+                    return void setTimeout(function () statusline.updateTabCount(false), 0);
 
-            // update the ordinal which is used for numbered tabs only when the user has
-            // tab numbers set
-            if (options.get("guioptions").has("n", "N"))
-            {
+                // update the ordinal which is used for numbered tabs
                 for (let [i, tab] in util.Array.iteritems(getBrowser().mTabs))
                     tab.setAttribute("ordinal", i + 1);
+
+                tabCountWidget.value = "[" + (tabs.index() + 1) + "/" + tabs.count + "]";
             }
-
-            if (!currentIndex || typeof currentIndex != "number")
-                currentIndex = tabs.index() + 1;
-            if (!totalTabs || typeof currentIndex != "number")
-                totalTabs = tabs.count;
-
-            tabCountWidget.value = "[" + currentIndex + "/" + totalTabs + "]";
         },
 
         /**

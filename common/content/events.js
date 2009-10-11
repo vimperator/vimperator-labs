@@ -350,19 +350,19 @@ function Events() //{{{
             let tabContainer = tabs.getBrowser().mTabContainer;
 
             tabContainer.addEventListener("TabMove", function (event) {
-                statusline.updateTabCount();
+                statusline.updateTabCount(true);
             }, false);
             tabContainer.addEventListener("TabOpen", function (event) {
-                statusline.updateTabCount();
+                statusline.updateTabCount(true);
             }, false);
             tabContainer.addEventListener("TabClose", function (event) {
-                statusline.updateTabCount();
+                statusline.updateTabCount(true);
             }, false);
             tabContainer.addEventListener("TabSelect", function (event) {
                 // TODO: is all of that necessary?
+                //       I vote no. --Kris
                 modes.reset();
-                // XXX: apparently the tab container hasn't updated mTabs yet
-                setTimeout(function () { statusline.updateTabCount(); }, 0);
+                statusline.updateTabCount(true);
                 tabs.updateSelectionHistory();
 
                 if (options["focuscontent"])
