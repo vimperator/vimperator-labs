@@ -2268,8 +2268,9 @@ function StatusLine() //{{{
                     return void setTimeout(function () statusline.updateTabCount(false), 0);
 
                 // update the ordinal which is used for numbered tabs
-                for (let [i, tab] in util.Array.iteritems(getBrowser().mTabs))
-                    tab.setAttribute("ordinal", i + 1);
+                if (options.get("guioptions").has("n", "N"))
+                    for (let [i, tab] in util.Array.iteritems(getBrowser().mTabs))
+                        tab.setAttribute("ordinal", i + 1);
 
                 tabCountWidget.value = "[" + (tabs.index() + 1) + "/" + tabs.count + "]";
             }
