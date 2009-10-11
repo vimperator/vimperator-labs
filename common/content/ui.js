@@ -1336,7 +1336,7 @@ function CommandLine() //{{{
                 if (events.isAcceptKey(key))
                 {
                     let mode = currentExtendedMode; // save it here, as modes.pop() resets it
-                    keepCommand = true;
+                    keepCommand = !userContext.hidden_option_no_command_afterimage;
                     currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                     modes.pop(!this.silent);
                     commandline.triggerCallback("submit", mode, command);
