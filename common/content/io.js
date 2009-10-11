@@ -141,6 +141,9 @@ function IO() //{{{
     downloadManager.addListener(downloadListener);
     liberator.registerObserver("shutdown", function () {
         downloadManager.removeListener(downloadListener);
+        for (let [, plugin] in Iterator(plugins.contexts))
+            if (plugin.onUnload)
+                plugin.onUnload();
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
