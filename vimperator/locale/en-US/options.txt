@@ -218,8 +218,8 @@ ____
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
 List of directories searched when executing the [c]:cd[c] command. This is
-only used for relative paths if an absolute path is specified then the option
-is ignored.
+only used for relative paths; for absolute paths the option is ignored. An
+empty string between two commas (,,) means to search in the current directory.
 ____
 
 
@@ -457,17 +457,6 @@ Number of Ex commands and search patterns to store in the command-line history.
 ____
 
 
-|\'noprivate'| |\'private'| +
-||'private'|| boolean (default: off)
-____
-Set the "private browsing" option. In private browsing mode history, cache
-files, cookies, form data, passwords, download list entries, local and URL
-marks, command-line history and macros are available only for the duration of
-the private browsing session and deleted when returning to normal browsing
-mode.
-____
-
-
 |\'nohls'| |\'nohlsearch'| |\'hls'| |\'hlsearch'| +
 ||'hlsearch' 'hls'|| boolean (default: off)
 ____
@@ -645,6 +634,17 @@ Patterns to use when guessing the \'previous' page in a document sequence when
 the user hits [c][[[c]. Each pattern, in order, is matched against all links
 in the page with the first match being used. The patterns are case insensitive
 regular expressions and the link elements are those defined by 'hinttags'.
+____
+
+
+|\'noprivate'| |\'private'| +
+||'private'|| boolean (default: off)
+____
+Set the "private browsing" option. In private browsing mode history, cache
+files, cookies, form data, passwords, download list entries, local and URL
+marks, command-line history and macros are available only for the duration of
+the private browsing session and deleted when returning to normal browsing
+mode.
 ____
 
 

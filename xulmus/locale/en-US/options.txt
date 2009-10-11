@@ -218,8 +218,8 @@ ____
 ||'cdpath' 'cd'|| string (default: equivalent to _$CDPATH_ or ",,")
 ____
 List of directories searched when executing the [c]:cd[c] command. This is
-only used for relative paths if an absolute path is specified then the option
-is ignored.
+only used for relative paths; for absolute paths the option is ignored. An
+empty string between two commas (,,) means to search in the current directory.
 ____
 
 
