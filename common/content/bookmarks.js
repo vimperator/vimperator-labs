@@ -733,7 +733,7 @@ function Bookmarks() //{{{
                     return [url, null];
 
                 let data = unescape(postData || "");
-                if (/%s/i.test(shortcutURL) || /%s/i.test(pdata))
+                if (/%s/i.test(shortcutURL) || /%s/i.test(data))
                 {
                     var charset = "";
                     var matches = shortcutURL.match(/^(.*)\&mozcharset=([a-zA-Z][_\-a-zA-Z0-9]+)\s*$/);
