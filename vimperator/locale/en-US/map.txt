@@ -387,7 +387,7 @@ properties, describing the completions and where the replacement is to start.
 
 *start* is the index into the word being completed at which the returned values
 should be applied and *completions* is a two dimensional array of the form:
-[[arg1, description1], [arg2, description2], ...]
+$$[[arg1, description1], [arg2, description2], ...]$$
 
 // TODO: add examples
 
