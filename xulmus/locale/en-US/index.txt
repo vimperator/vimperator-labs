@@ -259,9 +259,13 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:messages[c]|| Display previously given messages +
 ||[c]:messclear[c]|| Clear the message history +
 ||[c]:mkxulmusrc[c]|| Write current key mappings and changed options to the config file +
+||[c]:nmap[c]|| Map a key sequence in Normal mode +
+||[c]:nmapclear[c]|| Remove all mappings in Normal mode +
+||[c]:nnoremap[c]|| Map a key sequence without remapping keys in Normal mode +
 ||[c]:nohlsearch[c]|| Remove the search highlighting +
 ||[c]:noremap[c]|| Map a key sequence without remapping keys +
 ||[c]:normal[c]|| Execute Normal mode commands +
+||[c]:nunmap[c]|| Remove a mapping in Normal mode +
 ||[c]:open[c]|| Open one or more URLs in the current tab +
 ||[c]:optionusage[c]|| List all options with a short description +
 ||[c]:pageinfo[c]|| Show various page information +
@@ -272,7 +276,11 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:playerplay[c]|| Play the current track +
 ||[c]:playerprev[c]|| Play the previous track +
 ||[c]:playerstop[c]|| Stop playing the current track +
+||[c]:pmap[c]|| Map a key sequence in Player mode +
+||[c]:pmapclear[c]|| Remove all mappings in Player mode +
+||[c]:pnoremap[c]|| Map a key sequence without remapping keys in Player mode +
 ||[c]:preferences[c]|| Show Songbird preferences dialog +
+||[c]:punmap[c]|| Remove a mapping in Player mode +
 ||[c]:pwd[c]|| Print the current directory name +
 ||[c]:qmark[c]|| Mark a URL with a letter for quick access +
 ||[c]:qmarks[c]|| Show all QuickMarks +
@@ -295,6 +303,9 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:stop[c]|| Stop loading the current web page +
 ||[c]:stopall[c]|| Stop loading all tab pages +
 ||[c]:style[c]|| Style Xulmus and web sites +
+||[c]:styledisable[c]|| Disable a user style sheet +
+||[c]:styleenable[c]|| Enable a user style sheet +
+||[c]:styletoggle[c]|| Toggle a user style sheet +
 ||[c]:tab[c]|| Execute a command and tell it to output in a new tab +
 ||[c]:tabattach[c]|| Attach the current tab to another window +
 ||[c]:tabdetach[c]|| Detach current tab to its own window +
@@ -308,9 +319,9 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:tabprevious[c]|| Switch to the previous tab or go [count] tabs back +
 ||[c]:tabrewind[c]|| Switch to the first tab +
 ||[c]:time[c]|| Profile a piece of code or run a command multiple times +
-||[c]toolbarhide[c]|| Hide the named toolbar +
-||[c]toolbarshow[c]|| Show the named toolbar +
-||[c]toolbartoggle[c]|| Toggle the named toolbar +
+||[c]:toolbarhide[c]|| Hide the named toolbar +
+||[c]:toolbarshow[c]|| Show the named toolbar +
+||[c]:toolbartoggle[c]|| Toggle the named toolbar +
 ||[c]:unabbreviate[c]|| Remove an abbreviation +
 ||[c]:undo[c]|| Undo closing of a tab +
 ||[c]:undoall[c]|| Undo closing of all closed tabs +
@@ -321,6 +332,10 @@ section::Ex{nbsp}commands[ex-cmd-index,:index]
 ||[c]:viewsource[c]|| View source code of current document +
 ||[c]:viusage[c]|| List all mappings with a short description +
 ||[c]:volume[c]|| Set the player volume +
+||[c]:vmap[c]|| Map a key sequence in Visual mode +
+||[c]:vmapclear[c]|| Remove all mappings in Visual mode +
+||[c]:vnoremap[c]|| Map a key sequence without remapping keys in Visual mode +
+||[c]:vunmap[c]|| Remove a mapping in Visual mode +
 ||[c]:winclose[c]|| Close window +
 ||[c]:winopen[c]|| Open one or more URLs in a new window +
 ||[c]:wqall[c]|| Save the session and quit +
@@ -338,7 +353,7 @@ section::Options[option-index]
 ||'eventignore'|| List of autocommand event names which should be ignored +
 ||'exrc'|| Allow reading of an RC file in the current directory +
 ||'extendedhinttags'|| XPath string of hintable elements activated by [m];[m] +
-||'fileencoding'|| Changes the character encoding that Vimperator uses to read and write files +
+||'fileencoding'|| Changes the character encoding that Xulmus uses to read and write files +
 ||'focuscontent'|| Try to stay in Normal mode after loading a web page +
 ||'followhints'|| Change the behaviour of [m]<Return>[m] in Hints mode +
 ||'fullscreen'|| Show the current window fullscreen +
