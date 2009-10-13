@@ -12,7 +12,7 @@ function Hints() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    const ELEM = 0, TEXT = 1, SPAN = 2, IMGSPAN = 3;
+    const ELEM = 0, TEXT = 1, SPAN = 2, IMG_SPAN = 3;
 
     var myModes = config.browserModes;
 
@@ -24,7 +24,7 @@ function Hints() //{{{
     var prevInput = "";    // record previous user input type, "text" || "number"
     var extendedhintCount;  // for the count argument of Mode#action (extended hint only)
 
-    // hints[] = [elem, text, span, imgspan, elem.style.backgroundColor, elem.style.color]
+    // hints[] = [elem, text, span, imgSpan, elem.style.backgroundColor, elem.style.color]
     var pageHints = [];
     var validHints = []; // store the indices of the "hints" array with valid elements
 
@@ -115,12 +115,12 @@ function Hints() //{{{
      * neighbouring element might look like a label. Only called by generate().
      *
      * If it finds a hint it returns it, if the hint is not the caption of the
-     * element it will return showtext=true.
+     * element it will return showText=true.
      *
      * @param {Object} elem The element used to generate hint text.
      * @param {Document} doc The containing document.
      *
-     * @returns [text, showtext]
+     * @returns [text, showText]
      */
     function getInputHint(elem, doc)
     {
@@ -128,7 +128,7 @@ function Hints() //{{{
         // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
         // <input type="password">              Never use the value, use label or name
         // <input type="text|file"> <textarea>  Use value if set or label or name
-        // <input type="image">                 Use the alt text if present (showtext) or label or name
+        // <input type="image">                 Use the alt text if present (showText) or label or name
         // <input type="hidden">                Never gets here
         // <select>                             Use the text of the selected item or label or name
 
@@ -183,69 +183,69 @@ function Hints() //{{{
      * Only called by generate().
      *
      * @param {Object} elem  The <area> element.
-     * @param {number} leftpos  The left offset of the image.
-     * @param {number} toppos  The top offset of the image.
-     * @returns [leftpos, toppos]  The updated offsets.
+     * @param {number} leftPos  The left offset of the image.
+     * @param {number} topPos  The top offset of the image.
+     * @returns [leftPos, topPos]  The updated offsets.
      */
-    function getAreaOffset(elem, leftpos, toppos)
+    function getAreaOffset(elem, leftPos, topPos)
     {
         try
         {
             // Need to add the offset to the area element.
             // Always try to find the top-left point, as per liberator default.
             let shape = elem.getAttribute("shape").toLowerCase();
-            let coordstr = elem.getAttribute("coords");
+            let coordStr = elem.getAttribute("coords");
             // Technically it should be only commas, but hey
-            coordstr = coordstr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
-            let coords = coordstr.split(",").map(Number);
+            coordStr = coordStr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
+            let coords = coordStr.split(",").map(Number);
 
             if ((shape == "rect" || shape == "rectangle") && coords.length == 4)
             {
-                leftpos += coords[0];
-                toppos += coords[1];
+                leftPos += coords[0];
+                topPos += coords[1];
             }
             else if (shape == "circle" && coords.length == 3)
             {
-                leftpos += coords[0] - coords[2] / Math.sqrt(2);
-                toppos += coords[1] - coords[2] / Math.sqrt(2);
+                leftPos += coords[0] - coords[2] / Math.sqrt(2);
+                topPos += coords[1] - coords[2] / Math.sqrt(2);
             }
             else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0)
             {
-                let leftbound = Infinity;
-                let topbound = Infinity;
+                let leftBound = Infinity;
+                let topBound = Infinity;
 
                 // First find the top-left corner of the bounding rectangle (offset from image topleft can be noticably suboptimal)
                 for (let i = 0; i < coords.length; i += 2)
                 {
-                    leftbound = Math.min(coords[i], leftbound);
-                    topbound = Math.min(coords[i + 1], topbound);
+                    leftBound = Math.min(coords[i], leftBound);
+                    topBound = Math.min(coords[i + 1], topBound);
                 }
 
-                let curtop = null;
-                let curleft = null;
-                let curdist = Infinity;
+                let curTop = null;
+                let curLeft = null;
+                let curDist = Infinity;
 
                 // Then find the closest vertex. (we could generalise to nearest point on an edge, but I doubt there is a need)
                 for (let i = 0; i < coords.length; i += 2)
                 {
-                    let leftoffset = coords[i] - leftbound;
-                    let topoffset = coords[i + 1] - topbound;
-                    let dist = Math.sqrt(leftoffset * leftoffset + topoffset * topoffset);
-                    if (dist < curdist)
+                    let leftOffset = coords[i] - leftBound;
+                    let topOffset = coords[i + 1] - topBound;
+                    let dist = Math.sqrt(leftOffset * leftOffset + topOffset * topOffset);
+                    if (dist < curDist)
                     {
-                        curdist = dist;
-                        curleft = coords[i];
-                        curtop = coords[i + 1];
+                        curDist = dist;
+                        curLeft = coords[i];
+                        curTop = coords[i + 1];
                     }
                 }
 
                 // If we found a satisfactory offset, let's use it.
-                if (curdist < Infinity)
-                    return [leftpos + curleft, toppos + curtop];
+                if (curDist < Infinity)
+                    return [leftPos + curLeft, topPos + curTop];
             }
         }
         catch (e) {} // badly formed document, or shape == "default" in which case we don't move the hint
-        return [leftpos, toppos];
+        return [leftPos, topPos];
     }
 
     // the containing block offsets with respect to the viewport
@@ -283,14 +283,14 @@ function Hints() //{{{
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
-        let elem, text, span, rect, showtext;
+        let elem, text, span, rect, showText;
         let res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         let start = pageHints.length;
         for (let elem in res)
         {
-            showtext = false;
+            showText = false;
 
             // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
@@ -306,23 +306,23 @@ function Hints() //{{{
                 continue;
 
             if (elem instanceof HTMLInputElement || elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
-                [text, showtext] = getInputHint(elem, doc);
+                [text, showText] = getInputHint(elem, doc);
             else
                 text = elem.textContent.toLowerCase();
 
             span = baseNodeAbsolute.cloneNode(true);
 
-            let leftpos = Math.max((rect.left + offsetX), offsetX);
-            let toppos =  Math.max((rect.top + offsetY), offsetY);
+            let leftPos = Math.max((rect.left + offsetX), offsetX);
+            let topPos =  Math.max((rect.top + offsetY), offsetY);
 
             if (elem instanceof HTMLAreaElement)
-                [leftpos, toppos] = getAreaOffset(elem, leftpos, toppos);
+                [leftPos, topPos] = getAreaOffset(elem, leftPos, topPos);
 
-            span.style.left = leftpos + "px";
-            span.style.top =  toppos + "px";
+            span.style.left = leftPos + "px";
+            span.style.top =  topPos + "px";
             fragment.appendChild(span);
 
-            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showtext]);
+            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showText]);
         }
 
         if (doc.body)
@@ -377,7 +377,7 @@ function Hints() //{{{
     function showHints()
     {
 
-        let elem, text, rect, span, imgspan, _a, _b, showtext;
+        let elem, text, rect, span, imgSpan, _a, _b, showText;
         let hintnum = 1;
         let validHint = hintMatcher(hintString.toLowerCase());
         let activeHint = hintNumber || 1;
@@ -391,12 +391,12 @@ function Hints() //{{{
             for (let i in (util.interruptibleRange(start, end + 1, 500)))
             {
                 let hint = pageHints[i];
-                [elem, text, span, imgspan, _a, _b, showtext] = hint;
+                [elem, text, span, imgSpan, _a, _b, showText] = hint;
 
                 let valid = validHint(text);
                 span.style.display = (valid ? "" : "none");
-                if (imgspan)
-                    imgspan.style.display = (valid ? "" : "none");
+                if (imgSpan)
+                    imgSpan.style.display = (valid ? "" : "none");
 
                 if (!valid)
                 {
@@ -406,27 +406,27 @@ function Hints() //{{{
 
                 if (text == "" && elem.firstChild && elem.firstChild instanceof HTMLImageElement)
                 {
-                    if (!imgspan)
+                    if (!imgSpan)
                     {
                         rect = elem.firstChild.getBoundingClientRect();
                         if (!rect)
                             continue;
 
-                        imgspan = util.xmlToDom(<span highlight="Hint"/>, doc);
-                        imgspan.setAttributeNS(NS.uri, "class", "HintImage");
-                        imgspan.style.left = (rect.left + offsetX) + "px";
-                        imgspan.style.top = (rect.top + offsetY) + "px";
-                        imgspan.style.width = (rect.right - rect.left) + "px";
-                        imgspan.style.height = (rect.bottom - rect.top) + "px";
-                        hint[IMGSPAN] = imgspan;
-                        span.parentNode.appendChild(imgspan);
+                        imgSpan = util.xmlToDom(<span highlight="Hint"/>, doc);
+                        imgSpan.setAttributeNS(NS.uri, "class", "HintImage");
+                        imgSpan.style.left = (rect.left + offsetX) + "px";
+                        imgSpan.style.top = (rect.top + offsetY) + "px";
+                        imgSpan.style.width = (rect.right - rect.left) + "px";
+                        imgSpan.style.height = (rect.bottom - rect.top) + "px";
+                        hint[IMG_SPAN] = imgSpan;
+                        span.parentNode.appendChild(imgSpan);
                     }
-                    setClass(imgspan, activeHint == hintnum);
+                    setClass(imgSpan, activeHint == hintnum);
                 }
 
-                span.setAttribute("number", showtext ? hintnum + ": " + text.substr(0, 50) : hintnum);
-                if (imgspan)
-                    imgspan.setAttribute("number", hintnum);
+                span.setAttribute("number", showText ? hintnum + ": " + text.substr(0, 50) : hintnum);
+                if (imgSpan)
+                    imgSpan.setAttribute("number", hintnum);
                 else
                     setClass(elem, activeHint == hintnum);
                 validHints.push(elem);
