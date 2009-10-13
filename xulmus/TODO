@@ -10,6 +10,7 @@ BUGS:
 
 FEATURES:
 9 '?' - Reusing '/'.
+8 Merge with SongBird's sanitizer implementation.
 8 Playlist/SmartPlaylist operations & meta-data operations.
 8 Sort-View commands.
 7 Queue view.
