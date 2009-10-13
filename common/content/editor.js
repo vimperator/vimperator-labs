@@ -318,7 +318,6 @@ function Editor() //{{{
         ["<C-i>"], "Edit text field with an external editor",
         function () { editor.editFieldExternally(); });
 
-    // FIXME: <esc> does not work correctly
     mappings.add([modes.INSERT],
         ["<C-t>"], "Edit text field in Vi mode",
         function () { liberator.mode = modes.TEXTAREA; });
