@@ -5,12 +5,12 @@ LOGO
 mutt.*
 +++</center>+++
 
-section:Introduction[intro]
+section::Introduction[intro]
 
-http://muttator.mozdev.org[Muttator] is a free browser add-on for Thunderbird,
-which makes it look and behave like the http://www.vim.org[Vim]
-text editor. It has similar key bindings, and you could call it a modal
-mail client, as key bindings differ according to which mode you are in.
+http://vimperator.org/muttator[Muttator] is a free browser add-on for
+Thunderbird, which makes it look and behave like the http://www.vim.org[Vim]
+text editor. It has similar key bindings, and you could call it a modal mail
+client, as key bindings differ according to which mode you are in.
 
 |warning| +
 Warning:
@@ -26,9 +26,9 @@ Muttator was written by mailto:stubenschrott@vimperator.org[Martin Stubenschrott
 If you appreciate my work on Muttator and want to encourage me working on it
 more, you can either send me greetings, patches or make a donation:
 
-NOTE: If this link does not work, go to http://muttator.mozdev.org and click
-the donation button there, because Thunderbird seems to have a problem when
-this link is inside an e-mail (which this help screen actually is).
+NOTE: If this link does not work, go to http://vimperator.org/muttator and
+click the donation button there, because Thunderbird seems to have a problem
+when this link is inside an e-mail (which this help screen actually is).
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 <!-- the PAYPAL code -->
@@ -47,7 +47,7 @@ Of course as a believer in free open source software, only make a donation
 if you really like Muttator and the money doesn't hurt -- otherwise just use
 it, recommend it and like it :)
 
-section:Help{nbsp}topics[overview]
+section::Help{nbsp}topics[overview]
 
 //TO BE WRITTEN...
 
@@ -74,7 +74,7 @@ out about available mappings, commands and options. When in Message mode
 You can also jump directly to the help of a specific command with [c]:help
 o[c] or [c]:help :set[c].
 
-section:Features[features]
+section::Features[features]
 
 * Vim-like keybindings ([m]h[m], [m]j[m], [m]k[m], [m]l[m],
   [m]gg[m], [m]G[m], [m]0[m], [m]$[m], [m]ZZ[m], [m]<C-f>[m], etc.)
@@ -86,7 +86,7 @@ section:Features[features]
   [c]:set guioptions=f[c])
 * Ability to [c]:source[c] JavaScript files, and to use a [a]~/.muttatorrc[a]
   file with syntax highlighting if you install
-  http://vimperator.org/trac/ticket/328[muttator.vim]
+  http://code.google.com/p/vimperator-labs/issues/detail?id=51[muttator.vim]
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 messages)
 * Beep on errors
 * [c]:map[c] support (and feedkeys() for script writers)
@@ -95,12 +95,18 @@ section:Features[features]
 
 // * A comprehensive help file, explaining all commands, mappings and options.
 
-section:Contact[contact]
+section::Contact[contact]
 
-Please send comments/bug reports/patches to the mailing list, where I will
-properly answer any questions. You can also join the #vimperator IRC channel
-on irc.freenode.net or check the Wiki for frequently asked questions. Make
-sure, you have read the TODO file first, as I am aware of many things which
-can be improved when I find time for it or get patches.
+Please send comments/bug reports/patches to the mailing list, where we will
+properly answer any questions. You can also join the
++++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC channel
+on http://www.freenode.net/[Freenode] or check the
+http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-muttator[Wiki]
+for
+http://code.google.com/p/vimperator-labs/wiki/MuttatorFAQ[frequently asked
+questions (FAQ)]. Make sure, you have read the
+http://vimperator-labs.googlecode.com/hg/muttator/TODO[TODO] file first, as we
+are aware of many things which can be improved when we find time for it or
+receive patches.
 
 // vim: set filetype=asciidoc:

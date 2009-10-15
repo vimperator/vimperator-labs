@@ -10,10 +10,10 @@ VIMperator :)
 
 heading::Introduction[intro]
 
-http://vimperator.org[Vimperator] is a free browser add-on for Firefox,
-which makes it look and behave like the http://www.vim.org[Vim]
-text editor. It has similar key bindings, and you could call it a modal
-web browser, as key bindings differ according to which mode you are in.
+http://vimperator.org/vimperator[Vimperator] is a free browser add-on for
+Firefox, which makes it look and behave like the http://www.vim.org[Vim] text
+editor. It has similar key bindings, and you could call it a modal web browser,
+as key bindings differ according to which mode you are in.
 
 |warning| +
 Warning:
@@ -28,11 +28,11 @@ If you like it but can't remember the shortcuts, then press [m]<F1>[m] or
 |author| |donation| |sponsor| +
 Vimperator was initially written by mailto:stubenschrott@vimperator.org[Martin
 Stubenschrott] but has found many other
-http://vimperator.org/trac/wiki/Vimperator/Authors[contributors] in the
-meanwhile. If you appreciate the work on Vimperator and want to encourage us
-working on it more, you can send us greetings, patches, or donations (thanks a
-lot to http://vimperator.org/trac/wiki/Vimperator/Donors[these people] who
-already did):
+http://vimperator-labs.googlecode.com/hg/vimperator/AUTHORS[contributors] in
+the meanwhile. If you appreciate the work on Vimperator and want to encourage
+us working on it more, you can send us greetings, patches, or donations (thanks
+a lot to http://vimperator-labs.googlecode.com/hg/vimperator/Donors[these
+people] who already did):
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 <!-- the PAYPAL code -->
@@ -103,7 +103,7 @@ section::Features[features]
   [c]:set guioptions=[c])
 * Ability to [c]:source[c] JavaScript files, and to use a [a]~/.vimperatorrc[a]
   file with syntax highlighting if you install
-  http://vimperator.org/trac/ticket/26[vimperator.vim]
+  http://code.google.com/p/vimperator-labs/issues/detail?id=7[vimperator.vim]
 * Easy quick searches ([c]:open foo[c] will search for "foo" in google,
   [c]:open ebay terminator[c] will search for "terminator" on ebay)
   with support for Firefox keyword bookmarks and search engines
@@ -127,9 +127,12 @@ Please send comments/bug reports/patches to the mailing list, where we will
 properly answer any questions. You can also join the
 +++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC channel
 on http://www.freenode.net/[Freenode] or check the
-http://vimperator.org/trac/wiki/Vimperator/Wiki[Wiki] for
-http://vimperator.org/trac/wiki/Vimperator/FAQ[frequently asked questions
-(FAQ)]. Make sure, you have read the TODO file first, as we are aware of many
-things which can be improved when we find time for it or receive patches.
+http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator[Wiki]
+for
+http://code.google.com/p/vimperator-labs/wiki/VimperatorFAQ[frequently asked
+questions (FAQ)]. Make sure, you have read the
+http://vimperator-labs.googlecode.com/hg/vimperator/TODO[TODO] file first, as
+we are aware of many things which can be improved when we find time for it or
+receive patches.
 
 // vim: set filetype=asciidoc:

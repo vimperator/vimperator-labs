@@ -242,8 +242,9 @@ section::I'm{nbsp}interested...but{nbsp}lost![support]
 Vimperator has an energetic and growing user base. If you've run into a problem
 that you can't seem to solve with Vimperator, or if you think you might have
 found a bug, please let us know! There is support available on the
-http://vimperator.cutup.org/index.php?title=Main_Page[wiki], or in the
-#vimperator IRC channel on http://freenode.net/[freenode].
+http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator[wiki],
+or in the +++<a href="irc://irc.freenode.net/vimperator">#vimperator</a>+++ IRC
+channel on http://freenode.net/[freenode].
 
 If you have any feature requests or (even better) offers to help, we'd love to
 hear from you as well. Developers work on Vimperator whenever possible, but we
