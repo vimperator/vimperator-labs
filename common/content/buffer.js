@@ -105,8 +105,7 @@ function Buffer() //{{{
         if (!(elem instanceof Element))
         {
             let doc = findScrollableWindow().document;
-            elem = find(doc.body ||
-                        buffer.evaluateXPath("//body || //xhtml:body", doc).snapshotItem(0) ||
+            elem = find(doc.body || doc.getElementsByTagName("body")[0] ||
                         doc.documentElement);
         }
         return elem;
@@ -387,8 +386,8 @@ function Buffer() //{{{
                 buffer.focusElement(buffer.lastInputField);
             else
             {
-                let xpath = util.makeXPath(["input[not(@type) or @type='text' or @type='password' or @type='file']",
-                                            "textarea[not(@disabled) and not(@readonly)]"]);
+                let xpath = ["input[not(@type) or @type='text' or @type='password' or @type='file']",
+                             "textarea[not(@disabled) and not(@readonly)]"];
 
                 let elements = [m for (m in buffer.evaluateXPath(xpath))].filter(function (match) {
                     let computedStyle = util.computedStyle(match);
@@ -778,12 +777,9 @@ function Buffer() //{{{
                 var type = data.type && data.type.toLowerCase();
                 type = type.replace(/^\s+|\s*(?:;.*)?$/g, "");
 
-                isFeed = ["application/rss+xml", "application/atom+xml"].indexOf(type) >= 0;
-                if (!isFeed)
-                {
-                    // really slimy: general XML types with magic letters in the title
-                    isFeed = type in feedTypes && /\brss\b/i.test(data.title);
-                }
+                isFeed = ["application/rss+xml", "application/atom+xml"].indexOf(type) >= 0 ||
+                         // really slimy: general XML types with magic letters in the title
+                         type in feedTypes && /\brss\b/i.test(data.title);
             }
 
             if (isFeed)
@@ -805,25 +801,17 @@ function Buffer() //{{{
             return isFeed;
         }
 
-        // put feeds rss into pageFeeds[]
         let nFeed = 0;
-        for (let [, link] in Iterator(doc.getElementsByTagName("link")))
+        for (let link in buffer.evaluateXPath(["link[@href and (@rel='feed' or (@rel='alternate' and @type))]"], doc))
         {
-            if (!link.href)
-                return;
-
-            let rel = link.rel && link.rel.toLowerCase();
-
-            if (rel == "feed" || (link.type && rel == "alternate"))
+            let rel = link.rel.toLowerCase();
+            let feed = { title: link.title, href: link.href, type: link.type || "" };
+            if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
             {
-                let feed = { title: link.title, href: link.href, type: link.type || "" };
-                if (isValidFeed(feed, doc.nodePrincipal, rel == "feed"))
-                {
-                    nFeed++;
-                    let type = feedTypes[feed.type] || "RSS";
-                    if (verbose)
-                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
-                }
+                nFeed++;
+                let type = feedTypes[feed.type] || "RSS";
+                if (verbose)
+                    yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
             }
         }
 
@@ -1043,6 +1031,8 @@ function Buffer() //{{{
                 doc = window.content.document;
             if (!elem)
                 elem = doc;
+            if (util.isArray(expression))
+                expression = util.makeXPath(expression);
 
             let result = doc.evaluate(expression, elem,
                 function lookupNamespaceURI(prefix)
@@ -1535,7 +1525,7 @@ function Buffer() //{{{
                 if (bookmarks.isBookmarked(this.URL))
                     info += ", bookmarked";
 
-                let pageInfoText = <>"{file}" [{info}] {title}</>;
+                let pageInfoText = <>{file.quote()} [{info}] {title}</>;
                 liberator.echo(pageInfoText, commandline.FORCE_SINGLELINE);
                 return;
             }
