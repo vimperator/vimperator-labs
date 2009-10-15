@@ -263,11 +263,6 @@ function Editor() //{{{
 
     // insert mode mappings
     mappings.add(myModes,
-        ["<C-o>", "<C-f>", "<C-g>", "<C-n>", "<C-p>"],
-        "Ignore certain " + config.hostApplication + " key bindings",
-        function () { /*liberator.beep();*/ });
-
-    mappings.add(myModes,
         ["<C-w>"], "Delete previous word",
         function () { editor.executeCommand("cmd_deleteWordBackward", 1); });
 
