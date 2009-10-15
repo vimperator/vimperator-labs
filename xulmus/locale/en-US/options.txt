@@ -484,7 +484,7 @@ ____
 ||'insertmode' 'im'|| boolean (default: on)
 ____
 Use Insert mode as the default for text areas. This is useful if you want to
-use the known Firefox interface for editing text areas. Input fields default to
+use the known Songbird interface for editing text areas. Input fields default to
 this behaviour irrespective of this option's setting.
 
 Textarea mode can be entered with *<C-t>* from Insert mode.

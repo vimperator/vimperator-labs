@@ -95,7 +95,7 @@ section::Features[features]
   http://vimperator.org/trac/ticket/327[xulmus.vim]
 * Easy quick searches ([c]:open foo[c] will search for "foo" in google,
   [c]:open ebay terminator[c] will search for "terminator" on ebay)
-  with support for Firefox keyword bookmarks and search engines
+  with support for Songbird keyword bookmarks and search engines
 * Count supported for many commands ([m]3<C-o>[m] will go back 3 pages)
 * Beep on errors
 * Marks support ([m]m[m][a]a[a] to set mark a on a web page, [m]'[m][a]a[a] to

@@ -1,6 +1,6 @@
 heading::Hints[quick-hints,hints]
 
-Hints are the way in which Vimperator allows you to follow links on a page. By
+Hints are the way in which Xulmus allows you to follow links on a page. By
 providing each link with a suitable hint, you can access all links with a
 similar amount of minimal effort. This contrasts strongly with the traditional
 approaches offered by the mouse, in which you must first find and then aim for

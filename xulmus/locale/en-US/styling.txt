@@ -22,7 +22,7 @@ ________________________________________________________________________________
 Highlight {group} with {css}. {css} is one or more comma separated CSS
 declarations (E.g. *color: blue; background-color: red*). Normally, {css} is
 checked for valid syntax before it's applied. Once you're certain it's valid,
-[!] can be used to skip the check to speed up Vimperator startup. {selector}
+[!] can be used to skip the check to speed up Xulmus startup. {selector}
 can be any valid CSS selector, such as [c]:hover[c], and, if provided, will
 restrict the match to matching elements.
 

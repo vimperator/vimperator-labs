@@ -241,7 +241,7 @@ default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
 
 The available zoom range can be changed by setting the
 \'http://kb.mozillazine.org/Zoom.minPercent[zoom.minPercent]' and
-\'http://kb.mozillazine.org/Zoom.maxPercent[zoom.maxPercent]' Firefox
+\'http://kb.mozillazine.org/Zoom.maxPercent[zoom.maxPercent]' Songbird
 preferences. The zoom levels can be changed using the
 \'http://kb.mozillazine.org/Toolkit.zoomManager.zoomValues[toolkit.ZoomManager.zoomLevels]'
 preference.
