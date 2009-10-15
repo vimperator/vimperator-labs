@@ -514,8 +514,7 @@ const util = { //{{{
                 }
 
                 value = template.highlight(value, true, 150);
-                // FIXME: Inline style.
-                let key = <span style="font-weight: bold;">{i}</span>;
+                let key = <span highlight="Key">{i}</span>;
                 if (!isNaN(i))
                     i = parseInt(i);
                 else if (/^[A-Z_]+$/.test(i))
