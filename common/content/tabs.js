@@ -570,7 +570,7 @@ function Tabs() //{{{
             "Detach current tab to its own window",
             function ()
             {
-                if (tabs.count == 1 && !userContext.ImADeveloper_IKnowWhatImDoing_LeaveMeTheFuckAlone)
+                if (tabs.count == 1)
                     return void liberator.echoerr("Can't detach the last tab");
 
                 tabs.detachTab(null);
