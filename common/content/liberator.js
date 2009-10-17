@@ -1668,6 +1668,12 @@ const liberator = (function () //{{{
                     if (!(k in obj))
                         obj[k] = v;
                 }
+                if (liberator.storeErrors)
+                {
+                    let errors = storage.newArray("errors", false);
+                    errors.toString = function () [String(v[0]) + "\n" + v[1] for ([k, v] in this)].join("\n\n");
+                    errors.push([new Date, obj + obj.stack]);
+                }
                 liberator.dump(obj);
                 liberator.dump("");
             }
