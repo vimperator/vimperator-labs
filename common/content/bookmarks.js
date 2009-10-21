@@ -475,7 +475,7 @@ function Bookmarks() //{{{
                         let query = item.url.substring(begin.length, rest);
                         if (item.url.substr(rest) == end && query.indexOf("&") == -1)
                         {
-                            item.url = decodeURIComponent(query);
+                            item.url = decodeURIComponent(query.replace(/#.*/, ""));
                             return item;
                         }
                     }).filter(util.identity);
