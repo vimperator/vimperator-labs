@@ -22,17 +22,19 @@ function Services()
 
     function create(classes, ifaces, meth)
     {
-        ifaces = Array.concat(ifaces);
         try
         {
-            let res = Cc[classes][meth || "getService"](ifaces.shift());
+            let res = Cc[classes][meth || "getService"]();
+            if (!ifaces)
+                return res.wrappedJSObject;
+            ifaces = Array.concat(ifaces);
             ifaces.forEach(function (iface) res.QueryInterface(iface));
             return res;
         }
         catch (e)
         {
             // liberator.log() is not defined at this time, so just dump any error
-            dump("Service creation failed for '" + classes + "': " + e);
+            dump("Service creation failed for '" + classes + "': " + e + "\n");
         }
     }
 
@@ -97,6 +99,7 @@ function Services()
     self.add("extensionManager",    "@mozilla.org/extensions/manager;1",                Ci.nsIExtensionManager);
     self.add("favicon",             "@mozilla.org/browser/favicon-service;1",           Ci.nsIFaviconService);
     self.add("json",                "@mozilla.org/dom/json;1",                          Ci.nsIJSON, "createInstance");
+    self.add("liberator:",          "@mozilla.org/network/protocol;1?name=liberator");
     self.add("livemark",            "@mozilla.org/browser/livemark-service;2",          Ci.nsILivemarkService);
     self.add("observer",            "@mozilla.org/observer-service;1",                  Ci.nsIObserverService);
     self.add("io",                  "@mozilla.org/network/io-service;1",                Ci.nsIIOService);

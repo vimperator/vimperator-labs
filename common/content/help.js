@@ -1,17 +1,22 @@
-// Copyright (c) 2009 by Kris Maglione <maglione.k at Gmail>
+// Copyright (c) 2009 by Kris Maglione <kris@vimperator.org>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
 
-const win = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-                      .getService(Ci.nsIWindowWatcher)
-                      .activeWindow;
-const liberator = win.liberator;
+function checkFragment()
+{
+    document.title = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "title")[0].textContent;
+    var frag = document.location.hash.substr(1);
+    var elem = document.getElementById(frag);
+    if (elem)
+        window.content.scrollTo(0, window.content.scrollY + elem.getBoundingClientRect().top - 10); // 10px context
+}
 
-let page = liberator.findHelp(decodeURIComponent(document.location.search.substr(1)));
-let url = page ? "chrome://liberator/locale/" + page : content.history.previous;
-
-win.getBrowser().loadURIWithFlags(url, Components.interfaces.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY, null, null, null);
+document.addEventListener("load", checkFragment, true);
+window.addEventListener("message", function (event) {
+    if (event.data == "fragmentChange")
+        checkFragment();
+}, true);
 
 // vim: set fdm=marker sw=4 ts=4 et:

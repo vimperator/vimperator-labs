@@ -310,8 +310,7 @@ const liberator = (function () //{{{
             function ()
             {
                 liberator.open("chrome://mozapps/content/extensions/extensions.xul",
-                    (options["newtab"] && options.get("newtab").has("all", "addons"))
-                        ? liberator.NEW_TAB: liberator.CURRENT_TAB);
+                    { from: "addons" });
             },
             { argCount: "0" });
 
@@ -487,9 +486,7 @@ const liberator = (function () //{{{
                 if (args.bang)
                     window.openDialog(extension.options, "_blank", "chrome");
                 else
-                    liberator.open(extension.options,
-                        options.get("newtab").has("all", "extoptions")
-                            ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                    liberator.open(extension.options, { from: "extoptions" });
             },
             {
                 argCount: "1",
@@ -577,8 +574,7 @@ const liberator = (function () //{{{
                 if (args.bang) // open JavaScript console
                 {
                     liberator.open("chrome://global/content/console.xul",
-                        (options["newtab"] && options.get("newtab").has("all", "javascript"))
-                            ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                        { from: "javascript" });
                 }
                 else
                 {
@@ -848,19 +844,9 @@ const liberator = (function () //{{{
             context.title = ["Help"];
             context.anchored = false;
             context.key = unchunked;
-            context.generate = function ()
-            {
-                let files = unchunked ? ["all.html"] : config.helpFiles;
-                let res = files.map(function (file) {
-                    let resp = util.httpGet("chrome://liberator/locale/" + file);
-                    if (!resp)
-                        return [];
-                    let doc = resp.responseXML;
-                    return Array.map(doc.getElementsByClassName("tag"),
-                            function (elem) [elem.textContent, file]);
-                });
-                return util.Array.flatten(res);
-            };
+            context.completions = services.get("liberator:").HELP_TAGS;
+            if (unchunked)
+                context.keys = { text: "text", description: function () "all" };
         };
 
         completion.menuItem = function menuItem(context) {
@@ -941,10 +927,10 @@ const liberator = (function () //{{{
         getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
 
         // Global constants
-        CURRENT_TAB: 1,
-        NEW_TAB: 2,
-        NEW_BACKGROUND_TAB: 3,
-        NEW_WINDOW: 4,
+        CURRENT_TAB: [],
+        NEW_TAB: [],
+        NEW_BACKGROUND_TAB: [],
+        NEW_WINDOW: [],
 
         forceNewTab: false,
         forceNewWindow: false,
@@ -1371,23 +1357,22 @@ const liberator = (function () //{{{
         findHelp: function (topic, unchunked)
         {
             unchunked = !!unchunked;
-            let items = completion.runCompleter("help", topic, null, unchunked);
+            let items = completion._runCompleter("help", topic, null, unchunked).items;
             let partialMatch = null;
 
-            function format(item) item[1] + "#" + encodeURIComponent(item[0]);
+            function format(item) item.description + "#" + encodeURIComponent(item.text);
 
             for (let [i, item] in Iterator(items))
             {
-                if (item[0] == topic)
+                if (item.text == topic)
                     return format(item);
-                else if (!partialMatch && item[0].indexOf(topic) > -1)
+                else if (!partialMatch && topic)
                     partialMatch = item;
             }
 
             if (partialMatch)
                 return format(partialMatch);
-            else
-                return null;
+            return null;
         },
 
         /**
@@ -1400,15 +1385,11 @@ const liberator = (function () //{{{
          */
         help: function (topic, unchunked)
         {
-            let where = (options["newtab"] && options.get("newtab").has("all", "help"))
-                            ? liberator.NEW_TAB : liberator.CURRENT_TAB;
-
             if (!topic && !unchunked)
             {
                 let helpFile = options["helpfile"];
-
                 if (config.helpFiles.indexOf(helpFile) != -1)
-                    liberator.open("chrome://liberator/locale/" + helpFile, where);
+                    liberator.open("liberator://help/" + helpFile, { from: "help" });
                 else
                     liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
                 return;
@@ -1418,8 +1399,8 @@ const liberator = (function () //{{{
             if (page == null)
                 return void liberator.echoerr("E149: Sorry, no help for " + topic);
 
-            liberator.open("chrome://liberator/locale/" + page, where);
-            if (where == this.CURRENT_TAB)
+            liberator.open("liberator://help/" + page, { from: "help" });
+            if (options.get("activate").has("all", "help"))
                 content.postMessage("fragmentChange", "*");
         },
 
@@ -1550,12 +1531,16 @@ const liberator = (function () //{{{
             }
 
             let flags = 0;
-            if (where instanceof Object)
+            if (where && !(where instanceof Array))
             {
                 for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
                     if (where[opt])
                         flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
-                where = liberator.CURRENT_TAB;
+                if ("from" in where)
+                    where = (options["newtab"] && options.get("newtab").has("all", where.from))
+                            ? liberator.NEW_TAB : liberator.CURRENT_TAB;
+                else
+                    where = where.where || liberator.CURRENT_TAB;
             }
 
             if (urls.length == 0)
@@ -1738,6 +1723,8 @@ const liberator = (function () //{{{
         {
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
+
+            services.get("liberator:").helpFiles = config.helpFiles.map(function (f) f.replace(/\..*/, ""));
 
             config.features.push(getPlatformFeature());
 
@@ -1964,29 +1951,6 @@ const liberator = (function () //{{{
 })(); //}}}
 
 window.liberator = liberator;
-
-// FIXME: Ugly, etc.
-window.addEventListener("liberatorHelpLink", function (event) {
-        let elem = event.target;
-
-        if (/^(option|mapping|command|jump)$/.test(elem.className))
-            var tag = elem.textContent.replace(/\s.*/, "");
-        if (/^(mapping|command)$/.test(elem.className))
-            tag = tag.replace(/^\d+/, "");
-        if (elem.className == "command")
-            tag = tag.replace(/\[.*?\]/g, "").replace(/(\w+)!$/, "$1");
-
-        if (tag)
-        {
-            let page = liberator.findHelp(tag, /\/all.html($|#)/.test(elem.ownerDocument.location.href));
-            if (page)
-                elem.href = "chrome://liberator/locale/" + page;
-        }
-
-        // TODO: use HashChange event in Gecko 1.9.2
-        if (elem.href)
-            setTimeout(function () { content.postMessage("fragmentChange", "*"); }, 0);
-    }, true, true);
 
 // called when the chrome is fully loaded and before the main window is shown
 window.addEventListener("load",   liberator.startup,  false);

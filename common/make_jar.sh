@@ -15,7 +15,7 @@ mkdir -p $stage
 
 getfiles () {
     filter="\.($(echo $1 | tr ' ' '|'))$"; shift
-    find "$@" -not -path '*CVS*' 2>/dev/null | grep -E "$filter" || true
+    find "$@" -not -path '*\.hg*' 2>/dev/null | grep -E "$filter" || true
 }
 copytext () {
     sed -e "s,###VERSION###,$VERSION,g" \
