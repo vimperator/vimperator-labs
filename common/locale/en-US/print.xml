@@ -27,7 +27,7 @@
     <spec>:ha<oa>rdcopy</oa><oa>!</oa> ><a>filename</a></spec>
     <description>
         <p>As above, but write the output to <a>filename</a>.</p>
-        
+
         <note>Not available on Windows.</note>
     </description>
 </item>

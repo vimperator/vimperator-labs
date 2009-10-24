@@ -66,9 +66,9 @@ tedious unless you always visit the first link on a page.
             location of hint <em>24</em>, press <k>;y</k> to start this hint
             mode. Then press <em>24</em> to copy the hint location.
         </p>
-        
+
         <p><a>mode</a> can be one of:</p>
-        
+
         <ul>
             <li><tag>;;</tag> <em>;</em> to focus a link and hover it with the mouse</li>
             <li><tag>;?</tag> <em>?</em> to show information about the element (incomplete)</li>
@@ -91,13 +91,13 @@ tedious unless you always visit the first link on a page.
             <li><tag>;i</tag> <em>i</em> to open an image</li>
             <li><tag>;I</tag> <em>I</em> to open an image in a new tab.</li>
         </ul>
-        
+
         <p>
             Depending on the value of <o>complete</o>, you can get a list of
             extended hint modes by pressing <k name="Tab"/> from the <k>;</k>
             prompt.
         </p>
-        
+
         <p>
             Hintable elements for all extended hint modes can be set in the
             <o>extendedhinttags</o> XPath string.

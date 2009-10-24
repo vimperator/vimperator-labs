@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<dl tag="autocommand-list" replace="autocommand-list">
+    <dt>BookmarkAdd</dt>   <dd>Triggered after a page is bookmarked</dd>
+    <dt>ColorScheme</dt>   <dd>Triggered after a color scheme has been loaded</dd>
+    <dt>DOMLoad</dt>       <dd>Triggered when a page's DOM content has fully loaded</dd>
+    <dt>DownloadPost</dt>  <dd>Triggered when a download has completed</dd>
+    <dt>Fullscreen</dt>    <dd>Triggered when the player's fullscreen state changes</dd>
+    <dt>LocationChange</dt><dd>Triggered when changing tabs or when navigating to a new location</dd>
+    <dt>PageLoadPre</dt>   <dd>Triggered after a page load is initiated</dd>
+    <dt>PageLoad</dt>      <dd>Triggered when a page gets (re)loaded/opened</dd>
+    <dt>ShellCmdPost</dt>  <dd>Triggered after executing a shell command with <ex>:!</ex>#{cmd}</dd>
+    <dt>TrackChangePre</dt><dd>Triggered before a playing track is changed</dd>
+    <dt>TrackChange</dt>   <dd>Triggered after a playing track has changed</dd>
+    <dt>ViewChangePre</dt> <dd>Triggered before a sequencer view is changed</dd>
+    <dt>ViewChange</dt>    <dd>Triggered after a sequencer view is changed</dd>
+    <dt>StreamStart</dt>   <dd>Triggered after a stream has started</dd>
+    <dt>StreamPause</dt>   <dd>Triggered after a stream has paused</dd>
+    <dt>StreamEnd</dt>     <dd>Triggered after a stream has ended</dd>
+    <dt>StreamStop</dt>    <dd>Triggered after a stream has stopped</dd>
+    <dt>XulmusEnter</dt>   <dd>Triggered after Songbird starts</dd>
+    <dt>XulmusLeavePre</dt><dd>Triggered before exiting Songbird, just before destroying each module</dd>
+    <dt>XulmusLeave</dt>   <dd>Triggered before exiting Songbird</dd>
+</dl>
+
+<dl tag="autocommand-args" replace="autocommand-args">
+    <dt>&lt;url></dt>    <dd>The URL against which the event was selected.</dd>
+    <dt>&lt;title></dt>  <dd>The page, bookmark or download title.</dd>
+    <dt>&lt;doc></dt>    <dd>The document for which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
+    <dt>&lt;tab></dt>    <dd>The tab in which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
+    <dt>&lt;tags></dt>   <dd>The tags applied to &lt;url>. Only for <em>BookmarkAdd</em>.</dd>
+    <dt>&lt;keyword></dt><dd>The keywords applied to the bookmark. Only for <em>BookmarkAdd</em>.</dd>
+    <dt>&lt;icon></dt>   <dd>The icon associated with &lt;url>. Only for <em>BookmarkAdd</em>.</dd>
+    <dt>&lt;size></dt>   <dd>The size of a downloaded file. Only for <em>DownloadPost</em>.</dd>
+    <dt>&lt;file></dt>   <dd>The target destination of a download. Only for <em>DownloadPost</em>.</dd>
+    <dt>&lt;state></dt>  <dd>The new fullscreen state. Only for <em>Fullscreen</em>.</dd>
+    <dt>&lt;name></dt>   <dd>The color scheme name. Only for <em>ColorScheme</em>.</dd>
+    <dt>&lt;view></dt>   <dd>The new sequencer view. Only for <em>ViewChangePre</em> and <em>ViewChange</em>.</dd>
+    <dt>&lt;track></dt>  <dd>The new media track. Only for <em>TrackChangePre</em>, <em>TrackChange</em> and <em>Stream</em>.</dd>
+</dl>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

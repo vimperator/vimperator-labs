@@ -765,9 +765,9 @@
     <description>
         <p>
             Load plugin scripts when starting up. When on, yet unloaded plugins
-            are automatically loaded after the vimperatorrc file has been
+            are automatically loaded after the &liberator.name;rc file has been
             sourced. To load plugins earlier, use the <ex>:loadplugins</ex>
-            command within the vimperatorrc.
+            command within the &liberator.name;rc.
         </p>
     </description>
 </item>
@@ -936,13 +936,13 @@
 
 
 <item>
-    <tags>$VIMPERATOR_RUNTIME</tags>
+    <tags>$&liberator.idname;_RUNTIME</tags>
     <tags>'rtp' 'runtimepath'</tags>
     <spec>'runtimepath' 'rtp'</spec>
     <type>stringlist</type>
-    <default type="plain"><str>$VIMPERATOR_RUNTIME</str> or
-    Unix, Mac: <str>~/.vimperator</str>,
-    Windows: <str>~/vimperator</str></default>
+    <default type="plain"><str>$&liberator.idname;_RUNTIME</str> or
+    Unix, Mac: <str>~/.&liberator.name;</str>,
+    Windows: <str>~/&liberator.name;</str></default>
     <description>
         <p>List of directories searched for runtime files:</p>
 
@@ -954,16 +954,16 @@
 
         <p>Example:</p>
 
-        <code><ex>:set runtimepath=$$~/myvimperator,~/.vimperator$$</ex></code>
+        <code><ex>:set runtimepath=<str>~/my&liberator.name;,~/.&liberator.name;<str></ex></code>
 
         <p>
             This will search for plugins in both
-            <str>~/myvimperator/plugin</str> and
-            <str>~/.vimperator/plugin</str>
+            <str>~/my&liberator.name;/plugin</str> and
+            <str>~/.&liberator.name;/plugin</str>
         </p>
 
         <p>
-            On startup, if the environment variable <em>$VIMPERATOR_RUNTIME</em> does not
+            On startup, if the environment variable <em>$&liberator.idname;_RUNTIME</em> does not
             exist, &liberator.appname; will set it to match this value.
         </p>
     </description>
@@ -1169,7 +1169,7 @@
             Change the title of the browser window.  &liberator.appname; changes the
             browser title from <str>Title of web page - Mozilla &liberator.host;</str>
             to <str>Title of web page - &liberator.appname;</str>.  If you don't like
-            that, you can restore it with: 
+            that, you can restore it with:
         </p>
         <code><ex>:set titlestring=<str>Mozilla &liberator.host;</str></ex></code>
     </description>
@@ -1271,7 +1271,7 @@
     <description>
         <p>
             List of file patterns to ignore when completing files. E.g., to ignore object
-            files and Vim swap files 
+            files and Vim swap files
             <ex>:set wildignore=<str>.<em>\\.o,\\..</em>\\.s[a-z]\\<a>2</a></str></ex>
         </p>
 

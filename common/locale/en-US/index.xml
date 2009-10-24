@@ -300,7 +300,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:marks</ex></dt> <dd>Show all location marks of current web page</dd>
     <dt><ex>:messages</ex></dt> <dd>Display previously given messages</dd>
     <dt><ex>:messclear</ex></dt> <dd>Clear the message history</dd>
-    <dt><ex>:mkvimperatorrc</ex></dt> <dd>Write current key mappings and changed options to the config file</dd>
+    <dt><ex>:mk&liberator.name;rc</ex></dt> <dd>Write current key mappings and changed options to the config file</dd>
     <dt><ex>:nmap</ex></dt> <dd>Map a key sequence in Normal mode</dd>
     <dt><ex>:nmapclear</ex></dt> <dd>Remove all mappings in Normal mode</dd>
     <dt><ex>:nnoremap</ex></dt> <dd>Map a key sequence without remapping keys in Normal mode</dd>

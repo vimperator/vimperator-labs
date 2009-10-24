@@ -111,7 +111,7 @@
             which mostly contain Ex commands like <ex>map &lt; gt</ex> and put JavaScript code
             within a:
         </p>
-        
+
         <code><![CDATA[
 js <<EOF
 hello = function () {
@@ -124,7 +124,7 @@ EOF
             Or you can alternatively source a file which ends in <tt>.js</tt>. These files are
             automatically sourced as pure JavaScript files.
         </p>
-        
+
         <p>
             Note: In both cases you must add functions to the global window object like
             shown above, functions written as:
@@ -136,10 +136,10 @@ function hello2() {
 }
 ]]></code>
         <p>are only available within the scope of the script.</p>
-        
+
         <p>
-            The <tt>.vimperatorrc</tt> file in your home directory and any
-            files in <tt>~/.vimperator/plugin/</tt> are always
+            The <tt>.&liberator.name;rc</tt> file in your home directory and any
+            files in <tt>~/.&liberator.name;/plugin/</tt> are always
             sourced at startup. <tt>~</tt> is supported as a
             shortcut for the <tt>$HOME</tt> directory. If <oa>!</oa> is
             specified, errors are not printed.
@@ -154,8 +154,8 @@ function hello2() {
     <description>
         <p>
             Load all unloaded plugins immediately. Because plugins are automatically
-            loaded after vimperatorrc is sourced, this command must be placed early
-            in the vimperatorrc file if vimperatorrc also includes commands that are
+            loaded after &liberator.name;rc is sourced, this command must be placed early
+            in the &liberator.name;rc file if &liberator.name;rc also includes commands that are
             implemented by plugins. Additionally, this command allows for sourcing
             new plugins without restarting &liberator.appname;.
         </p>
@@ -211,9 +211,9 @@ function hello2() {
             and returns the elapsed time. <a>code</a> is always passed to JavaScript's eval(),
             which might be slow, so take the results with a grain of salt.
         </p>
-        
+
         <p>If <a>code</a> starts with a <ex>:</ex>, it is executed as a &liberator.appname; command.</p>
-        
+
         <p>
             Use the special version with <oa>!</oa> if you just want to run any command multiple
             times without showing profiling statistics.

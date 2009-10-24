@@ -206,8 +206,6 @@ Liberator.prototype = {
             {
                 case "help":
                     let url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
-                    dump("name: " + uri.path.replace(/#.*/, "") + "\n");
-                    dump("uri: " + url + "\n");
                     if (!url)
                         break;
                     return makeChannel(url, uri);

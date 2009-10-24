@@ -473,7 +473,7 @@ preference.
             between 30% and 300% or a relative value if prefixed with "-" or "+". If
             <oa>value</oa> is omitted, zoom is reset to 100%.
         </p>
-        
+
         <p>
             Normally this command operates on the text zoom; if used with <oa>!</oa>, it
             operates on full zoom.
@@ -533,7 +533,7 @@ then switch between these various style sheets, selecting their favorite.
             Select the author style sheet to apply. If <oa>stylesheet</oa> is not specified
             the page's default style sheet is used.
         </p>
-        
+
         <p>All author styling can be removed by setting the <o>usermode</o> option.</p>
     </description>
 </item>

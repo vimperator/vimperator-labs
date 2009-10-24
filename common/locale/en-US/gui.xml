@@ -56,7 +56,7 @@
         <p>Open a &liberator.host; dialog.</p>
 
         <p>Available dialogs:</p>
-        <dl>
+        <dl tag="dialog-list">
             <dt>about</dt>           <dd>About Mozilla &liberator.host;;</dd>
             <dt>addbookmark</dt>     <dd>Add bookmark for the current page</dd>
             <dt>addons</dt>          <dd>Manage Add-ons</dd>

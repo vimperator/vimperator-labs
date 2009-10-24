@@ -25,7 +25,7 @@
             Load a color scheme. <a>name</a> is found by searching the <o>runtimepath</o> for the
             first file matching colors/<a>name</a>.vimp.
         </p>
-        
+
         <p>
             The ColorScheme autocommand is triggered after the color scheme has been
             sourced.
@@ -46,9 +46,9 @@
             can be any valid CSS selector, such as <ex>:hover</ex>, and, if provided, will
             restrict the match to matching elements.
         </p>
-        
+
         <p>Valid groups are:</p>
-        
+
         <dl>
             <dt>Bell</dt>              <dd>&liberator.appname;'s visual bell</dd>
             <dt>Boolean</dt>           <dd>A JavaScript Boolean object</dd>
@@ -107,7 +107,7 @@
             <dt>URL</dt>               <dd>A URL</dd>
             <dt>WarningMsg</dt>        <dd>A warning message</dd>
         </dl>
-        
+
         <p>
             Every invocation completely replaces the styling of any previous invocation,
             unless <em>-append</em> (short option: <em>-a</em>) is provided, in which case <a>css</a> is
@@ -140,14 +140,14 @@
             containing any <em>:</em> or <em>/</em> characters are matched as domains. <a>css</a> is a full
             CSS rule set (e.g., <tt>body { color: blue; }</tt>).
         </p>
-        
+
         <p>
             If <a>name</a> (short option: *-n*) is provided, any existing style with the same
             name is overridden, and the style may later be deleted using <a>name</a>. If
             *-append* (short option: *-a*) is provided along with *-name*, <a>css</a> and
             <a>filter</a> are appended to its current value.
         </p>
-        
+
         <p>If <a>css</a> isn't provided, matching styles are listed.</p>
     </description>
 </item>
@@ -163,7 +163,7 @@
             style for <str>www.google.com,mozilla.org</str>, will result in a style for
             <str>www.google.com</str>. The available options are:
         </p>
-        
+
         <ul>
             <li><em>-name</em>:  The name provided to <ex>:style</ex> (short option: *-n*)</li>
             <li><em>-index</em>: For unnamed styles, the index listed by <ex>:style</ex>

@@ -59,7 +59,7 @@
             Example: <ex>:execute "source " + io.getRCFile().path</ex> sources the appropriate
             RC file.
         </p>
-        
+
         <p>Note: Unlike Vim this currently only supports a single argument.</p>
     </description>
 </item>
@@ -80,12 +80,12 @@
             until a line starting with "EOF"
             is found, and interpret them with the JavaScript <em>eval()</em> function.
         </p>
-        
+
         <p>
             The special version <ex>:javascript!</ex> opens the JavaScript console of
             Firefox.
         </p>
-        
+
         <p>
             <k name="Tab"/> completion is available for <ex>:javascript <a>cmd</a><k name="Tab"/></ex> (but not
             yet for the <ex>:js &lt;&lt;EOF</ex> multiline widget). Be aware that Vimperator needs

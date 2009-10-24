@@ -37,7 +37,7 @@
 
 <warning>
     Mappings are NOT saved between sessions, make sure you put them in your
-    vimperatorrc file!
+    &liberator.name;rc file!
 </warning>
 
 <h3 tag=":map-commands">Map commands</h3>
@@ -433,23 +433,23 @@
             command is redefined. Unlike Vim, the command may start with a lowercase
             letter.
         </p>
-        
+
         <p>
             The command's behavior can be specified by providing attributes when the
             command is defined.
         </p>
-        
+
         <p tag="E175 E176 :command-nargs">
             Argument handling
         </p>
-        
+
         <p>
             By default user commands accept no arguments. This can be changed by specifying
             the -nargs attribute.
         </p>
-        
+
         <p>The valid values are:</p>
-        
+
         <dl>
             <dt>-nargs=0</dt><dd>No arguments are allowed (default)</dd>
             <dt>-nargs=1</dt><dd>One argument is allowed</dd>
@@ -457,17 +457,17 @@
             <dt>-nargs=?</dt><dd>Zero or one argument is allowed</dd>
             <dt>-nargs=+</dt><dd>One or more arguments are allowed</dd>
         </dl>
-        
+
         <p tag="E180 E181 :command-complete">
             Argument completion
         </p>
-        
+
         <p>
             Completion for arguments to user defined commands is not available by default.
             Completion can be enabled by specifying one of the following arguments to the
             -complete option when defining the command.
         </p>
-        
+
         <dl>
             <dt>altstyle</dt>     <dd>alternate author style sheets</dd>
             <dt>bookmark</dt>     <dd>bookmarks</dd>
@@ -494,11 +494,11 @@
             <dt>usercommand</dt>  <dd>user commands</dd>
             <dt>custom,<a>func</a></dt><dd>custom completion, provided by <a>func</a></dd>
         </dl>
-        
+
         <p tag="E467 E468 :command-completion-custom">
             Custom completion
         </p>
-        
+
         <p>
             Custom completion can be provided by specifying the <str>custom,<a>func</a></str> argument to
             -complete. The <a>func</a> is called with two arguments, a completion context, and
@@ -506,56 +506,56 @@
             <str>completions</str> property, or return an object, with <str>items</str> and <str>start</str>
             properties, describing the completions and where the replacement is to start.
         </p>
-        
+
         <p>
             <em>start</em> is the index into the word being completed at which the returned values
             should be applied and <em>completions</em> is a two dimensional array of the form:
             [[arg1, description1], [arg2, description2], …]
         </p>
-        
+
         <!-- TODO: add examples -->
-        
+
         <p tag="E177 E178 :command-count">
             Count handling
         </p>
-        
+
         <p>
             By default user commands do not accept a count. Use the -count attribute if
             you'd like to have a count passed to your user command. This will then be
             available for expansion as &lt;count> in the argument.
         </p>
-        
+
         <p tag=":command-bang">
             Special cases
         </p>
-        
+
         <p>
             By default a user command does not have a special version, i.e. a version
             executed with the ! modifier. Providing the -bang attribute will enable this
             and &lt;bang> will be available in the argument.
         </p>
-        
+
         <p tag=":command-description">
             Command description
         </p>
-        
+
         <p>
             The command's description text can be set with -description. Otherwise it will
             default to "User-defined command".
         </p>
-        
+
         <p tag=":command-replacement-text">
             Replacement text
         </p>
-        
+
         <p>
             The replacement text <a>rep</a> is scanned for escape sequences and these are
             replaced with values from the user-entered command line. The resulting string
             is then executed as an Ex command.
         </p>
-        
+
         <p>The valid escape sequences are:</p>
-        
+
         <dl>
             <dt>&lt;args></dt> <dd>The command arguments exactly as supplied</dd>
             <dt>&lt;count></dt><dd>Any supplied count, e.g. 5</dd>
@@ -567,7 +567,7 @@
                 literal &lt;args>
             </dd>
         </dl>
-        
+
         <p>
             "q-" can be prefixed to the escape sequence so that the value is quoted, making
             it suitable for expression evaluation. Example: &lt;q-args>

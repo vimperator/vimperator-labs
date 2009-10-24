@@ -1,6 +1,9 @@
 
 <!ENTITY liberator.mainWindow "mainplayer">
 <!ENTITY liberator.name "xulmus">
+<!ENTITY liberator.appname "Xulmus">
+<!ENTITY liberator.idname "XULMUS">
+<!ENTITY liberator.host "Songbird">
 <!ENTITY liberator.statusBefore "statusbar-display">
 <!ENTITY liberator.statusAfter "">
 

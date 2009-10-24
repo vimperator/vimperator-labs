@@ -148,9 +148,18 @@
         <xsl:for-each select="$localdoc/*[@insertbefore=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
-        <xsl:for-each select="$elem">
-            <xsl:copy><xsl:apply-templates select="node()"/></xsl:copy>
-        </xsl:for-each>
+        <xsl:choose>
+            <xsl:when test="$localdoc/*[@replace=$tag] and not($elem[@replace])">
+                <xsl:for-each select="$localdoc/*[@replace=$tag]">
+                    <xsl:apply-templates select="."/>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:for-each select="$elem">
+                    <xsl:copy><xsl:apply-templates select="node()"/></xsl:copy>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:for-each select="$localdoc/*[@insertafter=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
@@ -168,7 +177,7 @@
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
-    <xsl:template match="liberator:*[@tag]">
+    <xsl:template match="liberator:*[@tag and not(@replace)]">
         <xsl:call-template name="splice-locals">
             <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>

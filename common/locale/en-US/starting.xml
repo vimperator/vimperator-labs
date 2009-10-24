@@ -13,9 +13,9 @@
 <tags>startup-options</tags>
 
 <p>
-    Command-line options can be passed to &liberator.appname; via the -vimperator &liberator.host;
+    Command-line options can be passed to &liberator.appname; via the -&liberator.name; &liberator.host;
     option. These are passed as single string argument.
-    E.g., firefox -vimperator <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str>
+    E.g., firefox -&liberator.name; <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str>
 </p>
 
 <item>
@@ -26,7 +26,7 @@
             Execute a single Ex command after all initialization has been performed. See
             <t>initialization</t>.
         </p>
-        
+
         <p>This option can be specified multiple times.</p>
     </description>
 </item>
@@ -40,7 +40,7 @@
             Execute a single Ex command before any initialization has been performed. See
             <t>initialization</t>.
         </p>
-        
+
         <p>This option can be specified multiple times.</p>
     </description>
 </item>
@@ -79,16 +79,16 @@
     and no further locations are tried.
 
         <ol>
-            <li tag="$VIMPERATOR_INIT">
-                <em>$VIMPERATOR_INIT</em> — May contain a single Ex command (e.g.,
+            <li tag="$&liberator.idname;_INIT">
+                <em>$&liberator.idname;_INIT</em> — May contain a single Ex command (e.g.,
                 "<ex>:source <a>file</a></ex>").
             </li>
-            <li tag="$MY_VIMPERATORRC">
-                <em>~/vimperatorrc</em> — Windows only. If this file exists, its contents
-                are executed and <em>$MY_VIMPERATORRC</em> set to its path.
+            <li tag="$MY_&liberator.idname;RC">
+                <em>~/&liberator.name;rc</em> — Windows only. If this file exists, its contents
+                are executed and <em>$MY_&liberator.idname;RC</em> set to its path.
             </li>
             <li>
-                <em>~/.vimperatorrc</em> — If this file exists, its contents are executed.
+                <em>~/.&liberator.name;rc</em> — If this file exists, its contents are executed.
             </li>
         </ol>
     </li>
@@ -125,16 +125,16 @@ it finds.
 <h2 tag="save-settings">Saving settings</h2>
 
 <item>
-    <tags>:mkv :mkvimperatorrc</tags>
+    <tags>:mkv :mk&liberator.name;rc</tags>
     <spec>:mkv<oa>imperatorrc</oa><oa>!</oa> <oa>file</oa></spec>
     <description>
         <p>
             Write current key mappings and changed options to <oa>file</oa>. If no
-            <oa>file</oa> is specified then <em>~/.vimperatorrc</em> is written unless this file
-            already exists. The special version <ex>:mkvimperatorrc!</ex> will overwrite
+            <oa>file</oa> is specified then <em>~/.&liberator.name;rc</em> is written unless this file
+            already exists. The special version <ex>:mk&liberator.name;rc!</ex> will overwrite
             <oa>file</oa> if it exists.
         </p>
-        
+
         <p>
             Warning: this differs from Vim's behavior which defaults to writing the file
             in the current directory.

@@ -54,7 +54,7 @@
             <a>cmd</a> is replaced with the previous external command, but not when there is a
             backslash before the '!', then the backslash is removed.
         </p>
-        
+
         <p>
             Warning: Input redirection (&lt; foo) not done, also do not run commands which
             require stdin or it will hang &liberator.host;! It is possible to launch background
@@ -82,12 +82,12 @@
             Clear private data items. Where <a>item</a> … is a list of private items to
             delete. These may be any of the items valid for <o>sanitizeitems</o>.
         </p>
-        
+
         <p>
             If <oa>!</oa> is specified then <o>sanitizeitems</o> is used for the list of items to
             delete.
         </p>
-        
+
         <p>
             If <a>timespan</a> is specified then only items within that timespan are deleted,
             otherwise the value of <o>sanitizetimespan</o> is used.
@@ -154,7 +154,7 @@
     <spec>:helpa<oa>ll</oa> <oa>subject</oa></spec>
     <description>
         <p>Open the single unchunked help page.</p>
-        
+
         <p>See <ex>:help</ex>.</p>
     </description>
 </item>
