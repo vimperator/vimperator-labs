@@ -58,14 +58,14 @@
             support it, currently:
         </p>
 
-        <p>
-            * <ex>:tab addons</ex>
-            * <ex>:tab downloads</ex>
-            * <ex>:tab extoptions</ex>
-            * <ex>:tab help</ex>
-            * <ex>:tab javascript!</ex>
-            * <ex>:tab preferences!</ex>
-        </p>
+        <ul>
+            <li><ex>:tab addons</ex></li>
+            <li><ex>:tab downloads</ex></li>
+            <li><ex>:tab extoptions</ex></li>
+            <li><ex>:tab help</ex></li>
+            <li><ex>:tab javascript!</ex></li>
+            <li><ex>:tab preferences!</ex></li>
+        </ul>
     </description>
 </item>
 
