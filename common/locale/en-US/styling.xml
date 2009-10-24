@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="styling"
-    title="&appname; Styling"
+    title="&liberator.appname; Styling"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="styling">Styling the GUI and web pages</h1>
 
 <p>
-    &appname; allows you to style both the browser and any web pages you view. All
+    &liberator.appname; allows you to style both the browser and any web pages you view. All
     styling is specified via CSS. Although you may style any user interface element
-    via the <ex>:style</ex> command, most &appname; elements can be styled with the
+    via the <ex>:style</ex> command, most &liberator.appname; elements can be styled with the
     <ex>:highlight</ex> command, for convenience.
 </p>
 
@@ -42,7 +42,7 @@
             Highlight <a>group</a> with <a>css</a>. <a>css</a> is one or more comma separated CSS
             declarations (E.g. <em>color: blue; background-color: red</em>). Normally, <a>css</a> is
             checked for valid syntax before it's applied. Once you're certain it's valid,
-            <oa>!</oa> can be used to skip the check to speed up &appname; startup. <a>selector</a>
+            <oa>!</oa> can be used to skip the check to speed up &liberator.appname; startup. <a>selector</a>
             can be any valid CSS selector, such as <ex>:hover</ex>, and, if provided, will
             restrict the match to matching elements.
         </p>
@@ -50,7 +50,7 @@
         <p>Valid groups are:</p>
         
         <dl>
-            <dt>Bell</dt>              <dd>&appname;'s visual bell</dd>
+            <dt>Bell</dt>              <dd>&liberator.appname;'s visual bell</dd>
             <dt>Boolean</dt>           <dd>A JavaScript Boolean object</dd>
             <dt>CmdLine</dt>           <dd>The command line</dd>
             <dt>CmdOutput</dt>         <dd></dd>

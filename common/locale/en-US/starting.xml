@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="starting"
-    title="&appname; Starting"
+    title="&liberator.appname; Starting"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h1 tag="starting">Starting &appname;</h1>
+<h1 tag="starting">Starting &liberator.appname;</h1>
 
 <tags>startup-options</tags>
 
 <p>
-    Command-line options can be passed to &appname; via the -vimperator &hostapp;
+    Command-line options can be passed to &liberator.appname; via the -vimperator &liberator.host;
     option. These are passed as single string argument.
     E.g., firefox -vimperator <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str>
 </p>
@@ -71,10 +71,10 @@
 
 <h2 tag="initialization startup">Initialization</h2>
 
-<p>At startup, &appname; completes the following tasks in order. </p>
+<p>At startup, &liberator.appname; completes the following tasks in order. </p>
 
 <ol>
-    <li> &appname; can perform user initialization commands. When
+    <li> &liberator.appname; can perform user initialization commands. When
     one of the following is successfully located, it is executed,
     and no further locations are tried.
 
@@ -118,7 +118,7 @@
 The user's ~ (i.e., "home") directory is determined as follows:
 
 * On Unix and Mac, the environment variable  <em>$HOME</em> is used.
-* On Windows, &appname; checks for the existence of <em>%HOME%</em>, then
+* On Windows, &liberator.appname; checks for the existence of <em>%HOME%</em>, then
 <em>%USERPROFILE%</em>, and then <em>%HOMEDRIVE%%HOMEPATH%</em>. It uses the first one
 it finds.
 
@@ -149,7 +149,7 @@ it finds.
     <tags>:res :restart</tags>
     <spec>:res<oa>tart</oa></spec>
     <description>
-        <p>Force &hostapp; to restart. Useful when installing extensions.</p>
+        <p>Force &liberator.host; to restart. Useful when installing extensions.</p>
     </description>
 </item>
 

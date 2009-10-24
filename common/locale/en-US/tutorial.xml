@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="tutorial"
-    title="&appname; Tutorial"
+    title="&liberator.appname; Tutorial"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <!-- Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu) -->
@@ -14,12 +14,12 @@
 
 <html:p style="text-align: center">
     This is a quickstart tutorial to help get new users up and running
-    in &appname;. It is not intended as a full reference explaining all
+    in &liberator.appname;. It is not intended as a full reference explaining all
     features.
 </html:p>
 
 <p>
-    If you've started using &appname; from scratch (i.e., without any
+    If you've started using &liberator.appname; from scratch (i.e., without any
     customization), you should be looking at this help page in a relatively
     bare-looking window. The menubar, navigation bar, and bookmark bars are hidden.
     In case you missed the notice in the <t>intro</t>, you can
@@ -35,43 +35,43 @@
 
 <p>
     However, in this author's opinion, the best way to get familiar with
-    &appname; is to leave these disabled for now. (The above action can be
+    &liberator.appname; is to leave these disabled for now. (The above action can be
     reversed with <ex>:set go=<key name="CR"/></ex>) You can look at the entry for <o>guioptions</o> in
     <t>options</t> for more information on this.
 </p>
 
-<h2 tag="modal">&appname;'s modal interface</h2>
+<h2 tag="modal">&liberator.appname;'s modal interface</h2>
 
 <p>
-    &appname;'s power, like Vim's, comes from it's modal interface. Keys have
-    different meanings depending on which mode the browser is in. &appname; has
+    &liberator.appname;'s power, like Vim's, comes from it's modal interface. Keys have
+    different meanings depending on which mode the browser is in. &liberator.appname; has
     several modes, but the 2 most important are <em>Normal</em> mode and
     <em>Command-line</em> mode.
 </p>
 
 <p>
-    When &appname; starts, it is in Normal mode by default. This is probably where
+    When &liberator.appname; starts, it is in Normal mode by default. This is probably where
     you will spend the majority of your time.
 </p>
 
 <p>
-    The other core mode of &appname;, Command-line mode, can be entered from
-    Normal mode by typing a <k>:</k> (colon). You will frequently see &appname;
+    The other core mode of &liberator.appname;, Command-line mode, can be entered from
+    Normal mode by typing a <k>:</k> (colon). You will frequently see &liberator.appname;
     commands start with a <k>:</k>, indicating that what follows is a command.
 </p>
 
 <p>
     To return to Normal mode from Command-line mode, type <k name="Esc"/>. Pressing
     <k name="Esc"/> will also return you to Normal mode from most other modes in
-    &appname;.
+    &liberator.appname;.
 </p>
 
 <h2 tag="getting-help">Getting help</h2>
 
 <p>
     Vim is a great editor but it's not much of a web browser. So even seasoned Vim
-    users will probably have to look at &appname; documentation sooner or later.
-    Most of the documentation for &appname;'s features are easily found using the
+    users will probably have to look at &liberator.appname; documentation sooner or later.
+    Most of the documentation for &liberator.appname;'s features are easily found using the
     <ex>:help</ex> command. For example, you can find help on the <ex>:help</ex> command
     by typing
 </p>
@@ -104,16 +104,16 @@
 <em>– or how I learned to stop worrying and love the 80+ buttons I already have.</em>
 
 <p>
-    The efficiency of &appname;, as with the legendary editor it was inspired by,
+    The efficiency of &liberator.appname;, as with the legendary editor it was inspired by,
     relies on the user being able to keep his fingers on the keyboard where they
     can do the most good. While there are some areas where the mouse is clearly
-    superior at, such as GUI design or some games, &appname; acts on the
+    superior at, such as GUI design or some games, &liberator.appname; acts on the
     assumption that a web browser doesn't have to be one of those.
 </p>
 
 <p>
     Here are some areas where the mouse is typically considered indisposable, and
-    how &appname; challenges this preconception.
+    how &liberator.appname; challenges this preconception.
 </p>
 
 <h2 tag="keyboard-scrolling">Scrolling</h2>
@@ -193,27 +193,27 @@
 <h2 tag="hints-tutorial">Some hints about surfing…</h2>
 
 <p>
-    So now you can navigate around in &appname;. But wait… how do you <em>open</em> a
+    So now you can navigate around in &liberator.appname;. But wait… how do you <em>open</em> a
     page or tab linked in a web page? How do you <em>click</em> on all those links
     without your tailed friend?
 </p>
 
 <p>
     The answer is <em>hints</em>. Activating hints displays a number next to every link
-    &appname; can find. To follow the link, simply type the number corresponding
+    &liberator.appname; can find. To follow the link, simply type the number corresponding
     to the hint, a white number inside a red square by default.
 </p>
 
 <p>
     For text links, there's an additional shortcut; you can type some text
-    contained in the link and &appname; will search all the links it can find and
+    contained in the link and &liberator.appname; will search all the links it can find and
     only hint the matching links, further narrowing down the list. If the text you
-    type uniquely identifies any given link, &appname; will follow that link
+    type uniquely identifies any given link, &liberator.appname; will follow that link
     immediately without any further user input.
 </p>
 
 <p>
-    Whichever way you choose to indicate your target link, once &appname; has
+    Whichever way you choose to indicate your target link, once &liberator.appname; has
     highlighted the link you want, simply hit <k name="Enter"/> to open it.
 </p>
 
@@ -225,10 +225,10 @@
 </p>
 
 <p>
-    To test it, try this link: <link target="http://vimperator.org/">&appname; Homepage</link>.
+    To test it, try this link: <link target="http://vimperator.org/">&liberator.appname; Homepage</link>.
     Activate QuickHint mode with <k>f</k> or <k>F</k> to highlight all currently
     visible links. Then start typing the text of the link. The link should be
-    uniquely identified soon, and &appname; will open it. Once you're done,
+    uniquely identified soon, and &liberator.appname; will open it. Once you're done,
     remember to use <k name="C-o"/> (<em>History Back</em>) or <k>d</k> (<em>Delete Buffer</em>)
     to return here, depending on which key you used to activate QuickHint mode.
 </p>
@@ -253,14 +253,14 @@
 <h2 tag="vimperatorrc">Saving for posterity - vimperatorrc</h2>
 
 <p>
-    Once you get &appname; set up with your desired options, maps, and commands,
-    you'll probably want them to be available the next time you open &appname;.
+    Once you get &liberator.appname; set up with your desired options, maps, and commands,
+    you'll probably want them to be available the next time you open &liberator.appname;.
     Continuing the Vim theme, this is done with a vimperatorrc file.
 </p>
 
 <p>
     To save your current settings and allow them to be loaded automatically
-    next time you start &appname;, issue the <ex>:mkv</ex> command.
+    next time you start &liberator.appname;, issue the <ex>:mkv</ex> command.
 </p>
 
 <p>
@@ -272,7 +272,7 @@
 <h2 tag="quitting-without-menus">Find the exit nearest you</h2>
 
 <p>
-    &appname; supports all of Vim's classic methods of exiting.
+    &liberator.appname; supports all of Vim's classic methods of exiting.
 </p>
 
 <ul>
@@ -287,31 +287,31 @@
     </li>
 </ul>
 
-<h2 tag="whither-firefox">Where did &hostapp; go?</h2>
+<h2 tag="whither-firefox">Where did &liberator.host; go?</h2>
 
 <p>
-    You might feel pretty disoriented now. Don't worry. This is still &hostapp;
-    underneath. Here are some ways &appname; allows &hostapp; to shine through. See
+    You might feel pretty disoriented now. Don't worry. This is still &liberator.host;
+    underneath. Here are some ways &liberator.appname; allows &liberator.host; to shine through. See
     the <ex>:help</ex> for these commands and mappings for more information on how to
     make the best use of them.
 </p>
 
 <ul>
     <li><ex>:dialog</ex> –
-        To access some of &hostapp;'s many dialog windows, you can use the
+        To access some of &liberator.host;'s many dialog windows, you can use the
         <ex>:dialog</ex> command. See <ex>:help :dialog</ex>.
     </li>
     <li><ex>:bmarks</ex> –
-        &appname; provides a new interface to bookmarks, but they're still your
-        standard &hostapp; bookmarks under the hood. <ex>:bmark</ex> will add a new
+        &liberator.appname; provides a new interface to bookmarks, but they're still your
+        standard &liberator.host; bookmarks under the hood. <ex>:bmark</ex> will add a new
         bookmark, while <ex>:bmarks</ex> will list the bookmarks currently defined.
     </li>
     <li><ex>:history</ex> –
         It's exactly what it sounds like. This command will display a colorized,
-        scrollable and clickable list of the locations in &appname;'s history.
+        scrollable and clickable list of the locations in &liberator.appname;'s history.
     </li>
     <li><ex>:emenu</ex> –
-        Access the &hostapp; menus through the &appname; command line.
+        Access the &liberator.host; menus through the &liberator.appname; command line.
     </li>
 </ul>
 
@@ -334,9 +334,9 @@
 </p>
 
 <p>
-    The &appname; way to do this is with the command <ex>:addons</ex>. Issuing this
-    command brings up the &hostapp; Add-ons dialog window; you can then remove it as
-    normal, selecting &appname; from the list and clicking (yes, clicking)
+    The &liberator.appname; way to do this is with the command <ex>:addons</ex>. Issuing this
+    command brings up the &liberator.host; Add-ons dialog window; you can then remove it as
+    normal, selecting &liberator.appname; from the list and clicking (yes, clicking)
     <em>Uninstall</em>.
 </p>
 
@@ -349,8 +349,8 @@
 <h2 tag="support">I'm interested… but lost!</h2>
 
 <p>
-    &appname; has an energetic and growing user base. If you've run into a problem
-    that you can't seem to solve with &appname;, or if you think you might have
+    &liberator.appname; has an energetic and growing user base. If you've run into a problem
+    that you can't seem to solve with &liberator.appname;, or if you think you might have
     found a bug, please let us know! There is support available on the
     <link target="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link>
     or in the <link target="irc://irc.freenode.net/vimperator">#vimperator</link> IRC
@@ -359,7 +359,7 @@
 
 <p>
     If you have any feature requests or (even better) offers to help, we'd love to
-    hear from you as well. Developers work on &appname; whenever possible, but we
+    hear from you as well. Developers work on &liberator.appname; whenever possible, but we
     are neither infinite nor omnipotent; please bear with us. If you can't wait for
     us to get around to it, rest assured patches are welcome! See the
     <t>developer</t> page for more information.

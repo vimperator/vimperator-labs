@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="message"
-    title="&appname; Messages"
+    title="&liberator.appname; Messages"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="messages">Error and informational messages</h1>
@@ -13,7 +13,7 @@
 <tags>message-history</tags>
 
 <p>
-    &appname; stores all info and error messages in a message
+    &liberator.appname; stores all info and error messages in a message
     history. The type of info messages output can be controlled by
     the <o>verbose</o> option. The number of stored messages can be set
     with the <o>messages</o> option.

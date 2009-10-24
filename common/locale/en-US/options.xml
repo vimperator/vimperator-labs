@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="options"
-    title="&appname; Options"
+    title="&liberator.appname; Options"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="options">Options</h1>
 
 <p>
-    &appname; has a number of internal variables and switches which can be set to
+    &liberator.appname; has a number of internal variables and switches which can be set to
     achieve special effects. These options come in 5 forms:
 </p>
 
@@ -210,19 +210,19 @@
     character) or <em>$<a>VAR</a></em>. <em>%VAR%</em> is also supported on Windows.
 </p>
 
-<h2 tag="firefox-options preferences">Setting &hostapp; options</h2>
+<h2 tag="firefox-options preferences">Setting &liberator.host; options</h2>
 
-<p>&hostapp; options can be viewed and set with the following commands:</p>
+<p>&liberator.host; options can be viewed and set with the following commands:</p>
 
 <item>
     <tags>:prefs :preferences</tags>
     <spec>:pref[erences]</spec>
     <description>
         <p>
-            Show the &hostapp; preferences dialog. You can change the browser
-            preferences from this dialog. Be aware that not all &hostapp;
-            preferences work, because &appname; overrides some key bindings and
-            changes &hostapp;'s GUI.
+            Show the &liberator.host; preferences dialog. You can change the browser
+            preferences from this dialog. Be aware that not all &liberator.host;
+            preferences work, because &liberator.appname; overrides some key bindings and
+            changes &liberator.host;'s GUI.
         </p>
     </description>
 </item>
@@ -232,7 +232,7 @@
     <spec>:pref[erences]!</spec>
     <description>
         <p>
-            Opens about:config in the current tab where you can change advanced &hostapp;
+            Opens about:config in the current tab where you can change advanced &liberator.host;
             preferences.
         </p>
     </description>
@@ -243,7 +243,7 @@
     <spec>:se[t]! <a>preference</a>=<a>value</a></spec>
     <description>
         <p>
-            Change any &hostapp; <a>preference</a> (those in the about:config
+            Change any &liberator.host; <a>preference</a> (those in the about:config
             window). You can also reset/delete those preferences with
             <ex>:set! <a>preference</a>&amp;</ex>.
         </p>
@@ -253,7 +253,7 @@
 <tags>overridden-preferences</tags>
 
 <p>
-    &appname; sets several &hostapp; preferences at startup. If this is undesirable,
+    &liberator.appname; sets several &liberator.host; preferences at startup. If this is undesirable,
     they can be changed to a different value in your RC file using
     <ex>:set! <a>preference</a>=<a>value</a></ex>
 </p>
@@ -316,7 +316,7 @@
         <dl>
             <dt>s</dt>     <dd>Search engines and keyword URLs</dd>
             <dt>f</dt>     <dd>Local files</dd>
-            <dt>l</dt>     <dd>&hostapp; location bar entries (bookmarks and history sorted in an intelligent way)</dd>
+            <dt>l</dt>     <dd>&liberator.host; location bar entries (bookmarks and history sorted in an intelligent way)</dd>
             <dt>b</dt>     <dd>Bookmarks</dd>
             <dt>h</dt>     <dd>History</dd>
             <dt>S</dt>     <dd>Search engine suggestions</dd>
@@ -355,7 +355,7 @@
         </p>
 
         <p>
-            If <o>defsearch</o> is empty, then &hostapp; will always attempt to
+            If <o>defsearch</o> is empty, then &liberator.host; will always attempt to
             open the raw [arg].
         </p>
     </description>
@@ -375,7 +375,7 @@
         </p>
 
         <warning>
-            &appname; will not behave correctly if the editor forks its own
+            &liberator.appname; will not behave correctly if the editor forks its own
             process, such as with gvim without the -f argument.
         </warning>
     </description>
@@ -459,7 +459,7 @@
     <type>string</type>
     <default>UTF-8</default>
     <description>
-        <p>Changes the character encoding that &appname; uses to read and write files.</p>
+        <p>Changes the character encoding that &liberator.appname; uses to read and write files.</p>
     </description>
 </item>
 
@@ -707,7 +707,7 @@
     <description>
         <p>
             Use Insert mode as the default for text areas. This is useful if you
-            want to use the known &hostapp; interface for editing text areas.
+            want to use the known &liberator.host; interface for editing text areas.
             Input fields default to this behaviour irrespective of this option's
             setting.
         </p>
@@ -913,7 +913,7 @@
             effective.
         </p>
 
-        <note>This option does not change the popup blocker of &hostapp; in any way.</note>
+        <note>This option does not change the popup blocker of &liberator.host; in any way.</note>
     </description>
 </item>
 
@@ -964,7 +964,7 @@
 
         <p>
             On startup, if the environment variable <em>$VIMPERATOR_RUNTIME</em> does not
-            exist, &appname; will set it to match this value.
+            exist, &liberator.appname; will set it to match this value.
         </p>
     </description>
 </item>
@@ -1163,15 +1163,15 @@
     <tags>'titlestring'</tags>
     <spec>'titlestring'</spec>
     <type>string</type>
-    <default>&appname;</default>
+    <default>&liberator.appname;</default>
     <description>
         <p>
-            Change the title of the browser window.  &appname; changes the
-            browser title from <str>Title of web page - Mozilla &hostapp;</str>
-            to <str>Title of web page - &appname;</str>.  If you don't like
+            Change the title of the browser window.  &liberator.appname; changes the
+            browser title from <str>Title of web page - Mozilla &liberator.host;</str>
+            to <str>Title of web page - &liberator.appname;</str>.  If you don't like
             that, you can restore it with: 
         </p>
-        <code><ex>:set titlestring=<str>Mozilla &hostapp;</str></ex></code>
+        <code><ex>:set titlestring=<str>Mozilla &liberator.host;</str></ex></code>
     </description>
 </item>
 
@@ -1217,7 +1217,7 @@
     <description>
         <p>
             Define which info messages are displayed.  When bigger than zero,
-            &appname; will give messages about what it is doing.  These can be
+            &liberator.appname; will give messages about what it is doing.  These can be
             viewed at any time with the <ex>:messages</ex> command. The highest
             value is 15, being the most verbose mode.
         </p>

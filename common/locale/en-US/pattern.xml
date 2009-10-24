@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="pattern"
-    title="&appname; Patterns"
+    title="&liberator.appname; Patterns"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="text-search-commands">Text search commands</h1>
 
 <p>
-    &appname; provides a Vim-like interface to &hostapp;'s standard text search
+    &liberator.appname; provides a Vim-like interface to &liberator.host;'s standard text search
     functionality. There is no support for using regular expressions in search
-    commands as &hostapp; does not provide native regex support. It is unlikely that
+    commands as &liberator.host; does not provide native regex support. It is unlikely that
     this will ever be available.
 </p>
 

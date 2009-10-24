@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="various"
-    title="&appname; Other"
+    title="&liberator.appname; Other"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1>Other help</h1>
@@ -57,7 +57,7 @@
         
         <p>
             Warning: Input redirection (&lt; foo) not done, also do not run commands which
-            require stdin or it will hang &hostapp;! It is possible to launch background
+            require stdin or it will hang &liberator.host;! It is possible to launch background
             processes, though (e.g. <ex>:! xterm &amp;</ex>).
         </p>
     </description>
@@ -126,7 +126,7 @@
     <spec>:ve<oa>rsion</oa><oa>!</oa></spec>
     <description>
         <p>
-            Show version information. You can show the &hostapp; version page with
+            Show version information. You can show the &liberator.host; version page with
             <ex>:version!</ex>.
         </p>
     </description>

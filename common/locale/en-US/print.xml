@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="print"
-    title="&appname; Printing"
+    title="&liberator.appname; Printing"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="printing">Printing</h1>
@@ -33,7 +33,7 @@
 </item>
 
 
-<h2 tag="firefox-print-dialogs">&hostapp; printing dialogs</h2>
+<h2 tag="firefox-print-dialogs">&liberator.host; printing dialogs</h2>
 
 <p>
     The "Print Preview" and "Page Setup" dialogs can be opened via the <ex>:dialog</ex>

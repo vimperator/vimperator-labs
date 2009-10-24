@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="index"
-    title="&appname; Index"
+    title="&liberator.appname; Index"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="index">Index</h1>
@@ -36,7 +36,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><k name="C-u"/></dt> <dd>Scroll window upwards in the buffer</dd>
     <dt><k name="C-v"/></dt> <dd>Pass through next key</dd>
     <dt><k name="C-x"/></dt> <dd>Decrement last number in URL</dd>
-    <dt><k name="C-z"/></dt> <dd>Temporarily ignore all &appname; key bindings</dd>
+    <dt><k name="C-z"/></dt> <dd>Temporarily ignore all &liberator.appname; key bindings</dd>
 </dl>
 
 
@@ -257,7 +257,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:delmarks</ex></dt> <dd>Delete the specified marks</dd>
     <dt><ex>:delqmarks</ex></dt> <dd>Delete the specified QuickMarks</dd>
     <dt><ex>:delstyle</ex></dt> <dd>Delete any matching styles</dd>
-    <dt><ex>:dialog</ex></dt> <dd>Open a &hostapp; dialog</dd>
+    <dt><ex>:dialog</ex></dt> <dd>Open a &liberator.host; dialog</dd>
     <dt><ex>:doautoall</ex></dt> <dd>Apply the autocommands matching the specified URL to all buffers</dd>
     <dt><ex>:doautocmd</ex></dt> <dd>Apply the autocommands matching the specified URL to the current buffer</dd>
     <dt><ex>:downloads</ex></dt> <dd>Show progress of current downloads</dd>
@@ -279,7 +279,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:hardcopy</ex></dt> <dd>Print current document</dd>
     <dt><ex>:help</ex></dt> <dd>Open the help page</dd>
     <dt><ex>:helpall</ex></dt> <dd>Open the single unchunked help page</dd>
-    <dt><ex>:highlight</ex></dt> <dd>Style &appname;</dd>
+    <dt><ex>:highlight</ex></dt> <dd>Style &liberator.appname;</dd>
     <dt><ex>:history</ex></dt> <dd>Show recently visited URLs</dd>
     <dt><ex>:iabbrev</ex></dt> <dd>Abbreviate a key sequence in Insert mode</dd>
     <dt><ex>:iabclear</ex></dt> <dd>Remove all abbreviations in Insert mode</dd>
@@ -313,12 +313,12 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:pageinfo</ex></dt> <dd>Show various page information</dd>
     <dt><ex>:pagestyle</ex></dt> <dd>Select the author style sheet to apply</dd>
     <dt><ex>:play</ex></dt> <dd>Replay a recorded macro</dd>
-    <dt><ex>:preferences</ex></dt> <dd>Show &hostapp; preferences dialog</dd>
+    <dt><ex>:preferences</ex></dt> <dd>Show &liberator.host; preferences dialog</dd>
     <dt><ex>:pwd</ex></dt> <dd>Print the current directory name</dd>
     <dt><ex>:qmark</ex></dt> <dd>Mark a URL with a letter for quick access</dd>
     <dt><ex>:qmarks</ex></dt> <dd>Show all QuickMarks</dd>
     <dt><ex>:quit</ex></dt> <dd>Quit current tab</dd>
-    <dt><ex>:quitall</ex></dt> <dd>Quit &appname;</dd>
+    <dt><ex>:quitall</ex></dt> <dd>Quit &liberator.appname;</dd>
     <dt><ex>:redraw</ex></dt> <dd>Redraw the screen</dd>
     <dt><ex>:reload</ex></dt> <dd>Reload the current web page</dd>
     <dt><ex>:reloadall</ex></dt> <dd>Reload all tab pages</dd>
@@ -336,7 +336,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:source</ex></dt> <dd>Read Ex commands from a file</dd>
     <dt><ex>:stop</ex></dt> <dd>Stop loading the current web page</dd>
     <dt><ex>:stopall</ex></dt> <dd>Stop loading all tab pages</dd>
-    <dt><ex>:style</ex></dt> <dd>Style &appname; and web sites</dd>
+    <dt><ex>:style</ex></dt> <dd>Style &liberator.appname; and web sites</dd>
     <dt><ex>:styledisable</ex></dt> <dd>Disable a user style sheet</dd>
     <dt><ex>:styleenable</ex></dt> <dd>Enable a user style sheet</dd>
     <dt><ex>:styletoggle</ex></dt> <dd>Toggle a user style sheet</dd>
@@ -391,7 +391,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>eventignore</o></dt> <dd>List of autocommand event names which should be ignored</dd>
     <dt><o>exrc</o></dt> <dd>Allow reading of an RC file in the current directory</dd>
     <dt><o>extendedhinttags</o></dt> <dd>XPath string of hintable elements activated by <k>;</k></dd>
-    <dt><o>fileencoding</o></dt> <dd>Changes the character encoding that &appname; uses to read and write files</dd>
+    <dt><o>fileencoding</o></dt> <dd>Changes the character encoding that &liberator.appname; uses to read and write files</dd>
     <dt><o>focuscontent</o></dt> <dd>Try to stay in Normal mode after loading a web page</dd>
     <dt><o>followhints</o></dt> <dd>Change the behaviour of <k name="Return"/> in Hints mode</dd>
     <dt><o>fullscreen</o></dt> <dd>Show the current window fullscreen</dd>

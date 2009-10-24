@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="repeat"
-    title="&appname; Repeating Commands"
+    title="&liberator.appname; Repeating Commands"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="repeating">Repeating commands</h1>
 
-<p>&appname; can repeat a number of commands and record macros.</p>
+<p>&liberator.appname; can repeat a number of commands and record macros.</p>
 
 <h2 tag="single-repeat">Single repeats</h2>
 
@@ -20,7 +20,7 @@
     <description>
         <p>
             Repeat the last keyboard mapping <oa>count</oa> times. Note that, unlike in Vim, this
-            does not apply solely to editing commands, mainly because &appname; doesn't
+            does not apply solely to editing commands, mainly because &liberator.appname; doesn't
             have them.
         </p>
     </description>
@@ -157,7 +157,7 @@ function hello2() {
             loaded after vimperatorrc is sourced, this command must be placed early
             in the vimperatorrc file if vimperatorrc also includes commands that are
             implemented by plugins. Additionally, this command allows for sourcing
-            new plugins without restarting &appname;.
+            new plugins without restarting &liberator.appname;.
         </p>
     </description>
 </item>
@@ -193,7 +193,7 @@ function hello2() {
     <spec>:fini<oa>sh</oa></spec>
     <description>
         <p>
-            Stop sourcing a script file. This can only be called from within a &appname;
+            Stop sourcing a script file. This can only be called from within a &liberator.appname;
             script file.
         </p>
     </description>
@@ -212,7 +212,7 @@ function hello2() {
             which might be slow, so take the results with a grain of salt.
         </p>
         
-        <p>If <a>code</a> starts with a <ex>:</ex>, it is executed as a &appname; command.</p>
+        <p>If <a>code</a> starts with a <ex>:</ex>, it is executed as a &liberator.appname; command.</p>
         
         <p>
             Use the special version with <oa>!</oa> if you just want to run any command multiple

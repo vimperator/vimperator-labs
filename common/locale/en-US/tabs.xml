@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="tabs"
-    title="&appname; Tabs"
+    title="&liberator.appname; Tabs"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="tabs">Tabs</h1>
@@ -354,7 +354,7 @@ See <t>opening</t> for other ways to open new tabs.
     <spec>:undoa<oa>ll</oa></spec>
     <description>
         <p>
-            Undo closing of all closed tabs. &hostapp; stores up to 10 closed tabs, even
+            Undo closing of all closed tabs. &liberator.host; stores up to 10 closed tabs, even
             after a browser restart.
         </p>
     </description>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="intro"
-    title="&appname; Introduction"
+    title="&liberator.appname; Introduction"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 
@@ -19,20 +19,20 @@ VIMperator :)
 
 <h1 tag="intro">Introduction</h1>
 
-<link topic="http://vimperator.org">&appname;</link> is a free browser add-on for &hostapp;,
+<link topic="http://vimperator.org">&liberator.appname;</link> is a free browser add-on for &liberator.host;,
 which makes it look and behave like the
 <link topic="http://www.vim.org">Vim</link>
 text editor. It has similar key bindings, and you could call it a modal
 web browser, as key bindings differ according to which mode you are in.
 
 <warning tag="warning">
-    To provide the most authentic Vim experience, the &hostapp; menubar and toolbar are hidden.
+    To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar are hidden.
 </warning>
 
 <p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.</p>
 <p>
-    If you don't like &appname; at all, you can uninstall it by typing
-    <ex>:extdelete &appname;</ex> or <ex>:extdisable &appname;</ex> to disable it.
+    If you don't like &liberator.appname; at all, you can uninstall it by typing
+    <ex>:extdelete &liberator.appname;</ex> or <ex>:extdisable &liberator.appname;</ex> to disable it.
 </p>
 <p>
     If you like it but can't remember the shortcuts, then press
@@ -41,14 +41,14 @@ web browser, as key bindings differ according to which mode you are in.
 
 <tags>author donaton sponsor</tags>
 <p>
-    &appname; was initially written by 
+    &liberator.appname; was initially written by 
     <link topic="mailto:stubenschrott@vimperator.org">Martin
     Stubenschrott</link> but has found many other
-    <link topic="http://vimperator.org/trac/wiki/&appname;/Authors">contributors</link>
-    in the meanwhile. If you appreciate the work on &appname; and want to
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">contributors</link>
+    in the meanwhile. If you appreciate the work on &liberator.appname; and want to
     encourage us working on it more, you can send us greetings, patches, or
     donations (thanks a lot to
-    <link topic="http://vimperator.org/trac/wiki/&appname;/Donors">these
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Donors">these
         people</link>
     who already did):
 </p>
@@ -65,7 +65,7 @@ web browser, as key bindings differ according to which mode you are in.
     us by buying some cool 
     <link topic="http://www.zazzle.com/maxauthority*">merchandise</link> like
     t-shirts or mugs. Of course, as we believe in free, open source software, only
-    support us financially if you really like &appname; and the money doesn't hurt
+    support us financially if you really like &liberator.appname; and the money doesn't hurt
     — otherwise just use it, recommend it, and like it :)
 </p>
 
@@ -77,8 +77,8 @@ web browser, as key bindings differ according to which mode you are in.
         A quick-start tutorial for new users.
     </li>
     <li>
-        <link topic="starting">Starting &appname;</link>:
-        How &appname; starts up, where it reads the config file…
+        <link topic="starting">Starting &liberator.appname;</link>:
+        How &liberator.appname; starts up, where it reads the config file…
     </li>
     <li>
         <link topic="browsing">Browsing</link>:
@@ -138,12 +138,12 @@ web browser, as key bindings differ according to which mode you are in.
         Printing pages.
     </li>
     <li>
-        <link topic="gui">&appname;'s GUI</link>:
-        Accessing &hostapp; menus, dialogs and the sidebar.
+        <link topic="gui">&liberator.appname;'s GUI</link>:
+        Accessing &liberator.host; menus, dialogs and the sidebar.
     </li>
     <li>
         <link topic="styling">Styling the GUI and web pages</link>:
-        Changing the styling of content pages and &appname; itself.
+        Changing the styling of content pages and &liberator.appname; itself.
     </li>
     <li>
         <link topic="message">Error and informational messages</link>:
@@ -179,7 +179,7 @@ or <ex>:help :set</ex>.
     <li>Vim-like statusline with a Wget-like progress bar</li>
     <li>Minimal GUI (easily hide useless menubar and toolbar with <ex>:set guioptions=</ex>)</li>
     <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.vimperatorrc</em> file with syntax highlighting if you install vimperator.vim</li>
-    <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &hostapp; keyword bookmarks and search engines</li>
+    <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
     <li>Count supported for many commands (<em>3</em><k name="C-o"/> will go back 3 pages)</li>
     <li>Beep on errors</li>
     <li>Marks support (<k>m</k><em>a</em> to set mark a on a web page, <k>'</k><em>a</em> to go there)</li>
@@ -200,8 +200,8 @@ or <ex>:help :set</ex>.
     properly answer any questions. You can also join the
     <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> IRC channel
     on <link target="http://www.freenode.net/">Freenode</link> or check the
-    <link topic="http://vimperator.org/trac/wiki/&appname;/Wiki">Wiki</link> for
-    <link topic="http://vimperator.org/trac/wiki/&appname;/FAQ">
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Wiki">Wiki</link> for
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/FAQ">
         frequently asked questions (FAQ)
     </link>. Make sure, you have read the TODO file first, as we are aware of many
     things which can be improved when we find time for it or receive patches.

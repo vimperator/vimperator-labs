@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="map"
-    title="&appname; Key Mappings"
+    title="&liberator.appname; Key Mappings"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1>Key mappings, abbreviations, and user-defined commands</h1>
@@ -32,7 +32,7 @@
     <li>Normal mode: When browsing normally</li>
     <li>Visual mode: When selecting text with the cursor keys</li>
     <li>Insert mode: When interacting with text fields on a website</li>
-    <li>Command-line mode: When typing into the &appname; command line</li>
+    <li>Command-line mode: When typing into the &liberator.appname; command line</li>
 </ul>
 
 <warning>
@@ -278,7 +278,7 @@
 <h2 tag="abbreviations">Abbreviations</h2>
 
 <p>
-    &appname; can automatically replace words identified as abbreviations,
+    &liberator.appname; can automatically replace words identified as abbreviations,
     which may be used to save typing or to correct commonly misspelled
     words. An abbreviation can be one of three types that are defined by the
     types of constituent characters. Whitespace and quotes are non-keyword
@@ -474,7 +474,7 @@
             <dt>buffer</dt>       <dd>buffers</dd>
             <dt>color</dt>        <dd>color schemes</dd>
             <dt>command</dt>      <dd>Ex commands</dd>
-            <dt>dialog</dt>       <dd>&hostapp; dialogs</dd>
+            <dt>dialog</dt>       <dd>&liberator.host; dialogs</dd>
             <dt>dir</dt>          <dd>directories</dd>
             <dt>environment</dt>  <dd>environment variables</dd>
             <dt>event</dt>        <dd>autocommand events</dd>
@@ -485,8 +485,8 @@
             <dt>macro</dt>        <dd>named macros</dd>
             <dt>mapping</dt>      <dd>user mappings</dd>
             <dt>menu</dt>         <dd>menu items</dd>
-            <dt>option</dt>       <dd>&appname; options</dd>
-            <dt>preference</dt>   <dd>&hostapp; preferences</dd>
+            <dt>option</dt>       <dd>&liberator.appname; options</dd>
+            <dt>preference</dt>   <dd>&liberator.host; preferences</dd>
             <dt>search</dt>       <dd>search engines and keywords</dd>
             <dt>shellcmd</dt>     <dd>shell commands</dd>
             <dt>sidebar</dt>      <dd>sidebar panels</dd>

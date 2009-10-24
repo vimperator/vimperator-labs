@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/locale/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
 
 <document
     name="gui"
-    title="&appname; GUI"
+    title="&liberator.appname; GUI"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="gui">&appname;'s GUI</h2>
+<h2 tag="gui">&liberator.appname;'s GUI</h2>
 
 <p>
-    Although &appname; offers the most frequently used &hostapp; functionality via
+    Although &liberator.appname; offers the most frequently used &liberator.host; functionality via
     Ex and Normal mode commands there may be times when directly accessing the GUI
     is required. There are commands for accessing the menu system, standard dialogs
     and the sidebar.
@@ -25,7 +25,7 @@
     <description>
         <p>
             Execute <a>menu</a> from the command line. This command provides command-line access
-            to all menu items available from the main &hostapp; menubar. <a>menu</a> is a
+            to all menu items available from the main &liberator.host; menubar. <a>menu</a> is a
             hierarchical path to the menu item with each submenu separated by a period.
             E.g. <ex>:emenu File.Open File…</ex>
         </p>
@@ -40,10 +40,10 @@
     <spec>:addo<oa>ns</oa></spec>
     <description>
         <p>
-            Show available &hostapp; Extensions and Themes.
+            Show available &liberator.host; Extensions and Themes.
             You can add/remove/disable browser extensions from this dialog.
-            Be aware that not all &hostapp; extensions work, because &appname; overrides
-            some key bindings and changes &hostapp;'s GUI.
+            Be aware that not all &liberator.host; extensions work, because &liberator.appname; overrides
+            some key bindings and changes &liberator.host;'s GUI.
         </p>
     </description>
 </item>
@@ -53,11 +53,11 @@
     <tags>:dia :dialog</tags>
     <spec>:dia<oa>log</oa> <oa>firefox-dialog</oa></spec>
     <description>
-        <p>Open a &hostapp; dialog.</p>
+        <p>Open a &liberator.host; dialog.</p>
 
         <p>Available dialogs:</p>
         <dl>
-            <dt>about</dt>           <dd>About Mozilla &hostapp;;</dd>
+            <dt>about</dt>           <dd>About Mozilla &liberator.host;;</dd>
             <dt>addbookmark</dt>     <dd>Add bookmark for the current page</dd>
             <dt>addons</dt>          <dd>Manage Add-ons</dd>
             <dt>bookmarks</dt>       <dd>List your bookmarks</dd>
@@ -74,7 +74,7 @@
             <dt>pageinfo</dt>        <dd>Show information about the current page</dd>
             <dt>pagesource</dt>      <dd>View page source</dd>
             <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
-            <dt>preferences</dt>     <dd>Show &hostapp; preferences dialog</dd>
+            <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
             <dt>printpreview</dt>    <dd>Preview the page before printing</dd>
             <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
             <dt>print</dt>           <dd>Show print dialog</dd>
@@ -92,7 +92,7 @@
     <spec>:downl<oa>oads</oa></spec>
     <description>
         <p>
-            Show progress of current downloads. Open the original &hostapp; download dialog
+            Show progress of current downloads. Open the original &liberator.host; download dialog
             in a new tab. Here, downloads can be paused, canceled and resumed.
         </p>
     </description>
@@ -189,7 +189,7 @@
     <description>
         <p>
             Open the sidebar window. <a>name</a> is any of the menu items listed under the
-            standard &hostapp; View->Sidebar menu. Add-ons, Preferences and Downloads are
+            standard &liberator.host; View->Sidebar menu. Add-ons, Preferences and Downloads are
             also available in the sidebar.
         </p>
     </description>
@@ -229,7 +229,7 @@
     </li>
     <li>
         Security: The security information button is displayed when appropriate
-        as per &hostapp;. The color of the status bar also changes to reflect the
+        as per &liberator.host;. The color of the status bar also changes to reflect the
         current security status of the loaded page.
         <ul>
             <li>black – the site's identity is unverified and the connection is unencrypted</li>
@@ -240,7 +240,7 @@
     </li>
     <li>
         Extensions: Any extension buttons that would normally be installed to the
-        &hostapp; status bar are appended to the end of the status line.
+        &liberator.host; status bar are appended to the end of the status line.
     </li>
 </ul>
 

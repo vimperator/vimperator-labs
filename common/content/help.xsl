@@ -1,3 +1,5 @@
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
 <xsl:stylesheet version="1.0"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:liberator="http://vimperator.org/namespaces/liberator"
@@ -7,6 +9,9 @@
     extension-element-prefixes="str">
 
     <xsl:output method="xml"/>
+
+    <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
+    <xsl:variable name="localdoc" select="document($local)/liberator:document"/>
 
     <xsl:template match="liberator:document">
         <html:html liberator:highlight="Help">
@@ -134,6 +139,33 @@
     <xsl:template match="liberator:tag|@tag">
         <xsl:call-template name="parse-tags">
             <xsl:with-param name="text"><xsl:value-of select="."/></xsl:with-param>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template name="splice-locals">
+        <xsl:param name="elem"/>
+        <xsl:param name="tag"/>
+        <xsl:for-each select="$localdoc/*[@insertbefore=$tag]">
+            <xsl:apply-templates select="."/>
+        </xsl:for-each>
+        <xsl:for-each select="$elem">
+            <xsl:copy><xsl:apply-templates select="node()"/></xsl:copy>
+        </xsl:for-each>
+        <xsl:for-each select="$localdoc/*[@insertafter=$tag]">
+            <xsl:apply-templates select="."/>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template match="liberator:document/*[liberator:tags]">
+        <xsl:call-template name="splice-locals">
+            <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
+        </xsl:call-template>
+    </xsl:template>
+    <xsl:template match="liberator:*[@tag]">
+        <xsl:call-template name="splice-locals">
+            <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
 
