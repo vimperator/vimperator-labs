@@ -1724,6 +1724,7 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
+            services.get("liberator:").helpNamespaces = ["liberator", config.name.toLowerCase()];
             services.get("liberator:").helpFiles = config.helpFiles.map(function (f) f.replace(/\..*/, ""));
 
             config.features.push(getPlatformFeature());
