@@ -474,15 +474,22 @@ const util = { //{{{
                     return ns + ":" + node.localName;
                 return node.localName.toLowerCase();
             }
-            let tag = "<" + [namespaced(elem)].concat(
-                [namespaced(a) + "=" +  template.highlight(a.value, true)
-                 for ([i, a] in util.Array.iteritems(elem.attributes))]).join(" ");
+            try
+            {
+                let tag = "<" + [namespaced(elem)].concat(
+                    [namespaced(a) + "=" +  template.highlight(a.value, true)
+                     for ([i, a] in util.Array.iteritems(elem.attributes))]).join(" ");
 
-            if (!elem.firstChild || /^\s*$/.test(elem.firstChild) && !elem.firstChild.nextSibling)
-                tag += '/>';
-            else
-                tag += '>...</' + namespaced(elem) + '>';
-            return tag;
+                if (!elem.firstChild || /^\s*$/.test(elem.firstChild) && !elem.firstChild.nextSibling)
+                    tag += '/>';
+                else
+                    tag += '>...</' + namespaced(elem) + '>';
+                return tag;
+            }
+            catch (e)
+            {
+                return {}.toString.call(elem);
+            }
         }
 
         try

@@ -1240,7 +1240,6 @@ const liberator = (function () //{{{
 
                 return value;
             }
-
             // String
             else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
             {
@@ -1249,7 +1248,6 @@ const liberator = (function () //{{{
                 else
                     return void this.echoerr("E115: Missing quote: " + string);
             }
-
             // Number
             else if (matches = string.match(/^(\d+)$/))
                 return parseInt(matches[1], 10);
@@ -1659,9 +1657,16 @@ const liberator = (function () //{{{
 
             try
             {
+                try
+                {
+                    var string = String(error);
+                    var stack = error.stack;
+                }
+                catch (e) {}
+
                 let obj = {
-                    toString: function () error.toString(),
-                    stack: <>{(error.stack || Error().stack).replace(/^/mg, "\t")}</>
+                    toString: function () string || {}.toString.call(error),
+                    stack: <>{String.replace(stack || Error().stack, /^/mg, "\t")}</>
                 };
                 for (let [k, v] in Iterator(error))
                 {
@@ -1674,6 +1679,7 @@ const liberator = (function () //{{{
                     errors.toString = function () [String(v[0]) + "\n" + v[1] for ([k, v] in this)].join("\n\n");
                     errors.push([new Date, obj + obj.stack]);
                 }
+                liberator.dump(string);
                 liberator.dump(obj);
                 liberator.dump("");
             }

@@ -360,7 +360,16 @@ function CommandLine() //{{{
         {
             let node = this.editor.rootElement.firstChild;
             if (node && node.nextSibling)
-                this.editor.deleteNode(node.nextSibling);
+            {
+                try
+                {
+                    this.editor.deleteNode(node.nextSibling);
+                }
+                catch (e)
+                {
+                    node.nextSibling.textContent = "";
+                }
+            }
             else if (this.removeSubstring)
             {
                 let str = this.removeSubstring;
