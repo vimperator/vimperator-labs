@@ -215,7 +215,7 @@ const liberator = (function () //{{{
 
         options.add(["helpfile", "hf"],
             "Name of the main help file",
-            "string", "intro.html");
+            "string", "intro");
 
         options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",

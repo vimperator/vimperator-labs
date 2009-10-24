@@ -184,6 +184,7 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpTag,liberator|tag                       display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
     HelpTags,liberator|tags                     display: block; float: right; clear: right;
+    HelpTopic,liberator|t                       color: #102663;
     HelpType,liberator|type                     display: block; float: left; margin-right: 1ex; margin-bottom: 1em;
 
     HelpWarning,liberator|warning               display: block; margin: 1em 0em;

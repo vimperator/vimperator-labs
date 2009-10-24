@@ -96,7 +96,7 @@
 
 
 <!-- TODO: should the tab commands be moved back here? -->
-See [j]opening[j] for other ways to open new tabs.
+See <t>opening</t> for other ways to open new tabs.
 
 <h2 tag="changing-tabs">Changing tabs</h2>
 
@@ -219,7 +219,7 @@ See [j]opening[j] for other ways to open new tabs.
             shortcut to open this prompt.
         </p>
         
-        <p>If argument is [a]#[a], the alternate buffer will be selected (see <k name="C-^"/>).</p>
+        <p>If argument is <em>#</em>, the alternate buffer will be selected (see <k name="C-^"/>).</p>
         
         <p>If no argument is given the current buffer remains current.</p>
     </description>

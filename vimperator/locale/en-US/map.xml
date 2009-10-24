@@ -14,7 +14,7 @@
 
 <p>
     The key mapping commands can be used to either redefine the standard key
-    bindings or define new ones. A mapping consists of a key, or [j]key-sequence[j],
+    bindings or define new ones. A mapping consists of a key, or <t>key-sequence</t>,
     which is translated to a string of characters. Example:
 </p>
 <code><ex>:map <k name="F2"/> :echo new Date().toDateString()<k name="CR"/></ex></code>
@@ -55,7 +55,7 @@
     <spec>:cm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
     <description>
         <p>
-            Map the [j]key-sequence[j] <a>lhs</a> to <a>rhs</a> for the applicable mode(s). The <a>rhs</a> is
+            Map the <t>key-sequence</t> <a>lhs</a> to <a>rhs</a> for the applicable mode(s). The <a>rhs</a> is
             remapped, allowing for nested and recursive mappings.
         </p>
     </description>
@@ -75,7 +75,7 @@
     <spec>:cno<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
     <description>
         <p>
-            Map the [j]key-sequence[j] <a>lhs</a> to <a>rhs</a> for the applicable mode(s). No remapping of
+            Map the <t>key-sequence</t> <a>lhs</a> to <a>rhs</a> for the applicable mode(s). No remapping of
             the <a>rhs</a> is performed.
         </p>
     </description>

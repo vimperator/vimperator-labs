@@ -59,8 +59,8 @@
         <p>
             Toggle bookmarked state of current URL. Add/remove a bookmark for the current
             location, depending on if it is already bookmarked or not. In contrast to the
-            <ex>:bmark</ex> command, the bookmark is just _starred_ which means it is placed
-            in the _Unfiled Bookmarks Folder_ instead of the bookmarks menu.
+            <ex>:bmark</ex> command, the bookmark is just <em>starred</em> which means it is placed
+            in the <em>Unfiled Bookmarks Folder</em> instead of the bookmarks menu.
         </p>
     </description>
 </item>

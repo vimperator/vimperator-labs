@@ -74,7 +74,7 @@
     <dt/><dd/>
     <dt>q, <k name="Esc"/> or CTRL-C             </dt><dd>stop the listing</dd>
     <dt>:                                        </dt><dd>stop the listing and enter a command-line</dd>
-    <dt>;                                        </dt><dd>start an [j]extended-hints[j] command</dd>
+    <dt>;                                        </dt><dd>start an <t>extended-hints</t> command</dd>
     <dt><k name="C-Y"/>                          </dt><dd>yank (copy) a modeless selection to the clipboard</dd>
 </dl>
 

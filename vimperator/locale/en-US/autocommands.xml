@@ -103,13 +103,13 @@
 </item>
 <h2 tag="autocmd-examples">Examples</h2>
 
-<p>Enable _passthrough_ mode on all Google sites:</p>
+<p>Enable <em>passthrough</em> mode on all Google sites:</p>
 
 <p>
      <ex>:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)</ex>
 </p>
 
-<p>Enable _passthrough_ mode on *some* Google sites:</p>
+<p>Enable <em>passthrough</em> mode on *some* Google sites:</p>
 
 <p>
      <ex>:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)</ex>
@@ -124,7 +124,7 @@
 </p>
 
 <p>
-    <ex>:autocmd LocationChange mail\.google\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
+    <ex>:autocmd LocationChange mail\\.google\\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
 </p>
 
 </document>

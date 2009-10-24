@@ -84,8 +84,8 @@
         <code><ex>:set opt=foo,bar</ex></code>
         <p>then,</p>
         <code><ex>:set opt!=foo,baz</ex></code>
-        <p>results in</p>
-        <code>opt=bar,baz</code>
+        <p>has the same result as</p>
+        <code><ex>:set opt=bar,baz</ex></code>
     </description>
 </item>
 
@@ -206,8 +206,8 @@
 
 <p>
     Environment variables are expanded for path options like <o>cdpath</o> and
-    <o>runtimepath</o>. The variable notation is _$VAR_ (terminated by a non-word
-    character) or _$\\<a>VAR</a>_. _%VAR%_ is also supported on Windows.
+    <o>runtimepath</o>. The variable notation is <em>$VAR</em> (terminated by a non-word
+    character) or <em>$<a>VAR</a></em>. <em>%VAR%</em> is also supported on Windows.
 </p>
 
 <h2 tag="firefox-options preferences">Setting &hostapp; options</h2>
@@ -261,9 +261,9 @@
 <p>The following preferences are set:</p>
 
 <ul>
-    <li><link href="http://kb.mozillazine.org/Dom.popup_allowed_events">dom.popup_allowed_events</link></li>
-    <li><link href="http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart">accessibility.typeaheadfind.autostart</link></li>
-    <li><link href="http://kb.mozillazine.org/Accessibility.typeaheadfind">accessibility.typeaheadfind</link></li>
+    <li><link target="http://kb.mozillazine.org/Dom.popup_allowed_events">dom.popup_allowed_events</link></li>
+    <li><link target="http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart">accessibility.typeaheadfind.autostart</link></li>
+    <li><link target="http://kb.mozillazine.org/Accessibility.typeaheadfind">accessibility.typeaheadfind</link></li>
 </ul>
 
 <!-- TODO: others? -->
@@ -294,7 +294,7 @@
     <tags>'cd' 'cdpath'</tags>
     <spec>'cdpath' 'cd'</spec>
     <type>string</type>
-    <default>equivalent to _$CDPATH_ or ",,"</default>
+    <default type="plain">equivalent to <em>$CDPATH</em> or <str>,,</str></default>
     <description>
         <p>
             List of directories searched when executing the <ex>:cd</ex>
@@ -549,7 +549,7 @@
     <tags>'hf' 'helpfile'</tags>
     <spec>'helpfile' 'hf'</spec>
     <type>string</type>
-    <default>intro.html</default>
+    <default>intro</default>
     <description>
         <p>
             Name of the main help file. This is the tail component of the chrome
@@ -963,7 +963,7 @@
         </p>
 
         <p>
-            On startup, if the environment variable _$VIMPERATOR_RUNTIME_ does not
+            On startup, if the environment variable <em>$VIMPERATOR_RUNTIME</em> does not
             exist, &appname; will set it to match this value.
         </p>
     </description>
@@ -1272,7 +1272,7 @@
         <p>
             List of file patterns to ignore when completing files. E.g., to ignore object
             files and Vim swap files 
-            <ex>:set wildignore=<str>.<em>\.o,\..</em>\.s[a-z]\\<a>2</a></str></ex>
+            <ex>:set wildignore=<str>.<em>\\.o,\\..</em>\\.s[a-z]\\<a>2</a></str></ex>
         </p>
 
         <note>Unlike Vim each pattern is a regex rather than a glob.</note>

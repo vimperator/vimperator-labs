@@ -88,7 +88,7 @@
     <xsl:template name="linkify-tag">
         <xsl:param name="contents"/>
         <xsl:variable name="tag" select="str:tokenize($contents, ' [')[1]"/>
-        <html:a href="liberator://help-tag/{$tag}" style="color: inherit">
+        <html:a href="liberator://help-tag/{$tag}" style="color: inherit;">
             <xsl:if test="
                 //liberator:tags[contains(concat(' ', ., ' '), concat(' ', $tag, ' '))] |
                 //liberator:tag[contains(concat(' ', ., ' '), concat(' ', $tag, ' '))] |
@@ -105,7 +105,7 @@
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="liberator:k">
+    <xsl:template match="liberator:k|liberator:t">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select="text()"/>
@@ -125,6 +125,10 @@
                 <xsl:with-param name="contents" select="."/>
             </xsl:call-template>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="liberator:link">
+        <html:a href="{@topic}"><xsl:apply-templates select="@*|node()"/></html:a>
     </xsl:template>
 
     <xsl:template match="liberator:tag|@tag">

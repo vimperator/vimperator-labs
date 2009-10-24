@@ -22,7 +22,7 @@
     If you've started using &appname; from scratch (i.e., without any
     customization), you should be looking at this help page in a relatively
     bare-looking window. The menubar, navigation bar, and bookmark bars are hidden.
-    In case you missed the notice in the help:Introduction[intro.html], you can
+    In case you missed the notice in the <t>intro</t>, you can
     regain these by issuing the command
 </p>
 
@@ -37,7 +37,7 @@
     However, in this author's opinion, the best way to get familiar with
     &appname; is to leave these disabled for now. (The above action can be
     reversed with <ex>:set go=<key name="CR"/></ex>) You can look at the entry for <o>guioptions</o> in
-    help:options[options.html] for more information on this.
+    <t>options</t> for more information on this.
 </p>
 
 <h2 tag="modal">&appname;'s modal interface</h2>
@@ -45,8 +45,8 @@
 <p>
     &appname;'s power, like Vim's, comes from it's modal interface. Keys have
     different meanings depending on which mode the browser is in. &appname; has
-    several modes, but the 2 most important are ``Normal'' mode and
-    ``Command-line'' mode.
+    several modes, but the 2 most important are <em>Normal</em> mode and
+    <em>Command-line</em> mode.
 </p>
 
 <p>
@@ -56,8 +56,8 @@
 
 <p>
     The other core mode of &appname;, Command-line mode, can be entered from
-    Normal mode by typing a \'<k>:</k>' (colon). You will frequently see &appname;
-    commands start with a \'<k>:</k>', indicating that what follows is a command.
+    Normal mode by typing a <k>:</k> (colon). You will frequently see &appname;
+    commands start with a <k>:</k>, indicating that what follows is a command.
 </p>
 
 <p>
@@ -145,7 +145,7 @@
 <h2 tag="history-navigation tab-navigation">History and tabs</h2>
 
 <p>
-    History navigation (e.g., ``Back'', ``Forward'') are done similarly to
+    History navigation (e.g., <em>Back</em>, <em>Forward</em>) are done similarly to
     scrolling.
 </p>
 
@@ -194,12 +194,12 @@
 
 <p>
     So now you can navigate around in &appname;. But wait… how do you <em>open</em> a
-    page or tab linked in a web page? How do you ``click'' on all those links
+    page or tab linked in a web page? How do you <em>click</em> on all those links
     without your tailed friend?
 </p>
 
 <p>
-    The answer is ``hints''. Activating hints displays a number next to every link
+    The answer is <em>hints</em>. Activating hints displays a number next to every link
     &appname; can find. To follow the link, simply type the number corresponding
     to the hint, a white number inside a red square by default.
 </p>
@@ -218,18 +218,18 @@
 </p>
 
 <p>
-    The most common hint mode is called help:QuickHint mode[various.html,f].
+    The most common hint mode is called <t>quick-hints</t>.
     To activate QuickHint mode, press either <k>f</k> or <k>F</k>. The lower-case
     <k>f</k> will open the resulting link in the current tab, while the upper-case
     <k>F</k> will open it in a new tab.
 </p>
 
 <p>
-    To test it, try this link: http://vimperator.org/[&appname; Homepage].
+    To test it, try this link: <link target="http://vimperator.org/">&appname; Homepage</link>.
     Activate QuickHint mode with <k>f</k> or <k>F</k> to highlight all currently
     visible links. Then start typing the text of the link. The link should be
     uniquely identified soon, and &appname; will open it. Once you're done,
-    remember to use <k name="C-o"/> (``History Back'') or <k>d</k> (``Delete Buffer'')
+    remember to use <k name="C-o"/> (<em>History Back</em>) or <k>d</k> (<em>Delete Buffer</em>)
     to return here, depending on which key you used to activate QuickHint mode.
 </p>
 
@@ -248,7 +248,7 @@
     following:
 </p>
 
-<code><k name="Esc">Esc</k></code>
+<code><k name="Esc"/></code>
 
 <h2 tag="vimperatorrc">Saving for posterity - vimperatorrc</h2>
 
@@ -320,7 +320,7 @@
     remember to use the <k>gt</k>/<k>gT</k> mappings to get back to this page. If
     using the <ex>:open</ex> command, use the history keys (e.g., <k>H</k>) to return.
     If you get hopelessly lost, just type <ex>:help<key name="CR"/></ex> and click the
-    ``Tutorial'' link to return.
+    <em>Tutorial</em> link to return.
 </p>
 
 
@@ -346,15 +346,15 @@
 </p>
 
 
-<h2 tag="support">I'm interested…but lost!</h2>
+<h2 tag="support">I'm interested… but lost!</h2>
 
 <p>
     &appname; has an energetic and growing user base. If you've run into a problem
     that you can't seem to solve with &appname;, or if you think you might have
     found a bug, please let us know! There is support available on the
-    http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator[wiki],
-    or in the <html:a href="irc://irc.freenode.net/vimperator">#vimperator</html:a> IRC
-    channel on http://freenode.net/[freenode].
+    <link target="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link>
+    or in the <link target="irc://irc.freenode.net/vimperator">#vimperator</link> IRC
+    channel on <link target="http://freenode.net/">freenode</link>.
 </p>
 
 <p>
@@ -362,7 +362,7 @@
     hear from you as well. Developers work on &appname; whenever possible, but we
     are neither infinite nor omnipotent; please bear with us. If you can't wait for
     us to get around to it, rest assured patches are welcome! See the
-    help:Developer[developer.html] page for more information.
+    <t>developer</t> page for more information.
 </p>
 
 </document>
