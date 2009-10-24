@@ -954,7 +954,7 @@
 
         <p>Example:</p>
 
-        <code><ex>:set runtimepath=<str>~/my&liberator.name;,~/.&liberator.name;<str></ex></code>
+        <code><ex>:set runtimepath=<str>~/my&liberator.name;,~/.&liberator.name;</str></ex></code>
 
         <p>
             This will search for plugins in both
