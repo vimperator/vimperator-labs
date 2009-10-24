@@ -94,6 +94,11 @@ function Liberator()
 {
     this.wrappedJSObject = this;
 
+    this.__defineGetter__("helpNamespaces", function () NAMESPACES ? NAMESPACES.slice() : null);
+    this.__defineSetter__("helpNamespaces", function (namespaces) {
+        if (!NAMESPACES)
+            NAMESPACES = Array.slice(namespaces)
+    });
     this.__defineGetter__("helpFiles", function () HELP_FILES ? HELP_FILES.slice() : null);
     this.__defineSetter__("helpFiles", function (files) {
         if (!HELP_FILES)
@@ -124,8 +129,10 @@ function Liberator()
         catch (e) {}
     }
 
-    const HELP_TAGS = {};
-    this.HELP_TAGS = HELP_TAGS;
+    const self = this;
+    this.HELP_TAGS = {};
+    this.FILE_MAP = {};
+    var NAMESPACES = null;
     var HELP_FILES = null;
 
     function parseHelpTags(files)
@@ -134,12 +141,26 @@ function Liberator()
         XSLT.importStylesheet(httpGet("chrome://liberator/content/help.xsl").responseXML);
         for each (let file in files)
         {
-            let res = httpGet("liberator://help/" + file);
-            if (res)
+            try
             {
-                let doc = XSLT.transformToDocument(res.responseXML);
-                for (let elem in xpath(doc, "//liberator:tag/text()"))
-                    HELP_TAGS[elem.textContent] = file;
+                for each (let namespace in NAMESPACES)
+                {
+                    let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
+                    let res = httpGet(url);
+                    if (res && res.responseXML.documentElement.localName == "document")
+                    {
+                        self.FILE_MAP[file] = url;
+                        let doc = XSLT.transformToDocument(res.responseXML);
+                        for (let elem in xpath(doc, "//liberator:tag/text()"))
+                            self.HELP_TAGS[elem.textContent] = file;
+                        break;
+                    }
+                }
+            }
+            catch (e)
+            {
+                Components.utils.reportError(e);
+                dump(e);
             }
         }
         HELP_FILES = Array.slice(files);
@@ -184,14 +205,19 @@ Liberator.prototype = {
             switch(uri.host)
             {
                 case "help":
-                    return makeChannel("chrome://liberator/locale" + uri.path.replace(/#.*/, "") + ".xml", uri);
+                    let url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
+                    dump("name: " + uri.path.replace(/#.*/, "") + "\n");
+                    dump("uri: " + url + "\n");
+                    if (!url)
+                        break;
+                    return makeChannel(url, uri);
                 case "help-tag":
                     let tag = uri.path.substr(1);
                     if (tag in this.HELP_TAGS)
                         return redirect("liberator://help/" + this.HELP_TAGS[tag] + "#" + tag, uri);
             }
         }
-        catch (e) { dump(e + "\n"); dump(e.stack); }
+        catch (e) {}
         return fakeChannel(uri);
     }
 };

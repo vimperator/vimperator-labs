@@ -11,7 +11,7 @@
     <xsl:output method="xml"/>
 
     <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
-    <xsl:variable name="localdoc" select="document($local)/liberator:document"/>
+    <xsl:variable name="localdoc" select="document($local)/liberator:overlay"/>
 
     <xsl:template match="liberator:document">
         <html:html liberator:highlight="Help">
@@ -156,6 +156,12 @@
         </xsl:for-each>
     </xsl:template>
 
+    <xsl:template match="liberator:document/liberator:tags|liberator:document/liberator:tag">
+        <xsl:call-template name="splice-locals">
+            <xsl:with-param name="tag" select="substring-before(concat(., ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
+        </xsl:call-template>
+    </xsl:template>
     <xsl:template match="liberator:document/*[liberator:tags]">
         <xsl:call-template name="splice-locals">
             <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
