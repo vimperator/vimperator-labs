@@ -51,7 +51,7 @@
 
 <item>
     <tags>:dia :dialog</tags>
-    <spec>:dia<oa>log</oa> <oa>firefox-dialog</oa></spec>
+    <spec>:dia<oa>log</oa> <oa>&liberator.host;-dialog</oa></spec>
     <description>
         <p>Open a &liberator.host; dialog.</p>
 

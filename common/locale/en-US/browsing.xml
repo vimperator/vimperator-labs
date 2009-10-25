@@ -10,9 +10,9 @@
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h2 tag="surfing browsing">Browsing</h2>
 
-Vimperator overrides nearly all Firefox keys in order to make browsing more
+&liberator.appname; overrides nearly all &liberator.host; keys in order to make browsing more
 pleasant for Vim users. On the rare occasions when you want to pass a keystroke
-to Firefox, or to the web page, and have it retain its original meaning you
+to &liberator.host;, or to the web page, and have it retain its original meaning you
 have 2 possibilities:
 
 <item>
@@ -20,7 +20,7 @@ have 2 possibilities:
     <spec>CTRL-Z</spec>
     <description>
         <p>
-            Disable all Vimperator keys except <k name="Esc"/> and pass them to the next event
+            Disable all &liberator.appname; keys except <k name="Esc"/> and pass them to the next event
             handler. This is especially useful if JavaScript controlled forms (e.g., the
             RichEdit form fields of Gmail) don't work anymore. To exit this mode, press
             <k name="Esc"/>. If you also need to pass <k name="Esc"/> in this mode to the web page,
@@ -36,10 +36,10 @@ have 2 possibilities:
     <description>
         <p>
             If you only need to pass a single key to a JavaScript form field or another
-            extension prefix the key with <k name="C-v"/>. Also works to unshadow Firefox
-            shortcuts like <k name="C-o"/> which are otherwise hidden in Vimperator. When
-            Vimperator mode is temporarily disabled with <k name="C-z"/>, <k name="C-v"/> will pass
-            the next key to Vimperator instead of the web page.
+            extension prefix the key with <k name="C-v"/>. Also works to unshadow &liberator.host;
+            shortcuts like <k name="C-o"/> which are otherwise hidden in &liberator.appname;. When
+            &liberator.appname; mode is temporarily disabled with <k name="C-z"/>, <k name="C-v"/> will pass
+            the next key to &liberator.appname; instead of the web page.
         </p>
     </description>
 </item>
@@ -86,7 +86,7 @@ have 2 possibilities:
                 opens a Google search for linus torvalds).
            </li>
            <li>
-               Passed directly to Firefox in all other cases
+               Passed directly to &liberator.host; in all other cases
                (<ex>:open www.osnews.com, www.slashdot.org</ex>
                opens OSNews in the current, and Slashdot in a new
                background tab).
@@ -440,7 +440,7 @@ have 2 possibilities:
     <description>
         <p>
             Quit current tab. If this is the last tab in the window, close the window. If
-            this was the last window, close Vimperator. When quitting Vimperator, the
+            this was the last window, close &liberator.appname;. When quitting &liberator.appname;, the
             session is not stored.
         </p>
     </description>
@@ -452,7 +452,7 @@ have 2 possibilities:
     <spec>:quita<oa>ll</oa></spec>
     <description>
         <p>
-            Quit Vimperator. Quit Vimperator, no matter how many tabs/windows are open.
+            Quit &liberator.appname;. Quit &liberator.appname;, no matter how many tabs/windows are open.
             The session is not stored.
         </p>
     </description>
@@ -483,7 +483,7 @@ have 2 possibilities:
     <spec>:xa<oa>ll</oa></spec>
     <description>
         <p>
-            Save the session and quit. Quit Vimperator, no matter how many tabs/windows
+            Save the session and quit. Quit &liberator.appname;, no matter how many tabs/windows
             are open. The session is stored. <ex>:wq</ex> is different from Vim, as it
             closes the window instead of just one tab by popular demand. Complain on the
             mailing list if you want to change that.
@@ -506,7 +506,7 @@ have 2 possibilities:
     <spec>ZZ</spec>
     <description>
         <p>
-            Quit and save the session. Quit Vimperator, no matter how many tabs/windows
+            Quit and save the session. Quit &liberator.appname;, no matter how many tabs/windows
             are open. The session is stored. Works like <ex>:xall</ex>.
         </p>
     </description>

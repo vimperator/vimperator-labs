@@ -210,7 +210,7 @@
     character) or <em>$<a>VAR</a></em>. <em>%VAR%</em> is also supported on Windows.
 </p>
 
-<h2 tag="firefox-options preferences">Setting &liberator.host; options</h2>
+<h2 tag="&liberator.host;-options preferences">Setting &liberator.host; options</h2>
 
 <p>&liberator.host; options can be viewed and set with the following commands:</p>
 

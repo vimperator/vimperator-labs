@@ -15,7 +15,7 @@
 <p>
     Command-line options can be passed to &liberator.appname; via the -&liberator.name; &liberator.host;
     option. These are passed as single string argument.
-    E.g., firefox -&liberator.name; <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str>
+    E.g., &liberator.hostbin; -&liberator.name; <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str>
 </p>
 
 <item>

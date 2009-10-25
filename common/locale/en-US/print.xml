@@ -33,7 +33,7 @@
 </item>
 
 
-<h2 tag="firefox-print-dialogs">&liberator.host; printing dialogs</h2>
+<h2 tag="&liberator.host;-print-dialogs">&liberator.host; printing dialogs</h2>
 
 <p>
     The "Print Preview" and "Page Setup" dialogs can be opened via the <ex>:dialog</ex>

@@ -30,7 +30,7 @@
             variables.
         </p>
 
-        <p>Add <a>cmd</a> to the list of commands Vimperator will execute on <a>event</a> for a URL matching <a>pat</a>:</p>
+        <p>Add <a>cmd</a> to the list of commands &liberator.appname; will execute on <a>event</a> for a URL matching <a>pat</a>:</p>
 
         <ul>
             <li><ex>:autocmd[!]</ex> <a>events</a> <a>pat</a>: list/remove autocommands filtered by <a>events</a> and <a>pat</a></li>

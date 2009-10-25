@@ -10,7 +10,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h2 tag="buffer document">Buffer</h2>
 
-Vimperator holds exactly one buffer object for each tab. It is usually an
+&liberator.appname; holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.
 
 <h2 tag="buffer-information">Buffer information</h2>
@@ -357,7 +357,7 @@ default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
 
 The available zoom range can be changed by setting the
 <link topic="http://kb.mozillazine.org/Zoom.minPercent">'zoom.minPercent'</link> and
-<link topic="http://kb.mozillazine.org/Zoom.maxPercent">'zoom.maxPercent'</link> Firefox
+<link topic="http://kb.mozillazine.org/Zoom.maxPercent">'zoom.maxPercent'</link> &liberator.host;
 preferences. The zoom levels can be changed using the
 <link topic="http://kb.mozillazine.org/Toolkit.zoomManager.zoomValues">'toolkit.ZoomManager.zoomLevels'</link>
 preference.

@@ -1,9 +1,13 @@
 
+<!ENTITY % liberatorBranding SYSTEM "chrome://branding/locale/brand.dtd">
+%liberatorBranding;
+
 <!ENTITY liberator.mainWindow "main-window">
 <!ENTITY liberator.name "vimperator">
 <!ENTITY liberator.idname "VIMPERATOR">
 <!ENTITY liberator.appname "Vimperator">
-<!ENTITY liberator.host "Firefox">
+<!ENTITY liberator.host "&brandShortName;">
+<!ENTITY liberator.hostbin "firefox">
 <!ENTITY liberator.statusBefore "statusbar-display">
 <!ENTITY liberator.statusAfter "">
 

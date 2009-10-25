@@ -83,12 +83,12 @@
 
         <p>
             The special version <ex>:javascript!</ex> opens the JavaScript console of
-            Firefox.
+            &liberator.host;.
         </p>
 
         <p>
             <k name="Tab"/> completion is available for <ex>:javascript <a>cmd</a><k name="Tab"/></ex> (but not
-            yet for the <ex>:js &lt;&lt;EOF</ex> multiline widget). Be aware that Vimperator needs
+            yet for the <ex>:js &lt;&lt;EOF</ex> multiline widget). Be aware that &liberator.appname; needs
             to run <a>cmd</a> through eval() to get the completions, which could have unwanted
             side effects.
         </p>

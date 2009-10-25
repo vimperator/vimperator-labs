@@ -11,14 +11,14 @@
 <h1 tag="different-marks marks">Marks</h1>
 
 <p>
-    Vimperator supports a number of different marks:
+    &liberator.appname; supports a number of different marks:
 </p>
 
 <ul>
     <li>Bookmarks which allow you to mark a web page as one of your favorites for easy access.</li>
     <li>QuickMarks allow you to define up to 62 (a-zA-Z0-9) web sites (or groups of web sites) which you visit most often.</li>
     <li>Local marks to store the position within a web page.</li>
-    <li>History is also a special type of marks, as Vimperator automatically remembers sites which you have visited in the past.</li>
+    <li>History is also a special type of marks, as &liberator.appname; automatically remembers sites which you have visited in the past.</li>
 </ul>
 
 <h1 tag="bookmarks">Bookmarks</h1>
