@@ -178,10 +178,7 @@ function Editor() //{{{
             {
                 let matches = args.string.match(RegExp("^\\s*($|" + abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
                 if (!matches)
-                {
-                    liberator.echoerr("E474: Invalid argument");
-                    return false;
-                }
+                    return void liberator.echoerr("E474: Invalid argument");
                 let [, lhs, rhs] = matches;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);

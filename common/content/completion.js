@@ -185,6 +185,7 @@ function CompletionContext(editor, name, offset) //{{{
     this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item.item) :
             key in self.keys ? item.item[self.keys[key]]
                              : item.item[key];
+    return this;
 }
 
 CompletionContext.Sort = {
@@ -453,13 +454,13 @@ CompletionContext.prototype = {
         let filter = fixCase(this.filter);
         if (this.anchored)
         {
-            function compare(text, s) text.substr(0, s.length) == s;
+            var compare = function compare(text, s) text.substr(0, s.length) == s;
             substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
         else
         {
-            function compare(text, s) text.indexOf(s) >= 0;
+            var compare = function compare(text, s) text.indexOf(s) >= 0;
             substrings = [];
             let start = 0;
             let idx;
@@ -1156,12 +1157,12 @@ function Completion() //{{{
                     // Yes. If the [ starts at the beginning of a logical
                     // statement, we're in an array literal, and we're done.
                      if (get(-3, 0, STATEMENTS) == get(-2)[OFFSET])
-                        return;
+                        return null;
 
                     // Beginning of the statement upto the opening [
                     let obj = getObj(-3, get(-2)[OFFSET]);
 
-                    return complete.call(this, obj, getKey(), null, string, last);
+                    return void complete.call(this, obj, getKey(), null, string, last);
                 }
 
                 // Is this a function call?
@@ -1211,7 +1212,7 @@ function Completion() //{{{
                     };
 
                     obj[0][1] += "." + func + "(... [" + args.length + "]";
-                    return complete.call(this, obj, key, compl, string, last);
+                    return void complete.call(this, obj, key, compl, string, last);
                 }
 
                 // In a string that's not an obj key or a function arg.
@@ -1246,7 +1247,7 @@ function Completion() //{{{
             { // FIXME
                 var o = top[OFFSET];
                 top[OFFSET] = offset;
-                return complete.call(this, obj, key);
+                return void complete.call(this, obj, key);
             }
             finally
             {

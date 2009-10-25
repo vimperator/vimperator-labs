@@ -96,7 +96,7 @@
     <spec>:delbm[arks]!</spec>
     <description>
         <p>
-            Delete a bookmark. Deletes *all* bookmarks which match the <oa>url</oa>. If
+            Delete a bookmark. Deletes <em>all</em> bookmarks which match the <oa>url</oa>. If
             omitted, <oa>url</oa> defaults to the URL of the current buffer. Use <k name="Tab"/>
             key on a string to complete the URL which you want to delete.
         </p>

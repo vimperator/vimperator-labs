@@ -100,7 +100,7 @@
     <li>
         All directories in <o>runtimepath</o> are searched for a
         "plugin" subdirectory and all yet unloaded plugins are loaded.
-        For each plugin directory, all *.{js,vimp} files (including
+        For each plugin directory, all <tt>*.{js,vimp}</tt> files (including
         those in further subdirectories) are sourced alphabetically. No
         plugins will be sourced if:
 
@@ -117,10 +117,15 @@
 
 The user's ~ (i.e., "home") directory is determined as follows:
 
-* On Unix and Mac, the environment variable  <em>$HOME</em> is used.
-* On Windows, &liberator.appname; checks for the existence of <em>%HOME%</em>, then
-<em>%USERPROFILE%</em>, and then <em>%HOMEDRIVE%%HOMEPATH%</em>. It uses the first one
-it finds.
+<ul>
+    <li>On Unix and Mac, the environment variable  <em>$HOME</em> is used.</li>
+    <li>
+        On Windows, &liberator.appname; checks for the existence of
+        <em>%HOME%</em>, then <em>%USERPROFILE%</em>, and then
+        <em>%HOMEDRIVE%%HOMEPATH%</em>. It uses the first one it
+        finds.
+    </li>
+</ul>
 
 <h2 tag="save-settings">Saving settings</h2>
 

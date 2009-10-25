@@ -215,7 +215,7 @@ const liberator = (function () //{{{
 
         options.add(["helpfile", "hf"],
             "Name of the main help file",
-            "string", "intro");
+            "string", "intro.html");
 
         options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",
@@ -1389,7 +1389,7 @@ const liberator = (function () //{{{
             {
                 let helpFile = options["helpfile"];
                 if (config.helpFiles.indexOf(helpFile) != -1)
-                    liberator.open("liberator://help/" + helpFile, { from: "help" });
+                    liberator.open("liberator://help/" + helpFile.replace(/\.html$/, ""), { from: "help" });
                 else
                     liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
                 return;

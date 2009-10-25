@@ -142,9 +142,9 @@
         </p>
 
         <p>
-            If <a>name</a> (short option: *-n*) is provided, any existing style with the same
+            If <a>name</a> (short option: <em>-n</em>) is provided, any existing style with the same
             name is overridden, and the style may later be deleted using <a>name</a>. If
-            *-append* (short option: *-a*) is provided along with *-name*, <a>css</a> and
+            <em>-append</em> (short option: <em>-a</em>) is provided along with <em>-name</em>, <a>css</a> and
             <a>filter</a> are appended to its current value.
         </p>
 
@@ -165,9 +165,9 @@
         </p>
 
         <ul>
-            <li><em>-name</em>:  The name provided to <ex>:style</ex> (short option: *-n*)</li>
+            <li><em>-name</em>:  The name provided to <ex>:style</ex> (short option: <em>-n</em>)</li>
             <li><em>-index</em>: For unnamed styles, the index listed by <ex>:style</ex>
-                             (short option: *-i*)</li>
+                (short option: <em>-i</em>)</li>
         </ul>
     </description>
 </item>

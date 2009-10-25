@@ -702,7 +702,6 @@ function Bookmarks() //{{{
         //          if the search also requires a postData, [url, postData] is returned
         getSearchURL: function getSearchURL(text, useDefsearch)
         {
-            let url = null;
             let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user

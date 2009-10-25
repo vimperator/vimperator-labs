@@ -43,7 +43,7 @@
 
         <dl tag="autocommand-list"/>
 
-        <p><a>pat</a> is a regular expression, use .* if you want to match all URLs.</p>
+        <p><a>pat</a> is a regular expression, use <tt>.*</tt> if you want to match all URLs.</p>
 
         <note>This differs from Vim which uses a glob rather than a regex for <a>pat</a>.</note>
 
@@ -78,27 +78,20 @@
 
 <p>Enable <em>passthrough</em> mode on all Google sites:</p>
 
-<p>
-     <ex>:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)</ex>
-</p>
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)</ex></code>
 
-<p>Enable <em>passthrough</em> mode on *some* Google sites:</p>
+<p>Enable <em>passthrough</em> mode on <em>some</em> Google sites:</p>
 
-<p>
-     <ex>:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)</ex>
-</p>
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)</ex></code>
 
 <p>
     Set the filetype to mail when editing email at Gmail:
 </p>
 
-<p>
+<code>
     <ex>:autocmd LocationChange .* :set editor=<str>gvim -f</str></ex>
-</p>
-
-<p>
     <ex>:autocmd LocationChange mail\\.google\\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
-</p>
+</code>
 
 </document>
 

@@ -176,11 +176,10 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpTab,liberator|dl                        display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
     HelpTabColumn,liberator|column              display: table-column;
-    HelpTabColumn1,liberator|column:nth-of-type(1) display: table-column; width: 25%;
-    HelpTabColumn2,liberator|column:nth-of-type(2) display: table-column; width: 75%;
+    HelpTabColumn:first-child                   width: 25%;
     HelpTabTitle,liberator|dt                   display: table-cell; padding: .1ex 1ex; font-weight: bold;
     HelpTabDescription,liberator|dd             display: table-cell; padding: .1ex 1ex;
-    HelpTabRow,liberator|dl>*                   display: table-row;
+    HelpTabRow,liberator|dl>tr                  display: table-row;
 
     HelpTag,liberator|tag                       display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
     HelpTags,liberator|tags                     display: block; float: right; clear: right;
@@ -277,7 +276,7 @@ function Highlights(name, store)
     this.selector = function (class)
     {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
-        let class = "[liberator|highlight~=" + hl + "]"
+        class = "[liberator|highlight~=" + hl + "]"
         if (highlight[hl] && highlight[hl].class != class)
             class = highlight[hl].selector;
         return class + rest;

@@ -31,11 +31,11 @@
         </html:html>
     </xsl:template>
 
-    <xsl:template match="liberator:include">
+    <xsl:template match="liberator:include" mode="pass-2">
         <xsl:apply-templates select="document(@href)/liberator:document/node()"/>
     </xsl:template>
 
-    <xsl:template match="liberator:dl">
+    <xsl:template match="liberator:dl" mode="pass-2">
         <xsl:copy>
             <column/>
             <column/>
@@ -48,7 +48,7 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="liberator:tags">
+    <xsl:template match="liberator:tags" mode="pass-2">
         <xsl:call-template name="parse-tags">
             <xsl:with-param name="text" select="."/>
         </xsl:call-template>
@@ -63,7 +63,7 @@
         </tags>
     </xsl:template>
 
-    <xsl:template match="liberator:default[not(@type='plain')]">
+    <xsl:template match="liberator:default[not(@type='plain')]" mode="pass-2">
         <xsl:variable name="type" select="preceding-sibling::liberator:type[1] | following-sibling::liberator:type[1]"/>
         <xsl:copy>
             <xsl:choose>
@@ -103,28 +103,28 @@
             <xsl:value-of select="$contents"/>
         </html:a>
     </xsl:template>
-    <xsl:template match="liberator:o">
+    <xsl:template match="liberator:o" mode="pass-2">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select='concat("&#39;", text(), "&#39;")'/>
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="liberator:k|liberator:t">
+    <xsl:template match="liberator:k|liberator:t" mode="pass-2">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select="text()"/>
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="liberator:k[@name]">
+    <xsl:template match="liberator:k[@name]" mode="pass-2">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select="concat('&lt;', @name, '>', .)"/>
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="liberator:ex">
+    <xsl:template match="liberator:ex" mode="pass-2">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select="."/>
@@ -132,11 +132,11 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="liberator:link">
+    <xsl:template match="liberator:link" mode="pass-2">
         <html:a href="{@topic}"><xsl:apply-templates select="@*|node()"/></html:a>
     </xsl:template>
 
-    <xsl:template match="liberator:tag|@tag">
+    <xsl:template match="liberator:tag|@tag" mode="pass-2">
         <xsl:call-template name="parse-tags">
             <xsl:with-param name="text"><xsl:value-of select="."/></xsl:with-param>
         </xsl:call-template>
@@ -151,12 +151,12 @@
         <xsl:choose>
             <xsl:when test="$localdoc/*[@replace=$tag] and not($elem[@replace])">
                 <xsl:for-each select="$localdoc/*[@replace=$tag]">
-                    <xsl:apply-templates select="."/>
+                    <xsl:apply-templates select="." mode="pass-2"/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:for-each select="$elem">
-                    <xsl:copy><xsl:apply-templates select="node()"/></xsl:copy>
+                    <xsl:apply-templates select="." mode="pass-2"/>
                 </xsl:for-each>
             </xsl:otherwise>
         </xsl:choose>
@@ -184,10 +184,13 @@
         </xsl:call-template>
     </xsl:template>
 
-    <xsl:template match="@*|node()">
+    <xsl:template match="@*|node()" mode="pass-2">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
+    </xsl:template>
+    <xsl:template match="@*|node()">
+        <xsl:apply-templates select="." mode="pass-2"/>
     </xsl:template>
 </xsl:stylesheet>
 

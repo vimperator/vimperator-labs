@@ -8,7 +8,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml">
 
 <dl tag="dialog-list" replace="dialog-list">
-    <dt>about</dt>           <dd>About &liberator.hostapp;</dd>
+    <dt>about</dt>           <dd>About &liberator.host;</dd>
     <dt>addons</dt>          <dd>Manage Add-ons</dd>
     <dt>checkupdates</dt>    <dd>Check for updates</dd>
     <dt>cleardata</dt>       <dd>Clear private data</dd>
@@ -21,7 +21,7 @@
     <dt>openfile</dt>        <dd>Open the file selector dialog</dd>
     <dt>pagesource</dt>      <dd>View page source</dd>
     <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
-    <dt>preferences</dt>     <dd>Show &liberator.hostapp; preferences dialog</dd>
+    <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
     <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
     <dt>print</dt>           <dd>Show print dialog</dd>
     <dt>saveframe</dt>       <dd>Save frame to disk</dd>
