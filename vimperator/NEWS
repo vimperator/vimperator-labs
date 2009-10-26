@@ -1,4 +1,8 @@
 2009-XX-XX:
+    * asciidoc is no longer required to build Vimperator
+    * The help system is newly modularized
+
+2009-XX-XX:
     * version 2.2a1pre
     * IMPORTANT: Vimperator's licence has changed from the MPL/GPL/LGPL
       tri-license to the MIT license.
