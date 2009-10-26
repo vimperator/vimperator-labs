@@ -880,10 +880,10 @@ function History() //{{{
                 let sh = history.session;
 
                 context.anchored = false;
-                context.completions = sh.slice(0, sh.index).reverse();
-                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
+                context.completions = sh.slice(0, sh.index).reverse();
+                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
             },
             count: true,
             literal: 0
@@ -922,10 +922,10 @@ function History() //{{{
                 let sh = history.session;
 
                 context.anchored = false;
-                context.completions = sh.slice(sh.index + 1);
-                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
+                context.completions = sh.slice(sh.index + 1);
+                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
             },
             count: true,
             literal: 0
