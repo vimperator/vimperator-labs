@@ -8,7 +8,7 @@
     xmlns:str="http://exslt.org/strings"
     extension-element-prefixes="str">
 
-    <xsl:output method="xml"/>
+    <xsl:output method="xml" indent="no"/>
 
     <xsl:template match="liberator:document">
         <html:html liberator:highlight="Help">
@@ -121,6 +121,9 @@
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
+    <xsl:template match="liberator:ol" mode="pass-2">
+        <html:ol><xsl:apply-templates select="@*|node()"/></html:ol>
+    </xsl:template>
     <xsl:template match="liberator:ex" mode="pass-2">
         <xsl:copy>
             <xsl:call-template name="linkify-tag">
@@ -133,6 +136,16 @@
         <html:a href="{@topic}"><xsl:apply-templates select="@*|node()"/></html:a>
     </xsl:template>
 
+    <xsl:template match="liberator:pan[liberator:handle]">
+        <form style="text-align:center" html="http://www.w3.org/1999/xhtml"
+              action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick"/>
+            <input type="image" src="chrome://liberator/content/x-click-but21.gif" border="0" name="submit" alt="Donate with PayPal"/>
+            <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+                "/>
+        </form>
+    </xsl:template>
+
     <xsl:template match="liberator:tag|@tag" mode="pass-2">
         <xsl:call-template name="parse-tags">
             <xsl:with-param name="text"><xsl:value-of select="."/></xsl:with-param>
@@ -142,18 +155,18 @@
     <!-- This does't work. Why?
     <xsl:include href="chrome://liberator/content/overlay.xsl"/>
     -->
-    <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
-    <xsl:variable name="localdoc" select="document($local)/liberator:overlay"/>
+    <xsl:variable name="overlay" select="concat('liberator://help-overlay/', /liberator:document/@name)"/>
+    <xsl:variable name="overlaydoc" select="document($overlay)/liberator:overlay"/>
 
-    <xsl:template name="splice-locals">
+    <xsl:template name="splice-overlays">
         <xsl:param name="elem"/>
         <xsl:param name="tag"/>
-        <xsl:for-each select="$localdoc/*[@insertbefore=$tag]">
+        <xsl:for-each select="$overlaydoc/*[@insertbefore=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
         <xsl:choose>
-            <xsl:when test="$localdoc/*[@replace=$tag] and not($elem[@replace])">
-                <xsl:for-each select="$localdoc/*[@replace=$tag]">
+            <xsl:when test="$overlaydoc/*[@replace=$tag] and not($elem[@replace])">
+                <xsl:for-each select="$overlaydoc/*[@replace=$tag]">
                     <xsl:apply-templates select="." mode="pass-2"/>
                 </xsl:for-each>
             </xsl:when>
@@ -163,25 +176,25 @@
                 </xsl:for-each>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:for-each select="$localdoc/*[@insertafter=$tag]">
+        <xsl:for-each select="$overlaydoc/*[@insertafter=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="liberator:document/liberator:tags|liberator:document/liberator:tag">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(., ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:document/*[liberator:tags]">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:*[@tag and not(@replace)]">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>

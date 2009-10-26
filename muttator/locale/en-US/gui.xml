@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<dl tag="dialog-list" replace="dialog-list">
+    <dt>about</dt>           <dd>About &liberator.host;</dd>
+    <dt>addons</dt>          <dd>Manage Add-ons</dd>
+    <dt>addressbook</dt>     <dd>Address book</dd>
+    <dt>checkupdates</dt>    <dd>Check for updates</dd>
+    <dt>console</dt>         <dd>JavaScript console</dd>
+    <dt>dominspector</dt>    <dd>DOM Inspector</dd>
+    <dt>downloads</dt>       <dd>Manage Downloads</dd>
+    <dt>openfile</dt>        <dd>Open the file selector dialog</dd>
+    <dt>pageinfo</dt>        <dd>Show information about the current page</dd>
+    <dt>pagesource</dt>      <dd>View page source</dd>
+    <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
+    <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
+    <dt>print</dt>           <dd>Show print dialog</dd>
+    <dt>saveframe</dt>       <dd>Save frame to disk</dd>
+    <dt>savepage</dt>        <dd>Save page to disk</dd>
+</dl>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

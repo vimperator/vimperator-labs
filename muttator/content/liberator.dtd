@@ -1,6 +1,13 @@
 
+<!ENTITY % liberatorBranding SYSTEM "chrome://branding/locale/brand.dtd">
+%liberatorBranding;
+
 <!ENTITY liberator.mainWindow "messengerWindow">
 <!ENTITY liberator.name "muttator">
+<!ENTITY liberator.idname "muttator">
+<!ENTITY liberator.appname "Muttator">
+<!ENTITY liberator.host "&brandShortName;">
+<!ENTITY liberator.hostbin "thunderbird">
 <!ENTITY liberator.statusBefore "">
 <!ENTITY liberator.statusAfter "statusTextBox">
 

@@ -8,8 +8,8 @@
     xmlns:str="http://exslt.org/strings"
     extension-element-prefixes="str">
 
-    <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
-    <xsl:variable name="localdoc" select="document($local)/liberator:overlay"/>
+    <xsl:variable name="overlay" select="concat('liberator://help-overlay/', /liberator:document/@name)"/>
+    <xsl:variable name="overlaydoc" select="document($overlay)/liberator:overlay"/>
 
     <xsl:template match="liberator:document">
         <xsl:copy>
@@ -17,15 +17,15 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template name="splice-locals">
+    <xsl:template name="splice-overlays">
         <xsl:param name="elem"/>
         <xsl:param name="tag"/>
-        <xsl:for-each select="$localdoc/*[@insertbefore=$tag]">
+        <xsl:for-each select="$overlaydoc/*[@insertbefore=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
         <xsl:choose>
-            <xsl:when test="$localdoc/*[@replace=$tag] and not($elem[@replace])">
-                <xsl:for-each select="$localdoc/*[@replace=$tag]">
+            <xsl:when test="$overlaydoc/*[@replace=$tag] and not($elem[@replace])">
+                <xsl:for-each select="$overlaydoc/*[@replace=$tag]">
                     <xsl:apply-templates select="." mode="pass-2"/>
                 </xsl:for-each>
             </xsl:when>
@@ -35,25 +35,25 @@
                 </xsl:for-each>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:for-each select="$localdoc/*[@insertafter=$tag]">
+        <xsl:for-each select="$overlaydoc/*[@insertafter=$tag]">
             <xsl:apply-templates select="."/>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="liberator:document/liberator:tags|liberator:document/liberator:tag">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(., ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:document/*[liberator:tags]">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:*[@tag and not(@replace)]">
-        <xsl:call-template name="splice-locals">
+        <xsl:call-template name="splice-overlays">
             <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
             <xsl:with-param name="elem" select="self::node()"/>
         </xsl:call-template>

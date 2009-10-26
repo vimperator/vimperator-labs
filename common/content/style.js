@@ -155,7 +155,7 @@ Highlights.prototype.CSS = <![CDATA[
     HelpLink:hover                              text-decoration: underline;
 
     HelpList,liberator|ul                       display: block; list-style: outside disc;
-    HelpOrderedList,liberator|ol                display: block; list-style: outside numeric;
+    HelpOrderedList,liberator|*>html:ol         display: block; list-style: outside decimal;
     HelpListItem,liberator|li                   display: list-item; margin-left: 1.5em;
 
     HelpNote,liberator|note                     display: block; margin: 1em 0em;

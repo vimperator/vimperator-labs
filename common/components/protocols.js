@@ -38,7 +38,7 @@ function makeChannel(url, orig)
     return channel;
 }
 function fakeChannel(orig)
-    makeChannel("chrome://does/not/exist/in/any/reasonable/configuration", orig);
+    makeChannel("chrome://liberator/content/does/not/exist", orig);
 function redirect(to, orig)
 {
     let html = <html><head><meta http-equiv="Refresh" content={"0;" + to}/></head></html>.toXMLString();
@@ -94,9 +94,9 @@ function Liberator()
 {
     this.wrappedJSObject = this;
 
-    this.__defineGetter__("helpNamespaces", function () NAMESPACES ? NAMESPACES.slice() : null);
+    this.__defineGetter__("helpNamespaces", function () this.NAMESPACES ? this.NAMESPACES.slice() : null);
     this.__defineSetter__("helpNamespaces", function (namespaces) {
-        if (!NAMESPACES)
+        if (!this.NAMESPACES)
             parseHelpTags(namespaces);
     });
 
@@ -112,6 +112,7 @@ function Liberator()
         return result;
     }
 
+    this.httpGet = httpGet;
     function httpGet(url)
     {
         try
@@ -126,8 +127,9 @@ function Liberator()
 
     const self = this;
     this.HELP_TAGS = {};
-    this.FILE_MAP = { all: "chrome://liberator/locale/all.xml" };
-    var NAMESPACES = null;
+    this.FILE_MAP = {};
+    this.OVERLAY_MAP = {};
+    this.NAMESPACES = null;
     var HELP_FILES = null;
 
     function XSLTProcessor(sheet)
@@ -139,23 +141,34 @@ function Liberator()
 
     function findHelpFile(file)
     {
-        for each (let namespace in NAMESPACES)
+        let result = [];
+        for each (let namespace in self.NAMESPACES)
         {
             let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
             let res = httpGet(url);
-            if (res && res.responseXML.documentElement.localName == "document")
-                return [url, res.responseXML];
+            if (res)
+            {
+                if (res.responseXML.documentElement.localName == "document")
+                    self.FILE_MAP[file] = url;
+                if (res.responseXML.documentElement.localName == "overlay")
+                    self.OVERLAY_MAP[file] = url;
+                if (res.responseXML.documentElement.localName == "document")
+                    result = [url, res.responseXML];
+            }
         }
-        return []
+        return result;
     }
 
     function parseHelpTags(namespaces)
     {
         HELP_FILES = [];
-        NAMESPACES = Array.slice(namespaces);
+        self.NAMESPACES = Array.slice(namespaces);
+
+        findHelpFile("all");
+
         const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
         self.HELP_TAGS.all = "all";
-        for each (let namespace in NAMESPACES)
+        for each (let namespace in self.NAMESPACES)
         {
             let files = xpath(
                     httpGet("chrome://" + namespace + "/locale/all.xml").responseXML,
@@ -163,8 +176,9 @@ function Liberator()
             for each (let file in files)
             {
                 let [url, doc] = findHelpFile(file.value);
-                if (doc)
-                    self.FILE_MAP[file.value] = url;
+                if (!doc)
+                    continue;
+                self.FILE_MAP[file.value] = url;
                 doc = XSLT.transformToDocument(doc);
                 for (let elem in xpath(doc, "//liberator:tag/text()"))
                     self.HELP_TAGS[elem.textContent] = file.value;
@@ -193,7 +207,7 @@ Liberator.prototype = {
     defaultPort: -1,
     allowPort: function (port, scheme) false,
     protocolFlags: 0
-         | nsIProtocolHandler.URI_IS_UI_RESOURCE
+         | nsIProtocolHandler.URI_LOADABLE_BY_ANYONE
          | nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
 
     newURI: function (spec, charset, baseURI)
@@ -213,8 +227,9 @@ Liberator.prototype = {
             {
                 case "help":
                     let url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
-                    if (!url)
-                        break;
+                    return makeChannel(url, uri);
+                case "help-overlay":
+                    url = this.OVERLAY_MAP[uri.path.replace(/^\/|#.*/g, "")];
                     return makeChannel(url, uri);
                 case "help-tag":
                     let tag = uri.path.substr(1);
