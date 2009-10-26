@@ -10,9 +10,6 @@
 
     <xsl:output method="xml"/>
 
-    <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
-    <xsl:variable name="localdoc" select="document($local)/liberator:overlay"/>
-
     <xsl:template match="liberator:document">
         <html:html liberator:highlight="Help">
             <html:head>
@@ -141,6 +138,12 @@
             <xsl:with-param name="text"><xsl:value-of select="."/></xsl:with-param>
         </xsl:call-template>
     </xsl:template>
+
+    <!-- This does't work. Why?
+    <xsl:include href="chrome://liberator/content/overlay.xsl"/>
+    -->
+    <xsl:variable name="local" select="concat('chrome://&liberator.name;/locale/', /liberator:document/@name, '.xml')"/>
+    <xsl:variable name="localdoc" select="document($local)/liberator:overlay"/>
 
     <xsl:template name="splice-locals">
         <xsl:param name="elem"/>

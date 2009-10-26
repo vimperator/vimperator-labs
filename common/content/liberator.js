@@ -215,7 +215,7 @@ const liberator = (function () //{{{
 
         options.add(["helpfile", "hf"],
             "Name of the main help file",
-            "string", "intro.html");
+            "string", "intro");
 
         options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",
@@ -1356,6 +1356,8 @@ const liberator = (function () //{{{
          */
         findHelp: function (topic, unchunked)
         {
+            if (topic in services.get("liberator:").FILE_MAP)
+                return topic;
             unchunked = !!unchunked;
             let items = completion._runCompleter("help", topic, null, unchunked).items;
             let partialMatch = null;
@@ -1388,8 +1390,8 @@ const liberator = (function () //{{{
             if (!topic && !unchunked)
             {
                 let helpFile = options["helpfile"];
-                if (config.helpFiles.indexOf(helpFile) != -1)
-                    liberator.open("liberator://help/" + helpFile.replace(/\.html$/, ""), { from: "help" });
+                if (helpFile in services.get("liberator:").FILE_MAP)
+                    liberator.open("liberator://help/" + helpFile, { from: "help" });
                 else
                     liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
                 return;
@@ -1725,7 +1727,6 @@ const liberator = (function () //{{{
             liberator.log("Initializing liberator object...", 0);
 
             services.get("liberator:").helpNamespaces = [config.name.toLowerCase(), "liberator"];
-            services.get("liberator:").helpFiles = config.helpFiles.map(function (f) f.replace(/\..*/, ""));
 
             config.features.push(getPlatformFeature());
 

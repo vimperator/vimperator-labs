@@ -97,12 +97,7 @@ function Liberator()
     this.__defineGetter__("helpNamespaces", function () NAMESPACES ? NAMESPACES.slice() : null);
     this.__defineSetter__("helpNamespaces", function (namespaces) {
         if (!NAMESPACES)
-            NAMESPACES = Array.slice(namespaces)
-    });
-    this.__defineGetter__("helpFiles", function () HELP_FILES ? HELP_FILES.slice() : null);
-    this.__defineSetter__("helpFiles", function (files) {
-        if (!HELP_FILES)
-            parseHelpTags(files);
+            parseHelpTags(namespaces);
     });
 
     function xpath(doc, expression)
@@ -131,36 +126,53 @@ function Liberator()
 
     const self = this;
     this.HELP_TAGS = {};
-    this.FILE_MAP = {};
+    this.FILE_MAP = { all: "chrome://liberator/locale/all.xml" };
     var NAMESPACES = null;
     var HELP_FILES = null;
 
-    function parseHelpTags(files)
+    function XSLTProcessor(sheet)
     {
-        const XSLT = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
-        XSLT.importStylesheet(httpGet("chrome://liberator/content/help.xsl").responseXML);
+        let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
+        xslt.importStylesheet(httpGet(sheet).responseXML);
+        return xslt;
+    }
+
+    function findHelpFile(file)
+    {
+        for each (let namespace in NAMESPACES)
+        {
+            let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
+            let res = httpGet(url);
+            if (res && res.responseXML.documentElement.localName == "document")
+                return [url, res.responseXML];
+        }
+        return []
+    }
+
+    function parseHelpTags(namespaces)
+    {
+        NAMESPACES = Array.slice(namespaces);
+        let files = xpath(
+                XSLTProcessor("chrome://liberator/content/overlay.xsl")
+                        .transformToDocument(httpGet(self.FILE_MAP.all).responseXML),
+                "//liberator:include/@href");
+        self.HELP_TAGS.all = "all";
+        const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
         for each (let file in files)
         {
             try
             {
-                for each (let namespace in NAMESPACES)
-                {
-                    let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
-                    let res = httpGet(url);
-                    if (res && res.responseXML.documentElement.localName == "document")
-                    {
-                        self.FILE_MAP[file] = url;
-                        let doc = XSLT.transformToDocument(res.responseXML);
-                        for (let elem in xpath(doc, "//liberator:tag/text()"))
-                            self.HELP_TAGS[elem.textContent] = file;
-                        break;
-                    }
-                }
+                let [url, doc] = findHelpFile(file.value);
+                if (doc)
+                    self.FILE_MAP[file.value] = url;
+                doc = XSLT.transformToDocument(doc);
+                for (let elem in xpath(doc, "//liberator:tag/text()"))
+                    self.HELP_TAGS[elem.textContent] = file.value;
             }
             catch (e)
             {
                 Components.utils.reportError(e);
-                dump(e);
+                dump(e + "\n");
             }
         }
         HELP_FILES = Array.slice(files);

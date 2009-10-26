@@ -135,17 +135,6 @@ const config = { //{{{
 
     hasTabbrowser: true,
 
-    // TODO : Write intro.html and tutorial.html
-    // they are sorted by relevance, not alphabetically
-    helpFiles: [
-        "intro.html", /*"tutorial.html",*/ "starting.html", "player.html",
-        "browsing.html", "buffer.html", "cmdline.html", "insert.html",
-        "options.html", "pattern.html", "tabs.html", "hints.html", "map.html",
-        "eval.html", "marks.html", "repeat.html", "autocommands.html",
-        "print.html", "gui.html", "styling.html", "message.html",
-        "developer.html", "various.html", "index.html", "version.html"
-    ],
-
     modes: [["PLAYER", { char: "p" }]],
 
     get ignoreKeys() {
