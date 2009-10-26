@@ -1415,23 +1415,20 @@ const liberator = (function () //{{{
                 }
                 return result;
             }
-
-            findHelpFile("all");
-            tagMap.all = "all";
-
             const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
-            for (let [, namespace] in Iterator(namespaces))
-            {
-                let files = util.evaluateXPath(
-                        "//liberator:include/@href",
-                        util.httpGet("chrome://" + namespace + "/locale/all.xml").responseXML);
-                for (let file in files)
-                    findHelpFile(file.value).forEach(function (doc) {
-                        doc = XSLT.transformToDocument(doc);
-                        for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
-                            tagMap[elem.textContent] = file.value;
-                    });
-            }
+
+            tagMap.all = "all";
+            let files = findHelpFile("all").map(function (doc)
+                    util.evaluateXPath(
+                        "//liberator:include/@href", doc.responseXML));
+
+            util.Array.flatten(files).map(function ({ value: file }) {
+                findHelpFile(file).forEach(function (doc) {
+                    doc = XSLT.transformToDocument(doc);
+                    for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
+                        tagMap[elem.textContent] = file;
+                });
+            });
 
             services.get("liberator:").init({
                 HELP_TAGS: tagMap, FILE_MAP: fileMap,
