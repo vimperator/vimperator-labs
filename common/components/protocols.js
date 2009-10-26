@@ -151,16 +151,16 @@ function Liberator()
 
     function parseHelpTags(namespaces)
     {
+        HELP_FILES = [];
         NAMESPACES = Array.slice(namespaces);
-        let files = xpath(
-                XSLTProcessor("chrome://liberator/content/overlay.xsl")
-                        .transformToDocument(httpGet(self.FILE_MAP.all).responseXML),
-                "//liberator:include/@href");
-        self.HELP_TAGS.all = "all";
         const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
-        for each (let file in files)
+        self.HELP_TAGS.all = "all";
+        for each (let namespace in NAMESPACES)
         {
-            try
+            let files = xpath(
+                    httpGet("chrome://" + namespace + "/locale/all.xml").responseXML,
+                    "//liberator:include/@href");
+            for each (let file in files)
             {
                 let [url, doc] = findHelpFile(file.value);
                 if (doc)
@@ -168,14 +168,9 @@ function Liberator()
                 doc = XSLT.transformToDocument(doc);
                 for (let elem in xpath(doc, "//liberator:tag/text()"))
                     self.HELP_TAGS[elem.textContent] = file.value;
-            }
-            catch (e)
-            {
-                Components.utils.reportError(e);
-                dump(e + "\n");
+                HELP_FILES.push(file.value);
             }
         }
-        HELP_FILES = Array.slice(files);
     }
 }
 Liberator.prototype = {
