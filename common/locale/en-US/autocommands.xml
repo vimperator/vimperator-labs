@@ -89,7 +89,7 @@
 </p>
 
 <code><!-- Why is the XSLT processor mangling newlines? -->
-<ex>:autocmd LocationChange .* :set editor=<str>gvim -f</str></ex>&#x0a;
+<ex>:autocmd LocationChange .* :set editor=<str>gvim -f</str></ex>
 <ex>:autocmd LocationChange mail\\.google\\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
 </code>
 

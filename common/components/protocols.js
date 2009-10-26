@@ -94,98 +94,11 @@ function Liberator()
 {
     this.wrappedJSObject = this;
 
-    this.__defineGetter__("helpNamespaces", function () this.NAMESPACES ? this.NAMESPACES.slice() : null);
-    this.__defineSetter__("helpNamespaces", function (namespaces) {
-        if (!this.NAMESPACES)
-            parseHelpTags(namespaces);
-    });
-
-    function xpath(doc, expression)
-    {
-        let result = doc.evaluate(expression, doc,
-            function lookupNamespaceURI(prefix) ({
-                    xhtml: "http://www.w3.org/1999/xhtml",
-                    liberator: "http://vimperator.org/namespaces/liberator",
-                }[prefix] || null),
-            5, null);
-        result.__iterator__ = function () { let elem; while ((elem = this.iterateNext())) yield elem; };
-        return result;
-    }
-
-    this.httpGet = httpGet;
-    function httpGet(url)
-    {
-        try
-        {
-            let xmlhttp = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
-            xmlhttp.open("GET", url, false);
-            xmlhttp.send(null);
-            return xmlhttp;
-        }
-        catch (e) {}
-    }
-
     const self = this;
     this.HELP_TAGS = {};
     this.FILE_MAP = {};
     this.OVERLAY_MAP = {};
-    this.NAMESPACES = null;
-    var HELP_FILES = null;
-
-    function XSLTProcessor(sheet)
-    {
-        let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
-        xslt.importStylesheet(httpGet(sheet).responseXML);
-        return xslt;
-    }
-
-    function findHelpFile(file)
-    {
-        let result = [];
-        for each (let namespace in self.NAMESPACES)
-        {
-            let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
-            let res = httpGet(url);
-            if (res)
-            {
-                if (res.responseXML.documentElement.localName == "document")
-                    self.FILE_MAP[file] = url;
-                if (res.responseXML.documentElement.localName == "overlay")
-                    self.OVERLAY_MAP[file] = url;
-                if (res.responseXML.documentElement.localName == "document")
-                    result = [url, res.responseXML];
-            }
-        }
-        return result;
-    }
-
-    function parseHelpTags(namespaces)
-    {
-        HELP_FILES = [];
-        self.NAMESPACES = Array.slice(namespaces);
-
-        findHelpFile("all");
-
-        const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
-        self.HELP_TAGS.all = "all";
-        for each (let namespace in self.NAMESPACES)
-        {
-            let files = xpath(
-                    httpGet("chrome://" + namespace + "/locale/all.xml").responseXML,
-                    "//liberator:include/@href");
-            for each (let file in files)
-            {
-                let [url, doc] = findHelpFile(file.value);
-                if (!doc)
-                    continue;
-                self.FILE_MAP[file.value] = url;
-                doc = XSLT.transformToDocument(doc);
-                for (let elem in xpath(doc, "//liberator:tag/text()"))
-                    self.HELP_TAGS[elem.textContent] = file.value;
-                HELP_FILES.push(file.value);
-            }
-        }
-    }
+    this.NAMESPACES = [];
 }
 Liberator.prototype = {
     contractID:       "@mozilla.org/network/protocol;1?name=liberator",
@@ -201,6 +114,13 @@ Liberator.prototype = {
                 throw Components.results.NS_ERROR_NO_AGGREGATION;
             return Liberator.instance.QueryInterface(iid);
         }
+    },
+
+    init: function (obj)
+    {
+        for each (let prop in ["HELP_TAGS", "FILE_MAP", "OVERLAY_MAP", "NAMESPACES"])
+            for (let [k, v] in Iterator(obj[prop]))
+                this[prop][k] = v
     },
 
     scheme: "liberator",

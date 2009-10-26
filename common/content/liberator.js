@@ -638,7 +638,7 @@ const liberator = (function () //{{{
         toolbox = document.getElementById("navigator-toolbox");
         if (toolbox)
         {
-            function findToolbar(name) buffer.evaluateXPath(
+            function findToolbar(name) util.evaluateXPath(
                 "./*[@toolbarname=" + util.escapeString(name, "'") + "]",
                 document, toolbox).snapshotItem(0);
 
@@ -859,7 +859,7 @@ const liberator = (function () //{{{
         completion.toolbar = function toolbar(context) {
             context.title = ["Toolbar"];
             context.keys = { text: function (item) item.getAttribute("toolbarname"), description: function () "" };
-            context.completions = buffer.evaluateXPath("./*[@toolbarname]", document, toolbox);
+            context.completions = util.evaluateXPath("./*[@toolbarname]", document, toolbox);
         };
 
         completion.window = function window(context) {
@@ -1378,6 +1378,73 @@ const liberator = (function () //{{{
         },
 
         /**
+         * @private
+         * Initialize the help system.
+         */
+        initHelp: function ()
+        {
+            if (services.get("liberator:").NAMESPACES.length)
+                return;
+
+            let namespaces = [config.name.toLowerCase(), "liberator"];
+            let tagMap = {};
+            let fileMap = {};
+            let overlayMap = {};
+            function XSLTProcessor(sheet)
+            {
+                let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
+                xslt.importStylesheet(util.httpGet(sheet).responseXML);
+                return xslt;
+            }
+
+            function findHelpFile(file)
+            {
+                let result = [];
+                for (let [, namespace] in Iterator(namespaces))
+                {
+                    let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
+                    let res = util.httpGet(url);
+                    if (res)
+                    {
+                        if (res.responseXML.documentElement.localName == "document")
+                            fileMap[file] = url;
+                        if (res.responseXML.documentElement.localName == "overlay")
+                            overlayMap[file] = url;
+                        if (res.responseXML.documentElement.localName == "document")
+                            result = [url, res.responseXML];
+                    }
+                }
+                return result;
+            }
+
+            findHelpFile("all");
+            tagMap.all = "all";
+
+            const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
+            for (let [, namespace] in Iterator(namespaces))
+            {
+                let files = util.evaluateXPath(
+                        "//liberator:include/@href",
+                        util.httpGet("chrome://" + namespace + "/locale/all.xml").responseXML);
+                for (let file in files)
+                {
+                    let [url, doc] = findHelpFile(file.value);
+                    if (!doc)
+                        continue;
+                    fileMap[file.value] = url;
+                    doc = XSLT.transformToDocument(doc);
+                    for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
+                        tagMap[elem.textContent] = file.value;
+                }
+            }
+
+            services.get("liberator:").init({
+                HELP_TAGS: tagMap, FILE_MAP: fileMap,
+                OVERLAY_MAP: overlayMap, NAMESPACES: namespaces
+            });
+        },
+
+        /**
          * Opens the help page containing the specified <b>topic</b> if it
          * exists.
          *
@@ -1726,7 +1793,7 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
-            services.get("liberator:").helpNamespaces = [config.name.toLowerCase(), "liberator"];
+            liberator.initHelp();
 
             config.features.push(getPlatformFeature());
 
