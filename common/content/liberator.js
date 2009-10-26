@@ -1410,8 +1410,7 @@ const liberator = (function () //{{{
                             fileMap[file] = url;
                         if (res.responseXML.documentElement.localName == "overlay")
                             overlayMap[file] = url;
-                        if (res.responseXML.documentElement.localName == "document")
-                            result = [url, res.responseXML];
+                        result.push(res.responseXML);
                     }
                 }
                 return result;
@@ -1427,15 +1426,11 @@ const liberator = (function () //{{{
                         "//liberator:include/@href",
                         util.httpGet("chrome://" + namespace + "/locale/all.xml").responseXML);
                 for (let file in files)
-                {
-                    let [url, doc] = findHelpFile(file.value);
-                    if (!doc)
-                        continue;
-                    fileMap[file.value] = url;
-                    doc = XSLT.transformToDocument(doc);
-                    for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
-                        tagMap[elem.textContent] = file.value;
-                }
+                    findHelpFile(file.value).forEach(function (doc) {
+                        doc = XSLT.transformToDocument(doc);
+                        for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
+                            tagMap[elem.textContent] = file.value;
+                    });
             }
 
             services.get("liberator:").init({
