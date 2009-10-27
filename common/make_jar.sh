@@ -52,6 +52,7 @@ do
     ) || exit 1
 done
 
-(cd $stage; zip -r "$top/$jar" *) || exit 1
+[ -f "$top/$jar" ] && rm -f "$top/$jar"
+(set -e; cd $stage; zip -r "$top/$jar" *) || exit 1
 rm -rf "$stage"
 

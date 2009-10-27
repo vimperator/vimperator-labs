@@ -8,7 +8,8 @@ BASE          = $(TOP)/../common
 LOCALEDIR     = locale
 DOC_FILES     = $(wildcard $(LOCALEDIR)/*/*.xml)
 
-MAKE_JAR      = VERSION="$(VERSION)" DATE="$(BUILD_DATE)" sh $(BASE)/make_jar.sh
+export VERSION BUILD_DATE
+MAKE_JAR      = sh $(BASE)/make_jar.sh
 
 # TODO: specify source files manually?
 JAR_BASES     = $(TOP) $(BASE)
