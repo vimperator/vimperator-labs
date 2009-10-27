@@ -234,10 +234,10 @@ CompletionContext.prototype = {
                 if (!context.hasItems)
                     return [];
                 let prefix = self.value.substring(minStart, context.offset);
-                return context.items.map(function (item) {
-                    item.text = prefix + item.text;
-                    return item;
-                });
+                return context.items.map(function (item) ({
+                    text: prefix + item.text,
+                    __proto__: item
+                }));
             });
             return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring };
         }
