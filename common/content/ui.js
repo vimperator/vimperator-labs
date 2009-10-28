@@ -1949,7 +1949,7 @@ function ItemList(id) //{{{
 
         divNodes.noCompletions.style.display = haveCompletions ? "none" : "block";
 
-        completionElements = buffer.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem']", doc);
+        completionElements = util.evaluateXPath("//xhtml:div[@liberator:highlight='CompItem']", doc);
 
         return true;
     }

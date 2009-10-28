@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<dl tag="dialog-list" replace="dialog-list">
+    <dt>about</dt>           <dd>About &liberator.host;</dd>
+    <dt>addons</dt>          <dd>Manage Add-ons</dd>
+    <dt>checkupdates</dt>    <dd>Check for updates</dd>
+    <dt>cleardata</dt>       <dd>Clear private data</dd>
+    <dt>cookies</dt>         <dd>List your cookies</dd>
+    <dt>console</dt>         <dd>JavaScript console</dd>
+    <dt>dominspector</dt>    <dd>DOM Inspector</dd>
+    <dt>downloads</dt>       <dd>Manage Downloads</dd>
+    <dt>jumpto</dt>          <dd>Jump to a media item</dd>
+    <dt>newsmartplaylist</dt><dd>Create a new smart playlist</dd>
+    <dt>openfile</dt>        <dd>Open the file selector dialog</dd>
+    <dt>pagesource</dt>      <dd>View page source</dd>
+    <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
+    <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
+    <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
+    <dt>print</dt>           <dd>Show print dialog</dd>
+    <dt>saveframe</dt>       <dd>Save frame to disk</dd>
+    <dt>savepage</dt>        <dd>Save page to disk</dd>
+    <dt>searchengines</dt>   <dd>Manage installed search engines</dd>
+    <dt>selectionsource</dt> <dd>View selection source</dd>
+    <dt>subscribe</dt>       <dd>Add a new subscription</dd>
+</dl>
+
+<item replace="sbcl">
+    <tags>:dpcl :dpclose</tags>
+    <spec>:dpcl<oa>ose</oa> <a>pane</a></spec>
+    <description>
+        <p>Close the specified display pane.</p>
+    </description>
+</item>
+
+<item replace=":sbope">
+    <tags>:dpope :dpopen :dp :dpane :dislplayp :dislplaypane</tags>
+    <spec>:displaypane <a>pane</a></spec>
+    <description>
+        <p>
+	    Open the specified display pane. <a>pane</a> is any of "service
+	    pane left", "service pane bottom", "content pane bottom" or "right
+	    sidebar".
+        </p>
+    </description>
+</item>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

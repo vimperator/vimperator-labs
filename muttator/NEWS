@@ -1,5 +1,7 @@
 2009-XX-XX
     * version 0.6a1pre
+    * asciidoc is no longer required to build Muttator
+    * The full help system now available for Muttator.
     * add 'titlestring' option
     * rename *FolderLoaded* autocommand event to *FolderLoad*
     * add the *DOMLoad* autocommand event

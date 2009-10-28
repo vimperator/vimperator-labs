@@ -77,14 +77,23 @@ function Bookmarks() //{{{
 
         function loadBookmark(node)
         {
-            let uri = util.newURI(node.uri);
-            let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
-            let tags = taggingService.getTagsForURI(uri, {}) || [];
-            let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
+            try
+            {
+                let uri = util.newURI(node.uri);
+                let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
+                let tags = taggingService.getTagsForURI(uri, {}) || [];
+                let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
-            bookmarks.push(bmark);
+                bookmarks.push(bmark);
 
-            return bmark;
+                return bmark;
+            }
+            catch (e)
+            {
+                liberator.dump("Failed to create bookmark for URI: " + node.uri);
+                liberator.reportError(e);
+                return null;
+            }
         }
 
         function readBookmark(id)
@@ -702,7 +711,6 @@ function Bookmarks() //{{{
         //          if the search also requires a postData, [url, postData] is returned
         getSearchURL: function getSearchURL(text, useDefsearch)
         {
-            let url = null;
             let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
 
             // we need to make sure our custom alias have been set, even if the user
@@ -872,10 +880,10 @@ function History() //{{{
                 let sh = history.session;
 
                 context.anchored = false;
-                context.completions = sh.slice(0, sh.index).reverse();
-                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
+                context.completions = sh.slice(0, sh.index).reverse();
+                context.keys = { text: function (item) (sh.index - item.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
             },
             count: true,
             literal: 0
@@ -914,10 +922,10 @@ function History() //{{{
                 let sh = history.session;
 
                 context.anchored = false;
-                context.completions = sh.slice(sh.index + 1);
-                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
                 context.compare = CompletionContext.Sort.unsorted;
                 context.filters = [CompletionContext.Filter.textDescription];
+                context.completions = sh.slice(sh.index + 1);
+                context.keys = { text: function (item) (item.index - sh.index) + ": " + item.URI.spec, description: "title", icon: "icon" };
             },
             count: true,
             literal: 0

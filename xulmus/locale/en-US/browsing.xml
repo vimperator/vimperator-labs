@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<span replace="w"/>
+<span replace="W"/>
+<span replace=":wc"/>
+<span replace=":winon"/>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

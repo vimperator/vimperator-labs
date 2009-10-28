@@ -670,7 +670,8 @@ function Tabs() //{{{
                 {
                     context.anchored = false;
                     context.compare = CompletionContext.Sort.unsorted;
-                    context.keys = { text: function ([i, item]) (i + 1) + ": " + item.state.entries[item.state.index - 1].url, description: "[1].title", icon: "[1].image" };
+                    context.filters = [CompletionContext.Filter.textDescription];
+                    conext.keys = { text: function ([i, isem]) (i + 1) + ": " + item.state.entries[item.state.index - 1].url, description: "[1].title", icon: "[1].image" };
                     context.completions = Iterator(tabs.closedTabs);
                 },
                 count: true,
@@ -1185,7 +1186,8 @@ function Tabs() //{{{
             if (!tab)
                 tab = getBrowser().mTabContainer.selectedItem;
 
-            getBrowser().replaceTabWithWindow(tab);
+            services.get("windowWatcher")
+                .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
         },
 
         /**

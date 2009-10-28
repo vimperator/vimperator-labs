@@ -1,5 +1,7 @@
 2009-XX-XX:
     * version 0.2pre
+    * asciidoc is no longer required to build Xulmus
+    * The help system is newly modularized
     * add [c]:silent[c]
     * add [j]$MY_XULMUSRC[j]
     * add [m]'[m] and [m]"[m] local marks

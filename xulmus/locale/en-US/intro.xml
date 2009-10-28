@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="intro"
+    title="&liberator.appname; Intro"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+    <logo/>
+
+<h2 tag="intro">Introduction</h2>
+
+<link topic="http://vimperator.org/%liberator.name;">&liberator.appname;</link>
+is a free media player add-on for &liberator.host;, which
+combines the best features of the
+<link topic="http://cmus.sourceforge.net">CMus</link>
+music player and the 
+<link topic="http://www.vim.org">Vim</link>
+text editor.
+
+<warning tag="warning">
+    To provide the most authentic CMus/Vim experience, the &liberator.host; toolbar
+    is hidden.
+    If you really need it, type: <ex>:set guioptions+=T</ex> to get it back.
+    If you don't like &liberator.appname; at all, you can uninstall it by typing
+    <ex>:extdelete &liberator.appname;</ex> or <ex>:extdisable &liberator.appname;</ex> to disable it.
+    If you like it but can't remember the shortcuts, then press <k>F1</k> or
+    <ex>:help</ex> to get this help window back.
+</warning>
+
+<tags>author donation</tags>
+<p>
+    &liberator.appname; was written by
+    <link topic="prathyushthota@gmail.com">Prathyush Thota</link>.  If you
+    appreciate my work on &liberator.appname; and want to encourage
+    me working on it more, you can either send me greetings, patches
+    or make a donation:
+</p>
+
+<pan><handle/></pan>
+
+<p>
+    Of course as a believer in free open source software, only make
+    a donation if you really like &liberator.appname; and the money
+    doesn't hurt -- otherwise just use it, recommend it and like it
+    :)
+</p>
+
+<h2 tag="overview">Help topics</h2>
+
+<ul>
+    <li><link topic="starting">Starting &liberator.appname;</link>: How &liberator.appname; starts up, where it reads the config file... </li>
+    <li><link topic="player">Player mode</link>: Interacting with the media player.</li>
+    <li><link topic="browsing">Browsing</link>: Basic mappings and commands needed for a browsing session (how to open a web page or go back in history).</li>
+    <li><link topic="buffer">Buffer</link>: Operations on the current document like scrolling or copying text.</li>
+    <li><link topic="cmdline">Command-line mode</link>: Command-line editing.</li>
+    <li><link topic="insert">Insert mode</link>: Insert-mode editing.</li>
+    <li><link topic="options">Options</link>: A description of all options.</li>
+    <li><link topic="pattern">Text search commands</link>: Searching for text in the current buffer.</li>
+    <li><link topic="tabs">Tabs</link>: Managing your tabbed browsing session.</li>
+    <li><link topic="hints">Hints</link>: Selecting hyperlinks and other page elements.</li>
+    <li><link topic="map">Key mappings, abbreviations, and user-defined commands</link>: Defining new key mappings, abbreviations and user commands.</li>
+    <li><link topic="eval">Expression evaluation</link>: Executing JavaScript.</li>
+    <li><link topic="marks">Marks</link>: Using bookmarks, QuickMarks, history and local marks.</li>
+    <li><link topic="repeat">Repeating commands</link>: Using macros to repeat recurring workflows.</li>
+    <li><link topic="autocommands">Automatic commands</link>: Automatically executing code on certain events.</li>
+    <li><link topic="print">Printing</link>: Printing pages.</li>
+    <li><link topic="gui">&liberator.appname;'s GUI</link>: Accessing &liberator.host; menus, dialogs and the display panels.</li>
+    <li><link topic="styling">Styling the GUI and web pages</link>: Changing the styling of content pages and &liberator.appname; itself.</li>
+    <li><link topic="message">Error and informational messages</link>: A description of messages and error messages.</li>
+    <li><link topic="developer">Developer information</link>: How to write docs or plugins.</li>
+    <li><link topic="various">Various commands</link>: Other help which didn't fit into any other category.</li>
+    <li><link topic="index">Index</link>: An index of all commands and options.</li>
+</ul>
+<p>
+    You can also jump directly to the help of a specific command
+    with <ex>:help o</ex> or <ex>:help :set</ex>.
+</p>
+
+<h2 tag="features">Features</h2>
+
+<!-- TODO: make Xulmus specific -->
+<ul>
+    <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)</li>
+    <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, ...)</li>
+    <li>Tab completion available for all commands with support for "longest" matching when set in 'wildmode'</li>
+    <li>Hit-a-hint like navigation of links (start with <k>f</k> to follow a link)</li>
+    <li>Advanced completion of bookmark and history URLs (searching also in title, not only URL)</li>
+    <li>Vim-like statusline with a Wget-like progress bar</li>
+    <li>Minimal GUI (easily hide useless menubar and toolbar with <ex>:set guioptions=</ex>)</li>
+    <li>Ability to <ex>:source</ex> JavaScript files, and to use a [a]~/.xulmusrc[a] file with syntax highlighting if you install http://code.google.com/p/vimperator-labs/issues/detail?id=50[xulmus.vim]</li>
+    <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
+    <li>Count supported for many commands (<em>3</em><k name="C-o"/> will go back 3 pages)</li>
+    <li>Beep on errors</li>
+    <li>Marks support (<k>m</k><em>a</em> to set mark a on a web page, <k>'</k><em>a</em> to go there)</li>
+    <li>QuickMarks support (quickly go to previously marked web pages with <k>go</k><a>a-zA-Z0-9</a>)</li>
+    <li><ex>:map</ex> and <ex>:command</ex> support (and feedkeys() for script writers)</li>
+    <li><ex>:time</ex> support for profiling</li>
+    <li>Move the text cursor and select text with Vim keys and a Visual mode</li>
+    <li>External editor support</li>
+    <li>Macros to replay key strokes</li>
+    <li>AutoCommands to execute actions on certain events</li>
+    <li>A comprehensive help system, explaining all commands, mappings and options</li>
+</ul>
+
+<h2 tag="contact">Contact</h2>
+<p>
+    Please send comments/bug reports/patches to the mailing list,
+    where we will properly answer any questions. You can also join
+    the
+    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>
+    IRC channel on
+    <link topic="http://www.freenode.net/">Freenode</link> or check the
+    <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-xulmus">Wiki</link>
+    for
+    <link topic="http://code.google.com/p/vimperator-labs/wiki/&liberator.appname;FAQ">
+        frequently asked questions (FAQ)</link>.
+    Make sure, you have read the
+    <link topic="http://vimperator-labs.googlecode.com/hg/xulmus/TODO">TODO</link>
+    file first, as we are aware of many things which can be improved
+    when we find time for it or receive patches.
+</p>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

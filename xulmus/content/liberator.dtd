@@ -1,6 +1,13 @@
 
+<!ENTITY % liberatorBranding SYSTEM "chrome://branding/locale/brand.dtd">
+%liberatorBranding;
+
 <!ENTITY liberator.mainWindow "mainplayer">
 <!ENTITY liberator.name "xulmus">
+<!ENTITY liberator.appname "Xulmus">
+<!ENTITY liberator.idname "XULMUS">
+<!ENTITY liberator.host "&brandShortName">
+<!ENTITY liberator.hostbin "songbird">
 <!ENTITY liberator.statusBefore "statusbar-display">
 <!ENTITY liberator.statusAfter "">
 

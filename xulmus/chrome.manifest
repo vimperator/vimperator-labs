@@ -1,7 +1,8 @@
 # Songbird 
 content  xulmus               content/
 skin     xulmus classic/1.0   skin/
-locale   liberator  en-US locale/en-US/
+locale   xulmus     en-US     locale/en-US/
+locale   liberator  en-US     ../common/locale/en-US/
 
 content  liberator             ../common/content/
 resource liberator             ../common/modules/

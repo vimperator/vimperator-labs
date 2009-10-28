@@ -164,7 +164,7 @@ function Hints() //{{{
                     if (elem.id)
                     {
                         // TODO: (possibly) do some guess work for label-like objects
-                        let label = buffer.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
+                        let label = util.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
                         if (label)
                             return [label.textContent.toLowerCase(), true];
                     }
@@ -284,7 +284,7 @@ function Hints() //{{{
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
         let elem, text, span, rect, showText;
-        let res = buffer.evaluateXPath(hintMode.tags(), doc, null, true);
+        let res = util.evaluateXPath(hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         let start = pageHints.length;
@@ -440,7 +440,7 @@ function Hints() //{{{
             // FIXME: Broken for imgspans.
             for (let [, { doc: doc }] in Iterator(docs))
             {
-                for (let elem in buffer.evaluateXPath("//*[@liberator:highlight and @number]", doc))
+                for (let elem in util.evaluateXPath("//*[@liberator:highlight and @number]", doc))
                 {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
                     css.push(highlight.selector(group) + "[number='" + elem.getAttribute("number") + "'] { " + elem.style.cssText + " }");
@@ -466,7 +466,7 @@ function Hints() //{{{
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
         {
-            for (let elem in buffer.evaluateXPath("//*[@liberator:highlight='hints']", doc))
+            for (let elem in util.evaluateXPath("//*[@liberator:highlight='hints']", doc))
                 elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1))
             {
@@ -778,7 +778,7 @@ function Hints() //{{{
     {
         try
         {
-            buffer.evaluateXPath(val, document.implementation.createDocument("", "", null));
+            util.evaluateXPath(val, document.implementation.createDocument("", "", null));
             return true;
         }
         catch (e)

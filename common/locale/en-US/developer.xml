@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="developer"
+    title="&liberator.appname; Developer information"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h2 tag="developer-information">Developer information</h2>
+
+<h2 tag="writing-docs documentation">Writing documentation</h2>
+
+<p>
+    For every new feature, writing documentation is <em>mandatory</em> for the
+    patch to be accepted. The docs are written in an XML dialect similar to
+    XHTML, with a few tags specific to our documentation. For example:
+</p>
+
+<code><![CDATA[
+<item>
+    <tags><![CDATA[<F1> :help :h help]]]]><![CDATA[></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]]]><![CDATA[></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+]]></code>
+
+<p>
+    creates a new help section for the command <ex>:help</ex> and for
+    the related key binding, <k name="F1"/>. It also creates help tags
+    for the command, its shortcuts, the key binding, and the general
+    topic, 'help'. These tags enable linking to this section when from
+    other mentions of the topic and from the <ex>:help</ex> command.
+    The above code displays as:
+</p>
+
+<html:div style="margin: 2em;">
+<item>
+    <tags><![CDATA[<F1> :help :h help]]></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+</html:div>
+
+If you don't know in which file/section you should put some
+documentation, ask on the mailing list or on #vimperator.
+
+<h2 tag="generating-docs">Generating documentation</h2>
+
+You can also autogenerate most of the XML help after you have
+written a new command, mapping or option. For this, use:
+
+  :echo util.generateHelp(commands.get("addons"), "Extra text")
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

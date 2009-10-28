@@ -121,12 +121,80 @@ Highlights.prototype.CSS = <![CDATA[
     HintActive,,*   background-color: #88FF00; color: black;
     HintImage,,*    opacity: .5;
 
+    Help                                        font-size: 8pt; line-height: 1.4em; font-family: -moz-fixed;
+
+    HelpArg,liberator|a                         color: #6A97D4;
+    HelpArg::before                             content: "{";
+    HelpArg::after                              content: "}";
+    HelpOptionalArg,liberator|oa                color: #6A97D4;
+    HelpOptionalArg::before                     content: "[";
+    HelpOptionalArg::after                      content: "]";
+
+    HelpBody                                    display: block; margin: 1em auto; max-width: 100ex;
+    HelpBorder,liberator|*                      border-color: silver; border-width: 0px; border-style: solid;
+    HelpCode,liberator|code                     display: block; white-space: pre; margin-left: 2em; font-family: courier, monospace;
+
+    HelpDefault,liberator|default               margin-right: 1ex; white-space: pre;
+    HelpDefault::after                          content: ")"
+    HelpDefault::before                         content: "(default: ";
+
+    HelpDescription,liberator|description       display: block;
+    HelpEm,liberator|em                         font-weight: bold;
+
+    HelpEx,liberator|ex                         display: inline-block; color: #527BBD; font-weight: bold;
+    HelpEx:hover                                text-decoration: underline; cursor: pointer;
+
+    HelpExample,liberator|example               display: block; margin: 1em 0;
+    HelpExample::before                         content: "Example: "; font-weight: bold;
+    HelpHead,liberator|h1                       display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 2em; font-weight: bold; color: #527BBD; clear: both;
+    HelpItem,liberator|item                     display: block; margin: 1em 1em 1em 10em; clear: both;
+
+    HelpKey,liberator|k                         color: #102663;
+
+    HelpLink,liberator|*>html|a                 text-decoration: none;
+    HelpLink:hover                              text-decoration: underline;
+
+    HelpList,liberator|ul                       display: block; list-style: outside disc;
+    HelpOrderedList,liberator|*>html:ol         display: block; list-style: outside decimal;
+    HelpListItem,liberator|li                   display: list-item; margin-left: 1.5em;
+
+    HelpNote,liberator|note                     display: block; margin: 1em 0em;
+    HelpNote::before                            content: "Note: "; color: red; font-weight: bold;
+
+    HelpOpt,liberator|o                         color: #106326;
+    HelpOpt:hover                               text-decoration: underline; cursor: pointer;
+    HelpOptInfo                                 display: inline-block; margin-bottom: 1ex;
+
+    HelpParagraph,liberator|p                   display: block; margin: 1em 0em;
+    HelpSpec,liberator|spec                     display: block; margin-left: -10em; float: left; clear: left; color: #527BBD;
+
+    HelpString,liberator|str                    display: inline-block; color: green; font-weight: normal; vertical-align: text-top;
+    HelpString::before                          content: '"';
+    HelpString::after                           content: '"';
+
+    HelpSubhead,liberator|h2                    display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 1.2em; font-weight: bold; color: #527BBD; clear: both;
+    HelpSubsubhead,liberator|h3                 display: block; margin: 1em 0; padding-bottom: .2ex; font-size: 1.1em; font-weight: bold; color: #527BBD; clear: both;
+
+    HelpTab,liberator|dl                        display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
+    HelpTabColumn,liberator|column              display: table-column;
+    HelpTabColumn:first-child                   width: 25%;
+    HelpTabTitle,liberator|dt                   display: table-cell; padding: .1ex 1ex; font-weight: bold;
+    HelpTabDescription,liberator|dd             display: table-cell; padding: .1ex 1ex;
+    HelpTabRow,liberator|dl>tr                  display: table-row;
+
+    HelpTag,liberator|tag                       display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
+    HelpTags,liberator|tags                     display: block; float: right; clear: right;
+    HelpTopic,liberator|t                       color: #102663;
+    HelpType,liberator|type                     margin-right: 2ex;
+
+    HelpWarning,liberator|warning               display: block; margin: 1em 0em;
+    HelpWarning::before                         content: "Warning: "; color: red; font-weight: bold;
+
     Search,,* {
         font-size: inherit;
         padding: 0;
         color: black;
         background-color: yellow;
-        padding: 0;
     }
     ]]>.toString();
 
@@ -142,10 +210,18 @@ function Highlights(name, store)
     let highlight = {};
     let styles = storage.styles;
 
-    const Highlight = Struct("class", "selector", "filter", "default", "value");
-    Highlight.defaultValue("filter", function () ["chrome://liberator/content/buffer.xhtml"].concat(config.styleableChrome).join(","));
+    const Highlight = Struct("class", "selector", "filter", "default", "value", "base");
+    Highlight.defaultValue("filter", function () 
+        this.base ? this.base.filter :
+        ["chrome://liberator/*",
+         "liberator:*",
+         "file://*"].concat(config.styleableChrome).join(","));
     Highlight.defaultValue("selector", function () self.selector(this.class));
     Highlight.defaultValue("value", function () this.default);
+    Highlight.defaultValue("base", function () {
+        let base = this.class.match(/^(\w*)/)[0];
+        return base != this.class && base in highlight ? highlight[base] : null;
+    });
     Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
     function keys() [k for ([k, v] in Iterator(highlight))].sort();
@@ -185,7 +261,7 @@ function Highlights(name, store)
         {
             css = style.selector + " { " + css + " }";
 
-            let error = styles.addSheet(true, style.selector, style.filter, css, true);
+            let error = styles.addSheet(true, "highlight:" + style.class, style.filter, css, true);
             if (error)
                 return error;
         }
@@ -201,7 +277,10 @@ function Highlights(name, store)
     this.selector = function (class)
     {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
-        return "[liberator|highlight~=" + hl + "]" + rest;
+        let pattern = "[liberator|highlight~=" + hl + "]"
+        if (highlight[hl] && highlight[hl].class != class)
+            pattern = highlight[hl].selector;
+        return pattern + rest;
     };
 
     /**
@@ -221,13 +300,13 @@ function Highlights(name, store)
      */
     this.loadCSS = function (css)
     {
-        css.replace(/\{((?:.|\n)*?)\}/g, function (_, _1) _1.replace(/\n\s*/g, " "))
+        css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + _2.replace(/\n\s*/g, " "))
            .split("\n").filter(function (s) /\S/.test(s))
            .forEach(function (style)
         {
             style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
             if (/^[>+ ]/.test(style.selector))
-                style.selector = self.selector(style.class + style.selector);
+                style.selector = self.selector(style.class) + style.selector;
 
             let old = highlight[style.class];
             highlight[style.class] = style;

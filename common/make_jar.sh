@@ -15,7 +15,7 @@ mkdir -p $stage
 
 getfiles () {
     filter="\.($(echo $1 | tr ' ' '|'))$"; shift
-    find "$@" -not -path '*CVS*' 2>/dev/null | grep -E "$filter" || true
+    find "$@" -not -path '*\.hg*' 2>/dev/null | grep -E "$filter" || true
 }
 copytext () {
     sed -e "s,###VERSION###,$VERSION,g" \
@@ -52,6 +52,7 @@ do
     ) || exit 1
 done
 
-(cd $stage; zip -r "$top/$jar" *) || exit 1
+[ -f "$top/$jar" ] && rm -f "$top/$jar"
+(set -e; cd $stage; zip -9r "$top/$jar" *) || exit 1
 rm -rf "$stage"
 

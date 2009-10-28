@@ -389,7 +389,7 @@ function Buffer() //{{{
                 let xpath = ["input[not(@type) or @type='text' or @type='password' or @type='file']",
                              "textarea[not(@disabled) and not(@readonly)]"];
 
-                let elements = [m for (m in buffer.evaluateXPath(xpath))].filter(function (match) {
+                let elements = [m for (m in util.evaluateXPath(xpath))].filter(function (match) {
                     let computedStyle = util.computedStyle(match);
                     return computedStyle.visibility != "hidden" && computedStyle.display != "none";
                 });
@@ -802,7 +802,7 @@ function Buffer() //{{{
         }
 
         let nFeed = 0;
-        for (let link in buffer.evaluateXPath(["link[@href and (@rel='feed' or (@rel='alternate' and @type))]"], doc))
+        for (let link in util.evaluateXPath(["link[@href and (@rel='feed' or (@rel='alternate' and @type))]"], doc))
         {
             let rel = link.rel.toLowerCase();
             let feed = { title: link.title, href: link.href, type: link.type || "" };
@@ -1013,48 +1013,6 @@ function Buffer() //{{{
         addPageInfoSection: addPageInfoSection,
 
         /**
-         * Evaluates an XPath expression in the current or provided
-         * document. It provides the xhtml, xhtml2 and liberator XML
-         * namespaces. The result may be used as an iterator.
-         *
-         * @param {string} expression The XPath expression to evaluate.
-         * @param {Document} doc The document to evaluate the expression in.
-         * @default The current document.
-         * @param {Node} elem The context element.
-         * @default <b>doc</b>
-         * @param {boolean} asIterator Whether to return the results as an
-         *     XPath iterator.
-         */
-        evaluateXPath: function (expression, doc, elem, asIterator)
-        {
-            if (!doc)
-                doc = window.content.document;
-            if (!elem)
-                elem = doc;
-            if (util.isArray(expression))
-                expression = util.makeXPath(expression);
-
-            let result = doc.evaluate(expression, elem,
-                function lookupNamespaceURI(prefix)
-                {
-                    return {
-                        xhtml: "http://www.w3.org/1999/xhtml",
-                        xhtml2: "http://www.w3.org/2002/06/xhtml2",
-                        liberator: NS.uri
-                    }[prefix] || null;
-                },
-                asIterator ? XPathResult.ORDERED_NODE_ITERATOR_TYPE : XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-                null
-            );
-
-            result.__iterator__ = asIterator
-                                ? function () { let elem; while ((elem = this.iterateNext())) yield elem; }
-                                : function () { for (let i = 0; i < this.snapshotLength; i++) yield this.snapshotItem(i); };
-
-            return result;
-        },
-
-        /**
          * Returns the currently selected word. If the selection is
          * null, it tries to guess the word that the caret is
          * positioned in.
@@ -1162,7 +1120,7 @@ function Buffer() //{{{
                     return true;
                 }
 
-                let res = buffer.evaluateXPath(options.get("hinttags").defaultValue, frame.document);
+                let res = util.evaluateXPath(options.get("hinttags").defaultValue, frame.document);
                 for (let [, regex] in Iterator(regexes))
                 {
                     for (let i in util.range(res.snapshotLength, 0, -1))

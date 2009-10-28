@@ -51,13 +51,6 @@ const configbase = { //{{{
     hostApplication: null,
 
     /**
-     * @property {[string]} A list of HTML help files available under
-     *     chrome://liberator/locale/. Used to generate help tag indexes for
-     *     the :help command.
-     */
-    helpFiles: [],
-
-    /**
      * @property {function} Called on liberator startup to allow for any
      *     arbitrary application-specific initialization code.
      */

@@ -1193,7 +1193,7 @@ function Commands() //{{{
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length);
             if (!junk)
-                return context.fork("", 0, this, "command");
+                return void context.fork("", 0, this, "command");
 
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);
