@@ -2174,8 +2174,8 @@ function StatusLine() //{{{
             }
             else
             {
-                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)#(.*)"), function (m, n1, n2) n1 + " " + decodeURIComponent(n2) + " [Help]");
-                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)"), "$1 [Help]");
+                url = url.replace(RegExp("^liberator://help/(\\S+)#(.*)"), function (m, n1, n2) n1 + " " + decodeURIComponent(n2) + " [Help]")
+                         .replace(RegExp("^liberator://help/(\\S+)"), "$1 [Help]");
             }
 
             // when session information is available, add [+] when we can go
