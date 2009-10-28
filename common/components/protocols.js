@@ -127,7 +127,7 @@ Liberator.prototype = {
     defaultPort: -1,
     allowPort: function (port, scheme) false,
     protocolFlags: 0
-         | nsIProtocolHandler.URI_LOADABLE_BY_ANYONE
+         | nsIProtocolHandler.URI_IS_UI_RESOURCE
          | nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
 
     newURI: function (spec, charset, baseURI)

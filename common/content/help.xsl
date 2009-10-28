@@ -137,7 +137,7 @@
     </xsl:template>
 
     <xsl:template match="liberator:pan[liberator:handle]">
-        <form style="text-align:center" html="http://www.w3.org/1999/xhtml"
+        <form style="text-align:center" xmlns="http://www.w3.org/1999/xhtml"
               action="https://www.paypal.com/cgi-bin/webscr" method="post">
             <input type="hidden" name="cmd" value="_s-xclick"/>
             <input type="image" src="chrome://liberator/content/x-click-but21.gif" border="0" name="submit" alt="Donate with PayPal"/>
