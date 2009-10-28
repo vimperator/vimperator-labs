@@ -1,5 +1,5 @@
-2009-XX-XX:
-    * version 2.2a1pre
+2009-10-28:
+    * version 2.2
     * IMPORTANT: Vimperator's licence has changed from the MPL/GPL/LGPL
       tri-license to the MIT license.
     * IMPORTANT: Map.flags has been replaced with individual properties.
