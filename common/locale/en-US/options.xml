@@ -401,8 +401,7 @@
     <tags>'eht' 'extendedhinttags'</tags>
     <spec>'extendedhinttags' 'eht'</spec>
     <type>string</type>
-    <default>
-        //*[@onclick or @onmouseover or @onmousedown or @onmouseup or
+    <default>//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
             @oncommand or @class='lk' or @role='link'] |
         //input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
         //a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
