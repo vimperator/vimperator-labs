@@ -1419,10 +1419,11 @@ const liberator = (function () //{{{
 
             tagMap.all = "all";
             let files = findHelpFile("all").map(function (doc)
-                    util.evaluateXPath(
-                        "//liberator:include/@href", doc.responseXML));
+                    [f.value for (f in util.evaluateXPath(
+                        "//liberator:include/@href", doc))]);
 
-            util.Array.flatten(files).map(function ({ value: file }) {
+            util.Array.flatten(files).map(function (file) {
+                liberator.dump("file:", file);
                 findHelpFile(file).forEach(function (doc) {
                     doc = XSLT.transformToDocument(doc);
                     for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
