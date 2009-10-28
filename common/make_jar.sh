@@ -53,6 +53,6 @@ do
 done
 
 [ -f "$top/$jar" ] && rm -f "$top/$jar"
-(set -e; cd $stage; zip -r "$top/$jar" *) || exit 1
+(set -e; cd $stage; zip -9r "$top/$jar" *) || exit 1
 rm -rf "$stage"
 

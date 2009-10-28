@@ -1186,7 +1186,8 @@ function Tabs() //{{{
             if (!tab)
                 tab = getBrowser().mTabContainer.selectedItem;
 
-            getBrowser().replaceTabWithWindow(tab);
+            services.get("windowWatcher")
+                .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
         },
 
         /**
