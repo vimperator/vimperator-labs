@@ -581,12 +581,12 @@ let (array = util.Array)
 /**
  * @property {Styles}
  */
-const styles = storage.newObject("styles", Styles, false);
+const styles = storage.newObject("styles", Styles, { store: false });
 
 /**
  * @property {Highlights}
  */
-const highlight = storage.newObject("highlight", Highlights, false);
+const highlight = storage.newObject("highlight", Highlights, { store: false });
 
 if (highlight.CSS != Highlights.prototype.CSS)
 {

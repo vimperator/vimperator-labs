@@ -56,7 +56,7 @@ function CommandLine() //{{{
                 }
             }
         }).init();
-    }, false);
+    }, { store: false });
     storage.addObserver("sanitize",
         function (key, event, value) {
             autocommands.trigger("Sanitize", {});
