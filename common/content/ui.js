@@ -2184,9 +2184,9 @@ function StatusLine() //{{{
             if (window.getWebNavigation)
             {
                 let sh = window.getWebNavigation().sessionHistory;
-                if (sh.index > 0)
+                if (sh && sh.index > 0)
                     modified += "+";
-                if (sh.index < sh.count -1)
+                if (sh && sh.index < sh.count -1)
                     modified += "-";
             }
             if (liberator.has("bookmarks"))
