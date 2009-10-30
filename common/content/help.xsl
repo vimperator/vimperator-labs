@@ -32,6 +32,47 @@
         <xsl:apply-templates select="document(@href)/liberator:document/node()"/>
     </xsl:template>
 
+    <xsl:template match="liberator:h1" mode="pass-2">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+        <html:div liberator:highlight="HelpTOC">
+            <h2>Contents</h2>
+            <xsl:call-template name="toc">
+                <xsl:with-param name="level" select="2"/>
+            </xsl:call-template>
+        </html:div>
+    </xsl:template>
+    <xsl:template name="toc">
+        <xsl:param name="level"/>
+        <xsl:param name="context" select="false()"/>
+
+        <xsl:variable name="tag" select="concat('h', $level)"/>
+        <xsl:variable name="lasttag" select="concat('h', $level - 1)"/>
+
+        <xsl:variable name="nodes" select="//liberator:document/liberator:*[
+            local-name() = $tag and preceding-sibling::*[local-name() = $lasttag][not($context) or (position() = 1 and . = $context)]]"/>
+
+        <xsl:if test="$nodes">
+            <html:ol liberator:highlight="HelpOrderedList">
+                <xsl:for-each select="$nodes">
+                    <li>
+                        <html:a>
+                            <xsl:if test="@tag">
+                                <xsl:attribute name="href"><xsl:value-of select="concat('#', substring-before(concat(@tag, ' '), ' '))"/></xsl:attribute>
+                            </xsl:if>
+                            <xsl:apply-templates select="node()"/>
+                        </html:a>
+                        <xsl:call-template name="toc">
+                            <xsl:with-param name="level" select="$level + 1"/>
+                            <xsl:with-param name="context" select="."/>
+                        </xsl:call-template>
+                    </li>
+                </xsl:for-each>
+            </html:ol>
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template match="liberator:dl" mode="pass-2">
         <xsl:copy>
             <column/>
@@ -145,8 +186,11 @@
             </xsl:call-template>
         </xsl:copy>
     </xsl:template>
+    <xsl:template match="liberator:ul" mode="pass-2">
+        <html:ul liberator:highlight="HelpList"><xsl:apply-templates select="@*|node()"/></html:ul>
+    </xsl:template>
     <xsl:template match="liberator:ol" mode="pass-2">
-        <html:ol><xsl:apply-templates select="@*|node()"/></html:ol>
+        <html:ol liberator:highlight="HelpOrderedList"><xsl:apply-templates select="@*|node()"/></html:ol>
     </xsl:template>
     <xsl:template match="liberator:ex" mode="pass-2">
         <xsl:copy>

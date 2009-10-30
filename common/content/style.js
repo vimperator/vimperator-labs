@@ -154,9 +154,9 @@ Highlights.prototype.CSS = <![CDATA[
     HelpLink,liberator|*>html|a                 text-decoration: none;
     HelpLink:hover                              text-decoration: underline;
 
-    HelpList,liberator|ul                       display: block; list-style: outside disc;
-    HelpOrderedList,liberator|*>html:ol         display: block; list-style: outside decimal;
-    HelpListItem,liberator|li                   display: list-item; margin-left: 1.5em;
+    HelpList                                    display: block; list-style: outside disc;
+    HelpOrderedList                             display: block; list-style: outside decimal;
+    HelpListItem,liberator|li                   display: list-item;
 
     HelpNote,liberator|note                     display: block; margin: 1em 0em;
     HelpNote::before                            content: "Note: "; color: red; font-weight: bold;
@@ -174,6 +174,9 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpSubhead,liberator|h2                    display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 1.2em; font-weight: bold; color: #527BBD; clear: both;
     HelpSubsubhead,liberator|h3                 display: block; margin: 1em 0; padding-bottom: .2ex; font-size: 1.1em; font-weight: bold; color: #527BBD; clear: both;
+
+    HelpTOC
+    HelpTOC>ol ol                               margin-left: -1em;
 
     HelpTab,liberator|dl                        display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
     HelpTabColumn,liberator|column              display: table-column;
@@ -304,7 +307,7 @@ function Highlights(name, store)
            .split("\n").filter(function (s) /\S/.test(s))
            .forEach(function (style)
         {
-            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
+            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*((?:[^,\s]|\s\S)+)(?:,((?:[^,\s]|\s\S)+)?)?(?:,((?:[^,\s]|\s\S)+))?\s*(.*)$/), 1));
             if (/^[>+ ]/.test(style.selector))
                 style.selector = self.selector(style.class) + style.selector;
 
@@ -785,7 +788,7 @@ liberator.registerObserver("load_commands", function () {
                     args.completeArg = args.completeArg > 1 ? -1 : 0;
 
                 if (args.completeArg == 0)
-                    context.completions = [[v.class, ""] for (v in highlight)];
+                    context.completions = [[v.class, v.value] for (v in highlight)];
                 else if (args.completeArg == 1)
                 {
                     let hl = highlight.get(args[0]);
