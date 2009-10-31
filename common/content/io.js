@@ -435,7 +435,7 @@ function IO() //{{{
             {
                 try
                 {
-                    return io.readDirectory(dir);
+                    return File(dir).readDirectory();
                 }
                 catch (e) {}
             };
