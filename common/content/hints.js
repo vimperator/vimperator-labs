@@ -320,7 +320,6 @@ function Hints() //{{{
 
             span.style.left = leftPos + "px";
             span.style.top =  topPos + "px";
-            span.style.position = 'absolute';
             fragment.appendChild(span);
 
             pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showText]);

@@ -8,10 +8,10 @@
 [liberator|highlight~=HintImage],
 [liberator|highlight~=Hint] {
     z-index: 5000;
-    position: absolute;
+    position: absolute !important;
 }
 [liberator|highlight~=Search] {
-    display: inline;
+    display: inline !important;
 }
 
 /* Applied only to completion buffer and MOW */
