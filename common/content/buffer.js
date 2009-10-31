@@ -427,7 +427,7 @@ function Buffer() //{{{
         {
             let url = util.readFromClipboard();
             if (url)
-                liberator.open(url, options.get("activate").has("paste") ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+                liberator.open(url, { from: "activate", where: liberator.NEW_TAB });
             else
                 liberator.beep();
         });

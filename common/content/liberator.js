@@ -1562,7 +1562,7 @@ const liberator = (function () //{{{
          *     tabs.
          * @returns {boolean}
          */
-        open: function (urls, where, force)
+        open: function (urls, params, force)
         {
             // convert the string to an array of converted URLs
             // -> see util.stringToURLArray for more details
@@ -1587,22 +1587,31 @@ const liberator = (function () //{{{
                 commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no]) ",
                     function (resp) {
                         if (resp && resp.match(/^y(es)?$/i))
-                            liberator.open(urls, where, true);
+                            liberator.open(urls, params, true);
                     });
                 return true;
             }
 
             let flags = 0;
-            if (where && !(where instanceof Array))
+            if (params instanceof Array)
+                params = { where: params };
+
+            for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
+                if (params[opt])
+                    flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
+
+            let where = params.where || liberator.CURRENT_TAB;
+            if ("from" in params && liberator.has("tabs"))
             {
-                for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
-                    if (where[opt])
-                        flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
-                if ("from" in where)
-                    where = (options["newtab"] && options.get("newtab").has("all", where.from))
-                            ? liberator.NEW_TAB : liberator.CURRENT_TAB;
-                else
-                    where = where.where || liberator.CURRENT_TAB;
+                if (!('where' in params) && options.get("newtab").has("all", params.from))
+                    where = liberator.NEW_BACKGROUND_TAB;
+                if (options.get("activate").has("all", params.from))
+                {
+                    if (where == liberator.NEW_TAB)
+                        where = liberator.NEW_BACKGROUND_TAB;
+                    else if (where == liberator.NEW_BACKGROUND_TAB)
+                        where = liberator.NEW_TAB;
+                }
             }
 
             if (urls.length == 0)

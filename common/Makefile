@@ -78,13 +78,12 @@ release: $(XPI) $(RDF)
 # This is not for you!
 dist: $(XPI)
 	@echo DIST $(XPI) $(GOOGLE)
-	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
 	proj=$$(echo -n $(NAME) | sed 's/\(.\).*/\1/' | tr a-z A-Z);    	\
 	proj="$$proj$$(echo $(NAME) | sed 's/.//')";                    	\
 	[ -z "$$summary" ] && summary="$$proj $(VERSION) Release"; 		\
+	labels="Project-$$proj,$(labels)";					\
+	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
 								        	\
-	labels=$$(echo -n "$$labels,Project-$$proj" | sed 's/^,*//g'); 		\
-										\
 	IFS=,; for l in $$(echo $$labels); do					\
 		set -- "$$@" --form-string "label=$$l";				\
 	done;									\

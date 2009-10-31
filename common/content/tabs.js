@@ -551,13 +551,10 @@ function Tabs() //{{{
                 args = args.string;
 
                 let where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
-                if (/\btabopen\b/.test(options["activate"]))
-                    where = special ? liberator.NEW_BACKGROUND_TAB : liberator.NEW_TAB;
-
                 if (args)
-                    liberator.open(args, where);
+                    liberator.open(args, { from: "tabopen", where: where });
                 else
-                    liberator.open("about:blank", where);
+                    liberator.open("about:blank", { from: "tabopen", where: where });
             },
             {
                 bang: true,

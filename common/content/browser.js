@@ -166,8 +166,7 @@ function Browser() //{{{
         function ()
         {
             let homepages = gHomeButton.getHomePage();
-            liberator.open(homepages, /\bhomepage\b/.test(options["activate"]) ?
-                    liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
+            liberator.open(homepages, { from: "homepage", where: liberator.NEW_TAB });
         });
 
     mappings.add([modes.NORMAL], ["gu"],
