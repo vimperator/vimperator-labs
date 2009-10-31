@@ -9,7 +9,7 @@
  * @constant
  * @property {string} The default highlighting rules. They have the
  * form:
- *    rule ::= selector space css
+ *    rule ::= selector space space+ css
  *    selector ::= group
  *               | group "," css-selector
  *               | group "," css-selector "," scope
@@ -44,21 +44,21 @@ Highlights.prototype.CSS = <![CDATA[
     CmdOutput   white-space: pre;
 
     CompGroup
-    CompGroup:not(:first-of-type) margin-top: .5em;
-    CompTitle          color: magenta; background: white; font-weight: bold;
-    CompTitle>*        padding: 0 .5ex;
-    CompMsg            font-style: italic; margin-left: 16px;
+    CompGroup:not(:first-of-type)  margin-top: .5em;
+    CompTitle            color: magenta; background: white; font-weight: bold;
+    CompTitle>*          padding: 0 .5ex;
+    CompMsg              font-style: italic; margin-left: 16px;
     CompItem
-    CompItem[selected] background: yellow;
-    CompItem>*         padding: 0 .5ex;
-    CompIcon           width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
-    CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
-    CompResult         width: 45%; overflow: hidden;
-    CompDesc           color: gray; width: 50%;
-    CompLess           text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
-    CompLess::after    content: "\2303" /* Unicode up arrowhead */
-    CompMore           text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
-    CompMore::after    content: "\2304" /* Unicode down arrowhead */
+    CompItem[selected]   background: yellow;
+    CompItem>*           padding: 0 .5ex;
+    CompIcon             width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
+    CompIcon>img         max-width: 16px; max-height: 16px; vertical-align: middle;
+    CompResult           width: 45%; overflow: hidden;
+    CompDesc             color: gray; width: 50%;
+    CompLess             text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
+    CompLess::after      content: "\2303" /* Unicode up arrowhead */
+    CompMore             text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
+    CompMore::after      content: "\2304" /* Unicode down arrowhead */
 
     Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
     GradientLeft    background-color: magenta;
@@ -73,10 +73,10 @@ Highlights.prototype.CSS = <![CDATA[
     LineNr      color: orange; background: white;
     Question    color: green; background: white; font-weight: bold;
 
-    StatusLine         color: white; background: black;
-    StatusLineBroken   color: black; background: #FFa0a0 /* light-red */
-    StatusLineSecure   color: black; background: #a0a0FF /* light-blue */
-    StatusLineExtended color: black; background: #a0FFa0 /* light-green */
+    StatusLine          color: white; background: black;
+    StatusLineBroken    color: black; background: #FFa0a0 /* light-red */
+    StatusLineSecure    color: black; background: #a0a0FF /* light-blue */
+    StatusLineExtended  color: black; background: #a0FFa0 /* light-green */
 
     TabClose,.tab-close-button
     TabIcon,.tab-icon
@@ -303,7 +303,7 @@ function Highlights(name, store)
      */
     this.loadCSS = function (css)
     {
-        css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + _2.replace(/\n\s*/g, " "))
+        css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + " " + _2.replace(/\n\s*/g, " "))
            .split("\n").filter(function (s) /\S/.test(s))
            .forEach(function (style)
         {
