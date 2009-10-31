@@ -1593,6 +1593,7 @@ const liberator = (function () //{{{
             }
 
             let flags = 0;
+            params = params || {};
             if (params instanceof Array)
                 params = { where: params };
 
