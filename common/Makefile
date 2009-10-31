@@ -4,6 +4,7 @@ TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 BASE          = $(TOP)/../common
+GOOGLE_PROJ   = vimperator-labs
 
 LOCALEDIR     = locale
 DOC_FILES     = $(wildcard $(LOCALEDIR)/*/*.xml)
@@ -56,6 +57,7 @@ help:
 	@echo "  make jar       - build a JAR ($(JAR))"
 	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
 	@echo "  make release   - updates update.rdf (this is not for you)"
+	@echo "  make release   - uploads to Google Code (this is not for you)"
 	@echo "  make clean     - clean up"
 	@echo "  make distclean - clean up more"
 	@echo
@@ -71,6 +73,19 @@ xpi: $(XPI)
 jar: $(JAR)
 
 release: $(XPI) $(RDF)
+
+# This is not for you!
+dist: $(XPI)
+	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
+	proj=$$(echo -n $(NAME) | sed 's/\(.\).*/\1/' | tr a-z A-Z);    	\
+	proj="$$proj$$(echo $(NAME) | sed 's/.//')";                    	\
+	[ -z "$$description" ] && description="$$proj $(VERSION) Release"; 	\
+								        	\
+	labels=$$(echo -n "$$labels,Project-$$proj" | sed 's/^,*//g'); 		\
+										\
+	googlecode_upload -s "$$description" -l "$$labels" 			\
+		-p "$(GOOGLE_PROJ)" -u "$(GOOGLE_USER)" -w "$(GOOGLE_PASS)" 	\
+		-- "$(XPI)"
 
 $(RDF): $(RDF_IN) Makefile
 	@echo "Preparing release..."
