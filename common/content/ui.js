@@ -56,7 +56,7 @@ function CommandLine() //{{{
                 }
             }
         }).init();
-    }, false);
+    }, { store: false });
     storage.addObserver("sanitize",
         function (key, event, value) {
             autocommands.trigger("Sanitize", {});
@@ -2174,8 +2174,8 @@ function StatusLine() //{{{
             }
             else
             {
-                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)#(.*)"), function (m, n1, n2) n1 + " " + decodeURIComponent(n2) + " [Help]");
-                url = url.replace(RegExp("^chrome://liberator/locale/(\\S+\\.html)"), "$1 [Help]");
+                url = url.replace(RegExp("^liberator://help/(\\S+)#(.*)"), function (m, n1, n2) n1 + " " + decodeURIComponent(n2) + " [Help]")
+                         .replace(RegExp("^liberator://help/(\\S+)"), "$1 [Help]");
             }
 
             // when session information is available, add [+] when we can go
@@ -2184,9 +2184,9 @@ function StatusLine() //{{{
             if (window.getWebNavigation)
             {
                 let sh = window.getWebNavigation().sessionHistory;
-                if (sh.index > 0)
+                if (sh && sh.index > 0)
                     modified += "+";
-                if (sh.index < sh.count -1)
+                if (sh && sh.index < sh.count -1)
                     modified += "-";
             }
             if (liberator.has("bookmarks"))

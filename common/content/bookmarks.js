@@ -249,7 +249,7 @@ function Bookmarks() //{{{
         statusline.updateUrl();
     };
 
-    var cache = storage.newObject("bookmark-cache", Cache, false);
+    var cache = storage.newObject("bookmark-cache", Cache, { store: false });
     storage.addObserver("bookmark-cache", bookmarkObserver, window);
 
     /////////////////////////////////////////////////////////////////////////////}}}

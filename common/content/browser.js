@@ -99,7 +99,7 @@ function Browser() //{{{
                     }
                 }
             }).init();
-        }, false);
+        }, { store: false });
         storage.addObserver("private-mode",
             function (key, event, value) {
                 autocommands.trigger("PrivateMode", { state: value });

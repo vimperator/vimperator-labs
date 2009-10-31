@@ -2,27 +2,18 @@ Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
 ARCHITECTURE:
-- modular help system
-	- I made a quick attempt at parameterizing it using attributes but it
-	  breaks Asciidoc formatting in certain unpredictable (to me at least)
-	  contexts. --djk
-        - move as much as possible to common/*
-- decide on how to document Arrays in our jsdoc(ish) documentation. Is there
-  even a documentation tool that can parse our source sensibly?
-- update build system to generate config specific components from templates in
-  common/components/* and copy others -
-  a739cdeab8f1648fd771f17d8a4885533032376f attempt at linking didn't work.
+- decide on how to document Arrays in our jsdoc(ish) documentation. Host docs
+  on the website - is there even a documentation tool that can parse our source
+  sensibly?
 
 BUGS:
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set
-- Motion keys (j/k/h/l/^F/^B/...) don't scroll scrollable block elements.
-
 - insert abbreviations broken on <space>
 - :sidebar improvements (:sidebar! Downloads while downloads is open should refocus the sidebar)
 - ;s saves the page rather than the image
 - RC file is sourced once per window
-- :undo seems to be effected by whether the tabstrip state
+- :undo seems to be effected by the tabstrip state
 
 (recent CVS regressions):
 - visual caret mode is broken, requires a manual page focus first anyway or
@@ -78,7 +69,7 @@ FEATURES:
 	  Total time:	0.25	sec
      --Kris
 
-8 allow for multiple ex commands separated with | (see #107)
+8 allow for multiple ex commands separated with | (see #24)
 8 <C-o>/<C-i> should work as in vim (i.e., save page positions as well as
   locations in the history list).
 7 use ctrl-n/p in insert mode for word completion
@@ -92,13 +83,12 @@ FEATURES:
 7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
 6 :mksession
-6 support private mode (and :set [no]private): http://ehsanakhgari.org/blog/2008-11-08/prepare-your-add-private-browsing
 6 add [count] support to :b* and :tab* commands where missing
 6 registers
   Here, unlike Vim, y and "*y would be equivalent. That is, the pasteboard would
   always be the default register. --Ted
 6 check/correct spellings in insert mode with some mappings
-6 add more autocommands (TabClose, TabOpen, TabChanged any more?)
+6 add more autocommands (TabClose, TabOpen, TabChanged etc)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 pipe selected text/link/website to an external command

@@ -306,14 +306,14 @@ var timers = {};
 
 var storage = {
     alwaysReload: {},
-    newObject: function newObject(key, constructor, store, type, options, reload)
+    newObject: function newObject(key, constructor, params)
     {
-        if (!(key in keys) || reload || this.alwaysReload[key])
+        if (!(key in keys) || params.reload || this.alwaysReload[key])
         {
-            if (key in this && !(reload || this.alwaysReload[key]))
+            if (key in this && !(params.reload || this.alwaysReload[key]))
                 throw Error();
-            let load = function () loadPref(key, store, type || Object);
-            keys[key] = new constructor(key, store, load, options || {});
+            let load = function () loadPref(key, params.store, params.type || Object);
+            keys[key] = new constructor(key, params.store, load, params);
             timers[key] = new Timer(1000, 10000, function () storage.save(key));
             this.__defineGetter__(key, function () keys[key]);
         }
@@ -322,12 +322,12 @@ var storage = {
 
     newMap: function newMap(key, store, options)
     {
-        return this.newObject(key, ObjectStore, store, null, options);
+        return this.newObject(key, ObjectStore, store, options);
     },
 
     newArray: function newArray(key, store, options)
     {
-        return this.newObject(key, ArrayStore, store, Array, options);
+        return this.newObject(key, ArrayStore, store, { type: Array, __proto__: options });
     },
 
     addObserver: function addObserver(key, callback, ref)

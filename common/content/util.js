@@ -276,60 +276,46 @@ const util = { //{{{
     /**
      * Generates an Asciidoc help entry.
      *
-     * @param {Command|Mapping|Option} obj A liberator <b>Command</b>,
-     *     <b>Mapping</b> or <b>Option</b> object
-     * @param {string} extraHelp Extra help text beyond the description.
+     * @param {Command|Map|Option} obj A liberator <b>Command</b>,
+     *     <b>Map</b> or <b>Option</b> object
+     * @param {XMLList} extraHelp Extra help text beyond the description.
      * @returns {string}
      */
     generateHelp: function generateHelp(obj, extraHelp)
     {
-        let start = "", end = "";
+        let spec = util.identity;
+        let tag = util.identity;
         if (obj instanceof Command)
-            start = ":";
+            tag = spec = function (cmd) <>:{cmd}</>;
+        else if (obj instanceof Map && obj.count)
+            spec = function (map) <><oa xmlns="">count</oa>{map}</>;
         else if (obj instanceof Option)
-            start = end = "'";
-
-        let ret = "";
-        let longHelp = false;
-        if ((obj.help && obj.description) && (obj.help.length + obj.description.length) > 50)
-            longHelp = true;
-
-        // the tags which are printed on the top right
-        for (let j = obj.names.length - 1; j >= 0; j--)
-            ret += "|" + start + obj.names[j] + end + "| ";
-
-        if (longHelp)
-            ret += "+";
-
-        ret += "\n";
-
-        // the usage information
-        let usage = obj.names[0];
-        if (obj.specs) // for :commands
-            usage = obj.specs[0];
-
-        usage = usage.replace(/{/, "\\\\{").replace(/}/, "\\\\}");
-        usage = usage.replace(/'/, "\\'").replace(/`/, "\\`");
-        ret += "||" + start + usage + end + "||";
-        if (usage.length > 15)
-            ret += " +";
-
-        ret += "\n________________________________________________________________________________\n";
-
-        // the actual help text
-        if (obj.description)
         {
-            ret += obj.description + "."; // the help description
-            if (extraHelp)
-                ret += " +\n" + extraHelp;
+            spec = function (opt) <o xmlns="">{opt}</o>;
+            tag  = function (opt) <>'{opt}'</>;
         }
-        else
-            ret += "Sorry, no help available";
 
-        // add more space between entries
-        ret += "\n________________________________________________________________________________\n\n\n";
+        // E4X has its warts.
+        let br = <>
+        </>;
 
-        return ret;
+        default xml namespace = "";
+        XML.prettyPrinting = false;
+        XML.ignoreWhitespace = false;
+
+        return <></> +
+<item>
+    <tags>{template.map(obj.names, tag, " ")}</tags>
+    <spec>{spec((obj.specs || obj.names)[0])}</spec>{
+    !obj.type ? "" : <>
+    <type>{obj.type}</type>
+    <default>{obj.defaultValue}</default></>}
+    <description>{
+        obj.description ? br+<p>{obj.description.replace(/\.?$/, ".")}</p> : "" }{
+            extraHelp ? br+extraHelp : "" }{
+            !(extraHelp || obj.description) ? br+<p>Sorry, no help available.</p> : "" }
+    </description>
+</item>.toXMLString();
     },
 
     /**

@@ -9,7 +9,7 @@
  * @constant
  * @property {string} The default highlighting rules. They have the
  * form:
- *    rule ::= selector space css
+ *    rule ::= selector space space+ css
  *    selector ::= group
  *               | group "," css-selector
  *               | group "," css-selector "," scope
@@ -44,21 +44,21 @@ Highlights.prototype.CSS = <![CDATA[
     CmdOutput   white-space: pre;
 
     CompGroup
-    CompGroup:not(:first-of-type) margin-top: .5em;
-    CompTitle          color: magenta; background: white; font-weight: bold;
-    CompTitle>*        padding: 0 .5ex;
-    CompMsg            font-style: italic; margin-left: 16px;
+    CompGroup:not(:first-of-type)  margin-top: .5em;
+    CompTitle            color: magenta; background: white; font-weight: bold;
+    CompTitle>*          padding: 0 .5ex;
+    CompMsg              font-style: italic; margin-left: 16px;
     CompItem
-    CompItem[selected] background: yellow;
-    CompItem>*         padding: 0 .5ex;
-    CompIcon           width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
-    CompIcon>img       max-width: 16px; max-height: 16px; vertical-align: middle;
-    CompResult         width: 45%; overflow: hidden;
-    CompDesc           color: gray; width: 50%;
-    CompLess           text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
-    CompLess::after    content: "\2303" /* Unicode up arrowhead */
-    CompMore           text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
-    CompMore::after    content: "\2304" /* Unicode down arrowhead */
+    CompItem[selected]   background: yellow;
+    CompItem>*           padding: 0 .5ex;
+    CompIcon             width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
+    CompIcon>img         max-width: 16px; max-height: 16px; vertical-align: middle;
+    CompResult           width: 45%; overflow: hidden;
+    CompDesc             color: gray; width: 50%;
+    CompLess             text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
+    CompLess::after      content: "\2303" /* Unicode up arrowhead */
+    CompMore             text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
+    CompMore::after      content: "\2304" /* Unicode down arrowhead */
 
     Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
     GradientLeft    background-color: magenta;
@@ -73,10 +73,10 @@ Highlights.prototype.CSS = <![CDATA[
     LineNr      color: orange; background: white;
     Question    color: green; background: white; font-weight: bold;
 
-    StatusLine         color: white; background: black;
-    StatusLineBroken   color: black; background: #FFa0a0 /* light-red */
-    StatusLineSecure   color: black; background: #a0a0FF /* light-blue */
-    StatusLineExtended color: black; background: #a0FFa0 /* light-green */
+    StatusLine          color: white; background: black;
+    StatusLineBroken    color: black; background: #FFa0a0 /* light-red */
+    StatusLineSecure    color: black; background: #a0a0FF /* light-blue */
+    StatusLineExtended  color: black; background: #a0FFa0 /* light-green */
 
     TabClose,.tab-close-button
     TabIcon,.tab-icon
@@ -154,9 +154,9 @@ Highlights.prototype.CSS = <![CDATA[
     HelpLink,liberator|*>html|a                 text-decoration: none;
     HelpLink:hover                              text-decoration: underline;
 
-    HelpList,liberator|ul                       display: block; list-style: outside disc;
-    HelpOrderedList,liberator|*>html:ol         display: block; list-style: outside decimal;
-    HelpListItem,liberator|li                   display: list-item; margin-left: 1.5em;
+    HelpList                                    display: block; list-style: outside disc;
+    HelpOrderedList                             display: block; list-style: outside decimal;
+    HelpListItem,liberator|li                   display: list-item;
 
     HelpNote,liberator|note                     display: block; margin: 1em 0em;
     HelpNote::before                            content: "Note: "; color: red; font-weight: bold;
@@ -174,6 +174,9 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpSubhead,liberator|h2                    display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 1.2em; font-weight: bold; color: #527BBD; clear: both;
     HelpSubsubhead,liberator|h3                 display: block; margin: 1em 0; padding-bottom: .2ex; font-size: 1.1em; font-weight: bold; color: #527BBD; clear: both;
+
+    HelpTOC
+    HelpTOC>ol ol                               margin-left: -1em;
 
     HelpTab,liberator|dl                        display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
     HelpTabColumn,liberator|column              display: table-column;
@@ -300,11 +303,11 @@ function Highlights(name, store)
      */
     this.loadCSS = function (css)
     {
-        css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + _2.replace(/\n\s*/g, " "))
+        css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + " " + _2.replace(/\n\s*/g, " "))
            .split("\n").filter(function (s) /\S/.test(s))
            .forEach(function (style)
         {
-            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*([^,\s]+)(?:,([^,\s]+)?)?(?:,([^,\s]+))?\s*(.*)$/), 1));
+            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*((?:[^,\s]|\s\S)+)(?:,((?:[^,\s]|\s\S)+)?)?(?:,((?:[^,\s]|\s\S)+))?\s*(.*)$/), 1));
             if (/^[>+ ]/.test(style.selector))
                 style.selector = self.selector(style.class) + style.selector;
 
@@ -581,12 +584,12 @@ let (array = util.Array)
 /**
  * @property {Styles}
  */
-const styles = storage.newObject("styles", Styles, false);
+const styles = storage.newObject("styles", Styles, { store: false });
 
 /**
  * @property {Highlights}
  */
-const highlight = storage.newObject("highlight", Highlights, false);
+const highlight = storage.newObject("highlight", Highlights, { store: false });
 
 if (highlight.CSS != Highlights.prototype.CSS)
 {
@@ -785,7 +788,7 @@ liberator.registerObserver("load_commands", function () {
                     args.completeArg = args.completeArg > 1 ? -1 : 0;
 
                 if (args.completeArg == 0)
-                    context.completions = [[v.class, ""] for (v in highlight)];
+                    context.completions = [[v.class, v.value] for (v in highlight)];
                 else if (args.completeArg == 1)
                 {
                     let hl = highlight.get(args[0]);

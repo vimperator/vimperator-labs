@@ -671,7 +671,7 @@ function Tabs() //{{{
                     context.anchored = false;
                     context.compare = CompletionContext.Sort.unsorted;
                     context.filters = [CompletionContext.Filter.textDescription];
-                    context.keys = { text: function ([i, item]) (i + 1) + ": " + item.state.entries[item.state.index - 1].url, description: "[1].title", icon: "[1].image" };
+                    context.keys = { text: function ([i, { state: s }]) (i + 1) + ": " + s.entries[s.index - 1].url, description: "[1].title", icon: "[1].image" };
                     context.completions = Iterator(tabs.closedTabs);
                 },
                 count: true,
