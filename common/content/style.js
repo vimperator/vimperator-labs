@@ -826,11 +826,11 @@ liberator.registerObserver("load_completion", function () {
 
     completion.colorScheme = function colorScheme(context) {
         context.title = ["Color Scheme", "Runtime Path"];
-        context.keys = { text: function (f) f.leafName.replace(/\.vimp$/, ""), description: "parent.path" };
+        context.keys = { text: function (f) f.leafName.replace(/\.vimp$/, ""), description: ".parent.path" };
         context.completions = util.Array.flatten(
             io.getRuntimeDirectories("colors").map(
                 function (dir) dir.readDirectory().filter(
-                    function (file) /\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))))
+                    function (file) /\.vimp$/.test(file.leafName))))
 
     };
 

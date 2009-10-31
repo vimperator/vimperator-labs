@@ -1167,6 +1167,8 @@ const liberator = (function () //{{{
          */
         loadScript: function (uri, context)
         {
+            XML.ignoreWhiteSpace = false;
+            XML.prettyPrinting = false;
             services.get("subscriptLoader").loadSubScript(uri, context);
         },
 
@@ -1383,9 +1385,6 @@ const liberator = (function () //{{{
          */
         initHelp: function ()
         {
-            if (services.get("liberator:").NAMESPACES.length)
-                return;
-
             let namespaces = [config.name.toLowerCase(), "liberator"];
             let tagMap = {};
             let fileMap = {};
@@ -1415,6 +1414,13 @@ const liberator = (function () //{{{
                 }
                 return result;
             }
+            function addTags(file, doc)
+            {
+                doc = XSLT.transformToDocument(doc);
+                for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
+                    tagMap[elem.textContent] = file;
+            }
+
             const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
 
             tagMap.all = "all";
@@ -1423,13 +1429,29 @@ const liberator = (function () //{{{
                         "//liberator:include/@href", doc))]);
 
             util.Array.flatten(files).map(function (file) {
-                liberator.dump("file:", file);
                 findHelpFile(file).forEach(function (doc) {
-                    doc = XSLT.transformToDocument(doc);
-                    for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
-                        tagMap[elem.textContent] = file;
+                    addTags(file, doc);
                 });
             });
+
+            XML.ignoreWhiteSpace = false;
+            XML.prettyPrinting = false;
+            let body = XML();
+            for (let [, context] in Iterator(plugins.contexts))
+                if (context.INFO instanceof XML)
+                    body += context.INFO;
+            let help = '<?xml version="1.0"?>\n' +
+                       '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/overlay.xsl"?>\n' +
+                       '<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">' +
+                <document
+                    name="plugins"
+                    title={config.name + " Plugins"}
+                    xmlns="http://vimperator.org/namespaces/liberator">
+                    <h2 tag="using-plugins">Using Plugins</h2>
+
+                    {body}
+                </document>.toXMLString();
+            fileMap['plugins'] = function () ['application/xml;charset=UTF-8', help];
 
             services.get("liberator:").init({
                 HELP_TAGS: tagMap, FILE_MAP: fileMap,
@@ -1796,8 +1818,6 @@ const liberator = (function () //{{{
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
-            liberator.initHelp();
-
             config.features.push(getPlatformFeature());
 
             try
@@ -1910,6 +1930,8 @@ const liberator = (function () //{{{
 
                 if (options["loadplugins"])
                     liberator.loadPlugins();
+
+                liberator.initHelp();
 
                 // after sourcing the initialization files, this function will set
                 // all gui options to their default values, if they have not been

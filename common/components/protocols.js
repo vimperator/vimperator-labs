@@ -29,8 +29,12 @@ const systemPrincipal = channel.owner;
 channel.cancel(NS_BINDING_ABORTED);
 delete channel;
 
+function dataURL(type, data)
+    "data:" + (type || "application/xml;encoding=UTF-8") + "," + escape(data);
 function makeChannel(url, orig)
 {
+    if (typeof url == "function")
+        url = dataURL.apply(null, url());
     let uri = ioService.newURI(url, null, null);
     let channel = ioService.newChannelFromURI(uri);
     channel.owner = systemPrincipal;
@@ -42,7 +46,7 @@ function fakeChannel(orig)
 function redirect(to, orig)
 {
     let html = <html><head><meta http-equiv="Refresh" content={"0;" + to}/></head></html>.toXMLString();
-    return makeChannel('data:text/html,' + escape(html), orig);
+    return makeChannel(dataURL('text/html', html), orig);
 }
 
 function ChromeData() {}
