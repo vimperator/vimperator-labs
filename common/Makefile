@@ -5,6 +5,7 @@ OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 BASE          = $(TOP)/../common
 GOOGLE_PROJ   = vimperator-labs
+GOOGLE	      = https://$(GOOGLE_PROJ).googlecode.com/files
 
 LOCALEDIR     = locale
 DOC_FILES     = $(wildcard $(LOCALEDIR)/*/*.xml)
@@ -76,16 +77,21 @@ release: $(XPI) $(RDF)
 
 # This is not for you!
 dist: $(XPI)
+	@echo DIST $(XPI) $(GOOGLE)
 	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
 	proj=$$(echo -n $(NAME) | sed 's/\(.\).*/\1/' | tr a-z A-Z);    	\
 	proj="$$proj$$(echo $(NAME) | sed 's/.//')";                    	\
-	[ -z "$$description" ] && description="$$proj $(VERSION) Release"; 	\
+	[ -z "$$summary" ] && summary="$$proj $(VERSION) Release"; 		\
 								        	\
 	labels=$$(echo -n "$$labels,Project-$$proj" | sed 's/^,*//g'); 		\
 										\
-	googlecode_upload -s "$$description" -l "$$labels" 			\
-		-p "$(GOOGLE_PROJ)" -u "$(GOOGLE_USER)" -w "$(GOOGLE_PASS)" 	\
-		-- "$(XPI)"
+	IFS=,; for l in $$(echo $$labels); do					\
+		set -- "$$@" --form-string "label=$$l";				\
+	done;									\
+	curl "$@" --form-string "summary=$$summary" 				\
+		-F "filename=<$(XPI)"						\
+		-H "Authorization: $$(echo "$(GOOGLE_USER):$(GOOGLE_PASS)" | base64)" \
+		-i "$(GOOGLE)" | sed -n '/^Location/{p;q}'
 
 $(RDF): $(RDF_IN) Makefile
 	@echo "Preparing release..."
