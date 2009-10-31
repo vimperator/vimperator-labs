@@ -50,8 +50,8 @@
         <xsl:variable name="tag" select="concat('h', $level)"/>
         <xsl:variable name="lasttag" select="concat('h', $level - 1)"/>
 
-        <xsl:variable name="nodes" select="//liberator:document/liberator:*[
-            local-name() = $tag and preceding-sibling::*[local-name() = $lasttag][position() = 1 and . = $context]]"/>
+        <xsl:variable name="nodes" select="//liberator:*[
+            local-name() = $tag and preceding::*[local-name() = $lasttag][position() = 1 and . = $context]]"/>
 
         <xsl:if test="$nodes">
             <html:ol liberator:highlight="HelpOrderedList">
@@ -139,7 +139,7 @@
     </xsl:template>
     <xsl:template match="liberator:tag|@tag" mode="pass-2">
         <xsl:call-template name="parse-tags">
-            <xsl:with-param name="text"><xsl:value-of select="."/></xsl:with-param>
+            <xsl:with-param name="text" select="."/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template name="parse-tags">

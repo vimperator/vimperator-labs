@@ -1436,22 +1436,27 @@ const liberator = (function () //{{{
 
             XML.ignoreWhiteSpace = false;
             XML.prettyPrinting = false;
+            XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
+            XML.prettyIndent = 4;
             let body = XML();
             for (let [, context] in Iterator(plugins.contexts))
                 if (context.INFO instanceof XML)
-                    body += context.INFO;
+                    body += <h2 xmlns={NS.uri} tag={context.INFO.@name + '-plugin'}>{context.INFO.@summary}</h2> +
+                        context.INFO;
+
             let help = '<?xml version="1.0"?>\n' +
-                       '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/overlay.xsl"?>\n' +
+                       '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>\n' +
                        '<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">' +
                 <document
                     name="plugins"
                     title={config.name + " Plugins"}
                     xmlns="http://vimperator.org/namespaces/liberator">
-                    <h2 tag="using-plugins">Using Plugins</h2>
+                    <h1 tag="using-plugins">Using Plugins</h1>
 
                     {body}
                 </document>.toXMLString();
-            fileMap['plugins'] = function () ['application/xml;charset=UTF-8', help];
+            fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
+            addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
 
             services.get("liberator:").init({
                 HELP_TAGS: tagMap, FILE_MAP: fileMap,
