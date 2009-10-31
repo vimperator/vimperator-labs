@@ -825,17 +825,13 @@ liberator.registerObserver("load_completion", function () {
         ]);
 
     completion.colorScheme = function colorScheme(context) {
-        let colors = [];
-
-        io.getRuntimeDirectories("colors").forEach(function (dir) {
-            io.readDirectory(dir).forEach(function (file) {
-                if (/\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))
-                    colors.push(file);
-            });
-        });
-
         context.title = ["Color Scheme", "Runtime Path"];
-        context.completions = [[c.leafName.replace(/\.vimp$/, ""), c.parent.path] for ([, c] in Iterator(colors))]
+        context.keys = { text: function (f) f.leafName.replace(/\.vimp$/, ""), description: "parent.path" };
+        context.completions = util.Array.flatten(
+            io.getRuntimeDirectories("colors").map(
+                function (dir) dir.readDirectory().filter(
+                    function (file) /\.vimp$/.test(file.leafName) && !colors.some(function (c) c.leafName == file.leafName))))
+
     };
 
     completion.highlightGroup = function highlightGroup(context) {

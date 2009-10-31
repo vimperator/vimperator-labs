@@ -892,16 +892,16 @@ function Editor() //{{{
                         textBox.style.backgroundColor = "#bbbbbb";
                     }
 
-                    if (!io.writeFile(tmpfile, text))
-                        throw "Input contains characters not valid in the current " +
-                              "file encoding";
+                    if (!tmpfile.write(text))
+                        throw Error("Input contains characters not valid in the current " +
+                                    "file encoding");
 
                     this.editFileExternally(tmpfile.path);
 
                     if (textBox)
                         textBox.removeAttribute("readonly");
 
-                    let val = io.readFile(tmpfile);
+                    let val = tmpfile.read();
                     if (textBox)
                         textBox.value = val;
                     else

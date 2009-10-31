@@ -402,10 +402,10 @@ const liberator = (function () //{{{
             "Install an extension",
             function (args)
             {
-                let file = io.getFile(args[0]);
+                let file = io.File(args[0]);
 
                 if (file.exists() && file.isReadable() && file.isFile())
-                    services.get("extensionManager").installItemFromFile(file, "app-profile");
+                    services.get("extensionManager").installItemFromFile(file.file, "app-profile");
                 else
                 {
                     if (file.exists() && file.isDirectory())
@@ -1483,7 +1483,7 @@ const liberator = (function () //{{{
                     return void liberator.echoerr("E484: Can't open file " + dir.path);
 
                 liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-                io.readDirectory(dir.path, true).forEach(function (file) {
+                dir.readDirectory(true).forEach(function (file) {
                     if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
                     {
                         try
@@ -1879,7 +1879,7 @@ const liberator = (function () //{{{
                 {
                     let filename = liberator.commandLineOptions.rcFile;
                     if (!/^(NONE|NORC)$/.test(filename))
-                        io.source(io.getFile(filename).path, false); // let io.source handle any read failure like Vim
+                        io.source(io.File(filename).path, false); // let io.source handle any read failure like Vim
                 }
                 else
                 {

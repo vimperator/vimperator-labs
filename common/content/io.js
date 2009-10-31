@@ -77,17 +77,16 @@ function IO() //{{{
     {
         if (!list)
             return [];
-        else
-            // empty list item means the current directory
-            return list.replace(/,$/, "").split(",")
-                       .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
+        // empty list item means the current directory
+        return list.replace(/,$/, "").split(",")
+                   .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
     }
 
     function replacePathSep(path) path.replace("/", IO.PATH_SEP, "g");
 
     function joinPaths(head, tail)
     {
-        let path = self.getFile(head);
+        let path = self.File(head);
         try
         {
             path.appendRelativePath(self.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
@@ -257,7 +256,7 @@ function IO() //{{{
                 return void liberator.echoerr("E172: Only one file name allowed");
 
             let filename = args[0] || io.getRCFile(null, true).path;
-            let file = io.getFile(filename);
+            let file = io.File(filename);
 
             if (file.exists() && !args.bang)
                 return void liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
@@ -281,7 +280,7 @@ function IO() //{{{
 
             try
             {
-                io.writeFile(file, lines.join("\n"));
+                file.write(lines.join("\n"));
             }
             catch (e)
             {
@@ -372,7 +371,7 @@ function IO() //{{{
     /////////////////////////////////////////////////////////////////////////////{{{
 
     liberator.registerObserver("load_completion", function () {
-        completion.setFunctionCompleter([self.getFile, self.expandPath],
+        completion.setFunctionCompleter([self.File, self.expandPath],
             [function (context, obj, args) {
                 context.quote[2] = "";
                 completion.file(context, true);
@@ -451,10 +450,10 @@ function IO() //{{{
 
                 for (let [, dirName] in Iterator(dirNames))
                 {
-                    let dir = io.getFile(dirName);
+                    let dir = io.File(dirName);
                     if (dir.exists() && dir.isDirectory())
                     {
-                        commands.push([[file.leafName, dir.path] for ([i, file] in Iterator(io.readDirectory(dir)))
+                        commands.push([[file.leafName, dir.path] for (file in dir.iterDirectory())
                                             if (file.isFile() && file.isExecutable())]);
                     }
                 }
@@ -467,10 +466,200 @@ function IO() //{{{
     });
 
     /////////////////////////////////////////////////////////////////////////////}}}
+    ////////////////////// File ////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////{{{
+
+    /**
+     * @class File A class to wrap nsIFile objects and simplify operations
+     * thereon.
+     *
+     * @param {nsIFile|string} path Expanded according to {@link IO#expandPath}
+     * @param {boolean} checkPWD Whether to allow expansion relative to the
+     *          current directory. @default true
+     */
+    function File(path, checkPWD)
+    {
+        let self = { __proto__: File.prototype }
+        if (arguments.length < 2)
+            checkPWD = true;
+
+        self.file = services.create("file");
+
+        if (path instanceof Ci.nsIFile)
+            self.file = path;
+        else if (/file:\/\//.test(path))
+            self.file = services.create("file:").getFileFromURLSpec(path);
+        else
+        {
+            let expandedPath = io.expandPath(path);
+
+            if (!isAbsolutePath(expandedPath) && checkPWD)
+                self = joinPaths(io.getCurrentDirectory().path, expandedPath);
+            else
+                self.file.initWithPath(expandedPath);
+        }
+        self.wrappedNative = self.file;
+        return self;
+    }
+    File.prototype = {
+        __noSuchMethod__: function (meth, args)
+        {
+            return this.wrappedNative[meth].apply(this.wrappedNative,
+                args.map(function (a) a instanceof File ? a.wrappedNative : a));
+        },
+
+        /**
+         * Iterates over the objects in this directory.
+         */
+        iterDirectory: function ()
+        {
+            if (!this.file.isDirectory())
+                throw Error("Not a directory");
+            let entries = this.file.directoryEntries;
+            while (entries.hasMoreElements())
+                yield File(entries.getNext().QueryInterface(Ci.nsIFile));
+        },
+        /**
+         * Returns the list of files in this directory.
+         *
+         * @param {boolean} sort Whether to sort the returned directory
+         *     entries.
+         * @returns {nsIFile[]}
+         */
+        readDirectory: function (sort)
+        {
+            if (!this.file.isDirectory())
+                throw Error("Not a directory");
+
+            let array = [e for (e in this.iterDirectory())];
+            if (sort)
+                array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
+            return array;
+        },
+
+        /**
+         * Reads this file's entire contents in "text" mode and returns the
+         * content as a string.
+         *
+         * @param {string} encoding The encoding from which to decode the file.
+         *          @default options["fileencoding"]
+         * @returns {string}
+         */
+        read: function (encoding)
+        {
+            let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+            let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
+
+            if (!encoding)
+                encoding = options["fileencoding"];
+
+            ifstream.init(this.file, -1, 0, 0);
+            icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
+
+            let buffer = [];
+            let str = {};
+            while (icstream.readString(4096, str) != 0)
+                buffer.push(str.value);
+
+            icstream.close();
+            ifstream.close();
+            return buffer.join("");
+        },
+
+        /**
+         * Writes the string <b>buf</b> to this file.
+         *
+         * @param {string} buf The file content.
+         * @param {string|number} mode The file access mode, a bitwise OR of
+         *     the following flags:
+         *       {@link #MODE_RDONLY}:   0x01
+         *       {@link #MODE_WRONLY}:   0x02
+         *       {@link #MODE_RDWR}:     0x04
+         *       {@link #MODE_CREATE}:   0x08
+         *       {@link #MODE_APPEND}:   0x10
+         *       {@link #MODE_TRUNCATE}: 0x20
+         *       {@link #MODE_SYNC}:     0x40
+         *     Alternatively, the following abbreviations may be used:
+         *       ">"  is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_TRUNCATE}
+         *       ">>" is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_APPEND}
+         * @default ">"
+         * @param {number} perms The file mode bits of the created file. This
+         *     is only used when creating a new file and does not change
+         *     permissions if the file exists.
+         * @default 0644
+         * @param {string} encoding The encoding to used to write the file.
+         * @default options["fileencoding"]
+         */
+        write: function (buf, mode, perms, encoding)
+        {
+            let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+            function getStream(defaultChar)
+            {
+                let stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+                stream.init(ofstream, encoding, 0, defaultChar);
+                return stream;
+            }
+
+            if (!encoding)
+                encoding = options["fileencoding"];
+
+            if (mode == ">>")
+                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_APPEND;
+            else if (!mode || mode == ">")
+                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_TRUNCATE;
+
+            if (!perms)
+                perms = 0644;
+
+            ofstream.init(this.file, mode, perms, 0);
+            let ocstream = getStream(0);
+            try
+            {
+                ocstream.writeString(buf);
+            }
+            catch (e)
+            {
+                liberator.dump(e);
+                if (e.result == Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA)
+                {
+                    ocstream = getStream("?".charCodeAt(0));
+                    ocstream.writeString(buf);
+                    return false;
+                }
+                else
+                    throw e;
+            }
+            finally
+            {
+                try
+                {
+                    ocstream.close();
+                }
+                catch (e) {}
+                ofstream.close();
+            }
+            return true;
+        },
+    };
+    /* It would be nice if there were a simpler way to do this. */
+    ("leafName nativeLeafName permissions permissionsOfLink lastModifiedTime " +
+     "lastModifiedTimeOfLink fileSize fileSizeOfLink target nativeTarget path " +
+     "nativePath parent directoryEntries").split(" ").forEach(function (p) {
+        File.prototype.__defineGetter__(p, function () this.file[p]);
+        File.prototype.__defineSetter__(p, function (val) this.file[p] = val);
+    });
+
+
+    /////////////////////////////////////////////////////////////////////////////}}}
     ////////////////////// PUBLIC SECTION //////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
     const self = {
+        /**
+         * @property {function} File class.
+         * @final
+         */
+        File: File,
 
         /**
          * @property {number} Open for reading only.
@@ -562,7 +751,7 @@ function IO() //{{{
          */
         getCurrentDirectory: function ()
         {
-            let dir = self.getFile(cwd.path);
+            let dir = self.File(cwd.path);
 
             // NOTE: the directory could have been deleted underneath us so
             // fallback to the process's CWD
@@ -586,7 +775,7 @@ function IO() //{{{
                 [cwd, oldcwd] = [oldcwd, this.getCurrentDirectory()];
             else
             {
-                let dir = self.getFile(newDir);
+                let dir = self.File(newDir);
 
                 if (!dir.exists() || !dir.isDirectory())
                 {
@@ -612,7 +801,6 @@ function IO() //{{{
 
             dirs = dirs.map(function (dir) joinPaths(dir, name))
                        .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
-
             return dirs;
         },
 
@@ -644,44 +832,11 @@ function IO() //{{{
             return null;
         },
 
-        // return a nsILocalFile for path where you can call isDirectory(), etc. on
-        // caller must check with .exists() if the returned file really exists
-        // also expands relative paths
-        /**
-         * Returns an nsIFile object for <b>path</b>, which is expanded
-         * according to {@link #expandPath}.
-         *
-         * @param {string} path The path used to create the file object.
-         * @param {boolean} noCheckPWD Whether to allow a relative path.
-         * @returns {nsIFile}
-         */
-        getFile: function (path, noCheckPWD)
-        {
-            let file = services.create("file");
-
-            if (/file:\/\//.test(path))
-            {
-                file = Cc["@mozilla.org/network/protocol;1?name=file"].createInstance(Ci.nsIFileProtocolHandler)
-                                 .getFileFromURLSpec(path);
-            }
-            else
-            {
-                let expandedPath = self.expandPath(path);
-
-                if (!isAbsolutePath(expandedPath) && !noCheckPWD)
-                    file = joinPaths(self.getCurrentDirectory().path, expandedPath);
-                else
-                    file.initWithPath(expandedPath);
-            }
-
-            return file;
-        },
-
         // TODO: make secure
         /**
          * Creates a temporary file.
          *
-         * @returns {nsIFile}
+         * @returns {File}
          */
         createTempFile: function ()
         {
@@ -690,148 +845,9 @@ function IO() //{{{
             file.append(config.tempFile);
             file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
 
-            return file;
+            return self.File(file);
         },
 
-        /**
-         * Returns the list of files in <b>dir</b>.
-         *
-         * @param {nsIFile|string} dir The directory to read, either a full
-         *     pathname or an instance of nsIFile.
-         * @param {boolean} sort Whether to sort the returned directory
-         *     entries.
-         * @returns {nsIFile[]}
-         */
-        readDirectory: function (dir, sort)
-        {
-            if (typeof dir == "string")
-                dir = self.getFile(dir);
-
-            if (dir.isDirectory())
-            {
-                let entries = dir.directoryEntries;
-                let array = [];
-                while (entries.hasMoreElements())
-                {
-                    let entry = entries.getNext();
-                    array.push(entry.QueryInterface(Ci.nsIFile));
-                }
-                if (sort)
-                    array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
-                return array;
-            }
-            else
-                return []; // XXX: or should it throw an error, probably yes?
-                           //  Yes, though frankly this should be a precondition so... --djk
-        },
-
-        /**
-         * Reads a file in "text" mode and returns the content as a string.
-         *
-         * @param {nsIFile|string} file The file to read, either a full
-         *     pathname or an instance of nsIFile.
-         * @returns {string}
-         */
-        readFile: function (file, encoding)
-        {
-            let ifstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
-            let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
-
-            if (!encoding)
-                encoding = options["fileencoding"];
-            if (typeof file == "string")
-                file = self.getFile(file);
-
-            ifstream.init(file, -1, 0, 0);
-            icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
-
-            let buffer = "";
-            let str = {};
-            while (icstream.readString(4096, str) != 0)
-                buffer += str.value;
-
-            icstream.close();
-            ifstream.close();
-
-            return buffer;
-        },
-
-        /**
-         * Writes the string <b>buf</b> to a file.
-         *
-         * @param {nsIFile|string} file The file to write, either a full
-         *     pathname or an instance of nsIFile.
-         * @param {string} buf The file content.
-         * @param {string|number} mode The file access mode, a bitwise OR of
-         *     the following flags:
-         *       {@link #MODE_RDONLY}:   0x01
-         *       {@link #MODE_WRONLY}:   0x02
-         *       {@link #MODE_RDWR}:     0x04
-         *       {@link #MODE_CREATE}:   0x08
-         *       {@link #MODE_APPEND}:   0x10
-         *       {@link #MODE_TRUNCATE}: 0x20
-         *       {@link #MODE_SYNC}:     0x40
-         *     Alternatively, the following abbreviations may be used:
-         *       ">"  is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_TRUNCATE}
-         *       ">>" is equivalent to {@link #MODE_WRONLY} | {@link #MODE_CREATE} | {@link #MODE_APPEND}
-         * @default ">"
-         * @param {number} perms The file mode bits of the created file. This
-         *     is only used when creating a new file and does not change
-         *     permissions if the file exists.
-         * @default 0644
-         */
-        writeFile: function (file, buf, mode, perms, encoding)
-        {
-            let ofstream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-            function getStream(defaultChar)
-            {
-                let stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
-                stream.init(ofstream, encoding, 0, defaultChar);
-                return stream;
-            }
-
-            if (!encoding)
-                encoding = options["fileencoding"];
-            if (typeof file == "string")
-                file = self.getFile(file);
-
-            if (mode == ">>")
-                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_APPEND;
-            else if (!mode || mode == ">")
-                mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_TRUNCATE;
-
-            if (!perms)
-                perms = 0644;
-
-            ofstream.init(file, mode, perms, 0);
-            let ocstream = getStream(0);
-            try
-            {
-                ocstream.writeString(buf);
-            }
-            catch (e)
-            {
-                liberator.dump(e);
-                if (e.result == Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA)
-                {
-                    ocstream = getStream("?".charCodeAt(0));
-                    ocstream.writeString(buf);
-                    return false;
-                }
-                else
-                    throw e;
-            }
-            finally
-            {
-                try
-                {
-                    ocstream.close();
-                }
-                catch (e) {}
-                ofstream.close();
-            }
-            return true;
-        },
 
         /**
          * Runs an external program.
@@ -849,7 +865,7 @@ function IO() //{{{
             let file;
 
             if (isAbsolutePath(program))
-                file = self.getFile(program, true);
+                file = self.File(program, true);
             else
             {
                 let dirs = services.get("environment").get("PATH").split(WINDOWS ? ";" : ":");
@@ -891,7 +907,7 @@ lookup:
 
             let process = services.create("process");
 
-            process.init(file);
+            process.init(file.wrappedNative);
             process.run(blocking, args.map(String), args.length);
 
             return process.exitValue;
@@ -952,7 +968,7 @@ lookup:
             let wasSourcing = self.sourcing;
             try
             {
-                var file = self.getFile(filename);
+                var file = self.File(filename);
                 self.sourcing = {
                     file: file.path,
                     line: 0
@@ -975,8 +991,8 @@ lookup:
 
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
-                let str = self.readFile(file);
-                let uri = services.get("io").newFileURI(file);
+                let str = file.read();
+                let uri = services.get("io").newFileURI(file.wrappedNative);
 
                 // handle pure JavaScript files specially
                 if (/\.js$/.test(filename))
@@ -990,7 +1006,7 @@ lookup:
                         let err = new Error();
                         for (let [k, v] in Iterator(e))
                             err[k] = v;
-                        err.echoerr = file.path + ":" + e.lineNumber + ": " + e;
+                        err.echoerr = <>{file.path}:{e.lineNumber}: {e}</>;
                         throw err;
                     }
                 }
@@ -1076,8 +1092,8 @@ lookup:
             }
             catch (e)
             {
-                let message = "Sourcing file: " + (e.echoerr || file.path + ": " + e);
                 liberator.reportError(e);
+                let message = "Sourcing file: " + (e.echoerr || file.path + ": " + e);
                 if (!silent)
                     liberator.echoerr(message);
             }
@@ -1105,7 +1121,7 @@ lookup:
 
             return this.withTempFiles(function (stdin, stdout, cmd) {
                 if (input)
-                    this.writeFile(stdin, input);
+                    stdin.write(input);
 
                 // TODO: implement 'shellredir'
                 if (WINDOWS)
@@ -1115,13 +1131,13 @@ lookup:
                 }
                 else
                 {
-                    this.writeFile(cmd, "cd " + escape(cwd.path) + "\n" +
+                    cmd.write("cd " + escape(cwd.path) + "\n" +
                             ["exec", ">" + escape(stdout.path), "2>&1", "<" + escape(stdin.path),
                              escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
                     res = this.run("/bin/sh", ["-e", cmd.path], true);
                 }
 
-                let output = self.readFile(stdout);
+                let output = stdout.read();
                 if (res > 0)
                     output += "\nshell returned " + res;
                 // if there is only one \n at the end, chop it off

@@ -688,9 +688,9 @@ const util = { //{{{
             try
             {
                 // Try to find a matching file.
-                let file = io.getFile(url);
+                let file = io.File(url);
                 if (file.exists() && file.isReadable())
-                    return services.get("io").newFileURI(file).spec;
+                    return services.get("io").newFileURI(file.wrappedNative).spec;
             }
             catch (e) {}
 

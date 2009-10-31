@@ -181,7 +181,7 @@ function Buffer() //{{{
     function openUploadPrompt(elem)
     {
         commandline.input("Upload file: ", function (path) {
-            let file = io.getFile(path);
+            let file = io.File(path);
             if (!file.exists())
                 return void liberator.beep();
 
@@ -541,7 +541,7 @@ function Buffer() //{{{
                 if (arg)
                 {
                     options.setPref("print.print_to_file", "true");
-                    options.setPref("print.print_to_filename", io.getFile(arg.substr(1)).path);
+                    options.setPref("print.print_to_filename", io.File(arg.substr(1)).path);
                     liberator.echomsg("Printing to file: " + arg.substr(1));
                 }
                 else
@@ -617,7 +617,7 @@ function Buffer() //{{{
 
             if (filename)
             {
-                let file = io.getFile(filename);
+                let file = io.File(filename);
 
                 if (file.exists() && !args.bang)
                     return void liberator.echoerr("E13: File exists (add ! to override)");

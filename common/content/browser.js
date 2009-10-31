@@ -177,7 +177,7 @@ function Browser() //{{{
             {
                 if (/^file:\/|^\//.test(url))
                 {
-                    let file = io.getFile(url);
+                    let file = io.File(url);
                     return file.exists() && file.isDirectory();
                 }
                 else

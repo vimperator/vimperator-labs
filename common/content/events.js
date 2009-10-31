@@ -563,21 +563,20 @@ function Events() //{{{
                 for (let [, dir] in Iterator(dirs))
                 {
                     liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
-
                     liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
                     let files = io.readDirectory(dir.path);
+                    for (let file in dir.iterDirectory())
+                    {
+                        if (file.exists() && !file.isDirectory() && file.isReadable() &&
+                            /^[\w_-]+(\.vimp)?$/i.test(file.leafName))
+                        {
+                            let name = file.leafName.replace(/\.vimp$/i, "");
+                            macros.set(name, file.read().split("\n")[0]);
 
-                    files.forEach(function (file) {
-                        if (!file.exists() || file.isDirectory() ||
-                            !file.isReadable() || !/^[\w_-]+(\.vimp)?$/i.test(file.leafName))
-                                return;
-
-                        let name = file.leafName.replace(/\.vimp$/i, "");
-                        macros.set(name, io.readFile(file).split("\n")[0]);
-
-                        liberator.log("Macro " + name + " added: " + macros.get(name), 5);
-                    });
+                            liberator.log("Macro " + name + " added: " + macros.get(name), 5);
+                        }
+                    }
                 }
             }
             else
