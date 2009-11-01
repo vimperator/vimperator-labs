@@ -156,7 +156,7 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpKey,liberator|k                         color: #102663;
 
-    HelpLink,liberator|*>html|a                 text-decoration: none;
+    HelpLink,liberator|*>html|a[href]           text-decoration: none;
     HelpLink:hover                              text-decoration: underline;
 
     HelpList                                    display: block; list-style: outside disc;

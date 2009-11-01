@@ -8,7 +8,7 @@
     title="&liberator.appname; Browsing"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="surfing browsing">Browsing</h2>
+<h1 tag="surfing browsing">Browsing</h1>
 
 &liberator.appname; overrides nearly all &liberator.host; keys in order to make browsing more
 pleasant for Vim users. On the rare occasions when you want to pass a keystroke

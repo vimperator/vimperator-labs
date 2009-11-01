@@ -8,7 +8,7 @@
     title="&liberator.appname; Insert Mode"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="Insert-mode Insert mode-insert">Insert mode</h2>
+<h1 tag="Insert-mode Insert mode-insert">Insert mode</h1>
 
 <p>
     Insert mode is used to enter text in text boxes and text areas. When

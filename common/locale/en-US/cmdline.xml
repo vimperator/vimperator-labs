@@ -8,7 +8,7 @@
     title="&liberator.appname; Command-line"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="Command-line-mode Command-line mode-cmdline">Command-line mode</h2>
+<h1 tag="Command-line-mode Command-line mode-cmdline">Command-line mode</h1>
 
 Command-line mode is used to enter Ex commands (<k>:</k>) and text search patterns
 (<k>/</k> and <k>?</k>).

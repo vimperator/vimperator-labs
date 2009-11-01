@@ -8,7 +8,7 @@
     title="&liberator.appname; Autocommands"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="autocommands">Automatic commands</h2>
+<h1 tag="autocommands">Automatic commands</h1>
 
 <p>
     Autocommands are a way to automatically execute code when

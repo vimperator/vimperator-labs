@@ -8,7 +8,7 @@
     title="&liberator.appname; GUI"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="gui">&liberator.appname;'s GUI</h2>
+<h1 tag="gui">&liberator.appname;'s GUI</h1>
 
 <p>
     Although &liberator.appname; offers the most frequently used &liberator.host; functionality via

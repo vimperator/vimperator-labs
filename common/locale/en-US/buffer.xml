@@ -8,7 +8,7 @@
     title="&liberator.appname; Buffer"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h2 tag="buffer document">Buffer</h2>
+<h1 tag="buffer document">Buffer</h1>
 
 &liberator.appname; holds exactly one buffer object for each tab. It is usually an
 (X)HTML document with advanced features.
