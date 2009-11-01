@@ -1456,8 +1456,15 @@ const liberator = (function () //{{{
                     {body}
                 </document>.toXMLString();
             fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
+
+            services.get("liberator:").init({
+                HELP_TAGS: tagMap, FILE_MAP: fileMap,
+                OVERLAY_MAP: overlayMap, NAMESPACES: namespaces
+            });
+
             addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
 
+            // TODO: Don't do this.
             services.get("liberator:").init({
                 HELP_TAGS: tagMap, FILE_MAP: fileMap,
                 OVERLAY_MAP: overlayMap, NAMESPACES: namespaces
