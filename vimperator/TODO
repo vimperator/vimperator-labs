@@ -6,6 +6,11 @@ ARCHITECTURE:
   on the website - is there even a documentation tool that can parse our source
   sensibly?
 
+  There are a few that can, to some extent. We more or less follow the
+  ScriptDoc standard, and we're very close to a few other standards.
+  Unfortunately, nearly all of the parsers are lacking in some way, bloated to
+  hell, and/or lack support for JS 1.8. --Kris
+
 BUGS:
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set

@@ -85,7 +85,6 @@ function Bookmarks() //{{{
                 let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
                 bookmarks.push(bmark);
-
                 return bmark;
             }
             catch (e)
