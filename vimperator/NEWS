@@ -1,6 +1,8 @@
 2009-XX-XX:
+    * add basic plugin authorship documentation
+    * plugins may now provide full-fleged ':help' documentation
     * asciidoc is no longer required to build Vimperator
-    * The help system is newly modularized
+    * the help system is newly modularized
 
 2009-XX-XX:
     * version 2.2a1pre
