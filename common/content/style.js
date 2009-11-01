@@ -147,6 +147,11 @@ Highlights.prototype.CSS = <![CDATA[
     HelpExample,liberator|example               display: block; margin: 1em 0;
     HelpExample::before                         content: "Example: "; font-weight: bold;
     HelpHead,liberator|h1                       display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 2em; font-weight: bold; color: #527BBD; clear: both;
+
+    HelpInfo                                    display: block; width: 20em; margin-left: auto;
+    HelpInfoLabel                               display: inline-block; width: 6em;  color: magenta; font-weight: bold; vertical-align: text-top;
+    HelpInfoValue                               display: inline-block; width: 14em; text-decoration: none;             vertical-align: text-top;
+
     HelpItem,liberator|item                     display: block; margin: 1em 1em 1em 10em; clear: both;
 
     HelpKey,liberator|k                         color: #102663;
