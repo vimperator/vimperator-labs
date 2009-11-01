@@ -57,39 +57,48 @@
 </item>
 </html:div>
 
-If you don't know in which file/section you should put some
-documentation, ask on the mailing list or on #vimperator.
+<p>
+    If you don't know in which file/section you should put some
+    documentation, ask on the mailing list or on
+    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>.
+</p>
 
 <h2 tag="generating-docs">Generating documentation</h2>
 
-You can also autogenerate most of the XML help after you have
-written a new command, mapping or option. For this, use:
+<p>
+    You can also autogenerate most of the XML help after you have
+    written a new command, mapping or option.
+</p>
 
-  :echo util.generateHelp(commands.get("addons"), "Extra text")
+<example><ex>:echo util.generateHelp(commands.get(<str>addons</str>), <![CDATA[<p>Extra text</p>]]>)</ex></example>
 
 <h2 tag="writing-plugins">Writing plugins</h2>
 
-Writing &liberator.appname; plugins is incredibly simple.
-Plugins are simply JavaScript files which run with full chrome
-privileges and have full access to the &liberator.appname; and
-&liberator.host; APIs. Each plugin has its own global object,
-which means that the variables and functions that you create
-won't pollute the global <em>window</em> or private
-<em>liberator</em> namespaces. This means that there's no need
-to wrap your plugin in a closure, as is often the practice in
-JavaScript development. Furthermore, any plugin which is
-installed in your <o>runtimepath</o><em>/plugin</em> directory
-will find its context stored in
-<em>plugins.&lt;pluginName></em>, which is often invaluable
-during development and testing.
+<p>
+    Writing &liberator.appname; plugins is incredibly simple.
+    Plugins are simply JavaScript files which run with full chrome
+    privileges and have full access to the &liberator.appname; and
+    &liberator.host; APIs. Each plugin has its own global object,
+    which means that the variables and functions that you create
+    won't pollute the global <em>window</em> or private
+    <em>liberator</em> namespaces. This means that there's no need
+    to wrap your plugin in a closure, as is often the practice in
+    JavaScript development. Furthermore, any plugin which is
+    installed in your <o>runtimepath</o><em>/plugin</em> directory
+    will find its context stored in
+    <em>plugins.&lt;pluginName></em>, which is often invaluable
+    during development and testing.
+</p>
 
 <h3 tag="plugin-documentation">Plugin documentation</h3>
 
-Plugins may provide inline documentation, which will appear on
-the <ex>:help plugins</ex> page. The markup for help entries
-is the same as the above, with a few more plugin specific
-entries. Here is an example from the popular
-<em>flashblock</em> extension:
+<p>
+    Plugins may provide inline documentation, which will appear on
+    the <ex>:help plugins</ex> page. The markup for help entries
+    is the same as the above, with a few more plugin specific
+    entries. Here is an example from the popular
+    <em>flashblock</em> extension:
+</p>
 
 <code><![CDATA[
 var INFO = 
@@ -125,18 +134,20 @@ var INFO =
 ]]>
 </code>
 
-The inline XML is made possible by
-<link topic="https://developer.mozilla.org/en/E4X">E4X</link>.
-It's important that the documentation be assigned to the
-<em>INFO</em> variable, or &liberator.appname; will not be able
-to find it. The documentation that you provide behaves exactly
-as other &liberator.appname; documentation, which means that
-the tags you provide are available via <ex>:help</ex> with
-full tag completion and cross-referencing support. Although
-documentation is not required, we strongly recommend that all
-plugin authors provide at least basic documentation of the
-functionality of their plugins and of each of the options,
-commands, and especially mappings that they provide.
+<p>
+    The inline XML is made possible by
+    <link topic="https://developer.mozilla.org/en/E4X">E4X</link>.
+    It's important that the documentation be assigned to the
+    <em>INFO</em> variable, or &liberator.appname; will not be able
+    to find it. The documentation that you provide behaves exactly
+    as other &liberator.appname; documentation, which means that
+    the tags you provide are available via <ex>:help</ex> with
+    full tag completion and cross-referencing support. Although
+    documentation is not required, we strongly recommend that all
+    plugin authors provide at least basic documentation of the
+    functionality of their plugins and of each of the options,
+    commands, and especially mappings that they provide.
+</p>
 
 </document>
 
