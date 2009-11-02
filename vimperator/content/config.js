@@ -155,20 +155,6 @@ const config = { //{{{
         ////////////////////// STYLES //////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        let img = Image();
-        img.src = "chrome://vimperator/content/logo.png";
-        img.onload = function () {
-            styles.addSheet(true, "logo", "chrome://liberator/locale/*",
-                ".liberator-logo {" + <>
-                     display:    inline-block;
-                     background: url({img.src});
-                     width:      {img.width}px;
-                     height:     {img.height}px;
-                </> + "}",
-                true);
-            delete img;
-        };
-
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// MAPPINGS ////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{

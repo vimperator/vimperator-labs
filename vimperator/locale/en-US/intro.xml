@@ -9,8 +9,6 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 
-<logo/>
-
 <html:p style="text-align: center; font-weight: bold;">
 First there was a Navigator, then there was an Explorer.
 Later it was time for a Konqueror. Now it's time for an Imperator, the
@@ -151,6 +149,10 @@ web browser, as key bindings differ according to which mode you are in.
     <li>
         <link topic="various">Various commands</link>:
         Other help which didn't fit into any other category.
+    </li>
+    <li>
+        <link topic="plugins">Plugins</link>:
+        Documentation for any plugins you may have installed.
     </li>
     <li>
         <link topic="index">Index</link>:

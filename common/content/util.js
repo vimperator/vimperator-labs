@@ -304,18 +304,119 @@ const util = { //{{{
         XML.ignoreWhitespace = false;
 
         return <></> +
-<item>
-    <tags>{template.map(obj.names, tag, " ")}</tags>
-    <spec>{spec((obj.specs || obj.names)[0])}</spec>{
-    !obj.type ? "" : <>
-    <type>{obj.type}</type>
-    <default>{obj.defaultValue}</default></>}
-    <description>{
-        obj.description ? br+<p>{obj.description.replace(/\.?$/, ".")}</p> : "" }{
-            extraHelp ? br+extraHelp : "" }{
-            !(extraHelp || obj.description) ? br+<p>Sorry, no help available.</p> : "" }
-    </description>
-</item>.toXMLString();
+            <item>
+                <tags>{template.map(obj.names, tag, " ")}</tags>
+                <spec>{spec((obj.specs || obj.names)[0])}</spec>{
+                !obj.type ? "" : <>
+                <type>{obj.type}</type>
+                <default>{obj.defaultValue}</default></>}
+                <description>{
+                    obj.description ? br+<p>{obj.description.replace(/\.?$/, ".")}</p> : "" }{
+                        extraHelp ? br+extraHelp : "" }{
+                        !(extraHelp || obj.description) ? br+<p>Sorry, no help available.</p> : "" }
+                </description>
+            </item>.toXMLString();
+    },
+
+    exportHelp: function (path)
+    {
+        const FILE = io.File(path);
+        const PATH = FILE.leafName.replace(/\..*/, "") + "/";
+        const TIME = Date.now();
+
+        let zip = services.create("zipWriter");
+        zip.open(FILE.file, io.MODE_CREATE | io.MODE_WRONLY | io.MODE_TRUNCATE);
+        function addURIEntry(file, uri)
+            zip.addEntryChannel(PATH + file, TIME, 9,
+                services.get("io").newChannel(uri, null, null),
+                false);
+        function addDataEntry(file, data) // Inideal to an extreme.
+            addURIEntry(file, "data:text/plain;charset=UTF-8," + encodeURI(data));
+
+        let empty = util.Array.toObject(
+            "area base basefont br col frame hr img input isindex link meta param"
+            .split(" ").map(Array.concat));
+        let chrome = {};
+        for (let [file,] in Iterator(services.get("liberator:").FILE_MAP))
+        {
+            liberator.open("liberator://help/" + file);
+            events.waitForPageLoad();
+            let data = [
+                '<?xml version="1.0" encoding="UTF-8"?>\n',
+                '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n',
+                '          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n'
+            ];
+            function fix(node)
+            {
+                switch(node.nodeType)
+                {
+                    case Node.ELEMENT_NODE:
+                        if (node instanceof HTMLScriptElement)
+                            return;
+
+                        data.push("<"); data.push(node.localName);
+                        if (node instanceof HTMLHtmlElement)
+                            data.push(' xmlns="' + XHTML.uri + '"');
+
+                        for (let { name: name, value: value } in util.Array.itervalues(node.attributes))
+                        {
+                            if (name == "liberator:highlight")
+                            {
+                                name = "class";
+                                value = "hl-" + value;
+                            }
+                            if (name == "href")
+                            {
+                                if (value.indexOf("liberator://help-tag/") == 0)
+                                    value = services.get("io").newChannel(value, null, null).originalURI.path.substr(1);
+                                if (!/[#\/]/.test(value))
+                                    value += ".xhtml";
+                            }
+                            if (name == "src" && value.indexOf(":") > 0)
+                            {
+                                chrome[value] = value.replace(/.*\//, "");;
+                                value = value.replace(/.*\//, "");
+                            }
+                            data.push(" ");
+                            data.push(name);
+                            data.push('="');
+                            data.push(<>{value}</>.toXMLString());
+                            data.push('"')
+                        }
+                        if (node.localName in empty)
+                            data.push(" />");
+                        else
+                        {
+                            data.push(">");
+                            if (node instanceof HTMLHeadElement)
+                                data.push(<link rel="stylesheet" type="text/css" href="help.css"/>.toXMLString());
+                            Array.map(node.childNodes, arguments.callee);
+                            data.push("</"); data.push(node.localName); data.push(">");
+                        }
+                        break;
+                    case Node.TEXT_NODE:
+                        data.push(<>{node.textContent}</>.toXMLString());
+                }
+            }
+            fix(content.document.documentElement);
+            addDataEntry(file + ".xhtml", data.join(""));
+        }
+
+        let data = [h.selector.replace(/^\[.*?=(.*?)\]/, ".hl-$1").replace(/html\|/, "") +
+                        "\t{" + h.value + "}"
+                    for (h in highlight) if (/^Help|^Logo/.test(h.class))];
+
+        data = data.join("\n");
+        addDataEntry("help.css", data.replace(/chrome:[^ ")]+\//g, ""));
+
+        let re = /(chrome:[^ ");]+\/)([^ ");]+)/g;
+        while (m = re.exec(data))
+            chrome[m[0]] = m[2];
+
+        for (let [uri, leaf] in Iterator(chrome))
+            addURIEntry(leaf, uri);
+
+        zip.close();
     },
 
     /**

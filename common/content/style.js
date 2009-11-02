@@ -123,80 +123,100 @@ Highlights.prototype.CSS = <![CDATA[
 
     Help                                        font-size: 8pt; line-height: 1.4em; font-family: -moz-fixed;
 
-    HelpArg,liberator|a                         color: #6A97D4;
-    HelpArg::before                             content: "{";
-    HelpArg::after                              content: "}";
+    HelpArg                                     color: #6A97D4;
     HelpOptionalArg,liberator|oa                color: #6A97D4;
-    HelpOptionalArg::before                     content: "[";
-    HelpOptionalArg::after                      content: "]";
 
     HelpBody                                    display: block; margin: 1em auto; max-width: 100ex;
-    HelpBorder,liberator|*                      border-color: silver; border-width: 0px; border-style: solid;
-    HelpCode,liberator|code                     display: block; white-space: pre; margin-left: 2em; font-family: courier, monospace;
+    HelpBorder,*,liberator://help/*             border-color: silver; border-width: 0px; border-style: solid;
+    HelpCode                                    display: block; white-space: pre; margin-left: 2em; font-family: courier, monospace;
 
-    HelpDefault,liberator|default               margin-right: 1ex; white-space: pre;
-    HelpDefault::after                          content: ")"
-    HelpDefault::before                         content: "(default: ";
+    HelpDefault                                 margin-right: 1ex; white-space: pre;
 
-    HelpDescription,liberator|description       display: block;
-    HelpEm,liberator|em                         font-weight: bold;
+    HelpDescription                             display: block;
+    HelpEm,html|em,liberator://help/*           font-weight: bold; font-style: normal;
 
-    HelpEx,liberator|ex                         display: inline-block; color: #527BBD; font-weight: bold;
+    HelpEx                                      display: inline-block; color: #527BBD; font-weight: bold;
     HelpEx:hover                                text-decoration: underline; cursor: pointer;
 
-    HelpExample,liberator|example               display: block; margin: 1em 0;
+    HelpExample                                 display: block; margin: 1em 0;
     HelpExample::before                         content: "Example: "; font-weight: bold;
-    HelpHead,liberator|h1                       display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 2em; font-weight: bold; color: #527BBD; clear: both;
 
     HelpInfo                                    display: block; width: 20em; margin-left: auto;
     HelpInfoLabel                               display: inline-block; width: 6em;  color: magenta; font-weight: bold; vertical-align: text-top;
     HelpInfoValue                               display: inline-block; width: 14em; text-decoration: none;             vertical-align: text-top;
 
-    HelpItem,liberator|item                     display: block; margin: 1em 1em 1em 10em; clear: both;
+    HelpItem                                    display: block; margin: 1em 1em 1em 10em; clear: both;
 
-    HelpKey,liberator|k                         color: #102663;
+    HelpKey                                     color: #102663;
 
-    HelpLink,liberator|*>html|a[href]           text-decoration: none;
+    HelpLink,html|a,liberator://help/*          text-decoration: none;
     HelpLink:hover                              text-decoration: underline;
 
-    HelpList                                    display: block; list-style: outside disc;
-    HelpOrderedList                             display: block; list-style: outside decimal;
-    HelpListItem,liberator|li                   display: list-item;
+    HelpList,html|ul,liberator://help/*         display: block; list-style: outside disc;
+    HelpOrderedList,html|ol,liberator://help/*  display: block; list-style: outside decimal;
+    HelpListItem,html|li,liberator://help/*     display: list-item;
 
-    HelpNote,liberator|note                     display: block; margin: 1em 0em;
-    HelpNote::before                            content: "Note: "; color: red; font-weight: bold;
+    HelpNote                                    color: red; font-weight: bold;
 
-    HelpOpt,liberator|o                         color: #106326;
+    HelpOpt                                     color: #106326;
     HelpOpt:hover                               text-decoration: underline; cursor: pointer;
     HelpOptInfo                                 display: inline-block; margin-bottom: 1ex;
 
-    HelpParagraph,liberator|p                   display: block; margin: 1em 0em;
-    HelpSpec,liberator|spec                     display: block; margin-left: -10em; float: left; clear: left; color: #527BBD;
+    HelpParagraph,html|p,liberator://help/*     display: block; margin: 1em 0em;
+    HelpSpec                                    display: block; margin-left: -10em; float: left; clear: left; color: #527BBD;
 
-    HelpString,liberator|str                    display: inline-block; color: green; font-weight: normal; vertical-align: text-top;
+    HelpString                                  display: inline-block; color: green; font-weight: normal; vertical-align: text-top;
     HelpString::before                          content: '"';
     HelpString::after                           content: '"';
 
-    HelpSubhead,liberator|h2                    display: block; margin: 1em 0; padding-bottom: .2ex; border-bottom-width: 1px; font-size: 1.2em; font-weight: bold; color: #527BBD; clear: both;
-    HelpSubsubhead,liberator|h3                 display: block; margin: 1em 0; padding-bottom: .2ex; font-size: 1.1em; font-weight: bold; color: #527BBD; clear: both;
+    HelpHead,html|h1,liberator://help/* {
+        display: block;
+        margin: 1em 0;
+        padding-bottom: .2ex;
+        border-bottom-width: 1px;
+        font-size: 2em;
+        font-weight: bold;
+        color: #527BBD;
+        clear: both;
+    }
+    HelpSubhead,html|h2,liberator://help/* {
+        display: block;
+        margin: 1em 0;
+        padding-bottom: .2ex;
+        border-bottom-width: 1px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #527BBD;
+        clear: both;
+    }
+    HelpSubsubhead,html|h3,liberator://help/* {
+        display: block;
+        margin: 1em 0;
+        padding-bottom: .2ex;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #527BBD;
+        clear: both;
+    }
 
     HelpTOC
     HelpTOC>ol ol                               margin-left: -1em;
 
-    HelpTab,liberator|dl                        display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
-    HelpTabColumn,liberator|column              display: table-column;
-    HelpTabColumn:first-child                   width: 25%;
-    HelpTabTitle,liberator|dt                   display: table-cell; padding: .1ex 1ex; font-weight: bold;
-    HelpTabDescription,liberator|dd             display: table-cell; padding: .1ex 1ex;
-    HelpTabRow,liberator|dl>tr                  display: table-row;
+    HelpTab,html|dl,liberator://help/*             display: table; width: 100%; margin: 1em 0; border-bottom-width: 1px; border-top-width: 1px; padding: .5ex 0; table-layout: fixed;
+    HelpTabColumn,html|column,liberator://help/*   display: table-column;
+    HelpTabColumn:first-child                      width: 25%;
+    HelpTabTitle,html|dt,liberator://help/*        display: table-cell; padding: .1ex 1ex; font-weight: bold;
+    HelpTabDescription,html|dd,liberator://help/*  display: table-cell; padding: .1ex 1ex; border-width: 0px;
+    HelpTabRow,html|dl>html|tr,liberator://help/*  display: table-row;
 
-    HelpTag,liberator|tag                       display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
-    HelpTags,liberator|tags                     display: block; float: right; clear: right;
-    HelpTopic,liberator|t                       color: #102663;
-    HelpType,liberator|type                     margin-right: 2ex;
+    HelpTag                                     display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
+    HelpTags                                    display: block; float: right; clear: right;
+    HelpTopic                                   color: #102663;
+    HelpType                                    margin-right: 2ex;
 
-    HelpWarning,liberator|warning               display: block; margin: 1em 0em;
-    HelpWarning::before                         content: "Warning: "; color: red; font-weight: bold;
+    HelpWarning                                 color: red; font-weight: bold;
+
+    Logo
 
     Search,,* {
         font-size: inherit;

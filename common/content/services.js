@@ -117,6 +117,7 @@ function Services()
     self.addClass("file:",      "@mozilla.org/network/protocol;1?name=file", Ci.nsIFileProtocolHandler);
     self.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
     self.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);
+    self.addClass("zipWriter",  "@mozilla.org/zipwriter;1",             Ci.nsIZipWriter);
 
     return self;
 }

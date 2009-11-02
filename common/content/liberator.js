@@ -567,6 +567,23 @@ const liberator = (function () //{{{
                 });
         });
 
+        commands.add(["exporth[elp]"],
+            "Exports " + config.name + "'s help system to the named zip file",
+            function (args)
+            {
+                liberator.echomsg("Exporting help to " + args[0].quote() + ". Please wait...");
+                util.exportHelp(args[0]);
+                liberator.echomsg("Help exported to " + args[0].quote() + ".");
+            },
+            {
+                argCount: "1",
+                completer: function (context) {
+                    context.filters.push(function ({ item: f }) f.isDirectory() || /\.zip/.test(f.leafName));
+                    completion.file(context);
+                },
+                literal: 0
+            });
+
         commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
             function (args)
@@ -1844,6 +1861,18 @@ const liberator = (function () //{{{
             {
                 liberator.reportError(e);
             }
+
+            let img = Image();
+            img.src = config.logo || "chrome://" + config.name.toLowerCase() + "/content/logo.png";
+            img.onload = function () {
+                highlight.set("Logo", String(<>
+                         display:    inline-block;
+                         background: url({img.src});
+                         width:      {img.width}px;
+                         height:     {img.height}px;
+                    </>));
+                delete img;
+            };
 
             // commands must always be the first module to be initialized
             loadModule("commands",     Commands);
