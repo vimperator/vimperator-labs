@@ -328,14 +328,14 @@ const util = { //{{{
         zip.open(FILE.file, io.MODE_CREATE | io.MODE_WRONLY | io.MODE_TRUNCATE);
         function addURIEntry(file, uri)
             zip.addEntryChannel(PATH + file, TIME, 9,
-                services.get("io").newChannel(uri, null, null),
-                false);
+                services.get("io").newChannel(uri, null, null), false);
         function addDataEntry(file, data) // Inideal to an extreme.
             addURIEntry(file, "data:text/plain;charset=UTF-8," + encodeURI(data));
 
         let empty = util.Array.toObject(
             "area base basefont br col frame hr img input isindex link meta param"
             .split(" ").map(Array.concat));
+
         let chrome = {};
         for (let [file,] in Iterator(services.get("liberator:").FILE_MAP))
         {
@@ -420,10 +420,10 @@ const util = { //{{{
     },
 
     /**
-     * Sends a synchronous HTTP request to <b>url</b> and returns the
-     * XMLHttpRequest object. If <b>callback</b> is specified the request is
-     * asynchronous and the <b>callback</b> is invoked with the object as its
-     * argument.
+     * Sends a synchronous or asynchronous HTTP request to <b>url</b> and
+     * returns the XMLHttpRequest object. If <b>callback</b> is specified the
+     * request is asynchronous and the <b>callback</b> is invoked with the
+     * object as its argument.
      *
      * @param {string} url
      * @param {function(XMLHttpRequest)} callback
