@@ -58,9 +58,9 @@ function Hints() //{{{
         V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
         y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
         Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
-        c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem), extended),
-        i: Mode("Show image",                           function (elem) liberator.open(elem.src), images),
-        I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB), images)
+        c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
+        i: Mode("Show image",                           function (elem) liberator.open(elem.src),                              images),
+        I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images)
     };
 
     /**
@@ -412,8 +412,7 @@ function Hints() //{{{
                         if (!rect)
                             continue;
 
-                        imgSpan = util.xmlToDom(<span highlight="Hint"/>, doc);
-                        imgSpan.setAttributeNS(NS.uri, "class", "HintImage");
+                        imgSpan = util.xmlToDom(<span highlight="Hint" liberator:class="HintImage" xmlns:liberator={NS}/>, doc);
                         imgSpan.style.left = (rect.left + offsetX) + "px";
                         imgSpan.style.top = (rect.top + offsetY) + "px";
                         imgSpan.style.width = (rect.right - rect.left) + "px";

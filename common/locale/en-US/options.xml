@@ -261,9 +261,9 @@
 <p>The following preferences are set:</p>
 
 <ul>
-    <li><link target="http://kb.mozillazine.org/Dom.popup_allowed_events">dom.popup_allowed_events</link></li>
-    <li><link target="http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart">accessibility.typeaheadfind.autostart</link></li>
-    <li><link target="http://kb.mozillazine.org/Accessibility.typeaheadfind">accessibility.typeaheadfind</link></li>
+    <li><link topic="http://kb.mozillazine.org/Dom.popup_allowed_events">dom.popup_allowed_events</link></li>
+    <li><link topic="http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart">accessibility.typeaheadfind.autostart</link></li>
+    <li><link topic="http://kb.mozillazine.org/Accessibility.typeaheadfind">accessibility.typeaheadfind</link></li>
 </ul>
 
 <!-- TODO: others? -->

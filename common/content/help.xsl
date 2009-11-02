@@ -8,37 +8,108 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:str="http://exslt.org/strings"
     xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="str">
+    extension-element-prefixes="exsl str">
 
     <xsl:output method="xml" indent="no"/>
 
     <!-- Variable Definitions {{{1 -->
 
+    <xsl:variable name="doc">
+        <xsl:apply-templates select="/liberator:document" mode="overlay"/>
+    </xsl:variable>
+    <xsl:variable name="root" select="exsl:node-set($doc)"/>
+
     <xsl:variable name="tags">
         <xsl:text> </xsl:text>
-        <xsl:for-each select="//@tag|//liberator:tags/text()|//liberator:tag/text()">
+        <xsl:for-each select="$root//@tag|$root//liberator:tags/text()|$root//liberator:tag/text()">
             <xsl:value-of select="concat(., ' ')"/>
         </xsl:for-each>
     </xsl:variable>
 
+    <!-- Process Overlays {{{1 -->
+
+    <xsl:variable name="overlay" select="concat('liberator://help-overlay/', /liberator:document/@name)"/>
+    <xsl:variable name="overlaydoc" select="document($overlay)/liberator:overlay"/>
+
+    <xsl:template name="splice-overlays">
+        <xsl:param name="elem"/>
+        <xsl:param name="tag"/>
+        <xsl:for-each select="$overlaydoc/*[@insertbefore=$tag]">
+            <xsl:apply-templates select="." mode="overlay"/>
+        </xsl:for-each>
+        <xsl:choose>
+            <xsl:when test="$overlaydoc/*[@replace=$tag] and not($elem[@replace])">
+                <xsl:for-each select="$overlaydoc/*[@replace=$tag]">
+                    <xsl:apply-templates select="." mode="overlay-2"/>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:for-each select="$elem">
+                    <xsl:apply-templates select="." mode="overlay-2"/>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:for-each select="$overlaydoc/*[@insertafter=$tag]">
+            <xsl:apply-templates select="." mode="overlay"/>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template match="liberator:tags[parent::liberator:document]|liberator:tag" mode="overlay">
+        <xsl:call-template name="splice-overlays">
+            <xsl:with-param name="tag" select="substring-before(concat(., ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
+        </xsl:call-template>
+    </xsl:template>
+    <xsl:template match="*[liberator:tags]" mode="overlay">
+        <xsl:call-template name="splice-overlays">
+            <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
+        </xsl:call-template>
+    </xsl:template>
+    <xsl:template match="liberator:*[@tag and not(@replace)]" mode="overlay">
+        <xsl:call-template name="splice-overlays">
+            <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
+            <xsl:with-param name="elem" select="self::node()"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <!-- Process Inclusions {{{1 -->
+
+    <xsl:template match="liberator:include" mode="overlay-2">
+        <xsl:copy>
+            <xsl:apply-templates select="document(@href)/liberator:document/node()" mode="overlay"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="@*|node()" mode="overlay">
+        <xsl:apply-templates select="." mode="overlay-2"/>
+    </xsl:template>
+    <xsl:template match="@*|node()" mode="overlay-2">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()" mode="overlay"/>
+        </xsl:copy>
+    </xsl:template>
+
     <!-- Root {{{1 -->
 
-    <xsl:template match="liberator:document">
-        <html:html liberator:highlight="Help">
-            <html:head>
-                <html:title><xsl:value-of select="@title"/></html:title>
-                <html:base href="liberator://help/{@name}"/>
-                <html:script type="text/javascript"
-                    src="chrome://liberator/content/help.js"/>
-            </html:head>
-            <html:body liberator:highlight="HelpBody">
-                <html:div class="liberator-logo"/>
-                <xsl:call-template name="parse-tags">
-                    <xsl:with-param name="text" select="concat(@name, '.html')"/>
-                </xsl:call-template>
-                <xsl:apply-templates/>
-            </html:body>
-        </html:html>
+    <xsl:template match="/">
+        <xsl:for-each select="$root/liberator:document">
+            <html:html liberator:highlight="Help">
+                <html:head>
+                    <html:title><xsl:value-of select="@title"/></html:title>
+                    <html:base href="liberator://help/{@name}"/>
+                    <html:script type="text/javascript"
+                        src="chrome://liberator/content/help.js"/>
+                </html:head>
+                <html:body liberator:highlight="HelpBody">
+                    <html:div class="liberator-logo"/>
+                    <xsl:call-template name="parse-tags">
+                        <xsl:with-param name="text" select="concat(@name, '.html')"/>
+                    </xsl:call-template>
+                    <xsl:apply-templates/>
+                </html:body>
+            </html:html>
+        </xsl:for-each>
     </xsl:template>
 
     <!-- Table of Contents {{{1 -->
@@ -50,8 +121,8 @@
         <xsl:variable name="tag" select="concat('h', $level)"/>
         <xsl:variable name="lasttag" select="concat('h', $level - 1)"/>
 
-        <xsl:variable name="nodes" select="//liberator:*[
-            local-name() = $tag and preceding::*[local-name() = $lasttag][position() = 1 and . = $context]]"/>
+        <xsl:variable name="nodes" select="//following-sibling::liberator:*[
+            local-name() = $tag and preceding-sibling::*[local-name() = $lasttag][position() = 1 and . = $context]]"/>
 
         <xsl:if test="$nodes">
             <html:ol liberator:highlight="HelpOrderedList">
@@ -76,13 +147,16 @@
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
-        <html:div liberator:highlight="HelpTOC">
-            <h2>Contents</h2>
-            <xsl:call-template name="toc">
-                <xsl:with-param name="level" select="2"/>
-                <xsl:with-param name="context" select="."/>
-            </xsl:call-template>
-        </html:div>
+        <xsl:if test="not($root//liberator:h1[2])">
+            <!-- Makes :help all impossibly slow. Why? -->
+            <html:div liberator:highlight="HelpTOC">
+                <h2>Contents</h2>
+                <xsl:call-template name="toc">
+                    <xsl:with-param name="level" select="2"/>
+                    <xsl:with-param name="context" select="."/>
+                </xsl:call-template>
+            </html:div>
+        </xsl:if>
     </xsl:template>
 
     <!-- Items {{{1 -->
@@ -271,59 +345,6 @@
             <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
                 "/>
         </form>
-    </xsl:template>
-
-    <!-- Process Inclusions {{{1 -->
-
-    <xsl:template match="liberator:include" mode="pass-2">
-        <xsl:apply-templates select="document(@href)/liberator:document/node()"/>
-    </xsl:template>
-
-    <!-- Process Overlays {{{1 -->
-
-    <xsl:variable name="overlay" select="concat('liberator://help-overlay/', /liberator:document/@name)"/>
-    <xsl:variable name="overlaydoc" select="document($overlay)/liberator:overlay"/>
-
-    <xsl:template name="splice-overlays">
-        <xsl:param name="elem"/>
-        <xsl:param name="tag"/>
-        <xsl:for-each select="$overlaydoc/*[@insertbefore=$tag]">
-            <xsl:apply-templates select="."/>
-        </xsl:for-each>
-        <xsl:choose>
-            <xsl:when test="$overlaydoc/*[@replace=$tag] and not($elem[@replace])">
-                <xsl:for-each select="$overlaydoc/*[@replace=$tag]">
-                    <xsl:apply-templates select="." mode="pass-2"/>
-                </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:for-each select="$elem">
-                    <xsl:apply-templates select="." mode="pass-2"/>
-                </xsl:for-each>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:for-each select="$overlaydoc/*[@insertafter=$tag]">
-            <xsl:apply-templates select="."/>
-        </xsl:for-each>
-    </xsl:template>
-
-    <xsl:template match="liberator:document/liberator:tags|liberator:document/liberator:tag">
-        <xsl:call-template name="splice-overlays">
-            <xsl:with-param name="tag" select="substring-before(concat(., ' '), ' ')"/>
-            <xsl:with-param name="elem" select="self::node()"/>
-        </xsl:call-template>
-    </xsl:template>
-    <xsl:template match="liberator:document/*[liberator:tags]">
-        <xsl:call-template name="splice-overlays">
-            <xsl:with-param name="tag" select="substring-before(concat(liberator:tags, ' '), ' ')"/>
-            <xsl:with-param name="elem" select="self::node()"/>
-        </xsl:call-template>
-    </xsl:template>
-    <xsl:template match="liberator:*[@tag and not(@replace)]">
-        <xsl:call-template name="splice-overlays">
-            <xsl:with-param name="tag" select="substring-before(concat(@tag, ' '), ' ')"/>
-            <xsl:with-param name="elem" select="self::node()"/>
-        </xsl:call-template>
     </xsl:template>
 
     <!-- Process Tree {{{1 -->
