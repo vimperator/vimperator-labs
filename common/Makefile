@@ -16,7 +16,7 @@ MAKE_JAR      = sh $(BASE)/make_jar.sh
 # TODO: specify source files manually?
 JAR_BASES     = $(TOP) $(BASE)
 JAR_DIRS      = content skin locale
-JAR_TEXTS     = js css dtd xml xul html xhtml
+JAR_TEXTS     = js css dtd xml xul html xhtml xsl
 JAR_BINS      = png
 
 JAR           = chrome/$(NAME).jar

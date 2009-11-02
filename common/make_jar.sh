@@ -19,7 +19,7 @@ getfiles () {
 }
 copytext () {
     sed -e "s,###VERSION###,$VERSION,g" \
-        -e "s,###DATE###,$DATE,g" \
+        -e "s,###DATE###,$BUILD_DATE,g" \
         <"$1" >"$2"
     cmp -s "$1" "$2" ||
     ( echo "modified: $1"; diff -u "$1" "$2" | grep '^[-+][^-+]' )
