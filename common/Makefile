@@ -36,7 +36,8 @@ RDF_IN        = $(RDF).in
 
 BUILD_DIR     = build.$(VERSION).$(OS)
 
-AWK = awk
+AWK  = awk
+CURL = curl
 
 .SILENT:
 
@@ -84,12 +85,12 @@ dist: $(XPI)
 	labels="Project-$$proj,$(labels)";					\
 	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
 								        	\
-	IFS=,; for l in $$(echo $$labels); do					\
+	IFS=,; for l in $$labels; do						\
 		set -- "$$@" --form-string "label=$$l";				\
 	done;									\
-	curl "$@" --form-string "summary=$$summary" 				\
-		-F "filename=<$(XPI)"						\
-		-H "Authorization: $$(echo "$(GOOGLE_USER):$(GOOGLE_PASS)" | base64)" \
+	$(CURL) "$$@" --form-string "summary=$$summary" 			\
+		-F "filename=@$(XPI)"						\
+		-H "Authorization: Basic $$(echo -n "$(GOOGLE_USER):$(GOOGLE_PASS)" | base64)" \
 		-i "$(GOOGLE)" | sed -n '/^Location/{p;q}'
 
 $(RDF): $(RDF_IN) Makefile
