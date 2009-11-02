@@ -115,14 +115,15 @@
     <!-- Table of Contents {{{1 -->
 
     <xsl:template name="toc">
-        <xsl:param name="level"/>
+        <xsl:param name="level" select="1"/>
         <xsl:param name="context"/>
+        <xsl:param name="toc"/>
 
         <xsl:variable name="tag" select="concat('h', $level)"/>
         <xsl:variable name="lasttag" select="concat('h', $level - 1)"/>
 
-        <xsl:variable name="nodes" select="//following-sibling::liberator:*[
-            local-name() = $tag and preceding-sibling::*[local-name() = $lasttag][position() = 1 and . = $context]]"/>
+        <xsl:variable name="nodes" select="$toc/*[
+            local-name() = $tag and not(preceding::*[local-name() = $lasttag][position() = 1 and not(.=$context)])]"/>
 
         <xsl:if test="$nodes">
             <html:ol liberator:highlight="HelpOrderedList">
@@ -137,24 +138,37 @@
                         <xsl:call-template name="toc">
                             <xsl:with-param name="level" select="$level + 1"/>
                             <xsl:with-param name="context" select="."/>
+                            <xsl:with-param name="toc" select="$toc"/>
                         </xsl:call-template>
                     </li>
                 </xsl:for-each>
             </html:ol>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="liberator:h1" mode="pass-2">
-        <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:copy>
-        <xsl:if test="not($root//liberator:h1[2])">
-            <!-- Makes :help all impossibly slow. Why? -->
+    <xsl:template match="liberator:toc" mode="pass-2">
+        <xsl:variable name="TOC">
+            <context/>
+            <xsl:for-each
+                select="following::liberator:h1|following::liberator:h2|following::liberator:h3|following::liberator:h4|following::liberator:h5">
+                <xsl:copy-of select="."/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="toc" select="exsl:node-set($TOC)"/>
+
+        <xsl:if test="//liberator:toc[1 and self::*]">
             <html:div liberator:highlight="HelpTOC">
                 <h2>Contents</h2>
-                <xsl:call-template name="toc">
-                    <xsl:with-param name="level" select="2"/>
-                    <xsl:with-param name="context" select="."/>
-                </xsl:call-template>
+                <xsl:if test="@start">
+                    <xsl:call-template name="toc">
+                        <xsl:with-param name="level" select="number(@start)"/>
+                        <xsl:with-param name="toc" select="$toc"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="not(@start)">
+                    <xsl:call-template name="toc">
+                        <xsl:with-param name="toc" select="$toc"/>
+                    </xsl:call-template>
+                </xsl:if>
             </html:div>
         </xsl:if>
     </xsl:template>

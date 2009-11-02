@@ -10,6 +10,8 @@
     xmlns:html="http://www.w3.org/1999/xhtml">
 <tags>all</tags>
 
+<toc/>
+
 <include href="intro" tag="intro.html"/>
 <include href="starting" tag="starting.html"/>
 <include href="browsing" tag="browsing.html"/>

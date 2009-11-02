@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="Command-line-mode Command-line mode-cmdline">Command-line mode</h1>
+<toc start="2"/>
 
 Command-line mode is used to enter Ex commands (<k>:</k>) and text search patterns
 (<k>/</k> and <k>?</k>).

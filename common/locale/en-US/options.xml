@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="options">Options</h1>
+<toc start="2"/>
 
 <p>
     &liberator.appname; has a number of internal variables and switches which can be set to

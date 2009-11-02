@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="text-search-commands">Text search commands</h1>
+<toc start="2"/>
 
 <p>
     &liberator.appname; provides a Vim-like interface to &liberator.host;'s standard text search

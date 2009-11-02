@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="tabs">Tabs</h1>
+<toc start="2"/>
 
 <p>
     Tabs are used to be able to view many web pages at the same time. Each tab

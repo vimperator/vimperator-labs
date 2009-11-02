@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1>Key mappings, abbreviations, and user-defined commands</h1>
+<toc start="2"/>
 
 <h2 tag="key-mapping mapping map macro">Key mapping</h2>
 

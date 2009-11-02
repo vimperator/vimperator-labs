@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="different-marks marks">Marks</h1>
+<toc start="2"/>
 
 <p>
     &liberator.appname; supports a number of different marks:
@@ -22,6 +23,7 @@
 </ul>
 
 <h1 tag="bookmarks">Bookmarks</h1>
+<toc start="2"/>
 
 <item>
     <tags>a :bma :bmark</tags>
@@ -106,6 +108,7 @@
 </item>
 <!-- TODO: why is this duplicated in browsing? -->
 <h1 tag="history">History</h1>
+<toc start="2"/>
 
 <item>
     <tags><![CDATA[<C-o>]]></tags>
@@ -201,6 +204,7 @@
 </item>
 
 <h1 tag="quickmarks">QuickMarks</h1>
+<toc start="2"/>
 
 <item>
     <tags>go</tags>
@@ -288,6 +292,7 @@
     </description>
 </item>
 <h1 tag="localmarks">Local marks</h1>
+<toc start="2"/>
 
 <item>
     <tags>m</tags>

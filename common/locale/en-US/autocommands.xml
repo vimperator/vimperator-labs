@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="autocommands">Automatic commands</h1>
+<toc start="2"/>
 
 <p>
     Autocommands are a way to automatically execute code when

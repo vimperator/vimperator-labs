@@ -9,6 +9,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 <h1 tag="quick-hints hints">Hints</h1>
+<toc start="2"/>
 
 Hints are the way in which &liberator.appname; allows you to follow links on a page. By
 providing each link with a suitable hint, you can access all links with a
