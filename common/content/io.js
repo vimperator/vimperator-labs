@@ -476,43 +476,37 @@ function IO() //{{{
      */
     function File(path, checkPWD)
     {
-        let self = { __proto__: File.prototype }
         if (arguments.length < 2)
             checkPWD = true;
 
-        self.file = services.create("file");
+        let file = services.create("file");
 
         if (path instanceof Ci.nsIFile)
-            self.file = path;
+            file = path;
         else if (/file:\/\//.test(path))
-            self.file = services.create("file:").getFileFromURLSpec(path);
+            file = services.create("file:").getFileFromURLSpec(path);
         else
         {
             let expandedPath = io.expandPath(path);
 
             if (!isAbsolutePath(expandedPath) && checkPWD)
-                self = joinPaths(io.getCurrentDirectory().path, expandedPath);
+                file = joinPaths(io.getCurrentDirectory().path, expandedPath);
             else
-                self.file.initWithPath(expandedPath);
+                file.initWithPath(expandedPath);
         }
-        self.wrappedNative = self.file;
-        return self;
+        file = XPCSafeJSObjectWrapper(file);
+        file.__proto__ = File.prototype;
+        return file;
     }
     File.prototype = {
-        __noSuchMethod__: function (meth, args)
-        {
-            return this.wrappedNative[meth].apply(this.wrappedNative,
-                args.map(function (a) a instanceof File ? a.wrappedNative : a));
-        },
-
         /**
          * Iterates over the objects in this directory.
          */
         iterDirectory: function ()
         {
-            if (!this.file.isDirectory())
+            if (!this.isDirectory())
                 throw Error("Not a directory");
-            let entries = this.file.directoryEntries;
+            let entries = this.directoryEntries;
             while (entries.hasMoreElements())
                 yield File(entries.getNext().QueryInterface(Ci.nsIFile));
         },
@@ -525,7 +519,7 @@ function IO() //{{{
          */
         readDirectory: function (sort)
         {
-            if (!this.file.isDirectory())
+            if (!this.isDirectory())
                 throw Error("Not a directory");
 
             let array = [e for (e in this.iterDirectory())];
@@ -550,7 +544,7 @@ function IO() //{{{
             if (!encoding)
                 encoding = options["fileencoding"];
 
-            ifstream.init(this.file, -1, 0, 0);
+            ifstream.init(this, -1, 0, 0);
             icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
 
             let buffer = [];
@@ -608,7 +602,7 @@ function IO() //{{{
             if (!perms)
                 perms = 0644;
 
-            ofstream.init(this.file, mode, perms, 0);
+            ofstream.init(this, mode, perms, 0);
             let ocstream = getStream(0);
             try
             {
@@ -638,13 +632,6 @@ function IO() //{{{
             return true;
         },
     };
-    /* It would be nice if there were a simpler way to do this. */
-    ("leafName nativeLeafName permissions permissionsOfLink lastModifiedTime " +
-     "lastModifiedTimeOfLink fileSize fileSizeOfLink target nativeTarget path " +
-     "nativePath parent directoryEntries").split(" ").forEach(function (p) {
-        File.prototype.__defineGetter__(p, function () this.file[p]);
-        File.prototype.__defineSetter__(p, function (val) this.file[p] = val);
-    });
 
 
     /////////////////////////////////////////////////////////////////////////////}}}
@@ -904,7 +891,7 @@ lookup:
 
             let process = services.create("process");
 
-            process.init(file.wrappedNative);
+            process.init(file);
             process.run(blocking, args.map(String), args.length);
 
             return process.exitValue;
@@ -989,7 +976,7 @@ lookup:
                 liberator.echomsg("sourcing \"" + filename + "\"", 2);
 
                 let str = file.read();
-                let uri = services.get("io").newFileURI(file.wrappedNative);
+                let uri = services.get("io").newFileURI(file);
 
                 // handle pure JavaScript files specially
                 if (/\.js$/.test(filename))

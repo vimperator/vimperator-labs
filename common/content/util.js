@@ -325,7 +325,7 @@ const util = { //{{{
         const TIME = Date.now();
 
         let zip = services.create("zipWriter");
-        zip.open(FILE.file, io.MODE_CREATE | io.MODE_WRONLY | io.MODE_TRUNCATE);
+        zip.open(FILE, io.MODE_CREATE | io.MODE_WRONLY | io.MODE_TRUNCATE);
         function addURIEntry(file, uri)
             zip.addEntryChannel(PATH + file, TIME, 9,
                 services.get("io").newChannel(uri, null, null), false);
@@ -791,7 +791,7 @@ const util = { //{{{
                 // Try to find a matching file.
                 let file = io.File(url);
                 if (file.exists() && file.isReadable())
-                    return services.get("io").newFileURI(file.wrappedNative).spec;
+                    return services.get("io").newFileURI(file).spec;
             }
             catch (e) {}
 

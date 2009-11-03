@@ -412,7 +412,7 @@ const liberator = (function () //{{{
                 let file = io.File(args[0]);
 
                 if (file.exists() && file.isReadable() && file.isFile())
-                    services.get("extensionManager").installItemFromFile(file.file, "app-profile");
+                    services.get("extensionManager").installItemFromFile(file, "app-profile");
                 else
                 {
                     if (file.exists() && file.isDirectory())
@@ -1878,6 +1878,8 @@ const liberator = (function () //{{{
         // this function is called when the chrome is ready
         startup: function ()
         {
+        try
+        {
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
@@ -2033,6 +2035,11 @@ const liberator = (function () //{{{
 
             liberator.dump("loaded in " + (Date.now() - start) + " ms");
             liberator.log(config.name + " fully initialized", 0);
+        }
+        catch (e)
+        {
+            liberator.reportError(e);
+        }
         },
 
         shutdown: function ()
