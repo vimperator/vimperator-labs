@@ -312,10 +312,10 @@
     <!-- Help elements {{{1 -->
 
     <xsl:template match="liberator:a" mode="pass-2">
-        <span liberator:highlight="HelpArg">[<xsl:apply-templates select="@*|node()"/>]</span>
+        <span liberator:highlight="HelpArg">{<xsl:apply-templates select="@*|node()"/>}</span>
     </xsl:template>
     <xsl:template match="liberator:oa" mode="pass-2">
-        <span liberator:highlight="HelpOptionalArg">{<xsl:apply-templates select="@*|node()"/>}</span>
+        <span liberator:highlight="HelpOptionalArg">[<xsl:apply-templates select="@*|node()"/>]</span>
     </xsl:template>
 
     <xsl:template match="liberator:note" mode="pass-2">
