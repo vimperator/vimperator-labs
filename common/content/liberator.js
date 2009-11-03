@@ -15,6 +15,13 @@ const EVAL_ERROR = "__liberator_eval_error";
 const EVAL_RESULT = "__liberator_eval_result";
 const EVAL_STRING = "__liberator_eval_string";
 
+function FailedAssertion(message) {
+    this.message = message;
+}
+FailedAssertion.prototype = {
+    __proto__: Error.prototype,
+};
+
 const liberator = (function () //{{{
 {
     ////////////////////////////////////////////////////////////////////////////////
@@ -363,8 +370,8 @@ const liberator = (function () //{{{
                 let arg = args.literalArg;
                 let items = getMenuItems();
 
-                if (!items.some(function (i) i.fullMenuPath == arg))
-                    return void liberator.echoerr("E334: Menu not found: " + arg);
+                liberator.assert(items.some(function (i) i.fullMenuPath == arg),
+                    "E334: Menu not found: " + arg);
 
                 for (let [, item] in Iterator(items))
                 {
@@ -453,8 +460,7 @@ const liberator = (function () //{{{
                         liberator.extensions.forEach(function (e) { action(e); });
                     else
                     {
-                        if (!name)
-                            return void liberator.echoerr("E471: Argument required"); // XXX
+                        liberator.assert(name, "E471: Argument required"); // XXX
 
                         let extension = liberator.getExtension(name);
                         if (extension)
@@ -481,8 +487,8 @@ const liberator = (function () //{{{
             function (args)
             {
                 let extension = liberator.getExtension(args[0]);
-                if (!extension || !extension.options)
-                    return void liberator.echoerr("E474: Invalid argument");
+                liberator.assert(extension && extension.options,
+                    "E474: Invalid argument");
                 if (args.bang)
                     window.openDialog(extension.options, "_blank", "chrome");
                 else
@@ -554,8 +560,7 @@ const liberator = (function () //{{{
                 command.description,
                 function (args)
                 {
-                    if (args.bang)
-                        return void liberator.echoerr("E478: Don't panic!");
+                    liberator.assert(!args.bang, "E478: Don't panic!");
 
                     liberator.help(args.literalArg, unchunked);
                 },
@@ -665,8 +670,7 @@ const liberator = (function () //{{{
                     function (args)
                     {
                         let toolbar = findToolbar(args[0]);
-                        if (!toolbar)
-                            return void liberator.echoerr("E474: Invalid argument");
+                        liberator.assert(toolbar, "E474: Invalid argument");
                         action(toolbar);
                     },
                     {
@@ -1104,6 +1108,20 @@ const liberator = (function () //{{{
         },
 
         /**
+         * Tests a condition and throws a FailedAssertion error on
+         * failure.
+         *
+         * @param {boolean} condition The condition to test.
+         * @param {string}  message The message to present to the
+         *                          user on failure.
+         */
+        assert: function (condition, message)
+        {
+            if (!condition)
+                throw new FailedAssertion(message);
+        },
+
+        /**
          * Outputs a plain message to the command line.
          *
          * @param {string} str The message to output.
@@ -1300,8 +1318,7 @@ const liberator = (function () //{{{
             else if (special && !command.bang)
                 err = "E477: No ! allowed";
 
-            if (err)
-                return void liberator.echoerr(err);
+            liberator.assert(!err, err);
             if (!silent)
                 commandline.command = str.replace(/^\s*:\s*/, "");
 
@@ -1509,8 +1526,7 @@ const liberator = (function () //{{{
             }
 
             let page = this.findHelp(topic, unchunked);
-            if (page == null)
-                return void liberator.echoerr("E149: Sorry, no help for " + topic);
+            liberator.assert(page != null, "E149: Sorry, no help for " + topic);
 
             liberator.open("liberator://help/" + page, { from: "help" });
             if (options.get("activate").has("all", "help"))
@@ -1530,8 +1546,7 @@ const liberator = (function () //{{{
         {
             function sourceDirectory(dir)
             {
-                if (!dir.isReadable())
-                    return void liberator.echoerr("E484: Can't open file " + dir.path);
+                liberator.assert(dir.isReadable(), "E484: Can't open file " + dir.path);
 
                 liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
                 dir.readDirectory(true).forEach(function (file) {
@@ -1750,6 +1765,25 @@ const liberator = (function () //{{{
                 services.get("appStartup").quit(Ci.nsIAppStartup.eForceQuit);
             else
                 window.goQuitApplication();
+        },
+
+        /**
+         * Traps errors in the called function, possibly reporting them.
+         *
+         * @param {function} func The function to call
+         * @param {object} self The 'this' object for the function.
+         */
+        trapErrors: function (func, self)
+        {
+            try
+            {
+                return func.apply(self || this, Array.slice(arguments, 2));
+            }
+            catch (e)
+            {
+                if (e instanceof FailedAssertion)
+                    liberator.echoerr(e.message);
+            }
         },
 
         /**

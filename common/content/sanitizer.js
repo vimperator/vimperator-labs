@@ -117,8 +117,7 @@ function Sanitizer() //{{{
 
             if (args.bang)
             {
-                if (args.length > 0)
-                    return void liberator.echoerr("E488: Trailing characters");
+                liberator.assert(args.length == 0, "E488: Trailing characters");
 
                 liberator.log("Sanitizing all items in 'sanitizeitems'...");
 
@@ -132,8 +131,7 @@ function Sanitizer() //{{{
             }
             else
             {
-                if (args.length == 0)
-                    return void liberator.echoerr("E471: Argument required");
+                liberator.assert(args.length > 0, "E471: Argument required");
 
                 for (let [, item] in Iterator(args.map(argToPref)))
                 {

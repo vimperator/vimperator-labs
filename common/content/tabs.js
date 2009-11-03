@@ -431,10 +431,8 @@ function Tabs() //{{{
                 // count is ignored if an arg is specified, as per Vim
                 if (arg)
                 {
-                    if (/^\d+$/.test(arg))
-                        index = arg - 1;
-                    else
-                        return void liberator.echoerr("E488: Trailing characters");
+                    liberator.assert(/^\d+$/.test(arg), "E488: Trailing characters");
+                    index = arg - 1;
                 }
                 else
                     index = count - 1;
@@ -527,8 +525,8 @@ function Tabs() //{{{
                 let arg = args[0];
 
                 // FIXME: tabmove! N should probably produce an error
-                if (arg && !/^([+-]?\d+)$/.test(arg))
-                    return void liberator.echoerr("E488: Trailing characters");
+                liberator.assert(!arg || /^([+-]?\d+)$/.test(arg),
+                    "E488: Trailing characters");
 
                 // if not specified, move to after the last tab
                 tabs.move(getBrowser().mCurrentTab, arg || "$", args.bang);
@@ -567,8 +565,7 @@ function Tabs() //{{{
             "Detach current tab to its own window",
             function ()
             {
-                if (tabs.count == 1)
-                    return void liberator.echoerr("Can't detach the last tab");
+                liberator.assert(tabs.count > 1, "Can't detach the last tab");
 
                 tabs.detachTab(null);
             },
@@ -600,16 +597,14 @@ function Tabs() //{{{
             "Attach the current tab to another window",
             function (args)
             {
-                if (args.length > 2 || args.some(function (i) i && !/^\d+$/.test(i)))
-                    return void liberator.echoerr("E488: Trailing characters");
+                liberator.assert(args.length <= 2 && !args.some(function (i) i && !/^\d+$/.test(i)),
+                    "E488: Trailing characters");
 
                 let [winIndex, tabIndex] = args.map(parseInt);
                 let win = liberator.windows[winIndex - 1];
 
-                if (!win)
-                    return void liberator.echoerr("Window " + winIndex + " does not exist");
-                else if (win == window)
-                    return void liberator.echoerr("Can't reattach to the same window");
+                liberator.assert(win, "Window " + winIndex + " does not exist");
+                liberator.assert(win != window, "Can't reattach to the same window");
 
                 let browser = win.getBrowser();
                 let dummy = browser.addTab("about:blank");
@@ -1192,8 +1187,8 @@ function Tabs() //{{{
          */
         selectAlternateTab: function ()
         {
-            if (tabs.alternate == null || tabs.getTab() == tabs.alternate)
-                return void liberator.echoerr("E23: No alternate page");
+            liberator.assert(tabs.alternate != null && tabs.getTab() != tabs.alternate,
+                "E23: No alternate page");
 
             // NOTE: this currently relies on v.tabs.index() returning the
             // currently selected tab index when passed null
@@ -1202,10 +1197,8 @@ function Tabs() //{{{
             // TODO: since a tab close is more like a bdelete for us we
             // should probably reopen the closed tab when a 'deleted'
             // alternate is selected
-            if (index == -1)
-                liberator.echoerr("E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-            else
-                tabs.select(index);
+            liberator.assert(index >= 0, "E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+            tabs.select(index);
         },
 
         // NOTE: when restarting a session FF selects the first tab and then the

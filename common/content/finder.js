@@ -417,10 +417,8 @@ function Finder() //{{{
                 var pattern = str;
             else
             {
-                if (lastSearchPattern)
-                    pattern = lastSearchPattern;
-                else
-                    return void liberator.echoerr("E35: No previous search pattern");
+                liberator.assert(lastSearchPattern, "E35: No previous search pattern");
+                pattern = lastSearchPattern;
             }
 
             this.clear();

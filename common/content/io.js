@@ -189,10 +189,8 @@ function IO() //{{{
                 arg = "~";
             else if (arg == "-")
             {
-                if (oldcwd)
-                    arg = oldcwd.path;
-                else
-                    return void liberator.echoerr("E186: No previous directory");
+                liberator.assert(oldcwd, "E186: No previous directory");
+                arg = oldcwd.path;
             }
 
             arg = io.expandPath(arg);
@@ -252,14 +250,13 @@ function IO() //{{{
         "Write current key mappings and changed options to the config file",
         function (args)
         {
-            if (args.length > 1)
-                return void liberator.echoerr("E172: Only one file name allowed");
+            liberator.assert(args.length <= 1, "E172: Only one file name allowed");
 
             let filename = args[0] || io.getRCFile(null, true).path;
             let file = io.File(filename);
 
-            if (file.exists() && !args.bang)
-                return void liberator.echoerr("E189: \"" + filename + "\" exists (add ! to override)");
+            liberator.assert(!file.exists() || args.bang,
+                "E189: \"" + filename + "\" exists (add ! to override)");
 
             // TODO: Use a set/specifiable list here:
             let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
@@ -341,8 +338,8 @@ function IO() //{{{
                 arg = "!" + arg;
 
             // replaceable bang and no previous command?
-            if (/((^|[^\\])(\\\\)*)!/.test(arg) && !lastRunCommand)
-                return void liberator.echoerr("E34: No previous command");
+            liberator.assert(!/((^|[^\\])(\\\\)*)!/.test(arg) || lastRunCommand,
+                "E34: No previous command");
 
             // NOTE: Vim doesn't replace ! preceded by 2 or more backslashes and documents it - desirable?
             // pass through a raw bang when escaped or substitute the last command

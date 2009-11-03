@@ -1126,11 +1126,9 @@ function QuickMarks() //{{{
         function (args)
         {
             // TODO: finish arg parsing - we really need a proper way to do this. :)
-            if (!args.bang && !args.string)
-                return void liberator.echoerr("E471: Argument required");
-
-            if (args.bang && args.string)
-                return void liberator.echoerr("E474: Invalid argument");
+            // assert(args.bang ^ args.string)
+            liberator.assert( args.bang ||  args.string, "E471: Argument required");
+            liberator.assert(!args.bang || !args.string, "E474: Invalid argument");
 
             if (args.bang)
                 quickmarks.removeAll();
@@ -1167,8 +1165,7 @@ function QuickMarks() //{{{
             args = args.string;
 
             // ignore invalid qmark characters unless there are no valid qmark chars
-            if (args && !/[a-zA-Z0-9]/.test(args))
-                return void liberator.echoerr("E283: No QuickMarks matching \"" + args + "\"");
+            liberator.assert(!args || /[a-zA-Z0-9]/.test(args), "E283: No QuickMarks matching \"" + args + "\"");
 
             let filter = args.replace(/[^a-zA-Z0-9]/g, "");
             quickmarks.list(filter);
@@ -1253,14 +1250,12 @@ function QuickMarks() //{{{
 
             marks = Array.concat(lowercaseMarks, uppercaseMarks, numberMarks);
 
-            if (marks.length == 0)
-                return void liberator.echoerr("No QuickMarks set");
+            liberator.assert(marks.length > 0, "No QuickMarks set");
 
             if (filter.length > 0)
             {
                 marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
-                if (marks.length == 0)
-                    return void liberator.echoerr("E283: No QuickMarks matching \"" + filter + "\"");
+                liberator.assert(marks.length >= 0, "E283: No QuickMarks matching \"" + filter + "\"");
             }
 
             let items = [[mark, qmarks.get(mark)] for ([k, mark] in Iterator(marks))];

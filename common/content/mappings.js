@@ -105,11 +105,11 @@ Map.prototype = {
             args.push(argument);
 
         let self = this;
-        // FIXME: Kludge.
-        if (this.names[0] != ".")
-            mappings.repeat = function () self.action.apply(self, args);
+        function repeat() self.action.apply(self, args);
+        if (this.names[0] != ".") // FIXME: Kludge.
+            mappings.repeat = repeat;
 
-        return this.action.apply(this, args);
+        return liberator.trapErrors(repeat);
     }
 
 }; //}}}

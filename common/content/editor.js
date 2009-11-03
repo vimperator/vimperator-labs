@@ -177,8 +177,8 @@ function Editor() //{{{
             function (args)
             {
                 let matches = args.string.match(RegExp("^\\s*($|" + abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
-                if (!matches)
-                    return void liberator.echoerr("E474: Invalid argument");
+                liberator.assert(matches, "E474: Invalid argument");
+
                 let [, lhs, rhs] = matches;
                 if (rhs)
                     editor.addAbbreviation(mode, lhs, rhs);
@@ -844,8 +844,7 @@ function Editor() //{{{
             // TODO: save return value in v:shell_error
             let args = commands.parseArgs(options["editor"], [], "*", true);
 
-            if (args.length < 1)
-                return void liberator.echoerr("No editor specified");
+            liberator.assert(args.length >= 1, "No editor specified");
 
             args.push(path);
             liberator.callFunctionInThread(null, io.run, io.expandPath(args.shift()), args, true);

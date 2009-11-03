@@ -200,14 +200,13 @@ Option.prototype = {
             scope = this.scope;
 
         let aValue;
-
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             aValue = tabs.options[this.name];
         if ((scope & options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
             aValue = this.globalValue;
 
         if (this.getter)
-            return this.getter.call(this, aValue);
+            return liberator.trapErrors(this.getter, this, aValue);
 
         return aValue;
     },
@@ -228,7 +227,7 @@ Option.prototype = {
             return null;
 
         if (this.setter)
-            newValue = this.setter(newValue);
+            newValue = liberator.trapErrors(this.setter, this, newValue);
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
@@ -581,12 +580,11 @@ function Options() //{{{
             }
 
             let opt = options.parseOpt(arg, modifiers);
-            if (!opt)
-                return void liberator.echoerr("Error parsing :set command: " + arg);
+            liberator.assert(opt, "Error parsing :set command: " + arg);
 
             let option = opt.option;
-            if (option == null && !opt.all)
-                return void liberator.echoerr("E518: Unknown option: " + arg);
+            liberator.assert(option != null || opt.all,
+                "E518: Unknown option: " + arg);
 
             // reset a variable to its default value
             if (opt.reset)
@@ -630,8 +628,7 @@ function Options() //{{{
 
                 if (opt.option.type == "boolean")
                 {
-                    if (opt.valueGiven)
-                        return void liberator.echoerr("E474: Invalid argument: " + arg);
+                    liberator.assert(!opt.valueGiven, "E474: Invalid argument: " + arg);
                     opt.values = !opt.unsetBoolean;
                 }
                 let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
@@ -769,42 +766,38 @@ function Options() //{{{
                 if (!matches[1])
                 {
                     let reference = liberator.variableReference(matches[2]);
-                    if (!reference[0] && matches[3])
-                        return void liberator.echoerr("E121: Undefined variable: " + matches[2]);
+                    liberator.assert(reference[0] || !matches[3],
+                        "E121: Undefined variable: " + matches[2]);
 
                     let expr = liberator.evalExpression(matches[4]);
-                    if (expr === undefined)
-                        return void liberator.echoerr("E15: Invalid expression: " + matches[4]);
-                    else
-                    {
-                        if (!reference[0])
-                        {
-                            if (reference[2] == "g")
-                                reference[0] = liberator.globalVariables;
-                            else
-                                return; // for now
-                        }
+                    liberator.assert(expr !== undefined, "E15: Invalid expression: " + matches[4]);
 
-                        if (matches[3])
-                        {
-                            if (matches[3] == "+")
-                                reference[0][reference[1]] += expr;
-                            else if (matches[3] == "-")
-                                reference[0][reference[1]] -= expr;
-                            else if (matches[3] == ".")
-                                reference[0][reference[1]] += expr.toString();
-                        }
+                    if (!reference[0])
+                    {
+                        if (reference[2] == "g")
+                            reference[0] = liberator.globalVariables;
                         else
-                            reference[0][reference[1]] = expr;
+                            return; // for now
                     }
+
+                    if (matches[3])
+                    {
+                        if (matches[3] == "+")
+                            reference[0][reference[1]] += expr;
+                        else if (matches[3] == "-")
+                            reference[0][reference[1]] -= expr;
+                        else if (matches[3] == ".")
+                            reference[0][reference[1]] += expr.toString();
+                    }
+                    else
+                        reference[0][reference[1]] = expr;
                 }
             }
             // 1 - name
             else if (matches = args.match(/^\s*([\w:]+)\s*$/))
             {
                 let reference = liberator.variableReference(matches[1]);
-                if (!reference[0])
-                    return void liberator.echoerr("E121: Undefined variable: " + matches[1]);
+                liberator.assert(reference[0], "E121: Undefined variable: " + matches[1]);
 
                 let value = reference[0][reference[1]];
                 let prefix = typeof value == "number"   ? "#" :

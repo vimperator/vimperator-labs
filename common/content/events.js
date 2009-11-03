@@ -56,7 +56,7 @@ function AutoCommands() //{{{
             }
             catch (e)
             {
-                return void liberator.echoerr("E475: Invalid argument: " + regex);
+                liberator.assert(false, "E475: Invalid argument: " + regex);
             }
 
             if (event)
@@ -66,8 +66,8 @@ function AutoCommands() //{{{
                 validEvents.push("*");
 
                 events = event.split(",");
-                if (!events.every(function (event) validEvents.indexOf(event) >= 0))
-                    return void liberator.echoerr("E216: No such group or event: " + event);
+                liberator.assert(events.every(function (event) validEvents.indexOf(event) >= 0),
+                    "E216: No such group or event: " + event);
             }
 
             if (cmd) // add new command, possibly removing all others with the same event/pattern
@@ -124,12 +124,12 @@ function AutoCommands() //{{{
                 let validEvents = config.autocommands.map(function (e) e[0]);
 
                 // TODO: add command validators
-                if (event == "*")
-                    return void liberator.echoerr("E217: Can't execute autocommands for ALL events");
-                else if (validEvents.indexOf(event) == -1)
-                    return void liberator.echoerr("E216: No such group or event: " + args);
-                else if (!autocommands.get(event).some(function (c) c.pattern.test(defaultURL)))
-                    return void liberator.echomsg("No matching autocommands");
+                liberator.assert(event != "*",
+                    "E217: Can't execute autocommands for ALL events");
+                liberator.assert(validEvents.indexOf(event) >= 0,
+                    "E216: No such group or event: " + args);
+                liberator.assert(autocommands.get(event).some(function (c) c.pattern.test(defaultURL)),
+                    "No matching autocommands");
 
                 if (this.name == "doautoall" && liberator.has("tabs"))
                 {
@@ -649,8 +649,7 @@ function Events() //{{{
         "Delete macros",
         function (args)
         {
-            if (args.bang && args.string)
-                return void liberator.echoerr("E474: Invalid argument");
+            liberator.assert(!args.bang || !args.string, "E474: Invalid argument");
 
             if (args.bang)
                 events.deleteMacros();
@@ -724,9 +723,9 @@ function Events() //{{{
          */
         startRecording: function (macro)
         {
-            if (!/[a-zA-Z0-9]/.test(macro))
                 // TODO: ignore this like Vim?
-                return void liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+            liberator.assert(/[a-zA-Z0-9]/.test(macro),
+                "E354: Invalid register name: '" + macro + "'");
 
             modes.isRecording = true;
 

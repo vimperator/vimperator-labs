@@ -189,7 +189,7 @@ Command.prototype = {
                 return;
             args.count = count;
             args.bang = bang;
-            self.action.call(self, args, modifiers);
+            liberator.trapErrors(self.action, self, args, modifiers)
         }
 
         if (this.hereDoc)
@@ -714,8 +714,7 @@ function Commands() //{{{
                                 if (sep == "=" || /\s/.test(sep) && opt[1] != this.OPTION_NOARG)
                                 {
                                     [count, arg, quote, error] = getNextArg(sub.substr(optname.length + 1));
-                                    if (error)
-                                        return void liberator.echoerr(error);
+                                    liberator.assert(!error, error);
 
                                     // if we add the argument to an option after a space, it MUST not be empty
                                     if (sep != "=" && !quote && arg.length == 0)
@@ -808,8 +807,7 @@ function Commands() //{{{
 
                 // if not an option, treat this token as an argument
                 let [count, arg, quote, error] = getNextArg(sub);
-                if (error)
-                    return void liberator.echoerr(error);
+                liberator.assert(!error, error);
 
                 if (complete)
                 {
@@ -1018,8 +1016,7 @@ function Commands() //{{{
         {
             let cmd = args[0];
 
-            if (cmd != null && /\W/.test(cmd))
-                return void liberator.echoerr("E182: Invalid command name");
+            liberator.assert(!/\W/.test(cmd || ''), "E182: Invalid command name");
 
             if (args.literalArg)
             {

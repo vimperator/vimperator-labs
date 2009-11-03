@@ -28,8 +28,8 @@ function Buffer() //{{{
 
     function setZoom(value, fullZoom)
     {
-        if (value < ZOOM_MIN || value > ZOOM_MAX)
-            return void liberator.echoerr("Zoom value out of range (" + ZOOM_MIN + " - " + ZOOM_MAX + "%)");
+        liberator.assert(value >= ZOOM_MIN && value <= ZOOM_MAX,
+            "Zoom value out of range (" + ZOOM_MIN + " - " + ZOOM_MAX + "%)");
 
         ZoomManager.useFullZoom = fullZoom;
         ZoomManager.zoom = value / 100;
@@ -534,8 +534,8 @@ function Buffer() //{{{
             let arg = args[0];
 
             // FIXME: arg handling is a bit of a mess, check for filename
-            if (arg && (liberator.has("Win32") || arg[0] != ">"))
-                return void liberator.echoerr("E488: Trailing characters");
+            liberator.assert(!arg || arg[0] == ">" && !liberator.has("Win32"),
+                "E488: Trailing characters");
 
             options.withContext(function () {
                 if (arg)
@@ -584,8 +584,8 @@ function Buffer() //{{{
 
             let titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
-            if (arg && titles.indexOf(arg) == -1)
-                return void liberator.echoerr("E475: Invalid argument: " + arg);
+            liberator.assert(!arg || titles.indexOf(arg) >= 0,
+                "E475: Invalid argument: " + arg);
 
             if (options["usermode"])
                 options["usermode"] = false;
@@ -619,8 +619,8 @@ function Buffer() //{{{
             {
                 let file = io.File(filename);
 
-                if (file.exists() && !args.bang)
-                    return void liberator.echoerr("E13: File exists (add ! to override)");
+                liberator.assert(!file.exists() || args.bang,
+                    "E13: File exists (add ! to override)");
 
                 chosenData = { file: file, uri: window.makeURI(doc.location.href, doc.characterSet) };
             }
@@ -685,7 +685,7 @@ function Buffer() //{{{
                 level = util.Math.constrain(level, ZOOM_MIN, ZOOM_MAX);
             }
             else
-                return void liberator.echoerr("E488: Trailing characters");
+                liberator.assert(false, "E488: Trailing characters");
 
             if (args.bang)
                 buffer.fullZoom = level;
@@ -1701,10 +1701,10 @@ function Marks() //{{{
             let special = args.bang;
             args = args.string;
 
-            if (!special && !args)
-                return void liberator.echoerr("E471: Argument required");
-            if (special && args)
-                return void liberator.echoerr("E474: Invalid argument");
+            // assert(special ^ args)
+            liberator.assert( special ||  args, "E471: Argument required");
+            liberator.assert(!special || !args, "E474: Invalid argument");
+
             let matches;
             if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/))
             {
@@ -1744,10 +1744,10 @@ function Marks() //{{{
         function (args)
         {
             let mark = args[0];
-            if (mark.length > 1)
-                return void liberator.echoerr("E488: Trailing characters");
-            if (!/[a-zA-Z]/.test(mark))
-                return void liberator.echoerr("E191: Argument must be a letter or forward/backward quote");
+
+            liberator.assert(mark.length <= 1, "E488: Trailing characters");
+            liberator.assert(/[a-zA-Z]/.test(mark),
+                "E191: Argument must be a letter or forward/backward quote");
 
             marks.add(mark);
         },
@@ -1760,8 +1760,8 @@ function Marks() //{{{
             args = args.string;
 
             // ignore invalid mark characters unless there are no valid mark chars
-            if (args && !/[a-zA-Z]/.test(args))
-                return void liberator.echoerr("E283: No marks matching " + args.quote());
+            liberator.assert(!args || /[a-zA-Z]/.test(args),
+                "E283: No marks matching " + args.quote());
 
             let filter = args.replace(/[^a-zA-Z]/g, "");
             marks.list(filter);
@@ -1941,14 +1941,12 @@ function Marks() //{{{
         {
             let marks = getSortedMarks();
 
-            if (marks.length == 0)
-                return void liberator.echoerr("No marks set");
+            liberator.assert(marks.length > 0, "No marks set");
 
             if (filter.length > 0)
             {
                 marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
-                if (marks.length == 0)
-                    return void liberator.echoerr("E283: No marks matching " + filter.quote());
+                liberator.assert(marks.length > 0, "E283: No marks matching " + filter.quote());
             }
 
             let list = template.tabular(
