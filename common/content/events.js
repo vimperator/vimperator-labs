@@ -338,7 +338,7 @@ function Events() //{{{
 
     var lastFocus = null;
 
-    var macros = storage.newMap("macros", true, { privateData: true });
+    var macros = storage.newMap("macros", { store: true, privateData: true });
 
     var currentMacro = "";
     var lastMacro = "";

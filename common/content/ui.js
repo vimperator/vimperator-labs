@@ -26,8 +26,8 @@ function CommandLine() //{{{
 
     const callbacks = {};
 
-    storage.newArray("history-search", true, { privateData: true });
-    storage.newArray("history-command", true, { privateData: true });
+    storage.newArray("history-search", { store: true, privateData: true });
+    storage.newArray("history-command", { store: true, privateData: true });
 
     // Really inideal.
     let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.

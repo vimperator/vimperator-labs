@@ -1581,8 +1581,8 @@ function Marks() //{{{
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
 
-    var localMarks = storage.newMap("local-marks", true, { privateData: true });
-    var urlMarks = storage.newMap("url-marks", true, { privateData: true });
+    var localMarks = storage.newMap("local-marks", { store: true, privateData: true });
+    var urlMarks = storage.newMap("url-marks", { store: true, privateData: true });
 
     var pendingJumps = [];
     var appContent = document.getElementById("appcontent");

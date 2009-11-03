@@ -320,14 +320,14 @@ var storage = {
         return keys[key];
     },
 
-    newMap: function newMap(key, store, options)
+    newMap: function newMap(key, options)
     {
-        return this.newObject(key, ObjectStore, store, options);
+        return this.newObject(key, ObjectStore, options);
     },
 
-    newArray: function newArray(key, store, options)
+    newArray: function newArray(key, options)
     {
-        return this.newObject(key, ArrayStore, store, { type: Array, __proto__: options });
+        return this.newObject(key, ArrayStore, { type: Array, __proto__: options });
     },
 
     addObserver: function addObserver(key, callback, ref)

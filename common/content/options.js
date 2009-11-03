@@ -441,7 +441,7 @@ function Options() //{{{
             opt.set(opt.value, options.OPTION_SCOPE_GLOBAL);
     }
 
-    storage.newMap("options", false);
+    storage.newMap("options", { store: false });
     storage.addObserver("options", optionObserver, window);
 
     function storePreference(name, value)

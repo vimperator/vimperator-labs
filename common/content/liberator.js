@@ -1783,7 +1783,7 @@ const liberator = (function () //{{{
                 }
                 if (liberator.storeErrors)
                 {
-                    let errors = storage.newArray("errors", false);
+                    let errors = storage.newArray("errors", { store: false });
                     errors.toString = function () [String(v[0]) + "\n" + v[1] for ([k, v] in this)].join("\n\n");
                     errors.push([new Date, obj + obj.stack]);
                 }
