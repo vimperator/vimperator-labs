@@ -29,14 +29,14 @@
 <item>
     <tags>:set :se</tags>
     <spec>:se[t]</spec>
-    <description>
+    <description short="true">
         <p>Show all options that differ from their default value.</p>
     </description>
 </item>
 
 <item>
     <spec>:se[t] all</spec>
-    <description>
+    <description short="true">
         <p>Show all options.</p>
     </description>
 </item>
@@ -52,11 +52,11 @@
 <item>
     <spec>:se[t] <a>option</a> […]</spec>
     <description>
-        <p>
-            Toggle option: set, switch it on.
-            Number option: show value.
-            String option: show value.
-        </p>
+        <dl>
+            <dt>Toggle option</dt> <dd>set, switch it on.</dd>
+            <dt>Number option</dt> <dd>show value.</dd>
+            <dt>String option</dt> <dd>show value.</dd>
+        </dl>
     </description>
 </item>
 

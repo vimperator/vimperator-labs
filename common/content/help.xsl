@@ -174,14 +174,19 @@
 
     <!-- Items {{{1 -->
 
+    <xsl:template match="liberator:strut" mode="pass-2">
+        <div style="clear: both"/>
+    </xsl:template>
     <xsl:template match="liberator:item" mode="pass-2">
         <div liberator:highlight="HelpItem">
-            <xsl:apply-templates select="liberator:tags|liberator:spec"/>
-            <hr style="border: 0; height: 0; margin: 0; width: 100%; float: right;"/>
-            <div liberator:highlight="HelpOptInfo">
-                <xsl:apply-templates select="liberator:type|liberator:default"/>
-                <div style="clear: both;"/>
-            </div>
+            <xsl:apply-templates select="liberator:tags|liberator:spec|liberator:strut"/>
+            <xsl:if test="not(liberator:description/@short)">
+                <hr style="border: 0; height: 0; margin: 0; width: 100%; float: right;"/>
+                <div liberator:highlight="HelpOptInfo">
+                    <xsl:apply-templates select="liberator:type|liberator:default"/>
+                    <div style="clear: both;"/>
+                </div>
+            </xsl:if>
             <xsl:apply-templates select="liberator:description"/>
             <div style="clear: both;"/>
         </div>

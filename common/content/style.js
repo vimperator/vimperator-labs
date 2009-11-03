@@ -163,6 +163,7 @@ Highlights.prototype.CSS = <![CDATA[
     HelpOptInfo                                 display: inline-block; margin-bottom: 1ex;
 
     HelpParagraph,html|p,liberator://help/*     display: block; margin: 1em 0em;
+    HelpParagraph:first-child                   margin-top: 0;
     HelpSpec                                    display: block; margin-left: -10em; float: left; clear: left; color: #527BBD;
 
     HelpString                                  display: inline-block; color: green; font-weight: normal; vertical-align: text-top;
