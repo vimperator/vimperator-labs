@@ -739,7 +739,7 @@ function Bookmarks() //{{{
                 if (!shortcutURL)
                     return [url, null];
 
-                let data = unescape(postData || "");
+                let data = window.unescape(postData || "");
                 if (/%s/i.test(shortcutURL) || /%s/i.test(data))
                 {
                     var charset = "";
@@ -764,9 +764,7 @@ function Bookmarks() //{{{
                         postData = window.getPostDataStream(data, param, encodedParam, "application/x-www-form-urlencoded");
                 }
                 else if (param)
-                {
-                    return [url, null];
-                }
+                    return [shortcutURL, null];
                 return [shortcutURL, postData];
             }
 

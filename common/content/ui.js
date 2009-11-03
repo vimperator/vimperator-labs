@@ -2140,10 +2140,7 @@ function StatusLine() //{{{
             // ripped from Firefox; modified
             function losslessDecodeURI(url) {
                 // 1. decodeURI decodes %25 to %, which creates unintended
-                //    encoding sequences. Re-encode it, unless it's part of
-                //    a sequence that survived decodeURI, i.e. one for:
-                //    ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '#'
-                //    (RFC 3987 section 3.2)
+                //    encoding sequences.
                 url = url.split("%25").map(decodeURI).join("%25");
                 // 2. Re-encode whitespace so that it doesn't get eaten away
                 //    by the location bar (bug 410726).
