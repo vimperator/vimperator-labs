@@ -374,7 +374,6 @@
 
     <xsl:template name="info">
         <xsl:param name="label"/>
-        <xsl:param name="prelink" select="''"/>
         <xsl:param name="link" select="@href"/>
         <div liberator:highlight="HelpInfo">
             <div liberator:highlight="HelpInfoLabel">
@@ -382,17 +381,22 @@
             </div>
             <a liberator:highlight="HelpInfoValue">
                 <xsl:if test="$link">
-                    <xsl:attribute name="href"><xsl:value-of select="concat($prelink, $link)"/></xsl:attribute>
+                    <xsl:attribute name="href"><xsl:value-of select="$link"/></xsl:attribute>
                 </xsl:if>
                 <xsl:apply-templates/>
             </a>
         </div>
     </xsl:template>
+    <xsl:template match="liberator:author[@email]" mode="pass-2">
+        <xsl:call-template name="info">
+            <xsl:with-param name="label" select="'Author'"/>
+            <xsl:with-param name="link" select="concat('mailto:', @email)"/>
+        </xsl:call-template>
+    </xsl:template>
     <xsl:template match="liberator:author" mode="pass-2">
         <xsl:call-template name="info">
             <xsl:with-param name="label" select="'Author'"/>
-            <xsl:with-param name="prelink" select="'mailto:'"/>
-            <xsl:with-param name="link" select="@email"/>
+            <xsl:with-param name="link" select="@href"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:license" mode="pass-2">
