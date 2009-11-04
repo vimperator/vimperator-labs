@@ -150,7 +150,7 @@ Highlights.prototype.CSS = <![CDATA[
     HelpKey                                     color: #102663;
 
     HelpLink,html|a,liberator://help/*          text-decoration: none;
-    HelpLink:hover                              text-decoration: underline;
+    HelpLink[href]:hover                        text-decoration: underline;
 
     HelpList,html|ul,liberator://help/*         display: block; list-style: outside disc;
     HelpOrderedList,html|ol,liberator://help/*  display: block; list-style: outside decimal;
