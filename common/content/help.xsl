@@ -375,28 +375,34 @@
     <xsl:template name="info">
         <xsl:param name="label"/>
         <xsl:param name="link" select="@href"/>
+        <xsl:param name="nodes" select="node()"/>
+        <xsl:param name="extra"/>
         <div liberator:highlight="HelpInfo">
             <div liberator:highlight="HelpInfoLabel">
                 <xsl:value-of select="$label"/>:
             </div>
-            <a liberator:highlight="HelpInfoValue">
-                <xsl:if test="$link">
-                    <xsl:attribute name="href"><xsl:value-of select="$link"/></xsl:attribute>
-                </xsl:if>
-                <xsl:apply-templates/>
-            </a>
+            <span liberator:highlight="HelpInfoValue">
+                <a>
+                    <xsl:if test="$link">
+                        <xsl:attribute name="href"><xsl:value-of select="$link"/></xsl:attribute>
+                    </xsl:if>
+                    <xsl:copy-of select="exsl:node-set($nodes)"/>
+                </a>
+                <xsl:copy-of select="exsl:node-set($extra)"/>
+            </span>
         </div>
     </xsl:template>
     <xsl:template match="liberator:author[@email]" mode="pass-2">
         <xsl:call-template name="info">
             <xsl:with-param name="label" select="'Author'"/>
-            <xsl:with-param name="link" select="concat('mailto:', @email)"/>
+            <xsl:with-param name="extra">
+                <xsl:text> </xsl:text><a href="mailto:{@email}">✉</a>
+            </xsl:with-param>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:author" mode="pass-2">
         <xsl:call-template name="info">
             <xsl:with-param name="label" select="'Author'"/>
-            <xsl:with-param name="link" select="@href"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:license" mode="pass-2">
@@ -405,14 +411,12 @@
         </xsl:call-template>
     </xsl:template>
     <xsl:template match="liberator:plugin" mode="pass-2">
-        <div liberator:highlight="HelpInfo">
-            <div liberator:highlight="HelpInfoLabel">
-                Plugin:
-            </div>
-            <a liberator:highlight="HelpInfoValue" href="{@href}">
-                <xsl:value-of select="@name"/>
-            </a>
-        </div>
+        <xsl:call-template name="info">
+            <xsl:with-param name="label" select="'Plugin'"/>
+            <xsl:with-param name="nodes">
+                <span><xsl:value-of select="@name"/></span>
+            </xsl:with-param>
+        </xsl:call-template>
         <xsl:apply-templates/>
     </xsl:template>
 
