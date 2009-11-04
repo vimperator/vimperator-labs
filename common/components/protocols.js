@@ -102,7 +102,6 @@ function Liberator()
     this.HELP_TAGS = {};
     this.FILE_MAP = {};
     this.OVERLAY_MAP = {};
-    this.NAMESPACES = [];
 }
 Liberator.prototype = {
     contractID:       "@mozilla.org/network/protocol;1?name=liberator",
@@ -122,9 +121,12 @@ Liberator.prototype = {
 
     init: function (obj)
     {
-        for each (let prop in ["HELP_TAGS", "FILE_MAP", "OVERLAY_MAP", "NAMESPACES"])
-            for (let [k, v] in Iterator(obj[prop]))
+        for each (let prop in ["HELP_TAGS", "FILE_MAP", "OVERLAY_MAP"])
+        {
+            this[prop] = this[prop].constructor();
+            for (let [k, v] in Iterator(obj[prop] || {}))
                 this[prop][k] = v
+        }
     },
 
     scheme: "liberator",

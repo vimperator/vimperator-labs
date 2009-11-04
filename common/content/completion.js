@@ -262,7 +262,7 @@ CompletionContext.prototype = {
                 lists.pop());
         if (!substrings) // FIXME: How is this undefined?
             return [];
-        return util.Array.uniq(substrings);
+        return util.Array.uniq(Array.slice(substrings));
     },
     // Temporary
     get longestAllSubstring()
@@ -1049,8 +1049,10 @@ function Completion() //{{{
                 let end = (frame == -1 ? lastIdx : get(frame + 1)[OFFSET]);
 
                 cacheKey = null;
-                let obj = [[cache.evalContext, "Local Variables"], [userContext, "Global Variables"],
-                           [modules, "modules"], [window, "window"]]; // Default objects;
+                let obj = [[cache.evalContext, "Local Variables"],
+                           [userContext, "Global Variables"],
+                           [modules, "modules"],
+                           [window, "window"]]; // Default objects;
                 // Is this an object dereference?
                 if (dot < statement) // No.
                     dot = statement - 1;

@@ -1205,6 +1205,8 @@ const liberator = (function () //{{{
             XML.ignoreWhiteSpace = false;
             XML.prettyPrinting = false;
             services.get("subscriptLoader").loadSubScript(uri, context);
+            if (liberator.initialized)
+                liberator.initHelp();
         },
 
         eval: function (str, context)
@@ -1420,9 +1422,10 @@ const liberator = (function () //{{{
         initHelp: function ()
         {
             let namespaces = [config.name.toLowerCase(), "liberator"];
-            let tagMap = {};
-            let fileMap = {};
-            let overlayMap = {};
+            services.get("liberator:").init({});
+            let tagMap = services.get("liberator:").HELP_TAGS;
+            let fileMap = services.get("liberator:").FILE_MAP;
+            let overlayMap = services.get("liberator:").OVERLAY_MAP;
             function XSLTProcessor(sheet)
             {
                 let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
@@ -1491,18 +1494,7 @@ const liberator = (function () //{{{
                 </document>.toXMLString();
             fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
 
-            services.get("liberator:").init({
-                HELP_TAGS: tagMap, FILE_MAP: fileMap,
-                OVERLAY_MAP: overlayMap, NAMESPACES: namespaces
-            });
-
             addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
-
-            // TODO: Don't do this.
-            services.get("liberator:").init({
-                HELP_TAGS: tagMap, FILE_MAP: fileMap,
-                OVERLAY_MAP: overlayMap, NAMESPACES: namespaces
-            });
         },
 
         /**
@@ -1878,8 +1870,6 @@ const liberator = (function () //{{{
         // this function is called when the chrome is ready
         startup: function ()
         {
-        try
-        {
             let start = Date.now();
             liberator.log("Initializing liberator object...", 0);
 
@@ -2029,17 +2019,14 @@ const liberator = (function () //{{{
 
                 liberator.triggerObserver("enter", null);
                 autocommands.trigger(config.name + "Enter", {});
+
+                liberator.initialized = true;
             }, 0);
 
             statusline.update();
 
             liberator.dump("loaded in " + (Date.now() - start) + " ms");
             liberator.log(config.name + " fully initialized", 0);
-        }
-        catch (e)
-        {
-            liberator.reportError(e);
-        }
         },
 
         shutdown: function ()
