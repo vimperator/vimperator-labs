@@ -324,21 +324,21 @@
     </xsl:template>
 
     <xsl:template match="liberator:note" mode="pass-2">
-        <div style="clear: both;"/>
-        <xsl:apply-templates select="@tag"/>
         <p style="clear: both;">
+            <xsl:apply-templates select="@*"/>
+            <div style="clear: both;"/>
             <span liberator:highlight="HelpNote">Note:</span>
             <xsl:text> </xsl:text> 
-            <xsl:apply-templates select="@*[name()!='tag']|node()"/>
+            <xsl:apply-templates select="node()"/>
         </p>
     </xsl:template>
     <xsl:template match="liberator:warning" mode="pass-2">
-        <div style="clear: both;"/>
-        <xsl:apply-templates select="@tag"/>
         <p style="clear: both;">
+            <xsl:apply-templates select="@*"/>
+            <div style="clear: both;"/>
             <span liberator:highlight="HelpWarning">Warning:</span>
             <xsl:text> </xsl:text> 
-            <xsl:apply-templates select="@*[name()!='tag']|node()"/>
+            <xsl:apply-templates select="node()"/>
         </p>
     </xsl:template>
     <xsl:template match="liberator:default" mode="pass-2">

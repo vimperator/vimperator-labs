@@ -124,11 +124,11 @@ Highlights.prototype.CSS = <![CDATA[
     Help                                        font-size: 8pt; line-height: 1.4em; font-family: -moz-fixed;
 
     HelpArg                                     color: #6A97D4;
-    HelpOptionalArg,liberator|oa                color: #6A97D4;
+    HelpOptionalArg                             color: #6A97D4;
 
     HelpBody                                    display: block; margin: 1em auto; max-width: 100ex;
     HelpBorder,*,liberator://help/*             border-color: silver; border-width: 0px; border-style: solid;
-    HelpCode                                    display: block; white-space: pre; margin-left: 2em; font-family: courier, monospace;
+    HelpCode                                    display: block; white-space: pre; margin-left: 2em; font-family: Terminus, Fixed, monospace;
 
     HelpDefault                                 margin-right: 1ex; white-space: pre;
 
@@ -136,7 +136,6 @@ Highlights.prototype.CSS = <![CDATA[
     HelpEm,html|em,liberator://help/*           font-weight: bold; font-style: normal;
 
     HelpEx                                      display: inline-block; color: #527BBD; font-weight: bold;
-    HelpEx:hover                                text-decoration: underline; cursor: pointer;
 
     HelpExample                                 display: block; margin: 1em 0;
     HelpExample::before                         content: "Example: "; font-weight: bold;
@@ -159,7 +158,6 @@ Highlights.prototype.CSS = <![CDATA[
     HelpNote                                    color: red; font-weight: bold;
 
     HelpOpt                                     color: #106326;
-    HelpOpt:hover                               text-decoration: underline; cursor: pointer;
     HelpOptInfo                                 display: inline-block; margin-bottom: 1ex;
 
     HelpParagraph,html|p,liberator://help/*     display: block; margin: 1em 0em;

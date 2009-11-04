@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
-<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd" [
+    <!ENTITY tab "&#xa0;&#xa0;&#xa0;">
+]>
 
 <document
     name="developer"
@@ -63,6 +65,81 @@
     documentation, ask on the mailing list or on
     <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>.
 </p>
+
+<h3 tag="help-tags help-xml">Help tags</h3>
+
+<p>
+    The following is a list of the more common XML tags used in help pages,
+    along with their highlight groups.
+</p>
+
+<dl>
+    <dt>Layout</dt><dd/>
+    <dt>p</dt>         <dd>A paragraph (HelpParagraph)</dd>
+    <dt>h1</dt>        <dd>A first-level heading (HelpHead)</dd>
+    <dt>h2</dt>        <dd>A second-level heading (HelpSubhead)</dd>
+    <dt>h3</dt>        <dd>A third-level heading (HelpSubsubhead)</dd>
+    <dt>code</dt>      <dd>A pre-formatted code block. (HelpCode)</dd>
+    <dt>note</dt>      <dd><note style="margin: 0;">A note paragraph. (HelpNote)</note></dd>
+    <dt>warning</dt>   <dd><warning style="margin: 0;">A warning paragraph. (HelpWarning)</warning></dd>
+</dl>
+<dl>
+    <dt>Generic</dt><dd/>
+    <dt>link</dt>         <dd>A generic link. (HelpLink)</dd>
+    <dt>&tab;@topic</dt>  <dd>The topic of the link. Either a help topic or a fully-qualified URI.</dd>
+    <dt>em</dt>           <dd><em>Emphasized</em> text. (HelpEm)</dd>
+    <dt>str</dt>          <dd>A <str>string</str>, with its contents wrapped in quotes. (HelpString)</dd>
+    <dt>logo</dt>         <dd>&liberator.appname;'s logo. (Logo)</dd>
+</dl>
+<dl>
+    <dt>Items</dt><dd/>
+    <dt>item</dt>       <dd>A help entry (HelpItem)</dd>
+    <dt>&tab;tags</dt>  <dd>See the 'Tagging' section (HelpTags)</dd>
+    <dt>&tab;spec</dt>  <dd>The specification for this item, such as an example command-line. (HelpSpec)</dd>
+    <dt>&tab;type</dt>  <dd>For options, the type of the option.
+                            <em>number</em>, <em>boolean</em>, <em>string</em>, <em>string</em>, <em>stringlist</em>, or <em>charlist</em>.
+                            (HelpType)
+                        </dd>
+    <dt>&tab;default</dt>     <dd>For options, the default value. (HelpDefault)</dd>
+    <dt>&tab;description</dt> <dd>The description of this help item. (HelpDescription)</dd>
+    <dt>a</dt>  <dd>Required <a>argument</a>. (HelpArg)</dd>
+    <dt>oa</dt> <dd>Optional <oa>argument</oa>. (HelpOptionalArg)</dd>
+</dl>
+<dl>
+    <dt>Tagging</dt><dd/>
+    <dt>tags</dt>   <dd>Space-separated list of strings to tag. Displayed right-aligned, and used for cross-linking. (HelpTags)</dd>
+    <dt>@tag</dt>   <dd>The tag attribute. Applied to any element, generates a &lt;tags> element with its value for its contents. (HelpTag)</dd>
+</dl>
+<dl>
+    <dt>Linking</dt><dd/>
+    <dt>o</dt>          <dd>Link to an option. (HelpOpt)</dd>
+    <dt>ex</dt>         <dd>Link to an ex command. (HelpEx)</dd>
+    <dt>k</dt>          <dd>Link to a key. (HelpKey)</dd>
+    <dt>&tab;@name</dt> <dd>The name attribute to &lt;k>. When provided, &lt;<a>value</a>> is prepended to
+                            the element's contents, i.e., <em>&lt;k name="lt"/></em> becomes <em><k name="lt"/></em>.
+                        </dd>
+    <dt>t</dt>          <dd>Links to an arbitrary help topic. (HelpTopic)</dd>
+</dl>
+<dl>
+    <dt>Plugins</dt><dd/>
+    <dt>plugin</dt>            <dd>The container tag used for describing a plugin.</dd>
+    <dt>&tab;@name</dt>        <dd>The name of the plugin. Used as the plugin's help tag.</dd>
+    <dt>&tab;@version</dt>     <dd>The plugin's version number.</dd>
+    <dt>&tab;@href</dt>        <dd>The plugin's home page.</dd>
+    <dt>&tab;@summary</dt>     <dd>A short description of the plugin, shown in its section head.</dd>
+
+    <dt>project</dt>           <dd>The project for which this plugin was intended.</dd>
+    <dt>&tab;@name</dt>        <dd>The name of the project (i.e., <str>&liberator.name;</str>)</dd>
+    <dt>&tab;@minVersion</dt>  <dd>The minimum version of the project for which this plugin is intended to work.</dd>
+    <dt>&tab;@maxVersion</dt>  <dd>The maximum version of the project for which this plugin is intended to work.</dd>
+
+    <dt>author</dt>            <dd>The plugin's author. May appear more than once.</dd>
+    <dt>&tab;@href</dt>        <dd>The author's home page.</dd>
+    <dt>&tab;@email</dt>       <dd>The author's email address.</dd>
+
+    <dt>license</dt>           <dd>The plugin's license. May appear more than once.</dd>
+    <dt>&tab;@href</dt>        <dd>The URI of a page which shows or explains the license.</dd>
+</dl>
 
 <h2 tag="generating-docs">Generating documentation</h2>
 
