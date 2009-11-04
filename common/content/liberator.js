@@ -1205,8 +1205,6 @@ const liberator = (function () //{{{
             XML.ignoreWhiteSpace = false;
             XML.prettyPrinting = false;
             services.get("subscriptLoader").loadSubScript(uri, context);
-            if (liberator.initialized)
-                liberator.initHelp();
         },
 
         eval: function (str, context)

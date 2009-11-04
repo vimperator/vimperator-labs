@@ -984,6 +984,8 @@ lookup:
                     try
                     {
                         liberator.loadScript(uri.spec, new Script(file));
+                        if (liberator.initialized)
+                            liberator.initHelp();
                     }
                     catch (e)
                     {
