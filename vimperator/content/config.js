@@ -128,9 +128,6 @@ const config = { //{{{
 
     init: function ()
     {
-        services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=vimperator",
-            Ci.nsICommandLineHandler);
-
         // load Vimperator specific modules
         // FIXME: Why aren't these listed in config.scripts?
         // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst

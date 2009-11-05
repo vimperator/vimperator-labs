@@ -1,3 +1,8 @@
+// Header:
+const Name = "Vimperator";
+// The following doesn't work here, so this module's code is sadly suplicated:
+//     Components.utils.import("resource://liberator/about-handler.jsm");
+
 // Copyright (c) 2009 by Doug Kearns
 //
 // This work is licensed for reuse under an MIT license. Details are
@@ -8,22 +13,22 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+const name = Name.toLowerCase();
 function AboutHandler() {}
-
 AboutHandler.prototype = {
 
-    classDescription: "About Vimperator Page",
+    classDescription: "About " + Name + " Page",
 
     classID: Components.ID("81495d80-89ee-4c36-a88d-ea7c4e5ac63f"),
 
-    contractID: "@mozilla.org/network/protocol/about;1?what=vimperator",
+    contractID: "@mozilla.org/network/protocol/about;1?what=" + name,
 
     QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 
     newChannel: function (uri)
     {
         let channel = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService)
-                          .newChannel("chrome://vimperator/content/about.html", null, null);
+                          .newChannel("chrome://" + name + "/content/about.html", null, null);
 
         channel.originalURI = uri;
 

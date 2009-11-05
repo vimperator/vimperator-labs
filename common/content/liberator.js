@@ -1919,6 +1919,9 @@ const liberator = (function () //{{{
 
             liberator.log("All modules loaded", 3);
 
+            services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase(),
+                Ci.nsICommandLineHandler);
+
             let commandline = services.get("commandLineHandler").wrappedJSObject.optionValue;
             if (commandline)
             {
