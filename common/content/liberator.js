@@ -1452,8 +1452,8 @@ const liberator = (function () //{{{
             function addTags(file, doc)
             {
                 doc = XSLT.transformToDocument(doc);
-                for (let elem in util.evaluateXPath("//liberator:tag/text()", doc))
-                    tagMap[elem.textContent] = file;
+                for (let elem in util.evaluateXPath("//xhtml:a/@id", doc))
+                    tagMap[elem.value] = file;
             }
 
             const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");

@@ -197,7 +197,7 @@ const config = { //{{{
             function ()
             {
                 if (!document.getElementById("sidebar-box").hidden)
-                    toggleSidebar();
+                    window.toggleSidebar();
             },
             { argCount: "0" });
 
