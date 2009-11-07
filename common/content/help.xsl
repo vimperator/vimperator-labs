@@ -247,7 +247,7 @@
 
     <xsl:template name="linkify-tag">
         <xsl:param name="contents" select="text()"/>
-        <xsl:variable name="tag" select="str:tokenize($contents, ' [')[1]"/>
+        <xsl:param name="tag" select="$contents"/>
         <a href="liberator://help-tag/{$tag}" style="color: inherit;">
             <xsl:if test="contains($tags, concat(' ', $tag, ' '))">
                 <xsl:attribute name="href">#<xsl:value-of select="$tag"/></xsl:attribute>
@@ -353,6 +353,7 @@
         <span liberator:highlight="HelpEx">
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select="."/>
+                <xsl:with-param name="tag" select="substring-before(concat(., '!'), '!')"/>
             </xsl:call-template>
         </span>
     </xsl:template>
