@@ -892,6 +892,8 @@ function Buffer() //{{{
 
     return {
 
+        get evaluateXPath() util.evaluateXPath,
+
         /**
          * @property {Array} The alternative style sheets for the current
          *     buffer. Only returns style sheets for the 'screen' media type.
