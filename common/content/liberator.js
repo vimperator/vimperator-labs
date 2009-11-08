@@ -864,10 +864,10 @@ const liberator = (function () //{{{
         completion.help = function help(context, unchunked) {
             context.title = ["Help"];
             context.anchored = false;
-            context.key = unchunked;
+            context.key = !!unchunked; // XXX: better as a precondition
             context.completions = services.get("liberator:").HELP_TAGS;
             if (unchunked)
-                context.keys = { text: "text", description: function () "all" };
+                context.keys = { text: 0, description: function () "all" };
         };
 
         completion.menuItem = function menuItem(context) {
@@ -1394,7 +1394,7 @@ const liberator = (function () //{{{
         {
             if (topic in services.get("liberator:").FILE_MAP)
                 return topic;
-            unchunked = !!unchunked;
+
             let items = completion._runCompleter("help", topic, null, unchunked).items;
             let partialMatch = null;
 
@@ -1505,9 +1505,9 @@ const liberator = (function () //{{{
          */
         help: function (topic, unchunked)
         {
-            if (!topic && !unchunked)
+            if (!topic)
             {
-                let helpFile = options["helpfile"];
+                let helpFile = unchunked ? "all" : options["helpfile"];
                 if (helpFile in services.get("liberator:").FILE_MAP)
                     liberator.open("liberator://help/" + helpFile, { from: "help" });
                 else
