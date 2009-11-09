@@ -478,7 +478,7 @@ const Mappings = Module("mappings", {
                 return util.Array.flatten(
                 [
                     [[name, map.description] for ([i, name] in Iterator(map.names))]
-                    for ([i, map] in Iterator(this._user[mode].concat(this._main[mode])))
+                    for ([i, map] in Iterator(mappings._user[mode].concat(mappings._main[mode])))
                 ]);
             }
         ]);

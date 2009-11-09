@@ -492,9 +492,9 @@ function Styles(name, store) {
      */
     this.removeSheet = function (system, name, filter, css, index) {
         let self = this;
-        if (arguments.length == 0) {
+        if (arguments.length == 1) {
             var matches = [system];
-            system = sheet.system;
+            system = matches[0].system;
         }
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
