@@ -42,7 +42,7 @@ function makeChannel(url, orig) {
 function fakeChannel(orig) makeChannel("chrome://liberator/content/does/not/exist", orig);
 function redirect(to, orig) {
     let html = <html><head><meta http-equiv="Refresh" content={"0;" + to}/></head></html>.toXMLString();
-    return makeChannel(dataURL('text/html', html), ioServices.newURI(to, null, null));
+    return makeChannel(dataURL('text/html', html), ioService.newURI(to, null, null));
 }
 
 function ChromeData() {}

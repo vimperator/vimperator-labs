@@ -452,7 +452,7 @@ const Hints = Module("hints", {
      *     link (when 'followhints' is 1 or 2)
      *
      */
-    __processHints: function (followFirst) {
+    _processHints: function (followFirst) {
         if (this._validHints.length == 0) {
             liberator.beep();
             return false;
@@ -489,7 +489,7 @@ const Hints = Module("hints", {
         setTimeout(function () {
             if (modes.extended & modes.HINTS)
                 modes.reset();
-            this._hintMode.action(elem, elem.href || "", this._extendedhintCount);
+            hints._hintMode.action(elem, elem.href || "", hints._extendedhintCount);
         }, timeout);
         return true;
     },
@@ -505,7 +505,7 @@ const Hints = Module("hints", {
         if (this._hintNumber > 0 && this._hintNumber * 10 <= this._validHints.length) {
             let timeout = options["hinttimeout"];
             if (timeout > 0)
-                this._activeTimeout = setTimeout(function () { this._processHints(true); }, timeout);
+                this._activeTimeout = setTimeout(function () { hints._processHints(true); }, timeout);
         }
         else // we have a unique hint
             this._processHints(true);
@@ -519,7 +519,7 @@ const Hints = Module("hints", {
      *
      * @param {Event} event The keypress event.
      */
-    __onInput: function (event) {
+    _onInput: function (event) {
         this._prevInput = "text";
 
         // clear any timeout which might be active after pressing a number
@@ -731,7 +731,7 @@ const Hints = Module("hints", {
         this._hintMode = this._hintModes[minor];
         if (!this._hintMode)
             return void liberator.beep();
-        commandline.input(this._hintMode.prompt + ": ", null, { onChange: this._onInput });
+        commandline.input(this._hintMode.prompt + ": ", null, { onChange: this.closure._onInput });
         modes.extended = modes.HINTS;
 
         this._submode = minor;
