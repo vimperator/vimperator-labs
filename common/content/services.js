@@ -26,7 +26,7 @@ const Services = Module("services", {
         this.add("browserSearch",       "@mozilla.org/browser/search-service;1",            Ci.nsIBrowserSearchService);
         this.add("cache",               "@mozilla.org/network/cache-service;1",             Ci.nsICacheService);
         this.add("console",             "@mozilla.org/consoleservice;1",                    Ci.nsIConsoleService);
-        this.add("liberator:",             "@mozilla.org/network/protocol;1?name=liberator");
+        this.add("liberator:",          "@mozilla.org/network/protocol;1?name=liberator");
         this.add("directory",           "@mozilla.org/file/directory_service;1",            Ci.nsIProperties);
         this.add("downloadManager",     "@mozilla.org/download-manager;1",                  Ci.nsIDownloadManager);
         this.add("environment",         "@mozilla.org/process/environment;1",               Ci.nsIEnvironment);
@@ -47,10 +47,10 @@ const Services = Module("services", {
         this.add("windowWatcher",       "@mozilla.org/embedcomp/window-watcher;1",          Ci.nsIWindowWatcher);
         this.add("xulAppInfo",          "@mozilla.org/xre/app-info;1",                      Ci.nsIXULAppInfo);
 
-        this.addClass("file",       "@mozilla.org/file/local;1",            Ci.nsILocalFile);
+        this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);
         this.addClass("file:",      "@mozilla.org/network/protocol;1?name=file", Ci.nsIFileProtocolHandler);
-        this.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",   Ci.nsIFind);
-        this.addClass("process",    "@mozilla.org/process/util;1",          Ci.nsIProcess);
+        this.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",        Ci.nsIFind);
+        this.addClass("process",    "@mozilla.org/process/util;1",               Ci.nsIProcess);
     },
 
     _create: function (classes, ifaces, meth) {

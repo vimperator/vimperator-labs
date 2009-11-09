@@ -558,15 +558,16 @@ const Options = Module("options", {
             return (this._optionHash[name].scope & scope) && this._optionHash[name];
 
         for (let opt in Iterator(options)) {
-try {
-            if (opt.hasName(name))
-                return (opt.scope & scope) && opt;
-}catch(e) {
-    liberator.dump(options.__iterator__);
-    liberator.dump(opt);
-    liberator.reportError(e);
-    throw e
-}
+            try {
+                if (opt.hasName(name))
+                    return (opt.scope & scope) && opt;
+            }
+            catch(e) {
+                liberator.dump(options.__iterator__);
+                liberator.dump(opt);
+                liberator.reportError(e);
+                throw e;
+            }
         }
 
         return null;
