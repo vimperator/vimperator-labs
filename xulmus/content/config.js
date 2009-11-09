@@ -6,7 +6,7 @@
 
 Components.utils.import("resource://gre/modules/utils.js"); // XXX
 
-const config = Module("config", {
+const Config = Module("config", {
     init: function () {
         // TODO: mention this to SB devs, they seem keen to provide these
         // functions to make porting from FF as simple as possible.
@@ -147,16 +147,6 @@ const config = Module("config", {
 
     modes: [["PLAYER", { char: "p" }]],
 
-    get ignoreKeys() {
-        delete this.ignoreKeys;
-        return this.ignoreKeys = {
-            "<Return>": modes.NORMAL | modes.INSERT,
-            "<Space>": modes.NORMAL | modes.INSERT,
-            "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT
-        };
-    },
-
     scripts: [
         "browser.js",
         "bookmarks.js",
@@ -280,6 +270,14 @@ const config = Module("config", {
         completion.displayPane = function (context) {
             context.title = ["Display Pane"];
             context.completions = Config.displayPanes; // FIXME: useful description etc
+        };
+    },
+    modes: function () {
+        this.ignoreKeys = {
+            "<Return>": modes.NORMAL | modes.INSERT,
+            "<Space>": modes.NORMAL | modes.INSERT,
+            "<Up>": modes.NORMAL | modes.INSERT,
+            "<Down>": modes.NORMAL | modes.INSERT
         };
     },
     options: function () {

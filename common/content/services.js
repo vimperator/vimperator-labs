@@ -5,11 +5,6 @@
 
 /** @scope modules */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cr = Components.results;
-const Cu = Components.utils;
-
 /**
  * Cached XPCOM services and classes.
  *

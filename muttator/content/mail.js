@@ -13,8 +13,7 @@ const Mail = Module("mail", {
         this._selectMessageReverse = false;
 
         this._mailSession = Cc["@mozilla.org/messenger/services/session;1"].getService(Ci.nsIMsgMailSession);
-        this._nsIFolderListener = Ci.this._nsIFolderListener;
-        this._notifyFlags = this._nsIFolderListener.intPropertyChanged | this._nsIFolderListener.event;
+        this._notifyFlags = Ci.nsIFolderListener.intPropertyChanged | Ci.nsIFolderListener.event;
         this._mailSession.AddFolderListener(this._folderListener, this._notifyFlags);
     },
 

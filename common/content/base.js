@@ -1,3 +1,13 @@
+// Copyright (c) 2009 by Kris Maglione <maglione.k@gmail.com>
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the LICENSE.txt file included with this file.
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+
 function array(obj) {
     if (isgenerator(obj))
         obj = [k for (k in obj)];
@@ -182,8 +192,10 @@ function update(targ) {
 }
 
 function extend(subc, superc, overrides) {
-    subc.prototype = { __proto__: superc.prototype };
+    subc.prototype = {};
     update(subc.prototype, overrides);
+    // This is unduly expensive.
+    subc.prototype.__proto__ = superc.prototype;
 
     subc.superclass = superc.prototype;
     subc.prototype.constructor = subc;

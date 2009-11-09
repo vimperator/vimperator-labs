@@ -3,7 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-const config = Module("config", ConfigBase, {
+const Config = Module("config", ConfigBase, {
     init: function () {
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
@@ -116,16 +116,6 @@ const config = Module("config", ConfigBase, {
     // they are sorted by relevance, not alphabetically
     helpFiles: ["intro.html", "version.html"],
 
-    get ignoreKeys() {
-        delete this.ignoreKeys;
-        return this.ignoreKeys = {
-            "<Return>": modes.NORMAL | modes.INSERT,
-            "<Space>": modes.NORMAL | modes.INSERT,
-            "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT
-        }
-    },
-
     modes: [
         ["MESSAGE", { char: "m" }],
         ["COMPOSE"]
@@ -148,7 +138,7 @@ const config = Module("config", ConfigBase, {
             return document.getElementById("appcontent").boxObject.height;
     },
 
-    get scripts() this.isComposeWindow() ? ["compose/compose.js"] : [
+    get scripts() this.isComposeWindow ? ["compose/compose.js"] : [
         "addressbook.js",
         "mail.js",
         "tabs.js",
@@ -164,6 +154,14 @@ const config = Module("config", ConfigBase, {
             "Show " + config.hostApplication + " preferences",
             function () { window.openOptionsDialog(); },
             { argCount: "0" });
+    },
+    modes: function () {
+        this.ignoreKeys = {
+            "<Return>": modes.NORMAL | modes.INSERT,
+            "<Space>": modes.NORMAL | modes.INSERT,
+            "<Up>": modes.NORMAL | modes.INSERT,
+            "<Down>": modes.NORMAL | modes.INSERT
+        };
     },
     optons: function () {
         // FIXME: comment obviously incorrect
@@ -186,6 +184,6 @@ const config = Module("config", ConfigBase, {
                 getter: function () MailOfflineMgr.isOnline()
             });
     },
-})
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

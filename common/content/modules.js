@@ -1,3 +1,7 @@
+// Copyright (c) 2009 by Kris Maglione <maglione.k@gmail.com>
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the LICENSE.txt file included with this file.
 
 const ModuleBase = Class("ModuleBase", { requires: [] });
 function Module(name, inst, clas, moduleInit) {

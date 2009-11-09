@@ -15,7 +15,10 @@ const Tabs = Module("tabs", {
     requires: ["config"],
 
     init: function () {
-        this._alternates = [getBrowser().mCurrentTab, null];
+        if (config.getBrowser)
+            this.getBrowser = config.getBrowser;
+
+        this._alternates = [this.getBrowser().mCurrentTab, null];
 
         // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
         this._lastBufferSwitchArgs = "";
@@ -24,7 +27,7 @@ const Tabs = Module("tabs", {
         // hide tabs initially to prevent flickering when 'stal' would hide them
         // on startup
         if (config.hasTabbrowser)
-            getBrowser().mTabContainer.collapsed = true; // FIXME: see 'stal' comment
+            this.getBrowser().mTabContainer.collapsed = true; // FIXME: see 'stal' comment
     },
 
     /**
@@ -38,7 +41,7 @@ const Tabs = Module("tabs", {
      *     in the current window.
      */
     get browsers() {
-        let browsers = getBrowser().browsers;
+        let browsers = this.getBrowser().browsers;
         for (let i = 0; i < browsers.length; i++)
             yield [i, browsers[i]];
     },
@@ -62,7 +65,7 @@ const Tabs = Module("tabs", {
     /**
      * @property {number} The number of tabs in the current window.
      */
-    get count() getBrowser().mTabs.length,
+    get count() this.getBrowser().mTabs.length,
 
     /**
      * @property {Object} The local options store for the current tab.
@@ -114,9 +117,9 @@ const Tabs = Module("tabs", {
      */
     index: function (tab) {
         if (tab)
-            return Array.indexOf(getBrowser().mTabs, tab);
+            return Array.indexOf(this.getBrowser().mTabs, tab);
         else
-            return getBrowser().mTabContainer.selectedIndex;
+            return this.getBrowser().mTabContainer.selectedIndex;
     },
 
     // TODO: implement filter
@@ -163,9 +166,9 @@ const Tabs = Module("tabs", {
      */
     getTab: function (index) {
         if (index != undefined)
-            return getBrowser().mTabs[index];
+            return this.getBrowser().mTabs[index];
         else
-            return getBrowser().mCurrentTab;
+            return this.getBrowser().mCurrentTab;
     },
 
     /**
@@ -189,7 +192,7 @@ const Tabs = Module("tabs", {
      */
     move: function (tab, spec, wrap) {
         let index = Tabs.indexFromSpec(spec, wrap);
-        getBrowser().moveTabTo(tab, index);
+        this.getBrowser().moveTabTo(tab, index);
     },
 
     /**
@@ -207,31 +210,31 @@ const Tabs = Module("tabs", {
     remove: function (tab, count, focusLeftTab, quitOnLastTab) {
         let removeOrBlankTab = {
                 Firefox: function (tab) {
-                    if (getBrowser().mTabs.length > 1)
-                        getBrowser().removeTab(tab);
+                    if (tabs.getBrowser().mTabs.length > 1)
+                        tabs.getBrowser().removeTab(tab);
                     else {
                         if (buffer.URL != "about:blank" ||
                             window.getWebNavigation().sessionHistory.count > 0) {
                             liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
-                            getBrowser().removeTab(tab);
+                            tabs.getBrowser().removeTab(tab);
                         }
                         else
                             liberator.beep();
                     }
                 },
                 Thunderbird: function (tab) {
-                    if (getBrowser().mTabs.length > 1)
-                        getBrowser().removeTab(tab);
+                    if (tabs.getBrowser().mTabs.length > 1)
+                        tabs.getBrowser().removeTab(tab);
                     else
                         liberator.beep();
                 },
                 Songbird: function (tab) {
-                    if (getBrowser().mTabs.length > 1)
-                        getBrowser().removeTab(tab);
+                    if (tabs.getBrowser().mTabs.length > 1)
+                        tabs.getBrowser().removeTab(tab);
                     else {
                         if (buffer.URL != "about:blank" || window.getWebNavigation().sessionHistory.count > 0) {
                             liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
-                            getBrowser().removeTab(tab);
+                            tabs.getBrowser().removeTab(tab);
                         }
                         else
                             liberator.beep();
@@ -242,7 +245,7 @@ const Tabs = Module("tabs", {
         if (typeof count != "number" || count < 1)
             count = 1;
 
-        if (quitOnLastTab >= 1 && getBrowser().mTabs.length <= count) {
+        if (quitOnLastTab >= 1 && this.getBrowser().mTabs.length <= count) {
             if (liberator.windows.length > 1)
                 window.close();
             else
@@ -258,7 +261,7 @@ const Tabs = Module("tabs", {
                 removeOrBlankTab(this.getTab(i));
                 lastRemovedTab = i > 0 ? i : 1;
             }
-            getBrowser().mTabContainer.selectedIndex = lastRemovedTab - 1;
+            this.getBrowser().mTabContainer.selectedIndex = lastRemovedTab - 1;
         }
         else {
             let i = index + count - 1;
@@ -267,7 +270,7 @@ const Tabs = Module("tabs", {
 
             for (; i >= index; i--)
                 removeOrBlankTab(this.getTab(i));
-            getBrowser().mTabContainer.selectedIndex = index;
+            this.getBrowser().mTabContainer.selectedIndex = index;
         }
     },
 
@@ -277,7 +280,7 @@ const Tabs = Module("tabs", {
      * @param {Object} tab The tab to keep.
      */
     keepOnly: function (tab) {
-        getBrowser().removeAllTabsBut(tab);
+        this.getBrowser().removeAllTabsBut(tab);
     },
 
     /**
@@ -293,7 +296,7 @@ const Tabs = Module("tabs", {
         // FIXME:
         if (index == -1)
             return void liberator.beep();
-        getBrowser().mTabContainer.selectedIndex = index;
+        this.getBrowser().mTabContainer.selectedIndex = index;
     },
 
     /**
@@ -306,10 +309,10 @@ const Tabs = Module("tabs", {
     reload: function (tab, bypassCache) {
         if (bypassCache) {
             const flags = Ci.nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | Ci.nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
-            getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
+            this.getBrowser().getBrowserForTab(tab).reloadWithFlags(flags);
         }
         else
-            getBrowser().reloadTab(tab);
+            this.getBrowser().reloadTab(tab);
     },
 
     /**
@@ -320,9 +323,9 @@ const Tabs = Module("tabs", {
      */
     reloadAll: function (bypassCache) {
         if (bypassCache) {
-            for (let i = 0; i < getBrowser().mTabs.length; i++) {
+            for (let i = 0; i < this.getBrowser().mTabs.length; i++) {
                 try {
-                    this.reload(getBrowser().mTabs[i], bypassCache);
+                    this.reload(this.getBrowser().mTabs[i], bypassCache);
                 }
                 catch (e) {
                     // FIXME: can we do anything useful here without stopping the
@@ -331,7 +334,7 @@ const Tabs = Module("tabs", {
             }
         }
         else
-            getBrowser().reloadAllTabs();
+            this.getBrowser().reloadAllTabs();
     },
 
     /**
@@ -402,11 +405,11 @@ const Tabs = Module("tabs", {
         matches = [];
         let lowerBuffer = buffer.toLowerCase();
         let first = tabs.index() + (reverse ? 0 : 1);
-        let nbrowsers = getBrowser().browsers.length;
+        let nbrowsers = this.getBrowser().browsers.length;
         for (let [i, ] in tabs.browsers) {
             let index = (i + first) % nbrowsers;
-            let url = getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
-            let title = getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
+            let url = this.getBrowser().getBrowserAtIndex(index).contentDocument.location.href;
+            let title = this.getBrowser().getBrowserAtIndex(index).contentDocument.title.toLowerCase();
             if (url == buffer) {
                 tabs.select(index, false);
                 return;
@@ -439,11 +442,11 @@ const Tabs = Module("tabs", {
      * @param {boolean} activate Whether to select the newly cloned tab.
      */
     cloneTab: function (tab, activate) {
-        let newTab = getBrowser().addTab();
+        let newTab = this.getBrowser().addTab();
         Tabs.copyTab(newTab, tab);
 
         if (activate)
-            getBrowser().mTabContainer.selectedItem = newTab;
+            this.getBrowser().mTabContainer.selectedItem = newTab;
 
         return newTab;
     },
@@ -456,7 +459,7 @@ const Tabs = Module("tabs", {
      */
     detachTab: function (tab) {
         if (!tab)
-            tab = getBrowser().mTabContainer.selectedItem;
+            tab = this.getBrowser().mTabContainer.selectedItem;
 
         services.get("windowWatcher")
             .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
@@ -497,7 +500,7 @@ const Tabs = Module("tabs", {
 }, {
     copyTab: function (to, from) {
         if (!from)
-            from = getBrowser().mTabContainer.selectedItem;
+            from = tabs.getBrowser().mTabContainer.selectedItem;
 
         let tabState = services.get("sessionStore").getTabState(from);
         services.get("sessionStore").setTabState(to, tabState);
@@ -513,8 +516,8 @@ const Tabs = Module("tabs", {
      * - "$" for the last tab
      */
     indexFromSpec: function (spec, wrap) {
-        let position = getBrowser().mTabContainer.selectedIndex;
-        let length   = getBrowser().mTabs.length;
+        let position = tabs.getBrowser().mTabContainer.selectedIndex;
+        let length   = tabs.getBrowser().mTabs.length;
         let last     = length - 1;
 
         if (spec === undefined || spec === "")
@@ -557,7 +560,7 @@ const Tabs = Module("tabs", {
                     }
                     else {
                         let str = arg.toLowerCase();
-                        let browsers = getBrowser().browsers;
+                        let browsers = tabs.getBrowser().browsers;
 
                         for (let i = browsers.length - 1; i >= 0; i--) {
                             let host, title, uri = browsers[i].currentURI.spec;
@@ -765,7 +768,7 @@ const Tabs = Module("tabs", {
                         "E488: Trailing characters");
 
                     // if not specified, move to after the last tab
-                    tabs.move(getBrowser().mCurrentTab, arg || "$", args.bang);
+                    tabs.move(tabs.getBrowser().mCurrentTab, arg || "$", args.bang);
                 }, {
                     argCount: "?",
                     bang: true
@@ -773,7 +776,7 @@ const Tabs = Module("tabs", {
 
             commands.add(["tabo[nly]"],
                 "Close all other tabs",
-                function () { tabs.keepOnly(getBrowser().mCurrentTab); },
+                function () { tabs.keepOnly(tabs.getBrowser().mCurrentTab); },
                 { argCount: "0" });
 
             commands.add(["tabopen", "t[open]", "tabnew", "tabe[dit]"],
@@ -847,7 +850,7 @@ const Tabs = Module("tabs", {
 
                     browser.moveTabTo(dummy, util.Math.constrain(tabIndex || last, 0, last));
                     browser.selectedTab = dummy; // required
-                    browser.swapBrowsersAndCloseOther(dummy, getBrowser().mCurrentTab);
+                    browser.swapBrowsersAndCloseOther(dummy, tabs.getBrowser().mCurrentTab);
                 }, {
                     argCount: "+",
                     completer: function (context, args) {
@@ -1007,7 +1010,7 @@ const Tabs = Module("tabs", {
                     // don't have to fight against the host app's attempts to keep
                     // it open - hack! Adding a filter watch to mStrip is probably
                     // the cleanest solution.
-                    let tabStrip = getBrowser().mTabContainer;
+                    let tabStrip = tabs.getBrowser().mTabContainer;
 
                     if (value == 0)
                         tabStrip.collapsed = true;
