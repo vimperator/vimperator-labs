@@ -17,9 +17,21 @@ const EVAL_STRING = "__liberator_eval_string";
 
 // Move elsewhere?
 const Storage = Module("storage", {
+    requires: ["services"],
+
     init: function () {
         Components.utils.import("resource://liberator/storage.jsm", this);
         modules.Timer = this.Timer; // Fix me, please.
+
+        try {
+            let infoPath = services.create("file");
+            infoPath.initWithPath(File.expandPath(IO.runtimePath.replace(/,.*/, "")));
+            infoPath.append("info");
+            infoPath.append(liberator.profileName);
+            this.storage.infoPath = infoPath;
+        }
+        catch (e) {}
+
         return this.storage;
     },
 });
@@ -1717,19 +1729,6 @@ const Liberator = Module("liberator", {
     },
     load: function () {
         config.features.push(Liberator.getPlatformFeature());
-
-        try {
-            let infoPath = services.create("file");
-            infoPath.initWithPath(File.expandPath(IO.runtimePath.replace(/,.*/, "")));
-            infoPath.append("info");
-            infoPath.append(liberator.profileName);
-            storage.infoPath = infoPath;
-        }
-        catch (e) {
-            liberator.reportError(e);
-        }
-
-        config.init();
 
         liberator.triggerObserver("load");
 
