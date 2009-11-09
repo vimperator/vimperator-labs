@@ -613,8 +613,8 @@ const Liberator = Module("liberator", {
      * @returns {string}
      */
     help: function (topic, unchunked) {
-        if (!topic && !unchunked) {
-            let helpFile = options["helpfile"];
+        if (!topic) {
+            let helpFile = unchunked ? "all" : options["helpfile"];
             if (helpFile in services.get("liberator:").FILE_MAP)
                 liberator.open("liberator://help/" + helpFile, { from: "help" });
             else
@@ -1691,10 +1691,9 @@ const Liberator = Module("liberator", {
         completion.help = function help(context, unchunked) {
             context.title = ["Help"];
             context.anchored = false;
-            context.key = unchunked;
             context.completions = services.get("liberator:").HELP_TAGS;
             if (unchunked)
-                context.keys = { text: "text", description: function () "all" };
+                context.keys = { text: 0, description: function () "all" };
         };
 
         completion.menuItem = function menuItem(context) {
