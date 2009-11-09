@@ -404,6 +404,9 @@ const Options = Module("options", {
     requires: ["config", "highlight", "storage"],
 
     init: function () {
+        this._optionHash = {};
+        this._prefContexts = [];
+
         for (let [, pref] in Iterator(this.allPrefs(Options.OLD_SAVED))) {
             let saved = Options.SAVED + pref.substr(Options.OLD_SAVED.length)
             if (!this.getPref(saved))
@@ -435,9 +438,6 @@ const Options = Module("options", {
 
         storage.newMap("options", { store: false });
         storage.addObserver("options", optionObserver, window);
-
-        this._optionHash = {};
-        this._prefContexts = [];
 
         this.prefObserver.register();
     },
