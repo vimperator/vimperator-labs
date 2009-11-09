@@ -8,7 +8,7 @@
  * @instance marks
  */
 const Marks = Module("marks", {
-    requires: ["storage"],
+    requires: ["config", "storage"],
 
     init: function init() {
         this._localMarks = storage.newMap("local-marks", { store: true, privateData: true });

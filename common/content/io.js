@@ -267,7 +267,7 @@ const File = Class("File", {
  * @instance io
  */
 const IO = Module("io", {
-    requires: ["services"],
+    requires: ["config", "services"],
 
     init: function () {
         this._processDir = services.get("directory").get("CurWorkD", Ci.nsIFile);

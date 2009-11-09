@@ -3,8 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-
-const configbase = { //{{{
+const ConfigBase = Class(ModuleBase, {
     /**
      * @property {[["string", "string"]]} A sequence of names and descriptions
      *     of the autocommands available in this application. Primarily used
@@ -99,6 +98,6 @@ const configbase = { //{{{
      */
     get tempFile() this.name.toLowerCase() + ".tmp"
 
-}; //}}}
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -4,6 +4,8 @@
 // given in the LICENSE.txt file included with this file.
 
 const History = Module("history", {
+    requires: ["config"],
+
     get format() bookmarks.format,
 
     get service() services.get("history"),

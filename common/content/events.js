@@ -10,7 +10,7 @@
  * @instance events
  */
 const Events = Module("events", {
-    requires: ["autocommands"],
+    requires: ["autocommands", "config"],
 
     init: function () {
         const self = this;

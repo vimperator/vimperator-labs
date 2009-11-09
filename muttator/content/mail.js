@@ -479,7 +479,7 @@ const Mail = Module("mail", {
                 bang: true,
             });
     },
-    completions: function () {
+    completion: function () {
         completion.mailFolder = function mailFolder(context) {
             let folders = mail.getFolders(context.filter);
             context.anchored = false;

@@ -6,7 +6,18 @@
 
 Components.utils.import("resource://gre/modules/utils.js"); // XXX
 
-const config = { //{{{
+const config = Module("config", {
+    init: function () {
+        // TODO: mention this to SB devs, they seem keen to provide these
+        // functions to make porting from FF as simple as possible.
+        window.toJavaScriptConsole = function () {
+            toOpenWindowByType("global:console", "chrome://global/content/console.xul");
+        };
+
+        window.BrowserStop = function () {
+            SBGetBrowser().mCurrentBrowser.stop();
+        };
+    },
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Xulmus",
     hostApplication: "Songbird",
@@ -158,98 +169,69 @@ const config = { //{{{
     stop: function (tab) {
         SBGetBrowser().mCurrentBrowser.stop();
     },
+}, {
 
-    init: function () {
-        // Adding a mode for Player
-        //modes.addMode("PLAYER"); // Player mode for songbird
+    // TODO: support 'nrformats'? -> probably not worth it --mst
+    incrementURL: function (count) {
+        let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
+        if (!matches)
+            return void liberator.beep();
 
-        // TODO: support 'nrformats'? -> probably not worth it --mst
-        function incrementURL(count) {
-            let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
-            if (!matches)
-                return void liberator.beep();
-
-            let [, pre, number, post] = matches;
-            let newNumber = parseInt(number, 10) + count;
-            let newNumberStr = String(newNumber > 0 ? newNumber : 0);
-            if (number.match(/^0/)) { // add 0009<C-a> should become 0010
-                while (newNumberStr.length < number.length)
-                    newNumberStr = "0" + newNumberStr;
-            }
-
-            liberator.open(pre + newNumberStr + post);
+        let [, pre, number, post] = matches;
+        let newNumber = parseInt(number, 10) + count;
+        let newNumberStr = String(newNumber > 0 ? newNumber : 0);
+        if (number.match(/^0/)) { // add 0009<C-a> should become 0010
+            while (newNumberStr.length < number.length)
+                newNumberStr = "0" + newNumberStr;
         }
 
-        function showServicePane(value) {
-            const key = "splitter.servicepane_splitter.was_collapsed";
-            gServicePane.open = value;
-            SBDataSetBoolValue(key, gServicePane.open);
+        liberator.open(pre + newNumberStr + post);
+    },
+
+    showServicePane: function (value) {
+        const key = "splitter.servicepane_splitter.was_collapsed";
+        gServicePane.open = value;
+        SBDataSetBoolValue(key, gServicePane.open);
+    },
+
+    openDisplayPane: function (id) {
+        if (id == "servicepane")
+            this.showServicePane(true);
+        else {
+            let pane = document.getElementById(id);
+            let manager = Cc['@songbirdnest.com/Songbird/DisplayPane/Manager;1'].getService(Ci.sbIDisplayPaneManager);
+            let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
+
+            if (!paneinfo)
+                paneinfo = manager.defaultPaneInfo;
+
+            pane.loadContent(paneinfo);
         }
+    },
 
-        function openDisplayPane(id) {
-            if (id == "servicepane")
-                showServicePane(true);
-            else {
-                let pane = document.getElementById(id);
-                let manager = Cc['@songbirdnest.com/Songbird/DisplayPane/Manager;1'].getService(Ci.sbIDisplayPaneManager);
-                let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
+    closeDisplayPane: function (id) {
+        if (id == "servicepane")
+            this.showServicePane(false);
+        else
+            document.getElementById(id).hide();
+    },
 
-                if (!paneinfo)
-                    paneinfo = manager.defaultPaneInfo;
-
-                pane.loadContent(paneinfo);
-            }
-        }
-
-        function closeDisplayPane(id) {
-            if (id == "servicepane")
-                showServicePane(false);
-            else
-                document.getElementById(id).hide();
-        }
-
-        // FIXME: best way to format these args? Hyphenated? One word like :dialog?
-        let displayPanes = {
-            "service pane left": "servicepane",
-            "content pane bottom": "displaypane_contentpane_bottom",
-            "service pane bottom": "displaypane_servicepane_bottom",
-            "right sidebar": "displaypane_right_sidebar"
-        };
-
-        completion.displayPane = function (context) {
-            context.title = ["Display Pane"];
-            context.completions = displayPanes; // FIXME: useful description etc
-        };
-
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////// STYLES //////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
-        let img = Image();
-        img.src = "chrome://xulmus/content/logo.png";
-        img.onload = function () {
-            styles.addSheet(true, "logo", "chrome://liberator/locale/*",
-                ".xulmus-logo {" + <>
-                     display:    inline-block;
-                     background: url({img.src});
-                     width:      {img.width}px;
-                     height:     {img.height}px;
-                </> + "}",
-                true);
-            delete img;
-        };
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// COMMANDS ////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
+    // FIXME: best way to format these args? Hyphenated? One word like :dialog?
+    displayPanes: {
+        "service pane left": "servicepane",
+        "content pane bottom": "displaypane_contentpane_bottom",
+        "service pane bottom": "displaypane_servicepane_bottom",
+        "right sidebar": "displaypane_right_sidebar"
+    }
+}, {
+    commands: function () {
         commands.add(["dpcl[ose]"],
             "Close a display pane",
             function (args) {
                 let arg = args.literalArg;
 
-                if (arg in displayPanes)
-                    closeDisplayPane(displayPanes[arg]);
+                if (arg in Config.displayPanes)
+                    Config.closeDisplayPane(Config.displayPanes[arg]);
                 else
                     liberator.echoerr("E475: Invalid argument: " + arg);
 
@@ -266,8 +248,8 @@ const config = { //{{{
             function (args) {
                 let arg = args.literalArg;
 
-                if (arg in displayPanes)
-                    openDisplayPane(displayPanes[arg]);
+                if (arg in Config.displayPanes)
+                    Config.openDisplayPane(Config.displayPanes[arg]);
                     // TODO: focus when we have better key handling of these extended modes
                 else
                     liberator.echoerr("E475: Invalid argument: " + arg);
@@ -293,11 +275,14 @@ const config = { //{{{
                 argCount: "0",
                 bang: true
             });
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// OPTIONS /////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
+    },
+    completion: function () {
+        completion.displayPane = function (context) {
+            context.title = ["Display Pane"];
+            context.completions = Config.displayPanes; // FIXME: useful description etc
+        };
+    },
+    options: function () {
         // TODO: SB doesn't explicitly support an offline mode. Should we? --djk
         options.add(["online"],
             "Set the 'work offline' option",
@@ -311,23 +296,7 @@ const config = { //{{{
                 },
                 getter: function () !services.get("io").offline
             });
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// COMPLETIONS /////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
-        //}}}
-
-        // TODO: mention this to SB devs, they seem keen to provide these
-        // functions to make porting from FF as simple as possible.
-        window.toJavaScriptConsole = function () {
-            toOpenWindowByType("global:console", "chrome://global/content/console.xul");
-        };
-
-        window.BrowserStop = function () {
-            SBGetBrowser().mCurrentBrowser.stop();
-        };
     }
-}; //}}}
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

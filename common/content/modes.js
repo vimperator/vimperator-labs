@@ -6,7 +6,7 @@
 /** @scope modules */
 
 const Modes = Module("modes", {
-    requires: ["util"],
+    requires: ["config", "util"],
 
     init: function () {
         this._main = 1;     // NORMAL

@@ -8,7 +8,7 @@ const DEFAULT_FAVICON = "chrome://mozapps/skin/places/defaultFavicon.png";
 
 // also includes methods for dealing with keywords and search engines
 const Bookmarks = Module("bookmarks", {
-    requires: ["autocommands", "liberator", "storage", "services"],
+    requires: ["autocommands", "config", "liberator", "storage", "services"],
 
     init: function () {
         const faviconService   = services.get("favicon");

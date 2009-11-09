@@ -11,6 +11,8 @@
 
 /** @instance editor */
 const Editor = Module("editor", {
+    requires: ["config"],
+
     init: function () {
         // store our last search with f, F, t or T
         //

@@ -15,6 +15,8 @@ const Point = new Struct("x", "y");
  * @instance buffer
  */
 const Buffer = Module("buffer", {
+    requires: ["config"],
+
     init: function () {
 
         this.pageInfo = {};

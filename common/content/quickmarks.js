@@ -9,7 +9,7 @@
 * @instance quickmarks
 */
 const QuickMarks = Module("quickmarks", {
-    requires: ["storage"],
+    requires: ["config", "storage"],
 
     init: function () {
         this._qmarks = storage.newMap("quickmarks", { store: true });

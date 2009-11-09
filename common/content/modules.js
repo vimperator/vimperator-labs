@@ -1,7 +1,10 @@
 
 const ModuleBase = Class("ModuleBase", { requires: [] });
 function Module(name, inst, clas, moduleInit) {
-    const module = Class(name, ModuleBase, inst, clas);
+    var base = ModuleBase;
+    if (callable(inst))
+        base = Array.splice(arguments, 1, 1)[0]
+    const module = Class(name, base, inst, clas);
     module.INIT = moduleInit || {};
     module.requires = inst.requires || [];
     Module.list.push(module);
@@ -12,7 +15,7 @@ Module.list = [];
 Module.constructors = {};
 
 window.addEventListener("load", function () {
-    function dump(str) window.dump(String.replace(str, /\n?$/, "\n").replace(/^/m, config.name.toLowerCase() + ": "));
+    function dump(str) window.dump(String.replace(str, /\n?$/, "\n").replace(/^/m, Config.prototype.name.toLowerCase() + ": "));
     const start = Date.now();
     const deferredInit = { load: [] };
     const seen = set();

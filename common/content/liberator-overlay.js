@@ -37,8 +37,8 @@
      "commandline.js",
      "commands.js",
      "completion.js",
-     "config.js",
      "configbase.js",
+     "config.js",
      "liberator.js",
      "editor.js",
      "events.js",
@@ -55,10 +55,9 @@
      "template.js",
      "util.js",
      ].forEach(load);
-    modules.config.__proto__ = modules.configbase;
 
-    prefix.unshift("chrome://" + modules.config.name.toLowerCase() + "/content/");
-    modules.config.scripts.forEach(load);
+    prefix.unshift("chrome://" + modules.Config.prototype.name.toLowerCase() + "/content/");
+    modules.Config.prototype.scripts.forEach(load);
 
 })();
 

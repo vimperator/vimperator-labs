@@ -3,8 +3,10 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
+const Config = Module("config", ConfigBase, {
+    init: function () {
+    },
 
-const config = { //{{{
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
@@ -97,15 +99,7 @@ const config = { //{{{
 
     hasTabbrowser: true,
 
-    get ignoreKeys() {
-        delete this.ignoreKeys;
-        return this.ignoreKeys = {
-            "<Return>": modes.NORMAL | modes.INSERT,
-            "<Space>": modes.NORMAL | modes.INSERT,
-            "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT
-        };
-    },
+    ignoreKeys: {},
 
     scripts: [
         "browser.js",
@@ -126,8 +120,9 @@ const config = { //{{{
 
         return prefix + ".tmp";
     },
-
-    init: function () {
+}, {
+}, {
+    commands: function () {
         commands.add(["winon[ly]"],
             "Close all other windows",
             function () {
@@ -227,28 +222,8 @@ const config = { //{{{
                 literal: 0,
                 privateData: true
             });
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// OPTIONS /////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
-        options.add(["online"],
-            "Set the 'work offline' option",
-            "boolean", true,
-            {
-                setter: function (value) {
-                    const ioService = services.get("io");
-                    if (ioService.offline == value)
-                        BrowserOffline.toggleOfflineStatus();
-                    return value;
-                },
-                getter: function () !services.get("io").offline
-            });
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// COMPLETIONS /////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
+    },
+    completion: function () {
         var searchRunning = false; // only until Firefox fixes https://bugzilla.mozilla.org/show_bug.cgi?id=510589
         completion.location = function location(context) {
             if (!services.get("autoCompleteSearch"))
@@ -292,9 +267,29 @@ const config = { //{{{
         completion.addUrlCompleter("l",
             "Firefox location bar entries (bookmarks and history sorted in an intelligent way)",
             completion.location);
-
-        //}}}
-    }
-}; //}}}
+    },
+    modes: function () {
+        this.ignoreKeys = {
+            "<Return>": modes.NORMAL | modes.INSERT,
+            "<Space>": modes.NORMAL | modes.INSERT,
+            "<Up>": modes.NORMAL | modes.INSERT,
+            "<Down>": modes.NORMAL | modes.INSERT
+        };
+    },
+    options: function () {
+        options.add(["online"],
+            "Set the 'work offline' option",
+            "boolean", true,
+            {
+                setter: function (value) {
+                    const ioService = services.get("io");
+                    if (ioService.offline == value)
+                        BrowserOffline.toggleOfflineStatus();
+                    return value;
+                },
+                getter: function () !services.get("io").offline
+            });
+    },
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

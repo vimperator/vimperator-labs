@@ -401,7 +401,7 @@ const Option = Class("Option", {
  * @instance options
  */
 const Options = Module("options", {
-    requires: ["highlight", "storage"],
+    requires: ["config", "highlight", "storage"],
 
     init: function () {
         for (let [, pref] in Iterator(this.allPrefs(Options.OLD_SAVED))) {

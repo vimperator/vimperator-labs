@@ -38,7 +38,7 @@ const FailedAssertion = Class("FailedAssertion", Error, {
 });
 
 const Liberator = Module("liberator", {
-    requires: ["services"],
+    requires: ["config", "services"],
 
     init: function () {
         window.liberator = this;

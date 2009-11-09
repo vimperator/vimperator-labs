@@ -560,7 +560,7 @@ const Player = Module("player", {
             },
             { argCount: "1" });
     },
-    completions: function () {
+    completion: function () {
         completion.song = function song(context, args) {
             // TODO: useful descriptions?
             function map(list) list.map(function (i) [i, ""]);

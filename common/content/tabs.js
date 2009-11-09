@@ -12,6 +12,8 @@
  * @instance tabs
  */
 const Tabs = Module("tabs", {
+    requires: ["config"],
+
     init: function () {
         this._alternates = [getBrowser().mCurrentTab, null];
 

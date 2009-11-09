@@ -20,6 +20,8 @@
  * @instance finder
  */
 const Finder = Module("finder", {
+    requires: ["config"],
+
     init: function () {
         const self = this;
 

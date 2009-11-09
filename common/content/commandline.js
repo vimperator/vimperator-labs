@@ -12,7 +12,7 @@
  * this class when the chrome is ready.
  */
 const CommandLine = Module("commandline", {
-    requires: ["liberator", "modes", "services", "storage", "template", "util"],
+    requires: ["config", "liberator", "modes", "services", "storage", "template", "util"],
 
     init: function () {
         const self = this;

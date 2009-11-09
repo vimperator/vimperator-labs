@@ -3,7 +3,12 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-const config = { //{{{
+const config = Module("config", ConfigBase, {
+    init: function () {
+        // don't wait too long when selecting new messages
+        // GetThreadTree()._selectDelay = 300; // TODO: make configurable
+    },
+
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
     hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
@@ -146,20 +151,21 @@ const config = { //{{{
     get scripts() this.isComposeWindow() ? ["compose/compose.js"] : [
         "addressbook.js",
         "mail.js",
+        "tabs.js",
     ],
 
     // to allow Vim to :set ft=mail automatically
     tempFile: "mutt-ator-mail",
 
-    init: function () {
-        // don't wait too long when selecting new messages
-        // GetThreadTree()._selectDelay = 300; // TODO: make configurable
-
+}, {
+}, {
+    commands: function () {
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
             function () { window.openOptionsDialog(); },
             { argCount: "0" });
-
+    },
+    optons: function () {
         // FIXME: comment obviously incorrect
         // 0: never automatically edit externally
         // 1: automatically edit externally when message window is shown the first time
@@ -179,9 +185,7 @@ const config = { //{{{
                 },
                 getter: function () MailOfflineMgr.isOnline()
             });
-
-        //}}}
-    }
-}; //}}}
+    },
+})
 
 // vim: set fdm=marker sw=4 ts=4 et:

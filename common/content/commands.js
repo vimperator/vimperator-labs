@@ -33,6 +33,8 @@
  * @private
  */
 const Command = Class("Command", {
+    requires: ["config"],
+
     init: function (specs, description, action, extraInfo) {
         specs = Array.concat(specs);
 

@@ -8,6 +8,8 @@
 /** @instance hints */
 const ELEM = 0, TEXT = 1, SPAN = 2, IMG_SPAN = 3;
 const Hints = Module("hints", {
+    requires: ["config"],
+
     init: function () {
 
         this._hintMode;

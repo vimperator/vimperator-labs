@@ -557,7 +557,7 @@ function Styles(name, store) {
 }
 
 Module("styles", {
-    requires: ["liberator", "storage", "util"],
+    requires: ["config", "liberator", "storage", "util"],
 
     init: function () {
         let (array = util.Array) {
@@ -707,7 +707,7 @@ Module("styles", {
 });
 
 Module("highlight", {
-    requires: ["styles"],
+    requires: ["config", "styles"],
 
     init: function () {
         const self = storage.newObject("highlight", Highlights, { store: false });

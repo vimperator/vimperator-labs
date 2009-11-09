@@ -12,6 +12,8 @@ const AutoCommand = new Struct("event", "pattern", "command");
  * @instance autocommands
  */
 const AutoCommands = Module("autocommands", {
+    requires: ["config"],
+
     init: function () {
         this._store = [];
     },
