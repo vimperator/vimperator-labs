@@ -661,7 +661,7 @@ const Editor = Module("editor", {
             commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
                 "Abbreviate a key sequence" + modeDescription,
                 function (args) {
-                    let matches = args.string.match(RegExp("^\\s*($|" + this._abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
+                    let matches = args.string.match(RegExp("^\\s*($|" + editor._abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
                     liberator.assert(matches, "E474: Invalid argument");
 
                     let [, lhs, rhs] = matches;
