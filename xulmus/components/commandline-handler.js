@@ -1,7 +1,10 @@
 // Header:
 const Name = "Xulmus";
-// The following doesn't work here, so this module's code is sadly duplicated:
-//     Components.utils.import("resource://liberator/commandline-handler.jsm");
+/*
+ * We can't load our modules here, so the following code is sadly
+ * duplicated: .w !sh
+vimdiff ../../*'/components/commandline-handler.js'
+ */
 
 // Copyright (c) 2009 by Doug Kearns
 //

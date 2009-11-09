@@ -1,7 +1,10 @@
 // Header:
 const Name = "Vimperator";
-// The following doesn't work here, so this module's code is sadly duplicated:
-//     Components.utils.import("resource://liberator/about-handler.jsm");
+/*
+ * We can't load our modules here, so the following code is sadly
+ * duplicated: .w !sh
+vimdiff ../../*'/components/about-handler.js'
+ */
 
 // Copyright (c) 2009 by Doug Kearns
 //
@@ -28,9 +31,7 @@ AboutHandler.prototype = {
     newChannel: function (uri) {
         let channel = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService)
                           .newChannel("chrome://" + name + "/content/about.html", null, null);
-
         channel.originalURI = uri;
-
         return channel;
     },
 
