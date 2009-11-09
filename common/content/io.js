@@ -58,9 +58,9 @@ const File = Class("File", {
             else
                 file.initWithPath(expandedPath);
         }
-        file = XPCSafeJSObjectWrapper(file);
-        file.__proto__ = File.prototype;
-        return file;
+        let self = XPCSafeJSObjectWrapper(file);
+        self.__proto__ = File.prototype;
+        return self;
     },
 
     /**
@@ -154,9 +154,9 @@ const File = Class("File", {
             encoding = options["fileencoding"];
 
         if (mode == ">>")
-            mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_APPEND;
+            mode = File.MODE_WRONLY | File.MODE_CREATE | File.MODE_APPEND;
         else if (!mode || mode == ">")
-            mode = self.MODE_WRONLY | self.MODE_CREATE | self.MODE_TRUNCATE;
+            mode = File.MODE_WRONLY | File.MODE_CREATE | File.MODE_TRUNCATE;
 
         if (!perms)
             perms = 0644;
@@ -186,6 +186,59 @@ const File = Class("File", {
         return true;
     },
 }, {
+    /**
+     * @property {number} Open for reading only.
+     * @final
+     */
+    MODE_RDONLY: 0x01,
+
+    /**
+     * @property {number} Open for writing only.
+     * @final
+     */
+    MODE_WRONLY: 0x02,
+
+    /**
+     * @property {number} Open for reading and writing.
+     * @final
+     */
+    MODE_RDWR: 0x04,
+
+    /**
+     * @property {number} If the file does not exist, the file is created.
+     *     If the file exists, this flag has no effect.
+     * @final
+     */
+    MODE_CREATE: 0x08,
+
+    /**
+     * @property {number} The file pointer is set to the end of the file
+     *     prior to each write.
+     * @final
+     */
+    MODE_APPEND: 0x10,
+
+    /**
+     * @property {number} If the file exists, its length is truncated to 0.
+     * @final
+     */
+    MODE_TRUNCATE: 0x20,
+
+    /**
+     * @property {number} If set, each write will wait for both the file
+     *     data and file status to be physically updated.
+     * @final
+     */
+    MODE_SYNC: 0x40,
+
+    /**
+     * @property {number} With MODE_CREATE, if the file does not exist, the
+     *     file is created. If the file already exists, no action and NULL
+     *     is returned.
+     * @final
+     */
+    MODE_EXCL: 0x80,
+
 
     expandPathList: function (list) list.split(",").map(this.expandPath).join(","),
 
@@ -309,59 +362,6 @@ const IO = Module("io", {
      * @final
      */
     File: File,
-
-    /**
-     * @property {number} Open for reading only.
-     * @final
-     */
-    MODE_RDONLY: 0x01,
-
-    /**
-     * @property {number} Open for writing only.
-     * @final
-     */
-    MODE_WRONLY: 0x02,
-
-    /**
-     * @property {number} Open for reading and writing.
-     * @final
-     */
-    MODE_RDWR: 0x04,
-
-    /**
-     * @property {number} If the file does not exist, the file is created.
-     *     If the file exists, this flag has no effect.
-     * @final
-     */
-    MODE_CREATE: 0x08,
-
-    /**
-     * @property {number} The file pointer is set to the end of the file
-     *     prior to each write.
-     * @final
-     */
-    MODE_APPEND: 0x10,
-
-    /**
-     * @property {number} If the file exists, its length is truncated to 0.
-     * @final
-     */
-    MODE_TRUNCATE: 0x20,
-
-    /**
-     * @property {number} If set, each write will wait for both the file
-     *     data and file status to be physically updated.
-     * @final
-     */
-    MODE_SYNC: 0x40,
-
-    /**
-     * @property {number} With MODE_CREATE, if the file does not exist, the
-     *     file is created. If the file already exists, no action and NULL
-     *     is returned.
-     * @final
-     */
-    MODE_EXCL: 0x80,
 
     /**
      * @property {Object} The current file sourcing context. As a file is
@@ -871,7 +871,7 @@ lookup:
                 liberator.assert(args.length <= 1, "E172: Only one file name allowed");
 
                 let filename = args[0] || io.getRCFile(null, true).path;
-                let file = io.File(filename);
+                let file = File(filename);
 
                 liberator.assert(!file.exists() || args.bang,
                     "E189: \"" + filename + "\" exists (add ! to override)");

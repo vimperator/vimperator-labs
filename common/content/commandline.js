@@ -1363,7 +1363,7 @@ const CommandLine = Module("commandline", {
                 this.wildIndex = util.Math.constrain(this.wildIndex + 1, 0, this.wildtypes.length - 1);
                 this.preview();
 
-                this._statusTimer.tell();
+                commandline._statusTimer.tell();
             }
 
             if (this.items.length == 0)

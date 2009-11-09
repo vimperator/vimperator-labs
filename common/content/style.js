@@ -729,7 +729,7 @@ Module("highlight", {
                 if (scheme == "default")
                     highlight.clear();
                 else
-                    liberator.assert(!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
+                    liberator.assert(io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
                         "E185: Cannot find color scheme " + scheme);
                 autocommands.trigger("ColorScheme", { name: scheme });
             },

@@ -419,7 +419,7 @@ const Mappings = Module("mappings", {
                                 arguments: [map.names[0]],
                                 literalArg: map.rhs
                             }
-                            for (map in this._mappingsIterator(modes, this._user))
+                            for (map in mappings._mappingsIterator(modes, mappings._user))
                             if (map.rhs && map.noremap == noremap && !isMultiMode(map, this.name))
                         ];
                     }

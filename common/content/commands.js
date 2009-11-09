@@ -1076,7 +1076,7 @@ const Commands = Module("commands", {
                         arguments: [cmd.name],
                         literalArg: cmd.replacementText
                     }
-                    for ([k, cmd] in Iterator(this._exCommands))
+                    for ([k, cmd] in Iterator(commands._exCommands))
                     if (cmd.user && cmd.replacementText)
                 ]
             });
