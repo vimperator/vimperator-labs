@@ -136,8 +136,8 @@ const Liberator = Module("liberator", {
 
     /**
      * @property {Object} The map of command-line options. These are
-     *     specified in the argument to the host application's -liberator
-     *     option. E.g. $ firefox -liberator '+u=tempRcFile ++noplugin'
+     *     specified in the argument to the host application's -{config.name}
+     *     option. E.g. $ firefox -vimperator '+u=/tmp/rcfile ++noplugin'
      *     Supported options:
      *         +u=RCFILE   Use RCFILE instead of .vimperatorrc.
      *         ++noplugin  Don't load plugins.
@@ -1734,8 +1734,7 @@ const Liberator = Module("liberator", {
 
         liberator.log("All modules loaded", 3);
 
-        services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase(),
-            Ci.nsICommandLineHandler);
+        services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase());
 
         let commandline = services.get("commandLineHandler").optionValue;
         if (commandline) {

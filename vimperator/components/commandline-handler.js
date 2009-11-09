@@ -35,7 +35,7 @@ CommandLineHandler.prototype = {
             this.optionValue = commandLine.handleFlagWithParam(name, false);
         }
         catch (e) {
-            //"vimperator: option -vimperator requires an argument"
+            dump(name + ": option '-" + name + "' requires an argument\n");
         }
     }
 };
