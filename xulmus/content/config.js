@@ -124,8 +124,7 @@ const config = { //{{{
             function () { SBSubscribe(); }]
     ],
 
-    focusChange: function ()
-    {
+    focusChange: function () {
         // Switch to -- PLAYER -- mode for Songbird Media Player.
         if (config.isPlayerWindow)
             liberator.mode = modes.PLAYER;
@@ -156,19 +155,16 @@ const config = { //{{{
     ],
 
     // FIXME: tab arg and media tab exception?
-    stop: function (tab)
-    {
+    stop: function (tab) {
         SBGetBrowser().mCurrentBrowser.stop();
     },
 
-    init: function ()
-    {
+    init: function () {
         // Adding a mode for Player
         //modes.addMode("PLAYER"); // Player mode for songbird
 
         // TODO: support 'nrformats'? -> probably not worth it --mst
-        function incrementURL(count)
-        {
+        function incrementURL(count) {
             let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
             if (!matches)
                 return void liberator.beep();
@@ -176,8 +172,7 @@ const config = { //{{{
             let [, pre, number, post] = matches;
             let newNumber = parseInt(number, 10) + count;
             let newNumberStr = String(newNumber > 0 ? newNumber : 0);
-            if (number.match(/^0/)) // add 0009<C-a> should become 0010
-            {
+            if (number.match(/^0/)) { // add 0009<C-a> should become 0010
                 while (newNumberStr.length < number.length)
                     newNumberStr = "0" + newNumberStr;
             }
@@ -185,19 +180,16 @@ const config = { //{{{
             liberator.open(pre + newNumberStr + post);
         }
 
-        function showServicePane(value)
-        {
+        function showServicePane(value) {
             const key = "splitter.servicepane_splitter.was_collapsed";
             gServicePane.open = value;
             SBDataSetBoolValue(key, gServicePane.open);
         }
 
-        function openDisplayPane(id)
-        {
+        function openDisplayPane(id) {
             if (id == "servicepane")
                 showServicePane(true);
-            else
-            {
+            else {
                 let pane = document.getElementById(id);
                 let manager = Cc['@songbirdnest.com/Songbird/DisplayPane/Manager;1'].getService(Ci.sbIDisplayPaneManager);
                 let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
@@ -209,8 +201,7 @@ const config = { //{{{
             }
         }
 
-        function closeDisplayPane(id)
-        {
+        function closeDisplayPane(id) {
             if (id == "servicepane")
                 showServicePane(false);
             else
@@ -270,8 +261,7 @@ const config = { //{{{
 
         commands.add(["dpcl[ose]"],
             "Close a display pane",
-            function (args)
-            {
+            function (args) {
                 let arg = args.literalArg;
 
                 if (arg in displayPanes)
@@ -289,8 +279,7 @@ const config = { //{{{
         // TODO: this should accept a second arg to specify content
         commands.add(["displayp[ane]", "dp[ane]", "dpope[n]"],
             "Open a display pane",
-            function (args)
-            {
+            function (args) {
                 let arg = args.literalArg;
 
                 if (arg in displayPanes)
@@ -307,10 +296,8 @@ const config = { //{{{
 
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
-            function (args)
-            {
-                if (args.bang) // open Songbird settings GUI dialog
-                {
+            function (args) {
+                if (args.bang) { // open Songbird settings GUI dialog
                     liberator.open("about:config",
                         (options["newtab"] && options.get("newtab").has("all", "prefs"))
                                 ? liberator.NEW_TAB : liberator.CURRENT_TAB);
@@ -332,8 +319,7 @@ const config = { //{{{
             "Set the 'work offline' option",
             "boolean", true,
             {
-                setter: function (value)
-                {
+                setter: function (value) {
                     const ioService = services.get("io");
                     ioService.offline = !value;
                     options.setPref("browser.offline", ioService.offline);

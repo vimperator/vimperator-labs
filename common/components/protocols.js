@@ -29,10 +29,8 @@ const systemPrincipal = channel.owner;
 channel.cancel(NS_BINDING_ABORTED);
 delete channel;
 
-function dataURL(type, data)
-    "data:" + (type || "application/xml;encoding=UTF-8") + "," + escape(data);
-function makeChannel(url, orig)
-{
+function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + escape(data);
+function makeChannel(url, orig) {
     if (typeof url == "function")
         url = dataURL.apply(null, url());
     let uri = ioService.newURI(url, null, null);
@@ -41,10 +39,8 @@ function makeChannel(url, orig)
     channel.originalURI = orig;
     return channel;
 }
-function fakeChannel(orig)
-    makeChannel("chrome://liberator/content/does/not/exist", orig);
-function redirect(to, orig)
-{
+function fakeChannel(orig) makeChannel("chrome://liberator/content/does/not/exist", orig);
+function redirect(to, orig) {
     let html = <html><head><meta http-equiv="Refresh" content={"0;" + to}/></head></html>.toXMLString();
     return makeChannel(dataURL('text/html', html), ioServices.newURI(to, null, null));
 }
@@ -56,8 +52,7 @@ ChromeData.prototype = {
     classDescription: "Data URIs with chrome privileges",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
     _xpcom_factory: {
-        createInstance: function (outer, iid)
-        {
+        createInstance: function (outer, iid) {
             if (!ChromeData.instance)
                 ChromeData.instance = new ChromeData();
             if (outer != null)
@@ -73,8 +68,7 @@ ChromeData.prototype = {
          | nsIProtocolHandler.URI_NOAUTH
          | nsIProtocolHandler.URI_IS_UI_RESOURCE,
 
-    newURI: function (spec, charset, baseURI)
-    {
+    newURI: function (spec, charset, baseURI) {
         var uri = Components.classes["@mozilla.org/network/standard-url;1"]
                             .createInstance(Components.interfaces.nsIStandardURL)
                             .QueryInterface(Components.interfaces.nsIURI);
@@ -82,10 +76,8 @@ ChromeData.prototype = {
         return uri;
     },
 
-    newChannel: function (uri)
-    {
-        try
-        {
+    newChannel: function (uri) {
+        try {
             if (uri.scheme == this.scheme)
                 return makeChannel(uri.spec.replace(/^.*?:\/*(.*)(?:#.*)?/, "data:$1"), uri);
         }
@@ -94,8 +86,7 @@ ChromeData.prototype = {
     }
 };
 
-function Liberator()
-{
+function Liberator() {
     this.wrappedJSObject = this;
 
     const self = this;
@@ -109,8 +100,7 @@ Liberator.prototype = {
     classDescription: "Liberator utility protocol",
     QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
     _xpcom_factory: {
-        createInstance: function (outer, iid)
-        {
+        createInstance: function (outer, iid) {
             if (!Liberator.instance)
                 Liberator.instance = new Liberator();
             if (outer != null)
@@ -119,10 +109,8 @@ Liberator.prototype = {
         }
     },
 
-    init: function (obj)
-    {
-        for each (let prop in ["HELP_TAGS", "FILE_MAP", "OVERLAY_MAP"])
-        {
+    init: function (obj) {
+        for each (let prop in ["HELP_TAGS", "FILE_MAP", "OVERLAY_MAP"]) {
             this[prop] = this[prop].constructor();
             for (let [k, v] in Iterator(obj[prop] || {}))
                 this[prop][k] = v
@@ -136,8 +124,7 @@ Liberator.prototype = {
          | nsIProtocolHandler.URI_IS_UI_RESOURCE
          | nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
 
-    newURI: function (spec, charset, baseURI)
-    {
+    newURI: function (spec, charset, baseURI) {
         var uri = Components.classes["@mozilla.org/network/standard-url;1"]
                             .createInstance(Components.interfaces.nsIStandardURL)
                             .QueryInterface(Components.interfaces.nsIURI);
@@ -145,12 +132,9 @@ Liberator.prototype = {
         return uri;
     },
 
-    newChannel: function (uri)
-    {
-        try
-        {
-            switch(uri.host)
-            {
+    newChannel: function (uri) {
+        try {
+            switch(uri.host) {
                 case "help":
                     let url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
                     return makeChannel(url, uri);
@@ -170,9 +154,6 @@ Liberator.prototype = {
 
 var components = [ChromeData, Liberator];
 
-function NSGetModule(compMgr, fileSpec)
-{
-    return XPCOMUtils.generateModule(components);
-}
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule(components)
 
 // vim: set fdm=marker sw=4 ts=4 et:

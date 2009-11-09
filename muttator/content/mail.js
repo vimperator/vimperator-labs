@@ -3,8 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-function Mail() //{{{
-{
+function Mail() { //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -25,20 +24,16 @@ function Mail() //{{{
         OnItemUnicharPropertyChanged: function (item, property, oldValue, newValue) {},
         OnItemPropertyFlagChanged: function (item, property, oldFlag, newFlag) {},
 
-        OnItemEvent: function (folder, event)
-        {
+        OnItemEvent: function (folder, event) {
             let eventType = event.toString();
-            if (eventType == "FolderLoaded")
-            {
-                if (folder)
-                {
+            if (eventType == "FolderLoaded") {
+                if (folder) {
                     let msgFolder = folder.QueryInterface(Ci.nsIMsgFolder);
                     autocommands.trigger("FolderLoaded", { url: msgFolder });
 
                     // Jump to a message when requested
                     let indices = [];
-                    if (selectMessageKeys.length > 0)
-                    {
+                    if (selectMessageKeys.length > 0) {
                         for (let j = 0; j < selectMessageKeys.length; j++)
                             indices.push([gDBView.findIndexFromKey(selectMessageKeys[j], true), selectMessageKeys[j]]);
 
@@ -67,19 +62,16 @@ function Mail() //{{{
     var notifyFlags = nsIFolderListener.intPropertyChanged | nsIFolderListener.event;
     mailSession.AddFolderListener(folderListener, notifyFlags);
 
-    function getCurrentFolderIndex()
-    {
+    function getCurrentFolderIndex() {
         // for some reason, the index is interpreted as a string, therefore the parseInt
         return parseInt(gFolderTreeView.getIndexOfFolder(gFolderTreeView.getSelectedFolders()[0]));
     }
 
-    function getRSSUrl()
-    {
+    function getRSSUrl() {
         return gDBView.hdrForFirstSelectedMessage.messageId.replace(/(#.*)?@.*$/, "");
     }
 
-    function moveOrCopy(copy, destinationFolder, operateOnThread)
-    {
+    function moveOrCopy(copy, destinationFolder, operateOnThread) {
         let folders = mail.getFolders(destinationFolder);
         if (folders.length == 0)
             return void liberator.echoerr("Exxx: No matching folder for " + destinationFolder);
@@ -96,13 +88,11 @@ function Mail() //{{{
         }, 100);
     }
 
-    function parentIndex(index)
-    {
+    function parentIndex(index) {
         let parent = index;
         let tree = GetThreadTree();
 
-        while (true)
-        {
+        while (true) {
             let tmp = tree.view.getParentIndex(parent);
             if (tmp >= 0)
                 parent = tmp;
@@ -113,18 +103,15 @@ function Mail() //{{{
     }
 
     // does not wrap yet, intentional?
-    function selectUnreadFolder(backwards, count)
-    {
+    function selectUnreadFolder(backwards, count) {
         count = Math.max(1, count);
         let direction = backwards ? -1 : 1;
         let c = getCurrentFolderIndex();
         let i = direction;
         let folder;
-        while (count > 0 && (c + i) < gFolderTreeView.rowCount && (c + i) >= 0)
-        {
+        while (count > 0 && (c + i) < gFolderTreeView.rowCount && (c + i) >= 0) {
             let resource = gFolderTreeView._rowMap[c+i]._folder;
-            if (!resource.isServer && resource.getNumUnread(false))
-            {
+            if (!resource.isServer && resource.getNumUnread(false)) {
                 count -= 1;
                 folder = i;
             }
@@ -136,8 +123,7 @@ function Mail() //{{{
             gFolderTreeView.selection.timedSelect(c + folder, 500);
     }
 
-    function escapeRecipient(recipient)
-    {
+    function escapeRecipient(recipient) {
         // strip all ":
         recipient = recipient.replace(/"/g, "");
         return "\"" + recipient + "\"";
@@ -162,10 +148,8 @@ function Mail() //{{{
         "Set the layout of the mail window",
         "string", "inherit",
         {
-            setter: function (value)
-            {
-                switch (value)
-                {
+            setter: function (value) {
+                switch (value) {
                     case "classic":  ChangeMailLayout(0); break;
                     case "wide":     ChangeMailLayout(1); break;
                     case "vertical": ChangeMailLayout(2); break;
@@ -188,8 +172,7 @@ function Mail() //{{{
         "string", services.get("smtpService").defaultServer.key, // TODO: how should we handle these persistent external defaults - "inherit" or null?
         {
             getter: function () services.get("smtpService").defaultServer.key,
-            setter: function (value)
-            {
+            setter: function (value) {
                 let server = mail.smtpServers.filter(function (s) s.key == value)[0];
                 services.get("smtpService").defaultServer = server;
                 return value;
@@ -202,8 +185,7 @@ function Mail() //{{{
         "Use threading to group messages",
         "boolean", true,
         {
-            setter: function (value)
-            {
+            setter: function (value) {
                 if (value)
                     MsgSortThreaded();
                 else
@@ -225,8 +207,7 @@ function Mail() //{{{
 
     mappings.add(myModes, ["I"],
         "Open the message in new tab",
-        function ()
-        {
+        function () {
             if (gDBView && gDBView.selection.count < 1)
                 return void liberator.beep();
 
@@ -282,10 +263,8 @@ function Mail() //{{{
 
     mappings.add(myModes, ["*"],
         "Select next message from the same sender",
-        function (count)
-        {
-            try
-            {
+        function (count) {
+            try {
                 let author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
                 mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, false, count);
             }
@@ -295,10 +274,8 @@ function Mail() //{{{
 
     mappings.add(myModes, ["#"],
         "Select previous message from the same sender",
-        function (count)
-        {
-            try
-            {
+        function (count) {
+            try {
                 let author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
                 mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, true, count);
             }
@@ -313,15 +290,12 @@ function Mail() //{{{
 
     mappings.add(myModes, ["M"],
         "Compose a new message to the sender of selected mail",
-        function ()
-        {
-          try
-          {
+        function () {
+          try {
               let to = escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
               commandline.open(":", "mail " + to + " -subject=", modes.EX);
           }
-          catch (e)
-          {
+          catch (e) {
               liberator.beep();
           }
         });
@@ -366,8 +340,7 @@ function Mail() //{{{
     // UNDO/REDO
     mappings.add(myModes, ["u"],
         "Undo",
-        function ()
-        {
+        function () {
             if (messenger.canUndo())
                 messenger.undo(msgWindow);
             else
@@ -375,8 +348,7 @@ function Mail() //{{{
         });
     mappings.add(myModes, ["<C-r>"],
         "Redo",
-        function ()
-        {
+        function () {
             if (messenger.canRedo())
                 messenger.redo(msgWindow);
             else
@@ -432,8 +404,7 @@ function Mail() //{{{
     // FOLDER SWITCHING
     mappings.add(myModes, ["gi"],
         "Go to inbox",
-        function (count)
-        {
+        function (count) {
             let folder = mail.getFolders("Inbox", false, true)[(count > 0) ? (count - 1) : 0];
             if (folder)
                 SelectFolder(folder.URI);
@@ -444,12 +415,10 @@ function Mail() //{{{
 
     mappings.add(myModes, ["<C-n>"],
         "Select next folder",
-        function (count)
-        {
+        function (count) {
             count = Math.max(1, count);
             let newPos = getCurrentFolderIndex() + count;
-            if (newPos >= gFolderTreeView.rowCount)
-            {
+            if (newPos >= gFolderTreeView.rowCount) {
                 newPos = newPos % gFolderTreeView.rowCount;
                 commandline.echo("search hit BOTTOM, continuing at TOP", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }
@@ -459,20 +428,17 @@ function Mail() //{{{
 
     mappings.add(myModes, ["<C-N>"],
         "Go to next mailbox with unread messages",
-        function (count)
-        {
+        function (count) {
             selectUnreadFolder(false, count);
         },
         { count: true });
 
     mappings.add(myModes, ["<C-p>"],
         "Select previous folder",
-        function (count)
-        {
+        function (count) {
             count = Math.max(1, count);
             let newPos = getCurrentFolderIndex() - count;
-            if (newPos < 0)
-            {
+            if (newPos < 0) {
                 newPos = (newPos % gFolderTreeView.rowCount) + gFolderTreeView.rowCount;
                 commandline.echo("search hit TOP, continuing at BOTTOM", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }
@@ -482,8 +448,7 @@ function Mail() //{{{
 
     mappings.add(myModes, ["<C-P>"],
         "Go to previous mailbox with unread messages",
-        function (count)
-        {
+        function (count) {
             selectUnreadFolder(true, count);
         },
         { count: true });
@@ -532,13 +497,11 @@ function Mail() //{{{
     // tagging messages
     mappings.add(myModes, ["l"],
         "Label message",
-        function (arg)
-        {
+        function (arg) {
             if (!GetSelectedMessages())
                 return void liberator.beep();
 
-            switch (arg)
-            {
+            switch (arg) {
                 case "r": MsgMarkMsgAsRead(); break;
                 case "s": MsgMarkAsFlagged(); break;
                 case "i": ToggleMessageTagKey(1); break; // Important
@@ -556,8 +519,7 @@ function Mail() //{{{
     // TODO: change binding?
     mappings.add(myModes, ["T"],
         "Mark current folder as read",
-        function ()
-        {
+        function () {
             if (mail.currentFolder.isServer)
                 return liberator.beep();
 
@@ -566,16 +528,14 @@ function Mail() //{{{
 
     mappings.add(myModes, ["<C-t>"],
         "Mark all messages as read",
-        function ()
-        {
+        function () {
             mail.getFolders("", false).forEach(function (folder) { folder.markAllMessagesRead(msgWindow); });
         });
 
     // DISPLAY OPTIONS
     mappings.add(myModes, ["h"],
         "Toggle displayed headers",
-        function ()
-        {
+        function () {
             let value = gPrefBranch.getIntPref("mail.show_headers", 2);
             gPrefBranch.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
             ReloadMessage();
@@ -583,8 +543,7 @@ function Mail() //{{{
 
     mappings.add(myModes, ["x"],
         "Toggle HTML message display",
-        function ()
-        {
+        function () {
             let wantHtml = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
             mail.setHTML(wantHtml ? 1 : 0);
         });
@@ -592,10 +551,8 @@ function Mail() //{{{
     // YANKING TEXT
     mappings.add(myModes, ["Y"],
         "Yank subject",
-        function ()
-        {
-            try
-            {
+        function () {
+            try {
                 let subject = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
                 util.copyToClipboard(subject, true);
             }
@@ -604,10 +561,8 @@ function Mail() //{{{
 
     mappings.add(myModes, ["y"],
         "Yank sender or feed URL",
-        function ()
-        {
-            try
-            {
+        function () {
+            try {
                 if (mail.currentAccount.server.type == "rss")
                     util.copyToClipboard(getRSSUrl(), true);
                 else
@@ -619,16 +574,13 @@ function Mail() //{{{
     // RSS specific mappings
     mappings.add(myModes, ["p"],
         "Open RSS message in browser",
-        function ()
-        {
-            try
-            {
+        function () {
+            try {
                 if (mail.currentAccount.server.type == "rss")
                     messenger.launchExternalURL(getRSSUrl());
                 // TODO: what to do for non-rss message?
             }
-            catch (e)
-            {
+            catch (e) {
                 liberator.beep();
             }
         });
@@ -639,8 +591,7 @@ function Mail() //{{{
 
     commands.add(["go[to]"],
         "Select a folder",
-        function (args)
-        {
+        function (args) {
             let count = Math.max(0, args.count - 1);
             let arg = args.literalArg || "Inbox";
 
@@ -661,8 +612,7 @@ function Mail() //{{{
 
     commands.add(["m[ail]"],
         "Write a new message",
-        function (args)
-        {
+        function (args) {
             let mailargs = {};
             mailargs.to =          args.join(", ");
             mailargs.subject =     args["-subject"];
@@ -746,13 +696,11 @@ function Mail() //{{{
         get currentFolder() gFolderTreeView.getSelectedFolders()[0],
 
         /** @property {nsISmtpServer[]} The list of configured SMTP servers. */
-        get smtpServers()
-        {
+        get smtpServers() {
             let servers = services.get("smtpService").smtpServers;
             let ret = [];
 
-            while (servers.hasMoreElements())
-            {
+            while (servers.hasMoreElements()) {
                 let server = servers.getNext();
                 if (server instanceof Ci.nsISmtpServer)
                     ret.push(server);
@@ -761,13 +709,11 @@ function Mail() //{{{
             return ret;
         },
 
-        composeNewMail: function (args)
-        {
+        composeNewMail: function (args) {
             let params = Cc["@mozilla.org/messengercompose/composeparams;1"].createInstance(Ci.nsIMsgComposeParams);
             params.composeFields = Cc["@mozilla.org/messengercompose/composefields;1"].createInstance(Ci.nsIMsgCompFields);
 
-            if (args)
-            {
+            if (args) {
                 if (args.originalMsg)
                     params.originalMsgURI = args.originalMsg;
                 if (args.to)
@@ -783,10 +729,8 @@ function Mail() //{{{
                 if (args.body)
                     params.composeFields.body = args.body;
 
-                if (args.attachments)
-                {
-                    while (args.attachments.length > 0)
-                    {
+                if (args.attachments) {
+                    while (args.attachments.length > 0) {
                         let url = args.attachments.pop();
                         let file = io.getFile(url);
                         if (!file.exists())
@@ -807,8 +751,7 @@ function Mail() //{{{
         },
 
         // returns an array of nsIMsgFolder objects
-        getFolders: function (filter, includeServers, includeMsgFolders)
-        {
+        getFolders: function (filter, includeServers, includeMsgFolders) {
             let folders = [];
             if (!filter)
                 filter = "";
@@ -820,8 +763,7 @@ function Mail() //{{{
             if (includeMsgFolders === undefined)
                 includeMsgFolders = true;
 
-            for (let i = 0; i < gFolderTreeView.rowCount; i++)
-            {
+            for (let i = 0; i < gFolderTreeView.rowCount; i++) {
                 let resource = gFolderTreeView._rowMap[i]._folder;
                 if ((resource.isServer && !includeServers) || (!resource.isServer && !includeMsgFolders))
                     continue;
@@ -836,22 +778,19 @@ function Mail() //{{{
             return folders;
         },
 
-        getNewMessages: function (currentAccountOnly)
-        {
+        getNewMessages: function (currentAccountOnly) {
             if (currentAccountOnly)
                 MsgGetMessagesForAccount();
             else
                 GetMessagesForAllAuthenticatedAccounts();
         },
 
-        getStatistics: function (currentAccountOnly)
-        {
+        getStatistics: function (currentAccountOnly) {
             let accounts = currentAccountOnly ? [this.currentAccount]
                                               : this.getFolders("", true, false);
 
             let unreadCount = 0, totalCount = 0, newCount = 0;
-            for (let i = 0; i < accounts.length; i++)
-            {
+            for (let i = 0; i < accounts.length; i++) {
                 let account = accounts[i];
                 unreadCount += account.getNumUnread(true); // true == deep (includes subfolders)
                 totalCount  += account.getTotalMessages(true);
@@ -861,14 +800,11 @@ function Mail() //{{{
             return { numUnread: unreadCount, numTotal: totalCount, numNew: newCount };
         },
 
-        collapseThread: function ()
-        {
+        collapseThread: function () {
             let tree = GetThreadTree();
-            if (tree)
-            {
+            if (tree) {
                 let parent = parentIndex(tree.currentIndex);
-                if (tree.changeOpenState(parent, false))
-                {
+                if (tree.changeOpenState(parent, false)) {
                     tree.view.selection.select(parent);
                     tree.treeBoxObject.ensureRowIsVisible(parent);
                     return true;
@@ -877,11 +813,9 @@ function Mail() //{{{
             return false;
         },
 
-        expandThread: function ()
-        {
+        expandThread: function () {
             let tree = GetThreadTree();
-            if (tree)
-            {
+            if (tree) {
                 let row = tree.currentIndex;
                 if (row >= 0 && tree.changeOpenState(row, true))
                    return true;
@@ -898,18 +832,15 @@ function Mail() //{{{
          * @param {boolean} openThreads Should we open closed threads?
          * @param {boolean} reverse Change direction of searching.
          */
-        selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count)
-        {
-            function currentIndex()
-            {
+        selectMessage: function (validatorFunc, canWrap, openThreads, reverse, count) {
+            function currentIndex() {
                 let index = gDBView.selection.currentIndex;
                 if (index < 0)
                     index = 0;
                 return index;
             }
 
-            function closedThread(index)
-            {
+            function closedThread(index) {
                 if (!(gDBView.viewFlags & nsMsgViewFlagsType.kThreadedDisplay))
                     return false;
 
@@ -924,34 +855,28 @@ function Mail() //{{{
                 count = 1;
 
             // first try to find in current folder
-            if (gDBView)
-            {
+            if (gDBView) {
                 for (let i = currentIndex() + (reverse ? -1 : (openThreads && closedThread() ? 0 : 1));
-                    reverse ? (i >= 0) : (i < gDBView.rowCount);
-                    reverse ? i-- : i++)
-                {
+                        reverse ? (i >= 0) : (i < gDBView.rowCount);
+                        reverse ? i-- : i++) {
                     let key = gDBView.getKeyAt(i);
                     let msg = gDBView.db.GetMsgHdrForKey(key);
 
                     // a closed thread
-                    if (openThreads && closedThread(i))
-                    {
+                    if (openThreads && closedThread(i)) {
                         let thread = gDBView.db.GetThreadContainingMsgHdr(msg);
                         let originalCount = count;
 
                         for (let j = (i == currentIndex() && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
                                  reverse ? (j >= 0) : (j < thread.numChildren);
-                                 reverse ? j-- : j++)
-                        {
+                                 reverse ? j-- : j++) {
                             msg = thread.getChildAt(j);
-                            if (validatorFunc(msg) && --count == 0)
-                            {
+                            if (validatorFunc(msg) && --count == 0) {
                                 // this hack is needed to get the correct message, because getChildAt() does not
                                 // necessarily return the messages in the order they are displayed
                                 gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
                                 GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
-                                if (j > 0)
-                                {
+                                if (j > 0) {
                                     GetThreadTree().changeOpenState(i, true);
                                     this.selectMessage(validatorFunc, false, false, false, originalCount);
                                 }
@@ -959,10 +884,8 @@ function Mail() //{{{
                             }
                         }
                     }
-                    else // simple non-threaded message
-                    {
-                        if (validatorFunc(msg) && --count == 0)
-                        {
+                    else { // simple non-threaded message
+                        if (validatorFunc(msg) && --count == 0) {
                             gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
                             GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
                             return;
@@ -972,14 +895,12 @@ function Mail() //{{{
             }
 
             // then in other folders
-            if (canWrap)
-            {
+            if (canWrap) {
                 selectMessageReverse = reverse;
 
                 let folders = this.getFolders("", true, true);
                 let ci = getCurrentFolderIndex();
-                for (let i = 1; i < folders.length; i++)
-                {
+                for (let i = 1; i < folders.length; i++) {
                     let index = (i + ci) % folders.length;
                     if (reverse)
                         index = folders.length - 1 - index;
@@ -993,29 +914,24 @@ function Mail() //{{{
 
                     // sometimes folder.getMessages can fail with an exception
                     // TODO: find out why, and solve the problem
-                    try
-                    {
+                    try {
                         var msgs = folder.messages;
                     }
-                    catch (e)
-                    {
+                    catch (e) {
                         msgs = folder.getMessages(msgWindow); // for older thunderbirds
                         liberator.dump("WARNING: " + folder.prettyName + " failed to getMessages, trying old API");
                         //continue;
                     }
 
-                    while (msgs.hasMoreElements())
-                    {
+                    while (msgs.hasMoreElements()) {
                         let msg = msgs.getNext().QueryInterface(Ci.nsIMsgDBHdr);
-                        if (validatorFunc(msg))
-                        {
+                        if (validatorFunc(msg)) {
                             count--;
                             selectMessageKeys.push(msg.messageKey);
                         }
                     }
 
-                    if (count <= 0)
-                    {
+                    if (count <= 0) {
                         // SelectFolder is asynchronous, message is selected in folderListener
                         SelectFolder(folder.URI);
                         return;
@@ -1028,8 +944,7 @@ function Mail() //{{{
             liberator.beep();
         },
 
-        setHTML: function (value)
-        {
+        setHTML: function (value) {
             let values = [[true,  1, gDisallow_classes_no_html],  // plaintext
                           [false, 0, 0],                          // HTML
                           [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML

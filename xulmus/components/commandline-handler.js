@@ -11,8 +11,7 @@ const Name = "Xulmus";
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const name = Name.toLowerCase();
-function CommandLineHandler()
-{
+function CommandLineHandler() {
     this.wrappedJSObject = this;
 }
 CommandLineHandler.prototype = {
@@ -30,20 +29,17 @@ CommandLineHandler.prototype = {
 
     QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsICommandLineHandler]),
 
-    handle: function (commandLine)
-    {
+    handle: function (commandLine) {
         // TODO: handle remote launches differently?
-        try
-        {
+        try {
             this.optionValue = commandLine.handleFlagWithParam(name, false);
         }
-        catch (e)
-        {
+        catch (e) {
             //"vimperator: option -vimperator requires an argument"
         }
     }
 };
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler]);
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler])
 
 // vim: set ft=javascript fdm=marker sw=4 ts=4 et:

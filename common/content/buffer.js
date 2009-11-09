@@ -355,10 +355,8 @@ const Buffer = Module("buffer", {
             for (let [, regex] in Iterator(regexes)) {
                 for (let i in util.range(res.snapshotLength, 0, -1)) {
                     let elem = res.snapshotItem(i);
-                    if (regex.test(elem.textContent) ||
-                        regex.test(elem.title) ||
-                        Array.some(elem.childNodes, function (child) regex.test(child.alt)))
-                    {
+                    if (regex.test(elem.textContent) || regex.test(elem.title) ||
+                            Array.some(elem.childNodes, function (child) regex.test(child.alt))) {
                         buffer.followLink(elem, liberator.CURRENT_TAB);
                         return true;
                     }

@@ -4,8 +4,7 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function checkFragment()
-{
+function checkFragment() {
     let frag = document.location.hash.substr(1);
     if (!frag || document.getElementById(frag))
         return;

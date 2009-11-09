@@ -4,8 +4,8 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function Player() //{{{
-{
+function Player() { //{{{
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -26,22 +26,18 @@ function Player() //{{{
     commandline.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function () { player.onSearchCancel(); });
 
     // interval (milliseconds)
-    function seek(interval, direction)
-    {
+    function seek(interval, direction) {
         let position = gMM.playbackControl ? gMM.playbackControl.position : 0;
         player.seekTo(position + (direction ? interval : -interval));
     }
 
-    function focusTrack(mediaItem)
-    {
+    function focusTrack(mediaItem) {
         SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
     }
 
     var mediaCoreListener = {
-        onMediacoreEvent: function (event)
-        {
-            switch (event.type)
-            {
+        onMediacoreEvent: function (event) {
+            switch (event.type) {
                 case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
                     liberator.log("Before track changed: " + event.data);
                     autocommands.trigger("TrackChangePre", { track: event.data });
@@ -193,8 +189,7 @@ function Player() //{{{
          ["N"], "Find the previous track",
          function () { player.searchViewAgain(true);});
 
-    for (let i in util.range(0, 6))
-    {
+    for (let i in util.range(0, 6)) {
         let (rating = i) {
             mappings.add([modes.PLAYER],
                  ["<C-" + rating + ">"], "Rate the current media item " + rating,
@@ -208,15 +203,13 @@ function Player() //{{{
 
     commands.add(["f[ilter]"],
             "Filter tracks based on keywords {genre/artist/album/track}",
-            function (args)
-            {
+            function (args) {
                 let library = LibraryUtils.mainLibrary;
                 let view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args.literalArg);
 
                 if (view.length == 0)
                     liberator.echoerr("No Tracks matching the keywords");
-                else
-                {
+                else {
                      SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, view,
                                                      "chrome://songbird/content/mediapages/filtersPage.xul");
                      // TODO: make this focusTrack work ?
@@ -231,19 +224,15 @@ function Player() //{{{
 
     commands.add(["load"],
         "Load a playlist",
-        function (args)
-        {
+        function (args) {
             let arg = args.literalArg;
 
-            if (arg)
-            {
+            if (arg) {
                 // load the selected playlist/smart playlist
                 let playlists = player.getPlaylists();
 
-                for ([i, list] in Iterator(playlists))
-                {
-                    if (util.compareIgnoreCase(arg, list.name) == 0)
-                    {
+                for ([i, list] in Iterator(playlists)) {
+                    if (util.compareIgnoreCase(arg, list.name) == 0) {
                         SBGetBrowser().loadMediaList(playlists[i]);
                         focusTrack(_SBGetCurrentView().getItemByIndex(0));
                         return;
@@ -252,8 +241,7 @@ function Player() //{{{
 
                 liberator.echoerr("E475: Invalid argument: " + arg);
             }
-            else
-            {
+            else {
                 // load main library if there are no args
                 _SBShowMainLibrary();
             }
@@ -287,8 +275,7 @@ function Player() //{{{
 
     commands.add(["see[k]"],
         "Seek to a track position",
-        function (args)
-        {
+        function (args) {
             let arg = args[0];
 
             // intentionally supports 999:99:99
@@ -297,14 +284,12 @@ function Player() //{{{
 
             function ms(t, m) Math.abs(parseInt(t, 10) * { s: 1000, m: 60000, h: 3600000 }[m])
 
-            if (/:/.test(arg))
-            {
+            if (/:/.test(arg)) {
                 let [seconds, minutes, hours] = arg.split(":").reverse();
                 hours = hours || 0;
                 var value = ms(seconds, "s") + ms(minutes, "m") + ms(hours, "h");
             }
-            else
-            {
+            else {
                 if (!/[smh]/.test(arg.substr(-1)))
                     arg += "s"; // default to seconds
 
@@ -321,22 +306,18 @@ function Player() //{{{
 
     commands.add(["mediav[iew]"],
         "Change the current media view",
-        function (args)
-        {
+        function (args) {
             // FIXME: is this a SB restriction? --djk
             if (!gBrowser.currentMediaPage)
                 return void liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
 
             let arg = args[0];
 
-            if (arg)
-            {
+            if (arg) {
                 let pages = player.getMediaPages();
 
-                for ([, page] in Iterator(pages))
-                {
-                    if (util.compareIgnoreCase(arg, page.contentTitle) == 0)
-                    {
+                for ([, page] in Iterator(pages)) {
+                    if (util.compareIgnoreCase(arg, page.contentTitle) == 0) {
                         player.loadMediaPage(page, gBrowser.currentMediaListView.mediaList, gBrowser.currentMediaListView);
                         return;
                     }
@@ -353,8 +334,7 @@ function Player() //{{{
 
     commands.add(["sort[view]"],
             "Sort the current media view",
-            function (args)
-            {
+            function (args) {
                player.sortBy(args, true);
 
             });
@@ -362,8 +342,7 @@ function Player() //{{{
     // FIXME: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
     commands.add(["qu[eue]"],
         "Queue tracks by artist/album/track",
-        function (args)
-        {
+        function (args) {
             // Store the old view
             // let prev_view = gMM.status.view;
             let library = LibraryUtils.mainLibrary;
@@ -372,8 +351,7 @@ function Player() //{{{
                                   .createInstance(Ci.sbIMutablePropertyArray);
 
             // args
-            switch (args.length)
-            {
+            switch (args.length) {
                 case 3:
                     customProps.appendProperty(SBProperties.trackName, args[2]);
                 case 2:
@@ -396,8 +374,7 @@ function Player() //{{{
     // TODO: maybe :vol! could toggle mute on/off? --djk
     commands.add(["vol[ume]"],
         "Set the volume",
-        function (args)
-        {
+        function (args) {
             let arg = args[0];
 
             if (!/^[+-]?\d+$/.test(arg))
@@ -421,18 +398,15 @@ function Player() //{{{
         function map(list) list.map(function (i) [i, ""]);
         let [artist, album] = [args[0], args[1]];
 
-        if (args.completeArg == 0)
-        {
+        if (args.completeArg == 0) {
             context.title = ["Artists"];
             context.completions = map(library.getArtists());
         }
-        else if (args.completeArg == 1)
-        {
+        else if (args.completeArg == 1) {
             context.title = ["Albums by " + artist];
             context.completions = map(library.getAlbums(artist));
         }
-        else if (args.completeArg == 2)
-        {
+        else if (args.completeArg == 2) {
             context.title = ["Tracks from " + album + " by " + artist];
             context.completions = map(library.getTracks(artist, album));
         }
@@ -462,53 +436,44 @@ function Player() //{{{
          * @property {string} The player volume as a percentage.
          */
         get volume() gMM.volumeControl.volume,
-        set volume(value)
-        {
+        set volume(value) {
             gMM.volumeControl.volume = value;
         },
 
         // FIXME: can't be called from non-media tabs since 840e78
-        play: function play()
-        {
+        play: function play() {
             // Check if there is any selection in place, else play first item of the visible view.
-            if (_SBGetCurrentView().selection.count != 0)
-            {
+            if (_SBGetCurrentView().selection.count != 0) {
                 // Play the selection.
                 gMM.sequencer.playView(_SBGetCurrentView(), _SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
                 focusTrack(gMM.sequencer.currentItem);
             }
-            else
-            {
+            else {
                 gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
                 focusTrack(gMM.sequencer.currentItem);
             }
         },
 
-        stop: function stop()
-        {
+        stop: function stop() {
             gMM.sequencer.stop();
         },
 
-        next: function next()
-        {
+        next: function next() {
             gSongbirdWindowController.doCommand("cmd_control_next");
             gSongbirdWindowController.doCommand("cmd_find_current_track");
         },
 
-        previous: function previous()
-        {
+        previous: function previous() {
             gSongbirdWindowController.doCommand("cmd_control_previous");
             gSongbirdWindowController.doCommand("cmd_find_current_track");
         },
 
-        togglePlayPause: function togglePlayPause()
-        {
+        togglePlayPause: function togglePlayPause() {
             gSongbirdWindowController.doCommand("cmd_control_playpause");
             focusTrack(gMM.sequencer.currentItem);
         },
 
-        toggleShuffle: function toggleShuffle()
-        {
+        toggleShuffle: function toggleShuffle() {
             if (gMM.sequencer.mode != gMM.sequencer.MODE_SHUFFLE)
                 gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE;
             else
@@ -516,10 +481,8 @@ function Player() //{{{
         },
 
         // FIXME: not really toggling - good enough for now.
-        toggleRepeat: function toggleRepeat()
-        {
-            switch (gMM.sequencer.repeatMode)
-            {
+        toggleRepeat: function toggleRepeat() {
+            switch (gMM.sequencer.repeatMode) {
                 case gMM.sequencer.MODE_REPEAT_NONE:
                     gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ONE;
                     break;
@@ -542,8 +505,7 @@ function Player() //{{{
          *  @param {number} interval The time interval (ms) to advance the
          *      current track.
          */
-        seekForward: function seekForward(interval)
-        {
+        seekForward: function seekForward(interval) {
             seek(interval, true);
         },
 
@@ -554,8 +516,7 @@ function Player() //{{{
          *  @param {number} interval The time interval (ms) to rewind the
          *      current track.
          */
-        seekBackward: function seekBackward(interval)
-        {
+        seekBackward: function seekBackward(interval) {
             seek(interval, false);
         },
 
@@ -564,8 +525,7 @@ function Player() //{{{
          *
          * @param {number} The new position (ms) in the track.
          */
-        seekTo: function seekTo(position)
-        {
+        seekTo: function seekTo(position) {
             // FIXME: if not playing
             if (!gMM.playbackControl)
                 this.play();
@@ -578,32 +538,27 @@ function Player() //{{{
 
         // FIXME: 10% ?
         // I think just general increments of say 0.05 might be better --djk
-        increaseVolume: function increaseVolume()
-        {
+        increaseVolume: function increaseVolume() {
             gMM.volumeControl.volume = gMM.volumeControl.volume * 1.1;
         },
 
-        decreaseVolume: function decreaseVolume()
-        {
+        decreaseVolume: function decreaseVolume() {
             if (gMM.volumeControl.volume == 0)
                 gMM.volumeControl.volume = 0.1;
             else
                 gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
         },
 
-        focusPlayingTrack :function focusPlayingTrack()
-        {
+        focusPlayingTrack :function focusPlayingTrack() {
             focusTrack(gMM.sequencer.currentItem);
         },
 
-        listTracks: function listTracks(view)
-        {
+        listTracks: function listTracks(view) {
             //let myView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args);
             let length = view.length;
             let tracksList = [];
 
-            for (let i = 0; i < length; i++)
-            {
+            for (let i = 0; i < length; i++) {
                 let mediaItem = view.getItemByIndex(i);
                 let trackName = mediaItem.getProperty(SBProperties.trackName);
                 let albumName = mediaItem.getProperty(SBProperties.albumName);
@@ -615,8 +570,7 @@ function Player() //{{{
             return tracksList;
         },
 
-        searchView: function searchView(args)
-        {
+        searchView: function searchView(args) {
             let currentView = _SBGetCurrentView();
             let mediaItemList = currentView.mediaList;
             let search = _getSearchString(currentView);
@@ -631,8 +585,7 @@ function Player() //{{{
 
             let mySearchView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
 
-            if (mySearchView.length)
-            {
+            if (mySearchView.length) {
                 lastSearchView = mySearchView;
                 lastSearchIndex = 0;
                 focusTrack(mySearchView.getItemByIndex(lastSearchIndex));
@@ -641,29 +594,23 @@ function Player() //{{{
                 liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
         },
 
-        searchViewAgain: function searchViewAgain(reverse)
-        {
-            function echo(str)
-            {
+        searchViewAgain: function searchViewAgain(reverse) {
+            function echo(str) {
                 setTimeout(function () {
                     commandline.echo(str, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
                 }, 0);
             }
 
-            if (reverse)
-            {
-                if (lastSearchIndex == 0)
-                {
+            if (reverse) {
+                if (lastSearchIndex == 0) {
                     lastSearchIndex = lastSearchView.length - 1;
                     echo("Search hit TOP, continuing at BOTTOM");
                 }
                 else
                     lastSearchIndex = lastSearchIndex - 1;
             }
-            else
-            {
-                if (lastSearchIndex == (lastSearchView.length - 1))
-                {
+            else {
+                if (lastSearchIndex == (lastSearchView.length - 1)) {
                     lastSearchIndex = 0;
                     echo("Search hit BOTTOM, continuing at TOP");
                 }
@@ -682,8 +629,7 @@ function Player() //{{{
          *
          * @param {string} str The contents of the search dialog.
          */
-        onSearchKeyPress: function (str)
-        {
+        onSearchKeyPress: function (str) {
             if (options["incsearch"])
                 this.searchView(str);
         },
@@ -693,28 +639,24 @@ function Player() //{{{
          *
          * @param {string} str The contents of the search dialog.
          */
-        onSearchSubmit: function (str)
-        {
+        onSearchSubmit: function (str) {
             this.searchView(str);
         },
 
         /**
          * The search dialog cancel callback.
          */
-        onSearchCancel: function ()
-        {
+        onSearchCancel: function () {
             // TODO: restore the view state if altered by an 'incsearch' search
         },
 
-        getPlaylists: function getPlaylists()
-        {
+        getPlaylists: function getPlaylists() {
             let mainLibrary = LibraryUtils.mainLibrary;
             let playlists = [mainLibrary];
             let listener = {
                 onEnumerationBegin: function () { },
                 onEnumerationEnd: function () { },
-                onEnumeratedItem: function (list, item)
-                {
+                onEnumeratedItem: function (list, item) {
                     // FIXME: why are there null items and duplicates?
                     if (!playlists.some(function (list) list.name == item.name) && item.name != null)
                         playlists.push(item);
@@ -728,42 +670,35 @@ function Player() //{{{
         },
 
         // Play track at 'row' in 'playlist'
-        playPlaylist: function playPlaylist(playlist, row)
-        {
+        playPlaylist: function playPlaylist(playlist, row) {
             gMM.sequencer.playView(playlist.createView(), row);
         },
 
-        getMediaPages: function getMediaPages()
-        {
+        getMediaPages: function getMediaPages() {
             let list = gBrowser.currentMediaPage.mediaListView.mediaList;
             let pages = services.get("mediaPageManager").getAvailablePages(list);
             return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Ci.sbIMediaPageInfo));
         },
 
-        loadMediaPage: function loadMediaList(page, list, view)
-        {
+        loadMediaPage: function loadMediaList(page, list, view) {
             services.get("mediaPageManager").setPage(list, page);
             gBrowser.loadMediaList(list, null, null, view, null);
         },
 
-        rateMediaItem: function rateMediaItem(rating)
-        {
+        rateMediaItem: function rateMediaItem(rating) {
             if (gMM.sequencer.currentItem)
                 gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating);
         },
 
-        getUserViewable: function getUserViewable()
-        {
+        getUserViewable: function getUserViewable() {
             let propManager = services.get("propertyManager");
             let propEnumerator = propManager.propertyIDs;
             let properties = [];
 
-            while (propEnumerator.hasMore())
-            {
+            while (propEnumerator.hasMore()) {
                 let propertyId = propEnumerator.getNext();
 
-                if (propManager.getPropertyInfo(propertyId).userViewable)
-                {
+                if (propManager.getPropertyInfo(propertyId).userViewable) {
                     //liberator.dump("propertyId - " + propManager.getPropertyInfo(propertyId).id);
                     properties.push(propManager.getPropertyInfo(propertyId).displayName);
                 }
@@ -772,13 +707,11 @@ function Player() //{{{
             return properties;
         },
 
-        sortBy: function sortBy(property, order)
-        {
+        sortBy: function sortBy(property, order) {
             let pa =  Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].createInstance(Ci.sbIMutablePropertyArray);
             liberator.dump("Property: " + property);
 
-            switch (property.string)
-            {
+            switch (property.string) {
                 case "#":
                 case "Title":
                         pa.appendProperty(SBProperties.trackName, "a");

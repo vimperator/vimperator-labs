@@ -3,8 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-const config = (function () //{{{
-{
+const config = (function () { //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -101,11 +100,9 @@ const config = (function () //{{{
                 function () { buffer.viewSelectionSource(); }]*/
         ],
 
-        focusChange: function (win)
-        {
+        focusChange: function (win) {
             // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
-            if (win && win.document instanceof HTMLDocument || liberator.focus instanceof HTMLAnchorElement)
-            {
+            if (win && win.document instanceof HTMLDocument || liberator.focus instanceof HTMLAnchorElement) {
                 if (config.isComposeWindow)
                     modes.set(modes.INSERT, modes.TEXTAREA);
                 else if (liberator.mode != modes.MESSAGE)
@@ -114,8 +111,7 @@ const config = (function () //{{{
         },
 
         getBrowser: function () {
-            if (!tabmail)
-            {
+            if (!tabmail) {
                 tabmail = { __proto__: document.getElementById("tabmail") };
                 tabmail.__defineGetter__("mTabContainer", function () this.tabContainer);
                 tabmail.__defineGetter__("mTabs", function () this.tabContainer.childNodes);
@@ -145,10 +141,8 @@ const config = (function () //{{{
         ],
 
         // NOTE: as I don't use TB I have no idea how robust this is. --djk
-        get outputHeight()
-        {
-            if (!this.isComposeWindow)
-            {
+        get outputHeight() {
+            if (!this.isComposeWindow) {
                 let container = document.getElementById("tabpanelcontainer").boxObject;
                 let deck      = document.getElementById("displayDeck");
                 let box       = document.getElementById("messagepanebox");
@@ -173,8 +167,7 @@ const config = (function () //{{{
         // to allow Vim to :set ft=mail automatically
         tempFile: "mutt-ator-mail",
 
-        init: function ()
-        {
+        init: function () {
             // don't wait too long when selecting new messages
             // GetThreadTree()._selectDelay = 300; // TODO: make configurable
 
@@ -182,8 +175,7 @@ const config = (function () //{{{
             if (this.isComposeWindow)
                 // TODO: this should probably be "composer"
                 liberator.loadModule("compose",      Compose);
-            else
-            {
+            else {
                 liberator.loadModule("mail",        Mail);
                 liberator.loadModule("addressbook", Addressbook);
                 liberator.loadModule("tabs",        Tabs);
@@ -208,8 +200,7 @@ const config = (function () //{{{
                 "Set the 'work offline' option",
                 "boolean", true,
                 {
-                    setter: function (value)
-                    {
+                    setter: function (value) {
                         if (MailOfflineMgr.isOnline() != value)
                             MailOfflineMgr.toggleOfflineStatus();
                         return value;

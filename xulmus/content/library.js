@@ -4,8 +4,8 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function Library() //{{{
-{
+function Library() { //{{{
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -14,8 +14,7 @@ function Library() //{{{
 
     function toJSArray(enum) ArrayConverter.JSArray(enum)
 
-    function getArtistsArray()
-    {
+    function getArtistsArray() {
         return toJSArray(MAIN_LIBRARY.getDistinctValuesForProperty(SBProperties.artistName));
     }
 
@@ -44,8 +43,7 @@ function Library() //{{{
          * @param {param} artist The artist name.
          * @returns {string[]}
          */
-        getAlbums: function getAlbums(artist)
-        {
+        getAlbums: function getAlbums(artist) {
             let albums = toJSArray(MAIN_LIBRARY.getItemsByProperty(SBProperties.artistName, artist))
                              .map(function (track) track.getProperty(SBProperties.albumName));
             return util.Array.uniq(albums);
@@ -59,8 +57,7 @@ function Library() //{{{
          * @param {param} album  The album name.
          * @returns {string[]}
          */
-        getTracks: function getTracks(artist, album)
-        {
+        getTracks: function getTracks(artist, album) {
             const properties = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                                  .createInstance(Ci.sbIMutablePropertyArray);
 

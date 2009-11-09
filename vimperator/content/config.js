@@ -119,8 +119,7 @@ const config = { //{{{
     get tempFile() {
         let prefix = this.name.toLowerCase();
 
-        try
-        {
+        try {
             prefix += "-" + window.content.document.location.hostname;
         }
         catch (e) {}
@@ -128,12 +127,10 @@ const config = { //{{{
         return prefix + ".tmp";
     },
 
-    init: function ()
-    {
+    init: function () {
         commands.add(["winon[ly]"],
             "Close all other windows",
-            function ()
-            {
+            function () {
                 liberator.windows.forEach(function (win) {
                     if (win != window)
                         win.close();
@@ -143,10 +140,8 @@ const config = { //{{{
 
         commands.add(["pref[erences]", "prefs"],
             "Show " + config.hostApplication + " preferences",
-            function (args)
-            {
-                if (args.bang) // open Firefox settings GUI dialog
-                {
+            function (args) {
+                if (args.bang) { // open Firefox settings GUI dialog
                     liberator.open("about:config",
                         (options["newtab"] && options.get("newtab").has("all", "prefs"))
                                 ? liberator.NEW_TAB : liberator.CURRENT_TAB);
@@ -161,8 +156,7 @@ const config = { //{{{
 
         commands.add(["sbcl[ose]"],
             "Close the sidebar window",
-            function ()
-            {
+            function () {
                 if (!document.getElementById("sidebar-box").hidden)
                     window.toggleSidebar();
             },
@@ -170,24 +164,20 @@ const config = { //{{{
 
         commands.add(["sideb[ar]", "sb[ar]", "sbope[n]"],
             "Open the sidebar window",
-            function (args)
-            {
+            function (args) {
                 let arg = args.literalArg;
                 function compare(a, b) util.compareIgnoreCase(a, b) == 0
 
                 // focus if the requested sidebar is already open
-                if (compare(document.getElementById("sidebar-title").value, arg))
-                {
+                if (compare(document.getElementById("sidebar-title").value, arg)) {
                     document.getElementById("sidebar-box").focus();
                     return;
                 }
 
                 let menu = document.getElementById("viewSidebarMenu");
 
-                for (let [, panel] in Iterator(menu.childNodes))
-                {
-                    if (compare(panel.label, arg))
-                    {
+                for (let [, panel] in Iterator(menu.childNodes)) {
+                    if (compare(panel.label, arg)) {
                         panel.doCommand();
                         return;
                     }
@@ -197,8 +187,7 @@ const config = { //{{{
             },
             {
                 argCount: "1",
-                completer: function (context)
-                {
+                completer: function (context) {
                     context.ignoreCase = true;
                     return completion.sidebar(context);
                 },
@@ -207,8 +196,7 @@ const config = { //{{{
 
         commands.add(["wind[ow]"],
             "Execute a command and tell it to output in a new window",
-            function (args)
-            {
+            function (args) {
                 liberator.forceNewWindow = true;
                 liberator.execute(args.string, null, true);
                 liberator.forceNewWindow = false;
@@ -226,8 +214,7 @@ const config = { //{{{
 
         commands.add(["wino[pen]", "wo[pen]", "wine[dit]"],
             "Open one or more URLs in a new window",
-            function (args)
-            {
+            function (args) {
                 args = args.string;
 
                 if (args)
@@ -249,8 +236,7 @@ const config = { //{{{
             "Set the 'work offline' option",
             "boolean", true,
             {
-                setter: function (value)
-                {
+                setter: function (value) {
                     const ioService = services.get("io");
                     if (ioService.offline == value)
                         BrowserOffline.toggleOfflineStatus();
@@ -289,8 +275,7 @@ const config = { //{{{
             services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result) {
                     timer.tell(result);
-                    if (result.searchResult <= result.RESULT_SUCCESS)
-                    {
+                    if (result.searchResult <= result.RESULT_SUCCESS) {
                         searchRunning = false;
                         timer.flush();
                     }

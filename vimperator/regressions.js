@@ -76,8 +76,7 @@ let functions = [
 // even after doing major Vimperator refactoring
 /////////////////////////////////////////////////////////////////////////////////////////
 
-function resetEnvironment()
-{
+function resetEnvironment() {
     multilineOutput.contentDocument.body.innerHTML = "";
     singlelineOutput.value = "";
     commandline.close();
@@ -91,8 +90,7 @@ function getSinglelineOutput()  singlelineOutput.value;
 function getTabIndex() getBrowser().mTabContainer.selectedIndex;
 function getTabCount() getBrowser().mTabs.length;
 
-function getBufferPosition()
-{
+function getBufferPosition() {
     let win = window.content;
     return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
              y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
@@ -100,8 +98,7 @@ function getBufferPosition()
 
 function getLocation() window.content.document.location.href;
 
-function echoLine(str, group)
-{
+function echoLine(str, group) {
     if (!doc)
         return;
 
@@ -109,8 +106,7 @@ function echoLine(str, group)
             <div highlight={group} style="border: 1px solid gray; white-space: pre; height: 1.5em; line-height: 1.5em;">{str}</div>,
             doc));
 }
-function echoMulti(str, group)
-{
+function echoMulti(str, group) {
     if (!doc)
         return;
 
@@ -122,8 +118,7 @@ function echoMulti(str, group)
 
 commands.addUserCommand(["regr[essions]"],
     "Run regression tests",
-    function (args)
-    {
+    function (args) {
         // TODO: might need to increase the 'messages' option temporarily
         // TODO: count (better even range) support to just run test 34 of 102
         // TODO: bang support to either: a) run commands like deleting bookmarks which
@@ -131,8 +126,7 @@ commands.addUserCommand(["regr[essions]"],
         //       just Ex command tests; Yet to be decided
 
         let updateOutputHeight = null;
-        function init()
-        {
+        function init() {
             liberator.registerObserver("echoLine", echoLine);
             liberator.registerObserver("echoMultiline", echoMulti);
             liberator.open("chrome://liberator/content/buffer.xhtml", liberator.NEW_TAB);
@@ -141,23 +135,20 @@ commands.addUserCommand(["regr[essions]"],
             doc.body.setAttributeNS(NS.uri, "highlight", "CmdLine");
 
             updateOutputHeight = commandline.updateOutputHeight;
-            commandline.updateOutputHeight = function (open)
-            {
+            commandline.updateOutputHeight = function (open) {
                 let elem = document.getElementById("liberator-multiline-output");
                 if (open)
                     elem.collapsed = false;
                 elem.height = 0;
             };
         }
-        function cleanup()
-        {
+        function cleanup() {
             liberator.unregisterObserver("echoLine", echoLine);
             liberator.unregisterObserver("echoMultiline", echoMulti);
             commandline.updateOutputHeight = updateOutputHeight;
         }
 
-        function run()
-        {
+        function run() {
             let now = Date.now();
             let totalTests = tests.length + functions.length;
             let successfulTests = 0;
@@ -169,17 +160,14 @@ commands.addUserCommand(["regr[essions]"],
             // TODO: might want to unify 'tests' and 'functions' handling
             // 1.) run commands and mappings tests
             outer:
-            for (let [, test] in Iterator(tests))
-            {
+            for (let [, test] in Iterator(tests)) {
                 currentTest++;
                 if (args.count >= 1 && currentTest != args.count)
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
-                for (let [, cmd] in Iterator(test.cmds))
-                {
-                    if (skipTests.indexOf(cmd) != -1)
-                    {
+                for (let [, cmd] in Iterator(test.cmds)) {
+                    if (skipTests.indexOf(cmd) != -1) {
                         skippedTests++;
                         liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
                         continue outer;
@@ -205,8 +193,7 @@ commands.addUserCommand(["regr[essions]"],
             }
 
             // 2.) Run function tests
-            for (let [, func] in Iterator(functions))
-            {
+            for (let [, func] in Iterator(functions)) {
                 currentTest++;
                 if (args.count >= 1 && currentTest != args.count)
                     continue;
@@ -232,8 +219,7 @@ commands.addUserCommand(["regr[essions]"],
             liberator.execute(":messages");
         }
 
-        if (!args.bang)
-        {
+        if (!args.bang) {
             liberator.echo(<e4x>
                 <span style="font-weight: bold">Running tests should always be done in a new profile.</span><br/>
 

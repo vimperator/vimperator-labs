@@ -3,8 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-function Compose() //{{{
-{
+function Compose() { //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -12,19 +11,16 @@ function Compose() //{{{
     config.features = ["addressbook"]; // the composer has no special features
 
     var stateListener = {
-        QueryInterface: function (id)
-        {
+        QueryInterface: function (id) {
             if (id.equals(Ci.nsIDocumentStateListener))
                 return this;
             throw Cr.NS_NOINTERFACE;
         },
 
         // this is (also) fired once the new compose window loaded the message for the first time
-        NotifyDocumentStateChanged: function (nowDirty)
-        {
+        NotifyDocumentStateChanged: function (nowDirty) {
             // only edit with external editor if this window was not cached!
-            if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/)
-            {
+            if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
                 window.messageWasEditedExternally = true;
                 editor.editFieldExternally();
             }
@@ -36,8 +32,7 @@ function Compose() //{{{
 
     // XXX: Hack!
     window.document.addEventListener("load", function () {
-        if (window.messageWasEditedExternally === undefined)
-        {
+        if (window.messageWasEditedExternally === undefined) {
             window.messageWasEditedExternally = false;
             GetCurrentEditor().addDocumentStateListener(stateListener);
         }

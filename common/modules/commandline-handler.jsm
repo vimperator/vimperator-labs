@@ -9,8 +9,7 @@ var CommandLineHandler;
 
 function initCommandLineHandler(Name) {
     var name = Name.toLowerCase();
-    CommandLineHandler = function CommandLineHandler()
-    {
+    CommandLineHandler = function CommandLineHandler() {
         this.wrappedJSObject = this;
     }
     CommandLineHandler.prototype = {
@@ -28,21 +27,18 @@ function initCommandLineHandler(Name) {
 
         QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsICommandLineHandler]),
 
-        handle: function (commandLine)
-        {
+        handle: function (commandLine) {
             // TODO: handle remote launches differently?
-            try
-            {
+            try {
                 this.optionValue = commandLine.handleFlagWithParam(name, false);
             }
-            catch (e)
-            {
+            catch (e) {
                 //"vimperator: option -vimperator requires an argument"
             }
         }
     };
 }
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler]);
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler])
 
 // vim: set ft=javascript fdm=marker sw=4 ts=4 et:

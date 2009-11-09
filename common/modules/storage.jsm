@@ -27,29 +27,24 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 // XXX: does not belong here
-function Timer(minInterval, maxInterval, callback)
-{
+function Timer(minInterval, maxInterval, callback) {
     let timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     this.doneAt = 0;
     this.latest = 0;
-    this.notify = function (aTimer)
-    {
+    this.notify = function (aTimer) {
         timer.cancel();
         this.latest = 0;
         // minInterval is the time between the completion of the command and the next firing
         this.doneAt = Date.now() + minInterval;
 
-        try
-        {
+        try {
             callback(this.arg);
         }
-        finally
-        {
+        finally {
             this.doneAt = Date.now() + minInterval;
         }
     };
-    this.tell = function (arg)
-    {
+    this.tell = function (arg) {
         if (arguments.length > 0)
             this.arg = arg;
 
@@ -68,32 +63,27 @@ function Timer(minInterval, maxInterval, callback)
         timer.initWithCallback(this, Math.max(timeout, 0), timer.TYPE_ONE_SHOT);
         this.doneAt = -1;
     };
-    this.reset = function ()
-    {
+    this.reset = function () {
         timer.cancel();
         this.doneAt = 0;
     };
-    this.flush = function ()
-    {
+    this.flush = function () {
         if (this.doneAt == -1)
             this.notify();
     };
 }
 
-function getFile(name)
-{
+function getFile(name) {
     let file = storage.infoPath.clone();
     file.append(name);
     return file;
 }
 
-function readFile(file)
-{
+function readFile(file) {
     let fileStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
     let stream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
-    try
-    {
+    try {
         fileStream.init(file, -1, 0, 0);
         stream.init(fileStream, "UTF-8", 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
 
@@ -110,8 +100,7 @@ function readFile(file)
     catch (e) {}
 }
 
-function writeFile(file, data)
-{
+function writeFile(file, data) {
     if (!file.exists())
         file.create(file.NORMAL_FILE_TYPE, 0600);
 
@@ -132,34 +121,28 @@ var prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPref
                             .getBranch("extensions.liberator.datastore.");
 var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
-function getCharPref(name)
-{
-    try
-    {
+function getCharPref(name) {
+    try {
         return prefService.getComplexValue(name, Ci.nsISupportsString).data;
     }
     catch (e) {}
 }
 
-function setCharPref(name, value)
-{
+function setCharPref(name, value) {
     var str = Cc['@mozilla.org/supports-string;1'].createInstance(Ci.nsISupportsString);
     str.data = value;
     return prefService.setComplexValue(name, Ci.nsISupportsString, str);
 }
 
-function loadPref(name, store, type)
-{
-    try
-    {
+function loadPref(name, store, type) {
+    try {
         if (store)
             var pref = getCharPref(name);
         if (!pref && storage.infoPath)
             var file = readFile(getFile(name));
         if (pref || file)
             var result = json.decode(pref || file);
-        if (pref)
-        {
+        if (pref) {
             prefService.clearUserPref(name);
             savePref({ name: name, store: true, serial: pref });
         }
@@ -169,8 +152,7 @@ function loadPref(name, store, type)
     catch (e) {}
 }
 
-function savePref(obj)
-{
+function savePref(obj) {
     if (obj.privateData && storage.privateMode)
         return;
     if (obj.store && storage.infoPath)
@@ -181,8 +163,7 @@ var prototype = {
     OPTIONS: ["privateData"],
     fireEvent: function (event, arg) { storage.fireEvent(this.name, event, arg); },
     save: function () { savePref(this); },
-    init: function (name, store, data, options)
-    {
+    init: function (name, store, data, options) {
         this.__defineGetter__("store", function () store);
         this.__defineGetter__("name", function () name);
         for (let [k, v] in Iterator(options))
@@ -192,12 +173,10 @@ var prototype = {
     }
 };
 
-function ObjectStore(name, store, load, options)
-{
+function ObjectStore(name, store, load, options) {
     var object = {};
 
-    this.reload = function reload()
-    {
+    this.reload = function reload() {
         object = load() || {};
         this.fireEvent("change", null);
     };
@@ -205,8 +184,7 @@ function ObjectStore(name, store, load, options)
     this.init.apply(this, arguments);
     this.__defineGetter__("serial", function () json.encode(object));
 
-    this.set = function set(key, val)
-    {
+    this.set = function set(key, val) {
         var defined = key in object;
         var orig = object[key];
         object[key] = val;
@@ -216,8 +194,7 @@ function ObjectStore(name, store, load, options)
             this.fireEvent("change", key);
     };
 
-    this.remove = function remove(key)
-    {
+    this.remove = function remove(key) {
         var ret = object[key];
         delete object[key];
         this.fireEvent("remove", key);
@@ -226,8 +203,7 @@ function ObjectStore(name, store, load, options)
 
     this.get = function get(val) object[val];
 
-    this.clear = function ()
-    {
+    this.clear = function () {
         object = {};
     };
 
@@ -235,12 +211,10 @@ function ObjectStore(name, store, load, options)
 }
 ObjectStore.prototype = prototype;
 
-function ArrayStore(name, store, load, options)
-{
+function ArrayStore(name, store, load, options) {
     var array = [];
 
-    this.reload = function reload()
-    {
+    this.reload = function reload() {
         array = load() || [];
         this.fireEvent("change", null);
     };
@@ -249,31 +223,26 @@ function ArrayStore(name, store, load, options)
     this.__defineGetter__("serial", function () json.encode(array));
     this.__defineGetter__("length", function () array.length);
 
-    this.set = function set(index, value)
-    {
+    this.set = function set(index, value) {
         var orig = array[index];
         array[index] = value;
         this.fireEvent("change", index);
     };
 
-    this.push = function push(value)
-    {
+    this.push = function push(value) {
         array.push(value);
         this.fireEvent("push", array.length);
     };
 
-    this.pop = function pop(value)
-    {
+    this.pop = function pop(value) {
         var ret = array.pop();
         this.fireEvent("pop", array.length);
         return ret;
     };
 
-    this.truncate = function truncate(length, fromEnd)
-    {
+    this.truncate = function truncate(length, fromEnd) {
         var ret = array.length;
-        if (array.length > length)
-        {
+        if (array.length > length) {
             if (fromEnd)
                 array.splice(0, array.length - length);
             array.length = length;
@@ -283,16 +252,14 @@ function ArrayStore(name, store, load, options)
     };
 
     // XXX: Awkward.
-    this.mutate = function mutate(aFuncName)
-    {
+    this.mutate = function mutate(aFuncName) {
         var funcName = aFuncName;
         arguments[0] = array;
         array = Array[funcName].apply(Array, arguments);
         this.fireEvent("change", null);
     };
 
-    this.get = function get(index)
-    {
+    this.get = function get(index) {
         return index >= 0 ? array[index] : array[array.length + index];
     };
 
@@ -306,10 +273,8 @@ var timers = {};
 
 var storage = {
     alwaysReload: {},
-    newObject: function newObject(key, constructor, params)
-    {
-        if (!(key in keys) || params.reload || this.alwaysReload[key])
-        {
+    newObject: function newObject(key, constructor, params) {
+        if (!(key in keys) || params.reload || this.alwaysReload[key]) {
             if (key in this && !(params.reload || this.alwaysReload[key]))
                 throw Error();
             let load = function () loadPref(key, params.store, params.type || Object);
@@ -320,27 +285,22 @@ var storage = {
         return keys[key];
     },
 
-    newMap: function newMap(key, options)
-    {
+    newMap: function newMap(key, options) {
         return this.newObject(key, ObjectStore, options);
     },
 
-    newArray: function newArray(key, options)
-    {
+    newArray: function newArray(key, options) {
         return this.newObject(key, ArrayStore, { type: Array, __proto__: options });
     },
 
-    addObserver: function addObserver(key, callback, ref)
-    {
-        if (ref)
-        {
+    addObserver: function addObserver(key, callback, ref) {
+        if (ref) {
             if (!ref.liberatorStorageRefs)
                 ref.liberatorStorageRefs = [];
             ref.liberatorStorageRefs.push(callback);
             var callbackRef = Cu.getWeakReference(callback);
         }
-        else
-        {
+        else {
             callbackRef = { get: function () callback };
         }
         this.removeDeadObservers();
@@ -350,8 +310,7 @@ var storage = {
             observers[key].push({ ref: ref && Cu.getWeakReference(ref), callback: callbackRef });
     },
 
-    removeObserver: function (key, callback)
-    {
+    removeObserver: function (key, callback) {
         this.removeDeadObservers();
         if (!(key in observers))
             return;
@@ -360,10 +319,8 @@ var storage = {
             delete obsevers[key];
     },
 
-    removeDeadObservers: function ()
-    {
-        for (let [key, ary] in Iterator(observers))
-        {
+    removeDeadObservers: function () {
+        for (let [key, ary] in Iterator(observers)) {
             observers[key] = ary = ary.filter(function (o) o.callback.get() && (!o.ref || o.ref.get() && o.ref.get().liberatorStorageRefs));
             if (!ary.length)
                 delete observers[key];
@@ -372,8 +329,7 @@ var storage = {
 
     get observers() observers,
 
-    fireEvent: function fireEvent(key, event, arg)
-    {
+    fireEvent: function fireEvent(key, event, arg) {
         if (!(key in this))
             return;
         this.removeDeadObservers();
@@ -383,27 +339,23 @@ var storage = {
         timers[key].tell();
     },
 
-    load: function load(key)
-    {
+    load: function load(key) {
         if (this[key].store && this[key].reload)
             this[key].reload();
     },
 
-    save: function save(key)
-    {
+    save: function save(key) {
         savePref(keys[key]);
     },
 
-    saveAll: function storeAll()
-    {
+    saveAll: function storeAll() {
         for each (let obj in keys)
             savePref(obj);
     },
 
     _privateMode: false,
     get privateMode() this._privateMode,
-    set privateMode(val)
-    {
+    set privateMode(val) {
         if (!val && this._privateMode)
             for (let key in keys)
                 this.load(key);

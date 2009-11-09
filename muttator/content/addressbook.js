@@ -3,8 +3,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
-function Addressbook() //{{{
-{
+function Addressbook() { //{{{
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////// PRIVATE SECTION /////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////{{{
@@ -14,8 +13,7 @@ function Addressbook() //{{{
 
     // TODO: add option for a format specifier, like:
     // :set displayname=%l, %f
-    function generateDisplayName(firstName, lastName)
-    {
+    function generateDisplayName(firstName, lastName) {
         if (firstName && lastName)
             return lastName + ", " + firstName;
         else if (firstName)
@@ -40,14 +38,11 @@ function Addressbook() //{{{
 
     mappings.add(myModes, ["a"],
         "Open a prompt to save a new addressbook entry for the sender of the selected message",
-        function ()
-        {
-            try
-            {
+        function () {
+            try {
                 var to = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
             }
-            catch (e)
-            {
+            catch (e) {
                 liberator.beep();
             }
 
@@ -57,8 +52,7 @@ function Addressbook() //{{{
             let address = to.substring(to.indexOf("<") + 1, to.indexOf(">"));
 
             let displayName = to.substr(0, to.indexOf("<") - 1);
-            if (/^\S+\s+\S+\s*$/.test(displayName))
-            {
+            if (/^\S+\s+\S+\s*$/.test(displayName)) {
                 let names = displayName.split(/\s+/);
                 displayName = "-firstname=" + names[0].replace(/"/g, "")
                             + " -lastname=" + names[1].replace(/"/g, "");
@@ -75,8 +69,7 @@ function Addressbook() //{{{
 
     commands.add(["con[tact]"],
         "Add an address book entry",
-        function (args)
-        {
+        function (args) {
             let mailAddr    = args[0]; // TODO: support more than one email address
             let firstName   = args["-firstname"] || null;
             let lastName    = args["-lastname"] || null;
@@ -108,8 +101,7 @@ function Addressbook() //{{{
 
     return {
 
-        add: function (address, firstName, lastName, displayName)
-        {
+        add: function (address, firstName, lastName, displayName) {
             const personalAddressbookURI = "moz-abmdbdirectory://abook.mab";
             let directory = getDirectoryFromURI(personalAddressbookURI);
             let card = Cc["@mozilla.org/addressbook/cardproperty;1"].createInstance(Ci.nsIAbCard);
@@ -126,18 +118,15 @@ function Addressbook() //{{{
         },
 
         // TODO: add telephone number support
-        list: function (filter, newMail)
-        {
+        list: function (filter, newMail) {
             let addresses = [];
             let dirs = abManager.directories;
             let lowerFilter = filter.toLowerCase();
 
-            while (dirs.hasMoreElements())
-            {
+            while (dirs.hasMoreElements()) {
                 let addrbook = dirs.getNext().QueryInterface(Ci.nsIAbDirectory);
                 let cards = addrbook.childCards;
-                while (cards.hasMoreElements())
-                {
+                while (cards.hasMoreElements()) {
                     let card = cards.getNext().QueryInterface(Ci.nsIAbCard);
                     //var mail = card.primaryEmail || ""; //XXX
                     let displayName = card.displayName;
@@ -150,8 +139,7 @@ function Addressbook() //{{{
                 }
             }
 
-            if (addresses.length < 1)
-            {
+            if (addresses.length < 1) {
                 if (!filter)
                     liberator.echoerr("Exxx: No contacts", commandline.FORCE_SINGLELINE);
                 else
@@ -159,8 +147,7 @@ function Addressbook() //{{{
                 return false;
             }
 
-            if (newMail)
-            {
+            if (newMail) {
                 // Now we have to create a new message
                 let args = {};
                 args.to = addresses.map(
@@ -169,8 +156,7 @@ function Addressbook() //{{{
 
                 mail.composeNewMail(args);
             }
-            else
-            {
+            else {
                 let list = template.tabular(["Name", "Address"], [],
                     [[util.clip(address[0], 50), address[1]] for ([, address] in Iterator(addresses))]
                 );

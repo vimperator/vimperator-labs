@@ -321,16 +321,15 @@ function Highlights(name, store) {
     this.loadCSS = function (css) {
         css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + " " + _2.replace(/\n\s*/g, " "))
            .split("\n").filter(function (s) /\S/.test(s))
-           .forEach(function (style)
-        {
-            style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*((?:[^,\s]|\s\S)+)(?:,((?:[^,\s]|\s\S)+)?)?(?:,((?:[^,\s]|\s\S)+))?\s*(.*)$/), 1));
-            if (/^[>+ ]/.test(style.selector))
-                style.selector = self.selector(style.class) + style.selector;
+           .forEach(function (style) {
+                style = Highlight.apply(Highlight, Array.slice(style.match(/^\s*((?:[^,\s]|\s\S)+)(?:,((?:[^,\s]|\s\S)+)?)?(?:,((?:[^,\s]|\s\S)+))?\s*(.*)$/), 1));
+                if (/^[>+ ]/.test(style.selector))
+                    style.selector = self.selector(style.class) + style.selector;
 
-            let old = highlight[style.class];
-            highlight[style.class] = style;
-            if (old && old.value != old.default)
-                style.value = old.value;
+                let old = highlight[style.class];
+                highlight[style.class] = style;
+                if (old && old.value != old.default)
+                    style.value = old.value;
         });
         for (let [class, hl] in Iterator(highlight)) {
             if (hl.value == hl.default)

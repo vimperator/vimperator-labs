@@ -25,8 +25,7 @@ AboutHandler.prototype = {
 
     QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 
-    newChannel: function (uri)
-    {
+    newChannel: function (uri) {
         let channel = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService)
                           .newChannel("chrome://" + name + "/content/about.html", null, null);
 
@@ -38,6 +37,6 @@ AboutHandler.prototype = {
     getURIFlags: function (uri) Ci.nsIAboutModule.ALLOW_SCRIPT,
 };
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler]);
+function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler])
 
 // vim: set fdm=marker sw=4 ts=4 et:
