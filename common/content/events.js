@@ -1065,7 +1065,8 @@ const Events = Module("events", {
         }
         finally {
             let motionMap = (this._input.pendingMotionMap && this._input.pendingMotionMap.names[0]) || "";
-            statusline.updateInputBuffer(motionMap + this._input.buffer);
+            if (!(modes.extended & modes.HINTS))
+                statusline.updateInputBuffer(motionMap + this._input.buffer);
         }
     },
 

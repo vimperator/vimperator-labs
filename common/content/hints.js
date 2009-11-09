@@ -836,7 +836,7 @@ const Hints = Module("hints", {
                     this._hintNumber = parseInt(key, 10);
                 }
                 else
-                    this._hintNumber = (this._hintNumber * 10) + parseInt(key, 10);
+                    this._hintNumber = parseInt(String(this._hintNumber) + key, 10);
 
                 this._updateStatusline();
 
