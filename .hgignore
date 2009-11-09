@@ -25,5 +25,5 @@ syntax: glob
 syntax: regexp
 
 ## For rejects
-\.(orig|rej)$
+\.(orig|rej|bak|diff)$
 
