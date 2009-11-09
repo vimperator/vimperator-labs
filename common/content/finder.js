@@ -168,7 +168,7 @@ const Finder = Module("finder", {
     },
 
     // set searchString, searchPattern, caseSensitive, linksOnly
-    processUserPattern: function (pattern) {
+    _processUserPattern: function (pattern) {
         //// strip off pattern terminator and offset
         //if (backwards)
         //    pattern = pattern.replace(/\?.*/, "");
@@ -373,16 +373,16 @@ const Finder = Module("finder", {
         this._highlighter.clear();
     }
 }, {
+}, {
     commandline: function () {
-        const self = this;
         // Event handlers for search - closure is needed
-        commandline.registerCallback("change", modes.SEARCH_FORWARD, function (str) { self.onKeyPress(str); });
-        commandline.registerCallback("submit", modes.SEARCH_FORWARD, function (str) { self.onSubmit(str); });
-        commandline.registerCallback("cancel", modes.SEARCH_FORWARD, function ()    { self.onCancel(); });
+        commandline.registerCallback("change", modes.SEARCH_FORWARD, this.closure.onKeyPress);
+        commandline.registerCallback("submit", modes.SEARCH_FORWARD, this.closure.onSubmit);
+        commandline.registerCallback("cancel", modes.SEARCH_FORWARD, this.closure.onCancel);
         // TODO: allow advanced myModes in register/triggerCallback
-        commandline.registerCallback("change", modes.SEARCH_BACKWARD, function (str) { self.onKeyPress(str); });
-        commandline.registerCallback("submit", modes.SEARCH_BACKWARD, function (str) { self.onSubmit(str); });
-        commandline.registerCallback("cancel", modes.SEARCH_BACKWARD, function ()    { self.onCancel(); });
+        commandline.registerCallback("change", modes.SEARCH_BACKWARD, this.closure.onKeyPress);
+        commandline.registerCallback("submit", modes.SEARCH_BACKWARD, this.closure.onSubmit);
+        commandline.registerCallback("cancel", modes.SEARCH_BACKWARD, this.closure.onCancel);
 
     },
     commands: function () {
