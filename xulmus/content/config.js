@@ -221,18 +221,6 @@ const config = { //{{{
             context.completions = displayPanes; // FIXME: useful description etc
         };
 
-        // load Xulmus specific modules
-        liberator.loadModule("browser",    Browser);
-        liberator.loadModule("finder",     Finder);
-        liberator.loadModule("bookmarks",  Bookmarks);
-        liberator.loadModule("history",    History);
-        liberator.loadModule("tabs",       Tabs);
-        liberator.loadModule("marks",      Marks);
-        liberator.loadModule("quickmarks", QuickMarks);
-        liberator.loadModule("hints",      Hints);
-        liberator.loadModule("player",     Player);
-        liberator.loadModule("library",    Library);
-
         ////////////////////////////////////////////////////////////////////////////////
         ////////////////////// STYLES //////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
@@ -250,10 +238,6 @@ const config = { //{{{
                 true);
             delete img;
         };
-
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////// MAPPINGS ////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
 
         /////////////////////////////////////////////////////////////////////////////}}}
         ////////////////////// COMMANDS ////////////////////////////////////////////////
