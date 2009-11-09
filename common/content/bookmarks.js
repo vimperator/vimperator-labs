@@ -60,20 +60,15 @@ const Bookmarks = Module("bookmarks", {
             this.__iterator__ = function () (val for ([, val] in Iterator(self.bookmarks)));
 
             function loadBookmark(node) {
-                try {
-                    let uri = util.newURI(node.uri);
-                    let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
-                    let tags = tagging.getTagsForURI(uri, {}) || [];
-                    let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
+                if (node.uri == null) // How does this happen?
+                    return false;
+                let uri = util.newURI(node.uri);
+                let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
+                let tags = tagging.getTagsForURI(uri, {}) || [];
+                let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
-                    bookmarks.push(bmark);
-                    return bmark;
-                }
-                catch (e) {
-                    liberator.dump("Failed to create bookmark for URI: " + node.uri);
-                    liberator.reportError(e);
-                    return null;
-                }
+                bookmarks.push(bmark);
+                return bmark;
             }
 
             function readBookmark(id) {
