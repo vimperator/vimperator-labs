@@ -12,7 +12,7 @@
         <em:optionsURL>chrome://liberator/content/preferences.xul</em:optionsURL>
         <em:file>
             <Description about="urn:mozilla:extension:file:vimperator.jar">
-                <em:package>content/vimperator/</em:package>
+                <em:package>content/liberator/</em:package>
             </Description>
         </em:file>
         <em:targetApplication>

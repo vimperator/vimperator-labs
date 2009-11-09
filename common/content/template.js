@@ -6,18 +6,16 @@
 
 /** @scope modules */
 
-const template = { //{{{
+const Template = Module("template", {
     add: function add(a, b) a + b,
     join: function join(c) function (a, b) a + c + b,
 
-    map: function map(iter, func, sep, interruptable)
-    {
+    map: function map(iter, func, sep, interruptable) {
         if (iter.length) // FIXME: Kludge?
             iter = util.Array.itervalues(iter);
         let ret = <></>;
         let n = 0;
-        for each (let i in Iterator(iter))
-        {
+        for each (let i in Iterator(iter)) {
             let val = func(i);
             if (val == undefined)
                 continue;
@@ -30,30 +28,25 @@ const template = { //{{{
         return ret;
     },
 
-    maybeXML: function maybeXML(xml)
-    {
+    maybeXML: function maybeXML(xml) {
         if (typeof xml == "xml")
             return xml;
-        try
-        {
+        try {
             return new XMLList(xml);
         }
         catch (e) {}
         return <>{xml}</>;
     },
 
-    completionRow: function completionRow(item, highlightGroup)
-    {
+    completionRow: function completionRow(item, highlightGroup) {
         if (typeof icon == "function")
             icon = icon();
 
-        if (highlightGroup)
-        {
+        if (highlightGroup) {
             var text = item[0] || "";
             var desc = item[1] || "";
         }
-        else
-        {
+        else {
             var text = this.process[0].call(this, item, item.text);
             var desc = this.process[1].call(this, item, item.description);
         }
@@ -85,8 +78,7 @@ const template = { //{{{
         }
     </>,
 
-    icon: function (item, text)
-    {
+    icon: function (item, text) {
         return <><span highlight="CompIcon">{item.icon ? <img src={item.icon}/> : <></>}</span><span class="td-strut"/>{text}</>
     },
 
@@ -108,79 +100,69 @@ const template = { //{{{
 
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
-    highlight: function highlight(arg, processStrings, clip)
-    {
+    highlight: function highlight(arg, processStrings, clip) {
         // some objects like window.JSON or getBrowsers()._browsers need the try/catch
-        try
-        {
+        try {
             let str = clip ? util.clip(String(arg), clip) : String(arg);
-            switch (arg == null ? "undefined" : typeof arg)
-            {
-                case "number":
-                    return <span highlight="Number">{str}</span>;
-                case "string":
-                    if (processStrings)
-                        str = str.quote();
-                    return <span highlight="String">{str}</span>;
-                case "boolean":
-                    return <span highlight="Boolean">{str}</span>;
-                case "function":
-                    // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
-                    // Using /foo*(:?)/ instead.
-                    if (processStrings)
-                        return <span highlight="Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
-                    return <>{arg}</>;
-                case "undefined":
-                    return <span highlight="Null">{arg}</span>;
-                case "object":
-                    // for java packages value.toString() would crash so badly
-                    // that we cannot even try/catch it
-                    if (/^\[JavaPackage.*\]$/.test(arg))
-                        return <>[JavaPackage]</>;
-                    if (processStrings && false)
-                        str = template.highlightFilter(str, "\n", function () <span highlight="NonText">^J</span>);
-                    return <span highlight="Object">{str}</span>;
-                case "xml":
-                    return arg;
-                default:
-                    return <![CDATA[<unknown type>]]>;
+            switch (arg == null ? "undefined" : typeof arg) {
+            case "number":
+                return <span highlight="Number">{str}</span>;
+            case "string":
+                if (processStrings)
+                    str = str.quote();
+                return <span highlight="String">{str}</span>;
+            case "boolean":
+                return <span highlight="Boolean">{str}</span>;
+            case "function":
+                // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
+                // Using /foo*(:?)/ instead.
+                if (processStrings)
+                    return <span highlight="Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
+                return <>{arg}</>;
+            case "undefined":
+                return <span highlight="Null">{arg}</span>;
+            case "object":
+                // for java packages value.toString() would crash so badly
+                // that we cannot even try/catch it
+                if (/^\[JavaPackage.*\]$/.test(arg))
+                    return <>[JavaPackage]</>;
+                if (processStrings && false)
+                    str = template.highlightFilter(str, "\n", function () <span highlight="NonText">^J</span>);
+                return <span highlight="Object">{str}</span>;
+            case "xml":
+                return arg;
+            default:
+                return <![CDATA[<unknown type>]]>;
             }
         }
-        catch (e)
-        {
+        catch (e) {
             return<![CDATA[<unknown>]]>;
         }
     },
 
-    highlightFilter: function highlightFilter(str, filter, highlight)
-    {
-        return this.highlightSubstrings(str, (function ()
-        {
+    highlightFilter: function highlightFilter(str, filter, highlight) {
+        return this.highlightSubstrings(str, (function () {
             if (filter.length == 0)
                 return;
             let lcstr = String.toLowerCase(str);
             let lcfilter = filter.toLowerCase();
             let start = 0;
-            while ((start = lcstr.indexOf(lcfilter, start)) > -1)
-            {
+            while ((start = lcstr.indexOf(lcfilter, start)) > -1) {
                 yield [start, filter.length];
                 start += filter.length;
             }
         })(), highlight || template.filter);
     },
 
-    highlightRegexp: function highlightRegexp(str, re, highlight)
-    {
-        return this.highlightSubstrings(str, (function ()
-        {
+    highlightRegexp: function highlightRegexp(str, re, highlight) {
+        return this.highlightSubstrings(str, (function () {
             let res;
             while ((res = re.exec(str)) && res[0].length)
                 yield [res.index, res[0].length];
         })(), highlight || template.filter);
     },
 
-    highlightSubstrings: function highlightSubstrings(str, iter, highlight)
-    {
+    highlightSubstrings: function highlightSubstrings(str, iter, highlight) {
         if (typeof str == "xml")
             return str;
         if (str == "")
@@ -190,8 +172,7 @@ const template = { //{{{
         let s = <></>;
         let start = 0;
         let n = 0;
-        for (let [i, length] in iter)
-        {
+        for (let [i, length] in iter) {
             if (n++ > 50) // Prevent infinite loops.
                 return s + <>{str.substr(start)}</>;
             XML.ignoreWhitespace = false;
@@ -202,23 +183,20 @@ const template = { //{{{
         return s + <>{str.substr(start)}</>;
     },
 
-    highlightURL: function highlightURL(str, force)
-    {
+    highlightURL: function highlightURL(str, force) {
         if (force || /^[a-zA-Z]+:\/\//.test(str))
             return <a highlight="URL" href={str}>{str}</a>;
         else
             return str;
     },
 
-    commandOutput: function generic(xml)
-    {
+    commandOutput: function generic(xml) {
         return <>:{commandline.command}<br/>{xml}</>;
     },
 
     // every item must have a .xml property which defines how to draw itself
     // @param headers is an array of strings, the text for the header columns
-    genericTable: function genericTable(items, format)
-    {
+    genericTable: function genericTable(items, format) {
         completion.listCompleter(function (context) {
             context.filterFunc = null;
             if (format)
@@ -227,8 +205,7 @@ const template = { //{{{
         });
     },
 
-    jumps: function jumps(index, elems)
-    {
+    jumps: function jumps(index, elems) {
         // <e4x>
         return this.commandOutput(
             <table>
@@ -248,8 +225,7 @@ const template = { //{{{
         // </e4x>
     },
 
-    options: function options(title, opts)
-    {
+    options: function options(title, opts) {
         // <e4x>
         return this.commandOutput(
             <table>
@@ -269,8 +245,7 @@ const template = { //{{{
         // </e4x>
     },
 
-    table: function table(title, data, indent)
-    {
+    table: function table(title, data, indent) {
         let table =
         // <e4x>
             <table>
@@ -290,8 +265,7 @@ const template = { //{{{
             return table;
     },
 
-    tabular: function tabular(headings, style, iter)
-    {
+    tabular: function tabular(headings, style, iter) {
         // TODO: This might be mind-bogglingly slow. We'll see.
         // <e4x>
         return this.commandOutput(
@@ -315,8 +289,7 @@ const template = { //{{{
         // </e4x>
     },
 
-    usage: function usage(iter)
-    {
+    usage: function usage(iter) {
         // <e4x>
         return this.commandOutput(
             <table>
@@ -330,6 +303,6 @@ const template = { //{{{
             </table>);
         // </e4x>
     }
-}; //}}}
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

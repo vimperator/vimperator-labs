@@ -110,6 +110,8 @@ const config = { //{{{
     scripts: [
         "browser.js",
         "bookmarks.js",
+        "history.js",
+        "quickmarks.js",
         "sanitizer.js",
         "tabs.js"
     ],
@@ -128,38 +130,6 @@ const config = { //{{{
 
     init: function ()
     {
-        // load Vimperator specific modules
-        // FIXME: Why aren't these listed in config.scripts?
-        // FIXME: Why isn't this automatic? -> how would one know which classes to load where? --mst
-        //      Something like:
-        //          liberator.addModule("search", function Search() { ...
-        //      for all modules, or something similar. For modules which
-        //      require other modules, well, there's addObserver("load_foo",
-        //      or we could just make sure that they're all sourced in order.
-        //      The scripts could even just instantiate them themselves.
-        //        --Kris
-        liberator.loadModule("browser",    Browser);
-        liberator.loadModule("finder",     Finder);
-        liberator.loadModule("bookmarks",  Bookmarks);
-        liberator.loadModule("history",    History);
-        liberator.loadModule("tabs",       Tabs);
-        liberator.loadModule("marks",      Marks);
-        liberator.loadModule("quickmarks", QuickMarks);
-        liberator.loadModule("hints",      Hints);
-        liberator.loadModule("sanitizer",  Sanitizer);
-
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////// STYLES //////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// MAPPINGS ////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
-        /////////////////////////////////////////////////////////////////////////////}}}
-        ////////////////////// COMMANDS ////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////{{{
-
         commands.add(["winon[ly]"],
             "Close all other windows",
             function ()

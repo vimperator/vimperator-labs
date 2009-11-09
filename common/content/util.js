@@ -10,7 +10,11 @@ const XUL = Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.
 const NS = Namespace("liberator", "http://vimperator.org/namespaces/liberator");
 default xml namespace = XHTML;
 
-const util = { //{{{
+const Util = Module("util", {
+    init: function () {
+        this.Array = Util.Array;
+    },
+
     /**
      * Returns true if its argument is an Array object, regardless
      * of which context it comes from.
@@ -25,8 +29,7 @@ const util = { //{{{
      * @param {Object} obj
      * @returns {Object}
      */
-    cloneObject: function cloneObject(obj)
-    {
+    cloneObject: function cloneObject(obj) {
         if (obj instanceof Array)
             return obj.slice();
         let newObj = {};
@@ -43,8 +46,7 @@ const util = { //{{{
      * @param {number} length The length of the returned string.
      * @returns {string}
      */
-    clip: function clip(str, length)
-    {
+    clip: function clip(str, length) {
         return str.length <= length ? str : str.substr(0, length - 3) + "...";
     },
 
@@ -64,8 +66,7 @@ const util = { //{{{
      * @param {Node} node
      * @returns {Object}
      */
-    computedStyle: function computedStyle(node)
-    {
+    computedStyle: function computedStyle(node) {
         while (node instanceof Text && node.parentNode)
             node = node.parentNode;
         return node.ownerDocument.defaultView.getComputedStyle(node, null);
@@ -78,8 +79,7 @@ const util = { //{{{
      * @param {string} str
      * @param {boolean} verbose
      */
-    copyToClipboard: function copyToClipboard(str, verbose)
-    {
+    copyToClipboard: function copyToClipboard(str, verbose) {
         const clipboardHelper = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper);
         clipboardHelper.copyString(str);
 
@@ -94,8 +94,7 @@ const util = { //{{{
      * @returns {Object}
      */
     // FIXME: newURI needed too?
-    createURI: function createURI(str)
-    {
+    createURI: function createURI(str) {
         const fixup = Cc["@mozilla.org/docshell/urifixup;1"].getService(Ci.nsIURIFixup);
         return fixup.createFixupURI(str, fixup.FIXUP_FLAG_ALLOW_KEYWORD_LOOKUP);
     },
@@ -107,8 +106,7 @@ const util = { //{{{
      * @param {string} str
      * @returns {string}
      */
-    escapeHTML: function escapeHTML(str)
-    {
+    escapeHTML: function escapeHTML(str) {
         // XXX: the following code is _much_ slower than a simple .replace()
         // :history display went down from 2 to 1 second after changing
         //
@@ -124,32 +122,28 @@ const util = { //{{{
      * @param {string} str
      * @returns {string}
      */
-    escapeRegex: function escapeRegex(str)
-    {
+    escapeRegex: function escapeRegex(str) {
         return str.replace(/([\\{}()[\].?*+])/g, "\\$1");
     },
 
     /**
      * Escapes quotes, newline and tab characters in <b>str</b>. The returned
      * string is delimited by <b>delimiter</b> or " if <b>delimiter</b> is not
-     * specified.
+     * specified. {@see String#quote}.
      *
      * @param {string} str
      * @param {string} delimiter
      * @returns {string}
      */
-    escapeString: function escapeString(str, delimiter)
-    {
+    escapeString: function escapeString(str, delimiter) {
         if (delimiter == undefined)
             delimiter = '"';
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
 
-    extend: function extend(dest)
-    {
+    extend: function extend(dest) {
         Array.slice(arguments, 1).filter(util.identity).forEach(function (src) {
-            for (let [k, v] in Iterator(src))
-            {
+            for (let [k, v] in Iterator(src)) {
                 let get = src.__lookupGetter__(k),
                     set = src.__lookupSetter__(k);
                 if (!get && !set)
@@ -171,8 +165,7 @@ const util = { //{{{
      * @param nodes {Array(string)}
      * @returns {string}
      */
-    makeXPath: function makeXPath(nodes)
-    {
+    makeXPath: function makeXPath(nodes) {
         return util.Array(nodes).map(function (node) [node, "xhtml:" + node]).flatten()
                                 .map(function (node) "//" + node).join(" | ");
     },
@@ -187,8 +180,7 @@ const util = { //{{{
      *          passed as the first argument, <b>key</b> as the
      *          second.
      */
-    memoize: function memoize(obj, key, getter)
-    {
+    memoize: function memoize(obj, key, getter) {
         obj.__defineGetter__(key, function () {
             delete obj[key];
             obj[key] = getter(obj, key);
@@ -209,14 +201,12 @@ const util = { //{{{
      * @param {string} str
      * @param {RegExp} marker
      */
-    splitLiteral: function splitLiteral(str, marker)
-    {
+    splitLiteral: function splitLiteral(str, marker) {
         let results = [];
         let resep = RegExp(/^(([^\\'"]|\\.|'([^\\']|\\.)*'|"([^\\"]|\\.)*")*?)/.source + marker.source);
         let cont = true;
 
-        while (cont)
-        {
+        while (cont) {
             cont = false;
             str = str.replace(resep, function (match, before) {
                 results.push(before);
@@ -238,17 +228,14 @@ const util = { //{{{
      * @param {boolean} humanReadable Use byte multiples.
      * @returns {string}
      */
-    formatBytes: function formatBytes(bytes, decimalPlaces, humanReadable)
-    {
+    formatBytes: function formatBytes(bytes, decimalPlaces, humanReadable) {
         const unitVal = ["Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
         let unitIndex = 0;
         let tmpNum = parseInt(bytes, 10) || 0;
         let strNum = [tmpNum + ""];
 
-        if (humanReadable)
-        {
-            while (tmpNum >= 1024)
-            {
+        if (humanReadable) {
+            while (tmpNum >= 1024) {
                 tmpNum /= 1024;
                 if (++unitIndex > (unitVal.length - 1))
                     break;
@@ -273,53 +260,7 @@ const util = { //{{{
         return strNum[0] + " " + unitVal[unitIndex];
     },
 
-    /**
-     * Generates an Asciidoc help entry.
-     *
-     * @param {Command|Map|Option} obj A liberator <b>Command</b>,
-     *     <b>Map</b> or <b>Option</b> object
-     * @param {XMLList} extraHelp Extra help text beyond the description.
-     * @returns {string}
-     */
-    generateHelp: function generateHelp(obj, extraHelp)
-    {
-        let spec = util.identity;
-        let tag = util.identity;
-        if (obj instanceof Command)
-            tag = spec = function (cmd) <>:{cmd}</>;
-        else if (obj instanceof Map && obj.count)
-            spec = function (map) <><oa xmlns="">count</oa>{map}</>;
-        else if (obj instanceof Option)
-        {
-            spec = function (opt) <o xmlns="">{opt}</o>;
-            tag  = function (opt) <>'{opt}'</>;
-        }
-
-        // E4X has its warts.
-        let br = <>
-        </>;
-
-        default xml namespace = "";
-        XML.prettyPrinting = false;
-        XML.ignoreWhitespace = false;
-
-        return <></> +
-            <item>
-                <tags>{template.map(obj.names, tag, " ")}</tags>
-                <spec>{spec((obj.specs || obj.names)[0])}</spec>{
-                !obj.type ? "" : <>
-                <type>{obj.type}</type>
-                <default>{obj.defaultValue}</default></>}
-                <description>{
-                    obj.description ? br+<p>{obj.description.replace(/\.?$/, ".")}</p> : "" }{
-                        extraHelp ? br+extraHelp : "" }{
-                        !(extraHelp || obj.description) ? br+<p>Sorry, no help available.</p> : "" }
-                </description>
-            </item>.toXMLString();
-    },
-
-    exportHelp: function (path)
-    {
+    exportHelp: function (path) {
         const FILE = io.File(path);
         const PATH = FILE.leafName.replace(/\..*/, "") + "/";
         const TIME = Date.now();
@@ -337,8 +278,7 @@ const util = { //{{{
             .split(" ").map(Array.concat));
 
         let chrome = {};
-        for (let [file,] in Iterator(services.get("liberator:").FILE_MAP))
-        {
+        for (let [file,] in Iterator(services.get("liberator:").FILE_MAP)) {
             liberator.open("liberator://help/" + file);
             events.waitForPageLoad();
             let data = [
@@ -346,10 +286,8 @@ const util = { //{{{
                 '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n',
                 '          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n'
             ];
-            function fix(node)
-            {
-                switch(node.nodeType)
-                {
+            function fix(node) {
+                switch(node.nodeType) {
                     case Node.ELEMENT_NODE:
                         if (node instanceof HTMLScriptElement)
                             return;
@@ -358,22 +296,18 @@ const util = { //{{{
                         if (node instanceof HTMLHtmlElement)
                             data.push(' xmlns="' + XHTML.uri + '"');
 
-                        for (let { name: name, value: value } in util.Array.itervalues(node.attributes))
-                        {
-                            if (name == "liberator:highlight")
-                            {
+                        for (let { name: name, value: value } in util.Array.itervalues(node.attributes)) {
+                            if (name == "liberator:highlight") {
                                 name = "class";
                                 value = "hl-" + value;
                             }
-                            if (name == "href")
-                            {
+                            if (name == "href") {
                                 if (value.indexOf("liberator://help-tag/") == 0)
                                     value = services.get("io").newChannel(value, null, null).originalURI.path.substr(1);
                                 if (!/[#\/]/.test(value))
                                     value += ".xhtml";
                             }
-                            if (name == "src" && value.indexOf(":") > 0)
-                            {
+                            if (name == "src" && value.indexOf(":") > 0) {
                                 chrome[value] = value.replace(/.*\//, "");;
                                 value = value.replace(/.*\//, "");
                             }
@@ -385,8 +319,7 @@ const util = { //{{{
                         }
                         if (node.localName in empty)
                             data.push(" />");
-                        else
-                        {
+                        else {
                             data.push(">");
                             if (node instanceof HTMLHeadElement)
                                 data.push(<link rel="stylesheet" type="text/css" href="help.css"/>.toXMLString());
@@ -429,14 +362,11 @@ const util = { //{{{
      * @param {function(XMLHttpRequest)} callback
      * @returns {XMLHttpRequest}
      */
-    httpGet: function httpGet(url, callback)
-    {
-        try
-        {
+    httpGet: function httpGet(url, callback) {
+        try {
             let xmlhttp = new XMLHttpRequest();
             xmlhttp.mozBackgroundRequest = true;
-            if (callback)
-            {
+            if (callback) {
                 xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4)
                         callback(xmlhttp);
@@ -446,8 +376,7 @@ const util = { //{{{
             xmlhttp.send(null);
             return xmlhttp;
         }
-        catch (e)
-        {
+        catch (e) {
             liberator.log("Error opening " + url + ": " + e, 1);
         }
     },
@@ -465,8 +394,7 @@ const util = { //{{{
      * @param {boolean} asIterator Whether to return the results as an
      *     XPath iterator.
      */
-    evaluateXPath: function (expression, doc, elem, asIterator)
-    {
+    evaluateXPath: function (expression, doc, elem, asIterator) {
         if (!doc)
             doc = window.content.document;
         if (!elem)
@@ -475,11 +403,11 @@ const util = { //{{{
             expression = util.makeXPath(expression);
 
         let result = doc.evaluate(expression, elem,
-            function lookupNamespaceURI(prefix)
-            {
+            function lookupNamespaceURI(prefix) {
                 return {
                     xhtml: "http://www.w3.org/1999/xhtml",
                     xhtml2: "http://www.w3.org/2002/06/xhtml2",
+                    liberator: NS.uri,
                     liberator: NS.uri
                 }[prefix] || null;
             },
@@ -526,8 +454,7 @@ const util = { //{{{
      * @param {function} func
      * @returns {Array}
      */
-    map: function map(obj, func)
-    {
+    map: function map(obj, func) {
         let ary = [];
         for (let i in Iterator(obj))
             ary.push(func(i));
@@ -558,8 +485,7 @@ const util = { //{{{
      * @returns {nsIURI}
      */
     // FIXME: createURI needed too?
-    newURI: function (uri)
-    {
+    newURI: function (uri) {
         return services.get("io").newURI(uri, null, null);
     },
 
@@ -571,10 +497,9 @@ const util = { //{{{
      * @param {boolean} color Whether the output should be colored.
      * @returns {string}
      */
-    objectToString: function objectToString(object, color)
-    {
+    objectToString: function objectToString(object, color) {
         // Use E4X literals so html is automatically quoted
-        // only when it's asked for. Noone wants to see &lt;
+        // only when it's asked for. No one wants to see &lt;
         // on their console or :map :foo in their buffer
         // when they expect :map <C-f> :foo.
         XML.prettyPrinting = false;
@@ -591,20 +516,17 @@ const util = { //{{{
             [XHTML, 'html'],
             [XUL, 'xul']
         ]);
-        if (object instanceof Element)
-        {
+        if (object instanceof Element) {
             let elem = object;
             if (elem.nodeType == elem.TEXT_NODE)
                 return elem.data;
-            function namespaced(node)
-            {
+            function namespaced(node) {
                 var ns = NAMESPACES[node.namespaceURI];
                 if (ns)
                     return ns + ":" + node.localName;
                 return node.localName.toLowerCase();
             }
-            try
-            {
+            try {
                 let tag = "<" + [namespaced(elem)].concat(
                     [namespaced(a) + "=" +  template.highlight(a.value, true)
                      for ([i, a] in util.Array.iteritems(elem.attributes))]).join(" ");
@@ -615,42 +537,34 @@ const util = { //{{{
                     tag += '>...</' + namespaced(elem) + '>';
                 return tag;
             }
-            catch (e)
-            {
+            catch (e) {
                 return {}.toString.call(elem);
             }
         }
 
-        try
-        { // for window.JSON
+        try { // for window.JSON
             var obj = String(object);
         }
-        catch (e)
-        {
+        catch (e) {
             obj = "[Object]";
         }
         obj = template.highlightFilter(util.clip(obj, 150), "\n", !color ? function () "^J" : function () <span highlight="NonText">^J</span>);
         let string = <><span highlight="Title Object">{obj}</span>::<br/>&#xa;</>;
 
         let keys = [];
-        try // window.content often does not want to be queried with "var i in object"
-        {
+        try { // window.content often does not want to be queried with "var i in object"
             let hasValue = !("__iterator__" in object);
-            if (modules.isPrototypeOf(object))
-            {
+            if (modules.isPrototypeOf(object)) {
                 object = Iterator(object);
                 hasValue = false;
             }
-            for (let i in object)
-            {
+            for (let i in object) {
                 let value = <![CDATA[<no value>]]>;
-                try
-                {
+                try {
                     value = object[i];
                 }
                 catch (e) {}
-                if (!hasValue)
-                {
+                if (!hasValue) {
                     if (i instanceof Array && i.length == 2)
                         [i, value] = i;
                     else
@@ -668,8 +582,7 @@ const util = { //{{{
         }
         catch (e) {}
 
-        function compare(a, b)
-        {
+        function compare(a, b) {
             if (!isNaN(a[0]) && !isNaN(b[0]))
                 return a[0] - b[0];
             return String.localeCompare(a[0], b[0]);
@@ -688,17 +601,14 @@ const util = { //{{{
      *     negative. @default 1
      * @returns {Iterator(Object)}
      */
-    range: function range(start, end, step)
-    {
+    range: function range(start, end, step) {
         if (!step)
             step = 1;
-        if (step > 0)
-        {
+        if (step > 0) {
             for (; start < end; start += step)
                 yield start;
         }
-        else
-        {
+        else {
             while (start > end)
                 yield start += step;
         }
@@ -713,13 +623,10 @@ const util = { //{{{
      * @param {number} time The time in milliseconds between thread yields.
      * @returns {Iterator(Object)}
      */
-    interruptibleRange: function interruptibleRange(start, end, time)
-    {
+    interruptibleRange: function interruptibleRange(start, end, time) {
         let endTime = Date.now() + time;
-        while (start < end)
-        {
-            if (Date.now() > endTime)
-            {
+        while (start < end) {
+            if (Date.now() > endTime) {
                 liberator.threadYield(true, true);
                 endTime = Date.now() + time;
             }
@@ -735,12 +642,10 @@ const util = { //{{{
      *
      * @returns {string}
      */
-    readFromClipboard: function readFromClipboard()
-    {
+    readFromClipboard: function readFromClipboard() {
         let str;
 
-        try
-        {
+        try {
             const clipboard = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
             const transferable = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
 
@@ -756,8 +661,7 @@ const util = { //{{{
 
             transferable.getTransferData("text/unicode", data, dataLen);
 
-            if (data)
-            {
+            if (data) {
                 data = data.value.QueryInterface(Ci.nsISupportsString);
                 str = data.data.substring(0, dataLen.value / 2);
             }
@@ -776,8 +680,7 @@ const util = { //{{{
      * @param {string} str
      * @returns {string[]}
      */
-    stringToURLArray: function stringToURLArray(str)
-    {
+    stringToURLArray: function stringToURLArray(str) {
         let urls;
 
         if (options["urlseparator"])
@@ -786,8 +689,7 @@ const util = { //{{{
             urls = [str];
 
         return urls.map(function (url) {
-            try
-            {
+            try {
                 // Try to find a matching file.
                 let file = io.File(url);
                 if (file.exists() && file.isReadable())
@@ -834,197 +736,129 @@ const util = { //{{{
      *     stored here, keyed to the value thereof.
      * @returns {Node}
      */
-    xmlToDom: function xmlToDom(node, doc, nodes)
-    {
+    xmlToDom: function xmlToDom(node, doc, nodes) {
         XML.prettyPrinting = false;
-        if (node.length() != 1)
-        {
+        if (node.length() != 1) {
             let domnode = doc.createDocumentFragment();
             for each (let child in node)
                 domnode.appendChild(arguments.callee(child, doc, nodes));
             return domnode;
         }
-        switch (node.nodeKind())
-        {
-            case "text":
-                return doc.createTextNode(node);
-            case "element":
-                let domnode = doc.createElementNS(node.namespace(), node.localName());
-                for each (let attr in node.@*)
-                    domnode.setAttributeNS(attr.name() == "highlight" ? NS.uri : attr.namespace(), attr.name(), String(attr));
-                for each (let child in node.*)
-                    domnode.appendChild(arguments.callee(child, doc, nodes));
-                if (nodes && node.@key)
-                    nodes[node.@key] = domnode;
-                return domnode;
+        switch (node.nodeKind()) {
+        case "text":
+            return doc.createTextNode(node);
+        case "element":
+            let domnode = doc.createElementNS(node.namespace(), node.localName());
+            for each (let attr in node.@*)
+                domnode.setAttributeNS(attr.name() == "highlight" ? NS.uri : attr.namespace(), attr.name(), String(attr));
+            for each (let child in node.*)
+                domnode.appendChild(arguments.callee(child, doc, nodes));
+            if (nodes && node.@key)
+                nodes[node.@key] = domnode;
+            return domnode;
         }
     }
-}; //}}}
-
-// TODO: Why don't we just push all util.BuiltinType up into modules? --djk
-/**
- * Array utility methods.
- */
-util.Array = function Array_(ary) {
-    var obj = {
-        __proto__: ary,
-        __iterator__: function () this.iteritems(),
-        __noSuchMethod__: function (meth, args)
-        {
-            let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
-            if (util.Array.isinstance(res))
-                return util.Array(res);
-            return res;
+}, {
+    // TODO: Why don't we just push all util.BuiltinType up into modules? --djk
+    /**
+     * Array utility methods.
+     */
+    Array: Class("Array", {
+        init: function (ary) {
+            return {
+                __proto__: ary,
+                __iterator__: function () this.iteritems(),
+                __noSuchMethod__: function (meth, args) {
+                    let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
+                    if (util.Array.isinstance(res))
+                        return util.Array(res);
+                    return res;
+                },
+                concat: function () [].concat.apply(this.__proto__, arguments),
+                map: function () this.__noSuchMethod__("map", Array.slice(arguments))
+            };
         },
-        concat: function () [].concat.apply(this.__proto__, arguments),
-        map: function () this.__noSuchMethod__("map", Array.slice(arguments))
-    };
-    return obj;
-}
-util.Array.isinstance = function isinstance(obj) {
-    return Object.prototype.toString.call(obj) == "[object Array]";
-};
-/**
- * Converts an array to an object. As in lisp, an assoc is an
- * array of key-value pairs, which maps directly to an object,
- * as such:
- *    [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
- *
- * @param {Array[]} assoc
- * @... {string} 0 - Key
- * @...          1 - Value
- */
-util.Array.toObject = function toObject(assoc)
-{
-    let obj = {};
-    assoc.forEach(function ([k, v]) { obj[k] = v; });
-    return obj;
-};
+    }, {
+        isinstance: function isinstance(obj) {
+            return Object.prototype.toString.call(obj) == "[object Array]";
+        },
+        /**
+         * Converts an array to an object. As in lisp, an assoc is an
+         * array of key-value pairs, which maps directly to an object,
+         * as such:
+         *    [["a", "b"], ["c", "d"]] -> { a: "b", c: "d" }
+         *
+         * @param {Array[]} assoc
+         * @... {string} 0 - Key
+         * @...          1 - Value
+         */
+        toObject: function toObject(assoc) {
+            let obj = {};
+            assoc.forEach(function ([k, v]) { obj[k] = v; });
+            return obj;
+        },
 
-/**
- * Flattens an array, such that all elements of the array are
- * joined into a single array:
- *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
- *
- * @param {Array} ary
- * @returns {Array}
- */
-util.Array.flatten = function flatten(ary) Array.concat.apply([], ary),
+        /**
+         * Flattens an array, such that all elements of the array are
+         * joined into a single array:
+         *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
+         *
+         * @param {Array} ary
+         * @returns {Array}
+         */
+        flatten: function flatten(ary) Array.concat.apply([], ary),
 
-/**
- * Returns an Iterator for an array's values.
- *
- * @param {Array} ary
- * @returns {Iterator(Object)}
- */
-util.Array.itervalues = function itervalues(ary)
-{
-    let length = ary.length;
-    for (let i = 0; i < length; i++)
-        yield ary[i];
-};
+        /**
+         * Returns an Iterator for an array's values.
+         *
+         * @param {Array} ary
+         * @returns {Iterator(Object)}
+         */
+        itervalues: function itervalues(ary) {
+            let length = ary.length;
+            for (let i = 0; i < length; i++)
+                yield ary[i];
+        },
 
-/**
- * Returns an Iterator for an array's indices and values.
- *
- * @param {Array} ary
- * @returns {Iterator([{number}, {Object}])}
- */
-util.Array.iteritems = function iteritems(ary)
-{
-    let length = ary.length;
-    for (let i = 0; i < length; i++)
-        yield [i, ary[i]];
-};
+        /**
+         * Returns an Iterator for an array's indices and values.
+         *
+         * @param {Array} ary
+         * @returns {Iterator([{number}, {Object}])}
+         */
+        iteritems: function iteritems(ary) {
+            let length = ary.length;
+            for (let i = 0; i < length; i++)
+                yield [i, ary[i]];
+        },
 
-/**
- * Filters out all duplicates from an array. If
- * <b>unsorted</b> is false, the array is sorted before
- * duplicates are removed.
- *
- * @param {Array} ary
- * @param {boolean} unsorted
- * @returns {Array}
- */
-util.Array.uniq = function uniq(ary, unsorted)
-{
-    let ret = [];
-    if (unsorted)
-    {
-        for (let [, item] in Iterator(ary))
-            if (ret.indexOf(item) == -1)
-                ret.push(item);
-    }
-    else
-    {
-        for (let [, item] in Iterator(ary.sort()))
-        {
-            if (item != last || !ret.length)
-                ret.push(item);
-            var last = item;
-        }
-    }
-    return ret;
-};
+        /**
+         * Filters out all duplicates from an array. If
+         * <b>unsorted</b> is false, the array is sorted before
+         * duplicates are removed.
+         *
+         * @param {Array} ary
+         * @param {boolean} unsorted
+         * @returns {Array}
+         */
+        uniq: function uniq(ary, unsorted) {
+            let ret = [];
+            if (unsorted) {
+                for (let [, item] in Iterator(ary))
+                    if (ret.indexOf(item) == -1)
+                        ret.push(item);
+            }
+            else {
+                for (let [, item] in Iterator(ary.sort())) {
+                    if (item != last || !ret.length)
+                        ret.push(item);
+                    var last = item;
+                }
+            }
+            return ret;
+        },
+    }),
+});
 
-function Struct()
-{
-    let self = this instanceof Struct ? this : new Struct();
-    if (!arguments.length)
-        return self;
-
-    let args = Array.slice(arguments);
-    self.__defineGetter__("length", function () args.length);
-    self.__defineGetter__("members", function () args.slice());
-    for (let arg in Iterator(args))
-    {
-        let [i, name] = arg;
-        self.__defineGetter__(name, function () this[i]);
-        self.__defineSetter__(name, function (val) { this[i] = val; });
-    }
-    function ConStructor()
-    {
-        let self = this instanceof arguments.callee ? this : new arguments.callee();
-        //for (let [k, v] in Iterator(Array.slice(arguments))) // That is makes using struct twice as slow as the following code:
-        for (let i = 0; i < arguments.length; i++)
-        {
-            if (arguments[i] != undefined)
-                self[i] = arguments[i];
-        }
-
-        return self;
-    }
-    ConStructor.prototype = self;
-    ConStructor.defaultValue = function (key, val)
-    {
-        let i = args.indexOf(key);
-        ConStructor.prototype.__defineGetter__(i, function () (this[i] = val.call(this), this[i])); // Kludge for FF 3.0
-        ConStructor.prototype.__defineSetter__(i, function (val) {
-            let value = val;
-            this.__defineGetter__(i, function () value);
-            this.__defineSetter__(i, function (val) { value = val });
-        });
-    };
-    return self.constructor = ConStructor;
-}
-
-Struct.prototype = {
-    clone: function clone()
-    {
-        return this.constructor.apply(null, this.slice());
-    },
-    // Iterator over our named members
-    __iterator__: function ()
-    {
-        let self = this;
-        return ([v, self[v]] for ([k, v] in Iterator(self.members)))
-    }
-};
-
-// Add no-sideeffect array methods. Can't set new Array() as the prototype or
-// get length() won't work.
-for (let [, k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
-                            "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
-    Struct.prototype[k] = Array.prototype[k];
 
 // vim: set fdm=marker sw=4 ts=4 et:

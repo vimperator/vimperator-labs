@@ -18,16 +18,15 @@ important, please ask.
 == Coding Style ==
 
 In general: Just look at the existing source code!
-We try to be quite consistent, but of course, that's not always possible.
 
-Also we try to target experienced JavaScript developers which do not
-necessarily need to have a good understanding of Vimperator's source code, nor
-do they probably know in-depth concepts of other languages like Lisp or Python.
-Therefore, the coding style should feel natural to any JavaScript developer
-so it is easy to read and understand. Of course, this does not mean, you have
-to avoid all new JavaScript features like list comprehension or generators.
-Use them, when they make sense, but don't use them, when the resulting code
-is hard to read.
+We try to target experienced JavaScript developers who do not
+necessarily need to have a good understanding of Vimperator's source
+code, nor necessarily understand in-depth concepts of other
+languages like Lisp or Python.  Therefore, the coding style should
+feel natural to any JavaScript developer.  Of course, this does not
+mean, you have to avoid all new JavaScript features like list
+comprehension or generators.  Use them, when they make sense, but
+don't use them when the resulting code is hard to read.
 
 === The most important style issues are: ===
 
@@ -40,29 +39,41 @@ is hard to read.
 * Use " for enclosing strings instead of ', unless using ' avoids escaping of lots of "
   Example: alert("foo") instead of alert('foo');
 
+* Use // regexp literals rather than RegExp constructors, unless
+  you're constructing an expression on the fly, or RegExp
+  constructors allow you to escape less /s than the additional
+  escaping of special characters required by string quoting.
+
+  Good: /application\/xhtml\+xml/
+  Bad:  RegExp("application/xhtml\\+xml")
+  Good: RegExp("http://(www\\.)vimperator.org/(.*)/(.*)")
+  Bad:  /http:\/\/(www\.)vimperator.org\/(.*)\/(.*)/
+
 * Exactly one space after if/for/while/catch etc. and after a comma, but none
   after a parenthesis or after a function call:
       for (pre; condition; post)
   but:
       alert("foo");
 
-* Opening curly brackets { must be on a new line, unless it is used in a closure:
-      function myFunction ()
-      {
-          if (foo)
-          {
-              baz = false;
-              return bar;
-          }
-          else
-          {
-              return baz;
-          }
-      }
-  but:
-      setTimeout(function () {
-          ...
-      });
+* Bracing is formatted as follows:
+    function myFunction () {
+        if (foo)
+            return bar;
+        else {
+            baz = false;
+            return baz;
+        }
+    }
+    var quux = frob("you",
+        {
+            a: 1,
+            b: 42,
+            c: {
+                hoopy: "frood"
+            }
+        });
+
+  When in doubt, look for similar code.
 
 * No braces for one-line conditional statements:
   Right:
@@ -97,9 +108,9 @@ is hard to read.
 
 * Use UNIX new lines (\n), not windows (\r\n) or old Mac ones (\r)
 
-* Use Iterators, Array#forEach, or for (let i = 0; i < ary.length; i++)
-  to iterate over arrays. for (let i in ary) and for each (let i in ary)
-  include members in an Array.prototype, which some extensions alter.
+* Use Iterators or Array#forEach to iterate over arrays. for (let i
+  in ary) and for each (let i in ary) include members in an
+  Array.prototype, which some extensions alter.
   Right:
     for (let [,elem] in Iterator(ary))
     for (let [k, v] in Iterator(obj))
@@ -136,12 +147,5 @@ Information about how/when to use :regressions might be nice.
 Additionally, maybe there should be some benchmark information here --
 something to let a developer know what's "too" slow...? Or general
 guidelines about optimization?
-
-== Source Code Management ==
-
-TODO: Document the existence of remote branches and discuss when and how
-      to push to them. At least provide an index so that devs know where
-      to look if an old branch needs to be maintained or a feature needs
-      to be added to a new branch.
 
 // vim: set ft=asciidoc fdm=marker sw=4 ts=4 et ai:

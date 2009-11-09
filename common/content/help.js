@@ -4,8 +4,7 @@
 // given in the LICENSE.txt file included with this file.
 
 
-function checkFragment()
-{
+function checkFragment() {
     document.title = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "title")[0].textContent;
     var frag = document.location.hash.substr(1);
     var elem = document.getElementById(frag);

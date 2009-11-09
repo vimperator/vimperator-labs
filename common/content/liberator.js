@@ -15,97 +15,1033 @@ const EVAL_ERROR = "__liberator_eval_error";
 const EVAL_RESULT = "__liberator_eval_result";
 const EVAL_STRING = "__liberator_eval_string";
 
-function FailedAssertion(message) {
-    this.message = message;
-}
-FailedAssertion.prototype = {
-    __proto__: Error.prototype,
-};
+// Move elsewhere?
+const Storage = Module("storage", {
+    init: function () {
+        Components.utils.import("resource://liberator/storage.jsm", this);
+        modules.Timer = this.Timer; // Fix me, please.
+        return this.storage;
+    },
+});
 
-const liberator = (function () //{{{
-{
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    function Runnable(self, func, args)
-    {
-        this.self = self;
-        this.func = func;
-        this.args = args;
-    }
-    Runnable.prototype = {
+function Runnable(self, func, args) {
+    return {
         QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
-        run: function () { this.func.apply(this.self, this.args); }
-    };
+        run: function () { func.apply(self, args); }
+    }
+}
 
-    const observers = {};
+const FailedAssertion = Class("FailedAssertion", Error, {
+    init: function (message) {
+        this.message = message;
+    },
+});
 
-    function registerObserver(type, callback)
-    {
-        if (!(type in observers))
-            observers[type] = [];
-        observers[type].push(callback);
+const Liberator = Module("liberator", {
+    requires: ["services"],
+
+    init: function () {
+        window.liberator = this;
+        window.liberator = this;
+        modules.liberator = this;
+        this.observers = {};
+        this.modules = modules;
+
+        // NOTE: services.get("profile").selectedProfile.name doesn't return
+        // what you might expect. It returns the last _actively_ selected
+        // profile (i.e. via the Profile Manager or -P option) rather than the
+        // current profile. These will differ if the current process was run
+        // without explicitly selecting a profile.
+        /** @property {string} The name of the current user profile. */
+        this.profileName = services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
+    },
+
+    destroy: function () {
+        autocommands.trigger(config.name + "LeavePre", {});
+        storage.saveAll();
+        liberator.triggerObserver("shutdown", null);
+        liberator.dump("All liberator modules destroyed\n");
+        autocommands.trigger(config.name + "Leave", {});
+    },
+
+    /**
+     * @property {number} The current main mode.
+     * @see modes#mainModes
+     */
+    get mode()      modes.main,
+    set mode(value) modes.main = value,
+
+    get menuItems() Liberator.getMenuItems(),
+
+    /** @property {Element} The currently focused element. */
+    get focus() document.commandDispatcher.focusedElement,
+
+    get extensions() {
+        const rdf = services.get("rdf");
+        const extensionManager = services.get("extensionManager");
+
+        let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+
+        function getRdfProperty(item, property) {
+            let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
+            let value = "";
+
+            if (resource) {
+                let target = extensionManager.datasource.GetTarget(resource,
+                    rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
+                if (target && target instanceof Ci.nsIRDFLiteral)
+                    value = target.Value;
+            }
+
+            return value;
+        }
+
+        //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
+        return extensions.map(function (e) ({
+            id: e.id,
+            name: e.name,
+            description: getRdfProperty(e, "description"),
+            enabled: getRdfProperty(e, "isDisabled") != "true",
+            icon: e.iconURL,
+            options: getRdfProperty(e, "optionsURL"),
+            version: e.version
+        }));
+    },
+
+    getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
+
+    // Global constants
+    CURRENT_TAB: [],
+    NEW_TAB: [],
+    NEW_BACKGROUND_TAB: [],
+    NEW_WINDOW: [],
+
+    forceNewTab: false,
+    forceNewWindow: false,
+
+    /** @property {string} The Liberator version string. */
+    version: "###VERSION### (created: ###DATE###)", // these VERSION and DATE tokens are replaced by the Makefile
+
+    /**
+     * @property {Object} The map of command-line options. These are
+     *     specified in the argument to the host application's -liberator
+     *     option. E.g. $ firefox -liberator '+u=tempRcFile ++noplugin'
+     *     Supported options:
+     *         +u=RCFILE   Use RCFILE instead of .vimperatorrc.
+     *         ++noplugin  Don't load plugins.
+     */
+    commandLineOptions: {
+        /** @property Whether plugin loading should be prevented. */
+        noPlugins: false,
+        /** @property An RC file to use rather than the default. */
+        rcFile: null,
+        /** @property An Ex command to run before any initialization is performed. */
+        preCommands: null,
+        /** @property An Ex command to run after all initialization has been performed. */
+        postCommands: null
+    },
+
+    registerObserver: function (type, callback) {
+        if (!(type in this.observers))
+            this.observers[type] = [];
+        this.observers[type].push(callback);
+    },
+
+    unregisterObserver: function (type, callback) {
+        if (type in this.observers)
+            this.observers[type] = this.observers[type].filter(function (c) c != callback);
+    },
+
+    // TODO: "zoom": if the zoom value of the current buffer changed
+    triggerObserver: function (type) {
+        let args = Array.slice(arguments, 1);
+        for (let [, func] in Iterator(this.observers[type] || []))
+            func.apply(null, args);
+    },
+
+    /**
+     * Triggers the application bell to notify the user of an error. The
+     * bell may be either audible or visual depending on the value of the
+     * 'visualbell' option.
+     */
+    beep: function () {
+        // FIXME: popups clear the command line
+        if (options["visualbell"]) {
+            // flash the visual bell
+            let popup = document.getElementById("liberator-visualbell");
+            let win = config.visualbellWindow;
+            let rect = win.getBoundingClientRect();
+            let width = rect.right - rect.left;
+            let height = rect.bottom - rect.top;
+
+            // NOTE: this doesn't seem to work in FF3 with full box dimensions
+            popup.openPopup(win, "overlap", 1, 1, false, false);
+            popup.sizeTo(width - 2, height - 2);
+            setTimeout(function () { popup.hidePopup(); }, 20);
+        }
+        else {
+            let soundService = Cc["@mozilla.org/sound;1"].getService(Ci.nsISound);
+            soundService.beep();
+        }
+        return false; // so you can do: if (...) return liberator.beep();
+    },
+
+    /**
+     * Creates a new thread.
+     */
+    newThread: function () services.get("threadManager").newThread(0),
+
+    /**
+     * Calls a function asynchronously on a new thread.
+     *
+     * @param {nsIThread} thread The thread to call the function on. If no
+     *     thread is specified a new one is created.
+     * @optional
+     * @param {Object} self The 'this' object used when executing the
+     *     function.
+     * @param {function} func The function to execute.
+     *
+     */
+    callAsync: function (thread, self, func) {
+        thread = thread || services.get("threadManager").newThread(0);
+        thread.dispatch(Runnable(self, func, Array.slice(arguments, 3)), thread.DISPATCH_NORMAL);
+    },
+
+    /**
+     * Calls a function synchronously on a new thread.
+     *
+     * NOTE: Be sure to call GUI related methods like alert() or dump()
+     * ONLY in the main thread.
+     *
+     * @param {nsIThread} thread The thread to call the function on. If no
+     *     thread is specified a new one is created.
+     * @optional
+     * @param {function} func The function to execute.
+     */
+    callFunctionInThread: function (thread, func) {
+        thread = thread || services.get("threadManager").newThread(0);
+
+        // DISPATCH_SYNC is necessary, otherwise strange things will happen
+        thread.dispatch(Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
+    },
+
+    /**
+     * Prints a message to the console. If <b>msg</b> is an object it is
+     * pretty printed.
+     *
+     * NOTE: the "browser.dom.window.dump.enabled" preference needs to be
+     * set.
+     *
+     * @param {string|Object} msg The message to print.
+     */
+    dump: function () {
+        let msg = Array.map(arguments, function (msg) {
+            if (typeof msg == "object")
+                msg = util.objectToString(msg);
+            return msg;
+        }).join(", ");
+        msg = String.replace(msg, /\n?$/, "\n");
+        window.dump(msg.replace(/^./gm, ("config" in modules && config.name.toLowerCase()) + ": $&"));
+    },
+
+    /**
+     * Dumps a stack trace to the console.
+     *
+     * @param {string} msg The trace message.
+     * @param {number} frames The number of frames to print.
+     */
+    dumpStack: function (msg, frames) {
+        let stack = Error().stack.replace(/(?:.*\n){2}/, "");
+        if (frames != null)
+            [stack] = stack.match(RegExp("(?:.*\n){0," + frames + "}"));
+        liberator.dump((msg || "Stack") + "\n" + stack);
+    },
+
+    /**
+     * Outputs a plain message to the command line.
+     *
+     * @param {string} str The message to output.
+     * @param {number} flags These control the multiline message behaviour.
+     *     See {@link CommandLine#echo}.
+     */
+    echo: function (str, flags) {
+        commandline.echo(str, commandline.HL_NORMAL, flags);
+    },
+
+    // TODO: Vim replaces unprintable characters in echoerr/echomsg
+    /**
+     * Outputs an error message to the command line.
+     *
+     * @param {string} str The message to output.
+     * @param {number} flags These control the multiline message behaviour.
+     *     See {@link CommandLine#echo}.
+     */
+    echoerr: function (str, flags) {
+        flags |= commandline.APPEND_TO_MESSAGES;
+
+        if (typeof str == "object" && "echoerr" in str)
+            str = str.echoerr;
+        else if (str instanceof Error)
+            str = str.fileName + ":" + str.lineNumber + ": " + str;
+
+        if (options["errorbells"])
+            liberator.beep();
+
+        commandline.echo(str, commandline.HL_ERRORMSG, flags);
+    },
+
+    // TODO: add proper level constants
+    /**
+     * Outputs an information message to the command line.
+     *
+     * @param {string} str The message to output.
+     * @param {number} verbosity The messages log level (0 - 15). Only
+     *     messages with verbosity less than or equal to the value of the
+     *     'verbosity' option will be output.
+     * @param {number} flags These control the multiline message behaviour.
+     *     See {@link CommandLine#echo}.
+     */
+    echomsg: function (str, verbosity, flags) {
+        // TODO: is there a reason for this? --djk
+        // yes, it doesn't show the MOW on startup if you have e.g. some qmarks in your vimperatorrc.
+        // Feel free to add another flag like DONT_OPEN_MULTILINE if really needed --mst
+        //
+        // But it's _supposed_ to show the MOW on startup when there are
+        // messages, surely?  As far as I'm concerned it essentially works
+        // exactly as it should with the DISALLOW_MULTILINE flag removed.
+        // Sending N messages to the command line in a row and having them
+        // overwrite each other is completely broken. I also think many of
+        // those messages like "Added quick mark" are plain silly but if
+        // you don't like them you can set verbose=0, or use :silent when
+        // someone adds it. I reckon another flag and 'class' of messages
+        // is just going to unnecessarily complicate things. --djk
+        flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE;
+
+        if (verbosity == null)
+            verbosity = 0; // verbosity level is exclusionary
+
+        if (options["verbose"] >= verbosity)
+            commandline.echo(str, commandline.HL_INFOMSG, flags);
+    },
+
+    /**
+     * Loads and executes the script referenced by <b>uri</b> in the scope
+     * of the <b>context</b> object.
+     *
+     * @param {string} uri The URI of the script to load. Should be a local
+     *     chrome:, file:, or resource: URL.
+     * @param {Object} context The context object into which the script
+     *     should be loaded.
+     */
+    loadScript: function (uri, context) {
+        XML.ignoreWhiteSpace = false;
+        XML.prettyPrinting = false;
+        services.get("subscriptLoader").loadSubScript(uri, context);
+    },
+
+    eval: function (str, context) {
+        try {
+            if (!context)
+                context = userContext;
+            context[EVAL_ERROR] = null;
+            context[EVAL_STRING] = str;
+            context[EVAL_RESULT] = null;
+            this.loadScript("chrome://liberator/content/eval.js", context);
+            if (context[EVAL_ERROR]) {
+                try {
+                    context[EVAL_ERROR].fileName = io.sourcing.file;
+                    context[EVAL_ERROR].lineNumber += io.sourcing.line;
+                }
+                catch (e) {}
+                throw context[EVAL_ERROR];
+            }
+            return context[EVAL_RESULT];
+        }
+        finally {
+            delete context[EVAL_ERROR];
+            delete context[EVAL_RESULT];
+            delete context[EVAL_STRING];
+        }
+    },
+
+    // partial sixth level expression evaluation
+    // TODO: what is that really needed for, and where could it be used?
+    //       Or should it be removed? (c) Viktor
+    //       Better name?  See other liberator.eval()
+    //       I agree, the name is confusing, and so is the
+    //           description --Kris
+    evalExpression: function (string) {
+        string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
+        let matches = string.match(/^&(\w+)/);
+
+        if (matches) {
+            let opt = this.options.get(matches[1]);
+
+            if (!opt)
+                return void this.echoerr("E113: Unknown option: " + matches[1]);
+
+            let type = opt.type;
+            let value = opt.getter();
+
+            if (type != "boolean" && type != "number")
+                value = value.toString();
+
+            return value;
+        }
+        // String
+        else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/)) {
+            if (matches)
+                return matches[2].toString();
+            else
+                return void this.echoerr("E115: Missing quote: " + string);
+        }
+        // Number
+        else if (matches = string.match(/^(\d+)$/))
+            return parseInt(matches[1], 10);
+
+        let reference = this.variableReference(string);
+
+        if (!reference[0])
+            this.echoerr("E121: Undefined variable: " + string);
+        else
+            return reference[0][reference[1]];
+
+        return;
+    },
+
+    /**
+     * Execute an Ex command string. E.g. ":zoom 300".
+     *
+     * @param {string} str The command to execute.
+     * @param {Object} modifiers Any modifiers to be passed to
+     *     {@link Command#action}.
+     * @param {boolean} silent Whether the command should be echoed on the
+     *     command line.
+     */
+    execute: function (str, modifiers, silent) {
+        // skip comments and blank lines
+        if (/^\s*("|$)/.test(str))
+            return;
+
+        modifiers = modifiers || {};
+
+        let err = null;
+        let [count, cmd, special, args] = commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
+        let command = commands.get(cmd);
+
+        if (command === null) {
+            err = "E492: Not a " + config.name.toLowerCase() + " command: " + str;
+            liberator.focusContent();
+        }
+        else if (command.action === null)
+            err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
+        else if (count != -1 && !command.count)
+            err = "E481: No range allowed";
+        else if (special && !command.bang)
+            err = "E477: No ! allowed";
+
+        liberator.assert(!err, err);
+        if (!silent)
+            commandline.command = str.replace(/^\s*:\s*/, "");
+
+        command.execute(args, special, count, modifiers);
+    },
+
+    /**
+     * Focuses the content window.
+     *
+     * @param {boolean} clearFocusedElement Remove focus from any focused
+     *     element.
+     */
+    focusContent: function (clearFocusedElement) {
+        if (window != services.get("windowWatcher").activeWindow)
+            return;
+
+        let elem = config.mainWidget || window.content;
+        // TODO: make more generic
+        try {
+            if (this.has("mail") && !config.isComposeWindow) {
+                let i = gDBView.selection.currentIndex;
+                if (i == -1 && gDBView.rowCount >= 0)
+                    i = 0;
+                gDBView.selection.select(i);
+            }
+            else if (this.has("tabs")) {
+                let frame = tabs.localStore.focusedFrame;
+                if (frame && frame.top == window.content)
+                    elem = frame;
+            }
+        }
+        catch (e) {}
+
+        if (clearFocusedElement && liberator.focus)
+            liberator.focus.blur();
+        if (elem && elem != liberator.focus)
+            elem.focus();
+    },
+
+    /**
+     * Returns whether this Liberator extension supports <b>feature</b>.
+     *
+     * @param {string} feature The feature name.
+     * @returns {boolean}
+     */
+    has: function (feature) config.features.indexOf(feature) >= 0,
+
+    /**
+     * Returns whether the host application has the specified extension
+     * installed.
+     *
+     * @param {string} name The extension name.
+     * @returns {boolean}
+     */
+    hasExtension: function (name) {
+        let extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+        return extensions.some(function (e) e.name == name);
+    },
+
+    /**
+     * Returns the URL of the specified help <b>topic</b> if it exists.
+     *
+     * @param {string} topic The help topic to lookup.
+     * @param {boolean} unchunked Whether to search the unchunked help page.
+     * @returns {string}
+     */
+    findHelp: function (topic, unchunked) {
+        if (topic in services.get("liberator:").FILE_MAP)
+            return topic;
+        unchunked = !!unchunked;
+        let items = completion._runCompleter("help", topic, null, unchunked).items;
+        let partialMatch = null;
+
+        function format(item) item.description + "#" + encodeURIComponent(item.text);
+
+        for (let [i, item] in Iterator(items)) {
+            if (item.text == topic)
+                return format(item);
+            else if (!partialMatch && topic)
+                partialMatch = item;
+        }
+
+        if (partialMatch)
+            return format(partialMatch);
+        return null;
+    },
+
+    /**
+     * @private
+     * Initialize the help system.
+     */
+    initHelp: function () {
+        let namespaces = [config.name.toLowerCase(), "liberator"];
+        services.get("liberator:").init({});
+        let tagMap = services.get("liberator:").HELP_TAGS;
+        let fileMap = services.get("liberator:").FILE_MAP;
+        let overlayMap = services.get("liberator:").OVERLAY_MAP;
+        function XSLTProcessor(sheet) {
+            let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
+            xslt.importStylesheet(util.httpGet(sheet).responseXML);
+            return xslt;
+        }
+
+        function findHelpFile(file) {
+            let result = [];
+            for (let [, namespace] in Iterator(namespaces)) {
+                let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
+                let res = util.httpGet(url);
+                if (res) {
+                    if (res.responseXML.documentElement.localName == "document")
+                        fileMap[file] = url;
+                    if (res.responseXML.documentElement.localName == "overlay")
+                        overlayMap[file] = url;
+                    result.push(res.responseXML);
+                }
+            }
+            return result;
+        }
+        function addTags(file, doc) {
+            doc = XSLT.transformToDocument(doc);
+            for (let elem in util.evaluateXPath("//xhtml:a/@id", doc))
+                tagMap[elem.value] = file;
+        }
+
+        const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
+
+        tagMap.all = "all";
+        let files = findHelpFile("all").map(function (doc)
+                [f.value for (f in util.evaluateXPath(
+                    "//liberator:include/@href", doc))]);
+
+        util.Array.flatten(files).forEach(function (file) {
+            findHelpFile(file).forEach(function (doc) {
+                addTags(file, doc);
+            });
+        });
+
+        XML.ignoreWhiteSpace = false;
+        XML.prettyPrinting = false;
+        XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
+        XML.prettyIndent = 4;
+        let body = XML();
+        for (let [, context] in Iterator(plugins.contexts))
+            if (context.INFO instanceof XML)
+                body += <h2 xmlns={NS.uri} tag={context.INFO.@name + '-plugin'}>{context.INFO.@summary}</h2> +
+                    context.INFO;
+
+        let help = '<?xml version="1.0"?>\n' +
+                   '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>\n' +
+                   '<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">' +
+            <document
+                name="plugins"
+                title={config.name + " Plugins"}
+                xmlns={NS}>
+                <h1 tag="using-plugins">Using Plugins</h1>
+
+                {body}
+            </document>.toXMLString();
+        fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
+
+        addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
+    },
+
+    /**
+     * Opens the help page containing the specified <b>topic</b> if it
+     * exists.
+     *
+     * @param {string} topic The help topic to open.
+     * @param {boolean} unchunked Whether to use the unchunked help page.
+     * @returns {string}
+     */
+    help: function (topic, unchunked) {
+        if (!topic && !unchunked) {
+            let helpFile = options["helpfile"];
+            if (helpFile in services.get("liberator:").FILE_MAP)
+                liberator.open("liberator://help/" + helpFile, { from: "help" });
+            else
+                liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
+            return;
+        }
+
+        let page = this.findHelp(topic, unchunked);
+        liberator.assert(page != null, "E149: Sorry, no help for " + topic);
+
+        liberator.open("liberator://help/" + page, { from: "help" });
+        if (options.get("activate").has("all", "help"))
+            content.postMessage("fragmentChange", "*");
+    },
+
+    /**
+     * The map of global variables.
+     *
+     * These are set and accessed with the "g:" prefix.
+     */
+    globalVariables: {},
+
+    loadPlugins: function () {
+        function sourceDirectory(dir) {
+            liberator.assert(dir.isReadable(), "E484: Can't open file " + dir.path);
+
+            liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+            dir.readDirectory(true).forEach(function (file) {
+                if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles)) {
+                    try {
+                        io.source(file.path, false);
+                        liberator.pluginFiles[file.path] = true;
+                    }
+                    catch (e) {
+                        liberator.reportError(e);
+                    }
+                }
+                else if (file.isDirectory())
+                    sourceDirectory(file);
+            });
+        }
+
+        let dirs = io.getRuntimeDirectories("plugin");
+
+        if (dirs.length == 0) {
+            liberator.log("No user plugin directory found", 3);
+            return;
+        }
+
+        liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
+                            + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"', 2);
+
+        dirs.forEach(function (dir) {
+            liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
+            sourceDirectory(dir);
+        });
+    },
+
+    // TODO: add proper level constants
+    /**
+     * Logs a message to the JavaScript error console. Each message has an
+     * associated log level. Only messages with a log level less than or
+     * equal to <b>level</b> will be printed. If <b>msg</b> is an object,
+     * it is pretty printed.
+     *
+     * @param {string|Object} msg The message to print.
+     * @param {number} level The logging level 0 - 15.
+     */
+    log: function (msg, level) {
+        let verbose = 0;
+        if (level == undefined)
+            level = 1;
+
+        // options does not exist at the very beginning
+        if (modules.options)
+            verbose = options.getPref("extensions.liberator.loglevel", 0);
+
+        if (level > verbose)
+            return;
+
+        if (typeof msg == "object")
+            msg = util.objectToString(msg, false);
+
+        services.get("console").logStringMessage(config.name.toLowerCase() + ": " + msg);
+    },
+
+    /**
+     * Opens one or more URLs. Returns true when load was initiated, or
+     * false on error.
+     *
+     * @param {string|string[]} urls Either a URL string or an array of URLs.
+     *     The array can look like this:
+     *       ["url1", "url2", "url3", ...]
+     *     or:
+     *       [["url1", postdata1], ["url2", postdata2], ...]
+     * @param {number|Object} where If ommited, CURRENT_TAB is assumed but NEW_TAB
+     *     is set when liberator.forceNewTab is true.
+     * @param {boolean} force Don't prompt whether to open more than 20
+     *     tabs.
+     * @returns {boolean}
+     */
+    open: function (urls, params, force) {
+        // convert the string to an array of converted URLs
+        // -> see util.stringToURLArray for more details
+        if (typeof urls == "string") {
+            // rather switch to the tab instead of opening a new url in case of "12: Tab Title" like "urls"
+            if (liberator.has("tabs")) {
+                let matches = urls.match(/^(\d+):/);
+                if (matches) {
+                    tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
+                    return;
+                }
+            }
+
+            urls = util.stringToURLArray(urls);
+        }
+
+        if (urls.length > 20 && !force) {
+            commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no]) ",
+                function (resp) {
+                    if (resp && resp.match(/^y(es)?$/i))
+                        liberator.open(urls, params, true);
+                });
+            return true;
+        }
+
+        let flags = 0;
+        params = params || {};
+        if (params instanceof Array)
+            params = { where: params };
+
+        for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
+            if (params[opt])
+                flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
+
+        let where = params.where || liberator.CURRENT_TAB;
+        if ("from" in params && liberator.has("tabs")) {
+            if (!('where' in params) && options.get("newtab").has("all", params.from))
+                where = liberator.NEW_BACKGROUND_TAB;
+            if (options.get("activate").has("all", params.from)) {
+                if (where == liberator.NEW_TAB)
+                    where = liberator.NEW_BACKGROUND_TAB;
+                else if (where == liberator.NEW_BACKGROUND_TAB)
+                    where = liberator.NEW_TAB;
+            }
+        }
+
+        if (urls.length == 0)
+            return false;
+
+        let browser = window.getBrowser();
+
+        function open(urls, where) {
+            let url = Array.concat(urls)[0];
+            let postdata = Array.concat(urls)[1];
+
+            // decide where to load the first url
+            switch (where) {
+            case liberator.CURRENT_TAB:
+                browser.loadURIWithFlags(url, flags, null, null, postdata);
+                break;
+
+            case liberator.NEW_BACKGROUND_TAB:
+            case liberator.NEW_TAB:
+                if (!liberator.has("tabs"))
+                    return open(urls, liberator.NEW_WINDOW);
+
+                options.withContext(function () {
+                    options.setPref("browser.tabs.loadInBackground", true);
+                    browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                });
+                break;
+
+            case liberator.NEW_WINDOW:
+                window.open();
+                let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
+                win.loadURI(url, null, postdata);
+                browser = win.getBrowser();
+                break;
+
+            default:
+                throw Error("Invalid 'where' directive in liberator.open(...)");
+            }
+        }
+
+        if (liberator.forceNewTab)
+            where = liberator.NEW_TAB;
+        else if (liberator.forceNewWindow)
+            where = liberator.NEW_WINDOW;
+        else if (!where)
+            where = liberator.CURRENT_TAB;
+
+        for (let [, url] in Iterator(urls)) {
+            open(url, where);
+            where = liberator.NEW_BACKGROUND_TAB;
+        }
+
+        return true;
+    },
+
+    pluginFiles: {},
+
+    // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
+    // v.plugins.mode = <str> string to show on v.modes.CUSTOM
+    // v.plugins.stop = <func> hooked on a v.modes.reset()
+    // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
+    plugins: plugins,
+
+    /**
+     * Quit the host application, no matter how many tabs/windows are open.
+     *
+     * @param {boolean} saveSession If true the current session will be
+     *     saved and restored when the host application is restarted.
+     * @param {boolean} force Forcibly quit irrespective of whether all
+     *    windows could be closed individually.
+     */
+    quit: function (saveSession, force) {
+        // TODO: Use safeSetPref?
+        if (saveSession)
+            options.setPref("browser.startup.page", 3); // start with saved session
+        else
+            options.setPref("browser.startup.page", 1); // start with default homepage session
+
+        if (force)
+            services.get("appStartup").quit(Ci.nsIAppStartup.eForceQuit);
+        else
+            window.goQuitApplication();
+    },
+
+    /*
+     * Tests a condition and throws a FailedAssertion error on
+     * failure.
+     *
+     * @param {boolean} condition The condition to test.
+     * @param {string}  message The message to present to the
+     *                          user on failure.
+     */
+    assert: function (condition, message) {
+        if (!condition)
+            throw new FailedAssertion(message);
+    },
+
+    /**
+     * Traps errors in the called function, possibly reporting them.
+     *
+     * @param {function} func The function to call
+     * @param {object} self The 'this' object for the function.
+     */
+    trapErrors: function (func, self) {
+        try {
+            return func.apply(self || this, Array.slice(arguments, 2));
+        }
+        catch (e) {
+            if (e instanceof FailedAssertion)
+                liberator.echoerr(e.message);
+        }
+    },
+
+    /**
+     * Reports an error to both the console and the host application's
+     * Error Console.
+     *
+     * @param {Object} error The error object.
+     */
+    reportError: function (error) {
+        if (Cu.reportError)
+            Cu.reportError(error);
+
+        try {
+            let obj = {
+                toString: function () String(error),
+                stack: <>{String.replace(error.stack || Error().stack, /^/mg, "\t")}</>
+            };
+            for (let [k, v] in Iterator(error)) {
+                if (!(k in obj))
+                    obj[k] = v;
+            }
+            if (liberator.storeErrors) {
+                let errors = storage.newArray("errors", { store: false });
+                errors.toString = function () [String(v[0]) + "\n" + v[1] for ([k, v] in this)].join("\n\n");
+                errors.push([new Date, obj + obj.stack]);
+            }
+            liberator.dump(String(error));
+            liberator.dump(obj);
+            liberator.dump("");
+        }
+        catch (e) { window.dump(e) }
+    },
+
+    /**
+     * Restart the host application.
+     */
+    restart: function () {
+        // notify all windows that an application quit has been requested.
+        var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
+        services.get("observer").notifyObservers(cancelQuit, "quit-application-requested", null);
+
+        // something aborted the quit process.
+        if (cancelQuit.data)
+            return;
+
+        // notify all windows that an application quit has been granted.
+        services.get("observer").notifyObservers(null, "quit-application-granted", null);
+
+        // enumerate all windows and call shutdown handlers
+        let windows = services.get("windowMediator").getEnumerator(null);
+        while (windows.hasMoreElements()) {
+            let win = windows.getNext();
+            if (("tryToClose" in win) && !win.tryToClose())
+                return;
+        }
+        services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
+    },
+
+    /**
+     * Parses a Liberator command-line string i.e. the value of the
+     * -liberator command-line option.
+     *
+     * @param {string} cmdline The string to parse for command-line
+     *     options.
+     * @returns {Object}
+     * @see Commands#parseArgs
+     */
+    parseCommandLine: function (cmdline) {
+        const options = [
+            [["+u"], commands.OPTIONS_STRING],
+            [["++noplugin"], commands.OPTIONS_NOARG],
+            [["++cmd"], commands.OPTIONS_STRING, null, null, true],
+            [["+c"], commands.OPTIONS_STRING, null, null, true]
+        ];
+        return commands.parseArgs(cmdline, options, "*");
+    },
+
+    sleep: function (delay) {
+        let mainThread = services.get("threadManager").mainThread;
+
+        let end = Date.now() + delay;
+        while (Date.now() < end)
+            mainThread.processNextEvent(true);
+        return true;
+    },
+
+    callInMainThread: function (callback, self) {
+        let mainThread = services.get("threadManager").mainThread;
+        if (!services.get("threadManager").isMainThread)
+            mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
+        else
+            callback.call(self);
+    },
+
+    threadYield: function (flush, interruptable) {
+        let mainThread = services.get("threadManager").mainThread;
+        liberator.interrupted = false;
+        do {
+            mainThread.processNextEvent(!flush);
+            if (liberator.interrupted)
+                throw new Error("Interrupted");
+        }
+        while (flush === true && mainThread.hasPendingEvents());
+    },
+
+    variableReference: function (string) {
+        if (!string)
+            return [null, null, null];
+
+        let matches = string.match(/^([bwtglsv]):(\w+)/);
+        if (matches) { // Variable
+            // Other variables should be implemented
+            if (matches[1] == "g") {
+                if (matches[2] in this.globalVariables)
+                    return [this.globalVariables, matches[2], matches[1]];
+                else
+                    return [null, matches[2], matches[1]];
+            }
+        }
+        else { // Global variable
+            if (string in this.globalVariables)
+                return [this.globalVariables, string, "g"];
+            else
+                return [null, string, "g"];
+        }
+    },
+
+    /**
+     * @property {Window[]} Returns an array of all the host application's
+     *     open windows.
+     */
+    get windows() {
+        let windows = [];
+        let enumerator = services.get("windowMediator").getEnumerator("navigator:browser");
+        while (enumerator.hasMoreElements())
+            windows.push(enumerator.getNext());
+
+        return windows;
     }
 
-    let nError = 0;
-    function loadModule(name, func)
-    {
-        let message = "Loading module " + name + "...";
-        try
-        {
-            liberator.log(message, 0);
-            liberator.dump(message);
-            modules[name] = func();
-            liberator.triggerObserver("load_" + name, name);
-        }
-        catch (e)
-        {
-            if (nError++ == 0)
-                toOpenWindowByType("global:console", "chrome://global/content/console.xul");
-            liberator.reportError(e);
-        }
-    }
-
+}, {
     // initially hide all GUI elements, they are later restored unless the user
     // has :set go= or something similar in his config
-    function hideGUI()
-    {
+    hideGUI: function () {
         let guioptions = config.guioptions;
-        for (let option in guioptions)
-        {
+        for (let option in guioptions) {
             guioptions[option].forEach(function (elem) {
-                try
-                {
+                try {
                     document.getElementById(elem).collapsed = true;
                 }
                 catch (e) {}
             });
         }
-    }
+    },
 
     // return the platform normalized to Vim values
-    function getPlatformFeature()
-    {
+    getPlatformFeature: function () {
         let platform = navigator.platform;
         return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
-    }
+    },
 
     // TODO: move this
-    function getMenuItems()
-    {
-        function addChildren(node, parent)
-        {
-            for (let [, item] in Iterator(node.childNodes))
-            {
+    getMenuItems: function () {
+        function addChildren(node, parent) {
+            for (let [, item] in Iterator(node.childNodes)) {
                 if (item.childNodes.length == 0 && item.localName == "menuitem"
-                    && !/rdf:http:/.test(item.getAttribute("label"))) // FIXME
-                {
+                    && !/rdf:http:/.test(item.getAttribute("label"))) { // FIXME
                     item.fullMenuPath = parent + item.getAttribute("label");
                     items.push(item);
                 }
-                else
-                {
+                else {
                     let path = parent;
                     if (item.localName == "menu")
                         path += item.getAttribute("label") + ".";
@@ -117,24 +1053,19 @@ const liberator = (function () //{{{
         let items = [];
         addChildren(document.getElementById(config.guioptions["m"][1]), "");
         return items;
-    }
+    },
 
     // show a usage index either in the MOW or as a full help page
-    function showHelpIndex(tag, items, inMow)
-    {
+    showHelpIndex: function (tag, items, inMow) {
         if (inMow)
             liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
         else
             liberator.help(tag);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+    },
+}, {
 
     // Only general options are added here, which are valid for all Liberator extensions
-    registerObserver("load_options", function () {
-
+    options: function () {
         options.add(["errorbells", "eb"],
             "Ring the bell when an error message is displayed",
             "boolean", false);
@@ -146,13 +1077,10 @@ const liberator = (function () //{{{
         const groups = {
             config: {
                 opts: config.guioptions,
-                setter: function (opts)
-                {
-                    for (let [opt, [, ids]] in Iterator(this.opts))
-                    {
+                setter: function (opts) {
+                    for (let [opt, [, ids]] in Iterator(this.opts)) {
                         ids.map(function (id) document.getElementById(id))
-                           .forEach(function (elem)
-                        {
+                           .forEach(function (elem) {
                             if (elem)
                                 elem.collapsed = (opts.indexOf(opt) == -1);
                         });
@@ -160,10 +1088,16 @@ const liberator = (function () //{{{
                 }
             },
             scroll: {
-                opts: { r: ["Right Scrollbar", "vertical"], l: ["Left Scrollbar", "vertical"], b: ["Bottom Scrollbar", "horizontal"] },
-                setter: function (opts)
-                {
-                    let dir = ["horizontal", "vertical"].filter(function (dir) !Array.some(opts, function (o) this.opts[o] && this.opts[o][1] == dir, this), this);
+                opts: {
+                    r: ["Right Scrollbar", "vertical"],
+                    l: ["Left Scrollbar", "vertical"],
+                    b: ["Bottom Scrollbar", "horizontal"]
+                },
+                setter: function (opts) {
+                    let dir = ["horizontal", "vertical"].filter(
+                        function (dir) !Array.some(opts,
+                            function (o) this.opts[o] && this.opts[o][1] == dir, this),
+                        this);
                     let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
                     if (class.length)
@@ -180,8 +1114,7 @@ const liberator = (function () //{{{
                     n: ["Tab number", highlight.selector("TabNumber")],
                     N: ["Tab number over icon", highlight.selector("TabIconNumber")]
                 },
-                setter: function (opts)
-                {
+                setter: function (opts) {
                     const self = this;
                     let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
                     let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
@@ -194,24 +1127,20 @@ const liberator = (function () //{{{
 
         options.add(["fullscreen", "fs"],
             "Show the current window fullscreen",
-            "boolean", false,
-            {
+            "boolean", false, {
                 setter: function (value) window.fullScreen = value,
                 getter: function () window.fullScreen
             });
 
         options.add(["guioptions", "go"],
             "Show or hide certain GUI elements like the menu or toolbar",
-            "charlist", config.defaults.guioptions || "",
-            {
-                setter: function (value)
-                {
+            "charlist", config.defaults.guioptions || "", {
+                setter: function (value) {
                     for (let [, group] in Iterator(groups))
                         group.setter(value);
                     return value;
                 },
-                completer: function (context)
-                {
+                completer: function (context) {
                     let opts = [v.opts for ([k, v] in Iterator(groups))];
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
                     return util.Array.flatten(opts);
@@ -232,26 +1161,22 @@ const liberator = (function () //{{{
             "Change the title of the window",
             "string", config.defaults.titlestring || config.hostApplication,
             {
-                setter: function (value)
-                {
+                setter: function (value) {
                     let win = document.documentElement;
-                    function updateTitle(old, current)
-                    {
+                    function updateTitle(old, current) {
                         document.title = document.title.replace(RegExp("(.*)" + util.escapeRegex(old)), "$1" + current);
                     }
 
                     // TODO: remove this FF3.5 test when we no longer support 3.0
                     //     : make this a config feature
-                    if (services.get("privateBrowsing"))
-                    {
+                    if (services.get("privateBrowsing")) {
                         let oldValue = win.getAttribute("titlemodifier_normal");
                         let suffix = win.getAttribute("titlemodifier_privatebrowsing").substr(oldValue.length);
 
                         win.setAttribute("titlemodifier_normal", value);
                         win.setAttribute("titlemodifier_privatebrowsing", value + suffix);
 
-                        if (services.get("privateBrowsing").privateBrowsingEnabled)
-                        {
+                        if (services.get("privateBrowsing").privateBrowsingEnabled) {
                             updateTitle(oldValue + suffix, value + suffix);
                             return value;
                         }
@@ -273,27 +1198,20 @@ const liberator = (function () //{{{
             "Use visual bell instead of beeping on errors",
             "boolean", false,
             {
-                setter: function (value)
-                {
+                setter: function (value) {
                     options.safeSetPref("accessibility.typeaheadfind.enablesound", !value,
                         "See 'visualbell' option");
                     return value;
                 }
             });
-    });
+    },
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// MAPPINGS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    registerObserver("load_mappings", function () {
-
+    mappings: function () {
         mappings.add(modes.all, ["<F1>"],
             "Open the help page",
             function () { liberator.help(); });
 
-        if (liberator.has("session"))
-        {
+        if (liberator.has("session")) {
             mappings.add([modes.NORMAL], ["ZQ"],
                 "Quit and don't save the session",
                 function () { liberator.quit(false); });
@@ -302,20 +1220,12 @@ const liberator = (function () //{{{
         mappings.add([modes.NORMAL], ["ZZ"],
             "Quit and save the session",
             function () { liberator.quit(true); });
-    });
+    },
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// COMMANDS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    var toolbox;
-
-    registerObserver("load_commands", function () {
-
+    commands: function () {
         commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
-            function ()
-            {
+            function () {
                 liberator.open("chrome://mozapps/content/extensions/extensions.xul",
                     { from: "addons" });
             },
@@ -328,19 +1238,15 @@ const liberator = (function () //{{{
 
         commands.add(["dia[log]"],
             "Open a " + config.name + " dialog",
-            function (args)
-            {
+            function (args) {
                 let arg = args[0];
 
-                try
-                {
+                try {
                     // TODO: why are these sorts of properties arrays? --djk
                     let dialogs = config.dialogs;
 
-                    for (let [, dialog] in Iterator(dialogs))
-                    {
-                        if (util.compareIgnoreCase(arg, dialog[0]) == 0)
-                        {
+                    for (let [, dialog] in Iterator(dialogs)) {
+                        if (util.compareIgnoreCase(arg, dialog[0]) == 0) {
                             dialog[2]();
                             return;
                         }
@@ -348,16 +1254,13 @@ const liberator = (function () //{{{
 
                     liberator.echoerr("E475: Invalid argument: " + arg);
                 }
-                catch (e)
-                {
+                catch (e) {
                     liberator.echoerr("Error opening '" + arg + "': " + e);
                 }
-            },
-            {
+            }, {
                 argCount: "1",
                 bang: true,
-                completer: function (context)
-                {
+                completer: function (context) {
                     context.ignoreCase = true;
                     return completion.dialog(context);
                 }
@@ -365,21 +1268,18 @@ const liberator = (function () //{{{
 
         commands.add(["em[enu]"],
             "Execute the specified menu item from the command line",
-            function (args)
-            {
+            function (args) {
                 let arg = args.literalArg;
-                let items = getMenuItems();
+                let items = Liberator.getMenuItems();
 
                 liberator.assert(items.some(function (i) i.fullMenuPath == arg),
                     "E334: Menu not found: " + arg);
 
-                for (let [, item] in Iterator(items))
-                {
+                for (let [, item] in Iterator(items)) {
                     if (item.fullMenuPath == arg)
                         item.doCommand();
                 }
-            },
-            {
+            }, {
                 argCount: "1",
                 completer: function (context) completion.menuItem(context),
                 literal: 0
@@ -392,36 +1292,30 @@ const liberator = (function () //{{{
             // E.g. :execute "source" io.getRCFile().path
             // Need to fix commands.parseArgs which currently strips the quotes
             // from quoted args
-            function (args)
-            {
-                try
-                {
+            function (args) {
+                try {
                     let cmd = liberator.eval(args.string);
                     liberator.execute(cmd, null, true);
                 }
-                catch (e)
-                {
+                catch (e) {
                     liberator.echoerr(e);
                 }
             });
 
         commands.add(["exta[dd]"],
             "Install an extension",
-            function (args)
-            {
+            function (args) {
                 let file = io.File(args[0]);
 
                 if (file.exists() && file.isReadable() && file.isFile())
                     services.get("extensionManager").installItemFromFile(file, "app-profile");
-                else
-                {
+                else {
                     if (file.exists() && file.isDirectory())
                         liberator.echomsg("Cannot install a directory: \"" + file.path + "\"", 0);
 
                     liberator.echoerr("E484: Can't open file " + file.path);
                 }
-            },
-            {
+            }, {
                 argCount: "1",
                 completer: function (context) {
                     context.filters.push(function ({ item: f }) f.isDirectory() || /\.xpi$/.test(f.leafName));
@@ -451,15 +1345,13 @@ const liberator = (function () //{{{
         ].forEach(function (command) {
             commands.add([command.name],
                 command.description,
-                function (args)
-                {
+                function (args) {
                     let name = args[0];
                     function action(e) { services.get("extensionManager")[command.action](e.id); };
 
                     if (args.bang)
                         liberator.extensions.forEach(function (e) { action(e); });
-                    else
-                    {
+                    else {
                         liberator.assert(name, "E471: Argument required"); // XXX
 
                         let extension = liberator.getExtension(name);
@@ -468,12 +1360,10 @@ const liberator = (function () //{{{
                         else
                             liberator.echoerr("E474: Invalid argument");
                     }
-                },
-                {
+                }, {
                     argCount: "?", // FIXME: should be "1"
                     bang: true,
-                    completer: function (context)
-                    {
+                    completer: function (context) {
                         completion.extension(context);
                         if (command.filter)
                             context.filters.push(command.filter);
@@ -484,8 +1374,7 @@ const liberator = (function () //{{{
 
         commands.add(["exto[ptions]", "extp[references]"],
             "Open an extension's preference dialog",
-            function (args)
-            {
+            function (args) {
                 let extension = liberator.getExtension(args[0]);
                 liberator.assert(extension && extension.options,
                     "E474: Invalid argument");
@@ -493,12 +1382,10 @@ const liberator = (function () //{{{
                     window.openDialog(extension.options, "_blank", "chrome");
                 else
                     liberator.open(extension.options, { from: "extoptions" });
-            },
-            {
+            }, {
                 argCount: "1",
                 bang: true,
-                completer: function (context)
-                {
+                completer: function (context) {
                     completion.extension(context);
                     context.filters.push(function ({ item: e }) e.options);
                 },
@@ -508,13 +1395,11 @@ const liberator = (function () //{{{
         // TODO: maybe indicate pending status too?
         commands.add(["extens[ions]"],
             "List available extensions",
-            function (args)
-            {
+            function (args) {
                 let filter = args[0] || "";
                 let extensions = liberator.extensions.filter(function (e) e.name.indexOf(filter) >= 0);
 
-                if (extensions.length > 0)
-                {
+                if (extensions.length > 0) {
                     let list = template.tabular(
                         ["Name", "Version", "Status", "Description"], [],
                         ([template.icon(e, e.name),
@@ -526,8 +1411,7 @@ const liberator = (function () //{{{
 
                     commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
-                else
-                {
+                else {
                     if (filter)
                         liberator.echoerr("Exxx: No extension matching \"" + filter + "\"");
                     else
@@ -538,8 +1422,7 @@ const liberator = (function () //{{{
 
         commands.add(["exu[sage]"],
             "List all Ex commands with a short description",
-            function (args) { showHelpIndex("ex-cmd-index", commands, args.bang); },
-            {
+            function (args) { Liberator.showHelpIndex("ex-cmd-index", commands, args.bang); }, {
                 argCount: "0",
                 bang: true
             });
@@ -548,8 +1431,7 @@ const liberator = (function () //{{{
             {
                 name: "h[elp]",
                 description: "Open the help page"
-            },
-            {
+            }, {
                 name: "helpa[ll]",
                 description: "Open the single unchunked help page"
             }
@@ -558,13 +1440,11 @@ const liberator = (function () //{{{
 
             commands.add([command.name],
                 command.description,
-                function (args)
-                {
+                function (args) {
                     liberator.assert(!args.bang, "E478: Don't panic!");
 
                     liberator.help(args.literalArg, unchunked);
-                },
-                {
+                }, {
                     argCount: "?",
                     bang: true,
                     completer: function (context) completion.help(context, unchunked),
@@ -572,45 +1452,22 @@ const liberator = (function () //{{{
                 });
         });
 
-        commands.add(["exporth[elp]"],
-            "Exports " + config.name + "'s help system to the named zip file",
-            function (args)
-            {
-                liberator.echomsg("Exporting help to " + args[0].quote() + ". Please wait...");
-                util.exportHelp(args[0]);
-                liberator.echomsg("Help exported to " + args[0].quote() + ".");
-            },
-            {
-                argCount: "1",
-                completer: function (context) {
-                    context.filters.push(function ({ item: f }) f.isDirectory() || /\.zip/.test(f.leafName));
-                    completion.file(context);
-                },
-                literal: 0
-            });
-
         commands.add(["javas[cript]", "js"],
             "Run a JavaScript command through eval()",
-            function (args)
-            {
-                if (args.bang) // open JavaScript console
-                {
+            function (args) {
+                if (args.bang) { // open JavaScript console
                     liberator.open("chrome://global/content/console.xul",
                         { from: "javascript" });
                 }
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         liberator.eval(args.string);
                     }
-                    catch (e)
-                    {
+                    catch (e) {
                         liberator.echoerr(e);
                     }
                 }
-            },
-            {
+            }, {
                 bang: true,
                 completer: function (context) completion.javascript(context),
                 hereDoc: true,
@@ -632,22 +1489,19 @@ const liberator = (function () //{{{
 
         commands.add(["optionu[sage]"],
             "List all options with a short description",
-            function (args) { showHelpIndex("option-index", options, args.bang); },
-            {
+            function (args) { Liberator.showHelpIndex("option-index", options, args.bang); }, {
                 argCount: "0",
                 bang: true
             });
 
         commands.add(["q[uit]"],
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
-            function (args)
-            {
+            function (args) {
                 if (liberator.has("tabs"))
                     tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
                 else
                     liberator.quit(false, args.bang);
-            },
-            {
+            }, {
                 argCount: "0",
                 bang: true
             });
@@ -657,26 +1511,21 @@ const liberator = (function () //{{{
             function () { liberator.restart(); },
             { argCount: "0" });
 
-        toolbox = document.getElementById("navigator-toolbox");
-        if (toolbox)
-        {
+        var toolbox = document.getElementById("navigator-toolbox");
+        if (toolbox) {
             function findToolbar(name) util.evaluateXPath(
                 "./*[@toolbarname=" + util.escapeString(name, "'") + "]",
                 document, toolbox).snapshotItem(0);
 
-            let tbcmd = function (names, desc, action, filter)
-            {
+            let tbcmd = function (names, desc, action, filter) {
                 commands.add(names, desc,
-                    function (args)
-                    {
+                    function (args) {
                         let toolbar = findToolbar(args[0]);
                         liberator.assert(toolbar, "E474: Invalid argument");
                         action(toolbar);
-                    },
-                    {
+                    }, {
                         argcount: "1",
-                        completer: function (context)
-                        {
+                        completer: function (context) {
                             completion.toolbar(context)
                             if (filter)
                                 context.filters.push(filter);
@@ -697,8 +1546,7 @@ const liberator = (function () //{{{
 
         commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
-            function (args)
-            {
+            function (args) {
                 let count = args.count;
                 let special = args.bang;
                 args = args.string;
@@ -708,15 +1556,12 @@ const liberator = (function () //{{{
                 else
                     method = liberator.eval("(function () {" + args + "})");
 
-                try
-                {
-                    if (count > 1)
-                    {
+                try {
+                    if (count > 1) {
                         let each, eachUnits, totalUnits;
                         let total = 0;
 
-                        for (let i in util.interruptibleRange(0, count, 500))
-                        {
+                        for (let i in util.interruptibleRange(0, count, 500)) {
                             let now = Date.now();
                             method();
                             total += Date.now() - now;
@@ -725,19 +1570,16 @@ const liberator = (function () //{{{
                         if (special)
                             return;
 
-                        if (total / count >= 100)
-                        {
+                        if (total / count >= 100) {
                             each = total / 1000.0 / count;
                             eachUnits = "sec";
                         }
-                        else
-                        {
+                        else {
                             each = total / count;
                             eachUnits = "msec";
                         }
 
-                        if (total >= 100)
-                        {
+                        if (total >= 100) {
                             total = total / 1000.0;
                             totalUnits = "sec";
                         }
@@ -755,8 +1597,7 @@ const liberator = (function () //{{{
                                 </table>);
                         commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
-                    else
-                    {
+                    else {
                         let beforeTime = Date.now();
                         method();
 
@@ -771,16 +1612,13 @@ const liberator = (function () //{{{
                             liberator.echo("Total time: " + (afterTime - beforeTime) + " msec");
                     }
                 }
-                catch (e)
-                {
+                catch (e) {
                     liberator.echoerr(e);
                 }
-            },
-            {
+            }, {
                 argCount: "+",
                 bang: true,
-                completer: function (context)
-                {
+                completer: function (context) {
                     if (/^:/.test(context.filter))
                         return completion.ex(context);
                     else
@@ -792,25 +1630,21 @@ const liberator = (function () //{{{
 
         commands.add(["verb[ose]"],
             "Execute a command with 'verbose' set",
-            function (args)
-            {
+            function (args) {
                 let vbs = options.get("verbose");
                 let value = vbs.value;
                 let setFrom = vbs.setFrom;
 
-                try
-                {
+                try {
                     vbs.set(args.count > -1 ? args.count : 1);
                     vbs.setFrom = null;
                     liberator.execute(args[0], null, true);
                 }
-                finally
-                {
+                finally {
                     vbs.set(value);
                     vbs.setFrom = setFrom;
                 }
-            },
-            {
+            }, {
                 argCount: "+",
                 completer: function (context) completion.ex(context),
                 count: true,
@@ -819,33 +1653,26 @@ const liberator = (function () //{{{
 
         commands.add(["ve[rsion]"],
             "Show version information",
-            function (args)
-            {
+            function (args) {
                 if (args.bang)
                     liberator.open("about:");
                 else
                     liberator.echo(template.commandOutput(<>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
-            },
-            {
+            }, {
                 argCount: "0",
                 bang: true
             });
 
         commands.add(["viu[sage]"],
             "List all mappings with a short description",
-            function (args) { showHelpIndex("normal-index", mappings, args.bang); },
-            {
+            function (args) { Liberator.showHelpIndex("normal-index", mappings, args.bang); }, {
                 argCount: "0",
                 bang: true
             });
 
-    });
+    },
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// COMPLETIONS /////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    registerObserver("load_completion", function () {
+    completion: function () {
         completion.setFunctionCompleter(services.get, [function () services.services]);
         completion.setFunctionCompleter(services.create, [function () [[c, ""] for (c in services.classes)]]);
 
@@ -888,1236 +1715,124 @@ const liberator = (function () //{{{
             context.keys = { text: function (win) liberator.windows.indexOf(win) + 1, description: function (win) win.document.title };
             context.completions = liberator.windows;
         };
-    });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    return {
-
-        modules: modules,
-
-        /**
-         * @property {number} The current main mode.
-         * @see modes#mainModes
-         */
-        get mode()      modes.main,
-        set mode(value) modes.main = value,
-
-        get menuItems() getMenuItems(),
-
-        /** @property {Element} The currently focused element. */
-        get focus() document.commandDispatcher.focusedElement,
-
-        get extensions()
-        {
-            const rdf = services.get("rdf");
-            const extensionManager = services.get("extensionManager");
-
-            let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-
-            function getRdfProperty(item, property)
-            {
-                let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
-                let value = "";
-
-                if (resource)
-                {
-                    let target = extensionManager.datasource.GetTarget(resource,
-                        rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
-                    if (target && target instanceof Ci.nsIRDFLiteral)
-                        value = target.Value;
-                }
-
-                return value;
-            }
-
-            //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
-            return extensions.map(function (e) ({
-                id: e.id,
-                name: e.name,
-                description: getRdfProperty(e, "description"),
-                enabled: getRdfProperty(e, "isDisabled") != "true",
-                icon: e.iconURL,
-                options: getRdfProperty(e, "optionsURL"),
-                version: e.version
-            }));
-        },
-
-        getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
-
-        // Global constants
-        CURRENT_TAB: [],
-        NEW_TAB: [],
-        NEW_BACKGROUND_TAB: [],
-        NEW_WINDOW: [],
-
-        forceNewTab: false,
-        forceNewWindow: false,
-
-        /** @property {string} The Liberator version string. */
-        version: "###VERSION### (created: ###DATE###)", // these VERSION and DATE tokens are replaced by the Makefile
-
-        // NOTE: services.get("profile").selectedProfile.name doesn't return
-        // what you might expect. It returns the last _actively_ selected
-        // profile (i.e. via the Profile Manager or -P option) rather than the
-        // current profile. These will differ if the current process was run
-        // without explicitly selecting a profile.
-        /** @property {string} The name of the current user profile. */
-        profileName: services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, ""),
-
-        /**
-         * @property {Object} The map of command-line options. These are
-         *     specified in the argument to the host application's -liberator
-         *     option. E.g. $ firefox -liberator '+u=tempRcFile ++noplugin'
-         *     Supported options:
-         *         +u=RCFILE   Use RCFILE instead of .vimperatorrc.
-         *         ++noplugin  Don't load plugins.
-         */
-        commandLineOptions: {
-            /** @property Whether plugin loading should be prevented. */
-            noPlugins: false,
-            /** @property An RC file to use rather than the default. */
-            rcFile: null,
-            /** @property An Ex command to run before any initialization is performed. */
-            preCommands: null,
-            /** @property An Ex command to run after all initialization has been performed. */
-            postCommands: null
-        },
-
-        registerObserver: registerObserver,
-
-        unregisterObserver: function (type, callback)
-        {
-            if (type in observers)
-                observers[type] = observers[type].filter(function (c) c != callback);
-        },
-
-        // TODO: "zoom": if the zoom value of the current buffer changed
-        triggerObserver: function (type)
-        {
-            let args = Array.slice(arguments, 1);
-            for (let [, func] in Iterator(observers[type] || []))
-                func.apply(null, args);
-        },
-
-        /**
-         * Triggers the application bell to notify the user of an error. The
-         * bell may be either audible or visual depending on the value of the
-         * 'visualbell' option.
-         */
-        beep: function ()
-        {
-            // FIXME: popups clear the command line
-            if (options["visualbell"])
-            {
-                // flash the visual bell
-                let popup = document.getElementById("liberator-visualbell");
-                let win = config.visualbellWindow;
-                let rect = win.getBoundingClientRect();
-                let width = rect.right - rect.left;
-                let height = rect.bottom - rect.top;
-
-                // NOTE: this doesn't seem to work in FF3 with full box dimensions
-                popup.openPopup(win, "overlap", 1, 1, false, false);
-                popup.sizeTo(width - 2, height - 2);
-                setTimeout(function () { popup.hidePopup(); }, 20);
-            }
-            else
-            {
-                let soundService = Cc["@mozilla.org/sound;1"].getService(Ci.nsISound);
-                soundService.beep();
-            }
-            return false; // so you can do: if (...) return liberator.beep();
-        },
-
-        /**
-         * Creates a new thread.
-         */
-        newThread: function () services.get("threadManager").newThread(0),
-
-        /**
-         * Calls a function asynchronously on a new thread.
-         *
-         * @param {nsIThread} thread The thread to call the function on. If no
-         *     thread is specified a new one is created.
-         * @optional
-         * @param {Object} self The 'this' object used when executing the
-         *     function.
-         * @param {function} func The function to execute.
-         *
-         */
-        callAsync: function (thread, self, func)
-        {
-            thread = thread || services.get("threadManager").newThread(0);
-            thread.dispatch(new Runnable(self, func, Array.slice(arguments, 3)), thread.DISPATCH_NORMAL);
-        },
-
-        /**
-         * Calls a function synchronously on a new thread.
-         *
-         * NOTE: Be sure to call GUI related methods like alert() or dump()
-         * ONLY in the main thread.
-         *
-         * @param {nsIThread} thread The thread to call the function on. If no
-         *     thread is specified a new one is created.
-         * @optional
-         * @param {function} func The function to execute.
-         */
-        callFunctionInThread: function (thread, func)
-        {
-            thread = thread || services.get("threadManager").newThread(0);
-
-            // DISPATCH_SYNC is necessary, otherwise strange things will happen
-            thread.dispatch(new Runnable(null, func, Array.slice(arguments, 2)), thread.DISPATCH_SYNC);
-        },
-
-        /**
-         * Prints a message to the console. If <b>msg</b> is an object it is
-         * pretty printed.
-         *
-         * NOTE: the "browser.dom.window.dump.enabled" preference needs to be
-         * set.
-         *
-         * @param {string|Object} msg The message to print.
-         */
-        dump: function ()
-        {
-            let msg = Array.map(arguments, function (msg) {
-                if (typeof msg == "object")
-                    msg = util.objectToString(msg);
-                return msg;
-            }).join(", ");
-            msg = String.replace(msg, /\n?$/, "\n");
-            window.dump(msg.replace(/^./gm, ("config" in modules && config.name.toLowerCase()) + ": $&"));
-        },
-
-        /**
-         * Dumps a stack trace to the console.
-         *
-         * @param {string} msg The trace message.
-         * @param {number} frames The number of frames to print.
-         */
-        dumpStack: function (msg, frames)
-        {
-            let stack = Error().stack.replace(/(?:.*\n){2}/, "");
-            if (frames != null)
-                [stack] = stack.match(RegExp("(?:.*\n){0," + frames + "}"));
-            liberator.dump((msg || "Stack") + "\n" + stack);
-        },
-
-        /**
-         * Tests a condition and throws a FailedAssertion error on
-         * failure.
-         *
-         * @param {boolean} condition The condition to test.
-         * @param {string}  message The message to present to the
-         *                          user on failure.
-         */
-        assert: function (condition, message)
-        {
-            if (!condition)
-                throw new FailedAssertion(message);
-        },
-
-        /**
-         * Outputs a plain message to the command line.
-         *
-         * @param {string} str The message to output.
-         * @param {number} flags These control the multiline message behaviour.
-         *     See {@link CommandLine#echo}.
-         */
-        echo: function (str, flags)
-        {
-            commandline.echo(str, commandline.HL_NORMAL, flags);
-        },
-
-        // TODO: Vim replaces unprintable characters in echoerr/echomsg
-        /**
-         * Outputs an error message to the command line.
-         *
-         * @param {string} str The message to output.
-         * @param {number} flags These control the multiline message behaviour.
-         *     See {@link CommandLine#echo}.
-         */
-        echoerr: function (str, flags)
-        {
-            flags |= commandline.APPEND_TO_MESSAGES;
-
-            if (typeof str == "object" && "echoerr" in str)
-                str = str.echoerr;
-            else if (str instanceof Error)
-                str = str.fileName + ":" + str.lineNumber + ": " + str;
-
-            if (options["errorbells"])
-                liberator.beep();
-
-            commandline.echo(str, commandline.HL_ERRORMSG, flags);
-        },
-
-        // TODO: add proper level constants
-        /**
-         * Outputs an information message to the command line.
-         *
-         * @param {string} str The message to output.
-         * @param {number} verbosity The messages log level (0 - 15). Only
-         *     messages with verbosity less than or equal to the value of the
-         *     'verbosity' option will be output.
-         * @param {number} flags These control the multiline message behaviour.
-         *     See {@link CommandLine#echo}.
-         */
-        echomsg: function (str, verbosity, flags)
-        {
-            // TODO: is there a reason for this? --djk
-            // yes, it doesn't show the MOW on startup if you have e.g. some qmarks in your vimperatorrc.
-            // Feel free to add another flag like DONT_OPEN_MULTILINE if really needed --mst
-            //
-            // But it's _supposed_ to show the MOW on startup when there are
-            // messages, surely?  As far as I'm concerned it essentially works
-            // exactly as it should with the DISALLOW_MULTILINE flag removed.
-            // Sending N messages to the command line in a row and having them
-            // overwrite each other is completely broken. I also think many of
-            // those messages like "Added quick mark" are plain silly but if
-            // you don't like them you can set verbose=0, or use :silent when
-            // someone adds it. I reckon another flag and 'class' of messages
-            // is just going to unnecessarily complicate things. --djk
-            flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE;
-
-            if (verbosity == null)
-                verbosity = 0; // verbosity level is exclusionary
-
-            if (options["verbose"] >= verbosity)
-                commandline.echo(str, commandline.HL_INFOMSG, flags);
-        },
-
-        /**
-         * Loads and executes the script referenced by <b>uri</b> in the scope
-         * of the <b>context</b> object.
-         *
-         * @param {string} uri The URI of the script to load. Should be a local
-         *     chrome:, file:, or resource: URL.
-         * @param {Object} context The context object into which the script
-         *     should be loaded.
-         */
-        loadScript: function (uri, context)
-        {
-            XML.ignoreWhiteSpace = false;
-            XML.prettyPrinting = false;
-            services.get("subscriptLoader").loadSubScript(uri, context);
-        },
-
-        eval: function (str, context)
-        {
-            try
-            {
-                if (!context)
-                    context = userContext;
-                context[EVAL_ERROR] = null;
-                context[EVAL_STRING] = str;
-                context[EVAL_RESULT] = null;
-                this.loadScript("chrome://liberator/content/eval.js", context);
-                if (context[EVAL_ERROR])
-                {
-                    try
-                    {
-                        context[EVAL_ERROR].fileName = io.sourcing.file;
-                        context[EVAL_ERROR].lineNumber += io.sourcing.line;
-                    }
-                    catch (e) {}
-                    throw context[EVAL_ERROR];
-                }
-                return context[EVAL_RESULT];
-            }
-            finally
-            {
-                delete context[EVAL_ERROR];
-                delete context[EVAL_RESULT];
-                delete context[EVAL_STRING];
-            }
-        },
-
-        // partial sixth level expression evaluation
-        // TODO: what is that really needed for, and where could it be used?
-        //       Or should it be removed? (c) Viktor
-        //       Better name?  See other liberator.eval()
-        //       I agree, the name is confusing, and so is the
-        //           description --Kris
-        evalExpression: function (string)
-        {
-            string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
-            let matches = string.match(/^&(\w+)/);
-
-            if (matches)
-            {
-                let opt = this.options.get(matches[1]);
-
-                if (!opt)
-                    return void this.echoerr("E113: Unknown option: " + matches[1]);
-
-                let type = opt.type;
-                let value = opt.getter();
-
-                if (type != "boolean" && type != "number")
-                    value = value.toString();
-
-                return value;
-            }
-            // String
-            else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))
-            {
-                if (matches)
-                    return matches[2].toString();
-                else
-                    return void this.echoerr("E115: Missing quote: " + string);
-            }
-            // Number
-            else if (matches = string.match(/^(\d+)$/))
-                return parseInt(matches[1], 10);
-
-            let reference = this.variableReference(string);
-
-            if (!reference[0])
-                this.echoerr("E121: Undefined variable: " + string);
-            else
-                return reference[0][reference[1]];
-
-            return;
-        },
-
-        /**
-         * Execute an Ex command string. E.g. ":zoom 300".
-         *
-         * @param {string} str The command to execute.
-         * @param {Object} modifiers Any modifiers to be passed to
-         *     {@link Command#action}.
-         * @param {boolean} silent Whether the command should be echoed on the
-         *     command line.
-         */
-        execute: function (str, modifiers, silent)
-        {
-            // skip comments and blank lines
-            if (/^\s*("|$)/.test(str))
-                return;
-
-            modifiers = modifiers || {};
-
-            let err = null;
-            let [count, cmd, special, args] = commands.parseCommand(str.replace(/^'(.*)'$/, "$1"));
-            let command = commands.get(cmd);
-
-            if (command === null)
-            {
-                err = "E492: Not a " + config.name.toLowerCase() + " command: " + str;
-                liberator.focusContent();
-            }
-            else if (command.action === null)
-                err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
-            else if (count != -1 && !command.count)
-                err = "E481: No range allowed";
-            else if (special && !command.bang)
-                err = "E477: No ! allowed";
-
-            liberator.assert(!err, err);
-            if (!silent)
-                commandline.command = str.replace(/^\s*:\s*/, "");
-
-            command.execute(args, special, count, modifiers);
-        },
-
-        /**
-         * Focuses the content window.
-         *
-         * @param {boolean} clearFocusedElement Remove focus from any focused
-         *     element.
-         */
-        focusContent: function (clearFocusedElement)
-        {
-            if (window != services.get("windowWatcher").activeWindow)
-                return;
-
-            let elem = config.mainWidget || window.content;
-            // TODO: make more generic
-            try
-            {
-                if (this.has("mail") && !config.isComposeWindow)
-                {
-                    let i = gDBView.selection.currentIndex;
-                    if (i == -1 && gDBView.rowCount >= 0)
-                        i = 0;
-                    gDBView.selection.select(i);
-                }
-                else if (this.has("tabs"))
-                {
-                    let frame = tabs.localStore.focusedFrame;
-                    if (frame && frame.top == window.content)
-                        elem = frame;
-                }
-            }
-            catch (e) {}
-
-            if (clearFocusedElement && liberator.focus)
-                liberator.focus.blur();
-            if (elem && elem != liberator.focus)
-                elem.focus();
-        },
-
-        /**
-         * Returns whether this Liberator extension supports <b>feature</b>.
-         *
-         * @param {string} feature The feature name.
-         * @returns {boolean}
-         */
-        has: function (feature) config.features.indexOf(feature) >= 0,
-
-        /**
-         * Returns whether the host application has the specified extension
-         * installed.
-         *
-         * @param {string} name The extension name.
-         * @returns {boolean}
-         */
-        hasExtension: function (name)
-        {
-            let extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-            return extensions.some(function (e) e.name == name);
-        },
-
-        /**
-         * Returns the URL of the specified help <b>topic</b> if it exists.
-         *
-         * @param {string} topic The help topic to lookup.
-         * @param {boolean} unchunked Whether to search the unchunked help page.
-         * @returns {string}
-         */
-        findHelp: function (topic, unchunked)
-        {
-            if (topic in services.get("liberator:").FILE_MAP)
-                return topic;
-            unchunked = !!unchunked;
-            let items = completion._runCompleter("help", topic, null, unchunked).items;
-            let partialMatch = null;
-
-            function format(item) item.description + "#" + encodeURIComponent(item.text);
-
-            for (let [i, item] in Iterator(items))
-            {
-                if (item.text == topic)
-                    return format(item);
-                else if (!partialMatch && topic)
-                    partialMatch = item;
-            }
-
-            if (partialMatch)
-                return format(partialMatch);
-            return null;
-        },
-
-        /**
-         * @private
-         * Initialize the help system.
-         */
-        initHelp: function ()
-        {
-            let namespaces = [config.name.toLowerCase(), "liberator"];
-            services.get("liberator:").init({});
-            let tagMap = services.get("liberator:").HELP_TAGS;
-            let fileMap = services.get("liberator:").FILE_MAP;
-            let overlayMap = services.get("liberator:").OVERLAY_MAP;
-            function XSLTProcessor(sheet)
-            {
-                let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
-                xslt.importStylesheet(util.httpGet(sheet).responseXML);
-                return xslt;
-            }
-
-            function findHelpFile(file)
-            {
-                let result = [];
-                for (let [, namespace] in Iterator(namespaces))
-                {
-                    let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
-                    let res = util.httpGet(url);
-                    if (res)
-                    {
-                        if (res.responseXML.documentElement.localName == "document")
-                            fileMap[file] = url;
-                        if (res.responseXML.documentElement.localName == "overlay")
-                            overlayMap[file] = url;
-                        result.push(res.responseXML);
-                    }
-                }
-                return result;
-            }
-            function addTags(file, doc)
-            {
-                doc = XSLT.transformToDocument(doc);
-                for (let elem in util.evaluateXPath("//xhtml:a/@id", doc))
-                    tagMap[elem.value] = file;
-            }
-
-            const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
-
-            tagMap.all = "all";
-            let files = findHelpFile("all").map(function (doc)
-                    [f.value for (f in util.evaluateXPath(
-                        "//liberator:include/@href", doc))]);
-
-            util.Array.flatten(files).map(function (file) {
-                findHelpFile(file).forEach(function (doc) {
-                    addTags(file, doc);
-                });
+    },
+    load: function () {
+        config.features.push(Liberator.getPlatformFeature());
+
+        try {
+            let infoPath = services.create("file");
+            infoPath.initWithPath(File.expandPath(IO.runtimePath.replace(/,.*/, "")));
+            infoPath.append("info");
+            infoPath.append(liberator.profileName);
+            storage.infoPath = infoPath;
+        }
+        catch (e) {
+            liberator.reportError(e);
+        }
+
+        config.init();
+
+        liberator.triggerObserver("load");
+
+        liberator.log("All modules loaded", 3);
+
+        services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase(),
+            Ci.nsICommandLineHandler);
+
+        let commandline = services.get("commandLineHandler").optionValue;
+        if (commandline) {
+            let args = liberator.parseCommandLine(commandline);
+            liberator.commandLineOptions.rcFile = args["+u"];
+            liberator.commandLineOptions.noPlugins = "++noplugin" in args;
+            liberator.commandLineOptions.postCommands = args["+c"];
+            liberator.commandLineOptions.preCommands = args["++cmd"];
+            liberator.dump("Processing command-line option: " + commandline);
+        }
+
+        liberator.log("Command-line options: " + util.objectToString(liberator.commandLineOptions), 3);
+
+        // first time intro message
+        const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";
+        if (options.getPref(firstTime, true)) {
+            setTimeout(function () {
+                liberator.help();
+                options.setPref(firstTime, false);
+            }, 1000);
+        }
+
+        // always start in normal mode
+        modes.reset();
+
+        // TODO: we should have some class where all this guioptions stuff fits well
+        Liberator.hideGUI();
+
+        if (liberator.commandLineOptions.preCommands)
+            liberator.commandLineOptions.preCommands.forEach(function (cmd) {
+                liberator.execute(cmd);
             });
 
-            XML.ignoreWhiteSpace = false;
-            XML.prettyPrinting = false;
-            XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
-            XML.prettyIndent = 4;
-            let body = XML();
-            for (let [, context] in Iterator(plugins.contexts))
-                if (context.INFO instanceof XML)
-                    body += <h2 xmlns={NS.uri} tag={context.INFO.@name + '-plugin'}>{context.INFO.@summary}</h2> +
-                        context.INFO;
+        // finally, read the RC file and source plugins
+        // make sourcing asynchronous, otherwise commands that open new tabs won't work
+        setTimeout(function () {
+            let extensionName = config.name.toUpperCase();
+            let init = services.get("environment").get(extensionName + "_INIT");
+            let rcFile = io.getRCFile("~");
 
-            let help = '<?xml version="1.0"?>\n' +
-                       '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>\n' +
-                       '<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">' +
-                <document
-                    name="plugins"
-                    title={config.name + " Plugins"}
-                    xmlns="http://vimperator.org/namespaces/liberator">
-                    <h1 tag="using-plugins">Using Plugins</h1>
-
-                    {body}
-                </document>.toXMLString();
-            fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
-
-            addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
-        },
-
-        /**
-         * Opens the help page containing the specified <b>topic</b> if it
-         * exists.
-         *
-         * @param {string} topic The help topic to open.
-         * @param {boolean} unchunked Whether to use the unchunked help page.
-         * @returns {string}
-         */
-        help: function (topic, unchunked)
-        {
-            if (!topic && !unchunked)
-            {
-                let helpFile = options["helpfile"];
-                if (helpFile in services.get("liberator:").FILE_MAP)
-                    liberator.open("liberator://help/" + helpFile, { from: "help" });
-                else
-                    liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
-                return;
+            if (liberator.commandLineOptions.rcFile) {
+                let filename = liberator.commandLineOptions.rcFile;
+                if (!/^(NONE|NORC)$/.test(filename))
+                    io.source(io.File(filename).path, false); // let io.source handle any read failure like Vim
             }
-
-            let page = this.findHelp(topic, unchunked);
-            liberator.assert(page != null, "E149: Sorry, no help for " + topic);
-
-            liberator.open("liberator://help/" + page, { from: "help" });
-            if (options.get("activate").has("all", "help"))
-                content.postMessage("fragmentChange", "*");
-        },
-
-        /**
-         * The map of global variables.
-         *
-         * These are set and accessed with the "g:" prefix.
-         */
-        globalVariables: {},
-
-        loadModule: function (name, func) { loadModule(name, func); },
-
-        loadPlugins: function ()
-        {
-            function sourceDirectory(dir)
-            {
-                liberator.assert(dir.isReadable(), "E484: Can't open file " + dir.path);
-
-                liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
-                dir.readDirectory(true).forEach(function (file) {
-                    if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles))
-                    {
-                        try
-                        {
-                            io.source(file.path, false);
-                            liberator.pluginFiles[file.path] = true;
-                        }
-                        catch (e)
-                        {
-                            liberator.reportError(e);
-                        }
+            else {
+                if (init)
+                    liberator.execute(init);
+                else {
+                    if (rcFile) {
+                        io.source(rcFile.path, true);
+                        services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
                     }
-                    else if (file.isDirectory())
-                        sourceDirectory(file);
-                });
-            }
-
-            let dirs = io.getRuntimeDirectories("plugin");
-
-            if (dirs.length == 0)
-            {
-                liberator.log("No user plugin directory found", 3);
-                return;
-            }
-
-            liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
-                                + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"', 2);
-
-            dirs.forEach(function (dir) {
-                liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
-                sourceDirectory(dir);
-            });
-        },
-
-        // TODO: add proper level constants
-        /**
-         * Logs a message to the JavaScript error console. Each message has an
-         * associated log level. Only messages with a log level less than or
-         * equal to <b>level</b> will be printed. If <b>msg</b> is an object,
-         * it is pretty printed.
-         *
-         * @param {string|Object} msg The message to print.
-         * @param {number} level The logging level 0 - 15.
-         */
-        log: function (msg, level)
-        {
-            let verbose = 0;
-            if (level == undefined)
-                level = 1;
-
-            // options does not exist at the very beginning
-            if (modules.options)
-                verbose = options.getPref("extensions.liberator.loglevel", 0);
-
-            if (level > verbose)
-                return;
-
-            if (typeof msg == "object")
-                msg = util.objectToString(msg, false);
-
-            services.get("console").logStringMessage(config.name.toLowerCase() + ": " + msg);
-        },
-
-        /**
-         * Opens one or more URLs. Returns true when load was initiated, or
-         * false on error.
-         *
-         * @param {string|string[]} urls Either a URL string or an array of URLs.
-         *     The array can look like this:
-         *       ["url1", "url2", "url3", ...]
-         *     or:
-         *       [["url1", postdata1], ["url2", postdata2], ...]
-         * @param {number|Object} where If ommited, CURRENT_TAB is assumed but NEW_TAB
-         *     is set when liberator.forceNewTab is true.
-         * @param {boolean} force Don't prompt whether to open more than 20
-         *     tabs.
-         * @returns {boolean}
-         */
-        open: function (urls, params, force)
-        {
-            // convert the string to an array of converted URLs
-            // -> see util.stringToURLArray for more details
-            if (typeof urls == "string")
-            {
-                // rather switch to the tab instead of opening a new url in case of "12: Tab Title" like "urls"
-                if (liberator.has("tabs"))
-                {
-                    let matches = urls.match(/^(\d+):/);
-                    if (matches)
-                    {
-                        tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
-                        return;
-                    }
+                    else
+                        liberator.log("No user RC file found", 3);
                 }
 
-                urls = util.stringToURLArray(urls);
-            }
-
-            if (urls.length > 20 && !force)
-            {
-                commandline.input("This will open " + urls.length + " new tabs. Would you like to continue? (yes/[no]) ",
-                    function (resp) {
-                        if (resp && resp.match(/^y(es)?$/i))
-                            liberator.open(urls, params, true);
-                    });
-                return true;
-            }
-
-            let flags = 0;
-            params = params || {};
-            if (params instanceof Array)
-                params = { where: params };
-
-            for (let [opt, flag] in Iterator({ replace: "REPLACE_HISTORY", hide: "BYPASS_HISTORY" }))
-                if (params[opt])
-                    flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
-
-            let where = params.where || liberator.CURRENT_TAB;
-            if ("from" in params && liberator.has("tabs"))
-            {
-                if (!('where' in params) && options.get("newtab").has("all", params.from))
-                    where = liberator.NEW_BACKGROUND_TAB;
-                if (options.get("activate").has("all", params.from))
-                {
-                    if (where == liberator.NEW_TAB)
-                        where = liberator.NEW_BACKGROUND_TAB;
-                    else if (where == liberator.NEW_BACKGROUND_TAB)
-                        where = liberator.NEW_TAB;
+                if (options["exrc"] && !liberator.commandLineOptions.rcFile) {
+                    let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
+                    if (localRCFile && !localRCFile.equals(rcFile))
+                        io.source(localRCFile.path, true);
                 }
             }
 
-            if (urls.length == 0)
-                return false;
+            if (liberator.commandLineOptions.rcFile == "NONE" || liberator.commandLineOptions.noPlugins)
+                options["loadplugins"] = false;
 
-            let browser = window.getBrowser();
+            if (options["loadplugins"])
+                liberator.loadPlugins();
 
-            function open(urls, where)
-            {
-                let url = Array.concat(urls)[0];
-                let postdata = Array.concat(urls)[1];
+            liberator.initHelp();
 
-                // decide where to load the first url
-                switch (where)
-                {
-                    case liberator.CURRENT_TAB:
-                        browser.loadURIWithFlags(url, flags, null, null, postdata);
-                        break;
-
-                    case liberator.NEW_BACKGROUND_TAB:
-                    case liberator.NEW_TAB:
-                        if (!liberator.has("tabs"))
-                            return open(urls, liberator.NEW_WINDOW);
-
-                        options.withContext(function () {
-                            options.setPref("browser.tabs.loadInBackground", true);
-                            browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
-                        });
-                        break;
-
-                    case liberator.NEW_WINDOW:
-                        window.open();
-                        let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
-                        win.loadURI(url, null, postdata);
-                        browser = win.getBrowser();
-                        break;
-
-                    default:
-                        throw Error("Invalid 'where' directive in liberator.open(...)");
-                }
+            // after sourcing the initialization files, this function will set
+            // all gui options to their default values, if they have not been
+            // set before by any RC file
+            for (let option in options) {
+                // 'encoding' option should not be set at this timing.
+                // Probably a wrong value is set into the option,
+                // if current page's encoging is not UTF-8.
+                if (option.name != "encoding" && option.setter)
+                    option.value = option.value;
             }
 
-            if (liberator.forceNewTab)
-                where = liberator.NEW_TAB;
-            else if (liberator.forceNewWindow)
-                where = liberator.NEW_WINDOW;
-            else if (!where)
-                where = liberator.CURRENT_TAB;
-
-            for (let [, url] in Iterator(urls))
-            {
-                open(url, where);
-                where = liberator.NEW_BACKGROUND_TAB;
-            }
-
-            return true;
-        },
-
-        pluginFiles: {},
-
-        // namespace for plugins/scripts. Actually (only) the active plugin must/can set a
-        // v.plugins.mode = <str> string to show on v.modes.CUSTOM
-        // v.plugins.stop = <func> hooked on a v.modes.reset()
-        // v.plugins.onEvent = <func> function triggered, on keypresses (unless <esc>) (see events.js)
-        plugins: plugins,
-
-        /**
-         * Quit the host application, no matter how many tabs/windows are open.
-         *
-         * @param {boolean} saveSession If true the current session will be
-         *     saved and restored when the host application is restarted.
-         * @param {boolean} force Forcibly quit irrespective of whether all
-         *    windows could be closed individually.
-         */
-        quit: function (saveSession, force)
-        {
-            // TODO: Use safeSetPref?
-            if (saveSession)
-                options.setPref("browser.startup.page", 3); // start with saved session
-            else
-                options.setPref("browser.startup.page", 1); // start with default homepage session
-
-            if (force)
-                services.get("appStartup").quit(Ci.nsIAppStartup.eForceQuit);
-            else
-                window.goQuitApplication();
-        },
-
-        /**
-         * Traps errors in the called function, possibly reporting them.
-         *
-         * @param {function} func The function to call
-         * @param {object} self The 'this' object for the function.
-         */
-        trapErrors: function (func, self)
-        {
-            try
-            {
-                return func.apply(self || this, Array.slice(arguments, 2));
-            }
-            catch (e)
-            {
-                if (e instanceof FailedAssertion)
-                    liberator.echoerr(e.message);
-            }
-        },
-
-        /**
-         * Reports an error to both the console and the host application's
-         * Error Console.
-         *
-         * @param {Object} error The error object.
-         */
-        reportError: function (error)
-        {
-            if (Cu.reportError)
-                Cu.reportError(error);
-
-            try
-            {
-                try
-                {
-                    var string = String(error);
-                    var stack = error.stack;
-                }
-                catch (e) {}
-
-                let obj = {
-                    toString: function () string || {}.toString.call(error),
-                    stack: <>{String.replace(stack || Error().stack, /^/mg, "\t")}</>
-                };
-                for (let [k, v] in Iterator(error))
-                {
-                    if (!(k in obj))
-                        obj[k] = v;
-                }
-                if (liberator.storeErrors)
-                {
-                    let errors = storage.newArray("errors", { store: false });
-                    errors.toString = function () [String(v[0]) + "\n" + v[1] for ([k, v] in this)].join("\n\n");
-                    errors.push([new Date, obj + obj.stack]);
-                }
-                liberator.dump(string);
-                liberator.dump(obj);
-                liberator.dump("");
-            }
-            catch (e) { window.dump(e) }
-        },
-
-        /**
-         * Restart the host application.
-         */
-        restart: function ()
-        {
-            // notify all windows that an application quit has been requested.
-            var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-            services.get("observer").notifyObservers(cancelQuit, "quit-application-requested", null);
-
-            // something aborted the quit process.
-            if (cancelQuit.data)
-                return;
-
-            // notify all windows that an application quit has been granted.
-            services.get("observer").notifyObservers(null, "quit-application-granted", null);
-
-            // enumerate all windows and call shutdown handlers
-            let windows = services.get("windowMediator").getEnumerator(null);
-            while (windows.hasMoreElements())
-            {
-                let win = windows.getNext();
-                if (("tryToClose" in win) && !win.tryToClose())
-                    return;
-            }
-            services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
-        },
-
-        /**
-         * Parses a Liberator command-line string i.e. the value of the
-         * -liberator command-line option.
-         *
-         * @param {string} cmdline The string to parse for command-line
-         *     options.
-         * @returns {Object}
-         * @see Commands#parseArgs
-         */
-        parseCommandLine: function (cmdline)
-        {
-            const options = [
-                [["+u"], commands.OPTIONS_STRING],
-                [["++noplugin"], commands.OPTIONS_NOARG],
-                [["++cmd"], commands.OPTIONS_STRING, null, null, true],
-                [["+c"], commands.OPTIONS_STRING, null, null, true]
-            ];
-            return commands.parseArgs(cmdline, options, "*");
-        },
-
-        // this function is called when the chrome is ready
-        startup: function ()
-        {
-            let start = Date.now();
-            liberator.log("Initializing liberator object...", 0);
-
-            config.features.push(getPlatformFeature());
-
-            try
-            {
-                let infoPath = services.create("file");
-                infoPath.initWithPath(IO.expandPath(IO.runtimePath.replace(/,.*/, "")));
-                infoPath.append("info");
-                infoPath.append(liberator.profileName);
-                storage.infoPath = infoPath;
-            }
-            catch (e)
-            {
-                liberator.reportError(e);
-            }
-
-            let img = Image();
-            img.src = config.logo || "chrome://" + config.name.toLowerCase() + "/content/logo.png";
-            img.onload = function () {
-                highlight.set("Logo", String(<>
-                         display:    inline-block;
-                         background: url({img.src});
-                         width:      {img.width}px;
-                         height:     {img.height}px;
-                    </>));
-                delete img;
-            };
-
-            // commands must always be the first module to be initialized
-            loadModule("commands",     Commands);
-            loadModule("options",      Options);
-            loadModule("events",       Events);
-            loadModule("mappings",     Mappings);
-            loadModule("buffer",       Buffer);
-            loadModule("commandline",  CommandLine);
-            loadModule("statusline",   StatusLine);
-            loadModule("editor",       Editor);
-            loadModule("autocommands", AutoCommands);
-            loadModule("io",           IO);
-            loadModule("completion",   Completion);
-
-            // add options/mappings/commands which are only valid in this particular extension
-            if (config.init)
-                config.init();
-
-            liberator.triggerObserver("load");
-
-            liberator.log("All modules loaded", 3);
-
-            services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase(),
-                Ci.nsICommandLineHandler);
-
-            let commandline = services.get("commandLineHandler").wrappedJSObject.optionValue;
-            if (commandline)
-            {
-                let args = liberator.parseCommandLine(commandline);
-                liberator.commandLineOptions.rcFile = args["+u"];
-                liberator.commandLineOptions.noPlugins = "++noplugin" in args;
-                liberator.commandLineOptions.postCommands = args["+c"];
-                liberator.commandLineOptions.preCommands = args["++cmd"];
-                liberator.dump("Processing command-line option: " + commandline);
-            }
-
-            liberator.log("Command-line options: " + util.objectToString(liberator.commandLineOptions), 3);
-
-            // first time intro message
-            const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";
-            if (options.getPref(firstTime, true))
-            {
-                setTimeout(function () {
-                    liberator.help();
-                    options.setPref(firstTime, false);
-                }, 1000);
-            }
-
-            // always start in normal mode
-            modes.reset();
-
-            // TODO: we should have some class where all this guioptions stuff fits well
-            hideGUI();
-
-            if (liberator.commandLineOptions.preCommands)
-                liberator.commandLineOptions.preCommands.forEach(function (cmd) {
+            if (liberator.commandLineOptions.postCommands)
+                liberator.commandLineOptions.postCommands.forEach(function (cmd) {
                     liberator.execute(cmd);
                 });
 
-            // finally, read the RC file and source plugins
-            // make sourcing asynchronous, otherwise commands that open new tabs won't work
-            setTimeout(function () {
+            liberator.triggerObserver("enter", null);
+            autocommands.trigger(config.name + "Enter", {});
+        }, 0);
 
-                let extensionName = config.name.toUpperCase();
-                let init = services.get("environment").get(extensionName + "_INIT");
-                let rcFile = io.getRCFile("~");
-
-                if (liberator.commandLineOptions.rcFile)
-                {
-                    let filename = liberator.commandLineOptions.rcFile;
-                    if (!/^(NONE|NORC)$/.test(filename))
-                        io.source(io.File(filename).path, false); // let io.source handle any read failure like Vim
-                }
-                else
-                {
-                    if (init)
-                        liberator.execute(init);
-                    else
-                    {
-                        if (rcFile)
-                        {
-                            io.source(rcFile.path, true);
-                            services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
-                        }
-                        else
-                            liberator.log("No user RC file found", 3);
-                    }
-
-                    if (options["exrc"] && !liberator.commandLineOptions.rcFile)
-                    {
-                        let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
-                        if (localRCFile && !localRCFile.equals(rcFile))
-                            io.source(localRCFile.path, true);
-                    }
-                }
-
-                if (liberator.commandLineOptions.rcFile == "NONE" || liberator.commandLineOptions.noPlugins)
-                    options["loadplugins"] = false;
-
-                if (options["loadplugins"])
-                    liberator.loadPlugins();
-
-                liberator.initHelp();
-
-                // after sourcing the initialization files, this function will set
-                // all gui options to their default values, if they have not been
-                // set before by any RC file
-                for (let option in options)
-                {
-                    // 'encoding' option should not be set at this timing.
-                    // Probably a wrong value is set into the option,
-                    // if current page's encoging is not UTF-8.
-                    if (option.name != "encoding" && option.setter)
-                        option.value = option.value;
-                }
-
-                if (liberator.commandLineOptions.postCommands)
-                    liberator.commandLineOptions.postCommands.forEach(function (cmd) {
-                        liberator.execute(cmd);
-                    });
-
-                liberator.triggerObserver("enter", null);
-                autocommands.trigger(config.name + "Enter", {});
-
-                liberator.initialized = true;
-            }, 0);
-
-            statusline.update();
-
-            liberator.dump("loaded in " + (Date.now() - start) + " ms");
-            liberator.log(config.name + " fully initialized", 0);
-        },
-
-        shutdown: function ()
-        {
-            autocommands.trigger(config.name + "LeavePre", {});
-            storage.saveAll();
-            liberator.triggerObserver("shutdown", null);
-            liberator.dump("All liberator modules destroyed\n");
-            autocommands.trigger(config.name + "Leave", {});
-        },
-
-        sleep: function (delay)
-        {
-            let mainThread = services.get("threadManager").mainThread;
-
-            let end = Date.now() + delay;
-            while (Date.now() < end)
-                mainThread.processNextEvent(true);
-            return true;
-        },
-
-        callInMainThread: function (callback, self)
-        {
-            let mainThread = services.get("threadManager").mainThread;
-            if (!services.get("threadManager").isMainThread)
-                mainThread.dispatch({ run: callback.call(self) }, mainThread.DISPATCH_NORMAL);
-            else
-                callback.call(self);
-        },
-
-        threadYield: function (flush, interruptable)
-        {
-            let mainThread = services.get("threadManager").mainThread;
-            liberator.interrupted = false;
-            do
-            {
-                mainThread.processNextEvent(!flush);
-                if (liberator.interrupted)
-                    throw new Error("Interrupted");
-            }
-            while (flush === true && mainThread.hasPendingEvents());
-        },
-
-        variableReference: function (string)
-        {
-            if (!string)
-                return [null, null, null];
-
-            let matches = string.match(/^([bwtglsv]):(\w+)/);
-            if (matches) // Variable
-            {
-                // Other variables should be implemented
-                if (matches[1] == "g")
-                {
-                    if (matches[2] in this.globalVariables)
-                        return [this.globalVariables, matches[2], matches[1]];
-                    else
-                        return [null, matches[2], matches[1]];
-                }
-            }
-            else // Global variable
-            {
-                if (string in this.globalVariables)
-                    return [this.globalVariables, string, "g"];
-                else
-                    return [null, string, "g"];
-            }
-        },
-
-        /**
-         * @property {Window[]} Returns an array of all the host application's
-         *     open windows.
-         */
-        get windows()
-        {
-            let windows = [];
-            let enumerator = services.get("windowMediator").getEnumerator("navigator:browser");
-            while (enumerator.hasMoreElements())
-                windows.push(enumerator.getNext());
-
-            return windows;
-        }
-    };
-    //}}}
-})(); //}}}
-
-window.liberator = liberator;
-
-// called when the chrome is fully loaded and before the main window is shown
-window.addEventListener("load",   liberator.startup,  false);
-window.addEventListener("unload", liberator.shutdown, false);
+        statusline.update();
+        liberator.log(config.name + " fully initialized", 0);
+    },
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

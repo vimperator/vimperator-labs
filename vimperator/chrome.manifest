@@ -8,7 +8,7 @@ content  liberator             ../common/content/
 resource liberator             ../common/modules/
 skin     liberator classic/1.0 ../common/skin/
 
-override chrome://liberator/content/liberator.dtd chrome://vimperator/content/liberator.dtd
+override chrome://liberator/content/liberator.dtd	  chrome://vimperator/content/liberator.dtd
 override chrome://liberator/content/config.js	  chrome://vimperator/content/config.js
 
 overlay  chrome://browser/content/browser.xul chrome://liberator/content/liberator.xul

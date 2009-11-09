@@ -1,6 +1,6 @@
 // Header:
 const Name = "Muttator";
-// The following doesn't work here, so this module's code is sadly suplicated:
+// The following doesn't work here, so this module's code is sadly duplicated:
 //     Components.utils.import("resource://liberator/about-handler.jsm");
 
 // Copyright (c) 2009 by Doug Kearns

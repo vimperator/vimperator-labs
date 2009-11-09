@@ -6,125 +6,116 @@
 
 /** @scope modules */
 /** @instance hints */
-function Hints() //{{{
-{
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+const ELEM = 0, TEXT = 1, SPAN = 2, IMG_SPAN = 3;
+const Hints = Module("hints", {
+    init: function () {
 
-    const ELEM = 0, TEXT = 1, SPAN = 2, IMG_SPAN = 3;
+        this._hintMode;
+        this._submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
+        this._hintString = ""; // the typed string part of the hint is in this string
+        this._hintNumber = 0;  // only the numerical part of the hint
+        this._usedTabKey = false; // when we used <Tab> to select an element
+        this._prevInput = "";    // record previous user input type, "text" || "number"
+        this._extendedhintCount;  // for the count argument of Mode#action (extended hint only)
 
-    var myModes = config.browserModes;
+        // hints[] = [elem, text, span, imgSpan, elem.style.backgroundColor, elem.style.color]
+        this._pageHints = [];
+        this._validHints = []; // store the indices of the "hints" array with valid elements
 
-    var hintMode;
-    var submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
-    var hintString = ""; // the typed string part of the hint is in this string
-    var hintNumber = 0;  // only the numerical part of the hint
-    var usedTabKey = false; // when we used <Tab> to select an element
-    var prevInput = "";    // record previous user input type, "text" || "number"
-    var extendedhintCount;  // for the count argument of Mode#action (extended hint only)
+        this._activeTimeout = null;  // needed for hinttimeout > 0
+        this._canUpdate = false;
 
-    // hints[] = [elem, text, span, imgSpan, elem.style.backgroundColor, elem.style.color]
-    var pageHints = [];
-    var validHints = []; // store the indices of the "hints" array with valid elements
+        // keep track of the documents which we generated the hints for
+        // this._docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
+        this._docs = [];
 
-    var activeTimeout = null;  // needed for hinttimeout > 0
-    var canUpdate = false;
+        const Mode = Hints.Mode;
+        Mode.defaultValue("tags", function () function () options.hinttags);
+        function extended() options.extendedhinttags;
+        function images() util.makeXPath(["img"]);
 
-    // keep track of the documents which we generated the hints for
-    // docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
-    var docs = [];
+        this._hintModes = {
+            ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
+            "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
+            s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
+            a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
+            f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () util.makeXPath(["body"])),
+            o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
+            t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
+            b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
+            w: Mode("Follow hint in a new window",          function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
+            F: Mode("Open multiple hints in tabs",          followAndReshow),
+            O: Mode("Generate an ':open URL' using hint",   function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
+            T: Mode("Generate a ':tabopen URL' using hint", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
+            W: Mode("Generate a ':winopen URL' using hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+            v: Mode("View hint source",                     function (elem, loc) buffer.viewSource(loc, false),                    extended),
+            V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
+            y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
+            Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+            c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
+            i: Mode("Show image",                           function (elem) liberator.open(elem.src),                              images),
+            I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images)
+        };
 
-    const Mode = new Struct("prompt", "action", "tags");
-    Mode.defaultValue("tags", function () function () options.hinttags);
-    function extended() options.extendedhinttags;
-    function images() util.makeXPath(["img"]);
+        /**
+         * Follows the specified hint and then reshows all hints. Used to open
+         * multiple hints in succession.
+         *
+         * @param {Node} elem The selected hint.
+         */
+        function followAndReshow(elem) {
+            buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
 
-    const hintModes = {
-        ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
-        "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
-        s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
-        a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
-        f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () util.makeXPath(["body"])),
-        o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
-        t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
-        b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
-        w: Mode("Follow hint in a new window",          function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
-        F: Mode("Open multiple hints in tabs",          followAndReshow),
-        O: Mode("Generate an ':open URL' using hint",   function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-        T: Mode("Generate a ':tabopen URL' using hint", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-        W: Mode("Generate a ':winopen URL' using hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
-        v: Mode("View hint source",                     function (elem, loc) buffer.viewSource(loc, false),                    extended),
-        V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
-        y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
-        Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
-        c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
-        i: Mode("Show image",                           function (elem) liberator.open(elem.src),                              images),
-        I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images)
-    };
-
-    /**
-     * Follows the specified hint and then reshows all hints. Used to open
-     * multiple hints in succession.
-     *
-     * @param {Node} elem The selected hint.
-     */
-    function followAndReshow(elem)
-    {
-        buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB);
-
-        // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
-        // showing them again, or is this short flash actually needed as a "usability
-        // feature"? --mst
-        hints.show("F");
-    }
+            // TODO: Maybe we find a *simple* way to keep the hints displayed rather than
+            // showing them again, or is this short flash actually needed as a "usability
+            // feature"? --mst
+            hints.show("F");
+        }
+    },
 
     /**
      * Reset hints, so that they can be cleanly used again.
      */
-    function reset()
-    {
+    _reset: function () {
         statusline.updateInputBuffer("");
-        hintString = "";
-        hintNumber = 0;
-        usedTabKey = false;
-        prevInput = "";
-        pageHints = [];
-        validHints = [];
-        canUpdate = false;
-        docs = [];
+        this._hintString = "";
+        this._hintNumber = 0;
+        this._usedTabKey = false;
+        this._prevInput = "";
+        this._pageHints = [];
+        this._validHints = [];
+        this._canUpdate = false;
+        this._docs = [];
         hints.escNumbers = false;
 
-        if (activeTimeout)
-            clearTimeout(activeTimeout);
-        activeTimeout = null;
-    }
+        if (this._activeTimeout)
+            clearTimeout(this._activeTimeout);
+        this._activeTimeout = null;
+    },
 
     /**
      * Display the current status to the user.
      */
-    function updateStatusline()
-    {
-        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (hintNumber || ""));
-    }
+    _updateStatusline: function () {
+        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber || ""));
+    },
 
     /**
      * Get a hint for "input", "textarea" and "select".
      *
      * Tries to use <label>s if possible but does not try to guess that a
-     * neighbouring element might look like a label. Only called by generate().
+     * neighbouring element might look like a label. Only called by this._generate().
      *
      * If it finds a hint it returns it, if the hint is not the caption of the
      * element it will return showText=true.
      *
-     * @param {Object} elem The element used to generate hint text.
+     * @param {Object} elem The element used to this._generate hint text.
      * @param {Document} doc The containing document.
      *
      * @returns [text, showText]
      */
-    function getInputHint(elem, doc)
-    {
-        // <input type="submit|button|reset">   Always use the value
+    _getInputHint: function (elem, doc) {
+        // <input type="submit|button|this._reset">   Always use the value
         // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
         // <input type="password">              Never use the value, use label or name
         // <input type="text|file"> <textarea>  Use value if set or label or name
@@ -134,35 +125,27 @@ function Hints() //{{{
 
         let type = elem.type;
 
-        if (elem instanceof HTMLInputElement && /(submit|button|reset)/.test(type))
+        if (elem instanceof HTMLInputElement && /(submit|button|this._reset)/.test(type))
             return [elem.value, false];
-        else
-        {
-            for (let [, option] in Iterator(options["hintinputs"].split(",")))
-            {
-                if (option == "value")
-                {
-                    if (elem instanceof HTMLSelectElement)
-                    {
+        else {
+            for (let [, option] in Iterator(options["hintinputs"].split(","))) {
+                if (option == "value") {
+                    if (elem instanceof HTMLSelectElement) {
                         if (elem.selectedIndex >= 0)
                             return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
                     }
-                    else if (type == "image")
-                    {
+                    else if (type == "image") {
                         if (elem.alt)
                             return [elem.alt.toLowerCase(), true];
                     }
-                    else if (elem.value && type != "password")
-                    {
+                    else if (elem.value && type != "password") {
                         // radio's and checkboxes often use internal ids as values - maybe make this an option too...
                         if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
                             return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")];
                     }
                 }
-                else if (option == "label")
-                {
-                    if (elem.id)
-                    {
+                else if (option == "label") {
+                    if (elem.id) {
                         // TODO: (possibly) do some guess work for label-like objects
                         let label = util.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
                         if (label)
@@ -175,22 +158,20 @@ function Hints() //{{{
         }
 
         return ["", false];
-    }
+    },
 
     /**
      * Gets the actual offset of an imagemap area.
      *
-     * Only called by generate().
+     * Only called by this._generate().
      *
      * @param {Object} elem  The <area> element.
      * @param {number} leftPos  The left offset of the image.
      * @param {number} topPos  The top offset of the image.
      * @returns [leftPos, topPos]  The updated offsets.
      */
-    function getAreaOffset(elem, leftPos, topPos)
-    {
-        try
-        {
+    _getAreaOffset: function (elem, leftPos, topPos) {
+        try {
             // Need to add the offset to the area element.
             // Always try to find the top-left point, as per liberator default.
             let shape = elem.getAttribute("shape").toLowerCase();
@@ -199,24 +180,20 @@ function Hints() //{{{
             coordStr = coordStr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
             let coords = coordStr.split(",").map(Number);
 
-            if ((shape == "rect" || shape == "rectangle") && coords.length == 4)
-            {
+            if ((shape == "rect" || shape == "rectangle") && coords.length == 4) {
                 leftPos += coords[0];
                 topPos += coords[1];
             }
-            else if (shape == "circle" && coords.length == 3)
-            {
+            else if (shape == "circle" && coords.length == 3) {
                 leftPos += coords[0] - coords[2] / Math.sqrt(2);
                 topPos += coords[1] - coords[2] / Math.sqrt(2);
             }
-            else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0)
-            {
+            else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0) {
                 let leftBound = Infinity;
                 let topBound = Infinity;
 
                 // First find the top-left corner of the bounding rectangle (offset from image topleft can be noticably suboptimal)
-                for (let i = 0; i < coords.length; i += 2)
-                {
+                for (let i = 0; i < coords.length; i += 2) {
                     leftBound = Math.min(coords[i], leftBound);
                     topBound = Math.min(coords[i + 1], topBound);
                 }
@@ -226,13 +203,11 @@ function Hints() //{{{
                 let curDist = Infinity;
 
                 // Then find the closest vertex. (we could generalise to nearest point on an edge, but I doubt there is a need)
-                for (let i = 0; i < coords.length; i += 2)
-                {
+                for (let i = 0; i < coords.length; i += 2) {
                     let leftOffset = coords[i] - leftBound;
                     let topOffset = coords[i + 1] - topBound;
                     let dist = Math.sqrt(leftOffset * leftOffset + topOffset * topOffset);
-                    if (dist < curDist)
-                    {
+                    if (dist < curDist) {
                         curDist = dist;
                         curLeft = coords[i];
                         curTop = coords[i + 1];
@@ -246,50 +221,46 @@ function Hints() //{{{
         }
         catch (e) {} // badly formed document, or shape == "default" in which case we don't move the hint
         return [leftPos, topPos];
-    }
+    },
 
     // the containing block offsets with respect to the viewport
-    function getContainerOffsets(doc)
-    {
+    _getContainerOffsets: function (doc) {
         let body = doc.body || doc.documentElement;
         // TODO: getComputedStyle returns null for Facebook channel_iframe doc - probable Gecko bug.
         let style = util.computedStyle(body);
 
-        if (style && /^(absolute|fixed|relative)$/.test(style.position))
-        {
+        if (style && /^(absolute|fixed|relative)$/.test(style.position)) {
             let rect = body.getClientRects()[0];
             return [-rect.left, -rect.top];
         }
         else
             return [doc.defaultView.scrollX, doc.defaultView.scrollY];
-    }
+    },
 
     /**
      * Generate the hints in a window.
      *
-     * Pushes the hints into the pageHints object, but does not display them.
+     * Pushes the hints into the this._pageHints object, but does not display them.
      *
      * @param {Window} win The window,defaults to window.content.
      */
-    function generate(win)
-    {
+    _generate: function (win) {
         if (!win)
             win = window.content;
 
         let doc = win.document;
         let height = win.innerHeight;
         let width  = win.innerWidth;
-        let [offsetX, offsetY] = getContainerOffsets(doc);
+        let [offsetX, offsetY] = this._getContainerOffsets(doc);
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
         let elem, text, span, rect, showText;
-        let res = util.evaluateXPath(hintMode.tags(), doc, null, true);
+        let res = util.evaluateXPath(this._hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
-        let start = pageHints.length;
-        for (let elem in res)
-        {
+        let start = this._pageHints.length;
+        for (let elem in res) {
             showText = false;
 
             // TODO: for iframes, this calculation is wrong
@@ -306,7 +277,7 @@ function Hints() //{{{
                 continue;
 
             if (elem instanceof HTMLInputElement || elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
-                [text, showText] = getInputHint(elem, doc);
+                [text, showText] = this._getInputHint(elem, doc);
             else
                 text = elem.textContent.toLowerCase();
 
@@ -316,27 +287,26 @@ function Hints() //{{{
             let topPos =  Math.max((rect.top + offsetY), offsetY);
 
             if (elem instanceof HTMLAreaElement)
-                [leftPos, topPos] = getAreaOffset(elem, leftPos, topPos);
+                [leftPos, topPos] = this._getAreaOffset(elem, leftPos, topPos);
 
             span.style.left = leftPos + "px";
             span.style.top =  topPos + "px";
             fragment.appendChild(span);
 
-            pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showText]);
+            this._pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showText]);
         }
 
         let body = doc.body || util.evaluateXPath(["body"], doc).snapshotItem(0);
-        if (body)
-        {
+        if (body) {
             body.appendChild(fragment);
-            docs.push({ doc: doc, start: start, end: pageHints.length - 1 });
+            this._docs.push({ doc: doc, start: start, end: this._pageHints.length - 1 });
         }
 
-        // also generate hints for frames
-        Array.forEach(win.frames, generate);
+        // also _generate hints for frames
+        Array.forEach(win.frames, this.closure._generate);
 
         return true;
-    }
+    },
 
     /**
      * Update the activeHint.
@@ -346,16 +316,15 @@ function Hints() //{{{
      * @param {number} newId The hint to make active.
      * @param {number} oldId The currently active hint.
      */
-    function showActiveHint(newId, oldId)
-    {
-        let oldElem = validHints[oldId - 1];
+    _showActiveHint: function (newId, oldId) {
+        let oldElem = this._validHints[oldId - 1];
         if (oldElem)
-            setClass(oldElem, false);
+            this._setClass(oldElem, false);
 
-        let newElem = validHints[newId - 1];
+        let newElem = this._validHints[newId - 1];
         if (newElem)
-            setClass(newElem, true);
-    }
+            this._setClass(newElem, true);
+    },
 
     /**
      * Toggle the highlight of a hint.
@@ -363,35 +332,31 @@ function Hints() //{{{
      * @param {Object} elem The element to toggle.
      * @param {boolean} active Whether it is the currently active hint or not.
      */
-    function setClass(elem, active)
-    {
+    _setClass: function (elem, active) {
         let prefix = (elem.getAttributeNS(NS.uri, "class") || "") + " ";
         if (active)
             elem.setAttributeNS(NS.uri, "highlight", prefix + "HintActive");
         else
             elem.setAttributeNS(NS.uri, "highlight", prefix + "HintElem");
-    }
+    },
 
     /**
-     * Display the hints in pageHints that are still valid.
+     * Display the hints in this._pageHints that are still valid.
      */
-    function showHints()
-    {
+    _showHints: function () {
 
         let elem, text, rect, span, imgSpan, _a, _b, showText;
         let hintnum = 1;
-        let validHint = hintMatcher(hintString.toLowerCase());
-        let activeHint = hintNumber || 1;
-        validHints = [];
+        let validHint = this._hintMatcher(this._hintString.toLowerCase());
+        let activeHint = this._hintNumber || 1;
+        this._validHints = [];
 
-        for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
-        {
-            let [offsetX, offsetY] = getContainerOffsets(doc);
+        for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
+            let [offsetX, offsetY] = this._getContainerOffsets(doc);
 
         inner:
-            for (let i in (util.interruptibleRange(start, end + 1, 500)))
-            {
-                let hint = pageHints[i];
+            for (let i in (util.interruptibleRange(start, end + 1, 500))) {
+                let hint = this._pageHints[i];
                 [elem, text, span, imgSpan, _a, _b, showText] = hint;
 
                 let valid = validHint(text);
@@ -399,16 +364,13 @@ function Hints() //{{{
                 if (imgSpan)
                     imgSpan.style.display = (valid ? "" : "none");
 
-                if (!valid)
-                {
+                if (!valid) {
                     elem.removeAttributeNS(NS.uri, "highlight");
                     continue inner;
                 }
 
-                if (text == "" && elem.firstChild && elem.firstChild instanceof HTMLImageElement)
-                {
-                    if (!imgSpan)
-                    {
+                if (text == "" && elem.firstChild && elem.firstChild instanceof HTMLImageElement) {
+                    if (!imgSpan) {
                         rect = elem.firstChild.getBoundingClientRect();
                         if (!rect)
                             continue;
@@ -421,27 +383,24 @@ function Hints() //{{{
                         hint[IMG_SPAN] = imgSpan;
                         span.parentNode.appendChild(imgSpan);
                     }
-                    setClass(imgSpan, activeHint == hintnum);
+                    this._setClass(imgSpan, activeHint == hintnum);
                 }
 
                 span.setAttribute("number", showText ? hintnum + ": " + text.substr(0, 50) : hintnum);
                 if (imgSpan)
                     imgSpan.setAttribute("number", hintnum);
                 else
-                    setClass(elem, activeHint == hintnum);
-                validHints.push(elem);
+                    this._setClass(elem, activeHint == hintnum);
+                this._validHints.push(elem);
                 hintnum++;
             }
         }
 
-        if (getBrowser().markupDocumentViewer.authorStyleDisabled)
-        {
+        if (getBrowser().markupDocumentViewer.authorStyleDisabled) {
             let css = [];
             // FIXME: Broken for imgspans.
-            for (let [, { doc: doc }] in Iterator(docs))
-            {
-                for (let elem in util.evaluateXPath("//*[@liberator:highlight and @number]", doc))
-                {
+            for (let [, { doc: doc }] in Iterator(this._docs)) {
+                for (let elem in util.evaluateXPath(" {//*[@liberator:highlight and @number]", doc)) {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
                     css.push(highlight.selector(group) + "[number='" + elem.getAttribute("number") + "'] { " + elem.style.cssText + " }");
                 }
@@ -450,27 +409,24 @@ function Hints() //{{{
         }
 
         return true;
-    }
+    },
 
     /**
-     * Remove all hints from the document, and reset the completions.
+     * Remove all hints from the document, and this._reset the completions.
      *
      * Lingers on the active hint briefly to confirm the selection to the user.
      *
      * @param {number} timeout The number of milliseconds before the active
      *     hint disappears.
      */
-    function removeHints(timeout)
-    {
-        let firstElem = validHints[0] || null;
+    _removeHints: function (timeout) {
+        let firstElem = this._validHints[0] || null;
 
-        for (let [,{ doc: doc, start: start, end: end }] in Iterator(docs))
-        {
+        for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
             for (let elem in util.evaluateXPath("//*[@liberator:highlight='hints']", doc))
                 elem.parentNode.removeChild(elem);
-            for (let i in util.range(start, end + 1))
-            {
-                let hint = pageHints[i];
+            for (let i in util.range(start, end + 1)) {
+                let hint = this._pageHints[i];
                 if (!timeout || hint[ELEM] != firstElem)
                     hint[ELEM].removeAttributeNS(NS.uri, "highlight");
             }
@@ -481,8 +437,8 @@ function Hints() //{{{
         }
         styles.removeSheet(true, "hint-positions");
 
-        reset();
-    }
+        this._reset();
+    },
 
     /**
      * Finish hinting.
@@ -494,41 +450,36 @@ function Hints() //{{{
      *     link (when 'followhints' is 1 or 2)
      *
      */
-    function processHints(followFirst)
-    {
-        if (validHints.length == 0)
-        {
+    __processHints: function (followFirst) {
+        if (this._validHints.length == 0) {
             liberator.beep();
             return false;
         }
 
-        if (options["followhints"] > 0)
-        {
+        if (options["followhints"] > 0) {
             if (!followFirst)
                 return false; // no return hit; don't examine uniqueness
 
             // OK. return hit. But there's more than one hint, and
             // there's no tab-selected current link. Do not follow in mode 2
-            if (options["followhints"] == 2 && validHints.length > 1 && !hintNumber)
+            if (options["followhints"] == 2 && this._validHints.length > 1 && !this._hintNumber)
                 return liberator.beep();
         }
 
-        if (!followFirst)
-        {
-            let firstHref = validHints[0].getAttribute("href") || null;
-            if (firstHref)
-            {
-                if (validHints.some(function (e) e.getAttribute("href") != firstHref))
+        if (!followFirst) {
+            let firstHref = this._validHints[0].getAttribute("href") || null;
+            if (firstHref) {
+                if (this._validHints.some(function (e) e.getAttribute("href") != firstHref))
                     return false;
             }
-            else if (validHints.length > 1)
+            else if (this._validHints.length > 1)
                 return false;
         }
 
         let timeout = followFirst || events.feedingKeys ? 0 : 500;
-        let activeIndex = (hintNumber ? hintNumber - 1 : 0);
-        let elem = validHints[activeIndex];
-        removeHints(timeout);
+        let activeIndex = (this._hintNumber ? this._hintNumber - 1 : 0);
+        let elem = this._validHints[activeIndex];
+        this._removeHints(timeout);
 
         if (timeout == 0)
             // force a possible mode change, based on whether an input field has focus
@@ -536,29 +487,27 @@ function Hints() //{{{
         setTimeout(function () {
             if (modes.extended & modes.HINTS)
                 modes.reset();
-            hintMode.action(elem, elem.href || "", extendedhintCount);
+            this._hintMode.action(elem, elem.href || "", this._extendedhintCount);
         }, timeout);
         return true;
-    }
+    },
 
-    function checkUnique()
-    {
-        if (hintNumber == 0)
+    _checkUnique: function () {
+        if (this._hintNumber == 0)
             return;
-        if (hintNumber > validHints.length)
+        if (this._hintNumber > this._validHints.length)
             return void liberator.beep();
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
-        if (hintNumber > 0 && hintNumber * 10 <= validHints.length)
-        {
+        if (this._hintNumber > 0 && this._hintNumber * 10 <= this._validHints.length) {
             let timeout = options["hinttimeout"];
             if (timeout > 0)
-                activeTimeout = setTimeout(function () { processHints(true); }, timeout);
+                this._activeTimeout = setTimeout(function () { this._processHints(true); }, timeout);
         }
         else // we have a unique hint
-            processHints(true);
-    }
+            this._processHints(true);
+    },
 
     /**
      * Handle user input.
@@ -568,33 +517,30 @@ function Hints() //{{{
      *
      * @param {Event} event The keypress event.
      */
-    function onInput(event)
-    {
-        prevInput = "text";
+    __onInput: function (event) {
+        this._prevInput = "text";
 
         // clear any timeout which might be active after pressing a number
-        if (activeTimeout)
-        {
-            clearTimeout(activeTimeout);
-            activeTimeout = null;
+        if (this._activeTimeout) {
+            clearTimeout(this._activeTimeout);
+            this._activeTimeout = null;
         }
 
-        hintNumber = 0;
-        hintString = commandline.command;
-        updateStatusline();
-        showHints();
-        if (validHints.length == 1)
-            processHints(false);
-    }
+        this._hintNumber = 0;
+        this._hintString = commandline.command;
+        this._updateStatusline();
+        this._showHints();
+        if (this._validHints.length == 1)
+            this._processHints(false);
+    },
 
     /**
-     * Get the hintMatcher according to user preference.
+     * Get the this._hintMatcher according to user preference.
      *
-     * @param {string} hintString The currently typed hint.
-     * @returns {hintMatcher}
+     * @param {string} this._hintString The currently typed hint.
+     * @returns {this._hintMatcher}
      */
-    function hintMatcher(hintString) //{{{
-    {
+    _hintMatcher: function (hintString) { //{{{
         /**
          * Divide a string by a regular expression.
          *
@@ -607,7 +553,7 @@ function Hints() //{{{
         /**
          * Get a hint matcher for hintmatching=contains
          *
-         * The hintMatcher expects the user input to be space delimited and it
+         * The this._hintMatcher expects the user input to be space delimited and it
          * returns true if each set of characters typed can be found, in any
          * order, in the link.
          *
@@ -616,8 +562,7 @@ function Hints() //{{{
          *     of a hint and returns true if all the (space-delimited) sets of
          *     characters typed by the user can be found in it.
          */
-        function containsMatcher(hintString) //{{{
-        {
+        function containsMatcher(hintString) { //{{{
             let tokens = tokenize(/\s+/, hintString);
             return function (linkText) {
                 linkText = linkText.toLowerCase();
@@ -626,9 +571,9 @@ function Hints() //{{{
         } //}}}
 
         /**
-         * Get a hintMatcher for hintmatching=firstletters|wordstartswith
+         * Get a this._hintMatcher for hintmatching=firstletters|wordstartswith
          *
-         * The hintMatcher will look for any division of the user input that
+         * The this._hintMatcher will look for any division of the user input that
          * would match the first letters of words. It will always only match
          * words in order.
          *
@@ -638,8 +583,7 @@ function Hints() //{{{
          * @returns {function(String):boolean} A function that will filter only
          *     hints that match as above.
          */
-        function wordStartsWithMatcher(hintString, allowWordOverleaping) //{{{
-        {
+        function wordStartsWithMatcher(hintString, allowWordOverleaping) { //{{{
             let hintStrings    = tokenize(/\s+/, hintString);
             let wordSplitRegex = RegExp(options["wordseparators"]);
 
@@ -657,13 +601,10 @@ function Hints() //{{{
              *     skipped during matching.
              * @returns {boolean} Whether a match can be found.
              */
-            function charsAtBeginningOfWords(chars, words, allowWordOverleaping)
-            {
-                function charMatches(charIdx, chars, wordIdx, words, inWordIdx, allowWordOverleaping)
-                {
+            function charsAtBeginningOfWords(chars, words, allowWordOverleaping) {
+                function charMatches(charIdx, chars, wordIdx, words, inWordIdx, allowWordOverleaping) {
                     let matches = (chars[charIdx] == words[wordIdx][inWordIdx]);
-                    if ((matches == false && allowWordOverleaping) || words[wordIdx].length == 0)
-                    {
+                    if ((matches == false && allowWordOverleaping) || words[wordIdx].length == 0) {
                         let nextWordIdx = wordIdx + 1;
                         if (nextWordIdx == words.length)
                             return false;
@@ -671,8 +612,7 @@ function Hints() //{{{
                         return charMatches(charIdx, chars, nextWordIdx, words, 0, allowWordOverleaping);
                     }
 
-                    if (matches)
-                    {
+                    if (matches) {
                         let nextCharIdx = charIdx + 1;
                         if (nextCharIdx == chars.length)
                             return true;
@@ -686,8 +626,7 @@ function Hints() //{{{
                         if (charMatched)
                             return true;
 
-                        if (charMatched == false || beyondLastWord == true)
-                        {
+                        if (charMatched == false || beyondLastWord == true) {
                             let nextInWordIdx = inWordIdx + 1;
                             if (nextInWordIdx == words[wordIdx].length)
                                 return false;
@@ -717,11 +656,9 @@ function Hints() //{{{
              *     non-contiguous.
              * @returns boolean Whether all the strings matched.
              */
-            function stringsAtBeginningOfWords(strings, words, allowWordOverleaping)
-            {
+            function stringsAtBeginningOfWords(strings, words, allowWordOverleaping) {
                 let strIdx = 0;
-                for (let [, word] in Iterator(words))
-                {
+                for (let [, word] in Iterator(words)) {
                     if (word.length == 0)
                         continue;
 
@@ -735,8 +672,7 @@ function Hints() //{{{
                         return true;
                 }
 
-                for (; strIdx < strings.length; strIdx++)
-                {
+                for (; strIdx < strings.length; strIdx++) {
                     if (strings[strIdx].length != 0)
                         return false;
                 }
@@ -755,321 +691,179 @@ function Hints() //{{{
             };
         } //}}}
 
-        switch (options["hintmatching"])
-        {
-            case "contains"      : return containsMatcher(hintString);
-            case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
-            case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
-            case "custom"        : return liberator.plugins.customHintMatcher(hintString);
-            default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
+        switch (options["hintmatching"]) {
+        case "contains"      : return containsMatcher(hintString);
+        case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
+        case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
+        case "custom"        : return liberator.plugins.customHintMatcher(hintString);
+        default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
         }
         return null;
-    } //}}}
+    }, //}}}
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+    /**
+     * Creates a new hint mode.
+     *
+     * @param {string} mode The letter that identifies this mode.
+     * @param {string} prompt The description to display to the user
+     *     about this mode.
+     * @param {function(Node)} action The function to be called with the
+     *     element that matches.
+     * @param {function():string} tags The function that returns an
+     *     XPath expression to decide which elements can be hinted (the
+     *     default returns options.hinttags).
+     * @optional
+     */
+    addMode: function (mode, prompt, action, tags) {
+        this._hintModes[mode] = Hints.Mode.apply(Hints.Mode, Array.slice(arguments, 1));
+    },
 
-    const DEFAULT_HINTTAGS =
-        util.makeXPath(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
-            + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']";
+    /**
+     * Updates the display of hints.
+     *
+     * @param {string} minor Which hint mode to use.
+     * @param {string} filter The filter to use.
+     * @param {Object} win The window in which we are showing hints.
+     */
+    show: function (minor, filter, win) {
+        this._hintMode = this._hintModes[minor];
+        if (!this._hintMode)
+            return void liberator.beep();
+        commandline.input(this._hintMode.prompt + ": ", null, { onChange: this._onInput });
+        modes.extended = modes.HINTS;
 
-    function checkXPath(val)
-    {
-        try
-        {
-            util.evaluateXPath(val, document.implementation.createDocument("", "", null));
-            return true;
+        this._submode = minor;
+        this._hintString = filter || "";
+        this._hintNumber = 0;
+        usedTab = false;
+        this._prevInput = "";
+        this._canUpdate = false;
+
+        this._generate(win);
+
+        // get all keys from the input queue
+        liberator.threadYield(true);
+
+        this._canUpdate = true;
+        this._showHints();
+
+        if (this._validHints.length == 0) {
+            liberator.beep();
+            modes.reset();
         }
-        catch (e)
-        {
-            return false;
+        else if (this._validHints.length == 1)
+            this._processHints(false);
+        else // Ticket #185
+            this._checkUnique();
+    },
+
+    /**
+     * Cancel all hinting.
+     */
+    hide: function () {
+        this._removeHints(0);
+    },
+
+    /**
+     * Handle a hint mode event.
+     *
+     * @param {Event} event The event to handle.
+     */
+    onEvent: function (event) {
+        let key = events.toString(event);
+        let followFirst = false;
+
+        // clear any timeout which might be active after pressing a number
+        if (this._activeTimeout) {
+            clearTimeout(this._activeTimeout);
+            this._activeTimeout = null;
         }
-    }
 
-    options.add(["extendedhinttags", "eht"],
-        "XPath string of hintable elements activated by ';'",
-        "string", DEFAULT_HINTTAGS,
-        { validator: checkXPath });
+        switch (key) {
+        case "<Return>":
+            followFirst = true;
+            break;
 
-    options.add(["hinttags", "ht"],
-        "XPath string of hintable elements activated by 'f' and 'F'",
-        "string", DEFAULT_HINTTAGS,
-        { validator: checkXPath });
+        case "<Tab>":
+        case "<S-Tab>":
+            this._usedTabKey = true;
+            if (this._hintNumber == 0)
+                this._hintNumber = 1;
 
-    options.add(["hinttimeout", "hto"],
-        "Timeout before automatically following a non-unique numerical hint",
-        "number", 0,
-        { validator: function (value) value >= 0 });
+            let oldId = this._hintNumber;
+            if (key == "<Tab>") {
+                if (++this._hintNumber > this._validHints.length)
+                    this._hintNumber = 1;
+            }
+            else {
+                if (--this._hintNumber < 1)
+                    this._hintNumber = this._validHints.length;
+            }
+            this._showActiveHint(this._hintNumber, oldId);
+            this._updateStatusline();
+            return;
 
-    options.add(["followhints", "fh"],
-        // FIXME: this description isn't very clear but I can't think of a
-        // better one right now.
-        "Change the behaviour of <Return> in hint mode",
-        "number", 0,
-        {
-            completer: function () [
-                ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on <Return>."],
-                ["1", "Follow the selected hint on <Return>."],
-                ["2", "Follow the selected hint on <Return> only it's been <Tab>-selected."]
-            ],
-            validator: Option.validateCompleter
-        });
-
-    options.add(["hintmatching", "hm"],
-        "How links are matched",
-        "string", "contains",
-        {
-            completer: function (context) [
-                ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
-                ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
-                ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
-                ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"]
-            ],
-            validator: Option.validateCompleter
-        });
-
-    options.add(["wordseparators", "wsp"],
-        "How words are split for hintmatching",
-        "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
-
-    options.add(["hintinputs", "hin"],
-        "How text input fields are hinted",
-        "stringlist", "label,value",
-        {
-            completer: function (context) [
-                ["value", "Match against the value contained by the input field"],
-                ["label", "Match against the value of a label for the input field, if one can be found"],
-                ["name",  "Match against the name of an input field, only if neither a name or value could be found."]
-            ],
-            validator: Option.validateCompleter
-        });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// MAPPINGS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    mappings.add(myModes, ["f"],
-        "Start QuickHint mode",
-        function () { hints.show("o"); });
-
-    // At the moment, "F" calls
-    //    buffer.followLink(clicked_element, DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
-    // It is not clear that it shouldn't be:
-    //    buffer.followLink(clicked_element, !DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
-    // In fact, it might be nice if there was a "dual" to F (like H and
-    // gH, except that gF is already taken). --tpp
-    //
-    // Likewise, it might be nice to have a liberator.NEW_FOREGROUND_TAB
-    // and then make liberator.NEW_TAB always do what a Cntrl+Click
-    // does. --tpp
-    mappings.add(myModes, ["F"],
-        "Start QuickHint mode, but open link in a new tab",
-        function () { hints.show(options.getPref("browser.tabs.loadInBackground") ? "b" : "t"); });
-
-    mappings.add(myModes, [";"],
-        "Start an extended hint mode",
-        function (count)
-        {
-            extendedhintCount = count;
-            commandline.input(";", null,
-                {
-                    promptHighlight: "Normal",
-                    completer: function (context)
-                    {
-                        context.compare = function () 0;
-                        context.completions = [[k, v.prompt] for ([k, v] in Iterator(hintModes))];
-                    },
-                    onChange: function () { modes.pop(); },
-                    onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
-                });
-        }, { count: true });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    return {
-
-        /**
-         * Creates a new hint mode.
-         *
-         * @param {string} mode The letter that identifies this mode.
-         * @param {string} prompt The description to display to the user
-         *     about this mode.
-         * @param {function(Node)} action The function to be called with the
-         *     element that matches.
-         * @param {function():string} tags The function that returns an
-         *     XPath expression to decide which elements can be hinted (the
-         *     default returns options.hinttags).
-         * @optional
-         */
-        addMode: function (mode, prompt, action, tags)
-        {
-            hintModes[mode] = Mode.apply(Mode, Array.slice(arguments, 1));
-        },
-
-        /**
-         * Updates the display of hints.
-         *
-         * @param {string} minor Which hint mode to use.
-         * @param {string} filter The filter to use.
-         * @param {Object} win The window in which we are showing hints.
-         */
-        show: function (minor, filter, win)
-        {
-            hintMode = hintModes[minor];
-            if (!hintMode)
+        case "<BS>":
+            if (this._hintNumber > 0 && !this._usedTabKey) {
+                this._hintNumber = Math.floor(this._hintNumber / 10);
+                if (this._hintNumber == 0)
+                    this._prevInput = "text";
+            }
+            else {
+                this._usedTabKey = false;
+                this._hintNumber = 0;
                 return void liberator.beep();
-            commandline.input(hintMode.prompt + ": ", null, { onChange: onInput });
-            modes.extended = modes.HINTS;
-
-            submode = minor;
-            hintString = filter || "";
-            hintNumber = 0;
-            usedTab = false;
-            prevInput = "";
-            canUpdate = false;
-
-            generate(win);
-
-            // get all keys from the input queue
-            liberator.threadYield(true);
-
-            canUpdate = true;
-            showHints();
-
-            if (validHints.length == 0)
-            {
-                liberator.beep();
-                modes.reset();
             }
-            else if (validHints.length == 1)
-                processHints(false);
-            else // Ticket #185
-                checkUnique();
-        },
+            break;
 
-        /**
-         * Cancel all hinting.
-         */
-        hide: function ()
-        {
-            removeHints(0);
-        },
+       case mappings.getMapLeader():
+           hints.escNumbers = !hints.escNumbers;
+           if (hints.escNumbers && this._usedTabKey) // this._hintNumber not used normally, but someone may wants to toggle
+               this._hintNumber = 0;            // <tab>s ? this._reset. Prevent to show numbers not entered.
 
-        /**
-         * Handle a hint mode event.
-         *
-         * @param {Event} event The event to handle.
-         */
-        onEvent: function (event)
-        {
-            let key = events.toString(event);
-            let followFirst = false;
+           this._updateStatusline();
+           return;
 
-            // clear any timeout which might be active after pressing a number
-            if (activeTimeout)
-            {
-                clearTimeout(activeTimeout);
-                activeTimeout = null;
-            }
+        default:
+            if (/^\d$/.test(key)) {
+                this._prevInput = "number";
 
-            switch (key)
-            {
-                case "<Return>":
-                    followFirst = true;
-                    break;
+                let oldHintNumber = this._hintNumber;
+                if (this._hintNumber == 0 || this._usedTabKey) {
+                    this._usedTabKey = false;
+                    this._hintNumber = parseInt(key, 10);
+                }
+                else
+                    this._hintNumber = (this._hintNumber * 10) + parseInt(key, 10);
 
-                case "<Tab>":
-                case "<S-Tab>":
-                    usedTabKey = true;
-                    if (hintNumber == 0)
-                        hintNumber = 1;
+                this._updateStatusline();
 
-                    let oldId = hintNumber;
-                    if (key == "<Tab>")
-                    {
-                        if (++hintNumber > validHints.length)
-                            hintNumber = 1;
-                    }
-                    else
-                    {
-                        if (--hintNumber < 1)
-                            hintNumber = validHints.length;
-                    }
-                    showActiveHint(hintNumber, oldId);
-                    updateStatusline();
+                if (!this._canUpdate)
                     return;
 
-                case "<BS>":
-                    if (hintNumber > 0 && !usedTabKey)
-                    {
-                        hintNumber = Math.floor(hintNumber / 10);
-                        if (hintNumber == 0)
-                            prevInput = "text";
-                    }
-                    else
-                    {
-                        usedTabKey = false;
-                        hintNumber = 0;
-                        return void liberator.beep();
-                    }
-                    break;
+                if (this._docs.length == 0) {
+                    this._generate();
+                    this._showHints();
+                }
+                this._showActiveHint(this._hintNumber, oldHintNumber || 1);
 
-               case mappings.getMapLeader():
-                   hints.escNumbers = !hints.escNumbers;
-                   if (hints.escNumbers && usedTabKey) // hintNumber not used normally, but someone may wants to toggle
-                       hintNumber = 0;            // <tab>s ? reset. Prevent to show numbers not entered.
+                if (this._hintNumber == 0)
+                    return void liberator.beep();
 
-                   updateStatusline();
-                   return;
-
-                default:
-                    if (/^\d$/.test(key))
-                    {
-                        prevInput = "number";
-
-                        let oldHintNumber = hintNumber;
-                        if (hintNumber == 0 || usedTabKey)
-                        {
-                            usedTabKey = false;
-                            hintNumber = parseInt(key, 10);
-                        }
-                        else
-                            hintNumber = (hintNumber * 10) + parseInt(key, 10);
-
-                        updateStatusline();
-
-                        if (!canUpdate)
-                            return;
-
-                        if (docs.length == 0)
-                        {
-                            generate();
-                            showHints();
-                        }
-                        showActiveHint(hintNumber, oldHintNumber || 1);
-
-                        if (hintNumber == 0)
-                            return void liberator.beep();
-
-                        checkUnique();
-                    }
-            }
-
-            updateStatusline();
-
-            if (canUpdate)
-            {
-                if (docs.length == 0 && hintString.length > 0)
-                    generate();
-
-                showHints();
-                processHints(followFirst);
+                this._checkUnique();
             }
         }
-    };
+
+        this._updateStatusline();
+
+        if (this._canUpdate) {
+            if (this._docs.length == 0 && this._hintString.length > 0)
+                this._generate();
+
+            this._showHints();
+            this._processHints(followFirst);
+        }
+    }
 
     // FIXME: add resize support
     // window.addEventListener("resize", onResize, null);
@@ -1083,6 +877,118 @@ function Hints() //{{{
     // }
 
     //}}}
-} //}}}
+}, {
+    Mode: new Struct("prompt", "action", "tags"),
+}, {
+    mappings: function () {
+        var myModes = config.browserModes;
+        mappings.add(myModes, ["f"],
+            "Start QuickHint mode",
+            function () { hints.show("o"); });
+
+        // At the moment, "F" calls
+        //    buffer.followLink(clicked_element, DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+        // It is not clear that it shouldn't be:
+        //    buffer.followLink(clicked_element, !DO_WHAT_FIREFOX_DOES_WITH_CNTRL_CLICK)
+        // In fact, it might be nice if there was a "dual" to F (like H and
+        // gH, except that gF is already taken). --tpp
+        //
+        // Likewise, it might be nice to have a liberator.NEW_FOREGROUND_TAB
+        // and then make liberator.NEW_TAB always do what a Cntrl+Click
+        // does. --tpp
+        mappings.add(myModes, ["F"],
+            "Start QuickHint mode, but open link in a new tab",
+            function () { hints.show(options.getPref("browser.tabs.loadInBackground") ? "b" : "t"); });
+
+        mappings.add(myModes, [";"],
+            "Start an extended hint mode",
+            function (count) {
+                this._extendedhintCount = count;
+                commandline.input(";", null,
+                    {
+                        promptHighlight: "Normal",
+                        completer: function (context) {
+                            context.compare = function () 0;
+                            context.completions = [[k, v.prompt] for ([k, v] in Iterator(this._hintModes))];
+                        },
+                        onChange: function () { modes.pop(); },
+                        onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
+                    });
+            }, { count: true });
+    },
+    options: function () {
+        const DEFAULT_HINTTAGS =
+            util.makeXPath(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
+                + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']";
+
+        function checkXPath(val) {
+            try {
+                util.evaluateXPath(val, document.implementation.createDocument("", "", null));
+                return true;
+            }
+            catch (e) {
+                return false;
+            }
+        }
+
+        options.add(["extendedhinttags", "eht"],
+            "XPath string of hintable elements activated by ';'",
+            "string", DEFAULT_HINTTAGS,
+            { validator: checkXPath });
+
+        options.add(["hinttags", "ht"],
+            "XPath string of hintable elements activated by 'f' and 'F'",
+            "string", DEFAULT_HINTTAGS,
+            { validator: checkXPath });
+
+        options.add(["hinttimeout", "hto"],
+            "Timeout before automatically following a non-unique numerical hint",
+            "number", 0,
+            { validator: function (value) value >= 0 });
+
+        options.add(["followhints", "fh"],
+            // FIXME: this description isn't very clear but I can't think of a
+            // better one right now.
+            "Change the behaviour of <Return> in hint mode",
+            "number", 0,
+            {
+                completer: function () [
+                    ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on <Return>."],
+                    ["1", "Follow the selected hint on <Return>."],
+                    ["2", "Follow the selected hint on <Return> only it's been <Tab>-selected."]
+                ],
+                validator: Option.validateCompleter
+            });
+
+        options.add(["hintmatching", "hm"],
+            "How links are matched",
+            "string", "contains",
+            {
+                completer: function (context) [
+                    ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
+                    ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
+                    ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
+                    ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(this._hintString)"]
+                ],
+                validator: Option.validateCompleter
+            });
+
+        options.add(["wordseparators", "wsp"],
+            "How words are split for hintmatching",
+            "string", '[.,!?:;/"^$%&?()[\\]{}<>#*+|=~ _-]');
+
+        options.add(["hintinputs", "hin"],
+            "How text input fields are hinted",
+            "stringlist", "label,value",
+            {
+                completer: function (context) [
+                    ["value", "Match against the value contained by the input field"],
+                    ["label", "Match against the value of a label for the input field, if one can be found"],
+                    ["name",  "Match against the name of an input field, only if neither a name or value could be found."]
+                ],
+                validator: Option.validateCompleter
+            });
+    }
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:

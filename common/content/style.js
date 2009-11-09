@@ -231,14 +231,13 @@ Highlights.prototype.CSS = <![CDATA[
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
-function Highlights(name, store)
-{
+function Highlights(name, store) {
     let self = this;
     let highlight = {};
     let styles = storage.styles;
 
     const Highlight = Struct("class", "selector", "filter", "default", "value", "base");
-    Highlight.defaultValue("filter", function () 
+    Highlight.defaultValue("filter", function ()
         this.base ? this.base.filter :
         ["chrome://liberator/*",
          "liberator:*",
@@ -256,8 +255,7 @@ function Highlights(name, store)
     this.__iterator__ = function () (highlight[v] for ([k, v] in Iterator(keys())));
 
     this.get = function (k) highlight[k];
-    this.set = function (key, newStyle, force, append)
-    {
+    this.set = function (key, newStyle, force, append) {
         let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
         if (!(class in highlight))
@@ -270,10 +268,8 @@ function Highlights(name, store)
             newStyle = (style.value || "").replace(/;?\s*$/, "; " + newStyle);
         if (/^\s*$/.test(newStyle))
             newStyle = null;
-        if (newStyle == null)
-        {
-            if (style.default == null)
-            {
+        if (newStyle == null) {
+            if (style.default == null) {
                 delete highlight[style.class];
                 styles.removeSheet(true, style.selector);
                 return null;
@@ -284,8 +280,7 @@ function Highlights(name, store)
 
         let css = newStyle.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
                           .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
-        if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css))
-        {
+        if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css)) {
             css = style.selector + " { " + css + " }";
 
             let error = styles.addSheet(true, "highlight:" + style.class, style.filter, css, true);
@@ -301,8 +296,7 @@ function Highlights(name, store)
      *
      * @param {string} class
      */
-    this.selector = function (class)
-    {
+    this.selector = function (class) {
         let [, hl, rest] = class.match(/^(\w*)(.*)/);
         let pattern = "[liberator|highlight~=" + hl + "]"
         if (highlight[hl] && highlight[hl].class != class)
@@ -314,8 +308,7 @@ function Highlights(name, store)
      * Clears all highlighting rules. Rules with default values are
      * reset.
      */
-    this.clear = function ()
-    {
+    this.clear = function () {
         for (let [k, v] in Iterator(highlight))
             this.set(k, null, true);
     };
@@ -325,8 +318,7 @@ function Highlights(name, store)
      *
      * @param {string} css The rules to load. See {@link Highlights#css}.
      */
-    this.loadCSS = function (css)
-    {
+    this.loadCSS = function (css) {
         css.replace(/^(\s*\S*\s+)\{((?:.|\n)*?)\}\s*$/gm, function (_, _1, _2) _1 + " " + _2.replace(/\n\s*/g, " "))
            .split("\n").filter(function (s) /\S/.test(s))
            .forEach(function (style)
@@ -340,8 +332,7 @@ function Highlights(name, store)
             if (old && old.value != old.default)
                 style.value = old.value;
         });
-        for (let [class, hl] in Iterator(highlight))
-        {
+        for (let [class, hl] in Iterator(highlight)) {
             if (hl.value == hl.default)
                 this.set(class);
         }
@@ -356,8 +347,7 @@ function Highlights(name, store)
  *
  * @author Kris Maglione <maglione.k@gmail.com>
  */
-function Styles(name, store)
-{
+function Styles(name, store) {
     // Can't reference liberator or Components inside Styles --
     // they're members of the window object, which disappear
     // with this window.
@@ -387,14 +377,12 @@ function Styles(name, store)
     Sheet.prototype.__defineGetter__("enabled", function () this._enabled);
     Sheet.prototype.__defineSetter__("enabled", function (on) {
         this._enabled = Boolean(on);
-        if (on)
-        {
+        if (on) {
             self.registerSheet(cssUri(this.fullCSS));
             if (this.agent)
                 self.registerSheet(cssUri(this.fullCSS), true);
         }
-        else
-        {
+        else {
             self.unregisterSheet(cssUri(this.fullCSS));
             self.unregisterSheet(cssUri(this.fullCSS), true);
         }
@@ -428,8 +416,7 @@ function Styles(name, store)
      *     "*" is matched as a prefix.
      * @param {string} css The CSS to be applied.
      */
-    this.addSheet = function (system, name, filter, css, agent)
-    {
+    this.addSheet = function (system, name, filter, css, agent) {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
         if (name && name in names)
@@ -437,12 +424,10 @@ function Styles(name, store)
 
         let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), String(css), null, system, agent);
 
-        try
-        {
+        try {
             sheet.enabled = true;
         }
-        catch (e)
-        {
+        catch (e) {
             return e.echoerr || e;
         }
         sheets.push(sheet);
@@ -459,8 +444,7 @@ function Styles(name, store)
      * @param {string or number} sheet The sheet to retrieve. Strings indicate
      *     sheet names, while numbers indicate indices.
      */
-    this.get = function get(system, sheet)
-    {
+    this.get = function get(system, sheet) {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
         if (typeof sheet === "number")
@@ -478,8 +462,7 @@ function Styles(name, store)
      * @param {string} css
      * @param {number} index
      */
-    this.findSheets = function (system, name, filter, css, index)
-    {
+    this.findSheets = function (system, name, filter, css, index) {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
 
@@ -508,11 +491,9 @@ function Styles(name, store)
      * @param {string} css
      * @param {number} index
      */
-    this.removeSheet = function (system, name, filter, css, index)
-    {
+    this.removeSheet = function (system, name, filter, css, index) {
         let self = this;
-        if (arguments.length == 0)
-        {
+        if (arguments.length == 0) {
             var matches = [system];
             system = sheet.system;
         }
@@ -531,8 +512,7 @@ function Styles(name, store)
         if (matches.length == 0)
             return;
 
-        for (let [, sheet] in Iterator(matches.reverse()))
-        {
+        for (let [, sheet] in Iterator(matches.reverse())) {
             sheet.enabled = false;
             if (name)
                 delete names[name];
@@ -540,8 +520,7 @@ function Styles(name, store)
                 sheets.splice(sheets.indexOf(sheet), 1);
 
             /* Re-add if we're only changing the site filter. */
-            if (filter)
-            {
+            if (filter) {
                 let sites = sheet.sites.filter(function (f) f != filter);
                 if (sites.length)
                     this.addSheet(system, name, sites.join(","), css, sheet.agent);
@@ -558,8 +537,7 @@ function Styles(name, store)
      * @param {boolean} reload Whether to reload any sheets that are
      *     already registered.
      */
-    this.registerSheet = function (uri, agent, reload)
-    {
+    this.registerSheet = function (uri, agent, reload) {
         if (reload)
             this.unregisterSheet(uri, agent);
         uri = ios.newURI(uri, null, null);
@@ -572,298 +550,279 @@ function Styles(name, store)
      *
      * @param {string} uri The URI of the sheet to unregister.
      */
-    this.unregisterSheet = function (uri, agent)
-    {
+    this.unregisterSheet = function (uri, agent) {
         uri = ios.newURI(uri, null, null);
         if (sss.sheetRegistered(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET))
             sss.unregisterSheet(uri, agent ? sss.AGENT_SHEET : sss.USER_SHEET);
     };
 }
-let (array = util.Array)
-{
-    util.extend(Styles.prototype, {
-        get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
-        completeSite: function (context, content)
-        {
-            context.anchored = false;
-            try
-            {
-                context.fork("current", 0, this, function (context) {
-                    context.title = ["Current Site"];
-                    context.completions = [
-                        [content.location.host, "Current Host"],
-                        [content.location.href, "Current URL"]
-                    ];
-                });
-            }
-            catch (e) {}
-            context.fork("others", 0, this, function (context) {
-                context.title = ["Site"];
-                context.completions = [[s, ""] for ([, s] in Iterator(styles.sites))];
+
+Module("styles", {
+    requires: ["liberator", "storage", "util"],
+
+    init: function () {
+        let (array = util.Array) {
+            update(Styles.prototype, {
+                get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
+                completeSite: function (context, content) {
+                    context.anchored = false;
+                    try {
+                        context.fork("current", 0, this, function (context) {
+                            context.title = ["Current Site"];
+                            context.completions = [
+                                [content.location.host, "Current Host"],
+                                [content.location.href, "Current URL"]
+                            ];
+                        });
+                    }
+                    catch (e) {}
+                    context.fork("others", 0, this, function (context) {
+                        context.title = ["Site"];
+                        context.completions = [[s, ""] for ([, s] in Iterator(styles.sites))];
+                    });
+                }
             });
         }
-    });
-}
+        return storage.newObject("styles", Styles, { store: false });
+    },
+}, {
+}, {
+    commands: function () {
+        commands.add(["sty[le]"],
+            "Add or list user styles",
+            function (args) {
+                let [filter, css] = args;
+                let name = args["-name"];
 
-/**
- * @property {Styles}
- */
-const styles = storage.newObject("styles", Styles, { store: false });
-
-/**
- * @property {Highlights}
- */
-const highlight = storage.newObject("highlight", Highlights, { store: false });
-
-if (highlight.CSS != Highlights.prototype.CSS)
-{
-    highlight.CSS = Highlights.prototype.CSS;
-    highlight.loadCSS(highlight.CSS);
-}
-
-liberator.triggerObserver("load_styles", "styles");
-liberator.triggerObserver("load_highlight", "highlight");
-
-/////////////////////////////////////////////////////////////////////////////}}}
-////////////////////// COMMANDS ////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////{{{
-
-liberator.registerObserver("load_commands", function () {
-
-    commands.add(["colo[rscheme]"],
-        "Load a color scheme",
-        function (args)
-        {
-            let scheme = args[0];
-
-            if (scheme == "default")
-                highlight.clear();
-            else
-                liberator.assert(!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
-                    "E185: Cannot find color scheme " + scheme);
-            autocommands.trigger("ColorScheme", { name: scheme });
-        },
-        {
-            argCount: "1",
-            completer: function (context) completion.colorScheme(context)
-        });
-
-    commands.add(["sty[le]"],
-        "Add or list user styles",
-        function (args)
-        {
-            let [filter, css] = args;
-            let name = args["-name"];
-
-            if (!css)
-            {
-                let list = Array.concat([i for (i in styles.userNames)],
-                                        [i for (i in styles.userSheets) if (!i[1].name)]);
-                let str = template.tabular(["", "Name", "Filter", "CSS"],
-                    ["min-width: 1em; text-align: center; color: red; font-weight: bold;",
-                     "padding: 0 1em 0 1ex; vertical-align: top;",
-                     "padding: 0 1em 0 0; vertical-align: top;"],
-                    ([sheet.enabled ? "" : "\u00d7",
-                      key,
-                      sheet.sites.join(","),
-                      sheet.css]
-                     for ([i, [key, sheet]] in Iterator(list))
-                     if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
-                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-            }
-            else
-            {
-                if ("-append" in args)
-                {
-                    let sheet = styles.get(false, name);
-                    if (sheet)
-                    {
-                        filter = sheet.sites.concat(filter).join(",");
-                        css = sheet.css + " " + css;
+                if (!css) {
+                    let list = Array.concat([i for (i in styles.userNames)],
+                                            [i for (i in styles.userSheets) if (!i[1].name)]);
+                    let str = template.tabular(["", "Name", "Filter", "CSS"],
+                        ["min-width: 1em; text-align: center; color: red; font-weight: bold;",
+                         "padding: 0 1em 0 1ex; vertical-align: top;",
+                         "padding: 0 1em 0 0; vertical-align: top;"],
+                        ([sheet.enabled ? "" : "\u00d7",
+                          key,
+                          sheet.sites.join(","),
+                          sheet.css]
+                         for ([i, [key, sheet]] in Iterator(list))
+                         if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
+                    commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+                }
+                else {
+                    if ("-append" in args) {
+                        let sheet = styles.get(false, name);
+                        if (sheet) {
+                            filter = sheet.sites.concat(filter).join(",");
+                            css = sheet.css + " " + css;
+                        }
                     }
-                }
-                let err = styles.addSheet(false, name, filter, css);
-                if (err)
-                    liberator.echoerr(err);
-            }
-        },
-        {
-            bang: true,
-            completer: function (context, args)
-            {
-                let compl = [];
-                if (args.completeArg == 0)
-                    styles.completeSite(context, content);
-                else if (args.completeArg == 1)
-                {
-                    let sheet = styles.get(false, args["-name"]);
-                    if (sheet)
-                        context.completions = [[sheet.css, "Current Value"]];
+                    let err = styles.addSheet(false, name, filter, css);
+                    if (err)
+                        liberator.echoerr(err);
                 }
             },
-            hereDoc: true,
-            literal: 1,
-            options: [[["-name", "-n"], commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]],
-                      [["-append", "-a"], commands.OPTION_NOARG]],
-            serial: function () [
-                {
-                    command: this.name,
-                    bang: true,
-                    options: sty.name ? { "-name": sty.name } : {},
-                    arguments: [sty.sites.join(",")],
-                    literalArg: sty.css
-                } for ([k, sty] in styles.userSheets)
-            ]
-        });
+            {
+                bang: true,
+                completer: function (context, args) {
+                    let compl = [];
+                    if (args.completeArg == 0)
+                        styles.completeSite(context, content);
+                    else if (args.completeArg == 1) {
+                        let sheet = styles.get(false, args["-name"]);
+                        if (sheet)
+                            context.completions = [[sheet.css, "Current Value"]];
+                    }
+                },
+                hereDoc: true,
+                literal: 1,
+                options: [[["-name", "-n"], commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]],
+                          [["-append", "-a"], commands.OPTION_NOARG]],
+                serial: function () [
+                    {
+                        command: this.name,
+                        bang: true,
+                        options: sty.name ? { "-name": sty.name } : {},
+                        arguments: [sty.sites.join(",")],
+                        literalArg: sty.css
+                    } for ([k, sty] in styles.userSheets)
+                ]
+            });
 
-    [
-        {
-            name: ["stylee[nable]", "stye[nable]"],
-            desc: "Enable a user style sheet",
-            action: function (sheet) sheet.enabled = true,
-            filter: function (sheet) !sheet.enabled
-        },
-        {
-            name: ["styled[isable]", "styd[isable]"],
-            desc: "Disable a user style sheet",
-            action: function (sheet) sheet.enabled = false,
-            filter: function (sheet) sheet.enabled
-        },
-        {
-            name: ["stylet[oggle]", "styt[oggle]"],
-            desc: "Toggle a user style sheet",
-            action: function (sheet) sheet.enabled = !sheet.enabled
-        },
-        {
-            name: ["dels[tyle]"],
-            desc: "Remove a user style sheet",
-            action: function (sheet) styles.removeSheet(sheet)
+        [
+            {
+                name: ["stylee[nable]", "stye[nable]"],
+                desc: "Enable a user style sheet",
+                action: function (sheet) sheet.enabled = true,
+                filter: function (sheet) !sheet.enabled
+            },
+            {
+                name: ["styled[isable]", "styd[isable]"],
+                desc: "Disable a user style sheet",
+                action: function (sheet) sheet.enabled = false,
+                filter: function (sheet) sheet.enabled
+            },
+            {
+                name: ["stylet[oggle]", "styt[oggle]"],
+                desc: "Toggle a user style sheet",
+                action: function (sheet) sheet.enabled = !sheet.enabled
+            },
+            {
+                name: ["dels[tyle]"],
+                desc: "Remove a user style sheet",
+                action: function (sheet) styles.removeSheet(sheet)
+            }
+        ].forEach(function (cmd) {
+            commands.add(cmd.name, cmd.desc,
+                function (args) {
+                    styles.findSheets(false, args["-name"], args[0], args.literalArg, args["-index"])
+                          .forEach(cmd.action);
+                },
+            {
+                completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
+                literal: 1,
+                options: [[["-index", "-i"], commands.OPTION_INT, null,
+                            function (context) {
+                                context.compare = CompletionContext.Sort.number;
+                                return [[i, <>{sheet.sites.join(",")}: {sheet.css.replace("\n", "\\n")}</>]
+                                        for ([i, sheet] in styles.userSheets)
+                                        if (!cmd.filter || cmd.filter(sheet))]
+                            }],
+                          [["-name", "-n"],  commands.OPTION_STRING, null,
+                            function () [[name, sheet.css]
+                                         for ([name, sheet] in Iterator(styles.userNames))
+                                         if (!cmd.filter || cmd.filter(sheet))]]]
+            });
+        });
+    },
+    completion: function () {
+        completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
+            [ // Prototype: (system, name, filter, css, index)
+                null,
+                function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,
+                function (context, obj, args) styles.completeSite(context, content),
+                null,
+                function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
+            ]);
+    },
+});
+
+Module("highlight", {
+    requires: ["styles"],
+
+    init: function () {
+        const self = storage.newObject("highlight", Highlights, { store: false });
+
+        if (self.CSS != Highlights.prototype.CSS) {
+            self.CSS = Highlights.prototype.CSS;
+            self.loadCSS(self.CSS);
         }
-    ].forEach(function (cmd) {
-        commands.add(cmd.name, cmd.desc,
-            function (args)
-            {
-                styles.findSheets(false, args["-name"], args[0], args.literalArg, args["-index"])
-                      .forEach(cmd.action);
+        return self;
+    },
+}, {
+}, {
+    commands: function () {
+        commands.add(["colo[rscheme]"],
+            "Load a color scheme",
+            function (args) {
+                let scheme = args[0];
+
+                if (scheme == "default")
+                    highlight.clear();
+                else
+                    liberator.assert(!io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
+                        "E185: Cannot find color scheme " + scheme);
+                autocommands.trigger("ColorScheme", { name: scheme });
             },
-        {
-            completer: function (context) { context.completions = styles.sites.map(function (site) [site, ""]); },
-            literal: 1,
-            options: [[["-index", "-i"], commands.OPTION_INT, null,
-                        function (context) {
-                            context.compare = CompletionContext.Sort.number;
-                            return [[i, <>{sheet.sites.join(",")}: {sheet.css.replace("\n", "\\n")}</>]
-                                    for ([i, sheet] in styles.userSheets)
-                                    if (!cmd.filter || cmd.filter(sheet))]
-                        }],
-                      [["-name", "-n"],  commands.OPTION_STRING, null,
-                        function () [[name, sheet.css]
-                                     for ([name, sheet] in Iterator(styles.userNames))
-                                     if (!cmd.filter || cmd.filter(sheet))]]]
-        });
-    });
-
-    commands.add(["hi[ghlight]"],
-        "Set the style of certain display elements",
-        function (args)
-        {
-            let style = <![CDATA[
-                ;
-                display: inline-block !important;
-                position: static !important;
-                margin: 0px !important; padding: 0px !important;
-                width: 3em !important; min-width: 3em !important; max-width: 3em !important;
-                height: 1em !important; min-height: 1em !important; max-height: 1em !important;
-                overflow: hidden !important;
-            ]]>;
-            let clear = args[0] == "clear";
-            if (clear)
-                args.shift();
-
-            let [key, css] = args;
-            if (clear && css)
-                return liberator.echo("E488: Trailing characters");
-
-            if (!css && !clear)
             {
-                // List matching keys
-                let str = template.tabular(["Key", "Sample", "CSS"],
-                    ["padding: 0 1em 0 0; vertical-align: top",
-                     "text-align: center"],
-                    ([h.class,
-                      <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
-                      template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g)]
-                        for (h in highlight)
-                        if (!key || h.class.indexOf(key) > -1)));
-                commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-                return;
-            }
-            if (!key && clear)
-                return highlight.clear();
-            let error = highlight.set(key, css, clear, "-append" in args);
-            if (error)
-                liberator.echoerr(error);
-        },
-        {
-            // TODO: add this as a standard highlight completion function?
-            completer: function (context, args)
-            {
-                // Complete a highlight group on :hi clear ...
-                if (args.completeArg > 0 && args[0] == "clear")
-                    args.completeArg = args.completeArg > 1 ? -1 : 0;
+                argCount: "1",
+                completer: function (context) completion.colorScheme(context)
+            });
 
-                if (args.completeArg == 0)
-                    context.completions = [[v.class, v.value] for (v in highlight)];
-                else if (args.completeArg == 1)
-                {
-                    let hl = highlight.get(args[0]);
-                    if (hl)
-                        context.completions = [[hl.value, "Current Value"], [hl.default || "", "Default Value"]];
+        commands.add(["hi[ghlight]"],
+            "Set the style of certain display elements",
+            function (args) {
+                let style = <![CDATA[
+                    ;
+                    display: inline-block !important;
+                    position: static !important;
+                    margin: 0px !important; padding: 0px !important;
+                    width: 3em !important; min-width: 3em !important; max-width: 3em !important;
+                    height: 1em !important; min-height: 1em !important; max-height: 1em !important;
+                    overflow: hidden !important;
+                ]]>;
+                let clear = args[0] == "clear";
+                if (clear)
+                    args.shift();
+
+                let [key, css] = args;
+                if (clear && css)
+                    return liberator.echo("E488: Trailing characters");
+
+                if (!css && !clear) {
+                    // List matching keys
+                    let str = template.tabular(["Key", "Sample", "CSS"],
+                        ["padding: 0 1em 0 0; vertical-align: top",
+                         "text-align: center"],
+                        ([h.class,
+                          <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
+                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g)]
+                            for (h in highlight)
+                            if (!key || h.class.indexOf(key) > -1)));
+                    commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
+                    return;
                 }
+                if (!key && clear)
+                    return highlight.clear();
+                let error = highlight.set(key, css, clear, "-append" in args);
+                if (error)
+                    liberator.echoerr(error);
             },
-            hereDoc: true,
-            literal: 1,
-            options: [[["-append", "-a"], commands.OPTION_NOARG]],
-            serial: function () [
-                {
-                    command: this.name,
-                    arguments: [k],
-                    literalArg: v
-                }
-                for ([k, v] in Iterator(highlight))
-                if (v.value != v.default)
-            ]
-        });
+            {
+                // TODO: add this as a standard highlight completion function?
+                completer: function (context, args) {
+                    // Complete a highlight group on :hi clear ...
+                    if (args.completeArg > 0 && args[0] == "clear")
+                        args.completeArg = args.completeArg > 1 ? -1 : 0;
+
+                    if (args.completeArg == 0)
+                        context.completions = [[v.class, v.value] for (v in highlight)];
+                    else if (args.completeArg == 1) {
+                        let hl = highlight.get(args[0]);
+                        if (hl)
+                            context.completions = [[hl.value, "Current Value"], [hl.default || "", "Default Value"]];
+                    }
+                },
+                hereDoc: true,
+                literal: 1,
+                options: [[["-append", "-a"], commands.OPTION_NOARG]],
+                serial: function () [
+                    {
+                        command: this.name,
+                        arguments: [k],
+                        literalArg: v
+                    }
+                    for ([k, v] in Iterator(highlight))
+                    if (v.value != v.default)
+                ]
+            });
+    },
+    completion: function () {
+        completion.colorScheme = function colorScheme(context) {
+            context.title = ["Color Scheme", "Runtime Path"];
+            context.keys = { text: function (f) f.leafName.replace(/\.vimp$/, ""), description: ".parent.path" };
+            context.completions = util.Array.flatten(
+                io.getRuntimeDirectories("colors").map(
+                    function (dir) dir.readDirectory().filter(
+                        function (file) /\.vimp$/.test(file.leafName))))
+
+        };
+
+        completion.highlightGroup = function highlightGroup(context) {
+            context.title = ["Highlight Group", "Value"];
+            context.completions = [[v.class, v.value] for (v in highlight)];
+        };
+    },
 });
-/////////////////////////////////////////////////////////////////////////////}}}
-////////////////////// COMPLETIONS /////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////{{{
-
-liberator.registerObserver("load_completion", function () {
-    completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
-        [ // Prototype: (system, name, filter, css, index)
-            null,
-            function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,
-            function (context, obj, args) styles.completeSite(context, content),
-            null,
-            function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
-        ]);
-
-    completion.colorScheme = function colorScheme(context) {
-        context.title = ["Color Scheme", "Runtime Path"];
-        context.keys = { text: function (f) f.leafName.replace(/\.vimp$/, ""), description: ".parent.path" };
-        context.completions = util.Array.flatten(
-            io.getRuntimeDirectories("colors").map(
-                function (dir) dir.readDirectory().filter(
-                    function (file) /\.vimp$/.test(file.leafName))))
-
-    };
-
-    completion.highlightGroup = function highlightGroup(context) {
-        context.title = ["Highlight Group", "Value"];
-        context.completions = [[v.class, v.value] for (v in highlight)];
-    };
-});
-//}}}
 
 // vim: set fdm=marker sw=4 ts=4 et:

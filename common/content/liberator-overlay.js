@@ -11,51 +11,51 @@
 
     const loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                      .getService(Components.interfaces.mozIJSSubScriptLoader);
-    function load(script)
-    {
-        for (let [i, base] in Iterator(prefix))
-        {
-            try
-            {
+    function load(script) {
+        for (let [i, base] in Iterator(prefix)) {
+            try {
                 loader.loadSubScript(base + script, modules);
                 return;
             }
-            catch (e)
-            {
+            catch (e) {
                 if (i + 1 < prefix.length)
                     continue;
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
                 dump("liberator: Loading script " + script + ": " + e + "\n");
+                dump(e.stack + "\n");
             }
         }
     }
 
-    Components.utils.import("resource://liberator/storage.jsm", modules);
-
     let prefix = [BASE];
 
-    ["services.js",
-     "liberator.js",
-     "configbase.js",
-     "config.js"].forEach(load);
-    modules.config.__proto__ = modules.configbase;
-
-    ["util.js",
-     "style.js",
+    ["base.js",
+     "modules.js",
+     "autocommands.js",
      "buffer.js",
+     "commandline.js",
      "commands.js",
      "completion.js",
+     "config.js",
+     "configbase.js",
+     "liberator.js",
      "editor.js",
      "events.js",
      "finder.js",
      "hints.js",
      "io.js",
      "mappings.js",
+     "marks.js",
      "modes.js",
      "options.js",
+     "services.js",
+     "statusline.js",
+     "style.js",
      "template.js",
-     "ui.js"].forEach(load);
+     "util.js",
+     ].forEach(load);
+    modules.config.__proto__ = modules.configbase;
 
     prefix.unshift("chrome://" + modules.config.name.toLowerCase() + "/content/");
     modules.config.scripts.forEach(load);
