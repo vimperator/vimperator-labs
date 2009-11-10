@@ -484,7 +484,7 @@ const CommandLine = Module("commandline", {
      * @default "Normal"
      * @param {number} flags Changes the behavior as follows:
      *   commandline.APPEND_TO_MESSAGES - Causes message to be added to the
-     *          messages this._history, and shown by :messages.
+     *          messages history, and shown by :messages.
      *   commandline.FORCE_SINGLELINE   - Forbids the command from being
      *          pushed to the MOW if it's too long or of there are already
      *          status messages being shown.
@@ -957,8 +957,7 @@ const CommandLine = Module("commandline", {
     },
 
     /**
-     * Changes the height of the this._multilineOutputWidget to fit in the
-     * available space.
+     * Changes the height of the message window to fit in the available space.
      *
      * @param {boolean} open If true, the widget will be opened if it's not
      *     already so.
@@ -989,10 +988,10 @@ const CommandLine = Module("commandline", {
     }
 }, {
     /**
-     * A class for managing the this._history of an inputField.
+     * A class for managing the history of an input field.
      *
      * @param {HTMLInputElement} inputField
-     * @param {string} mode The mode for which we need this._history.
+     * @param {string} mode The mode for which we need history.
      */
     History: Class("History", {
         init: function (inputField, mode) {
@@ -1002,7 +1001,7 @@ const CommandLine = Module("commandline", {
             this.reset();
         },
         /**
-         * Reset the this._history index to the first entry.
+         * Reset the history index to the first entry.
          */
         reset: function () {
             this.index = null;
@@ -1032,7 +1031,7 @@ const CommandLine = Module("commandline", {
             return false;
         },
         /**
-         * Removes any private data from this this._history.
+         * Removes any private data from this history.
          */
         sanitize: function (timespan) {
             let range = [0, Number.MAX_VALUE];
@@ -1055,7 +1054,7 @@ const CommandLine = Module("commandline", {
         },
 
         /**
-         * Move forward or backward in this._history.
+         * Move forward or backward in history.
          *
          * @param {boolean} backward Direction to move.
          * @param {boolean} matchCurrent Search for matches starting
@@ -1105,7 +1104,7 @@ const CommandLine = Module("commandline", {
     }),
 
     /**
-     * A class for tab this._completions on an input field.
+     * A class for tab completions on an input field.
      *
      * @param {Object} input
      */
@@ -1708,7 +1707,7 @@ const ItemList = Class("ItemList", {
     },
 
     /**
-     * Uses the entries in "items" to this._fill the listbox and does incremental
+     * Uses the entries in "items" to fill the listbox and does incremental
      * filling to speed up things.
      *
      * @param {number} offset Start at this index and show options["maxitems"].

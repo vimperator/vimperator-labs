@@ -106,12 +106,13 @@ const Hints = Module("hints", {
      * Get a hint for "input", "textarea" and "select".
      *
      * Tries to use <label>s if possible but does not try to guess that a
-     * neighbouring element might look like a label. Only called by this._generate().
+     * neighbouring element might look like a label. Only called by
+     * {@link #_generate}.
      *
      * If it finds a hint it returns it, if the hint is not the caption of the
      * element it will return showText=true.
      *
-     * @param {Object} elem The element used to this._generate hint text.
+     * @param {Object} elem The element used to generate hint text.
      * @param {Document} doc The containing document.
      *
      * @returns [text, showText]
@@ -165,7 +166,7 @@ const Hints = Module("hints", {
     /**
      * Gets the actual offset of an imagemap area.
      *
-     * Only called by this._generate().
+     * Only called by {@link #_generate}.
      *
      * @param {Object} elem  The <area> element.
      * @param {number} leftPos  The left offset of the image.
@@ -242,9 +243,10 @@ const Hints = Module("hints", {
     /**
      * Generate the hints in a window.
      *
-     * Pushes the hints into the this._pageHints object, but does not display them.
+     * Pushes the hints into the pageHints object, but does not display them.
      *
-     * @param {Window} win The window,defaults to window.content.
+     * @param {Window} win The window for which to generate hints.
+     * @default window.content
      */
     _generate: function (win) {
         if (!win)
@@ -343,7 +345,7 @@ const Hints = Module("hints", {
     },
 
     /**
-     * Display the hints in this._pageHints that are still valid.
+     * Display the hints in pageHints that are still valid.
      */
     _showHints: function () {
 
@@ -414,7 +416,7 @@ const Hints = Module("hints", {
     },
 
     /**
-     * Remove all hints from the document, and this._reset the completions.
+     * Remove all hints from the document, and reset the completions.
      *
      * Lingers on the active hint briefly to confirm the selection to the user.
      *
@@ -537,10 +539,10 @@ const Hints = Module("hints", {
     },
 
     /**
-     * Get the this._hintMatcher according to user preference.
+     * Get the hintMatcher according to user preference.
      *
-     * @param {string} this._hintString The currently typed hint.
-     * @returns {this._hintMatcher}
+     * @param {string} hintString The currently typed hint.
+     * @returns {hintMatcher}
      */
     _hintMatcher: function (hintString) { //{{{
         /**
@@ -555,7 +557,7 @@ const Hints = Module("hints", {
         /**
          * Get a hint matcher for hintmatching=contains
          *
-         * The this._hintMatcher expects the user input to be space delimited and it
+         * The hintMatcher expects the user input to be space delimited and it
          * returns true if each set of characters typed can be found, in any
          * order, in the link.
          *
@@ -573,9 +575,9 @@ const Hints = Module("hints", {
         } //}}}
 
         /**
-         * Get a this._hintMatcher for hintmatching=firstletters|wordstartswith
+         * Get a hintMatcher for hintmatching=firstletters|wordstartswith
          *
-         * The this._hintMatcher will look for any division of the user input that
+         * The hintMatcher will look for any division of the user input that
          * would match the first letters of words. It will always only match
          * words in order.
          *

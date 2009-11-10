@@ -547,11 +547,11 @@ const Editor = Module("editor", {
     },
 
     /**
-     * Returns all this._abbreviations matching <b>filter</b> and <b>lhs</b>.
+     * Returns all abbreviations matching <b>filter</b> and <b>lhs</b>.
      *
      * @param {string} filter The mode filter.
      * @param {string} lhs The LHS of the abbreviation.
-     * @returns {Array} The matching this._abbreviations [mode, lhs, rhs]
+     * @returns {Array} The matching abbreviations [mode, lhs, rhs]
      * @see #addAbbreviation
      */
     getAbbreviations: function (filter, lhs) {
@@ -562,7 +562,7 @@ const Editor = Module("editor", {
     },
 
     /**
-     * Lists all this._abbreviations matching <b>filter</b> and <b>lhs</b>.
+     * Lists all abbreviations matching <b>filter</b> and <b>lhs</b>.
      *
      * @param {string} filter The mode filter.
      * @param {string} lhs The LHS of the abbreviation.
@@ -585,7 +585,7 @@ const Editor = Module("editor", {
     },
 
     /**
-     * Deletes all this._abbreviations matching <b>filter</b> and <b>lhs</b>.
+     * Deletes all abbreviations matching <b>filter</b> and <b>lhs</b>.
      *
      * @param {string} filter The mode filter.
      * @param {string} lhs The LHS of the abbreviation.
@@ -629,7 +629,7 @@ const Editor = Module("editor", {
     },
 
     /**
-     * Removes all this._abbreviations matching <b>filter</b>.
+     * Removes all abbreviations matching <b>filter</b>.
      *
      * @param {string} filter The mode filter.
      * @see #addAbbreviation
