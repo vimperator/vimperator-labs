@@ -237,8 +237,10 @@ const Finder = Module("finder", {
         fastFind.caseSensitive = this._caseSensitive;
         this._found = fastFind.find(this._searchString, this._linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
-        if (!this._found)
-            setTimeout(function () liberator.echoerr("E486: Pattern not found: " + this._searchPattern, commandline.FORCE_SINGLELINE), 0);
+        if (!this._found) {
+            let self = this; // XXX
+            setTimeout(function () liberator.echoerr("E486: Pattern not found: " + self._searchPattern, commandline.FORCE_SINGLELINE), 0);
+        }
     },
 
     /**
