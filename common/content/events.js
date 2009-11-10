@@ -539,7 +539,8 @@ const Events = Module("events", {
             modifier += "M-";
 
         if (/^key/.test(event.type)) {
-            if (event.charCode == 0) {
+            let charCode = event.type == "keyup" ? 0 : event.charCode;
+            if (charCode == 0) {
                 if (event.shiftKey)
                     modifier += "S-";
 
@@ -565,17 +566,17 @@ const Events = Module("events", {
             // certainly is on Windows), and so it is probably
             // harmless to remove the has("MacUnix") if desired.
             //
-            else if (liberator.has("MacUnix") && event.ctrlKey && event.charCode >= 27 && event.charCode <= 31) {
-                if (event.charCode == 27) { // [Ctrl-Bug 1/5] the <C-[> bug
+            else if (liberator.has("MacUnix") && event.ctrlKey && charCode >= 27 && charCode <= 31) {
+                if (charCode == 27) { // [Ctrl-Bug 1/5] the <C-[> bug
                     key = "Esc";
                     modifier = modifier.replace("C-", "");
                 }
                 else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
-                    key = String.fromCharCode(event.charCode + 64);
+                    key = String.fromCharCode(charCode + 64);
             }
             // a normal key like a, b, c, 0, etc.
-            else if (event.charCode > 0) {
-                key = String.fromCharCode(event.charCode);
+            else if (charCode > 0) {
+                key = String.fromCharCode(charCode);
 
                 if (key in this._key_code) {
                     // a named charcode key (<Space> and <lt>) space can be shifted, <lt> must be forced
