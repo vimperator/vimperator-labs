@@ -828,7 +828,7 @@ const Completion = Module("completion", {
                     // v[0] in orig and orig[v[0]] catch different cases. XPCOM
                     // objects are problematic, to say the least.
                     compl = [v for (v in this.iter(obj))
-                        if ((typeof orig == "object" && v[0] in orig) || getKey(orig, v[0]) !== undefined)];
+                        if (v && (typeof orig == "object" && v[0] in orig || getKey(orig, v[0]) !== undefined))];
                 }
 
                 // And if wrappedJSObject happens to be available,

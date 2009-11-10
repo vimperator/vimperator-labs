@@ -23,6 +23,7 @@ window.addEventListener("load", function () {
     const start = Date.now();
     const deferredInit = { load: [] };
     const seen = set();
+    const loaded = [];
 
     function load(module, prereq) {
         try {
@@ -36,23 +37,26 @@ window.addEventListener("load", function () {
                 load(Module.constructors[dep], module.name);
 
             dump("Load" + (isstring(prereq) ? " " + prereq + " dependency: " : ": ") + module.name);
+            loaded.push(module.name);
             modules[module.name] = module();
 
             function init(mod, module)
                 function () module.INIT[mod].call(modules[module.name], modules[mod]);
-            for (let [mod, ] in iter(module.INIT))
+            for (let mod in values(loaded)) {
                 try {
-                    if (mod in modules)
+                    if (mod in module.INIT)
                         init(mod, module)();
-                    else {
-                        deferredInit[mod] = deferredInit[mod] || [];
-                        deferredInit[mod].push(init(mod, module));
-                    }
+                    delete module.INIT[mod]
                 }
                 catch(e) {
                     if (modules.liberator)
                         liberator.reportError(e);
                 }
+            }
+            for (let mod in keys(module.INIT)) {
+                deferredInit[mod] = deferredInit[mod] || [];
+                deferredInit[mod].push(init(mod, module));
+            }
             for (let [, fn] in iter(deferredInit[module.name] || []))
                 fn();
         }

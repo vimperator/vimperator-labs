@@ -1063,6 +1063,9 @@ const Events = Module("events", {
             if (stop)
                 killEvent();
         }
+        catch (e) {
+            liberator.reportError(e);
+        }
         finally {
             let motionMap = (this._input.pendingMotionMap && this._input.pendingMotionMap.names[0]) || "";
             if (!(modes.extended & modes.HINTS))

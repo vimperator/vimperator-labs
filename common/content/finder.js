@@ -224,7 +224,7 @@ const Finder = Module("finder", {
         // TODO: focus the top of the currently visible screen
     },
 
-    // TODO: backwards seems impossible i fear :(
+    // TODO: backwards seems impossible i fear
     /**
      * Searches the current buffer for <b>str</b>.
      *
@@ -454,6 +454,289 @@ const Finder = Module("finder", {
         options.add(["smartcase", "scs"],
             "Override the 'ignorecase' option if the pattern contains uppercase characters",
             "boolean", true);
+    },
+});
+
+const RangeFinder = Module("rangefinder", {
+    requires: ["config"],
+
+    init: function () {
+    },
+
+    openPrompt: function (mode) {
+        let backwards;
+        if (mode == modes.FIND_BACKWARD) {
+            commandline.open("?", "", modes.FIND_BACKWARD);
+            backwards = true;
+        }
+        else {
+            commandline.open("/", "", modes.FIND_FORWARD);
+            backwards = false;
+        }
+
+        this.find("", backwards);
+        // TODO: focus the top of the currently visible screen
+    },
+
+    find: function (str, backwards) {
+        let caseSensitive = false;
+        this.rangeFind = RangeFind(caseSensitive, backwards);
+
+        if (!this.rangeFind.search(searchString))
+            setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
+
+        return this.rangeFind.found;
+    },
+
+    findAgain: function (reverse) {
+        if (!this.rangeFind || !this.rangeFind.search(null, reverse))
+            liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
+        else if (this.rangeFind.wrapped) {
+            // hack needed, because wrapping causes a "scroll" event which clears
+            // our command line
+            setTimeout(function () {
+                if (rangfinder.rangeFind.backward)
+                    commandline.echo("search hit TOP, continuing at BOTTOM",
+                        commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
+                else
+                    commandline.echo("search hit BOTTOM, continuing at TOP",
+                        commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
+            }, 0);
+        }
+        else {
+            liberator.echo((this.rangeFind.backward ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+
+            if (options["hlsearch"])
+                this.highlight(this.rangeFind.lastString);
+        }
+    },
+
+    // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
+    onKeyPress: function (command) {
+        if (options["incsearch"] && this.rangeFind)
+            this.rangeFind.search(command);
+    },
+
+    onSubmit: function (command) {
+        // use the last pattern if none specified
+        if (!command)
+            command = lastSearchPattern;
+
+        if (!options["incsearch"] || !this.rangeFind.found) {
+            this.clear();
+            this.find(command, this.rangeFind.backwards);
+        }
+
+        this._lastSearchBackwards = this.rangeFind.backwards;
+        this._lastSearchPattern = command;
+        this._lastSearchString = command;
+
+        if (options["hlsearch"])
+            this.highlight(this.rangeFind.searchString);
+
+        modes.reset();
+    },
+
+    // Called when the search is canceled - for example if someone presses
+    // escape while typing a search
+    onCancel: function () {
+        // TODO: code to reposition the document to the place before search started
+        if (this.rangeFind)
+            this.rangeFind.cancel();
+        this.rangeFind = null;
+    },
+
+    get rangeFind() tabs.localStore.rangeFind,
+    set rangeFind(val) tabs.localStore.rangeFind = val,
+
+    /**
+     * Highlights all occurances of <b>str</b> in the buffer.
+     *
+     * @param {string} str The string to highlight.
+     */
+    highlight: function (str) {
+        return;
+    },
+
+    /**
+     * Clears all search highlighting.
+     */
+    clear: function () {
+        return;
+    }
+}, {
+}, {
+    commandline: function () {
+        // Event handlers for search - closure is needed
+        commandline.registerCallback("change", modes.FIND_FORWARD, this.closure.onKeyPress);
+        commandline.registerCallback("submit", modes.FIND_FORWARD, this.closure.onSubmit);
+        commandline.registerCallback("cancel", modes.FIND_FORWARD, this.closure.onCancel);
+        // TODO: allow advanced myModes in register/triggerCallback
+        commandline.registerCallback("change", modes.FIND_BACKWARD, this.closure.onKeyPress);
+        commandline.registerCallback("submit", modes.FIND_BACKWARD, this.closure.onSubmit);
+        commandline.registerCallback("cancel", modes.FIND_BACKWARD, this.closure.onCancel);
+
+    },
+    commands: function () {
+    },
+    mappings: function () {
+        var myModes = config.browserModes.concat([modes.CARET]);
+
+        mappings.add(myModes,
+            ["g/"], "Search forward for a pattern",
+            function () { rangefinder.openPrompt(modes.FIND_FORWARD); });
+
+        mappings.add(myModes,
+            ["g?"], "Search backwards for a pattern",
+            function () { rangefinder.openPrompt(modes.FIND_BACKWARD); });
+
+        mappings.add(myModes,
+            ["g."], "Find next",
+            function () { rangefinder.findAgain(false); });
+
+        mappings.add(myModes,
+            ["g,"], "Find previous",
+            function () { rangefinder.findAgain(true); });
+
+        mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["g*"],
+            "Find word under cursor",
+            function () {
+                rangefinder._found = false;
+                rangefinder.onSubmit(buffer.getCurrentWord(), false);
+            });
+
+        mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["g#"],
+            "Find word under cursor backwards",
+            function () {
+                rangefinder._found = false;
+                rangefinder.onSubmit(buffer.getCurrentWord(), true);
+            });
+    },
+    modes: function () {
+        modes.addMode("FIND_FORWARD", true);
+        modes.addMode("FIND_BACKWARD", true);
+    },
+    options: function () {
+    },
+});
+
+const RangeFind = Class("RangeFind", {
+    init: function (matchCase, backward) {
+        this.finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
+                               .createInstance()
+                               .QueryInterface(Components.interfaces.nsIFind);
+        this.finder.caseSensitive = matchCase;
+        this.matchCase = matchCase;
+        this._backward = backward;
+        this.sel = buffer.selectionController;
+        this.win = content;
+        this.doc = content.document;
+
+        this.pageRange = this.doc.createRange();
+        this.pageRange.setStartBefore(this.doc.body);
+        this.pageRange.setEndAfter(this.doc.body);
+        this.pageStart = this.pageRange.cloneRange();
+        this.pageEnd = this.pageRange.cloneRange();
+        this.pageStart.collapse(true);
+        this.pageEnd.collapse(false);
+
+        this.start = Point(this.win.pageXOffset, this.win.pageYOffset);
+        this.selection = this.sel.getSelection(this.sel.SELECTION_NORMAL);
+        this.startRange = this.selection.rangeCount ? this.selection.getRangeAt(0) : this.pageStart;
+        this.startRange.collapse(true);
+
+        this.lastString = "";
+        this.lastRange = null;
+        this.forward = null;
+        this.found = false;
+    },
+
+    // This doesn't work yet.
+    resetCaret: function () {
+        let equal = function (r1, r2) !r1.compareToRange(Range.START_TO_START, r2) && !r1.compareToRange(Range.END_TO_END, r2);
+        letselection = this.win.getSelection();
+        if (selection.rangeCount == 0)
+            selection.addRange(this.pageStart);
+        function getLines() {
+            let orig = selection.getRangeAt(0);
+            function getRanges(forward) {
+                selection.removeAllRanges();
+                selection.addRange(orig);
+                let cur = orig;
+                while (true) {
+                    var last = cur;
+                    this.sel.lineMove(forward, false);
+                    cur = selection.getRangeAt(0);
+                    if (equal(cur, last))
+                        break;
+                    yield cur;
+                }
+            }
+            yield orig;
+            for (let range in getRanges(true))
+                yield range;
+            for (let range in getRanges(false))
+                yield range;
+        }
+        for (let range in getLines()) {
+            if (this.sel.checkVisibility(range.startContainer, range.startOffset, range.startOffset))
+                return range;
+        }
+        return null;
+    },
+
+    get searchString() this.lastString,
+    get backward() this.finder.findBackwards,
+
+    search: function (word, reverse) {
+        this.finder.findBackwards = reverse ? !this._backward : this._backward;
+        let again = word == null;
+        if (again)
+            word = this.lastString;
+        if (!this.matchCase)
+            word = word.toLowerCase();
+
+        if (word == "")
+            var range = this.startRange;
+        else {
+            if (this.lastRange) {
+                if (again)
+                    this.lastRange.collapse(this.backward);
+                else if (word.indexOf(this.lastString) != 0 || this.backward)
+                    this.lastRange = null;
+                else
+                    this.lastRange.collapse(true);
+            }
+
+            var range = this.finder.Find(word, this.pageRange,
+                                          this.lastRange || this.startRange,
+                                          this.pageEnd);
+        }
+
+        this.lastString = word;
+        if (range == null) {
+            if (this.wrapped) {
+                this.cancel();
+                this.found = false;
+                return null;
+            }
+            this.wrapped = true;
+            this.lastRange = this.backward ? this.pageEnd : this.pageStart;
+            return this.search(again ? null : word, reverse);
+        }
+        this.wrapped = false;
+        this.selection.removeAllRanges();
+        this.selection.addRange(range);
+        this.sel.scrollSelectionIntoView(this.sel.SELECTION_NORMAL, 0, false);
+        this.lastRange = range.cloneRange();
+        this.found = true;
+        return range;
+    },
+
+    cancel: function () {
+        this.selection.removeAllRanges();
+        this.selection.addRange(this.startRange);
+        this.win.scrollTo(this.start.x, this.start.y);
     },
 });
 
