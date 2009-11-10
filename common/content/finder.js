@@ -74,7 +74,7 @@ const Finder = Module("finder", {
 
             highlightDoc: function highlightDoc(win, aWord) {
                 this.doc = content.document; // XXX
-                Array.forEach(win.frames, function (frame) this._highlighter.highlightDoc(frame, aWord));
+                Array.forEach(win.frames, function (frame) this.highlightDoc(frame, aWord), this);
 
                 var doc = win.document;
                 if (!doc || !(doc instanceof HTMLDocument))
@@ -237,10 +237,8 @@ const Finder = Module("finder", {
         fastFind.caseSensitive = this._caseSensitive;
         this._found = fastFind.find(this._searchString, this._linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
-        if (!this._found) {
-            let self = this; // XXX
-            setTimeout(function () liberator.echoerr("E486: Pattern not found: " + self._searchPattern, commandline.FORCE_SINGLELINE), 0);
-        }
+        if (!this._found)
+            setTimeout(function () liberator.echoerr("E486: Pattern not found: " + finder._searchPattern, commandline.FORCE_SINGLELINE), 0);
     },
 
     /**
@@ -740,6 +738,137 @@ const RangeFind = Class("RangeFind", {
         this.selection.addRange(this.startRange);
         this.win.scrollTo(this.start.x, this.start.y);
     },
+});
+
+/* Stolen from toolkit.jar in Firefox, for the time being. The private
+ * methods were unstable, and changed. The new version is not remotely
+ * compatible with what we do.
+ *   The following only applies to this object, and may not be
+ * necessary, or accurate, but, just in case:
+ *   The Original Code is mozilla.org viewsource frontend.
+ *
+ *   The Initial Developer of the Original Code is
+ *   Netscape Communications Corporation.
+ *   Portions created by the Initial Developer are Copyright (c) 2003
+ *   by the Initial Developer. All Rights Reserved.
+ *
+ *   Contributor(s):
+ *       Blake Ross <blake@cs.stanford.edu> (Original Author)
+ *       Masayuki Nakano <masayuki@d-toybox.com>
+ *       Ben Basson <contact@cusser.net>
+ *       Jason Barnabe <jason_barnabe@fastmail.fm>
+ *       Asaf Romano <mano@mozilla.com>
+ *       Ehsan Akhgari <ehsan.akhgari@gmail.com>
+ *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
+ */
+const Highlighter = Class("Highlighter", {
+    init: function (doc) {
+        this.doc = doc;
+    },
+
+    doc: null,
+
+    spans: [],
+
+    search: function (word, matchCase) {
+        var finder = services.create("find");
+
+        var range;
+        while ((range = finder.Find(word, this.searchRange, this.startPt, this.endPt)))
+            yield range;
+    },
+
+    highlightDoc: function highlightDoc(win, word) {
+        Array.forEach(win.frames, function (frame) this.highlightDoc(frame, word), this);
+
+        var doc = win.document;
+        if (!doc || !(doc instanceof HTMLDocument))
+            return;
+
+        if (!word) {
+            let elems = this._highlighter.spans;
+            for (let i = elems.length; --i >= 0;) {
+                let elem = elems[i];
+                let docfrag = doc.createDocumentFragment();
+                let next = elem.nextSibling;
+                let parent = elem.parentNode;
+
+                let child;
+                while (child = elem.firstChild)
+                    docfrag.appendChild(child);
+
+                parent.removeChild(elem);
+                parent.insertBefore(docfrag, next);
+                parent.normalize();
+            }
+            return;
+        }
+
+        var baseNode = <span highlight="Search"/>;
+        baseNode = util.xmlToDom(baseNode, window.content.document);
+
+        var body = doc.body;
+        var count = body.childNodes.length;
+        this.searchRange = doc.createRange();
+        this.startPt = doc.createRange();
+        this.endPt = doc.createRange();
+
+        this.searchRange.setStart(body, 0);
+        this.searchRange.setEnd(body, count);
+
+        this.startPt.setStart(body, 0);
+        this.startPt.setEnd(body, 0);
+        this.endPt.setStart(body, count);
+        this.endPt.setEnd(body, count);
+
+        liberator.interrupted = false;
+        let n = 0;
+        for (let retRange in this.search(word, this._caseSensitive)) {
+            // Highlight
+            var nodeSurround = baseNode.cloneNode(true);
+            var node = this.highlight(retRange, nodeSurround);
+            this.startPt = node.ownerDocument.createRange();
+            this.startPt.setStart(node, node.childNodes.length);
+            this.startPt.setEnd(node, node.childNodes.length);
+            if (n++ % 20 == 0)
+                liberator.threadYield(true);
+            if (liberator.interrupted)
+                break;
+        }
+    },
+
+    highlight: function highlight(range, node) {
+        var startContainer = range.startContainer;
+        var startOffset = range.startOffset;
+        var endOffset = range.endOffset;
+        var docfrag = range.extractContents();
+        var before = startContainer.splitText(startOffset);
+        var parent = before.parentNode;
+        node.appendChild(docfrag);
+        parent.insertBefore(node, before);
+        this.spans.push(node);
+        return node;
+    },
+
+    /**
+     * Clears all search highlighting.
+     */
+    clear: function () {
+        this.spans.forEach(function (span) {
+            if (span.parentNode) {
+                let el = span.firstChild;
+                while (el) {
+                    span.removeChild(el);
+                    span.parentNode.insertBefore(el, span);
+                    el = span.firstChild;
+                }
+                span.parentNode.removeChild(span);
+            }
+        });
+        this.spans = [];
+    },
+
+    isHighlighted: function (doc) this.doc == doc && this.spans.length > 0
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

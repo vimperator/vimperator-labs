@@ -31,15 +31,13 @@ const AutoCommands = Module("autocommands", {
      * @param {string} cmd The Ex command to run.
      */
     add: function (events, regex, cmd) {
-        let self = this;
-
         if (typeof events == "string") {
             events = events.split(",");
             liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
         }
         events.forEach(function (event) {
-            self._store.push(new AutoCommand(event, RegExp(regex), cmd));
-        });
+            this._store.push(new AutoCommand(event, RegExp(regex), cmd));
+        }, this);
     },
 
     /**
