@@ -430,10 +430,13 @@ const Finder = Module("finder", {
             "Highlight previous search pattern matches",
             "boolean", "false", {
                 setter: function (value) {
-                    if (value)
-                        finder.highlight();
-                    else
-                        finder.clear();
+                    try {
+                        if (value)
+                            finder.highlight();
+                        else
+                            finder.clear();
+                    }
+                    catch (e) {}
 
                     return value;
                 }
@@ -464,45 +467,36 @@ const RangeFinder = Module("rangefinder", {
     },
 
     openPrompt: function (mode) {
-        let backwards;
-        if (mode == modes.FIND_BACKWARD) {
-            commandline.open("?", "", modes.FIND_BACKWARD);
-            backwards = true;
-        }
-        else {
-            commandline.open("/", "", modes.FIND_FORWARD);
-            backwards = false;
-        }
+        let backwards = mode == modes.FIND_BACKWARD;
+        commandline.open(backwards ? "?" : "/", "", mode);
 
         this.find("", backwards);
-        // TODO: focus the top of the currently visible screen
     },
 
     find: function (str, backwards) {
-try {
         let caseSensitive = false;
+        if (this.rangeFind)
+            this.clear();
         this.rangeFind = RangeFind(caseSensitive, backwards);
 
         if (!this.rangeFind.search(str))
             setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + str); }, 0);
 
         return this.rangeFind.found;
-} catch(e) { liberator.reportError(e) }
     },
 
     findAgain: function (reverse) {
-        if (!this.rangeFind || !this.rangeFind.search(null, reverse))
+        if (!this.rangeFind)
+            this.find(this._lastSearchString);
+        else if (!this.rangeFind.search(null, reverse))
             liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
         else if (this.rangeFind.wrapped) {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
             setTimeout(function () {
-                if (rangfinder.rangeFind.backward)
-                    commandline.echo("search hit TOP, continuing at BOTTOM",
-                        commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
-                else
-                    commandline.echo("search hit BOTTOM, continuing at TOP",
-                        commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
+                let msg = rangfinder.rangeFind.backward ? "search hit TOP, continuing at BOTTOM"
+                                                        : "search hit BOTTOM, continuing at TOP";
+                commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }, 0);
         }
         else {
@@ -515,20 +509,14 @@ try {
 
     // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
     onKeyPress: function (command) {
-try {
         if (options["incsearch"] && this.rangeFind)
             this.rangeFind.search(command);
-} catch(e) { liberator.reportError(e); }
     },
 
     onSubmit: function (command) {
-        // use the last pattern if none specified
-        if (!command)
-            command = lastSearchPattern;
-
-        if (!options["incsearch"] || !this.rangeFind.found) {
+        if (!options["incsearch"] || !this.rangeFind || !this.rangeFind.found) {
             this.clear();
-            this.find(command, this.rangeFind.backwards);
+            this.find(command || this._lastSearchString, this._lastSearchBackwards);
         }
 
         this._lastSearchBackwards = this.rangeFind.backwards;
@@ -536,7 +524,7 @@ try {
         this._lastSearchString = command;
 
         if (options["hlsearch"])
-            this.highlight(this.rangeFind.searchString);
+            this.highlight();
 
         modes.reset();
     },
@@ -558,15 +546,17 @@ try {
      *
      * @param {string} str The string to highlight.
      */
-    highlight: function (str) {
-        return;
+    highlight: function () {
+        if (this.rangeFind)
+            this.rangeFind.highlight();
     },
 
     /**
      * Clears all search highlighting.
      */
     clear: function () {
-        return;
+        if (this.rangeFind)
+            this.rangeFind.highlight(true);
     }
 }, {
 }, {
@@ -632,9 +622,9 @@ const RangeFind = Class("RangeFind", {
         this._backward = backward;
 
         this.ranges = this.makeFrameList(content);
-        this.range = { document: (tabs.localStore.focusedFrame || content).document };
+        this.range = RangeFind.Range(tabs.localStore.focusedFrame || content);
 
-        this.startRange = (this.selection.rangeCount ? this.selection.getRangeAt(0) : this.ranges[0].range).cloneRange();
+        this.startRange = (this.range.selection.rangeCount ? this.range.selection.getRangeAt(0) : this.ranges[0].range).cloneRange();
         this.startRange.collapse(!backward);
         this.range = this.findRange(this.startRange);
         this.ranges.first = this.range;
@@ -644,17 +634,6 @@ const RangeFind = Class("RangeFind", {
         this.forward = null;
         this.found = false;
     },
-
-    get docShell() {
-        for (let shell in iter(getBrowser().docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
-            if (shell.QueryInterface(nsIWebNavigation).document == this.range.document)
-                return shell;
-    },
-    get selectionController() this.docShell
-                .QueryInterface(Ci.nsIInterfaceRequestor)
-                .getInterface(Ci.nsISelectionDisplay)
-                .QueryInterface(Ci.nsISelectionController),
-    get selection() this.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL),
 
     sameDocument: function (r1, r2) r1 && r2 && r1.endContainer.ownerDocument == r2.endContainer.ownerDocument,
 
@@ -679,34 +658,25 @@ const RangeFind = Class("RangeFind", {
         win = win.top;
         let frames = [];
 
-        function endpoint(range, before) {
-            range = range.cloneRange();
-            range.collapse(before);
-            return range;
-        }
-        function pushRange(start, end, win) {
-            let scroll = Point(win.pageXOffset, win.pageYOffset);
-            let range = win.document.createRange();
-            range.setStart(start.startContainer, start.startOffset);
-            range.setEnd(end.startContainer, end.startOffset);
-            frames.push({ range: range, index: frames.length, window: win, document: win.document, scroll: scroll });
+        function pushRange(start, end) {
+            frames.push(RangeFind.Range(start, end, frames.length));
         }
         function rec(win) {
             let doc = win.document;
             let pageRange = doc.createRange();
             pageRange.setStartBefore(doc.body || doc.documentElement.lastChild);
             pageRange.setEndAfter(doc.body || doc.documentElement.lastChild);
-            let pageStart = endpoint(pageRange, true);
-            let pageEnd = endpoint(pageRange, false);
+            let pageStart = RangeFind.endpoint(pageRange, true);
+            let pageEnd = RangeFind.endpoint(pageRange, false);
 
             for (let frame in util.Array.itervalues(win.frames)) {
                 let range = doc.createRange();
                 range.selectNode(frame.frameElement);
-                pushRange(pageStart, endpoint(range, true), win);
-                pageStart = endpoint(range, false);
+                pushRange(pageStart, RangeFind.endpoint(range, true));
+                pageStart = RangeFind.endpoint(range, false);
                 rec(frame);
             }
-            pushRange(pageStart, pageEnd, win);
+            pushRange(pageStart, pageEnd);
         }
         rec(win);
         return frames;
@@ -749,7 +719,23 @@ const RangeFind = Class("RangeFind", {
     get searchString() this.lastString,
     get backward() this.finder.findBackwards,
 
-    search: function (word, reverse) {
+    __iterator__: function () {
+        let range = this.range;
+        let lastRange = this.lastRange
+        try {
+            this.range = this.ranges[0];
+            this.lastRange = null;
+            var res;
+            while (res = this.search(null, this._backward, true))
+                yield res;
+        }
+        finally {
+            this.range = range;
+            this.lastRange = lastRange;
+        }
+    },
+
+    search: function (word, reverse, private) {
         this.finder.findBackwards = reverse ? !this._backward : this._backward;
         let again = word == null;
         if (again)
@@ -758,9 +744,10 @@ const RangeFind = Class("RangeFind", {
             word = word.toLowerCase();
 
         if (!again && (word == "" || word.indexOf(this.lastString) != 0 || this.backward)) {
-            this.unhighlight();
+            if (!private)
+                this.range.deselect();
             if (word == "")
-                this.deScroll(this.range);
+                this.range.descroll()
             this.lastRange = this.startRange;
             this.range = this.ranges.first;
         }
@@ -772,6 +759,8 @@ const RangeFind = Class("RangeFind", {
                 let idx = this.range.index;
                 for (let i in this.backward ? util.range(idx + 1, -1, -1) : util.range(idx, this.ranges.length))
                     yield i;
+                if (private)
+                    return;
                 this.wrapped = true;
                 for (let i in this.backward ? util.range(this.ranges.length, idx, -1) : util.range(0, idx))
                     yield i;
@@ -779,15 +768,23 @@ const RangeFind = Class("RangeFind", {
             for (let i in indices.call(this)) {
                 this.range = this.ranges[i];
                 let start = this.sameDocument(this.lastRange, this.range.range) ?
-                            this.lastRange : this.range.range;
+                            RangeFind.endpoint(this.lastRange, this.backward) :
+                            RangeFind.endpoint(this.range.range, !this.backward);;
 
                 var range = this.finder.Find(word, this.range.range, start, this.range.range);
-                if (range && this.compareRanges(range, this.range.range) <= 0)
+                if (range)
                     break;
-                this.deScroll(this.range);
-                this.unhighlight();
+                if (!private) {
+                    this.range.descroll();
+                    this.range.deselect();
+                }
             }
         }
+
+        if (range)
+            this.lastRange = range.cloneRange();
+        if (private)
+            return range;
 
         this.lastString = word;
         if (range == null) {
@@ -796,159 +793,121 @@ const RangeFind = Class("RangeFind", {
             return null;
         }
         this.wrapped = false;
-        this.selection.removeAllRanges();
-        this.selection.addRange(range);
-        this.selectionController.scrollSelectionIntoView(this.selectionController.SELECTION_NORMAL, 0, false);
-        this.lastRange = range.cloneRange();
+        this.range.selection.removeAllRanges();
+        this.range.selection.addRange(range);
+        this.range.selectionController.scrollSelectionIntoView(
+            this.range.selectionController.SELECTION_NORMAL, 0, false);
         this.found = true;
         return range;
     },
 
+    highlight: function (clear) {
+        if (!this.lastString)
+            return;
+
+        if (!clear)
+            for (let range in values(this.ranges))
+                if (util.evaluateXPath("//@liberator:highlight[1][.='Search']").snapshotLength)
+                    return;
+
+        let span = util.xmlToDom(<span highlight="Search"/>, this.range.document);
+
+        function highlight(range) {
+            let startContainer = range.startContainer;
+            let startOffset = range.startOffset;
+            let node = startContainer.ownerDocument.importNode(span, true);
+
+            let docfrag = range.extractContents();
+            let before = startContainer.splitText(startOffset);
+            let parent = before.parentNode;
+            node.appendChild(docfrag);
+            parent.insertBefore(node, before);
+            range.selectNode(node);
+        }
+        function unhighlight(range) {
+            let elem = range.startContainer;
+            while (!(elem instanceof Element) && elem.parentNode)
+                elem = elem.parentNode;
+            if (elem.getAttributeNS(NS.uri, "highlight") != "Search")
+                return;
+
+            let docfrag = range.extractContents();
+
+            let parent = elem.parentNode;
+            parent.replaceChild(docfrag, elem);
+            parent.normalize();
+        }
+
+        this.range.save();
+        liberator.dump(String.quote(this.range.initialSelection));
+        let action = clear ? unhighlight : highlight;
+        for (let r in this) {
+            action(r);
+            this.lastRange = r;
+        }
+        this.range.deselect();
+        if (!clear)
+            this.search(null, false);
+    },
+
     cancel: function () {
-        if (false) // Later.
-            this.selection.addRange(this.startRange);
-        this.unhighlight();
-        this.deScroll(this.range);
+        this.range.deselect();
+        this.range.descroll()
     },
+}, {
+    Range: Class("RangeFind.Range", {
+        init: function (start, end, index) {
+            if (start instanceof Ci.nsIDOMWindow) { // Kludge
+                this.document = start.document;
+                return;
+            }
 
-    unhighlight: function () {
-        this.selection.removeAllRanges();
-    },
+            this.index = index;
 
-    deScroll: function (range) {
-        range.window.scrollTo(range.scroll.x, range.scroll.y);
+            this.document = start.startContainer.ownerDocument;
+            this.window = this.document.defaultView;
+
+            this.range = this.document.createRange();
+            this.range.setStart(start.startContainer, start.startOffset);
+            this.range.setEnd(end.startContainer, end.startOffset);
+
+            this.save();
+        },
+
+        save: function () {
+            this.scroll = Point(this.window.pageXOffset, this.window.pageYOffset);
+
+            this.initialSelection = null;
+            if (this.selection.rangeCount)
+                this.initialSelection = this.selection.getRangeAt(0);
+        },
+
+        descroll: function (range) {
+            this.window.scrollTo(this.scroll.x, this.scroll.y);
+        },
+
+        deselect: function () {
+            this.selection.removeAllRanges();
+            if (this.initialSelection)
+                this.selection.addRange(this.initialSelection);
+        },
+
+        get docShell() {
+            for (let shell in iter(getBrowser().docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
+                if (shell.QueryInterface(nsIWebNavigation).document == this.document)
+                    return shell;
+        },
+        get selectionController() this.docShell
+                    .QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsISelectionDisplay)
+                    .QueryInterface(Ci.nsISelectionController),
+        get selection() this.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL),
+    }),
+    endpoint: function (range, before) {
+        range = range.cloneRange();
+        range.collapse(before);
+        return range;
     }
-});
-
-/* Stolen from toolkit.jar in Firefox, for the time being. The private
- * methods were unstable, and changed. The new version is not remotely
- * compatible with what we do.
- *   The following only applies to this object, and may not be
- * necessary, or accurate, but, just in case:
- *   The Original Code is mozilla.org viewsource frontend.
- *
- *   The Initial Developer of the Original Code is
- *   Netscape Communications Corporation.
- *   Portions created by the Initial Developer are Copyright (c) 2003
- *   by the Initial Developer. All Rights Reserved.
- *
- *   Contributor(s):
- *       Blake Ross <blake@cs.stanford.edu> (Original Author)
- *       Masayuki Nakano <masayuki@d-toybox.com>
- *       Ben Basson <contact@cusser.net>
- *       Jason Barnabe <jason_barnabe@fastmail.fm>
- *       Asaf Romano <mano@mozilla.com>
- *       Ehsan Akhgari <ehsan.akhgari@gmail.com>
- *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
- */
-const Highlighter = Class("Highlighter", {
-    init: function (doc) {
-        this.doc = doc;
-    },
-
-    doc: null,
-
-    spans: [],
-
-    search: function (word, matchCase) {
-        var finder = services.create("find");
-
-        var range;
-        while ((range = finder.Find(word, this.searchRange, this.startPt, this.endPt)))
-            yield range;
-    },
-
-    highlightDoc: function highlightDoc(win, word) {
-        Array.forEach(win.frames, function (frame) this.highlightDoc(frame, word), this);
-
-        var doc = win.document;
-        if (!doc || !(doc instanceof HTMLDocument))
-            return;
-
-        if (!word) {
-            let elems = this._highlighter.spans;
-            for (let i = elems.length; --i >= 0;) {
-                let elem = elems[i];
-                let docfrag = doc.createDocumentFragment();
-                let next = elem.nextSibling;
-                let parent = elem.parentNode;
-
-                let child;
-                while (child = elem.firstChild)
-                    docfrag.appendChild(child);
-
-                parent.removeChild(elem);
-                parent.insertBefore(docfrag, next);
-                parent.normalize();
-            }
-            return;
-        }
-
-        var baseNode = <span highlight="Search"/>;
-        baseNode = util.xmlToDom(baseNode, window.content.document);
-
-        var body = doc.body;
-        var count = body.childNodes.length;
-        this.searchRange = doc.createRange();
-        this.startPt = doc.createRange();
-        this.endPt = doc.createRange();
-
-        this.searchRange.setStart(body, 0);
-        this.searchRange.setEnd(body, count);
-
-        this.startPt.setStart(body, 0);
-        this.startPt.setEnd(body, 0);
-        this.endPt.setStart(body, count);
-        this.endPt.setEnd(body, count);
-
-        liberator.interrupted = false;
-        let n = 0;
-        for (let retRange in this.search(word, this._caseSensitive)) {
-            // Highlight
-            var nodeSurround = baseNode.cloneNode(true);
-            var node = this.highlight(retRange, nodeSurround);
-            this.startPt = node.ownerDocument.createRange();
-            this.startPt.setStart(node, node.childNodes.length);
-            this.startPt.setEnd(node, node.childNodes.length);
-            if (n++ % 20 == 0)
-                liberator.threadYield(true);
-            if (liberator.interrupted)
-                break;
-        }
-    },
-
-    highlight: function highlight(range, node) {
-        var startContainer = range.startContainer;
-        var startOffset = range.startOffset;
-        var endOffset = range.endOffset;
-        var docfrag = range.extractContents();
-        var before = startContainer.splitText(startOffset);
-        var parent = before.parentNode;
-        node.appendChild(docfrag);
-        parent.insertBefore(node, before);
-        this.spans.push(node);
-        return node;
-    },
-
-    /**
-     * Clears all search highlighting.
-     */
-    clear: function () {
-        this.spans.forEach(function (span) {
-            if (span.parentNode) {
-                let el = span.firstChild;
-                while (el) {
-                    span.removeChild(el);
-                    span.parentNode.insertBefore(el, span);
-                    el = span.firstChild;
-                }
-                span.parentNode.removeChild(span);
-            }
-        });
-        this.spans = [];
-    },
-
-    isHighlighted: function (doc) this.doc == doc && this.spans.length > 0
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

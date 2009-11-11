@@ -190,17 +190,17 @@ const Option = Class("Option", {
         else
             scope = this.scope;
 
-        let aValue;
+        let value;
 
         if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
-            aValue = tabs.options[this.name];
-        if ((scope & options.OPTION_SCOPE_GLOBAL) && (aValue == undefined))
-            aValue = this.globalValue;
+            value = tabs.options[this.name];
+        if ((scope & options.OPTION_SCOPE_GLOBAL) && (value == undefined))
+            value = this.globalValue;
 
         if (this.getter)
-            return liberator.trapErrors(this.getter, this, aValue);
+            return liberator.trapErrors(this.getter, this, value);
 
-        return aValue;
+        return value;
     },
 
     /**

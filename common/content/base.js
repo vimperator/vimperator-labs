@@ -8,6 +8,19 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
+// TODO: Move to liberator.
+function setTimeout(callback, timeout, self) {
+    function target() {
+        try {
+            callback.call(self);
+        }
+        catch (e) {
+            liberator.reportError(e);
+        }
+    }
+    return window.setTimeout(target, timeout);
+}
+
 function array(obj) {
     if (isgenerator(obj))
         obj = [k for (k in obj)];
@@ -230,8 +243,9 @@ function Class() {
     if (callable(args[0]))
         superclass = args.shift();
 
-    var Constructor = eval("(function " + (name || superclass.name) +
+    var Constructor = eval("(function " + (name || superclass.name).replace(/\W/g, "_") +
             String.substr(constructor, 20) + ")");
+    Constructor.name = name || superclass.name;
 
     if (!('init' in superclass.prototype)) {
         var superc = superclass;
