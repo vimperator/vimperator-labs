@@ -882,6 +882,8 @@ const Liberator = Module("liberator", {
         catch (e) {
             if (e instanceof FailedAssertion)
                 liberator.echoerr(e.message);
+            else
+                liberator.reportError(e);
         }
     },
 
