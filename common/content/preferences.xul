@@ -4,7 +4,7 @@
     <script type="application/javascript;version=1.8">
         let uri = Components.classes["@mozilla.org/network/io-service;1"]
                             .getService(Components.interfaces.nsIIOService)
-                            .newURI("chrome://liberator/locale/options.html", null, null);
+                            .newURI("liberator://help/options", null, null);
         Application.activeWindow.open(uri).focus(); // TODO: generalise for Muttator et al.
         window.close();
     </script>
