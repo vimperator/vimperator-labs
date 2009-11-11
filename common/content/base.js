@@ -29,7 +29,23 @@ function array(obj) {
     return util.Array(obj);
 }
 
+function allkeys(obj) {
+    let ret = {};
+    for (; obj; obj = obj.__proto__) {
+        services.get("debugger").wrapValue(obj).getProperties(ret, {});
+        for (let prop in values(ret.value))
+            yield prop.name.stringValue;
+    }
+}
+
 function keys(obj) {
+    if (modules.services) {
+        let ret = {};
+        services.get("debugger").wrapValue(obj).getProperties(ret, {});
+        for (let prop in values(ret.value))
+            yield prop.name.stringValue;
+        return;
+    }
     if ('__iterator__' in obj) {
         var iter = obj.__iterator__;
         yield '__iterator__';

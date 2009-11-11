@@ -61,7 +61,7 @@ window.addEventListener("load", function () {
                 fn();
         }
         catch (e) {
-            dump("Loading " + (module && module.name) + ": " + e);
+            dump("Loading " + (module && module.name) + ": " + e + "\n");
             if (e.stack)
                 dump(e.stack);
         }

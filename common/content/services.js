@@ -22,6 +22,7 @@ const Services = Module("services", {
         this.add("cache",               "@mozilla.org/network/cache-service;1",             Ci.nsICacheService);
         this.add("console",             "@mozilla.org/consoleservice;1",                    Ci.nsIConsoleService);
         this.add("liberator:",          "@mozilla.org/network/protocol;1?name=liberator");
+        this.add("debugger",            "@mozilla.org/js/jsd/debugger-service;1",           Ci.jsdIDebuggerService);
         this.add("directory",           "@mozilla.org/file/directory_service;1",            Ci.nsIProperties);
         this.add("downloadManager",     "@mozilla.org/download-manager;1",                  Ci.nsIDownloadManager);
         this.add("environment",         "@mozilla.org/process/environment;1",               Ci.nsIEnvironment);

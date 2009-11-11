@@ -783,24 +783,18 @@ const Completion = Module("completion", {
             }
 
             this.iter = function iter(obj) {
-                let iterator = ([k, getKey(obj, k)] for (k in obj));
-                try {
-                    // The point of 'for k in obj' is to get keys
-                    // that are accessible via . or [] notation.
-                    // Iterators quite often return values of no
-                    // use whatsoever for this purpose, so, we try
-                    // this rather dirty hack of getting a standard
-                    // object iterator for any object that defines its
-                    // own.
-                    if ("__iterator__" in obj) {
-                        let oldIter = obj.__iterator__;
-                        delete obj.__iterator__;
-                        iterator = Iterator(obj);
-                        obj.__iterator__ = oldIter;
+                let seen = {};
+                let ret = {};
+                for (; obj; obj = obj.__proto__) {
+                    services.get("debugger").wrapValue(obj).getProperties(ret, {});
+                    for (let prop in values(ret.value)) {
+                        let name = '|' + prop.name.stringValue;
+                        if (name in seen)
+                            continue;
+                        seen[name] = 1;
+                        yield [prop.name.stringValue, prop.value.getWrappedValue()]
                     }
                 }
-                catch (e) {}
-                return iterator;
             };
 
             // Search the object for strings starting with @key.
@@ -829,6 +823,7 @@ const Completion = Module("completion", {
                     // objects are problematic, to say the least.
                     compl = [v for (v in this.iter(obj))
                         if (v && (typeof orig == "object" && v[0] in orig || getKey(orig, v[0]) !== undefined))];
+                    compl = util.Array.uniq(compl, true);
                 }
 
                 // And if wrappedJSObject happens to be available,
