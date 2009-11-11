@@ -684,8 +684,8 @@ const Buffer = Module("buffer", {
             let file = content.document.location.pathname.split("/").pop() || "[No Name]";
             let title = content.document.title || "[No Title]";
 
-            let info = template.map("gf", function (opt)
-                    template.map(this.pageInfo[opt][0](), util.identity, ", "),
+            let info = template.map("gf",
+                function (opt) template.map(buffer.pageInfo[opt][0](), util.identity, ", "),
                 ", ");
 
             if (bookmarks.isBookmarked(this.URL))
@@ -698,7 +698,7 @@ const Buffer = Module("buffer", {
 
         let option = sections || options["pageinfo"];
         let list = template.map(option, function (option) {
-            let opt = this.pageInfo[option];
+            let opt = buffer.pageInfo[option];
             if (opt)
                 return template.table(opt[1], opt[0](true));
         }, <br/>);
