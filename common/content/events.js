@@ -523,7 +523,7 @@ const Events = Module("events", {
      */
     toString: function (event) {
         if (!event)
-            return "[object Mappings]";
+            return "[instance events]";
 
         if (event.liberatorString)
             return event.liberatorString;

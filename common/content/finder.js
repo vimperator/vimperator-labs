@@ -479,13 +479,15 @@ const RangeFinder = Module("rangefinder", {
     },
 
     find: function (str, backwards) {
+try {
         let caseSensitive = false;
         this.rangeFind = RangeFind(caseSensitive, backwards);
 
-        if (!this.rangeFind.search(searchString))
-            setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + searchPattern); }, 0);
+        if (!this.rangeFind.search(str))
+            setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + str); }, 0);
 
         return this.rangeFind.found;
+} catch(e) { liberator.reportError(e) }
     },
 
     findAgain: function (reverse) {
@@ -513,8 +515,10 @@ const RangeFinder = Module("rangefinder", {
 
     // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
     onKeyPress: function (command) {
+try {
         if (options["incsearch"] && this.rangeFind)
             this.rangeFind.search(command);
+} catch(e) { liberator.reportError(e); }
     },
 
     onSubmit: function (command) {
@@ -622,28 +626,18 @@ const RangeFinder = Module("rangefinder", {
 
 const RangeFind = Class("RangeFind", {
     init: function (matchCase, backward) {
-        this.finder = Components.classes["@mozilla.org/embedcomp/rangefind;1"]
-                               .createInstance()
-                               .QueryInterface(Components.interfaces.nsIFind);
+        this.finder = services.create("find");
         this.finder.caseSensitive = matchCase;
         this.matchCase = matchCase;
         this._backward = backward;
-        this.sel = buffer.selectionController;
-        this.win = content;
-        this.doc = content.document;
 
-        this.pageRange = this.doc.createRange();
-        this.pageRange.setStartBefore(this.doc.body);
-        this.pageRange.setEndAfter(this.doc.body);
-        this.pageStart = this.pageRange.cloneRange();
-        this.pageEnd = this.pageRange.cloneRange();
-        this.pageStart.collapse(true);
-        this.pageEnd.collapse(false);
+        this.ranges = this.makeFrameList(content);
+        this.range = { document: (tabs.localStore.focusedFrame || content).document };
 
-        this.start = Point(this.win.pageXOffset, this.win.pageYOffset);
-        this.selection = this.sel.getSelection(this.sel.SELECTION_NORMAL);
-        this.startRange = this.selection.rangeCount ? this.selection.getRangeAt(0) : this.pageStart;
-        this.startRange.collapse(true);
+        this.startRange = (this.selection.rangeCount ? this.selection.getRangeAt(0) : this.ranges[0].range).cloneRange();
+        this.startRange.collapse(!backward);
+        this.range = this.findRange(this.startRange);
+        this.ranges.first = this.range;
 
         this.lastString = "";
         this.lastRange = null;
@@ -651,9 +645,76 @@ const RangeFind = Class("RangeFind", {
         this.found = false;
     },
 
+    get docShell() {
+        for (let shell in iter(getBrowser().docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
+            if (shell.QueryInterface(nsIWebNavigation).document == this.range.document)
+                return shell;
+    },
+    get selectionController() this.docShell
+                .QueryInterface(Ci.nsIInterfaceRequestor)
+                .getInterface(Ci.nsISelectionDisplay)
+                .QueryInterface(Ci.nsISelectionController),
+    get selection() this.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL),
+
+    sameDocument: function (r1, r2) r1 && r2 && r1.endContainer.ownerDocument == r2.endContainer.ownerDocument,
+
+    compareRanges: function (r1, r2) 
+            this.backward ?  r1.compareBoundaryPoints(Range.END_TO_START, r2)
+                          : -r1.compareBoundaryPoints(Range.START_TO_END, r2),
+
+    findRange: function (range) {
+        let doc = range.startContainer.ownerDocument;
+        let win = doc.defaultView;
+        let ranges = this.ranges.filter(function (r)
+            r.window == win &&
+            r.range.compareBoundaryPoints(Range.START_TO_END, range) >= 0 &&
+            r.range.compareBoundaryPoints(Range.END_TO_START, range) <= 0);
+
+        if (this.backward)
+            return ranges[ranges.length - 1];
+        return ranges[0];
+    },
+
+    makeFrameList: function (win) {
+        win = win.top;
+        let frames = [];
+
+        function endpoint(range, before) {
+            range = range.cloneRange();
+            range.collapse(before);
+            return range;
+        }
+        function pushRange(start, end, win) {
+            let scroll = Point(win.pageXOffset, win.pageYOffset);
+            let range = win.document.createRange();
+            range.setStart(start.startContainer, start.startOffset);
+            range.setEnd(end.startContainer, end.startOffset);
+            frames.push({ range: range, index: frames.length, window: win, document: win.document, scroll: scroll });
+        }
+        function rec(win) {
+            let doc = win.document;
+            let pageRange = doc.createRange();
+            pageRange.setStartBefore(doc.body || doc.documentElement.lastChild);
+            pageRange.setEndAfter(doc.body || doc.documentElement.lastChild);
+            let pageStart = endpoint(pageRange, true);
+            let pageEnd = endpoint(pageRange, false);
+
+            for (let frame in util.Array.itervalues(win.frames)) {
+                let range = doc.createRange();
+                range.selectNode(frame.frameElement);
+                pushRange(pageStart, endpoint(range, true), win);
+                pageStart = endpoint(range, false);
+                rec(frame);
+            }
+            pushRange(pageStart, pageEnd, win);
+        }
+        rec(win);
+        return frames;
+    },
+
     // This doesn't work yet.
     resetCaret: function () {
-        let equal = function (r1, r2) !r1.compareToRange(Range.START_TO_START, r2) && !r1.compareToRange(Range.END_TO_END, r2);
+        let equal = function (r1, r2) !r1.compareBoundaryPoints(Range.START_TO_START, r2) && !r1.compareBoundaryPoints(Range.END_TO_END, r2);
         letselection = this.win.getSelection();
         if (selection.rangeCount == 0)
             selection.addRange(this.pageStart);
@@ -696,48 +757,67 @@ const RangeFind = Class("RangeFind", {
         if (!this.matchCase)
             word = word.toLowerCase();
 
+        if (!again && (word == "" || word.indexOf(this.lastString) != 0 || this.backward)) {
+            this.unhighlight();
+            if (word == "")
+                this.deScroll(this.range);
+            this.lastRange = this.startRange;
+            this.range = this.ranges.first;
+        }
+
         if (word == "")
             var range = this.startRange;
         else {
-            if (this.lastRange) {
-                if (again)
-                    this.lastRange.collapse(this.backward);
-                else if (word.indexOf(this.lastString) != 0 || this.backward)
-                    this.lastRange = null;
-                else
-                    this.lastRange.collapse(true);
+            function indices() {
+                let idx = this.range.index;
+                for (let i in this.backward ? util.range(idx + 1, -1, -1) : util.range(idx, this.ranges.length))
+                    yield i;
+                this.wrapped = true;
+                for (let i in this.backward ? util.range(this.ranges.length, idx, -1) : util.range(0, idx))
+                    yield i;
             }
+            for (let i in indices.call(this)) {
+                this.range = this.ranges[i];
+                let start = this.sameDocument(this.lastRange, this.range.range) ?
+                            this.lastRange : this.range.range;
 
-            var range = this.finder.Find(word, this.pageRange,
-                                          this.lastRange || this.startRange,
-                                          this.pageEnd);
+                var range = this.finder.Find(word, this.range.range, start, this.range.range);
+                if (range && this.compareRanges(range, this.range.range) <= 0)
+                    break;
+                this.deScroll(this.range);
+                this.unhighlight();
+            }
         }
 
         this.lastString = word;
         if (range == null) {
-            if (this.wrapped) {
-                this.cancel();
-                this.found = false;
-                return null;
-            }
-            this.wrapped = true;
-            this.lastRange = this.backward ? this.pageEnd : this.pageStart;
-            return this.search(again ? null : word, reverse);
+            this.cancel();
+            this.found = false;
+            return null;
         }
         this.wrapped = false;
         this.selection.removeAllRanges();
         this.selection.addRange(range);
-        this.sel.scrollSelectionIntoView(this.sel.SELECTION_NORMAL, 0, false);
+        this.selectionController.scrollSelectionIntoView(this.selectionController.SELECTION_NORMAL, 0, false);
         this.lastRange = range.cloneRange();
         this.found = true;
         return range;
     },
 
     cancel: function () {
-        this.selection.removeAllRanges();
-        this.selection.addRange(this.startRange);
-        this.win.scrollTo(this.start.x, this.start.y);
+        if (false) // Later.
+            this.selection.addRange(this.startRange);
+        this.unhighlight();
+        this.deScroll(this.range);
     },
+
+    unhighlight: function () {
+        this.selection.removeAllRanges();
+    },
+
+    deScroll: function (range) {
+        range.window.scrollTo(range.scroll.x, range.scroll.y);
+    }
 });
 
 /* Stolen from toolkit.jar in Firefox, for the time being. The private

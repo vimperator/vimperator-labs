@@ -115,11 +115,11 @@ function isobject(obj) {
 }
 
 function isarray(obj) {
-    return Object.prototype.toString(obj) == "[object Array]";
+    return Object.prototype.toString.call(obj) == "[object Array]";
 }
 
 function isgenerator(val) {
-    return Object.prototype.toString(obj) == "[object Generator]";
+    return Object.prototype.toString.call(val) == "[object Generator]";
 }
 
 function isstring(val) {
@@ -212,9 +212,11 @@ function Class() {
             constructor: Constructor,
             get closure() {
                 delete this.closure;
-                const self = this;
-                return this.closure = dict([k for (k in this) if (!self.__lookupGetter__(k) && callable(self[k]))].map(
-                        function (k) [k, function () self[k].apply(self, arguments)]));
+                function closure(fn) function () fn.apply(self, arguments);
+                for (let k in this)
+                    if (!this.__lookupGetter__(k) && callable(this[k]))
+                        closure[k] = closure(self[k]);
+                return this.closure = closure;
             }
         };
         var res = self.init.apply(self, arguments);
