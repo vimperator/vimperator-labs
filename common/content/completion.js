@@ -782,17 +782,20 @@ const Completion = Module("completion", {
                 }
             }
 
-            this.iter = function iter(obj) {
+            this.iter = function iter(obj, toplevel) {
                 let seen = {};
                 let ret = {};
-                for (; obj; obj = obj.__proto__) {
+                let top = services.get("debugger").wrapValue(obj);
+                if (!toplevel)
+                    obj = obj.__proto__;
+                for (; obj; obj = !toplevel && obj.__proto__) {
                     services.get("debugger").wrapValue(obj).getProperties(ret, {});
                     for (let prop in values(ret.value)) {
                         let name = '|' + prop.name.stringValue;
                         if (name in seen)
                             continue;
                         seen[name] = 1;
-                        yield [prop.name.stringValue, prop.value.getWrappedValue()]
+                        yield [prop.name.stringValue, top.getProperty(prop.name.stringValue).value.getWrappedValue()]
                     }
                 }
             };
@@ -801,7 +804,7 @@ const Completion = Module("completion", {
             // If @last is defined, key is a quoted string, it's
             // wrapped in @last after @offset characters are sliced
             // off of it and it's quoted.
-            this.objectKeys = function objectKeys(obj) {
+            this.objectKeys = function objectKeys(obj, toplevel) {
                 // Things we can dereference
                 if (["object", "string", "function"].indexOf(typeof obj) == -1)
                     return [];
@@ -817,19 +820,10 @@ const Completion = Module("completion", {
                 if (modules.isPrototypeOf(obj))
                     compl = [v for (v in Iterator(obj))];
                 else {
-                    if (getKey(obj, 'wrappedJSObject'))
-                        obj = obj.wrappedJSObject;
-                    // v[0] in orig and orig[v[0]] catch different cases. XPCOM
-                    // objects are problematic, to say the least.
-                    compl = [v for (v in this.iter(obj))
-                        if (v && (typeof orig == "object" && v[0] in orig || getKey(orig, v[0]) !== undefined))];
-                    compl = util.Array.uniq(compl, true);
+                    compl = [k for (k in this.iter(obj, toplevel))];
+                    if (!toplevel)
+                        compl = util.Array.uniq(compl, true);
                 }
-
-                // And if wrappedJSObject happens to be available,
-                // return that, too.
-                if (getKey(orig, 'wrappedJSObject'))
-                    compl.push(["wrappedJSObject", obj]);
 
                 // Add keys for sorting later.
                 // Numbers are parsed to ints.
@@ -1104,7 +1098,7 @@ const Completion = Module("completion", {
                 function complete(objects, key, compl, string, last) {
                     let orig = compl;
                     if (!compl) {
-                        compl = function (context, obj) {
+                        compl = function (context, obj, recurse) {
                             context.process = [null, function highlight(item, v) template.highlight(v, true)];
                             // Sort in a logical fashion for object keys:
                             //  Numbers are sorted as numbers, rather than strings, and appear first.
@@ -1121,7 +1115,7 @@ const Completion = Module("completion", {
                                 context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
                             if (obj == cache.evalContext)
                                 context.regenerate = true;
-                            context.generate = function () self.objectKeys(obj);
+                            context.generate = function () self.objectKeys(obj, !recurse);
                         };
                     }
                     // TODO: Make this a generic completion helper function.
@@ -1133,6 +1127,10 @@ const Completion = Module("completion", {
                     if (orig)
                         return;
                     for (let [, obj] in Iterator(objects)) {
+                        let name = obj[1] + " (prototypes)";
+                        this.context.fork(name, top[OFFSET], this, fill,
+                            obj[0], name, function(a, b) compl(a, b, true), compl != orig,
+                            filter, last, key.length);
                         obj[1] += " (substrings)";
                         this.context.fork(obj[1], top[OFFSET], this, fill,
                             obj[0], obj[1], compl, false, filter, last, key.length);
