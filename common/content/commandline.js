@@ -1539,7 +1539,7 @@ const CommandLine = Module("commandline", {
             "Items which are completed at the :open prompts",
             "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
             {
-                completer: function (context) array(keys(completion.urlCompleters)),
+                completer: function (context) array(values(completion.urlCompleters)),
                 validator: Option.validateCompleter
             });
 
