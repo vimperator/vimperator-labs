@@ -488,10 +488,10 @@ const Hints = Module("hints", {
         if (timeout == 0)
             // force a possible mode change, based on whether an input field has focus
             events.onFocusChange();
-        setTimeout(function () {
+        this.setTimeout(function () {
             if (modes.extended & modes.HINTS)
                 modes.reset();
-            hints._hintMode.action(elem, elem.href || "", hints._extendedhintCount);
+            this._hintMode.action(elem, elem.href || "", hints._extendedhintCount);
         }, timeout);
         return true;
     },
@@ -507,7 +507,7 @@ const Hints = Module("hints", {
         if (this._hintNumber > 0 && this._hintNumber * 10 <= this._validHints.length) {
             let timeout = options["hinttimeout"];
             if (timeout > 0)
-                this._activeTimeout = setTimeout(function () { hints._processHints(true); }, timeout);
+                this._activeTimeout = this.setTimeout(function () { this._processHints(true); }, timeout);
         }
         else // we have a unique hint
             this._processHints(true);

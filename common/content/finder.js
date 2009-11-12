@@ -238,7 +238,7 @@ const Finder = Module("finder", {
         this._found = fastFind.find(this._searchString, this._linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
         if (!this._found)
-            setTimeout(function () liberator.echoerr("E486: Pattern not found: " + finder._searchPattern, commandline.FORCE_SINGLELINE), 0);
+            this.setTimeout(function () liberator.echoerr("E486: Pattern not found: " + this._searchPattern, commandline.FORCE_SINGLELINE), 0);
     },
 
     /**
@@ -325,7 +325,7 @@ const Finder = Module("finder", {
         // TODO: move to find() when reverse incremental searching is kludged in
         // need to find again for reverse searching
         if (this._backwards)
-            setTimeout(function () { finder.findAgain(false); }, 0);
+            this.setTimeout(function () { this.findAgain(false); }, 0);
 
         if (options["hlsearch"])
             this.highlight(this._searchString);
@@ -493,9 +493,9 @@ const RangeFinder = Module("rangefinder", {
         else if (this.rangeFind.wrapped) {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
-            setTimeout(function () {
-                let msg = rangfinder.rangeFind.backward ? "search hit TOP, continuing at BOTTOM"
-                                                        : "search hit BOTTOM, continuing at TOP";
+            this.setTimeout(function () {
+                let msg = this.rangeFind.backward ? "search hit TOP, continuing at BOTTOM"
+                                                  : "search hit BOTTOM, continuing at TOP";
                 commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }, 0);
         }

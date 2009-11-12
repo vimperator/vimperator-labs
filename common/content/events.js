@@ -880,7 +880,7 @@ const Events = Module("events", {
                 events.feedingKeys = false;
                 if (modes.isReplaying) {
                     modes.isReplaying = false;
-                    setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + this._lastMacro + "'"); }, 100);
+                    this.setTimeout(function () { liberator.echomsg("Canceled playback of macro '" + this._lastMacro + "'"); }, 100);
                 }
             }
             else

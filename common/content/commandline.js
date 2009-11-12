@@ -596,7 +596,7 @@ const CommandLine = Module("commandline", {
         this._multilineInputWidget.value = "";
         this._autosizeMultilineInputWidget();
 
-        setTimeout(function () { this._multilineInputWidget.focus(); }, 10);
+        this.setTimeout(function () { this._multilineInputWidget.focus(); }, 10);
     },
 
     /**
@@ -608,18 +608,17 @@ const CommandLine = Module("commandline", {
      * @private
      */
     onEvent: function onEvent(event) {
-        const self = this;
         let command = this.command;
 
         if (event.type == "blur") {
             // prevent losing focus, there should be a better way, but it just didn't work otherwise
-            setTimeout(function () {
-                if (self._commandShown() && event.originalTarget == self._commandWidget.inputField)
-                    self._commandWidget.inputField.focus();
+            this.setTimeout(function () {
+                if (this._commandShown() && event.originalTarget == this._commandWidget.inputField)
+                    this._commandWidget.inputField.focus();
             }, 0);
         }
         else if (event.type == "focus") {
-            if (!self._commandShown() && event.target == self._commandWidget.inputField) {
+            if (!this._commandShown() && event.target == this._commandWidget.inputField) {
                 event.target.blur();
                 liberator.beep();
             }
@@ -711,7 +710,7 @@ const CommandLine = Module("commandline", {
         }
         else if (event.type == "blur") {
             if (modes.extended & modes.INPUT_MULTILINE)
-                setTimeout(function () { this._multilineInputWidget.inputField.focus(); }, 0);
+                this.setTimeout(function () { this._multilineInputWidget.inputField.focus(); }, 0);
         }
         else if (event.type == "input")
             this._autosizeMultilineInputWidget();
@@ -1038,6 +1037,7 @@ const CommandLine = Module("commandline", {
             if (liberator.has("sanitizer") && (timespan || options["sanitizetimespan"]))
                 range = sanitizer.getClearRange(timespan || options["sanitizetimespan"]);
 
+            const self = this;
             this.store.mutate("filter", function (item) {
                 let timestamp = (item.timestamp || Date.now()/1000) * 1000;
                 return !line.privateData || timestamp < self.range[0] || timestamp > self.range[1];
@@ -1653,16 +1653,18 @@ const ItemList = Class("ItemList", {
     _dom: function (xml, map) util.xmlToDom(xml, this._doc, map),
 
     _autoSize: function () {
-    const self = this;
         if (this._container.collapsed)
             this._div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
+
         this._minHeight = Math.max(this._minHeight, this._divNodes.completions.getBoundingClientRect().bottom);
         this._container.height = this._minHeight;
+
         if (this._container.collapsed)
             this._div.style.minWidth = "";
+
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
-        setTimeout(function () { self._container.height -= commandline.getSpaceNeeded() }, 0);
+        this.setTimeout(function () { this._container.height -= commandline.getSpaceNeeded() }, 0);
     },
 
     _getCompletion: function (index) this._completionElements.snapshotItem(index - this._startIndex),

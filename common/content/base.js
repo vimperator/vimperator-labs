@@ -8,19 +8,6 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-// TODO: Move to liberator.
-function setTimeout(callback, timeout, self) {
-    function target() {
-        try {
-            callback.call(self);
-        }
-        catch (e) {
-            liberator.reportError(e);
-        }
-    }
-    return window.setTimeout(target, timeout);
-}
-
 function array(obj) {
     if (isgenerator(obj))
         obj = [k for (k in obj)];
@@ -288,7 +275,14 @@ function Class() {
 Class.toString = function () "[class " + this.constructor.name + "]",
 Class.prototype = {
     init: function() {},
+
     toString: function () "[instance " + this.constructor.name + "]",
+
+    setTimeout: function (callback, timeout) {
+        const self = this;
+        function target() callback.call(self);
+        return window.setTimeout(target, timeout);
+    }
 };
 
 const Struct = Class("Struct", {
