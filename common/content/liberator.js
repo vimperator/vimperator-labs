@@ -66,6 +66,8 @@ const Liberator = Module("liberator", {
         // without explicitly selecting a profile.
         /** @property {string} The name of the current user profile. */
         this.profileName = services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
+
+        config.features.push(Liberator.getPlatformFeature());
     },
 
     destroy: function () {
@@ -1730,8 +1732,6 @@ const Liberator = Module("liberator", {
         };
     },
     load: function () {
-        config.features.push(Liberator.getPlatformFeature());
-
         liberator.triggerObserver("load");
 
         liberator.log("All modules loaded", 3);
