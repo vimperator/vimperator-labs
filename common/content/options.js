@@ -1117,26 +1117,10 @@ const Options = Module("options", {
                             else if (matches[3] == ".")
                                 reference[0][reference[1]] += expr.toString();
                         }
-                        else {
-                            if (!reference[0]) {
-                                if (reference[2] == "g")
-                                    reference[0] = liberator.globalVariables;
-                                else
-                                    return; // for now
-                            }
 
-                            if (matches[3]) {
-                                if (matches[3] == "+")
-                                    reference[0][reference[1]] += expr;
-                                else if (matches[3] == "-")
-                                    reference[0][reference[1]] -= expr;
-                                else if (matches[3] == ".")
-                                    reference[0][reference[1]] += expr.toString();
-                            }
-                            else
-                                reference[0][reference[1]] = expr;
-                        }
-                    }
+                        else
+                            reference[0][reference[1]] = expr;
+                     }
                 }
                 // 1 - name
                 else if (matches = args.match(/^\s*([\w:]+)\s*$/)) {
