@@ -40,12 +40,16 @@ function allkeys(obj) {
 
 function keys(obj) {
     if (modules.services) {
-        let ret = {};
-        services.get("debugger").wrapValue(obj).getProperties(ret, {});
-        for (let prop in values(ret.value))
-            yield prop.name.stringValue;
-        return;
+        try {
+            let ret = {};
+            services.get("debugger").wrapValue(obj).getProperties(ret, {});
+            for (let prop in values(ret.value))
+                yield prop.name.stringValue;
+            return;
+        }
+        catch (e) {}
     }
+
     if ('__iterator__' in obj) {
         var iter = obj.__iterator__;
         yield '__iterator__';
