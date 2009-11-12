@@ -812,7 +812,7 @@ const Tabs = Module("tabs", {
                     let tab = tabs.getTab();
 
                     let activate = args.bang ? true : false;
-                    if (/\btabopen\b/.test(options["activate"]))
+                    if (options.get("activate").has("tabopen", "all"))
                         activate = !activate;
 
                     for (let i in util.range(0, Math.max(1, args.count)))
@@ -1045,7 +1045,6 @@ const Tabs = Module("tabs", {
                         ["tabopen", ":tabopen[!] command"],
                         ["paste", "P and gP mappings"]
                     ],
-                    validator: Option.validateCompleter
                 });
 
             options.add(["newtab"],
