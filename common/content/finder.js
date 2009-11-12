@@ -464,6 +464,8 @@ const RangeFinder = Module("rangefinder", {
     requires: ["config"],
 
     init: function () {
+        this.lastSearchString = "";
+        this.lastSearchBackwards = false;
     },
 
     openPrompt: function (mode) {
@@ -475,9 +477,9 @@ const RangeFinder = Module("rangefinder", {
 
     find: function (str, backwards) {
         let caseSensitive = false;
-        if (this.rangeFind)
-            this.clear();
+        let highlighted = this.rangeFind && this.rangeFind.highlighted; // Kludge?
         this.rangeFind = RangeFind(caseSensitive, backwards);
+        this.rangeFind.highlighted = highlighted;
 
         if (!this.rangeFind.search(str))
             setTimeout(function () { liberator.echoerr("E486: Pattern not found: " + str); }, 0);
@@ -487,9 +489,9 @@ const RangeFinder = Module("rangefinder", {
 
     findAgain: function (reverse) {
         if (!this.rangeFind)
-            this.find(this._lastSearchString);
+            this.find(this.lastSearchString);
         else if (!this.rangeFind.search(null, reverse))
-            liberator.echoerr("E486: Pattern not found: " + lastSearchPattern);
+            liberator.echoerr("E486: Pattern not found: " + this.lastSearchString);
         else if (this.rangeFind.wrapped) {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
@@ -499,12 +501,11 @@ const RangeFinder = Module("rangefinder", {
                 commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
             }, 0);
         }
-        else {
-            liberator.echo((this.rangeFind.backward ? "?" : "/") + lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+        else
+            commandline.echo((this.rangeFind.backward ? "?" : "/") + this.lastSearchString, null, commandline.FORCE_SINGLELINE);
 
-            if (options["hlsearch"])
-                this.highlight(this.rangeFind.lastString);
-        }
+        if (options["hlsearch"])
+            this.highlight();
     },
 
     // Called when the user types a key in the search dialog. Triggers a find attempt if 'incsearch' is set
@@ -516,12 +517,11 @@ const RangeFinder = Module("rangefinder", {
     onSubmit: function (command) {
         if (!options["incsearch"] || !this.rangeFind || !this.rangeFind.found) {
             this.clear();
-            this.find(command || this._lastSearchString, this._lastSearchBackwards);
+            this.find(command || this.lastSearchString, this.lastSearchBackwards);
         }
 
-        this._lastSearchBackwards = this.rangeFind.backwards;
-        this._lastSearchPattern = command;
-        this._lastSearchString = command;
+        this.lastSearchBackwards = this.rangeFind.backwards;
+        this.lastSearchString = this.rangeFind.searchString;
 
         if (options["hlsearch"])
             this.highlight();
@@ -535,7 +535,6 @@ const RangeFinder = Module("rangefinder", {
         // TODO: code to reposition the document to the place before search started
         if (this.rangeFind)
             this.rangeFind.cancel();
-        this.rangeFind = null;
     },
 
     get rangeFind() tabs.localStore.rangeFind,
@@ -629,6 +628,7 @@ const RangeFind = Class("RangeFind", {
         this.range = this.findRange(this.startRange);
         this.ranges.first = this.range;
 
+        this.highlighted = null;
         this.lastString = "";
         this.lastRange = null;
         this.forward = null;
@@ -719,19 +719,18 @@ const RangeFind = Class("RangeFind", {
     get searchString() this.lastString,
     get backward() this.finder.findBackwards,
 
-    __iterator__: function () {
-        let range = this.range;
-        let lastRange = this.lastRange
+    iter: function (word) {
+        let saved = ["range", "lastRange", "lastString"].map(this.closure(function (s) [s, this[s]]))
         try {
             this.range = this.ranges[0];
             this.lastRange = null;
+            this.lastString = word
             var res;
             while (res = this.search(null, this._backward, true))
                 yield res;
         }
         finally {
-            this.range = range;
-            this.lastRange = lastRange;
+            saved.forEach(function ([k, v]) this[k] = v, this)
         }
     },
 
@@ -802,13 +801,15 @@ const RangeFind = Class("RangeFind", {
     },
 
     highlight: function (clear) {
-        if (!this.lastString)
+
+        if (!clear && (!this.lastString || this.lastString == this.highlighted))
             return;
 
-        if (!clear)
-            for (let range in values(this.ranges))
-                if (util.evaluateXPath("//@liberator:highlight[1][.='Search']").snapshotLength)
-                    return;
+        if (!clear && this.highlighted)
+            this.highlight(true);
+                
+        if (clear && !this.highlighted)
+            return;
 
         let span = util.xmlToDom(<span highlight="Search"/>, this.range.document);
 
@@ -838,15 +839,18 @@ const RangeFind = Class("RangeFind", {
             parent.normalize();
         }
 
-        this.range.save();
         let action = clear ? unhighlight : highlight;
-        for (let r in this) {
+        let string = this[clear ? "highlighted" : "lastString"];
+        for (let r in this.iter(string)) {
             action(r);
             this.lastRange = r;
         }
-        this.range.deselect();
-        if (!clear)
+        if (clear)
+            this.highlighted = null;
+        else {
+            this.highlighted = this.lastString;
             this.search(null, false);
+        }
     },
 
     cancel: function () {
