@@ -58,7 +58,7 @@ function Module(name, prototype, classProperties, moduleInit) {
         base = Array.splice(arguments, 1, 1)[0]
     const module = Class(name, base, prototype, classProperties);
     module.INIT = moduleInit || {};
-    module.requires = inst.requires || [];
+    module.requires = prototype.requires || [];
     Module.list.push(module);
     Module.constructors[name] = module;
     return module;
