@@ -839,7 +839,6 @@ const RangeFind = Class("RangeFind", {
         }
 
         this.range.save();
-        liberator.dump(String.quote(this.range.initialSelection));
         let action = clear ? unhighlight : highlight;
         for (let r in this) {
             action(r);
