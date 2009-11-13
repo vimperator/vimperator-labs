@@ -1016,8 +1016,8 @@ const Options = Module("options", {
                     context.advance(filter.length);
                     filter = filter.substr(0, filter.length - 1);
                     context.completions = [
-                            [this._loadPreference(filter, null, false), "Current Value"],
-                            [this._loadPreference(filter, null, true), "Default Value"]
+                            [options._loadPreference(filter, null, false), "Current Value"],
+                            [options._loadPreference(filter, null, true), "Default Value"]
                     ].filter(function ([k]) k != null);
                     return;
                 }
