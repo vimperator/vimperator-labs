@@ -987,12 +987,12 @@ const Hints = Module("hints", {
             var m, c = chr.charCodeAt(0);
             var n = table.length;
             var i = 0;
-            while(n) {
+            while (n) {
                 m = Math.floor(n / 2);
                 var t = table[i + m];
-                if(c >= t[0] && c <= t[1])
+                if (c >= t[0] && c <= t[1])
                     return t[3](c)
-                if(c < t[0] || m == 0)
+                if (c < t[0] || m == 0)
                     n = m;
                 else {
                     i += m;

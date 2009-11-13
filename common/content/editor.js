@@ -62,7 +62,6 @@ const Editor = Module("editor", {
 
     },
 
-
     // For the record, some of this code I've just finished throwing
     // away makes me want to pull someone else's hair out. --Kris
     abbrevs: function () {
@@ -1069,7 +1068,7 @@ const Editor = Module("editor", {
         options.add(["insertmode", "im"],
             "Use Insert mode as the default for text areas",
             "boolean", true);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

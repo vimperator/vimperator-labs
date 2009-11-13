@@ -40,7 +40,6 @@ const Marks = Module("marks", {
         return lmarks.concat(umarks);
     },
 
-
     /**
      * Add a named mark for the current buffer, at its current position.
      * If mark matches [A-Z], it's considered a URL mark, and will jump to
@@ -337,7 +336,7 @@ const Marks = Module("marks", {
             context.keys.description = function ([, m]) percent(m.position.y) + "% " + percent(m.position.x) + "% " + m.location;
             context.completions = marks.all;
         };
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

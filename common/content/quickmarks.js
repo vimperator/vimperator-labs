@@ -167,7 +167,7 @@ const QuickMarks = Module("quickmarks", {
                 quickmarks.add(arg, buffer.URL);
             },
             { arg: true });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

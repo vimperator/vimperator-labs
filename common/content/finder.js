@@ -457,7 +457,7 @@ const Finder = Module("finder", {
         options.add(["smartcase", "scs"],
             "Override the 'ignorecase' option if the pattern contains uppercase characters",
             "boolean", true);
-    },
+    }
 });
 
 const RangeFinder = Module("rangefinder", {
@@ -493,7 +493,7 @@ const RangeFinder = Module("rangefinder", {
                 return n1;
             return "";
         });
-        if (!this.rangeFind || linksOnly ^ !!this.rangeFind.elementPath || 
+        if (!this.rangeFind || linksOnly ^ !!this.rangeFind.elementPath ||
             matchCase ^ this.rangeFind.matchCase || backward ^ this.rangeFind.reverse) {
             if (this.rangeFind)
                 this.rangeFind.cancel();
@@ -635,7 +635,7 @@ const RangeFinder = Module("rangefinder", {
         modes.addMode("FIND_BACKWARD", true);
     },
     options: function () {
-    },
+    }
 });
 
 const RangeFind = Class("RangeFind", {
@@ -663,7 +663,7 @@ const RangeFind = Class("RangeFind", {
 
     sameDocument: function (r1, r2) r1 && r2 && r1.endContainer.ownerDocument == r2.endContainer.ownerDocument,
 
-    compareRanges: function (r1, r2) 
+    compareRanges: function (r1, r2)
             this.backward ?  r1.compareBoundaryPoints(Range.END_TO_START, r2)
                           : -r1.compareBoundaryPoints(Range.START_TO_END, r2),
 
@@ -860,7 +860,7 @@ const RangeFind = Class("RangeFind", {
 
         if (!clear && this.highlighted)
             this.highlight(true);
-                
+
         if (clear && !this.highlighted)
             return;
 
@@ -909,7 +909,7 @@ const RangeFind = Class("RangeFind", {
     cancel: function () {
         this.range.deselect();
         this.range.descroll()
-    },
+    }
 }, {
     Range: Class("RangeFind.Range", {
         init: function (range, index) {

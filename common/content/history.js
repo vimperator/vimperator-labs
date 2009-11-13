@@ -229,7 +229,7 @@ const History = Module("history", {
             ["L", "<A-Right>", "<M-Right>"], "Go forward in the browser history",
             function (count) { history.stepTo(Math.max(count, 1)); },
             { count: true });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -777,7 +777,7 @@ const Util = Module("util", {
                 concat: function () [].concat.apply(this.__proto__, arguments),
                 map: function () this.__noSuchMethod__("map", Array.slice(arguments))
             };
-        },
+        }
     }, {
         isinstance: function isinstance(obj) {
             return Object.prototype.toString.call(obj) == "[object Array]";
@@ -856,9 +856,8 @@ const Util = Module("util", {
                 }
             }
             return ret;
-        },
+        }
     }),
 });
-
 
 // vim: set fdm=marker sw=4 ts=4 et:

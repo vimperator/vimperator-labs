@@ -183,7 +183,7 @@ const Config = Module("config", ConfigBase, {
                 },
                 getter: function () MailOfflineMgr.isOnline()
             });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

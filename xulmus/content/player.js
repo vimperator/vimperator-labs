@@ -709,7 +709,7 @@ const Player = Module("player", {
     services: function () {
         services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
         services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

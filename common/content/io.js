@@ -184,7 +184,7 @@ const File = Class("File", {
             ofstream.close();
         }
         return true;
-    },
+    }
 }, {
     /**
      * @property {number} Open for reading only.
@@ -238,7 +238,6 @@ const File = Class("File", {
      * @final
      */
     MODE_EXCL: 0x80,
-
 
     expandPathList: function (list) list.split(",").map(this.expandPath).join(","),
 
@@ -311,7 +310,7 @@ const File = Class("File", {
         catch (e) {
             return false;
         }
-    },
+    }
 });
 
 // TODO: why are we passing around strings rather than file objects?
@@ -489,7 +488,6 @@ const IO = Module("io", {
 
         return File(file);
     },
-
 
     /**
      * Runs an external program.
@@ -798,12 +796,15 @@ lookup:
         return rtp;
     },
 
+    /**
+     * @property {string} The current platform's path seperator.
+     */
     get PATH_SEP() {
         delete this.PATH_SEP;
         let f = services.get("directory").get("CurProcD", Ci.nsIFile);
         f.append("foo");
         return this.PATH_SEP = f.path.substr(f.parent.path.length, 1);
-    },
+    }
 }, {
     commands: function () {
         commands.add(["cd", "chd[ir]"],
@@ -1097,7 +1098,7 @@ lookup:
         options.add(["shellcmdflag", "shcf"],
             "Flag passed to shell when executing :! and :run commands",
             "string", shellcmdflag);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

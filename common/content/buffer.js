@@ -1114,7 +1114,7 @@ const Buffer = Module("buffer", {
             completer: completion.file,
             default: elem.value
         });
-    },
+    }
 }, {
     commands: function () {
         commands.add(["frameo[nly]"],
@@ -1633,7 +1633,7 @@ const Buffer = Module("buffer", {
                 setter: function (value) getBrowser().markupDocumentViewer.authorStyleDisabled = value,
                 getter: function () getBrowser().markupDocumentViewer.authorStyleDisabled
             });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

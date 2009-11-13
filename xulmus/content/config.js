@@ -158,7 +158,7 @@ const Config = Module("config", {
     // FIXME: tab arg and media tab exception?
     stop: function (tab) {
         SBGetBrowser().mCurrentBrowser.stop();
-    },
+    }
 }, {
 
     // TODO: support 'nrformats'? -> probably not worth it --mst

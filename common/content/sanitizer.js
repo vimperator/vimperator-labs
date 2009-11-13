@@ -263,7 +263,7 @@ const Sanitizer = Module("sanitizer", {
                 ],
                 validator: Option.validateCompleter
             });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

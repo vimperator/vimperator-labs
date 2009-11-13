@@ -233,7 +233,7 @@ const Command = Class("Command", {
         }
 
         return { names: names, longNames: longNames, shortNames: shortNames };
-    },
+    }
 });
 
 /**
@@ -855,7 +855,7 @@ const Commands = Module("commands", {
         }
 
         return [len - str.length, arg, quote];
-    },
+    }
 }, {
     mappings: function () {
         mappings.add(config.browserModes,

@@ -1337,7 +1337,7 @@ const Events = Module("events", {
             statusline.updateBufferPosition();
             modes.show();
         }, null);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

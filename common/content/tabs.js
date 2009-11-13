@@ -530,7 +530,6 @@ const Tabs = Module("tabs", {
         services.get("sessionStore").setTabState(to, tabState);
     },
 
-
     /**
      * @param spec can either be:
      * - an absolute integer
@@ -564,7 +563,7 @@ const Tabs = Module("tabs", {
             position = wrap ? (position % length) + length : 0;
 
         return position;
-    },
+    }
 }, {
     commands: function () {
         commands.add(["bd[elete]", "bw[ipeout]", "bun[load]", "tabc[lose]"],
@@ -1115,7 +1114,7 @@ const Tabs = Module("tabs", {
                     validator: Option.validateCompleter
                 });
         }
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -198,7 +198,6 @@ const Bookmarks = Module("bookmarks", {
         storage.addObserver("bookmark-cache", bookmarkObserver, window);
     },
 
-
     get format() ({
         anchored: false,
         title: ["URL", "Info"],
@@ -680,7 +679,7 @@ const Bookmarks = Module("bookmarks", {
         completion.addUrlCompleter("S", "Suggest engines", completion.searchEngineSuggest);
         completion.addUrlCompleter("b", "Bookmarks", completion.bookmark);
         completion.addUrlCompleter("s", "Search engines and keyword URLs", completion.search);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

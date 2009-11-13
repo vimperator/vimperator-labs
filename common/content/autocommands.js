@@ -147,7 +147,7 @@ const AutoCommands = Module("autocommands", {
 }, {
     matchAutoCmd: function (autoCmd, event, regex) {
         return (!event || autoCmd.event == event) && (!regex || autoCmd.pattern.source == regex);
-    },
+    }
 }, {
     commands: function () {
         commands.add(["au[tocmd]"],
@@ -271,7 +271,7 @@ const AutoCommands = Module("autocommands", {
         options.add(["focuscontent", "fc"],
             "Try to stay in normal mode after loading a web page",
             "boolean", false);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

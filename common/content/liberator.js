@@ -33,7 +33,7 @@ const Storage = Module("storage", {
         catch (e) {}
 
         return this.storage;
-    },
+    }
 });
 
 function Runnable(self, func, args) {
@@ -46,7 +46,7 @@ function Runnable(self, func, args) {
 const FailedAssertion = Class("FailedAssertion", Error, {
     init: function (message) {
         this.message = message;
-    },
+    }
 });
 
 const Liberator = Module("liberator", {
@@ -1077,7 +1077,7 @@ const Liberator = Module("liberator", {
             liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
         else
             liberator.help(tag);
-    },
+    }
 }, {
 
     // Only general options are added here, which are valid for all Liberator extensions
@@ -1831,7 +1831,7 @@ const Liberator = Module("liberator", {
 
         statusline.update();
         liberator.log(config.name + " fully initialized", 0);
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

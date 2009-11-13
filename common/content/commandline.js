@@ -160,7 +160,6 @@ const CommandLine = Module("commandline", {
         this._multilineRegexp = null;
         this._multilineCallback = null;
 
-
         this._input = {};
 
         this.registerCallback("submit", modes.EX, function (command) {
@@ -318,8 +317,6 @@ const CommandLine = Module("commandline", {
 
         this._multilineInputWidget.setAttribute("rows", Math.max(lines, 1));
     },
-
-
 
     HL_NORMAL:     "Normal",
     HL_ERRORMSG:   "ErrorMsg",
@@ -1398,7 +1395,7 @@ const CommandLine = Module("commandline", {
             arg = String(arg);
 
         return arg;
-    },
+    }
 }, {
     commands: function () {
         [
@@ -1610,9 +1607,8 @@ const CommandLine = Module("commandline", {
         styles.registerSheet("chrome://liberator/skin/liberator.css");
         let error = styles.addSheet(true, "font-size", "chrome://liberator/content/buffer.xhtml",
             "body { font-size: " + fontSize + "; }");
-    },
+    }
 });
-
 
 /**
  * The list which is used for the completion box (and QuickFix window in

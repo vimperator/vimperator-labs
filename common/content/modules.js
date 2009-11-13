@@ -96,7 +96,7 @@ window.addEventListener("load", function () {
                         init(mod, module)();
                     delete module.INIT[mod]
                 }
-                catch(e) {
+                catch (e) {
                     if (modules.liberator)
                         liberator.reportError(e);
                 }

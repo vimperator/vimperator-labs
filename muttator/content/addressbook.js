@@ -145,7 +145,7 @@ const Addressbook = Module("addressbook", {
 
                 commandline.open(":", "contact " + address + " " + displayName, modes.EX);
             });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

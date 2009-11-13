@@ -75,8 +75,8 @@ function set(ary) {
             obj[ary[i]] = true;
     return obj;
 }
-set.add = function(set, key) { set[key] = true }
-set.remove = function(set, key) { delete set[key] }
+set.add = function (set, key) { set[key] = true }
+set.remove = function (set, key) { delete set[key] }
 
 function iter(obj) {
     if (obj instanceof Ci.nsISimpleEnumerator)
@@ -205,16 +205,16 @@ function curry(fn, length, self, acc) {
     if (length == 0)
         return fn;
 
-    /* Close over function with 'this' */
+    // Close over function with 'this'
     function close(self, fn) function () fn.apply(self, Array.slice(arguments));
 
     if (acc == null)
         acc = [];
 
-    return function() {
+    return function () {
         let args = acc.concat(Array.slice(arguments));
 
-        /* The curried result should preserve 'this' */
+        // The curried result should preserve 'this'
         if (arguments.length == 0)
             return close(self || this, arguments.callee);
 
@@ -238,7 +238,7 @@ function curry(fn, length, self, acc) {
  *
  *    a.foo("foo") -> "bar foo"
  *    b.foo()      -> "bar baz"
- * 
+ *
  * @param {Object} target The object to update.
  * @param {Object} src The source object from which to update target.
  *    May be provided multiple times.
@@ -247,17 +247,17 @@ function curry(fn, length, self, acc) {
 function update(target) {
     for (let i=1; i < arguments.length; i++) {
         let src = arguments[i];
-        foreach(keys(src || {}), function(k) {
+        foreach(keys(src || {}), function (k) {
             var get = src.__lookupGetter__(k),
                 set = src.__lookupSetter__(k);
             if (!get && !set) {
                 var v = src[k];
                 target[k] = v;
                 if (target.__proto__ && callable(v)) {
-                    v.superapply = function(self, args) {
+                    v.superapply = function (self, args) {
                         return target.__proto__[k].apply(self, args);
                     }
-                    v.supercall = function(self) {
+                    v.supercall = function (self) {
                         return v.superapply(self, Array.slice(arguments, 1));
                     }
                 }
@@ -361,7 +361,7 @@ function Class() {
     extend(Constructor, superclass, args[0]);
     update(Constructor, args[1]);
     args = args.slice(2);
-    Array.forEach(args, function(obj) {
+    Array.forEach(args, function (obj) {
         if (callable(obj))
             obj = obj.prototype;
         update(Constructor.prototype, obj);
@@ -374,7 +374,7 @@ Class.prototype = {
      * Initializes new instances of this class. Called automatically
      * when new instances are created.
      */
-    init: function() {},
+    init: function () {},
 
     toString: function () "[instance " + this.constructor.name + "]",
 

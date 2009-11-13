@@ -583,7 +583,7 @@ Module("styles", {
             });
         }
         return storage.newObject("styles", Styles, { store: false });
-    },
+    }
 }, {
 }, {
     commands: function () {
@@ -703,7 +703,7 @@ Module("styles", {
                 null,
                 function (context, obj, args) args[0] ? styles.systemSheets : styles.userSheets
             ]);
-    },
+    }
 });
 
 Module("highlight", {
@@ -717,7 +717,7 @@ Module("highlight", {
             self.loadCSS(self.CSS);
         }
         return self;
-    },
+    }
 }, {
 }, {
     commands: function () {
@@ -821,7 +821,7 @@ Module("highlight", {
             context.title = ["Highlight Group", "Value"];
             context.completions = [[v.class, v.value] for (v in highlight)];
         };
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

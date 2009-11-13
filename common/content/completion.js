@@ -618,7 +618,7 @@ const CompletionContext = Class("CompletionContext", {
         textDescription: function (item) {
             return CompletionContext.Filter.text.call(this, item) || this.match(item.description);
         }
-    },
+    }
 });
 
 /**
@@ -1129,7 +1129,7 @@ const Completion = Module("completion", {
                     for (let [, obj] in Iterator(objects)) {
                         let name = obj[1] + " (prototypes)";
                         this.context.fork(name, top[OFFSET], this, fill,
-                            obj[0], name, function(a, b) compl(a, b, true), compl != orig,
+                            obj[0], name, function (a, b) compl(a, b, true), compl != orig,
                             filter, last, key.length);
                         obj[1] += " (substrings)";
                         this.context.fork(obj[1], top[OFFSET], this, fill,
@@ -1260,7 +1260,7 @@ const Completion = Module("completion", {
                     top[OFFSET] = o;
                 }
             }
-        },
+        }
     }, {
         EVAL_TMP: "__liberator_eval_tmp",
     }),

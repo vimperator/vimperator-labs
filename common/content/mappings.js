@@ -498,7 +498,7 @@ const Mappings = Module("mappings", {
             this._main[mode] = [];
             this._user[mode] = [];
         }
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -394,7 +394,7 @@ const Option = Class("Option", {
         if (!res)
             res = context.allItems.items.map(function (item) [item.text]);
         return Array.concat(values).every(function (value) res.some(function (item) item[0] == value));
-    },
+    }
 });
 
 /**
@@ -427,7 +427,6 @@ const Options = Module("options", {
                     this._storePreference("dom.popup_allowed_events", popupAllowedEvents);
             });
         }
-
 
         function optionObserver(key, event, option) {
             // Trigger any setters.
@@ -890,7 +889,7 @@ const Options = Module("options", {
         catch (e) {
             return defaultValue;
         }
-    },
+    }
 }, {
     SAVED: "extensions.liberator.saved.",
     OLD_SAVED: "liberator.saved.",
@@ -1274,7 +1273,7 @@ const Options = Module("options", {
             context.keys = { text: function (item) item, description: function (item) options.getPref(item) };
             context.completions = options.allPrefs();
         };
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

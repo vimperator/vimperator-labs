@@ -937,7 +937,7 @@ const Mail = Module("mail", {
                     return value;
                 }
             });*/
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

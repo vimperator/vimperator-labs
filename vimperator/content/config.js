@@ -119,7 +119,7 @@ const Config = Module("config", ConfigBase, {
         catch (e) {}
 
         return prefix + ".tmp";
-    },
+    }
 }, {
 }, {
     commands: function () {
@@ -289,7 +289,7 @@ const Config = Module("config", ConfigBase, {
                 },
                 getter: function () !services.get("io").offline
             });
-    },
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:
