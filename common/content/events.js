@@ -22,6 +22,8 @@ const Events = Module("events", {
         this._currentMacro = "";
         this._lastMacro = "";
 
+        this.sessionListeners = [];
+
         this._macros = storage.newMap("macros", true, { privateData: true });
 
         // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
@@ -119,30 +121,39 @@ const Events = Module("events", {
 
         this._wrappedOnKeyPress = wrapListener("onKeyPress");
         this._wrappedOnKeyUpOrDown = wrapListener("onKeyUpOrDown");
-        window.addEventListener("keypress", this.closure._wrappedOnKeyPress, true);
-        window.addEventListener("keydown", this.closure._wrappedOnKeyUpOrDown, true);
-        window.addEventListener("keyup", this.closure._wrappedOnKeyUpOrDown, true);
+        this.addSessionListener(window, "keypress", this.closure._wrappedOnKeyPress, true);
+        this.addSessionListener(window, "keydown", this.closure._wrappedOnKeyUpOrDown, true);
+        this.addSessionListener(window, "keyup", this.closure._wrappedOnKeyUpOrDown, true);
 
         this._activeMenubar = false;
-        window.addEventListener("popupshown", this.closure.onPopupShown, true);
-        window.addEventListener("popuphidden", this.closure.onPopupHidden, true);
-        window.addEventListener("DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
-        window.addEventListener("DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
-        window.addEventListener("resize", this.closure.onResize, true);
+        this.addSessionListener(window, "popupshown", this.closure.onPopupShown, true);
+        this.addSessionListener(window, "popuphidden", this.closure.onPopupHidden, true);
+        this.addSessionListener(window, "DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
+        this.addSessionListener(window, "DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
+        this.addSessionListener(window, "resize", this.closure.onResize, true);
 
     },
 
     destroy: function () {
-        liberator.dump("TODO: remove all event listeners");
+        liberator.dump("Removing all event listeners");
+        for (let args in values(this.sessionListeners))
+            args[0].removeEventListener.apply(args[0], args.slice(1));
+    },
 
-        window.removeEventListener("popupshown", this.closure.onPopupShown, true);
-        window.removeEventListener("popuphidden", this.closure.onPopupHidden, true);
-        window.removeEventListener("DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
-        window.removeEventListener("DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
-        window.removeEventListener("resize", this.closure.onResize, true);
-        window.removeEventListener("keypress", this.closure._wrappedOnKeyPress, true);
-        window.removeEventListener("keydown", this.closure._wrappedOnKeyUpOrDown, true);
-        window.removeEventListener("keyup", this.closure._wrappedOnKeyUpOrDown, true);
+    /**
+     * Adds an event listener for this session and removes it on
+     * liberator shutdown.
+     *
+     * @param {Element} target The element on which to listen.
+     * @param {string} event The event to listen for.
+     * @param {function} callback The function to call when the event is received.
+     * @param {boolean} capture When true, listen during the capture
+     *      phase, otherwise during the bubbling phase.
+     */
+    addSessionListener: function (target, event, callback, capture) {
+        let args = Array.slice(arguments, 0);
+        target.addEventListener.apply(target, args.slice(1));
+        this.sessionListeners.push(args);
     },
 
     /**

@@ -67,6 +67,8 @@ Module.list = [];
 Module.constructors = {};
 
 window.addEventListener("load", function () {
+    window.removeEventListener("load", arguments.callee, false);
+
     function dump(str) window.dump(String.replace(str, /\n?$/, "\n").replace(/^/m, Config.prototype.name.toLowerCase() + ": "));
     const start = Date.now();
     const deferredInit = { load: [] };
@@ -124,6 +126,7 @@ window.addEventListener("load", function () {
 }, false);
 
 window.addEventListener("unload", function () {
+    window.removeEventListener("unload", arguments.callee, false);
     for (let [, mod] in iter(modules))
         if (mod instanceof ModuleBase && "destroy" in mod)
             mod.destroy();

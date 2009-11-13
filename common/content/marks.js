@@ -15,10 +15,6 @@ const Marks = Module("marks", {
         this._urlMarks = storage.newMap("url-marks", { store: true, privateData: true });
 
         this._pendingJumps = [];
-
-        var appContent = document.getElementById("appcontent");
-        if (appContent)
-            appContent.addEventListener("load", this.closure._onPageLoad, true);
     },
 
     /**
@@ -240,6 +236,11 @@ const Marks = Module("marks", {
     isLocalMark: function isLocalMark(mark) /^['`a-z]$/.test(mark),
     isURLMark: function isURLMark(mark) /^[A-Z0-9]$/.test(mark),
 }, {
+    events: function () {
+        let appContent = document.getElementById("appcontent");
+        if (appContent)
+            events.addSessionListener(appContent, "load", this.closure._onPageLoad, true);
+    },
     mappings: function () {
         var myModes = config.browserModes;
 

@@ -19,11 +19,9 @@ const Point = new Struct("x", "y");
  * @instance buffer
  */
 const Buffer = Module("buffer", {
-    requires: ["autocommands", "config"],
+    requires: ["config"],
 
     init: function () {
-        const self = this;
-
         this.pageInfo = {};
 
         this.addPageInfoSection("f", "Feeds", function (verbose) {
@@ -144,32 +142,6 @@ const Buffer = Module("buffer", {
             return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
                         .sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));
         });
-
-        window.XULBrowserWindow = this.progressListener;
-        window.QueryInterface(Ci.nsIInterfaceRequestor)
-              .getInterface(Ci.nsIWebNavigation)
-              .QueryInterface(Ci.nsIDocShellTreeItem)
-              .treeOwner
-              .QueryInterface(Ci.nsIInterfaceRequestor)
-              .getInterface(Ci.nsIXULWindow)
-              .XULBrowserWindow = this.progressListener;
-
-        try {
-            getBrowser().addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
-        }
-        catch (e) {} // Why? --djk
-
-        let appContent = document.getElementById("appcontent");
-        appContent.addEventListener("DOMContentLoaded", this.closure.onDOMContentLoaded, true);
-        // this adds an event which is is called on each page load, even if the
-        // page is loaded in a background tab
-        appContent.addEventListener("load", this.closure.onPageLoad, true);
-        // called when the active document is scrolled
-        this._updateBufferPosition = function _updateBufferPosition() {
-            statusline.updateBufferPosition();
-            modes.show();
-        };
-        appContent.addEventListener("scroll", self._updateBufferPosition, false);
     },
 
     destroy: function () {
@@ -177,11 +149,6 @@ const Buffer = Module("buffer", {
             getBrowser().removeProgressListener(this.progressListener);
         }
         catch (e) {} // Why? --djk
-
-        let appContent = document.getElementById("appcontent");
-        appContent.removeEventListener("DOMContentLoaded", this.closure.onDOMContentLoaded, true);
-        appContent.removeEventListener("load", this.closure.onPageLoad, true);
-        appContent.removeEventListener("scroll", buffer._updateBufferPosition, false);
     },
 
     _triggerLoadAutocmd: function _triggerLoadAutocmd(name, doc) {
@@ -198,6 +165,12 @@ const Buffer = Module("buffer", {
         autocommands.trigger(name, args);
     },
 
+    // called when the active document is scrolled
+    _updateBufferPosition: function _updateBufferPosition() {
+        statusline.updateBufferPosition();
+        modes.show();
+    },
+
     onDOMContentLoaded: function onDOMContentLoaded(event) {
         let doc = event.originalTarget;
         if (doc instanceof HTMLDocument && !doc.defaultView.frameElement)
@@ -205,6 +178,8 @@ const Buffer = Module("buffer", {
     },
 
     // TODO: see what can be moved to onDOMContentLoaded()
+    // event listener which is is called on each page load, even if the
+    // page is loaded in a background tab
     onPageLoad: function onPageLoad(event) {
         if (event.originalTarget instanceof HTMLDocument) {
             let doc = event.originalTarget;
@@ -1334,6 +1309,26 @@ const Buffer = Module("buffer", {
                 };
             });
         };
+    },
+    events: function () {
+        window.XULBrowserWindow = this.progressListener;
+        window.QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIWebNavigation)
+              .QueryInterface(Ci.nsIDocShellTreeItem)
+              .treeOwner
+              .QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIXULWindow)
+              .XULBrowserWindow = this.progressListener;
+
+        try {
+            getBrowser().addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+        }
+        catch (e) {} // Why? --djk
+
+        let appContent = document.getElementById("appcontent");
+        events.addSessionListener(appContent, "DOMContentLoaded", this.closure.onDOMContentLoaded, true);
+        events.addSessionListener(appContent, "load", this.closure.onPageLoad, true);
+        events.addSessionListener(appContent, "scroll", this.closure._updateBufferPosition, false);
     },
     mappings: function () {
         var myModes = config.browserModes;
