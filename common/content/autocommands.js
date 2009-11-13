@@ -49,7 +49,7 @@ const AutoCommands = Module("autocommands", {
      * @returns {AutoCommand[]}
      */
     get: function (event, regex) {
-        return this._store.filter(function (autoCmd) matchAutoCmd(autoCmd, event, regex));
+        return this._store.filter(function (autoCmd) AutoCommands.matchAutoCmd(autoCmd, event, regex));
     },
 
     /**
@@ -60,7 +60,7 @@ const AutoCommands = Module("autocommands", {
      * @param {string} regex The URL pattern filter.
      */
     remove: function (event, regex) {
-        this._store = this._store.filter(function (autoCmd) !matchAutoCmd(autoCmd, event, regex));
+        this._store = this._store.filter(function (autoCmd) !AutoCommands.matchAutoCmd(autoCmd, event, regex));
     },
 
     /**
@@ -75,7 +75,7 @@ const AutoCommands = Module("autocommands", {
 
         // XXX
         this._store.forEach(function (autoCmd) {
-            if (matchAutoCmd(autoCmd, event, regex)) {
+            if (AutoCommands.matchAutoCmd(autoCmd, event, regex)) {
                 cmds[autoCmd.event] = cmds[autoCmd.event] || [];
                 cmds[autoCmd.event].push(autoCmd);
             }
