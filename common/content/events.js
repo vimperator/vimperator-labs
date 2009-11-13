@@ -102,19 +102,6 @@ const Events = Module("events", {
             }
         }, 100);
 
-        window.XULBrowserWindow = this.progressListener;
-        window.QueryInterface(Ci.nsIInterfaceRequestor)
-              .getInterface(Ci.nsIWebNavigation)
-              .QueryInterface(Ci.nsIDocShellTreeItem)
-              .treeOwner
-              .QueryInterface(Ci.nsIInterfaceRequestor)
-              .getInterface(Ci.nsIXULWindow)
-              .XULBrowserWindow = this.progressListener;
-        try {
-            getBrowser().addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
-        }
-        catch (e) {}
-
         function wrapListener(method) {
             return function (event) {
                 try {
@@ -147,11 +134,6 @@ const Events = Module("events", {
 
     destroy: function () {
         liberator.dump("TODO: remove all event listeners");
-
-        try {
-            getBrowser().removeProgressListener(this.progressListener);
-        }
-        catch (e) {}
 
         window.removeEventListener("popupshown", this.closure.onPopupShown, true);
         window.removeEventListener("popuphidden", this.closure.onPopupHidden, true);
@@ -1082,100 +1064,6 @@ const Events = Module("events", {
             liberator.triggerObserver("fullscreen", this._fullscreen);
             autocommands.trigger("Fullscreen", { state: this._fullscreen });
         }
-    },
-
-    // TODO: move to buffer.js?
-    /**
-     * The liberator document loading progress listener.
-     */
-    progressListener: {
-        QueryInterface: XPCOMUtils.generateQI([
-            Ci.nsIWebProgressListener,
-            Ci.nsIXULBrowserWindow
-        ]),
-
-        // XXX: function may later be needed to detect a canceled synchronous openURL()
-        onStateChange: function (webProgress, request, flags, status) {
-            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
-            // receive statechange events for loading images and other parts of the web page
-            if (flags & (Ci.nsIWebProgressListener.STATE_IS_DOCUMENT | Ci.nsIWebProgressListener.STATE_IS_WINDOW)) {
-                // This fires when the load event is initiated
-                // only thrown for the current tab, not when another tab changes
-                if (flags & Ci.nsIWebProgressListener.STATE_START) {
-                    buffer.loaded = 0;
-                    statusline.updateProgress(0);
-
-                    autocommands.trigger("PageLoadPre", { url: buffer.URL });
-
-                    // don't reset mode if a frame of the frameset gets reloaded which
-                    // is not the focused frame
-                    if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow) {
-                        setTimeout(function () { modes.reset(false); },
-                            liberator.mode == modes.HINTS ? 500 : 0);
-                    }
-                }
-                else if (flags & Ci.nsIWebProgressListener.STATE_STOP) {
-                    buffer.loaded = (status == 0 ? 1 : 2);
-                    statusline.updateUrl();
-                }
-            }
-        },
-        // for notifying the user about secure web pages
-        onSecurityChange: function (webProgress, request, state) {
-            // TODO: do something useful with STATE_SECURE_MED and STATE_SECURE_LOW
-            if (state & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
-                statusline.setClass("insecure");
-            else if (state & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
-                statusline.setClass("broken");
-            else if (state & Ci.nsIWebProgressListener.STATE_IDENTITY_EV_TOPLEVEL)
-                statusline.setClass("extended");
-            else if (state & Ci.nsIWebProgressListener.STATE_SECURE_HIGH)
-                statusline.setClass("secure");
-        },
-        onStatusChange: function (webProgress, request, status, message) {
-            statusline.updateUrl(message);
-        },
-        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) {
-            statusline.updateProgress(curTotalProgress/maxTotalProgress);
-        },
-        // happens when the users switches tabs
-        onLocationChange: function () {
-            statusline.updateUrl();
-            statusline.updateProgress();
-
-            autocommands.trigger("LocationChange", { url: buffer.URL });
-
-            // if this is not delayed we get the position of the old buffer
-            setTimeout(function () { statusline.updateBufferPosition(); }, 500);
-        },
-        // called at the very end of a page load
-        asyncUpdateUI: function () {
-            setTimeout(function () { statusline.updateUrl(); }, 100);
-        },
-        setOverLink: function (link, b) {
-            let ssli = options["showstatuslinks"];
-            if (link && ssli) {
-                if (ssli == 1)
-                    statusline.updateUrl("Link: " + link);
-                else if (ssli == 2)
-                    liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
-            }
-
-            if (link == "") {
-                if (ssli == 1)
-                    statusline.updateUrl();
-                else if (ssli == 2)
-                    modes.show();
-            }
-        },
-
-        // nsIXULBrowserWindow stubs
-        setJSDefaultStatus: function (status) {},
-        setJSStatus: function (status) {},
-
-        // Stub for something else, presumably. Not in any documented
-        // interface.
-        onLinkIconAvailable: function () {}
     }
 }, {
     isInputElemFocused: function () {
@@ -1264,79 +1152,6 @@ const Events = Module("events", {
                     ;
             },
             { arg: true, count: true });
-    },
-    tabs: function () {
-
-        function triggerLoadAutocmd(name, doc) {
-            let args = {
-                url:   doc.location.href,
-                title: doc.title
-            };
-
-            if (liberator.has("tabs")) {
-                args.tab = tabs.getContentIndex(doc) + 1;
-                args.doc = "tabs.getTab(" + (args.tab - 1) + ").linkedBrowser.contentDocument";
-            }
-
-            autocommands.trigger(name, args);
-        }
-
-        function onDOMContentLoaded(event) {
-            let doc = event.originalTarget;
-            if (doc instanceof HTMLDocument && !doc.defaultView.frameElement)
-                triggerLoadAutocmd("DOMLoad", doc);
-        }
-
-        // TODO: see what can be moved to onDOMContentLoaded()
-        function onPageLoad(event) {
-            if (event.originalTarget instanceof HTMLDocument) {
-                let doc = event.originalTarget;
-                // document is part of a frameset
-                if (doc.defaultView.frameElement) {
-                    // hacky way to get rid of "Transfering data from ..." on sites with frames
-                    // when you click on a link inside a frameset, because asyncUpdateUI
-                    // is not triggered there (Gecko bug?)
-                    setTimeout(function () { statusline.updateUrl(); }, 10);
-                    return;
-                }
-
-                // code which should happen for all (also background) newly loaded tabs goes here:
-
-                // mark the buffer as loaded, we can't use buffer.loaded
-                // since that always refers to the current buffer, while doc can be
-                // any buffer, even in a background tab
-                doc.pageIsFullyLoaded = 1;
-
-                // code which is only relevant if the page load is the current tab goes here:
-                if (doc == getBrowser().contentDocument) {
-                    // we want to stay in command mode after a page has loaded
-                    // TODO: move somewhere else, as focusing can already happen earlier than on "load"
-                    if (options["focuscontent"]) {
-                        setTimeout(function () {
-                            let focused = liberator.focus;
-                            if (focused && (focused.value != null) && focused.value.length == 0)
-                                focused.blur();
-                        }, 0);
-                    }
-                }
-                else // background tab
-                    liberator.echomsg("Background tab loaded: " + doc.title || doc.location.href, 3);
-
-                triggerLoadAutocmd("PageLoad", doc);
-            }
-        }
-
-        tabs.getBrowser().addEventListener("DOMContentLoaded", onDOMContentLoaded, true);
-
-        // this adds an event which is is called on each page load, even if the
-        // page is loaded in a background tab
-        tabs.getBrowser().addEventListener("load", onPageLoad, true);
-
-        // called when the active document is scrolled
-        tabs.getBrowser().addEventListener("scroll", function (event) {
-            statusline.updateBufferPosition();
-            modes.show();
-        }, null);
     }
 });
 
