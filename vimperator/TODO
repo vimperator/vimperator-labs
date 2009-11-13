@@ -12,6 +12,9 @@ ARCHITECTURE:
   hell, and/or lack support for JS 1.8. --Kris
 
 BUGS:
+- Class#closure seems to be throwing [Exception... "Could not convert
+  JavaScript argument"  nsresult: "0x80570009 (NS_ERROR_XPC_BAD_CONVERT_JS)"]
+  in as yet underdetermined circumstances.
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set
 - insert abbreviations broken on <space>

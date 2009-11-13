@@ -24,10 +24,34 @@ const Tabs = Module("tabs", {
         this._lastBufferSwitchArgs = "";
         this._lastBufferSwitchSpecial = true;
 
+        let tabContainer = this.getBrowser().mTabContainer;
+        this._updateTabCount = function () { statusline.updateTabCount(true); };
+        ["TabMove", "TabOpen", "TabClose"].forEach(function (event) {
+            tabContainer.addEventListener(event, this._updateTabCount, false);
+        }, this);
+        this._onTabSelect = function () {
+            // TODO: is all of that necessary?
+            //       I vote no. --Kris
+            modes.reset();
+            statusline.updateTabCount(true);
+            this.updateSelectionHistory();
+            if (options["focuscontent"])
+                setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
+        };
+        tabContainer.addEventListener("TabSelect", this.closure._onTabSelect, false);
+
         // hide tabs initially to prevent flickering when 'stal' would hide them
         // on startup
         if (config.hasTabbrowser)
             this.getBrowser().mTabContainer.collapsed = true; // FIXME: see 'stal' comment
+    },
+
+    destroy: function () {
+        let tabContainer = this.getBrowser().mTabContainer;
+        ["TabMove", "TabOpen", "TabClose"].forEach(function (event) {
+            tabContainer.removeEventListener(event, this._updateTabCount, false);
+        }, this);
+        tabContainer.removeEventListener("TabSelect", this.closure._onTabSelect, false);
     },
 
     /**

@@ -1326,28 +1326,6 @@ const Events = Module("events", {
             }
         }
 
-        let tabContainer = tabs.getBrowser().mTabContainer;
-
-        tabContainer.addEventListener("TabMove", function (event) {
-            statusline.updateTabCount(true);
-        }, false);
-        tabContainer.addEventListener("TabOpen", function (event) {
-            statusline.updateTabCount(true);
-        }, false);
-        tabContainer.addEventListener("TabClose", function (event) {
-            statusline.updateTabCount(true);
-        }, false);
-        tabContainer.addEventListener("TabSelect", function (event) {
-            // TODO: is all of that necessary?
-            //       I vote no. --Kris
-            modes.reset();
-            statusline.updateTabCount(true);
-            tabs.updateSelectionHistory();
-
-            if (options["focuscontent"])
-                setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
-        }, false);
-
         tabs.getBrowser().addEventListener("DOMContentLoaded", onDOMContentLoaded, true);
 
         // this adds an event which is is called on each page load, even if the
