@@ -1,4 +1,6 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -68,23 +70,6 @@ const Events = Module("events", {
             count: null                // parsed count from the input buffer
         };
 
-        function onResize(event) {
-            if (window.fullScreen != this._fullscreen) {
-                this._fullscreen = window.fullScreen;
-                liberator.triggerObserver("fullscreen", this._fullscreen);
-                autocommands.trigger("Fullscreen", { state: this._fullscreen });
-            }
-        }
-
-        /////////////////////////////////////////////////////////
-        // track if a popup is open or the menubar is active
-        this._activeMenubar = false;
-        window.addEventListener("popupshown", this._enterPopupMode, true);
-        window.addEventListener("popuphidden", this._exitPopupMode, true);
-        window.addEventListener("DOMMenuBarActive", this._enterMenuMode, true);
-        window.addEventListener("DOMMenuBarInactive", this._exitMenuMode, true);
-        window.addEventListener("resize", onResize, true);
-
         // load all macros
         // setTimeout needed since io. is loaded after events.
         setTimeout(function () {
@@ -144,49 +129,38 @@ const Events = Module("events", {
                 }
             };
         }
-        window.addEventListener("keypress", wrapListener("onKeyPress"),    true);
-        window.addEventListener("keydown",  wrapListener("onKeyUpOrDown"), true);
-        window.addEventListener("keyup",    wrapListener("onKeyUpOrDown"), true);
+
+        this._wrappedOnKeyPress = wrapListener("onKeyPress");
+        this._wrappedOnKeyUpOrDown = wrapListener("onKeyUpOrDown");
+        window.addEventListener("keypress", this.closure._wrappedOnKeyPress, true);
+        window.addEventListener("keydown", this.closure._wrappedOnKeyUpOrDown, true);
+        window.addEventListener("keyup", this.closure._wrappedOnKeyUpOrDown, true);
+
+        this._activeMenubar = false;
+        window.addEventListener("popupshown", this.closure.onPopupShown, true);
+        window.addEventListener("popuphidden", this.closure.onPopupHidden, true);
+        window.addEventListener("DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
+        window.addEventListener("DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
+        window.addEventListener("resize", this.closure.onResize, true);
+
     },
 
-    /**
-     * A destructor called when this module is destroyed.
-     */
     destroy: function () {
-        // removeEventListeners() to avoid mem leaks
-        liberator.dump("TODO: remove all eventlisteners");
+        liberator.dump("TODO: remove all event listeners");
 
         try {
             getBrowser().removeProgressListener(this.progressListener);
         }
         catch (e) {}
 
-        window.removeEventListener("popupshown", this._enterPopupMode, true);
-        window.removeEventListener("popuphidden", this._exitPopupMode, true);
-        window.removeEventListener("DOMMenuBarActive", this._enterMenuMode, true);
-        window.removeEventListener("DOMMenuBarInactive", this._exitMenuMode, true);
-
-        window.removeEventListener("keypress", this.onKeyPress, true);
-        window.removeEventListener("keydown", this.onKeyDown, true);
-    },
-
-    _enterPopupMode: function (event) {
-        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
-            return;
-
-        modes.add(modes.MENU);
-    },
-    _exitPopupMode: function () { // gContextMenu is set to NULL, when a context menu is closed
-        if (window.gContextMenu == null && !this._activeMenubar)
-            modes.remove(modes.MENU);
-    },
-    _enterMenuMode: function () {
-        this._activeMenubar = true;
-        modes.add(modes.MENU);
-    },
-    _exitMenuMode: function () {
-        this._activeMenubar = false;
-        modes.remove(modes.MENU);
+        window.removeEventListener("popupshown", this.closure.onPopupShown, true);
+        window.removeEventListener("popuphidden", this.closure.onPopupHidden, true);
+        window.removeEventListener("DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
+        window.removeEventListener("DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
+        window.removeEventListener("resize", this.closure.onResize, true);
+        window.removeEventListener("keypress", this.closure._wrappedOnKeyPress, true);
+        window.removeEventListener("keydown", this.closure._wrappedOnKeyUpOrDown, true);
+        window.removeEventListener("keyup", this.closure._wrappedOnKeyUpOrDown, true);
     },
 
     /**
@@ -845,6 +819,7 @@ const Events = Module("events", {
 
     // this keypress handler gets always called first, even if e.g.
     // the commandline has focus
+    // TODO: ...help me...please...
     onKeyPress: function (event) {
         function isEscapeKey(key) key == "<Esc>" || key == "<C-[>";
 
@@ -1078,8 +1053,37 @@ const Events = Module("events", {
     onKeyUpOrDown: function (event) {
         if (modes.passNextKey ^ modes.passAllKeys || Events.isInputElemFocused())
             return;
-
         event.stopPropagation();
+    },
+
+    onPopupShown: function (event) {
+        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
+            return;
+        modes.add(modes.MENU);
+    },
+
+    onPopupHidden: function () {
+        // gContextMenu is set to NULL, when a context menu is closed
+        if (window.gContextMenu == null && !this._activeMenubar)
+            modes.remove(modes.MENU);
+    },
+
+    onDOMMenuBarActive: function () {
+        this._activeMenubar = true;
+        modes.add(modes.MENU);
+    },
+
+    onDOMMenuBarInactive: function () {
+        this._activeMenubar = false;
+        modes.remove(modes.MENU);
+    },
+
+    onResize: function (event) {
+        if (window.fullScreen != this._fullscreen) {
+            this._fullscreen = window.fullScreen;
+            liberator.triggerObserver("fullscreen", this._fullscreen);
+            autocommands.trigger("Fullscreen", { state: this._fullscreen });
+        }
     },
 
     // TODO: move to buffer.js?
