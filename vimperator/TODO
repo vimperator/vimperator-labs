@@ -11,6 +11,9 @@ ARCHITECTURE:
   Unfortunately, nearly all of the parsers are lacking in some way, bloated to
   hell, and/or lack support for JS 1.8. --Kris
 
+REFACTORING:
+- remove unnecessary usage of "self"
+
 BUGS:
 - Class#closure seems to be throwing [Exception... "Could not convert
   JavaScript argument"  nsresult: "0x80570009 (NS_ERROR_XPC_BAD_CONVERT_JS)"]

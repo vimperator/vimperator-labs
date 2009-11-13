@@ -1,10 +1,14 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
 
 /** @scope modules */
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
 const Point = new Struct("x", "y");
 
@@ -15,9 +19,10 @@ const Point = new Struct("x", "y");
  * @instance buffer
  */
 const Buffer = Module("buffer", {
-    requires: ["config"],
+    requires: ["autocommands", "config"],
 
     init: function () {
+        const self = this;
 
         this.pageInfo = {};
 
@@ -139,6 +144,196 @@ const Buffer = Module("buffer", {
             return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
                         .sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));
         });
+
+        window.XULBrowserWindow = this.progressListener;
+        window.QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIWebNavigation)
+              .QueryInterface(Ci.nsIDocShellTreeItem)
+              .treeOwner
+              .QueryInterface(Ci.nsIInterfaceRequestor)
+              .getInterface(Ci.nsIXULWindow)
+              .XULBrowserWindow = this.progressListener;
+
+        try {
+            getBrowser().addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+        }
+        catch (e) {} // Why? --djk
+
+        let appContent = document.getElementById("appcontent");
+        appContent.addEventListener("DOMContentLoaded", this.closure.onDOMContentLoaded, true);
+        // this adds an event which is is called on each page load, even if the
+        // page is loaded in a background tab
+        appContent.addEventListener("load", this.closure.onPageLoad, true);
+        // called when the active document is scrolled
+        this._updateBufferPosition = function _updateBufferPosition() {
+            statusline.updateBufferPosition();
+            modes.show();
+        };
+        appContent.addEventListener("scroll", self._updateBufferPosition, false);
+    },
+
+    destroy: function () {
+        try {
+            getBrowser().removeProgressListener(this.progressListener);
+        }
+        catch (e) {} // Why? --djk
+
+        let appContent = document.getElementById("appcontent");
+        appContent.removeEventListener("DOMContentLoaded", this.closure.onDOMContentLoaded, true);
+        appContent.removeEventListener("load", this.closure.onPageLoad, true);
+        appContent.removeEventListener("scroll", buffer._updateBufferPosition, false);
+    },
+
+    _triggerLoadAutocmd: function _triggerLoadAutocmd(name, doc) {
+        let args = {
+            url:   doc.location.href,
+            title: doc.title
+        };
+
+        if (liberator.has("tabs")) {
+            args.tab = tabs.getContentIndex(doc) + 1;
+            args.doc = "tabs.getTab(" + (args.tab - 1) + ").linkedBrowser.contentDocument";
+        }
+
+        autocommands.trigger(name, args);
+    },
+
+    onDOMContentLoaded: function onDOMContentLoaded(event) {
+        let doc = event.originalTarget;
+        if (doc instanceof HTMLDocument && !doc.defaultView.frameElement)
+            this._triggerLoadAutocmd("DOMLoad", doc);
+    },
+
+    // TODO: see what can be moved to onDOMContentLoaded()
+    onPageLoad: function onPageLoad(event) {
+        if (event.originalTarget instanceof HTMLDocument) {
+            let doc = event.originalTarget;
+            // document is part of a frameset
+            if (doc.defaultView.frameElement) {
+                // hacky way to get rid of "Transfering data from ..." on sites with frames
+                // when you click on a link inside a frameset, because asyncUpdateUI
+                // is not triggered there (Gecko bug?)
+                setTimeout(function () { statusline.updateUrl(); }, 10);
+                return;
+            }
+
+            // code which should happen for all (also background) newly loaded tabs goes here:
+
+            // mark the buffer as loaded, we can't use buffer.loaded
+            // since that always refers to the current buffer, while doc can be
+            // any buffer, even in a background tab
+            doc.pageIsFullyLoaded = 1;
+
+            // code which is only relevant if the page load is the current tab goes here:
+            if (doc == getBrowser().contentDocument) {
+                // we want to stay in command mode after a page has loaded
+                // TODO: move somewhere else, as focusing can already happen earlier than on "load"
+                if (options["focuscontent"]) {
+                    setTimeout(function () {
+                        let focused = liberator.focus;
+                        if (focused && (focused.value != null) && focused.value.length == 0)
+                            focused.blur();
+                    }, 0);
+                }
+            }
+            else // background tab
+                liberator.echomsg("Background tab loaded: " + doc.title || doc.location.href, 3);
+
+            this._triggerLoadAutocmd("PageLoad", doc);
+        }
+    },
+
+    /**
+     * @property {Object} The document loading progress listener.
+     */
+    progressListener: {
+        QueryInterface: XPCOMUtils.generateQI([
+            Ci.nsIWebProgressListener,
+            Ci.nsIXULBrowserWindow
+        ]),
+
+        // XXX: function may later be needed to detect a canceled synchronous openURL()
+        onStateChange: function (webProgress, request, flags, status) {
+            // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
+            // receive statechange events for loading images and other parts of the web page
+            if (flags & (Ci.nsIWebProgressListener.STATE_IS_DOCUMENT | Ci.nsIWebProgressListener.STATE_IS_WINDOW)) {
+                // This fires when the load event is initiated
+                // only thrown for the current tab, not when another tab changes
+                if (flags & Ci.nsIWebProgressListener.STATE_START) {
+                    buffer.loaded = 0;
+                    statusline.updateProgress(0);
+
+                    autocommands.trigger("PageLoadPre", { url: buffer.URL });
+
+                    // don't reset mode if a frame of the frameset gets reloaded which
+                    // is not the focused frame
+                    if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow) {
+                        setTimeout(function () { modes.reset(false); },
+                            liberator.mode == modes.HINTS ? 500 : 0);
+                    }
+                }
+                else if (flags & Ci.nsIWebProgressListener.STATE_STOP) {
+                    buffer.loaded = (status == 0 ? 1 : 2);
+                    statusline.updateUrl();
+                }
+            }
+        },
+        // for notifying the user about secure web pages
+        onSecurityChange: function (webProgress, request, state) {
+            // TODO: do something useful with STATE_SECURE_MED and STATE_SECURE_LOW
+            if (state & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
+                statusline.setClass("insecure");
+            else if (state & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
+                statusline.setClass("broken");
+            else if (state & Ci.nsIWebProgressListener.STATE_IDENTITY_EV_TOPLEVEL)
+                statusline.setClass("extended");
+            else if (state & Ci.nsIWebProgressListener.STATE_SECURE_HIGH)
+                statusline.setClass("secure");
+        },
+        onStatusChange: function (webProgress, request, status, message) {
+            statusline.updateUrl(message);
+        },
+        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) {
+            statusline.updateProgress(curTotalProgress/maxTotalProgress);
+        },
+        // happens when the users switches tabs
+        onLocationChange: function () {
+            statusline.updateUrl();
+            statusline.updateProgress();
+
+            autocommands.trigger("LocationChange", { url: buffer.URL });
+
+            // if this is not delayed we get the position of the old buffer
+            setTimeout(function () { statusline.updateBufferPosition(); }, 500);
+        },
+        // called at the very end of a page load
+        asyncUpdateUI: function () {
+            setTimeout(function () { statusline.updateUrl(); }, 100);
+        },
+        setOverLink: function (link, b) {
+            let ssli = options["showstatuslinks"];
+            if (link && ssli) {
+                if (ssli == 1)
+                    statusline.updateUrl("Link: " + link);
+                else if (ssli == 2)
+                    liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
+            }
+
+            if (link == "") {
+                if (ssli == 1)
+                    statusline.updateUrl();
+                else if (ssli == 2)
+                    modes.show();
+            }
+        },
+
+        // nsIXULBrowserWindow stubs
+        setJSDefaultStatus: function (status) {},
+        setJSStatus: function (status) {},
+
+        // Stub for something else, presumably. Not in any documented
+        // interface.
+        onLinkIconAvailable: function () {}
     },
 
     /**
