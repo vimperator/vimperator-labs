@@ -169,8 +169,6 @@ const Events = Module("events", {
      */
     feedingKeys: false,
 
-    wantsModeReset: true, // used in onFocusChange since Firefox is so buggy here
-
     /**
      * Initiates the recording of a key event macro.
      *
