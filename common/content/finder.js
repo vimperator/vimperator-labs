@@ -615,10 +615,10 @@ const RangeFinder = Module("rangefinder", {
 
 const RangeFind = Class("RangeFind", {
     init: function (matchCase, backward) {
+        this.matchCase = Boolean(matchCase);
+        this._backward = Boolean(backward);
         this.finder = services.create("find");
-        this.finder.caseSensitive = matchCase;
-        this.matchCase = matchCase;
-        this._backward = backward;
+        this.finder.caseSensitive = this.matchCase;
 
         this.ranges = this.makeFrameList(content);
         this.range = RangeFind.Range(tabs.localStore.focusedFrame || content);
@@ -735,6 +735,7 @@ const RangeFind = Class("RangeFind", {
     },
 
     search: function (word, reverse, private) {
+        this.wrapped = false;
         this.finder.findBackwards = reverse ? !this._backward : this._backward;
         let again = word == null;
         if (again)
@@ -756,19 +757,23 @@ const RangeFind = Class("RangeFind", {
         else {
             function indices() {
                 let idx = this.range.index;
-                for (let i in this.backward ? util.range(idx + 1, -1, -1) : util.range(idx, this.ranges.length))
+                for (let i in this.backward ? util.range(idx + 1, 0, -1) : util.range(idx, this.ranges.length))
                     yield i;
                 if (private)
                     return;
                 this.wrapped = true;
-                for (let i in this.backward ? util.range(this.ranges.length, idx, -1) : util.range(0, idx))
+                this.lastRange = null;
+                for (let i in this.backward ? util.range(this.ranges.length, idx, -1) : util.range(0, idx + 1))
                     yield i;
             }
             for (let i in indices.call(this)) {
                 this.range = this.ranges[i];
+
                 let start = this.sameDocument(this.lastRange, this.range.range) ?
-                            RangeFind.endpoint(this.lastRange, this.backward) :
+                            RangeFind.endpoint(this.lastRange, !(again ^ this.backward)) :
                             RangeFind.endpoint(this.range.range, !this.backward);;
+                if (this.backward && !again)
+                    start = RangeFind.endpoint(this.startRange, false);
 
                 var range = this.finder.Find(word, this.range.range, start, this.range.range);
                 if (range)
@@ -791,7 +796,6 @@ const RangeFind = Class("RangeFind", {
             this.found = false;
             return null;
         }
-        this.wrapped = false;
         this.range.selection.removeAllRanges();
         this.range.selection.addRange(range);
         this.range.selectionController.scrollSelectionIntoView(

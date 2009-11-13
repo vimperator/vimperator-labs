@@ -449,7 +449,7 @@ const Liberator = Module("liberator", {
         }
         else if (command.action === null)
             err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
-        else if (count != -1 && !command.count)
+        else if (count != null && !command.count)
             err = "E481: No range allowed";
         else if (special && !command.bang)
             err = "E477: No ! allowed";
@@ -1652,7 +1652,7 @@ const Liberator = Module("liberator", {
                 let setFrom = vbs.setFrom;
 
                 try {
-                    vbs.set(args.count > -1 ? args.count : 1);
+                    vbs.set(args.count || 1);
                     vbs.setFrom = null;
                     liberator.execute(args[0], null, true);
                 }

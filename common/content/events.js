@@ -65,7 +65,7 @@ const Events = Module("events", {
             buffer: "",                // partial command storage
             pendingMotionMap: null,    // e.g. "d{motion}" if we wait for a motion of the "d" command
             pendingArgMap: null,       // pending map storage for commands like m{a-z}
-            count: -1                  // parsed count from the input buffer
+            count: null                // parsed count from the input buffer
         };
 
         function onResize(event) {
@@ -1009,7 +1009,7 @@ const Events = Module("events", {
                 this._input.pendingMap = null;
                 this._input.count = parseInt(countStr, 10);
                 if (isNaN(this._input.count))
-                    this._input.count = -1;
+                    this._input.count = null;
                 this._input.buffer = "";
                 if (map.arg) {
                     this._input.buffer = inputStr;

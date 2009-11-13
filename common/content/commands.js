@@ -142,7 +142,7 @@ const Command = Class("Command", {
     execute: function (args, bang, count, modifiers) {
         // XXX
         bang = !!bang;
-        count = (count === undefined) ? -1 : count;
+        count = (count === undefined) ? null : count;
         modifiers = modifiers || {};
 
         let self = this;
@@ -287,11 +287,11 @@ const Commands = Module("commands", {
     OPTION_LIST: 6,
 
     /**
-     * @property {number} Indicates that no count was specified for this
+     * @property Indicates that no count was specified for this
      *     command invocation.
      * @final
      */
-    COUNT_NONE: -1,
+    COUNT_NONE: null,
     /**
      * @property {number} Indicates that the full buffer range (1,$) was
      *     specified for this command invocation.
@@ -748,7 +748,7 @@ const Commands = Module("commands", {
 
         // parse count
         if (count)
-            count = count == "%" ? this.COUNT_ALL: parseInt(count, 10);
+            count = count == "%" ? this.COUNT_ALL : parseInt(count, 10);
         else
             count = this.COUNT_NONE;
 
@@ -1022,6 +1022,7 @@ const Commands = Module("commands", {
 
                     // TODO: using an array comprehension here generates flakey results across repeated calls
                     //     : perhaps we shouldn't allow options in a list call but just ignore them for now
+                    //     : No, array comprehensions are fine, generator statements aren't. --Kris
                     let cmds = this._exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
 
                     if (cmds.length > 0) {

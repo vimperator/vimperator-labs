@@ -869,7 +869,7 @@ const Tabs = Module("tabs", {
                     if (args.length)
                         args = args[0];
                     else
-                        args = Math.max(args.count, 0);
+                        args = args.count || 0;
 
                     let m;
                     if (m = /^(\d+)(:|$)/.exec(args || '1'))
@@ -929,7 +929,7 @@ const Tabs = Module("tabs", {
         mappings.add([modes.NORMAL], ["gt"],
             "Go to the next tab",
             function (count) {
-                if (count > 0)
+                if (count != null)
                     tabs.select(count - 1, false);
                 else
                     tabs.select("+1", true);
@@ -938,19 +938,19 @@ const Tabs = Module("tabs", {
 
         mappings.add([modes.NORMAL], ["<C-n>", "<C-Tab>", "<C-PageDown>"],
             "Go to the next tab",
-            function (count) { tabs.select("+" + (count < 1 ? 1 : count), true); },
+            function (count) { tabs.select("+" + (count || 1), true); },
             { count: true });
 
         mappings.add([modes.NORMAL], ["gT", "<C-p>", "<C-S-Tab>", "<C-PageUp>"],
            "Go to previous tab",
-            function (count) { tabs.select("-" + (count < 1 ? 1 : count), true); },
+            function (count) { tabs.select("-" + (count || 1), true); },
             { count: true });
 
         if (config.hasTabbrowser) {
             mappings.add([modes.NORMAL], ["b"],
                 "Open a prompt to switch buffers",
                 function (count) {
-                    if (count != -1)
+                    if (count != null)
                         tabs.switchTo(String(count));
                     else
                         commandline.open(":", "buffer! ", modes.EX);

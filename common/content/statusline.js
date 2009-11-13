@@ -102,7 +102,7 @@ const StatusLine = Module("statusline", {
             let sh = window.getWebNavigation().sessionHistory;
             if (sh && sh.index > 0)
                 modified += "+";
-            if (sh && sh.index < sh.count -1)
+            if (sh && sh.index < sh.count - 1)
                 modified += "-";
         }
         if (modules.bookmarks) {

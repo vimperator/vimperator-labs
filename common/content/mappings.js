@@ -386,7 +386,7 @@ const Mappings = Module("mappings", {
 
                     mappings.addUserMap(modes, [lhs],
                         "User defined mapping",
-                        function (count) { events.feedkeys((count > -1 ? count : "") + this.rhs, this.noremap, this.silent); }, {
+                        function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); }, {
                             count: true,
                             rhs: events.canonicalKeys(rhs),
                             noremap: !!noremap,
