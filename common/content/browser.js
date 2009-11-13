@@ -1,4 +1,6 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -208,7 +210,7 @@ const Browser = Module("browser", {
             },
             { argCount: "0" });
 
-        commands.add(["o[pen]", "e[dit]"],
+        commands.add(["o[pen]"],
             "Open one or more URLs in the current tab",
             function (args) {
                 args = args.string;

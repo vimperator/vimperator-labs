@@ -4,6 +4,7 @@
     * plugins may now provide full-fleged ':help' documentation
     * asciidoc is no longer required to build Vimperator
     * the help system is newly modularized
+    * remove [c]:edit[c], [c]:tabedit[c], and [c]:winedit[c]
 
 2009-10-28:
     * version 2.2

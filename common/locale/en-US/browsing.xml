@@ -106,7 +106,7 @@ have 2 possibilities:
 
 
 <item>
-    <tags>t :t :tabopen :tabnew :tabe :tabedit</tags>
+    <tags>t :t :tabopen :tabnew</tags>
     <spec>:tabopen<oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
     <spec>t</spec>
     <description>
@@ -156,7 +156,7 @@ have 2 possibilities:
 
 
 <item>
-    <tags>w :winopen :wopen :winedit</tags>
+    <tags>w :winopen :wopen</tags>
     <spec>:wino<oa>pen</oa><oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
     <spec>w</spec>
     <description>
