@@ -25,30 +25,30 @@ const ModuleBase = Class("ModuleBase", {
  * entirely elided, or they must have the exact type specified.
  * Loading semantics are as follows:
  *
- *  - A module is garunteed not to be initialized before any of its
+ *  - A module is guaranteed not to be initialized before any of its
  *    prerequisites as listed in its {@see ModuleBase#requires} member.
- *  - A module is considered initialized once its been instantiated,
- *    it's {@see Class#init} method has been called, and its
+ *  - A module is considered initialized once it's been instantiated,
+ *    its {@see Class#init} method has been called, and its
  *    instance has been installed into the top-level {@see modules}
  *    object.
  *  - Once the module has been initialized, its module-dependent
  *    initialization functions will be called as described hereafter.
  * @param {string} name The module's name as it will appear in the
- *      top-level {@see modules} object.
+ *     top-level {@see modules} object.
  * @param {ModuleBase} base The base class for this module.
- *      @optional
+ *     @optional
  * @param {Object} prototype The prototype for instances of this
- *      object. The object itself is copied and not used as a
- *      prototype directly.
+ *     object. The object itself is copied and not used as a prototype
+ *     directly.
  * @param {Object} classProperties The class properties for the new
- *      module constructor.
- *      @optional
+ *     module constructor.
+ *     @optional
  * @param {Object} moduleInit The module initialization functions
- *      for the new module. Each function is called as soon as the
- *      named module has been initialized, but after the module
- *      itself. The constructors are garunteed to be called in the
- *      same order that the dependent modules were initialized.
- *      @optional
+ *     for the new module. Each function is called as soon as the named module
+ *     has been initialized, but after the module itself. The constructors are
+ *     guaranteed to be called in the same order that the dependent modules
+ *     were initialized.
+ *     @optional
  *
  * @returns {function} The constructor for the resulting module.
  */
@@ -115,7 +115,7 @@ window.addEventListener("load", function () {
         }
     }
     Module.list.forEach(load);
-    deferredInit['load'].forEach(call)
+    deferredInit["load"].forEach(call)
 
     for (let module in values(Module.list))
         delete module.INIT;
@@ -125,7 +125,7 @@ window.addEventListener("load", function () {
 
 window.addEventListener("unload", function () {
     for (let [, mod] in iter(modules))
-        if (mod instanceof ModuleBase && 'destroy' in mod)
+        if (mod instanceof ModuleBase && "destroy" in mod)
             mod.destroy();
 }, false);
 

@@ -191,13 +191,13 @@ function call(fn) {
  *     curry(foo)(4)(8)(9) -> "7 8 9";
  *
  * @param {function} fn The function to curry.
- * @param {integer}  length The number of arguments expected.
- *      @default fn.length
- *      @optional
- * @param {object}   self   The 'this' value for the returned
- *      function. When omitted, the value of 'this' from the
- *      first call to the function is preserved.
- *      @optional
+ * @param {integer} length The number of arguments expected.
+ *     @default fn.length
+ *     @optional
+ * @param {object} self The 'this' value for the returned function. When
+ *     omitted, the value of 'this' from the first call to the function is
+ *     preserved.
+ *     @optional
  */
 function curry(fn, length, self, acc) {
     if (length == null)
@@ -306,18 +306,18 @@ function extend(subclass, superclass, overrides) {
  * specified.
  *
  * @param {string} name The class's as it will appear when toString
- *      is called, as well as in stack traces.
- *      @optional
+ *     is called, as well as in stack traces.
+ *     @optional
  * @param {function} base The base class for this module. May be any
- *      callable object.
- *      @optional
- *      @default Class
+ *     callable object.
+ *     @optional
+ *     @default Class
  * @param {Object} prototype The prototype for instances of this
- *      object. The object itself is copied and not used as a
- *      prototype directly.
+ *     object. The object itself is copied and not used as a prototype
+ *     directly.
  * @param {Object} classProperties The class properties for the new
- *      module constructor. More than one may be provided.
- *      @optional
+ *     module constructor. More than one may be provided.
+ *     @optional
  *
  * @returns {function} The constructor for the resulting class.
  */
@@ -350,7 +350,7 @@ function Class() {
             String.substr(constructor, 20) + ")");
     Constructor.name = name || superclass.name;
 
-    if (!('init' in superclass.prototype)) {
+    if (!("init" in superclass.prototype)) {
         var superc = superclass;
         superclass = function Shim() {}
         extend(superclass, superc, {
@@ -384,9 +384,9 @@ Class.prototype = {
      *
      * @param {function} callback The function to call after 'timeout'
      * @param {number} timeout The timeout, in seconds, to wait
-     *          before calling 'callback'.
+     *     before calling 'callback'.
      * @returns {integer} The ID of this timeout, to be passed to
-     *          {@see nsIDOMWindow#clearTimeout}.
+     *     {@see nsIDOMWindow#clearTimeout}.
      */
     setTimeout: function (callback, timeout) {
         const self = this;
@@ -433,12 +433,12 @@ const Struct = Class("Struct", {
         /**
          * Sets a lazily constructed default value for a member of
          * the struct. The value is constructed once, the first time
-         * it is accesed and memoized thereafter.
+         * it is accessed and memoized thereafter.
          *
          * @param {string} key The name of the member for which to
-         *      provide the default value.
+         *     provide the default value.
          * @param {function} val The function which is to generate
-         *      the default value.
+         *     the default value.
          */
         Struct.defaultValue = function (key, val) {
             let i = args.indexOf(key);
