@@ -804,7 +804,7 @@ const Completion = Module("completion", {
                         }
                     }
                     for (let k in obj) {
-                        if (k in obj && !(k in seen) && obj.hasOwnProperty(k) == toplevel)
+                        if (k in obj && !('|' + k in seen) && obj.hasOwnProperty(k) == toplevel)
                             yield [k, getKey(obj, k)]
                     }
                 }
