@@ -937,8 +937,13 @@ const Options = Module("options", {
                     }
 
                     if (name == "all" && reset)
-                        // TODO: Why? --djk
-                        liberator.echoerr("You can't reset all options, it could make " + config.hostApplication + " unusable.");
+                        commandline.input("Warning: Resetting all preferences may make " + config.hostApplication + " unusable. Continue (yes/[no]): ",
+                            function (resp) {
+                                if (resp == "yes")
+                                    for (let pref in values(options.allPrefs()))
+                                        options.resetPref(pref);
+                            },
+                            { promptHighlight: "WarningMsg" });
                     else if (name == "all")
                         options.listPrefs(onlyNonDefault, "");
                     else if (reset)

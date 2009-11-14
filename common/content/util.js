@@ -782,6 +782,9 @@ const Util = Module("util", {
         isinstance: function isinstance(obj) {
             return Object.prototype.toString.call(obj) == "[object Array]";
         },
+
+        toString: function () this.__proto__.toString(),
+
         /**
          * Converts an array to an object. As in lisp, an assoc is an
          * array of key-value pairs, which maps directly to an object,
