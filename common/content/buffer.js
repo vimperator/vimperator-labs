@@ -1401,7 +1401,7 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["G", "<End>"],
             "Go to the end of the document",
-            function (count) { buffer.scrollToPercent(buffer.scrollXPercent, count >= 0 ? count : 100); },
+            function (count) { buffer.scrollToPercent(buffer.scrollXPercent, count != null ? count : 100); },
             { count: true });
 
         mappings.add(myModes, ["%"],
