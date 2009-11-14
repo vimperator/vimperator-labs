@@ -83,7 +83,6 @@ const Events = Module("events", {
                         liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
                         liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
-                        let files = io.readDirectory(dir.path);
                         for (let file in dir.iterDirectory()) {
                             if (file.exists() && !file.isDirectory() && file.isReadable() &&
                                 /^[\w_-]+(\.vimp)?$/i.test(file.leafName)) {
