@@ -826,12 +826,6 @@ const Completion = Module("completion", {
                 if (!obj)
                     return [];
 
-                // XPCNativeWrappers, etc, don't show all accessible
-                // members until they're accessed, so, we look at
-                // the wrappedJSObject instead, and return any keys
-                // available in the object itself.
-                let orig = obj;
-
                 if (modules.isPrototypeOf(obj))
                     compl = [v for (v in Iterator(obj))];
                 else {
