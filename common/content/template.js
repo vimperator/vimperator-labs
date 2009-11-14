@@ -263,6 +263,7 @@ const Template = Module("template", {
         // </e4x>
         if (table.tr.length() > 1)
             return table;
+        return XML();
     },
 
     tabular: function tabular(headings, style, iter) {

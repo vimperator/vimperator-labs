@@ -460,14 +460,15 @@ const Hints = Module("hints", {
             return false;
         }
 
+        // This "followhints" option is *too* confusing. For me, and
+        // presumably for users, too. --Kris
         if (options["followhints"] > 0) {
             if (!followFirst)
                 return false; // no return hit; don't examine uniqueness
 
             // OK. return hit. But there's more than one hint, and
             // there's no tab-selected current link. Do not follow in mode 2
-            if (options["followhints"] == 2 && this._validHints.length > 1 && !this._hintNumber)
-                return liberator.beep();
+            liberator.assert(options["followhints"] != 2 || this._validHints.length == 1 || this._hintNumber)
         }
 
         if (!followFirst) {
@@ -499,8 +500,7 @@ const Hints = Module("hints", {
     _checkUnique: function () {
         if (this._hintNumber == 0)
             return;
-        if (this._hintNumber > this._validHints.length)
-            return void liberator.beep();
+        liberator.assert(this._hintNumber <= this._validHints.length);
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
@@ -735,8 +735,8 @@ const Hints = Module("hints", {
      */
     show: function (minor, filter, win) {
         this._hintMode = this._hintModes[minor];
-        if (!this._hintMode)
-            return void liberator.beep();
+        liberator.assert(this._hintMode);
+
         commandline.input(this._hintMode.prompt + ": ", null, { onChange: this.closure._onInput });
         modes.extended = modes.HINTS;
 
@@ -820,7 +820,8 @@ const Hints = Module("hints", {
             else {
                 this._usedTabKey = false;
                 this._hintNumber = 0;
-                return void liberator.beep();
+                liberator.beep();
+                return;
             }
             break;
 
@@ -855,8 +856,7 @@ const Hints = Module("hints", {
                 }
                 this._showActiveHint(this._hintNumber, oldHintNumber || 1);
 
-                if (this._hintNumber == 0)
-                    return void liberator.beep();
+                liberator.assert(this._hintNumber != 0);
 
                 this._checkUnique();
             }
@@ -1022,7 +1022,8 @@ const Hints = Module("hints", {
             return -1;
         }
     })(),
-    Mode: new Struct("prompt", "action", "tags"),
+
+    Mode: new Struct("prompt", "action", "tags")
 }, {
     mappings: function () {
         var myModes = config.browserModes;

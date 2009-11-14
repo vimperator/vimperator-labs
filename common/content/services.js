@@ -61,6 +61,7 @@ const Services = Module("services", {
         catch (e) {
             // liberator.log() is not defined at this time, so just dump any error
             dump("Service creation failed for '" + classes + "': " + e + "\n");
+            return null;
         }
     },
 
@@ -74,8 +75,8 @@ const Services = Module("services", {
      * @param {string} meth The name of the function used to instanciate
      *     the service.
      */
-    add: function (name, class, ifaces, meth) {
-        return this.services[name] = this._create(class, ifaces, meth);
+    add: function (name, class_, ifaces, meth) {
+        return this.services[name] = this._create(class_, ifaces, meth);
     },
 
     /**
@@ -86,9 +87,9 @@ const Services = Module("services", {
      * @param {nsISupports|nsISupports[]} ifaces The interface or array of
      *     interfaces implemented by this class.
      */
-    addClass: function (name, class, ifaces) {
+    addClass: function (name, class_, ifaces) {
         const self = this;
-        return this.classes[name] = function () self._create(class, ifaces, "createInstance");
+        return this.classes[name] = function () self._create(class_, ifaces, "createInstance");
     },
 
     /**

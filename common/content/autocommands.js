@@ -213,8 +213,10 @@ const AutoCommands = Module("autocommands", {
                 // TODO: Perhaps this should take -args to pass to the command?
                 function (args) {
                     // Vim compatible
-                    if (args.length == 0)
-                        return void liberator.echomsg("No matching autocommands");
+                    if (args.length == 0) {
+                        liberator.echomsg("No matching autocommands");
+                        return;
+                    }
 
                     let [event, url] = args;
                     let defaultURL = url || buffer.URL;

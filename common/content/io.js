@@ -28,6 +28,7 @@ const Script = Class("Script", {
             if (dir.contains(file, false))
                 plugins[this.NAME] = this;
         }
+        return this;
     }
 });
 
@@ -1038,6 +1039,7 @@ lookup:
                     return File(dir).readDirectory();
                 }
                 catch (e) {}
+                return [];
             };
         };
 

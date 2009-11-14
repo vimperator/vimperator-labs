@@ -201,7 +201,7 @@ function ObjectStore(name, store, load, options) {
         return ret;
     };
 
-    this.get = function get(val) object[val];
+    this.get = function get(val, default_) val in object ? object[val] : default_;
 
     this.clear = function () {
         object = {};
@@ -334,8 +334,9 @@ var storage = {
             return;
         this.removeDeadObservers();
         // Safe, since we have our own Array object here.
-        for each (let observer in observers[key])
-            observer.callback.get()(key, event, arg);
+        if (key in observers)
+            for each (let observer in observers[key])
+                observer.callback.get()(key, event, arg);
         timers[key].tell();
     },
 

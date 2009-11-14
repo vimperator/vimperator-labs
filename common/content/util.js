@@ -343,7 +343,7 @@ const Util = Module("util", {
         addDataEntry("help.css", data.replace(/chrome:[^ ")]+\//g, ""));
 
         let re = /(chrome:[^ ");]+\/)([^ ");]+)/g;
-        while (m = re.exec(data))
+        while ((m = re.exec(data)))
             chrome[m[0]] = m[2];
 
         for (let [uri, leaf] in Iterator(chrome))
@@ -378,6 +378,7 @@ const Util = Module("util", {
         }
         catch (e) {
             liberator.log("Error opening " + url + ": " + e, 1);
+            return null;
         }
     },
 
@@ -407,7 +408,6 @@ const Util = Module("util", {
                 return {
                     xhtml: "http://www.w3.org/1999/xhtml",
                     xhtml2: "http://www.w3.org/2002/06/xhtml2",
-                    liberator: NS.uri,
                     liberator: NS.uri
                 }[prefix] || null;
             },
@@ -756,6 +756,8 @@ const Util = Module("util", {
             if (nodes && node.@key)
                 nodes[node.@key] = domnode;
             return domnode;
+        default:
+            return null;
         }
     }
 }, {
@@ -860,7 +862,7 @@ const Util = Module("util", {
             }
             return ret;
         }
-    }),
+    })
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

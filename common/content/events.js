@@ -417,8 +417,7 @@ const Events = Module("events", {
 
         let re = RegExp("<.*?>?>|[^<]|<(?!.*>)", "g");
         let match;
-
-        while (match = re.exec(input)) {
+        while ((match = re.exec(input))) {
             let evt_str = match[0];
             let evt_obj = { ctrlKey: false, shiftKey: false, altKey: false, metaKey: false,
                             keyCode: 0, charCode: 0, type: "keypress" };
@@ -560,7 +559,7 @@ const Events = Module("events", {
                 }
             }
             if (key == null)
-                return;
+                return null;
         }
         else if (event.type == "click" || event.type == "dblclick") {
             if (event.shiftKey)
@@ -697,8 +696,10 @@ const Events = Module("events", {
                 return;
             }
 
-            if (config.focusChange)
-                return void config.focusChange(win);
+            if (config.focusChange) {
+                config.focusChange(win);
+                return;
+            }
 
             let urlbar = document.getElementById("urlbar");
             if (elem == null && urlbar && urlbar.inputField == this._lastFocus)
@@ -828,7 +829,8 @@ const Events = Module("events", {
                 modes.isRecording = false;
                 liberator.log("Recorded " + this._currentMacro + ": " + this._macros.get(this._currentMacro), 9);
                 liberator.echomsg("Recorded macro '" + this._currentMacro + "'");
-                return void killEvent();
+                killEvent();
+                return;
             }
             else if (!mappings.hasMap(liberator.mode, this._input.buffer + key))
                 this._macros.set(this._currentMacro, this._macros.get(this._currentMacro) + key);
@@ -852,14 +854,15 @@ const Events = Module("events", {
             else
                 events.duringFeed.push(event);
 
-            return void killEvent();
+            killEvent();
+            return;
         }
 
         try {
             let stop = false;
 
             let win = document.commandDispatcher.focusedWindow;
-            if (win && win.document && win.document.designMode == "on" && !config.isComposeWindow)
+            if (win && win.document && "designMode" in win.document && win.document.designMode == "on" && !config.isComposeWindow)
                 stop = true;
             // menus have their own command handlers
             if (modes.extended & modes.MENU)
@@ -889,7 +892,7 @@ const Events = Module("events", {
             // just forward event without checking any mappings when the MOW is open
             if (liberator.mode == modes.COMMAND_LINE && (modes.extended & modes.OUTPUT_MULTILINE)) {
                 commandline.onMultilineOutputEvent(event);
-                return void killEvent();
+                throw killEvent();
             }
 
             // XXX: ugly hack for now pass certain keys to the host app as
@@ -907,7 +910,7 @@ const Events = Module("events", {
                 // custom mode...
                 if (liberator.mode == modes.CUSTOM) {
                     plugins.onEvent(event);
-                    return void killEvent();
+                    throw killEvent();
                 }
 
                 // All of these special cases for hint mode are driving
@@ -920,7 +923,7 @@ const Events = Module("events", {
                         || (/^[0-9]$/.test(key) && !hints.escNumbers)) {
                         hints.onEvent(event);
                         this._input.buffer = "";
-                        return void killEvent();
+                        throw killEvent();
                     }
 
                     // others are left to generate the 'input' event or handled by the host app
@@ -992,7 +995,7 @@ const Events = Module("events", {
                 }
                 else {
                     if (modes.isReplaying && !this.waitForPageLoad())
-                        return void killEvent();
+                        throw killEvent();
 
                     let ret = map.execute(null, this._input.count);
                     if (map.route && ret)
@@ -1031,7 +1034,8 @@ const Events = Module("events", {
                 killEvent();
         }
         catch (e) {
-            liberator.reportError(e);
+            if (e !== undefined)
+                liberator.reportError(e);
         }
         finally {
             let motionMap = (this._input.pendingMotionMap && this._input.pendingMotionMap.names[0]) || "";
@@ -1084,8 +1088,7 @@ const Events = Module("events", {
                  elem instanceof HTMLIsIndexElement ||
                  elem instanceof HTMLObjectElement ||
                  elem instanceof HTMLEmbedElement);
-    },
-
+    }
 }, {
     commands: function () {
         commands.add(["delmac[ros]"],
@@ -1124,7 +1127,7 @@ const Events = Module("events", {
             function () { events.onEscape(); });
 
         // add the ":" mapping in all but insert mode mappings
-        mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.HINTS, modes.MESSAGE, modes.COMPOSE, modes.CARET, modes.TEXTAREA],
+        mappings.add(modes.matchModes({ extended: false, input: false }),
             [":"], "Enter command line mode",
             function () { commandline.open(":", "", modes.EX); });
 

@@ -79,24 +79,23 @@ const Sanitizer = Module("sanitizer", {
         return errors;
     },
 
-    get prefNames() util.Array.flatten([this.prefDomain, this.prefDomain2].map(options.allPrefs)),
+    get prefNames() util.Array.flatten([this.prefDomain, this.prefDomain2].map(options.allPrefs))
 }, {
     prefArgList: [["commandLine",  "commandline"],
                   ["offlineApps",  "offlineapps"],
                   ["siteSettings", "sitesettings"]],
     prefToArg: function (pref) {
-        let pref = pref.replace(/.*\./, "");
+        pref = pref.replace(/.*\./, "");
         return util.Array.toObject(Sanitizer.prefArgList)[pref] || pref;
     },
 
-    argToPref: function (arg) [k for ([k, v] in values(Sanitizer.prefArgList)) if (v == arg)][0] || arg,
+    argToPref: function (arg) [k for ([k, v] in values(Sanitizer.prefArgList)) if (v == arg)][0] || arg
 }, {
     commands: function () {
         commands.add(["sa[nitize]"],
             "Clear private data",
             function (args) {
-                if (options['private'])
-                    return void liberator.echomsg("Cannot sanitize items in private mode");
+                liberator.assert(!options['private'], "Cannot sanitize items in private mode");
 
                 let timespan = args["-timespan"] || options["sanitizetimespan"];
 

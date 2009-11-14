@@ -371,9 +371,9 @@ const Commands = Module("commands", {
         function quote(str) Commands.quoteArg[/[\s"'\\]|^$/.test(str) ? '"' : ""](str);
 
         for (let [opt, val] in Iterator(args.options || {})) {
-            let char = /^-.$/.test(opt) ? " " : "=";
+            let chr = /^-.$/.test(opt) ? " " : "=";
             if (val != null)
-                opt += char + quote(val)
+                opt += chr + quote(val)
             res.push(opt);
         }
         for (let [, arg] in Iterator(args.arguments || []))
@@ -816,31 +816,31 @@ const Commands = Module("commands", {
                 break;
 
             case "vimperator":
-                if (res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                if ((res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
-                else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
                     arg += eval(res[0] + (res[3] ? "" : '"'));
-                else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                else if ((res = str.match(/^(')((?:[^\\']|\\.)*)('?)/)))
                     arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                 break;
 
             case "rc-ish":
-                if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                if ((res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
-                else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
                     arg += eval(res[0] + (res[3] ? "" : '"'));
-                else if (res = str.match(/^(')((?:[^']|'')*)('?)/))
+                else if ((res = str.match(/^(')((?:[^']|'')*)('?)/)))
                     arg += res[2].replace("''", "'", "g");
                 break;
 
             case "pythonesque":
-                if (res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/))
+                if ((res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
-                else if (res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/))
+                else if ((res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/)))
                     arg += res[2];
-                else if (res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/))
+                else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
                     arg += eval(res[0] + (res[3] ? "" : '"'));
-                else if (res = str.match(/^(')((?:[^\\']|\\.)*)('?)/))
+                else if ((res = str.match(/^(')((?:[^\\']|\\.)*)('?)/)))
                     arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                 break;
             }
@@ -887,8 +887,10 @@ const Commands = Module("commands", {
             let [count, cmd, bang, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length);
-            if (!junk)
-                return void context.fork("", 0, this, "command");
+            if (!junk) {
+                context.fork("", 0, this, "command");
+                return;
+            }
 
             // dynamically get completions as specified with the command's completer function
             let command = commands.get(cmd);

@@ -310,8 +310,9 @@ const Tabs = Module("tabs", {
         let index = Tabs.indexFromSpec(spec, wrap);
         // FIXME:
         if (index == -1)
-            return void liberator.beep();
-        config.tabbrowser.mTabContainer.selectedIndex = index;
+            liberator.beep();
+        else
+            config.tabbrowser.mTabContainer.selectedIndex = index;
     },
 
     /**
@@ -885,13 +886,15 @@ const Tabs = Module("tabs", {
                     else
                         args = args.count || 0;
 
-                    let m;
-                    if (m = /^(\d+)(:|$)/.exec(args || '1'))
+                    let m = /^(\d+)(:|$)/.exec(args || '1');
+                    if (m)
                         window.undoCloseTab(Number(m[1]) - 1);
                     else if (args) {
                         for (let [i, item] in Iterator(tabs.closedTabs))
-                            if (item.state.entries[item.state.index - 1].url == args)
-                                return void window.undoCloseTab(i);
+                            if (item.state.entries[item.state.index - 1].url == args) {
+                                window.undoCloseTab(i);
+                                return;
+                            }
 
                         liberator.echoerr("Exxx: No matching closed tab");
                     }
@@ -1064,7 +1067,7 @@ const Tabs = Module("tabs", {
                         ["quickmark", "go and gn mappings"],
                         ["tabopen", ":tabopen[!] command"],
                         ["paste", "P and gP mappings"]
-                    ],
+                    ]
                 });
 
             options.add(["newtab"],

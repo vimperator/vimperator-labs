@@ -161,9 +161,7 @@ const QuickMarks = Module("quickmarks", {
         mappings.add(myModes,
             ["M"], "Add new QuickMark for current URL",
             function (arg) {
-                if (/[^a-zA-Z0-9]/.test(arg))
-                    return void liberator.beep();
-
+                liberator.assert(/^[a-zA-Z0-9]$/.test(arg));
                 quickmarks.add(arg, buffer.URL);
             },
             { arg: true });

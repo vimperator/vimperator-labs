@@ -16,8 +16,7 @@ const Browser = Module("browser", {
     // TODO: support 'nrformats'? -> probably not worth it --mst
     incrementURL: function (count) {
         let matches = buffer.URL.match(/(.*?)(\d+)(\D*)$/);
-        if (!matches)
-            return void liberator.beep();
+        liberator.assert(matches);
 
         let [, pre, number, post] = matches;
         let newNumber = parseInt(number, 10) + count;
@@ -48,6 +47,7 @@ const Browser = Module("browser", {
                         getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                     }
                     catch (e) { liberator.reportError(e); }
+                    return null;
                 },
                 completer: function (context) completion.charset(context)
             });
@@ -189,8 +189,7 @@ const Browser = Module("browser", {
             "Go to the root of the website",
             function () {
                 let uri = content.document.location;
-                if (/(about|mailto):/.test(uri.protocol)) // exclude these special protocols for now
-                    return void liberator.beep();
+                liberator.assert(!/(about|mailto):/.test(uri.protocol)); // exclude these special protocols for now
                 liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
             });
 
@@ -221,7 +220,7 @@ const Browser = Module("browser", {
             }, {
                 completer: function (context) completion.url(context),
                 literal: 0,
-                privateData: true,
+                privateData: true
             });
 
         commands.add(["redr[aw]"],

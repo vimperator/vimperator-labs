@@ -173,8 +173,10 @@ const StatusLine = Module("statusline", {
      */
     updateTabCount: function updateTabCount(delayed) {
         if (liberator.has("tabs")) {
-            if (delayed)
-                return void this.setTimeout(function () this.updateTabCount(false), 0);
+            if (delayed) {
+                this.setTimeout(function () this.updateTabCount(false), 0);
+                return;
+            }
 
             // update the ordinal which is used for numbered tabs
             if (options.get("guioptions").has("n", "N"))

@@ -386,13 +386,12 @@ const Liberator = Module("liberator", {
     //           description --Kris
     evalExpression: function (string) {
         string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
-        let matches = string.match(/^&(\w+)/);
 
+        let matches = string.match(/^&(\w+)/);
         if (matches) {
             let opt = this.options.get(matches[1]);
 
-            if (!opt)
-                return void this.echoerr("E113: Unknown option: " + matches[1]);
+            liberator.assert(opt, "E113: Unknown option: " + matches[1]);
 
             let type = opt.type;
             let value = opt.getter();
@@ -403,14 +402,11 @@ const Liberator = Module("liberator", {
             return value;
         }
         // String
-        else if (matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/)) {
-            if (matches)
-                return matches[2].toString();
-            else
-                return void this.echoerr("E115: Missing quote: " + string);
+        else if ((matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))) {
+            return matches[2].toString();
         }
         // Number
-        else if (matches = string.match(/^(\d+)$/))
+        else if ((matches = string.match(/^(\d+)$/)))
             return parseInt(matches[1], 10);
 
         let reference = this.variableReference(string);
@@ -419,8 +415,7 @@ const Liberator = Module("liberator", {
             this.echoerr("E121: Undefined variable: " + string);
         else
             return reference[0][reference[1]];
-
-        return;
+        return null;
     },
 
     /**
@@ -733,6 +728,9 @@ const Liberator = Module("liberator", {
     open: function (urls, params, force) {
         // convert the string to an array of converted URLs
         // -> see util.stringToURLArray for more details
+        //
+        // This is strange. And counterintuitive. Is it really
+        // necessary? --Kris
         if (typeof urls == "string") {
             // rather switch to the tab instead of opening a new url in case of "12: Tab Title" like "urls"
             if (liberator.has("tabs")) {
@@ -752,7 +750,7 @@ const Liberator = Module("liberator", {
                     if (resp && resp.match(/^y(es)?$/i))
                         liberator.open(urls, params, true);
                 });
-            return true;
+            return;
         }
 
         let flags = 0;
@@ -777,40 +775,42 @@ const Liberator = Module("liberator", {
         }
 
         if (urls.length == 0)
-            return false;
+            return;
 
         let browser = config.browser;
         function open(urls, where) {
-            let url = Array.concat(urls)[0];
-            let postdata = Array.concat(urls)[1];
+            try {
+                let url = Array.concat(urls)[0];
+                let postdata = Array.concat(urls)[1];
 
-            // decide where to load the first url
-            switch (where) {
-            case liberator.CURRENT_TAB:
-                browser.loadURIWithFlags(url, flags, null, null, postdata);
-                break;
+                // decide where to load the first url
+                switch (where) {
+                case liberator.CURRENT_TAB:
+                    browser.loadURIWithFlags(url, flags, null, null, postdata);
+                    break;
 
-            case liberator.NEW_BACKGROUND_TAB:
-            case liberator.NEW_TAB:
-                if (!liberator.has("tabs"))
-                    return open(urls, liberator.NEW_WINDOW);
+                case liberator.NEW_BACKGROUND_TAB:
+                case liberator.NEW_TAB:
+                    if (!liberator.has("tabs")) {
+                        open(urls, liberator.NEW_WINDOW);
+                        return;
+                    }
 
-                options.withContext(function () {
-                    options.setPref("browser.tabs.loadInBackground", true);
-                    browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
-                });
-                break;
+                    options.withContext(function () {
+                        options.setPref("browser.tabs.loadInBackground", true);
+                        browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                    });
+                    break;
 
-            case liberator.NEW_WINDOW:
-                window.open();
-                let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
-                win.loadURI(url, null, postdata);
-                browser = win.getBrowser();
-                break;
-
-            default:
-                throw Error("Invalid 'where' directive in liberator.open(...)");
+                case liberator.NEW_WINDOW:
+                    window.open();
+                    let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
+                    win.loadURI(url, null, postdata);
+                    browser = win.getBrowser();
+                    break;
+                }
             }
+            catch(e) {}
         }
 
         if (liberator.forceNewTab)
@@ -824,8 +824,6 @@ const Liberator = Module("liberator", {
             open(url, where);
             where = liberator.NEW_BACKGROUND_TAB;
         }
-
-        return true;
     },
 
     pluginFiles: {},
@@ -881,10 +879,15 @@ const Liberator = Module("liberator", {
             return func.apply(self || this, Array.slice(arguments, 2));
         }
         catch (e) {
-            if (e instanceof FailedAssertion)
-                liberator.echoerr(e.message);
+            if (e instanceof FailedAssertion) {
+                if (e.message)
+                    liberator.echoerr(e.message);
+                else
+                    liberator.beep();
+            }
             else
                 liberator.reportError(e);
+            return undefined;
         }
     },
 
@@ -1011,6 +1014,7 @@ const Liberator = Module("liberator", {
             else
                 return [null, string, "g"];
         }
+        throw Error("What the fuck?");
     },
 
     /**
@@ -1113,10 +1117,10 @@ const Liberator = Module("liberator", {
                         function (dir) !Array.some(opts,
                             function (o) this.opts[o] && this.opts[o][1] == dir, this),
                         this);
-                    let class = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
+                    let class_ = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
 
-                    if (class.length)
-                        styles.addSheet(true, "scrollbar", "*", class.join(", ") + " { visibility: collapse !important; }", true);
+                    if (class_.length)
+                        styles.addSheet(true, "scrollbar", "*", class_.join(", ") + " { visibility: collapse !important; }", true);
                     else
                         styles.removeSheet(true, "scrollbar");
                     options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2,
@@ -1247,7 +1251,7 @@ const Liberator = Module("liberator", {
             { argCount: "0" });
 
         commands.add(["beep"],
-            "Play a system beep",
+            "Play a system beep", // Play? Wrong word. Implies some kind of musicality. --Kris
             function () { liberator.beep(); },
             { argCount: "0" });
 

@@ -335,12 +335,13 @@ const Bookmarks = Module("bookmarks", {
             catch (e) {}
             if (!callback)
                 return results;
-            callback(results);
+            return callback(results);
         }
 
         let resp = util.httpGet(queryURI, callback && process);
         if (!callback)
             return process(resp);
+        return null;
     },
 
     // TODO: add filtering
@@ -440,6 +441,7 @@ const Bookmarks = Module("bookmarks", {
             liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
         else
             liberator.echoerr("No bookmarks set");
+        return null;
     }
 }, {
 }, {
@@ -644,6 +646,7 @@ const Bookmarks = Module("bookmarks", {
                                 item.url = decodeURIComponent(query.replace(/#.*/, ""));
                                 return item;
                             }
+                            return null;
                         }).filter(util.identity);
                     };
                 });

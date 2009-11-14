@@ -150,7 +150,7 @@ const Option = Class("Option", {
     set: function (newValue, scope) {
         scope = scope || this.scope;
         if ((scope & this.scope) == 0) // option doesn't exist in this scope
-            return null;
+            return;
 
         if (this.setter)
             newValue = liberator.trapErrors(this.setter, this, newValue);
@@ -308,6 +308,7 @@ const Option = Class("Option", {
         if (!this.isValidValue(newValue))
             return "E474: Invalid argument: " + values;
         this.setValues(newValue, scope);
+        return null;
     },
 
     // Properties {{{2
@@ -903,7 +904,7 @@ const Options = Module("options", {
     }
 }, {
     SAVED: "extensions.liberator.saved.",
-    OLD_SAVED: "liberator.saved.",
+    OLD_SAVED: "liberator.saved."
 }, {
     commandline: function () {
         // TODO: maybe reset in .destroy()?
@@ -1035,7 +1036,7 @@ const Options = Module("options", {
                             [options._loadPreference(filter, null, false), "Current Value"],
                             [options._loadPreference(filter, null, true), "Default Value"]
                     ].filter(function ([k]) k != null);
-                    return;
+                    return null;
                 }
 
                 return completion.preference(context);
@@ -1050,7 +1051,7 @@ const Options = Module("options", {
                 return completion.option(context, opt.scope);
             }
             else if (prefix == "no")
-                return;
+                return null;
 
             if (prefix)
                 context.advance(prefix.length);
@@ -1064,7 +1065,7 @@ const Options = Module("options", {
             }
 
             if (opt.get || opt.reset || !option || prefix)
-                return;
+                return null;
 
             if (!opt.value) {
                 context.fork("default", 0, this, function (context) {
@@ -1076,7 +1077,7 @@ const Options = Module("options", {
                 });
             }
 
-            context.fork("values", 0, completion, "optionValue", opt.name, opt.operator);
+            return context.fork("values", 0, completion, "optionValue", opt.name, opt.operator);
         }
 
         commands.add(["let"],
@@ -1106,16 +1107,17 @@ const Options = Module("options", {
                     return;
                 }
 
-                let matches;
                 // 1 - type, 2 - name, 3 - +-., 4 - expr
-                if (matches = args.match(/([$@&])?([\w:]+)\s*([-+.])?=\s*(.+)/)) {
-                    if (!matches[1]) {
-                        let reference = liberator.variableReference(matches[2]);
-                        liberator.assert(reference[0] || !matches[3],
-                            "E121: Undefined variable: " + matches[2]);
+                let matches = args.match(/([$@&])?([\w:]+)\s*([-+.])?=\s*(.+)/);
+                if (matches) {
+                    let [, type, name, stuff, expr] = matches;
+                    if (!type) {
+                        let reference = liberator.variableReference(name);
+                        liberator.assert(reference[0] || !stuff,
+                            "E121: Undefined variable: " + name);
 
-                        let expr = liberator.evalExpression(matches[4]);
-                        liberator.assert(expr !== undefined, "E15: Invalid expression: " + matches[4]);
+                        let expr = liberator.evalExpression(expr);
+                        liberator.assert(expr !== undefined, "E15: Invalid expression: " + expr);
 
                         if (!reference[0]) {
                             if (reference[2] == "g")
@@ -1124,12 +1126,12 @@ const Options = Module("options", {
                                 return; // for now
                         }
 
-                        if (matches[3]) {
-                            if (matches[3] == "+")
+                        if (stuff) {
+                            if (stuff == "+")
                                 reference[0][reference[1]] += expr;
-                            else if (matches[3] == "-")
+                            else if (stuff == "-")
                                 reference[0][reference[1]] -= expr;
-                            else if (matches[3] == ".")
+                            else if (stuff == ".")
                                 reference[0][reference[1]] += expr.toString();
                         }
 
@@ -1138,7 +1140,7 @@ const Options = Module("options", {
                      }
                 }
                 // 1 - name
-                else if (matches = args.match(/^\s*([\w:]+)\s*$/)) {
+                else if ((matches = args.match(/^\s*([\w:]+)\s*$/))) {
                     let reference = liberator.variableReference(matches[1]);
                     liberator.assert(reference[0], "E121: Undefined variable: " + matches[1]);
 

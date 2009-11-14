@@ -258,7 +258,7 @@ const Editor = Module("editor", {
 
         if (forward) {
             if (pos <= Editor.getEditor().selectionEnd || pos > Editor.getEditor().value.length)
-                return false;
+                return;
 
             do { // TODO: test code for endless loops
                 this.executeCommand("cmd_selectCharNext", 1);
@@ -267,7 +267,7 @@ const Editor = Module("editor", {
         }
         else {
             if (pos >= Editor.getEditor().selectionStart || pos < 0)
-                return false;
+                return;
 
             do { // TODO: test code for endless loops
                 this.executeCommand("cmd_selectCharPrevious", 1);
@@ -339,7 +339,7 @@ const Editor = Module("editor", {
     // TODO: clean up with 2 functions for textboxes and currentEditor?
     editFieldExternally: function (forceEditing) {
         if (!options["editor"])
-            return false;
+            return;
 
         let textBox = null;
         if (!(config.isComposeWindow))
@@ -349,7 +349,7 @@ const Editor = Module("editor", {
             commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
                 function (resp) {
                     if (resp && resp.match(/^y(es)?$/i))
-                        return editor.editFieldExternally(true);
+                        editor.editFieldExternally(true);
                 });
                 return;
         }
@@ -360,7 +360,7 @@ const Editor = Module("editor", {
         else if (typeof GetCurrentEditor == "function") // Thunderbird composer
             text = GetCurrentEditor().outputToString("text/plain", 2);
         else
-            return false;
+            return;
 
         let oldBg, tmpBg;
         try {
@@ -395,7 +395,7 @@ const Editor = Module("editor", {
                 }
             }, this);
             if (res == false)
-                throw "Couldn't create temporary file";
+                throw Error("Couldn't create temporary file");
         }
         catch (e) {
             // Errors are unlikely, and our error messages won't
@@ -415,7 +415,7 @@ const Editor = Module("editor", {
             })();
         }
 
-        return true;
+        return;
     },
 
     // Abbreviations {{{
@@ -520,7 +520,7 @@ const Editor = Module("editor", {
     expandAbbreviation: function (filter) {
         let textbox   = Editor.getEditor();
         if (!textbox)
-            return;
+            return false;
         let text      = textbox.value;
         let currStart = textbox.selectionStart;
         let currEnd   = textbox.selectionEnd;
@@ -648,8 +648,7 @@ const Editor = Module("editor", {
             return null;
 
         return ed.controllers.getControllerForCommand("cmd_beginLine");
-    },
-
+    }
 }, {
     commands: function () {
         // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
@@ -861,7 +860,7 @@ const Editor = Module("editor", {
             ["<S-Insert>"], "Insert clipboard/selection",
             function () { editor.pasteClipboard(); });
 
-        mappings.add([modes.INSERT, modes.TEXTAREA, modes.COMPOSE],
+        mappings.add(modes.getCharModes("i"),
             ["<C-i>"], "Edit text field with an external editor",
             function () { editor.editFieldExternally(); });
 
@@ -950,12 +949,9 @@ const Editor = Module("editor", {
         mappings.add([modes.VISUAL],
             ["c", "s"], "Change selected text",
             function (count) {
-                if (modes.extended & modes.TEXTAREA) {
-                    editor.executeCommand("cmd_cut");
-                    modes.set(modes.INSERT, modes.TEXTAREA);
-                }
-                else
-                    liberator.beep();
+                liberator.assert(modes.extended & modes.TEXTAREA);
+                editor.executeCommand("cmd_cut");
+                modes.set(modes.INSERT, modes.TEXTAREA);
             });
 
         mappings.add([modes.VISUAL],
@@ -978,24 +974,20 @@ const Editor = Module("editor", {
                 }
                 else {
                     let sel = window.content.document.getSelection();
-                    if (sel)
-                        util.copyToClipboard(sel, true);
-                    else
-                        liberator.beep();
+                    liberator.assert(sel);
+                    util.copyToClipboard(sel, true);
                 }
             });
 
         mappings.add([modes.VISUAL, modes.TEXTAREA],
             ["p"], "Paste clipboard contents",
             function (count) {
-                if (!(modes.extended & modes.CARET)) {
-                    if (!count) count = 1;
-                    while (count--)
-                        editor.executeCommand("cmd_paste");
-                    liberator.mode = modes.TEXTAREA;
-                }
-                else
-                    liberator.beep();
+                liberator.assert(!(modes.extended & modes.CARET));
+                if (!count)
+                    count = 1;
+                while (count--)
+                    editor.executeCommand("cmd_paste");
+                liberator.mode = modes.TEXTAREA;
             });
 
         // finding characters
@@ -1047,8 +1039,8 @@ const Editor = Module("editor", {
                 while (count-- > 0) {
                     let text = Editor.getEditor().value;
                     let pos = Editor.getEditor().selectionStart;
-                    if (pos >= text.length)
-                        return void liberator.beep();
+                    liberator.assert(pos < text.length);
+
                     let chr = text[pos];
                     Editor.getEditor().value = text.substring(0, pos) +
                         (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +

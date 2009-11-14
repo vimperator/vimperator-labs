@@ -180,6 +180,7 @@ const CompletionContext = Class("CompletionContext", {
         this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item.item) :
                 key in self.keys ? item.item[self.keys[key]]
                                  : item.item[key];
+        return this;
     },
     // Temporary
     /**
@@ -1008,7 +1009,7 @@ const Completion = Module("completion", {
                     if (e.message != "Invalid JS")
                         liberator.reportError(e);
                     lastIdx = 0;
-                    return;
+                    return null;
                 }
 
                 let cache = this.context.cache;
@@ -1023,7 +1024,7 @@ const Completion = Module("completion", {
                 for (let [, v] in Iterator(get(0)[FULL_STATEMENTS])) {
                     let key = str.substring(prev, v + 1);
                     if (checkFunction(prev, v, key))
-                        return;
+                        return null;
                     this.eval(key);
                     prev = v + 1;
                 }
@@ -1210,11 +1211,11 @@ const Completion = Module("completion", {
 
                         // Does the opening "(" mark a function call?
                         if (get(-3, 0, FUNCTIONS) != get(-2)[OFFSET])
-                            return; // No. We're done.
+                            return null; // No. We're done.
 
                         let [offset, obj, func] = getObjKey(-3);
                         if (!obj.length)
-                            return;
+                            return null;
                         obj = obj.slice(0, 1);
 
                         try {
@@ -1224,7 +1225,7 @@ const Completion = Module("completion", {
                         if (!completer)
                             completer = this.completers[func];
                         if (!completer)
-                            return;
+                            return null;
 
                         // Split up the arguments
                         let prev = get(-2)[OFFSET];
@@ -1249,7 +1250,7 @@ const Completion = Module("completion", {
 
                     // In a string that's not an obj key or a function arg.
                     // Nothing to do.
-                    return;
+                    return null;
                 }
 
                 //
@@ -1268,11 +1269,11 @@ const Completion = Module("completion", {
                 if (!this.context.tabPressed && key == "" && obj.length > 1) {
                     this.context.waitingForTab = true;
                     this.context.message = "Waiting for key press";
-                    return;
+                    return null;
                 }
 
                 if (!/^(?:[a-zA-Z_$][\w$]*)?$/.test(key))
-                    return; // Not a word. Forget it. Can this even happen?
+                    return null; // Not a word. Forget it. Can this even happen?
 
                 try { // FIXME
                     var o = top[OFFSET];
@@ -1282,11 +1283,12 @@ const Completion = Module("completion", {
                 finally {
                     top[OFFSET] = o;
                 }
+                return null;
             }
         }
     }, {
-        EVAL_TMP: "__liberator_eval_tmp",
-    }),
+        EVAL_TMP: "__liberator_eval_tmp"
+    })
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

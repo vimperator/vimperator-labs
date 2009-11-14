@@ -179,7 +179,7 @@ const CommandLine = Module("commandline", {
             if (self._input.complete)
                 self._autocompleteTimer.tell(false);
             if (self._input.change)
-                return self._input.change.call(commandline, str);
+                self._input.change.call(commandline, str);
         });
         this.registerCallback("complete", modes.PROMPT, function (context) {
             if (self._input.complete)
@@ -647,10 +647,8 @@ const CommandLine = Module("commandline", {
                 event.preventDefault();
                 event.stopPropagation();
 
-                if (this._history)
-                    this._history.select(/Up/.test(key), !/(Page|S-)/.test(key));
-                else
-                    liberator.beep();
+                liberator.assert(this._history);
+                this._history.select(/Up/.test(key), !/(Page|S-)/.test(key));
             }
             // user pressed <Tab> to get completions of a command
             else if (key == "<Tab>" || key == "<S-Tab>") {
@@ -937,8 +935,10 @@ const CommandLine = Module("commandline", {
      *     and what they do.
      */
     updateMorePrompt: function updateMorePrompt(force, showHelp) {
-        if (this._outputContainer.collapsed)
-            return this._echoLine("", this.HL_NORMAL);
+        if (this._outputContainer.collapsed) {
+            this._echoLine("", this.HL_NORMAL);
+            return;
+        }
 
         let win = this._multilineOutputWidget.contentWindow;
         function isScrollable() !win.scrollMaxY == 0;
@@ -1489,10 +1489,8 @@ const CommandLine = Module("commandline", {
         mappings.add([modes.NORMAL],
             ["g<"], "Redisplay the last command output",
             function () {
-                if (this._lastMowOutput)
-                    this._echoMultiline(this._lastMowOutput, commandline.HL_NORMAL);
-                else
-                    liberator.beep();
+                liberator.assert(this._lastMowOutput);
+                this._echoMultiline(this._lastMowOutput, commandline.HL_NORMAL);
             });
     },
     options: function () {
@@ -1853,7 +1851,7 @@ const ItemList = Class("ItemList", {
 
     onEvent: function onEvent(event) false
 }, {
-    WAITING_MESSAGE: "Generating results...",
+    WAITING_MESSAGE: "Generating results..."
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -480,23 +480,23 @@ const Buffer = Module("buffer", {
     focusElement: function (elem) {
         let doc = window.content.document;
         if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
-            return void elem.contentWindow.focus();
+            elem.contentWindow.focus();
         else if (elem instanceof HTMLInputElement && elem.type == "file") {
             Buffer.openUploadPrompt(elem);
             buffer.lastInputField = elem;
-            return;
         }
+        else {
+            elem.focus();
 
-        elem.focus();
+            // for imagemap
+            if (elem instanceof HTMLAreaElement) {
+                try {
+                    let [x, y] = elem.getAttribute("coords").split(",").map(parseFloat);
 
-        // for imagemap
-        if (elem instanceof HTMLAreaElement) {
-            try {
-                let [x, y] = elem.getAttribute("coords").split(",").map(parseFloat);
-
-                elem.dispatchEvent(events.create(doc, "mouseover", { screenX: x, screenY: y }));
+                    elem.dispatchEvent(events.create(doc, "mouseover", { screenX: x, screenY: y }));
+                }
+                catch (e) {}
             }
-            catch (e) {}
         }
     },
 
@@ -881,8 +881,7 @@ const Buffer = Module("buffer", {
         let option = sections || options["pageinfo"];
         let list = template.map(option, function (option) {
             let opt = buffer.pageInfo[option];
-            if (opt)
-                return template.table(opt[1], opt[0](true));
+            return opt ? template.table(opt[1], opt[0](true)) : undefined;
         }, <br/>);
         liberator.echo(list, commandline.FORCE_MULTILINE);
     },
@@ -1037,7 +1036,6 @@ const Buffer = Module("buffer", {
     scrollVertical: function scrollVertical(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, false);
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
-        let increment;
         if (increment == "lines")
             increment = fontSize;
         else if (increment == "pages")
@@ -1050,7 +1048,6 @@ const Buffer = Module("buffer", {
     scrollHorizontal: function scrollHorizontal(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, true);
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
-        let increment;
         if (increment == "columns")
             increment = fontSize; // Good enough, I suppose.
         else if (increment == "pages")
@@ -1093,8 +1090,7 @@ const Buffer = Module("buffer", {
     openUploadPrompt: function openUploadPrompt(elem) {
         commandline.input("Upload file: ", function (path) {
             let file = io.File(path);
-            if (!file.exists())
-                return void liberator.beep();
+            liberator.assert(file.exists());
 
             elem.value = file.path;
         }, {
@@ -1411,10 +1407,8 @@ const Buffer = Module("buffer", {
         mappings.add(myModes, ["%"],
             "Scroll to {count} percent of the document",
             function (count) {
-                if (count > 0 && count <= 100)
-                    buffer.scrollToPercent(buffer.scrollXPercent, count);
-                else
-                    liberator.beep();
+                liberator.assert(count > 0 && count <= 100);
+                buffer.scrollToPercent(buffer.scrollXPercent, count);
             },
             { count: true });
 
@@ -1484,10 +1478,8 @@ const Buffer = Module("buffer", {
                         return computedStyle.visibility != "hidden" && computedStyle.display != "none";
                     });
 
-                    if (elements.length > 0)
-                        buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
-                    else
-                        liberator.beep();
+                    liberator.assert(elements.length > 0);
+                    buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
                 }
             },
             { count: true });
@@ -1503,20 +1495,16 @@ const Buffer = Module("buffer", {
             "Open (put) a URL based on the current clipboard contents in the current buffer",
             function () {
                 let url = util.readFromClipboard();
-                if (url)
-                    liberator.open(url);
-                else
-                    liberator.beep();
+                liberator.assert(url);
+                liberator.open(url);
             });
 
         mappings.add(myModes, ["P"],
             "Open (put) a URL based on the current clipboard contents in a new buffer",
             function () {
                 let url = util.readFromClipboard();
-                if (url)
-                    liberator.open(url, { from: "activate", where: liberator.NEW_TAB });
-                else
-                    liberator.beep();
+                liberator.assert(url);
+                liberator.open(url, { from: "activate", where: liberator.NEW_TAB });
             });
 
         // reloading
@@ -1533,11 +1521,8 @@ const Buffer = Module("buffer", {
             "Copy selected text or current word",
             function () {
                 let sel = buffer.getCurrentWord();
-
-                if (sel)
-                    util.copyToClipboard(sel, true);
-                else
-                    liberator.beep();
+                liberator.assert(sel);
+                util.copyToClipboard(sel, true);
             });
 
         // zooming

@@ -89,7 +89,7 @@ const Finder = Module("finder", {
                         let parent = elem.parentNode;
 
                         let child;
-                        while (child = elem.firstChild)
+                        while ((child = elem.firstChild))
                             docfrag.appendChild(child);
 
                         parent.removeChild(elem);
@@ -783,7 +783,7 @@ const RangeFind = Class("RangeFind", {
             this.lastRange = null;
             this.lastString = word
             var res;
-            while (res = this.search(null, this.reverse, true))
+            while ((res = this.search(null, this.reverse, true)))
                 yield res;
         }
         finally {
@@ -791,7 +791,7 @@ const RangeFind = Class("RangeFind", {
         }
     },
 
-    search: function (word, reverse, private) {
+    search: function (word, reverse, private_) {
         this.wrapped = false;
         this.finder.findBackwards = reverse ? !this.reverse : this.reverse;
         let again = word == null;
@@ -801,7 +801,7 @@ const RangeFind = Class("RangeFind", {
             word = word.toLowerCase();
 
         if (!again && (word == "" || word.indexOf(this.lastString) != 0 || this.backward)) {
-            if (!private)
+            if (!private_)
                 this.range.deselect();
             if (word == "")
                 this.range.descroll()
@@ -816,7 +816,7 @@ const RangeFind = Class("RangeFind", {
                 let idx = this.range.index;
                 for (let i in this.backward ? util.range(idx + 1, 0, -1) : util.range(idx, this.ranges.length))
                     yield i;
-                if (private)
+                if (private_)
                     return;
                 this.wrapped = true;
                 this.lastRange = null;
@@ -835,7 +835,7 @@ const RangeFind = Class("RangeFind", {
                 var range = this.finder.Find(word, this.range.range, start, this.range.range);
                 if (range)
                     break;
-                if (!private) {
+                if (!private_) {
                     this.range.descroll();
                     this.range.deselect();
                 }
@@ -844,7 +844,7 @@ const RangeFind = Class("RangeFind", {
 
         if (range)
             this.lastRange = range.cloneRange();
-        if (private)
+        if (private_)
             return range;
 
         this.lastString = word;
@@ -983,12 +983,13 @@ const RangeFind = Class("RangeFind", {
             for (let shell in iter(config.browser.docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
                 if (shell.QueryInterface(nsIWebNavigation).document == this.document)
                     return this._docShell = shell;
+            throw Error();
         },
         get selectionController() this.docShell
                     .QueryInterface(Ci.nsIInterfaceRequestor)
                     .getInterface(Ci.nsISelectionDisplay)
                     .QueryInterface(Ci.nsISelectionController),
-        get selection() this.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL),
+        get selection() this.selectionController.getSelection(Ci.nsISelectionController.SELECTION_NORMAL)
     }),
     endpoint: function (range, before) {
         range = range.cloneRange();

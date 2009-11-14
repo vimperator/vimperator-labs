@@ -135,7 +135,7 @@ function isinstance(targ, src) {
         boolean: Boolean,
         string: String,
         function: Function,
-        number: Number,
+        number: Number
     }
     src = Array.concat(src);
     for (var i=0; i < src.length; i++) {
@@ -372,7 +372,7 @@ function Class() {
         var superc = superclass;
         superclass = function Shim() {}
         extend(superclass, superc, {
-            init: superc,
+            init: superc
         });
     }
 

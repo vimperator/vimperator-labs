@@ -256,10 +256,10 @@ function Highlights(name, store) {
 
     this.get = function (k) highlight[k];
     this.set = function (key, newStyle, force, append) {
-        let [, class, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
+        let [, class_, selectors] = key.match(/^([a-zA-Z_-]+)(.*)/);
 
-        if (!(class in highlight))
-            return "Unknown highlight keyword: " + class;
+        if (!(class_ in highlight))
+            return "Unknown highlight keyword: " + class_;
 
         let style = highlight[key] || new Highlight(key);
         styles.removeSheet(true, style.selector);
@@ -289,6 +289,7 @@ function Highlights(name, store) {
         }
         style.value = newStyle;
         highlight[style.class] = style;
+        return null;
     };
 
     /**
@@ -296,10 +297,10 @@ function Highlights(name, store) {
      *
      * @param {string} class
      */
-    this.selector = function (class) {
-        let [, hl, rest] = class.match(/^(\w*)(.*)/);
+    this.selector = function (class_) {
+        let [, hl, rest] = class_.match(/^(\w*)(.*)/);
         let pattern = "[liberator|highlight~=" + hl + "]"
-        if (highlight[hl] && highlight[hl].class != class)
+        if (highlight[hl] && highlight[hl].class != class_)
             pattern = highlight[hl].selector;
         return pattern + rest;
     };
@@ -331,9 +332,9 @@ function Highlights(name, store) {
                 if (old && old.value != old.default)
                     style.value = old.value;
         });
-        for (let [class, hl] in Iterator(highlight)) {
+        for (let [class_, hl] in Iterator(highlight)) {
             if (hl.value == hl.default)
-                this.set(class);
+                this.set(class_);
         }
     };
     this.loadCSS(this.CSS);
@@ -509,7 +510,7 @@ function Styles(name, store) {
         if (!matches)
             matches = this.findSheets(system, name, filter, css, index);
         if (matches.length == 0)
-            return;
+            return null;
 
         for (let [, sheet] in Iterator(matches.reverse())) {
             sheet.enabled = false;
@@ -755,8 +756,7 @@ Module("highlight", {
                     args.shift();
 
                 let [key, css] = args;
-                if (clear && css)
-                    return liberator.echo("E488: Trailing characters");
+                liberator.assert(!(clear && css), "E488: Trailing characters");
 
                 if (!css && !clear) {
                     // List matching keys
@@ -772,10 +772,12 @@ Module("highlight", {
                     return;
                 }
                 if (!key && clear)
-                    return highlight.clear();
-                let error = highlight.set(key, css, clear, "-append" in args);
-                if (error)
-                    liberator.echoerr(error);
+                    highlight.clear();
+                else {
+                    let error = highlight.set(key, css, clear, "-append" in args);
+                    if (error)
+                        liberator.echoerr(error);
+                }
             },
             {
                 // TODO: add this as a standard highlight completion function?

@@ -14,7 +14,7 @@ const ModuleBase = Class("ModuleBase", {
      */
     requires: [],
 
-    toString: function () "[module " + this.constructor.name + "]",
+    toString: function () "[module " + this.constructor.name + "]"
 });
 
 /**
@@ -87,11 +87,17 @@ window.addEventListener("load", function () {
                 load(Module.constructors[dep], module.name);
 
             dump("Load" + (isstring(prereq) ? " " + prereq + " dependency: " : ": ") + module.name);
-            loaded.push(module.name);
             modules[module.name] = module();
+            loaded.push(module.name);
 
             function init(mod, module)
                 function () module.INIT[mod].call(modules[module.name], modules[mod]);
+            function init(mod, module)
+                function () {
+                    if (!(mod in modules))
+                        dump(mod + " not in modules");
+                    return module.INIT[mod].call(modules[module.name], modules[mod]);
+                }
             for (let mod in values(loaded)) {
                 try {
                     if (mod in module.INIT)

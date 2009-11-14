@@ -104,6 +104,7 @@ const History = Module("history", {
             liberator.echoerr("E283: No history matching \"" + filter + "\"");
         else
             liberator.echoerr("No history set");
+        return null;
     }
 }, {
 }, {
@@ -129,6 +130,7 @@ const History = Module("history", {
                     else
                         history.stepTo(-Math.max(args.count, 1));
                 }
+                return null;
             },
             {
                 argCount: "?",
@@ -167,6 +169,7 @@ const History = Module("history", {
                     else
                         history.stepTo(Math.max(args.count, 1));
                 }
+                return null;
             },
             {
                 argCount: "?",

@@ -29,7 +29,7 @@
  */
 const Map = Class("Map", {
     init: function (modes, keys, description, action, extraInfo) {
-        modes = Array.concat(modes);
+        modes = Array.concat(modes).map(function (m) isobject(m) ? m.mask : m);
 
         if (!extraInfo)
             extraInfo = {};

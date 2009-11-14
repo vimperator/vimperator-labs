@@ -223,7 +223,7 @@ const Marks = Module("marks", {
         for (let [mark, value] in this._localMarks)
             for (let [, val] in Iterator(value))
                 yield [mark, val];
-    },
+    }
 
 }, {
     markToString: function markToString(name, mark) {
@@ -234,7 +234,8 @@ const Marks = Module("marks", {
     },
 
     isLocalMark: function isLocalMark(mark) /^['`a-z]$/.test(mark),
-    isURLMark: function isURLMark(mark) /^[A-Z0-9]$/.test(mark),
+
+    isURLMark: function isURLMark(mark) /^[A-Z0-9]$/.test(mark)
 }, {
     events: function () {
         let appContent = document.getElementById("appcontent");
@@ -247,9 +248,7 @@ const Marks = Module("marks", {
         mappings.add(myModes,
             ["m"], "Set mark at the cursor position",
             function (arg) {
-                if (/[^a-zA-Z]/.test(arg))
-                    return void liberator.beep();
-
+                liberator.assert(/^[a-zA-Z]$/.test(arg));
                 marks.add(arg);
             },
             { arg: true });
@@ -271,28 +270,18 @@ const Marks = Module("marks", {
                 liberator.assert( special ||  args, "E471: Argument required");
                 liberator.assert(!special || !args, "E474: Invalid argument");
 
-                let matches;
-                if (matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/)) {
-                    // NOTE: this currently differs from Vim's behavior which
-                    // deletes any valid marks in the arg list, up to the first
-                    // invalid arg, as well as giving the error message.
-                    liberator.echoerr("E475: Invalid argument: " + matches[0]);
-                    return;
-                }
+                let matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/);
+                // NOTE: this currently differs from Vim's behavior which
+                // deletes any valid marks in the arg list, up to the first
+                // invalid arg, as well as giving the error message.
+                liberator.assert(!matches, "E475: Invalid argument: " + matches[0]);
+
                 // check for illegal ranges - only allow a-z A-Z 0-9
-                if (matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g)) {
-                    for (let i = 0; i < matches.length; i++) {
-                        let start = matches[i][0];
-                        let end   = matches[i][2];
-                        if (/[a-z]/.test(start) != /[a-z]/.test(end) ||
-                            /[A-Z]/.test(start) != /[A-Z]/.test(end) ||
-                            /[0-9]/.test(start) != /[0-9]/.test(end) ||
-                            start > end)
-                        {
-                            liberator.echoerr("E475: Invalid argument: " + args.match(matches[i] + ".*")[0]);
-                            return;
-                        }
-                    }
+                if ((matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))) {
+                    for (let match in values(matches))
+                        liberator.assert(/[a-z]-[a-z]|[A-Z]-[A-Z]|[0-9]-[0-9]/.test(match) &&
+                                         match[0] <= match[2],
+                            "E475: Invalid argument: " + args.match(match + ".*")[0]);
                 }
 
                 marks.remove(args, special);
