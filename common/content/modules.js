@@ -55,7 +55,7 @@ const ModuleBase = Class("ModuleBase", {
 function Module(name, prototype, classProperties, moduleInit) {
     var base = ModuleBase;
     if (callable(prototype))
-        base = Array.splice(arguments, 1, 1)[0]
+        base = Array.splice(arguments, 1, 1)[0];
     const module = Class(name, base, prototype, classProperties);
     module.INIT = moduleInit || {};
     module.requires = prototype.requires || [];
@@ -96,7 +96,7 @@ window.addEventListener("load", function () {
                 try {
                     if (mod in module.INIT)
                         init(mod, module)();
-                    delete module.INIT[mod]
+                    delete module.INIT[mod];
                 }
                 catch (e) {
                     if (modules.liberator)
@@ -117,7 +117,7 @@ window.addEventListener("load", function () {
         }
     }
     Module.list.forEach(load);
-    deferredInit["load"].forEach(call)
+    deferredInit["load"].forEach(call);
 
     for (let module in values(Module.list))
         delete module.INIT;

@@ -977,7 +977,7 @@ const Hints = Module("hints", {
             [0xff41, 0xff5a, "a"],
         ].map(function (a) {
             if (typeof a[2] == "string")
-                a[3] = function (chr) String.fromCharCode(this[2].charCodeAt(0) + chr - this[0])
+                a[3] = function (chr) String.fromCharCode(this[2].charCodeAt(0) + chr - this[0]);
             else
                 a[3] = function (chr) this[2][(chr - this[0]) % this[2].length];
             return a;
@@ -991,7 +991,7 @@ const Hints = Module("hints", {
                 m = Math.floor(n / 2);
                 var t = table[i + m];
                 if (c >= t[0] && c <= t[1])
-                    return t[3](c)
+                    return t[3](c);
                 if (c < t[0] || m == 0)
                     n = m;
                 else {
@@ -1007,11 +1007,11 @@ const Hints = Module("hints", {
             if (src.length == 0)
                 return 0;
         outer:
-            for (var i=0; i < end; i++) {
+            for (var i = 0; i < end; i++) {
                     var j = i;
-                    for (var k=0; k < src.length;) {
+                    for (var k = 0; k < src.length;) {
                         var s = translate(dest[j++]);
-                        for (var l=0; l < s.length; l++, k++) {
+                        for (var l = 0; l < s.length; l++, k++) {
                             if (s[l] != src[k])
                                 continue outer;
                             if (k == src.length - 1)
@@ -1022,7 +1022,6 @@ const Hints = Module("hints", {
             return -1;
         }
     })(),
-
     Mode: new Struct("prompt", "action", "tags")
 }, {
     mappings: function () {
@@ -1113,7 +1112,7 @@ const Hints = Module("hints", {
                     ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
                     ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
                     ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
-                    ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"],
+                    ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"]
                 ]
             });
 

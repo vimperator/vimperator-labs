@@ -153,7 +153,7 @@ const Command = Class("Command", {
                 return;
             args.count = count;
             args.bang = bang;
-            liberator.trapErrors(self.action, self, args, modifiers)
+            liberator.trapErrors(self.action, self, args, modifiers);
         }
 
         if (this.hereDoc) {
@@ -373,7 +373,7 @@ const Commands = Module("commands", {
         for (let [opt, val] in Iterator(args.options || {})) {
             let chr = /^-.$/.test(opt) ? " " : "=";
             if (val != null)
-                opt += chr + quote(val)
+                opt += chr + quote(val);
             res.push(opt);
         }
         for (let [, arg] in Iterator(args.arguments || []))

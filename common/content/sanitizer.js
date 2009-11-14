@@ -191,7 +191,7 @@ const Sanitizer = Module("sanitizer", {
             self.items[item.name] = {
                 canClear: true,
                 clear: item.action
-            }
+            };
         });
 
         // call Sanitize autocommand
@@ -201,9 +201,9 @@ const Sanitizer = Module("sanitizer", {
             if (item.clear) {
                 let func = item.clear;
                 item.clear = function () {
-                    autocommands.trigger("Sanitize", { name: arg })
+                    autocommands.trigger("Sanitize", { name: arg });
                     func.call(item);
-                }
+                };
             }
         }
 
@@ -239,7 +239,7 @@ const Sanitizer = Module("sanitizer", {
                     ["offlineapps", "Offline website data"],
                     ["passwords", "Saved passwords"],
                     ["sessions", "Authenticated sessions"],
-                    ["sitesettings", "Site preferences"],
+                    ["sitesettings", "Site preferences"]
                 ]
             });
 

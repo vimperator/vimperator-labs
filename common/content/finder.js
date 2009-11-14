@@ -777,17 +777,17 @@ const RangeFind = Class("RangeFind", {
     get backward() this.finder.findBackwards,
 
     iter: function (word) {
-        let saved = ["range", "lastRange", "lastString"].map(this.closure(function (s) [s, this[s]]))
+        let saved = ["range", "lastRange", "lastString"].map(this.closure(function (s) [s, this[s]]));
         try {
             this.range = this.ranges[0];
             this.lastRange = null;
-            this.lastString = word
+            this.lastString = word;
             var res;
             while ((res = this.search(null, this.reverse, true)))
                 yield res;
         }
         finally {
-            saved.forEach(function ([k, v]) this[k] = v, this)
+            saved.forEach(function ([k, v]) this[k] = v, this);
         }
     },
 
@@ -804,7 +804,7 @@ const RangeFind = Class("RangeFind", {
             if (!private_)
                 this.range.deselect();
             if (word == "")
-                this.range.descroll()
+                this.range.descroll();
             this.lastRange = this.startRange;
             this.range = this.ranges.first;
         }
@@ -936,7 +936,7 @@ const RangeFind = Class("RangeFind", {
     cancel: function () {
         this.purgeListeners();
         this.range.deselect();
-        this.range.descroll()
+        this.range.descroll();
     }
 }, {
     Range: Class("RangeFind.Range", {

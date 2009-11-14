@@ -30,8 +30,8 @@ function allkeys(obj) {
 
     let __iterator__ = obj.__iterator__;
     try {
-        if ('__iterator__' in obj) {
-            yield '__iterator__';
+        if ("__iterator__" in obj) {
+            yield "__iterator__";
             delete obj.__iterator__;
         }
         for (let k in obj)
@@ -55,9 +55,9 @@ function keys(obj) {
         catch (e) {}
     }
 
-    if ('__iterator__' in obj) {
+    if ("__iterator__" in obj) {
         var iter = obj.__iterator__;
-        yield '__iterator__';
+        yield "__iterator__";
         // This is dangerous, but necessary.
         delete obj.__iterator__;
     }
@@ -79,7 +79,7 @@ function foreach(iter, fn, self) {
 
 function dict(ary) {
     var obj = {};
-    for (var i=0; i < ary.length; i++) {
+    for (var i = 0; i < ary.length; i++) {
         var val = ary[i];
         obj[val[0]] = val[1];
     }
@@ -87,21 +87,21 @@ function dict(ary) {
 }
 
 function set(ary) {
-    var obj = {}
+    var obj = {};
     if (ary)
-        for (var i=0; i < ary.length; i++)
+        for (var i = 0; i < ary.length; i++)
             obj[ary[i]] = true;
     return obj;
 }
-set.add = function (set, key) { set[key] = true }
-set.remove = function (set, key) { delete set[key] }
+set.add = function (set, key) { set[key] = true; }
+set.remove = function (set, key) { delete set[key]; }
 
 function iter(obj) {
     if (obj instanceof Ci.nsISimpleEnumerator)
         return (function () {
             while (obj.hasMoreElements())
                 yield obj.getNext();
-        })()
+        })();
     if (isinstance(obj, [Ci.nsIStringEnumerator, Ci.nsIUTF8StringEnumerator]))
         return (function () {
             while (obj.hasMore())
@@ -111,7 +111,7 @@ function iter(obj) {
         return (function () {
             try {
                 while (true)
-                    yield obj.nextNode()
+                    yield obj.nextNode();
             }
             catch (e) {}
         })();
@@ -119,8 +119,8 @@ function iter(obj) {
         return util.Array.iteritems(obj);
     if (obj instanceof NamedNodeMap)
         return (function () {
-            for (let i=0; i < obj.length; i++)
-                yield [obj.name, obj]
+            for (let i = 0; i < obj.length; i++)
+                yield [obj.name, obj];
         })();
     return Iterator(obj);
 }
@@ -138,7 +138,7 @@ function isinstance(targ, src) {
         number: Number
     }
     src = Array.concat(src);
-    for (var i=0; i < src.length; i++) {
+    for (var i = 0; i < src.length; i++) {
         if (targ instanceof src[i])
             return true;
         var type = types[typeof targ];
@@ -240,7 +240,7 @@ function curry(fn, length, self, acc) {
             return fn.apply(self || this, args);
 
         return curry(fn, length, self || this, args);
-    }
+    };
 }
 
 /**
@@ -263,7 +263,7 @@ function curry(fn, length, self, acc) {
  * @returns {Object} Returns its updated first argument.
  */
 function update(target) {
-    for (let i=1; i < arguments.length; i++) {
+    for (let i = 1; i < arguments.length; i++) {
         let src = arguments[i];
         foreach(keys(src || {}), function (k) {
             var get = src.__lookupGetter__(k),
@@ -274,10 +274,10 @@ function update(target) {
                 if (target.__proto__ && callable(v)) {
                     v.superapply = function (self, args) {
                         return target.__proto__[k].apply(self, args);
-                    }
+                    };
                     v.supercall = function (self) {
                         return v.superapply(self, Array.slice(arguments, 1));
-                    }
+                    };
                 }
             }
             if (get)
@@ -354,7 +354,7 @@ function Class() {
             }
         };
         var res = self.init.apply(self, arguments);
-        return res !== undefined ? res : self
+        return res !== undefined ? res : self;
     }
 
     var args = Array.slice(arguments);
@@ -370,7 +370,7 @@ function Class() {
 
     if (!("init" in superclass.prototype)) {
         var superc = superclass;
-        superclass = function Shim() {}
+        superclass = function Shim() {};
         extend(superclass, superc, {
             init: superc
         });
@@ -464,7 +464,7 @@ const Struct = Class("Struct", {
             Struct.prototype.__defineSetter__(i, function (val) {
                 let value = val;
                 this.__defineGetter__(i, function () value);
-                this.__defineSetter__(i, function (val) { value = val });
+                this.__defineSetter__(i, function (val) { value = val; });
             });
         };
         return this.constructor = Struct;

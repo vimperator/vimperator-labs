@@ -686,7 +686,7 @@ Module("styles", {
                                 context.compare = CompletionContext.Sort.number;
                                 return [[i, <>{sheet.sites.join(",")}: {sheet.css.replace("\n", "\\n")}</>]
                                         for ([i, sheet] in styles.userSheets)
-                                        if (!cmd.filter || cmd.filter(sheet))]
+                                        if (!cmd.filter || cmd.filter(sheet))];
                             }],
                           [["-name", "-n"],  commands.OPTION_STRING, null,
                             function () [[name, sheet.css]

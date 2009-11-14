@@ -40,7 +40,7 @@ function Runnable(self, func, args) {
     return {
         QueryInterface: XPCOMUtils.generateQI([Ci.nsIRunnable]),
         run: function () { func.apply(self, args); }
-    }
+    };
 }
 
 const FailedAssertion = Class("FailedAssertion", Error, {
@@ -929,7 +929,7 @@ const Liberator = Module("liberator", {
             liberator.dump(obj);
             liberator.dump("");
         }
-        catch (e) { window.dump(e) }
+        catch (e) { window.dump(e); }
     },
 
     /**
@@ -1561,7 +1561,7 @@ const Liberator = Module("liberator", {
                         },
                         literal: 0
                     });
-            }
+            };
 
             tbcmd(["toolbars[how]", "tbs[how]"], "Show the named toolbar",
                 function (toolbar) toolbar.collapsed = false,

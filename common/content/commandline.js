@@ -1653,7 +1653,7 @@ const ItemList = Class("ItemList", {
 
         // FIXME: Belongs elsewhere.
         commandline.updateOutputHeight(false);
-        this.setTimeout(function () { this._container.height -= commandline.getSpaceNeeded() }, 0);
+        this.setTimeout(function () { this._container.height -= commandline.getSpaceNeeded(); }, 0);
     },
 
     _getCompletion: function (index) this._completionElements.snapshotItem(index - this._startIndex),

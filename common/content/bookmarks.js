@@ -91,7 +91,7 @@ const Bookmarks = Module("bookmarks", {
                     id = bookmarksService.getFolderIdForItem(id);
                 } while (id != bookmarksService.placesRoot && id != root);
                 return root;
-            }
+            };
 
             this.isBookmark = function (id) rootFolders.indexOf(self.findRoot(id)) >= 0;
 
@@ -103,7 +103,7 @@ const Bookmarks = Module("bookmarks", {
                     id = bookmarksService.getFolderIdForItem(id);
                 } while (id != bookmarksService.placesRoot && id != root);
                 return rootFolders.indexOf(root) >= 0;
-            }
+            };
 
             // since we don't use a threaded bookmark loading (by set preload)
             // anymore, is this loading synchronization still needed? --mst
