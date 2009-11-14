@@ -475,6 +475,9 @@ const RangeFinder = Module("rangefinder", {
     },
 
     bootstrap: function (str, backward) {
+        if (this.rangeFind && this.rangeFind.stale)
+            this.rangeFind = null;
+
         let highlighted = this.rangeFind && this.rangeFind.highlighted;
         let matchCase = !(options["ignorecase"] || options["smartcase"] && !/[A-Z]/.test(str));
         let linksOnly = options["linksearch"];
@@ -493,7 +496,11 @@ const RangeFinder = Module("rangefinder", {
                 return n1;
             return "";
         });
-        if (!this.rangeFind || linksOnly ^ !!this.rangeFind.elementPath ||
+
+        // It's possible, with :tabdetach, for the rangeFind to actually move
+        // from one window to another, which breaks things.
+        if (!this.rangeFind || this.rangeFind.window != window ||
+            linksOnly ^ !!this.rangeFind.elementPath ||
             matchCase ^ this.rangeFind.matchCase || backward ^ this.rangeFind.reverse) {
             if (this.rangeFind)
                 this.rangeFind.cancel();
@@ -562,8 +569,8 @@ const RangeFinder = Module("rangefinder", {
             this.rangeFind.cancel();
     },
 
-    get rangeFind() tabs.localStore.rangeFind,
-    set rangeFind(val) tabs.localStore.rangeFind = val,
+    get rangeFind() buffer.localStore.rangeFind,
+    set rangeFind(val) buffer.localStore.rangeFind = val,
 
     /**
      * Highlights all occurances of <b>str</b> in the buffer.
@@ -640,6 +647,7 @@ const RangeFinder = Module("rangefinder", {
 
 const RangeFind = Class("RangeFind", {
     init: function (matchCase, backward, elementPath) {
+        this.window = window;
         this.elementPath = elementPath || null;
         this.matchCase = Boolean(matchCase);
         this.reverse = Boolean(backward);
@@ -898,15 +906,35 @@ const RangeFind = Class("RangeFind", {
             action(r);
             this.lastRange = r;
         }
-        if (clear)
+        if (clear) {
             this.highlighted = null;
+            this.purgeListeners();
+        }
         else {
             this.highlighted = this.lastString;
+            this.addListeners();
             this.search(null, false);
         }
     },
 
+    addListeners: function () {
+        for (let range in values(this.ranges))
+            range.window.addEventListener("unload", this.closure.onUnload, true);
+    },
+    purgeListeners: function () {
+        for (let range in values(this.ranges))
+            range.window.removeEventListener("unload", this.closure.onUnload, true);
+    },
+
+    onUnload: function (event) {
+        this.purgeListeners();
+        if (this.highlighted)
+            this.highlight(false);
+        this.stale = true;
+    },
+
     cancel: function () {
+        this.purgeListeners();
         this.range.deselect();
         this.range.descroll()
     }
@@ -950,9 +978,11 @@ const RangeFind = Class("RangeFind", {
         },
 
         get docShell() {
+            if (this._docShell)
+                return this._docShell;
             for (let shell in iter(getBrowser().docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
                 if (shell.QueryInterface(nsIWebNavigation).document == this.document)
-                    return shell;
+                    return this._docShell = shell;
         },
         get selectionController() this.docShell
                     .QueryInterface(Ci.nsIInterfaceRequestor)

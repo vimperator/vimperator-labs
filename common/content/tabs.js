@@ -104,6 +104,10 @@ const Tabs = Module("tabs", {
      * @returns {Object}
      */
     // FIXME: why not a tab arg? Why this and the property?
+    //      : To the latter question, because this works for any tab, the
+    //        property doesn't. And the property is so oft-used that it's
+    //        convenient. To the former question, because I think this is mainly
+    //        useful for autocommands, and they get index arguments. --Kris
     getLocalStore: function (tabIndex) {
         let tab = this.getTab(tabIndex);
         if (!tab.liberatorStore)
@@ -478,7 +482,7 @@ const Tabs = Module("tabs", {
             tab = this.getBrowser().mTabContainer.selectedItem;
 
         services.get("windowWatcher")
-            .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
+                .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
     },
 
     /**

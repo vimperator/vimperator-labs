@@ -346,6 +346,18 @@ const Buffer = Module("buffer", {
     },
 
     /**
+     * @property {Object} The local state store for the currently selected
+     *     tab.
+     */
+    get localStore() {
+        if (!content.liberatorStore)
+            content.liberatorStore = {};
+        return content.liberatorStore;
+    },
+
+
+
+    /**
      * @property {Node} The last focused input field in the buffer. Used
      *     by the "gi" key binding.
      */

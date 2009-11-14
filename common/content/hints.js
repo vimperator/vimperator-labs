@@ -979,7 +979,7 @@ const Hints = Module("hints", {
             if (typeof a[2] == "string")
                 a[3] = function (chr) String.fromCharCode(this[2].charCodeAt(0) + chr - this[0])
             else
-                a[3] = function (chr) this[2][(chr - this[0]) % this[3].length];
+                a[3] = function (chr) this[2][(chr - this[0]) % this[2].length];
             return a;
         });
 
