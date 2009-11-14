@@ -499,7 +499,7 @@ const RangeFinder = Module("rangefinder", {
 
         // It's possible, with :tabdetach, for the rangeFind to actually move
         // from one window to another, which breaks things.
-        if (!this.rangeFind || this.rangeFind.window != window ||
+        if (!this.rangeFind || this.rangeFind.window.get() != window ||
             linksOnly ^ !!this.rangeFind.elementPath ||
             matchCase ^ this.rangeFind.matchCase || backward ^ this.rangeFind.reverse) {
             if (this.rangeFind)
@@ -647,7 +647,7 @@ const RangeFinder = Module("rangefinder", {
 
 const RangeFind = Class("RangeFind", {
     init: function (matchCase, backward, elementPath) {
-        this.window = window;
+        this.window = Cu.getWeakReference(window);
         this.elementPath = elementPath || null;
         this.matchCase = Boolean(matchCase);
         this.reverse = Boolean(backward);
