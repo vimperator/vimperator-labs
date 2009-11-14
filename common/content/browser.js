@@ -35,7 +35,7 @@ const Browser = Module("browser", {
             "Sets the current buffer's character encoding",
             "string", "UTF-8",
             {
-                scope: options.OPTION_SCOPE_LOCAL,
+                scope: Option.SCOPE_LOCAL,
                 getter: function () getBrowser().docShell.QueryInterface(Ci.nsIDocCharset).charset,
                 setter: function (val) {
                     if (options["encoding"] == val)

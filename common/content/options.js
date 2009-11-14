@@ -31,84 +31,19 @@ const Option = Class("Option", {
         if (!extraInfo)
             extraInfo = {};
 
-        /** @property {string} The option's canonical name. */
         this.name = names[0];
-        /** @property {string[]} All names by which this option is identified. */
         this.names = names;
-        /**
-         * @property {string} The option's data type. One of:
-         *     "boolean"    - Boolean E.g. true
-         *     "number"     - Integer E.g. 1
-         *     "string"     - String E.g. "Vimperator"
-         *     "charlist"   - Character list E.g. "rb"
-         *     "stringlist" - String list E.g. "homepage,quickmark,tabopen,paste"
-         */
         this.type = type;
-        /**
-         * @property {number} The scope of the option. This can be local, global,
-         * or both.
-         * @see Options#OPTION_SCOPE_LOCAL
-         * @see Options#OPTION_SCOPE_GLOBAL
-         * @see Options#OPTION_SCOPE_BOTH
-         */
-        this.scope = (extraInfo.scope & options.OPTION_SCOPE_BOTH) || options.OPTION_SCOPE_GLOBAL; // XXX set to BOTH by default someday? - kstep
-        /**
-         * @property {string} This option's description, as shown in :optionusage.
-         */
-        this.description = description || "";
+        this.description = description;
 
-        /**
-         * @property {value} The option's default value. This value will be used
-         * unless the option is explicitly set either interactively or in an RC
-         * file or plugin.
-         */
-        this.defaultValue = (defaultValue === undefined) ? null : defaultValue; // "", 0 are valid default values
+        if (arguments.length > 3)
+            this.defaultValue = defaultValue;
 
-        /**
-         * @property {function} The function called when the option value is set.
-         */
-        this.setter = extraInfo.setter || null;
-        /**
-         * @property {function} The function called when the option value is read.
-         */
-        this.getter = extraInfo.getter || null;
-        /**
-         * @property {function(CompletionContext, Args)} This option's completer.
-         * @see CompletionContext
-         */
-        this.completer = extraInfo.completer || null;
-        /**
-         * @property {function} The function called to validate the option's value
-         * when set.
-         */
-        this.validator = extraInfo.validator || null;
-        /**
-         * @property The function called to determine whether the option already
-         * contains a specified value.
-         * @see #has
-         */
-        this.checkHas = extraInfo.checkHas || null;
-
-        /**
-         * @property {boolean} Set to true whenever the option is first set. This
-         * is useful to see whether it was changed from its default value
-         * interactively or by some RC file.
-         */
-        this.hasChanged = false;
-        /**
-         * @property {nsIFile} The script in which this option was last set. null
-         *     implies an interactive command.
-         */
-        this.setFrom = null;
+        update(this, extraInfo);
 
         // add no{option} variant of boolean {option} to this.names
-        if (this.type == "boolean") {
-            this.names = []; // reset since order is important
-            for (let [, name] in Iterator(names)) {
-                this.names.push(name);
-                this.names.push("no" + name);
-            }
-        }
+        if (this.type == "boolean")
+            this.names = array([name, "no" + name] for (name in values(names))).flatten();
 
         if (this.globalValue == undefined)
             this.globalValue = this.defaultValue;
@@ -192,9 +127,9 @@ const Option = Class("Option", {
 
         let value;
 
-        if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
+        if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             value = tabs.options[this.name];
-        if ((scope & options.OPTION_SCOPE_GLOBAL) && (value == undefined))
+        if ((scope & Option.SCOPE_GLOBAL) && (value == undefined))
             value = this.globalValue;
 
         if (this.getter)
@@ -220,9 +155,9 @@ const Option = Class("Option", {
         if (this.setter)
             newValue = liberator.trapErrors(this.setter, this, newValue);
 
-        if (liberator.has("tabs") && (scope & options.OPTION_SCOPE_LOCAL))
+        if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
-        if ((scope & options.OPTION_SCOPE_GLOBAL) && newValue != this.globalValue)
+        if ((scope & Option.SCOPE_GLOBAL) && newValue != this.globalValue)
             this.globalValue = newValue;
 
         this.hasChanged = true;
@@ -378,8 +313,104 @@ const Option = Class("Option", {
         if (!this.isValidValue(newValue))
             return "E474: Invalid argument: " + values;
         this.setValues(newValue, scope);
-    }
+    },
+
+    // Properties {{{2
+
+    /** @property {string} The option's canonical name. */
+    name: null,
+    /** @property {string[]} All names by which this option is identified. */
+    names: null,
+
+    /**
+     * @property {string} The option's data type. One of:
+     *     "boolean"    - Boolean E.g. true
+     *     "number"     - Integer E.g. 1
+     *     "string"     - String E.g. "Vimperator"
+     *     "charlist"   - Character list E.g. "rb"
+     *     "stringlist" - String list E.g. "homepage,quickmark,tabopen,paste"
+     */
+    type: null,
+
+    /**
+     * @property {number} The scope of the option. This can be local, global,
+     * or both.
+     * @see Option#SCOPE_LOCAL
+     * @see Option#SCOPE_GLOBAL
+     * @see Option#SCOPE_BOTH
+     */
+    scope: 1, // Option.SCOPE_GLOBAL // XXX set to BOTH by default someday? - kstep
+
+    /**
+     * @property {string} This option's description, as shown in :optionusage.
+     */
+    description: "",
+
+    /**
+     * @property {value} The option's default value. This value will be used
+     * unless the option is explicitly set either interactively or in an RC
+     * file or plugin.
+     */
+    defaultValue: null,
+
+    /**
+     * @property {function} The function called when the option value is set.
+     */
+    setter: null,
+    /**
+     * @property {function} The function called when the option value is read.
+     */
+    getter: null,
+    /**
+     * @property {function(CompletionContext, Args)} This option's completer.
+     * @see CompletionContext
+     */
+    completer: null,
+    /**
+     * @property {function} The function called to validate the option's value
+     * when set.
+     */
+    validator: null,
+    /**
+     * @property The function called to determine whether the option already
+     * contains a specified value.
+     * @see #has
+     */
+    checkHas: null,
+
+    /**
+     * @property {boolean} Set to true whenever the option is first set. This
+     * is useful to see whether it was changed from its default value
+     * interactively or by some RC file.
+     */
+    hasChanged: false,
+
+    /**
+     * @property {nsIFile} The script in which this option was last set. null
+     *     implies an interactive command.
+     */
+    setFrom: null
+
 }, {
+    /**
+     * @property {number} Global option scope.
+     * @final
+     */
+    SCOPE_GLOBAL: 1,
+
+    /**
+     * @property {number} Local option scope. Options in this scope only
+     *     apply to the current tab/buffer.
+     * @final
+     */
+    SCOPE_LOCAL: 2,
+
+    /**
+     * @property {number} Both local and global option scope.
+     * @final
+     */
+    SCOPE_BOTH: 3,
+
     // TODO: Run this by default?
     /**
      * Validates the specified <b>values</b> against values generated by the
@@ -432,7 +463,7 @@ const Options = Module("options", {
             // Trigger any setters.
             let opt = options.get(option);
             if (event == "change" && opt)
-                opt.set(opt.value, options.OPTION_SCOPE_GLOBAL);
+                opt.set(opt.value, Option.SCOPE_GLOBAL);
         }
 
         storage.newMap("options", { store: false });
@@ -444,25 +475,6 @@ const Options = Module("options", {
     destroy: function () {
         this.prefObserver.unregister();
     },
-
-    /**
-     * @property {number} Global option scope.
-     * @final
-     */
-    OPTION_SCOPE_GLOBAL: 1,
-
-    /**
-     * @property {number} Local option scope. Options in this scope only
-     *     apply to the current tab/buffer.
-     * @final
-     */
-    OPTION_SCOPE_LOCAL: 2,
-
-    /**
-     * @property {number} Both local and global option scope.
-     * @final
-     */
-    OPTION_SCOPE_BOTH: 3,
 
     /** @property {Iterator(Option)} @private */
     __iterator__: function () {
@@ -551,7 +563,7 @@ const Options = Module("options", {
      */
     get: function (name, scope) {
         if (!scope)
-            scope = options.OPTION_SCOPE_BOTH;
+            scope = Option.SCOPE_BOTH;
 
         if (name in this._optionHash)
             return (this._optionHash[name].scope & scope) && this._optionHash[name];
@@ -575,7 +587,7 @@ const Options = Module("options", {
      */
     list: function (onlyNonDefault, scope) {
         if (!scope)
-            scope = options.OPTION_SCOPE_BOTH;
+            scope = Option.SCOPE_BOTH;
 
         function opts(opt) {
             for (let opt in Iterator(options)) {
@@ -1141,14 +1153,14 @@ const Options = Module("options", {
         commands.add(["setl[ocal]"],
             "Set local option",
             function (args, modifiers) {
-                modifiers.scope = options.OPTION_SCOPE_LOCAL;
+                modifiers.scope = Option.SCOPE_LOCAL;
                 setAction(args, modifiers);
             },
             {
                 bang: true,
                 count: true,
                 completer: function (context, args) {
-                    return setCompleter(context, args, { scope: options.OPTION_SCOPE_LOCAL });
+                    return setCompleter(context, args, { scope: Option.SCOPE_LOCAL });
                 },
                 literal: 0
             }
@@ -1157,14 +1169,14 @@ const Options = Module("options", {
         commands.add(["setg[lobal]"],
             "Set global option",
             function (args, modifiers) {
-                modifiers.scope = options.OPTION_SCOPE_GLOBAL;
+                modifiers.scope = Option.SCOPE_GLOBAL;
                 setAction(args, modifiers);
             },
             {
                 bang: true,
                 count: true,
                 completer: function (context, args) {
-                    return setCompleter(context, args, { scope: options.OPTION_SCOPE_GLOBAL });
+                    return setCompleter(context, args, { scope: Option.SCOPE_GLOBAL });
                 },
                 literal: 0
             }
@@ -1185,7 +1197,7 @@ const Options = Module("options", {
                                                           : opt.name + "=" + opt.value]
                     }
                     for (opt in options)
-                    if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & options.OPTION_SCOPE_GLOBAL))
+                    if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
                 ]
             });
 
