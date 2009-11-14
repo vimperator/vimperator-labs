@@ -6,7 +6,7 @@
 
 Components.utils.import("resource://gre/modules/utils.js"); // XXX
 
-const Config = Module("config", {
+const Config = Module("config", ConfigBase, {
     init: function () {
         // TODO: mention this to SB devs, they seem keen to provide these
         // functions to make porting from FF as simple as possible.
@@ -144,12 +144,18 @@ const Config = Module("config", {
     },
 
     hasTabbrowser: true,
+    // FIXME: unless I'm seeing double in in the wee small hours gBrowser is
+    // first set from getBrowser which they've deprecated in FF.
+    get tabbrowser() window.getBrowser(),
+    get browser() window.getBrowser(),
 
     modes: [["PLAYER", { char: "p" }]],
 
     scripts: [
         "browser.js",
         "bookmarks.js",
+        "history.js",
+        "quickmarks.js",
         "tabs.js",
         "player.js",
         "library.js"
