@@ -118,7 +118,7 @@ const Marks = Module("marks", {
         if (Marks.isURLMark(mark)) {
             let slice = this._urlMarks.get(mark);
             if (slice && slice.tab && slice.tab.linkedBrowser) {
-                if (slice.tab.parentNode != getBrowser().tabContainer) {
+                if (slice.tab.parentNode != config.browser.tabContainer) {
                     this._pendingJumps.push(slice);
                     // NOTE: this obviously won't work on generated pages using
                     // non-unique URLs :(

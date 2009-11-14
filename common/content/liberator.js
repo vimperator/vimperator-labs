@@ -779,8 +779,7 @@ const Liberator = Module("liberator", {
         if (urls.length == 0)
             return false;
 
-        let browser = window.getBrowser();
-
+        let browser = config.browser;
         function open(urls, where) {
             let url = Array.concat(urls)[0];
             let postdata = Array.concat(urls)[1];
@@ -1514,7 +1513,7 @@ const Liberator = Module("liberator", {
             liberator.has("tabs") ? "Quit current tab" : "Quit application",
             function (args) {
                 if (liberator.has("tabs"))
-                    tabs.remove(getBrowser().mCurrentTab, 1, false, 1);
+                    tabs.remove(config.browser.mCurrentTab, 1, false, 1);
                 else
                     liberator.quit(false, args.bang);
             }, {

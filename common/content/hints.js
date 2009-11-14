@@ -400,7 +400,7 @@ const Hints = Module("hints", {
             }
         }
 
-        if (getBrowser().markupDocumentViewer.authorStyleDisabled) {
+        if (config.browser.markupDocumentViewer.authorStyleDisabled) {
             let css = [];
             // FIXME: Broken for imgspans.
             for (let [, { doc: doc }] in Iterator(this._docs)) {

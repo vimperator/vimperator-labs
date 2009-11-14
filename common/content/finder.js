@@ -231,7 +231,7 @@ const Finder = Module("finder", {
      * @param {string} str The string to find.
      */
     find: function (str) {
-        let fastFind = getBrowser().fastFind;
+        let fastFind = config.browser.fastFind;
 
         this._processUserPattern(str);
         fastFind.caseSensitive = this._caseSensitive;
@@ -252,11 +252,11 @@ const Finder = Module("finder", {
         // This hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search.  Since searchString is
         // readonly we have to call find() again to update it.
-        if (getBrowser().fastFind.searchString != this._lastSearchString)
+        if (config.browser.fastFind.searchString != this._lastSearchString)
             this.find(this._lastSearchString);
 
         let up = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
-        let result = getBrowser().fastFind.findAgain(up, this._linksOnly);
+        let result = config.browser.fastFind.findAgain(up, this._linksOnly);
 
         if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND)
             liberator.echoerr("E486: Pattern not found: " + this._lastSearchPattern, commandline.FORCE_SINGLELINE);
@@ -361,7 +361,7 @@ const Finder = Module("finder", {
 
         // recreate selection since highlightDoc collapses the selection
         if (window.content.getSelection().isCollapsed)
-            getBrowser().fastFind.findAgain(this._backwards, this._linksOnly);
+            config.browser.fastFind.findAgain(this._backwards, this._linksOnly);
 
         // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [type="simple"])
     },
@@ -980,7 +980,7 @@ const RangeFind = Class("RangeFind", {
         get docShell() {
             if (this._docShell)
                 return this._docShell;
-            for (let shell in iter(getBrowser().docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
+            for (let shell in iter(config.browser.docShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeAll, Ci.nsIDocShell.ENUMERATE_FORWARDS)))
                 if (shell.QueryInterface(nsIWebNavigation).document == this.document)
                     return this._docShell = shell;
         },

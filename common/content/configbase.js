@@ -11,6 +11,9 @@ const ConfigBase = Class(ModuleBase, {
      */
     autocommands: [],
 
+    browser: window.gBrowser,
+    tabbrowser: window.gBrowser,
+
     get browserModes() [modes.NORMAL],
 
     /**
@@ -83,7 +86,7 @@ const ConfigBase = Class(ModuleBase, {
      * @property {number} The height (px) that is available to the output
      *     window.
      */
-    get outputHeight() getBrowser().mPanelContainer.boxObject.height,
+    get outputHeight() config.browser.mPanelContainer.boxObject.height,
 
     /**
      * @property {[string]} A list of extra scripts in the liberator or

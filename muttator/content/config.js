@@ -102,15 +102,14 @@ const Config = Module("config", ConfigBase, {
         }
     },
 
-    getBrowser: function () {
-        var tabmail = { __proto__: document.getElementById("tabmail") };
-        tabmail.__defineGetter__("mTabContainer", function () this.tabContainer);
-        tabmail.__defineGetter__("mTabs", function () this.tabContainer.childNodes);
-        tabmail.__defineGetter__("mCurrentTab", function () this.tabContainer.selectedItem);
-        tabmail.__defineGetter__("mStrip", function () this.tabStrip);
-        tabmail.__defineGetter__("browsers", function () [browser for (browser in Iterator(this.mTabs))]);
-        config.getBrowser = function () tabmail;
-        return tabmail;
+    get browser() getBrowser(),
+    tabbrowser: {
+        __proto__: document.getElementById("tabmail"),
+        get mTabContainer() this.tabContainer,
+        get mTabs() this.tabContainer.childNodes,
+        get mCurrentTab() this.tabContainer.selectedItem,
+        get mStrip() this.tabStrip,
+        get browsers() [browser for (browser in Iterator(this.mTabs))]
     },
 
     // they are sorted by relevance, not alphabetically

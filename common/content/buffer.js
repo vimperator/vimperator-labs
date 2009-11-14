@@ -146,7 +146,7 @@ const Buffer = Module("buffer", {
 
     destroy: function () {
         try {
-            getBrowser().removeProgressListener(this.progressListener);
+            config.browser.removeProgressListener(this.progressListener);
         }
         catch (e) {} // Why? --djk
     },
@@ -200,7 +200,7 @@ const Buffer = Module("buffer", {
             doc.pageIsFullyLoaded = 1;
 
             // code which is only relevant if the page load is the current tab goes here:
-            if (doc == getBrowser().contentDocument) {
+            if (doc == config.browser.contentDocument) {
                 // we want to stay in command mode after a page has loaded
                 // TODO: move somewhere else, as focusing can already happen earlier than on "load"
                 if (options["focuscontent"]) {
@@ -387,7 +387,7 @@ const Buffer = Module("buffer", {
      * @property {number} The current browser's text zoom level, as a
      *     percentage with 100 as 'normal'. Only affects text size.
      */
-    get textZoom() getBrowser().markupDocumentViewer.textZoom * 100,
+    get textZoom() config.browser.markupDocumentViewer.textZoom * 100,
     set textZoom(value) { Buffer.setZoom(value, false); },
 
     /**
@@ -395,7 +395,7 @@ const Buffer = Module("buffer", {
      *     percentage with 100 as 'normal'. Affects text size, as well as
      *     image size and block size.
      */
-    get fullZoom() getBrowser().markupDocumentViewer.fullZoom * 100,
+    get fullZoom() config.browser.markupDocumentViewer.fullZoom * 100,
     set fullZoom(value) { Buffer.setZoom(value, true); },
 
     /**
@@ -618,7 +618,7 @@ const Buffer = Module("buffer", {
      * @property {nsISelectionController} The current document's selection
      *     controller.
      */
-    get selectionController() getBrowser().docShell
+    get selectionController() config.browser.docShell
             .QueryInterface(Ci.nsIInterfaceRequestor)
             .getInterface(Ci.nsISelectionDisplay)
             .QueryInterface(Ci.nsISelectionController),
@@ -1132,7 +1132,7 @@ const Buffer = Module("buffer", {
                     options.setPref("print.always_print_silent", args.bang);
                     options.setPref("print.show_print_progress", !args.bang);
 
-                    getBrowser().contentWindow.print();
+                    config.browser.contentWindow.print();
                 });
 
                 if (arg)
@@ -1180,7 +1180,7 @@ const Buffer = Module("buffer", {
 
         commands.add(["re[load]"],
             "Reload the current web page",
-            function (args) { tabs.reload(getBrowser().mCurrentTab, args.bang); },
+            function (args) { tabs.reload(config.browser.mCurrentTab, args.bang); },
             {
                 bang: true,
                 argCount: "0"
@@ -1228,7 +1228,7 @@ const Buffer = Module("buffer", {
 
         commands.add(["st[op]"],
             "Stop loading the current web page",
-            function () { tabs.stop(getBrowser().mCurrentTab); },
+            function () { tabs.stop(config.browser.mCurrentTab); },
             { argCount: "0" });
 
         commands.add(["vie[wsource]"],
@@ -1333,14 +1333,16 @@ const Buffer = Module("buffer", {
               .XULBrowserWindow = this.progressListener;
 
         try {
-            getBrowser().addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+            config.browser.addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
         }
         catch (e) {} // Why? --djk
 
         let appContent = document.getElementById("appcontent");
-        events.addSessionListener(appContent, "DOMContentLoaded", this.closure.onDOMContentLoaded, true);
-        events.addSessionListener(appContent, "load", this.closure.onPageLoad, true);
-        events.addSessionListener(appContent, "scroll", this.closure._updateBufferPosition, false);
+        if (appContent) {
+            events.addSessionListener(appContent, "DOMContentLoaded", this.closure.onDOMContentLoaded, true);
+            events.addSessionListener(appContent, "load", this.closure.onPageLoad, true);
+            events.addSessionListener(appContent, "scroll", this.closure._updateBufferPosition, false);
+        }
     },
     mappings: function () {
         var myModes = config.browserModes;
@@ -1365,7 +1367,7 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["<C-c>"],
             "Stop loading the current web page",
-            function () { tabs.stop(getBrowser().mCurrentTab); });
+            function () { tabs.stop(config.browser.mCurrentTab); });
 
         // scrolling
         mappings.add(myModes, ["j", "<Down>", "<C-e>"],
@@ -1520,11 +1522,11 @@ const Buffer = Module("buffer", {
         // reloading
         mappings.add(myModes, ["r"],
             "Reload the current web page",
-            function () { tabs.reload(getBrowser().mCurrentTab, false); });
+            function () { tabs.reload(config.browser.mCurrentTab, false); });
 
         mappings.add(myModes, ["R"],
             "Reload while skipping the cache",
-            function () { tabs.reload(getBrowser().mCurrentTab, true); });
+            function () { tabs.reload(config.browser.mCurrentTab, true); });
 
         // yanking
         mappings.add(myModes, ["Y"],
@@ -1635,8 +1637,8 @@ const Buffer = Module("buffer", {
             "Show current website with a minimal style sheet to make it easily accessible",
             "boolean", false,
             {
-                setter: function (value) getBrowser().markupDocumentViewer.authorStyleDisabled = value,
-                getter: function () getBrowser().markupDocumentViewer.authorStyleDisabled
+                setter: function (value) config.browser.markupDocumentViewer.authorStyleDisabled = value,
+                getter: function () config.browser.markupDocumentViewer.authorStyleDisabled
             });
     }
 });
