@@ -642,7 +642,7 @@ const CommandLine = Module("commandline", {
                 commandline.triggerCallback("submit", mode, command);
             }
             // user pressed <Up> or <Down> arrow to cycle this._history completion
-            else if (/^(<Up>|<Down>|<S-Up>|<S-Down>|<PageUp>|<PageDown>)$/.test(key)) {
+            else if (/^<(Up|Down|S-Up|S-Down|PageUp|PageDown)>$/.test(key)) {
                 // prevent tab from moving to the next field
                 event.preventDefault();
                 event.stopPropagation();
@@ -651,7 +651,7 @@ const CommandLine = Module("commandline", {
                 this._history.select(/Up/.test(key), !/(Page|S-)/.test(key));
             }
             // user pressed <Tab> to get completions of a command
-            else if (key == "<Tab>" || key == "<S-Tab>") {
+            else if (/^<(Tab|S-Tab)>$/.test(key)) {
                 // prevent tab from moving to the next field
                 event.preventDefault();
                 event.stopPropagation();
@@ -675,7 +675,7 @@ const CommandLine = Module("commandline", {
         }
         else if (event.type == "keyup") {
             let key = events.toString(event);
-            if (key == "<Tab>" || key == "<S-Tab>")
+            if (/^<(Tab|S-Tab)>$/.test(key))
                 this._tabTimer.flush();
         }
     },

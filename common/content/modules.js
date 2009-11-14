@@ -92,12 +92,6 @@ window.addEventListener("load", function () {
 
             function init(mod, module)
                 function () module.INIT[mod].call(modules[module.name], modules[mod]);
-            function init(mod, module)
-                function () {
-                    if (!(mod in modules))
-                        dump(mod + " not in modules");
-                    return module.INIT[mod].call(modules[module.name], modules[mod]);
-                }
             for (let mod in values(loaded)) {
                 try {
                     if (mod in module.INIT)

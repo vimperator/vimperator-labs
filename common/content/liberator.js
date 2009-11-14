@@ -544,15 +544,20 @@ const Liberator = Module("liberator", {
     initHelp: function () {
         let namespaces = [config.name.toLowerCase(), "liberator"];
         services.get("liberator:").init({});
+
         let tagMap = services.get("liberator:").HELP_TAGS;
         let fileMap = services.get("liberator:").FILE_MAP;
         let overlayMap = services.get("liberator:").OVERLAY_MAP;
+
+        // Left as an XPCOM instantiation so it can easilly be moved
+        // into XPCOM code.
         function XSLTProcessor(sheet) {
             let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
             xslt.importStylesheet(util.httpGet(sheet).responseXML);
             return xslt;
         }
 
+        // Find help and overlay files with the given name.
         function findHelpFile(file) {
             let result = [];
             for (let [, namespace] in Iterator(namespaces)) {
@@ -568,29 +573,36 @@ const Liberator = Module("liberator", {
             }
             return result;
         }
+        // Find the tags in the document.
         function addTags(file, doc) {
             doc = XSLT.transformToDocument(doc);
             for (let elem in util.evaluateXPath("//xhtml:a/@id", doc))
                 tagMap[elem.value] = file;
         }
 
-        const XSLT = XSLTProcessor("chrome://liberator/content/help.xsl");
+        const XSLT = XSLTProcessor("chrome://liberator/content/help-single.xsl");
 
+        // Scrape the list of help files from all.xml
+        // Always process main and overlay files, since XSLTProcessor and
+        // XMLHttpRequest don't allow access to chrome documents.
         tagMap.all = "all";
         let files = findHelpFile("all").map(function (doc)
                 [f.value for (f in util.evaluateXPath(
                     "//liberator:include/@href", doc))]);
 
+        // Scrape the tags from the rest of the help files.
         util.Array.flatten(files).forEach(function (file) {
             findHelpFile(file).forEach(function (doc) {
                 addTags(file, doc);
             });
         });
 
+        // Process plugin help entries.
         XML.ignoreWhiteSpace = false;
         XML.prettyPrinting = false;
         XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
         XML.prettyIndent = 4;
+
         let body = XML();
         for (let [, context] in Iterator(plugins.contexts))
             if (context.INFO instanceof XML)
@@ -600,10 +612,8 @@ const Liberator = Module("liberator", {
         let help = '<?xml version="1.0"?>\n' +
                    '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>\n' +
                    '<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">' +
-            <document
-                name="plugins"
-                title={config.name + " Plugins"}
-                xmlns={NS}>
+            <document xmlns={NS}
+                name="plugins" title={config.name + " Plugins"}>
                 <h1 tag="using-plugins">Using Plugins</h1>
 
                 {body}
