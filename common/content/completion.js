@@ -783,20 +783,35 @@ const Completion = Module("completion", {
             }
 
             this.iter = function iter(obj, toplevel) {
+                toplevel = !!toplevel;
                 let seen = {};
                 let ret = {};
-                let top = services.get("debugger").wrapValue(obj);
-                if (!toplevel)
-                    obj = obj.__proto__;
-                for (; obj; obj = !toplevel && obj.__proto__) {
-                    services.get("debugger").wrapValue(obj).getProperties(ret, {});
-                    for (let prop in values(ret.value)) {
-                        let name = '|' + prop.name.stringValue;
-                        if (name in seen)
-                            continue;
-                        seen[name] = 1;
-                        yield [prop.name.stringValue, top.getProperty(prop.name.stringValue).value.getWrappedValue()]
+
+                try {
+                    let top = services.get("debugger").wrapValue(obj);
+
+                    if (!toplevel)
+                        obj = obj.__proto__;
+
+                    for (; obj; obj = !toplevel && obj.__proto__) {
+                        services.get("debugger").wrapValue(obj).getProperties(ret, {});
+                        for (let prop in values(ret.value)) {
+                            let name = '|' + prop.name.stringValue;
+                            if (name in seen)
+                                continue;
+                            seen[name] = 1;
+                            yield [prop.name.stringValue, top.getProperty(prop.name.stringValue).value.getWrappedValue()]
+                        }
                     }
+                    for (let k in obj) {
+                        if (k in obj && !(k in seen) && obj.hasOwnProperty(k) == toplevel)
+                            yield [k, getKey(obj, k)]
+                    }
+                }
+                catch(e) {
+                    for (k in allkeys(obj))
+                        if (obj.hasOwnProperty(k) == toplevel)
+                            yield [k, getKey(obj, k)];
                 }
             };
 

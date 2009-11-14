@@ -18,10 +18,28 @@ function array(obj) {
 
 function allkeys(obj) {
     let ret = {};
-    for (; obj; obj = obj.__proto__) {
-        services.get("debugger").wrapValue(obj).getProperties(ret, {});
-        for (let prop in values(ret.value))
-            yield prop.name.stringValue;
+    try {
+        for (; obj; obj = obj.__proto__) {
+            services.get("debugger").wrapValue(obj).getProperties(ret, {});
+            for (let prop in values(ret.value))
+                yield prop.name.stringValue;
+        }
+        return;
+    }
+    catch (e) {}
+
+    let __iterator__ = obj.__iterator__;
+    try {
+        if ('__iterator__' in obj) {
+            yield '__iterator__';
+            delete obj.__iterator__;
+        }
+        for (let k in obj)
+            yield k;
+    }
+    finally {
+        if (__iterator__)
+            obj.__iterator__ = __iterator__;
     }
 }
 
