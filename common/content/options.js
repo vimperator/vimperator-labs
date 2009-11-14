@@ -198,12 +198,7 @@ const Option = Class("Option", {
      * Returns whether the specified <b>values</b> are valid for this option.
      * @see Option#validator
      */
-    isValidValue: function (values) {
-        if (this.validator)
-            return this.validator(values);
-        else
-            return true;
-    },
+    isValidValue: function (values) this.validator(values),
 
     /**
      * Resets the option to its default value.
@@ -370,7 +365,11 @@ const Option = Class("Option", {
      * @property {function} The function called to validate the option's value
      * when set.
      */
-    validator: null,
+    validator: function () {
+        if (this.completer)
+            return Option.validateCompleter.apply(this, arguments);
+        return true;
+    },
     /**
      * @property The function called to determine whether the option already
      * contains a specified value.

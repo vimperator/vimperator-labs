@@ -49,8 +49,7 @@ const Browser = Module("browser", {
                     }
                     catch (e) { liberator.reportError(e); }
                 },
-                completer: function (context) completion.charset(context),
-                validator: Option.validateCompleter
+                completer: function (context) completion.charset(context)
             });
 
         // only available in FF 3.5

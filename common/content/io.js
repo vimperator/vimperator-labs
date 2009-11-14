@@ -1077,8 +1077,7 @@ lookup:
         options.add(["fileencoding", "fenc"],
             "Sets the character encoding of read and written files",
             "string", "UTF-8", {
-                completer: function (context) completion.charset(context),
-                validator: Option.validateCompleter
+                completer: function (context) completion.charset(context)
             });
         options.add(["cdpath", "cd"],
             "List of directories searched when executing :cd",

@@ -241,8 +241,7 @@ const Sanitizer = Module("sanitizer", {
                     ["passwords", "Saved passwords"],
                     ["sessions", "Authenticated sessions"],
                     ["sitesettings", "Site preferences"],
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         options.add(["sanitizetimespan", "sts"],
@@ -260,8 +259,7 @@ const Sanitizer = Module("sanitizer", {
                     ["2", "Last two hours"],
                     ["3", "Last four hours"],
                     ["4", "Today"]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
     }
 });

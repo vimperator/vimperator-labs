@@ -264,8 +264,7 @@ const AutoCommands = Module("autocommands", {
             "List of autocommand event names which should be ignored",
             "stringlist", "",
             {
-                completer: function () config.autocommands.concat([["all", "All events"]]),
-                validator: Option.validateCompleter
+                completer: function () config.autocommands.concat([["all", "All events"]])
             });
 
         options.add(["focuscontent", "fc"],

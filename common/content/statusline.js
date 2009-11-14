@@ -236,8 +236,7 @@ const StatusLine = Module("statusline", {
                     ["0", "Never display status line"],
                     ["1", "Display status line only if there are multiple windows"],
                     ["2", "Always display status line"]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
     }
 });

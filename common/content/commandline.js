@@ -1528,16 +1528,14 @@ const CommandLine = Module("commandline", {
                                            .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
 
                      return engines.map(function (engine) [engine.alias, engine.description]);
-                 },
-                 validator: Option.validateCompleter
+                 }
              });
 
         options.add(["complete", "cpt"],
             "Items which are completed at the :open prompts",
             "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
             {
-                completer: function (context) array(values(completion.urlCompleters)),
-                validator: Option.validateCompleter
+                completer: function (context) array(values(completion.urlCompleters))
             });
 
         options.add(["wildcase", "wic"],
@@ -1548,8 +1546,7 @@ const CommandLine = Module("commandline", {
                     ["smart", "Case is significant when capital letters are typed"],
                     ["match", "Case is always significant"],
                     ["ignore", "Case is never significant"]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         options.add(["wildignore", "wig"],
@@ -1581,7 +1578,6 @@ const CommandLine = Module("commandline", {
                     ["list:full",     "List all and complete first match"],
                     ["list:longest",  "List all and complete common string"]
                 ],
-                validator: Option.validateCompleter,
                 checkHas: function (value, val) {
                     let [first, second] = value.split(":", 2);
                     return first == val || second == val;
@@ -1598,8 +1594,7 @@ const CommandLine = Module("commandline", {
                         ["auto", "Automatically show this._completions while you are typing"],
                         ["sort", "Always sort the completion list"]
                     ];
-                },
-                validator: Option.validateCompleter
+                }
             });
     },
     styles: function () {

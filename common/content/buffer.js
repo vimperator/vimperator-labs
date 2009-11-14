@@ -1612,8 +1612,7 @@ const Buffer = Module("buffer", {
             "Desired info in the :pageinfo output",
             "charlist", "gfm",
             {
-                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(this.pageInfo))],
-                validator: Option.validateCompleter
+                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(this.pageInfo))]
             });
 
         options.add(["scroll", "scr"],
@@ -1629,8 +1628,7 @@ const Buffer = Module("buffer", {
                     ["0", "Don't show link destination"],
                     ["1", "Show the link in the status line"],
                     ["2", "Show the link in the command line"]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         options.add(["usermode", "um"],

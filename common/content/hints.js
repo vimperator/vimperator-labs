@@ -1100,8 +1100,7 @@ const Hints = Module("hints", {
                     ["0", "Follow the first hint as soon as typed text uniquely identifies it. Follow the selected hint on <Return>."],
                     ["1", "Follow the selected hint on <Return>."],
                     ["2", "Follow the selected hint on <Return> only it's been <Tab>-selected."]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         options.add(["hintmatching", "hm"],
@@ -1114,8 +1113,7 @@ const Hints = Module("hints", {
                     ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
                     ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
                     ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"],
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         options.add(["wordseparators", "wsp"],
@@ -1130,8 +1128,7 @@ const Hints = Module("hints", {
                     ["value", "Match against the value contained by the input field"],
                     ["label", "Match against the value of a label for the input field, if one can be found"],
                     ["name",  "Match against the name of an input field, only if neither a name or value could be found."]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
     }
 });

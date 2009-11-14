@@ -1056,8 +1056,7 @@ const Tabs = Module("tabs", {
                     ["0", "Never show tab bar"],
                     ["1", "Show tab bar only if more than one tab is open"],
                     ["2", "Always show tab bar"]
-                ],
-                validator: Option.validateCompleter
+                ]
             });
 
         if (config.hasTabbrowser) {
@@ -1085,8 +1084,7 @@ const Tabs = Module("tabs", {
                         ["help", ":h[elp] command"],
                         ["javascript", ":javascript! or :js! command"],
                         ["prefs", ":pref[erences]! or :prefs! command"]
-                    ],
-                    validator: Option.validateCompleter
+                    ]
                 });
 
             // TODO: Is this really applicable to Xulmus?
@@ -1113,8 +1111,7 @@ const Tabs = Module("tabs", {
                         ["tab",     "Open popups in a new tab"],
                         ["window",  "Open popups in a new window"],
                         ["resized", "Open resized popups in a new window"]
-                    ],
-                    validator: Option.validateCompleter
+                    ]
                 });
         }
     }
