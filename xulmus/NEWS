@@ -12,7 +12,7 @@
     * add [c]:displaypane[c] and [c]:dpclose[c]
     * rename [c]:filter[c] to [c]:queue[c] and [c]:Filter[c] to [c]:filter[c]
     * add 'repeat' and 'shuffle'
-	* add 'jsdebugger' option - switch on/off javascript debugger service
+    * add 'jsdebugger' option - switch on/off javascript debugger service
 
 2009-03-28:
     * version 0.1

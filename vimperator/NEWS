@@ -5,7 +5,7 @@
     * asciidoc is no longer required to build Vimperator
     * the help system is newly modularized
     * remove [c]:edit[c], [c]:tabedit[c], and [c]:winedit[c]
-	* add 'jsdebugger' option - switch on/off javascript debugger service
+    * add 'jsdebugger' option - switch on/off javascript debugger service
 
 2009-10-28:
     * version 2.2

@@ -7,7 +7,7 @@
     * add the *DOMLoad* autocommand event
     * add 'online' option
     * add 'smtpserver' option
-	* add 'jsdebugger' option - switch on/off javascript debugger service
+    * add 'jsdebugger' option - switch on/off javascript debugger service
 
 2009-03-29
     * version 0.5
