@@ -261,7 +261,7 @@ function Highlights(name, store) {
         if (!(class_ in highlight))
             return "Unknown highlight keyword: " + class_;
 
-        let style = highlight[key] || new Highlight(key);
+        let style = highlight[key] || Highlight(key);
         styles.removeSheet(true, style.selector);
 
         if (append)
@@ -361,7 +361,7 @@ function Styles(name, store) {
                       '@namespace xul "' + XUL + '";\n' +
                       '@namespace liberator "' + NS.uri + '";\n';
 
-    const Sheet = new Struct("name", "id", "sites", "css", "system", "agent");
+    const Sheet = Struct("name", "id", "sites", "css", "system", "agent");
     Sheet.prototype.__defineGetter__("fullCSS", function wrapCSS() {
         let filter = this.sites;
         let css = this.css;

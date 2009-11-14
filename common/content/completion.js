@@ -496,7 +496,7 @@ const CompletionContext = Class("CompletionContext", {
     fork: function fork(name, offset, self, completer) {
         if (typeof completer == "string")
             completer = self[completer];
-        let context = new CompletionContext(this, name, offset);
+        let context = CompletionContext(this, name, offset);
         this.contextList.push(context);
         if (completer)
             return completer.apply(self || this, [context].concat(Array.slice(arguments, arguments.callee.length)));
@@ -753,7 +753,7 @@ const Completion = Module("completion", {
     }
     //}}}
 }, {
-    UrlCompleter: new Struct("name", "description", "completer"),
+    UrlCompleter: Struct("name", "description", "completer"),
 
     Javascript: Class("Javascript", {
         init: function () {

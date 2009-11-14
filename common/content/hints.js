@@ -1022,7 +1022,7 @@ const Hints = Module("hints", {
             return -1;
         }
     })(),
-    Mode: new Struct("prompt", "action", "tags")
+    Mode: Struct("prompt", "action", "tags")
 }, {
     mappings: function () {
         var myModes = config.browserModes;

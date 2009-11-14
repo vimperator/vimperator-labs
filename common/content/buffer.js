@@ -10,7 +10,7 @@
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
-const Point = new Struct("x", "y");
+const Point = Struct("x", "y");
 
 /**
  * A class to manage the primary web content buffer. The name comes

@@ -6,7 +6,7 @@
 
 /** @scope modules */
 
-const AutoCommand = new Struct("event", "pattern", "command");
+const AutoCommand = Struct("event", "pattern", "command");
 
 /**
  * @instance autocommands
@@ -36,7 +36,7 @@ const AutoCommands = Module("autocommands", {
             liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
         }
         events.forEach(function (event) {
-            this._store.push(new AutoCommand(event, RegExp(regex), cmd));
+            this._store.push(AutoCommand(event, RegExp(regex), cmd));
         }, this);
     },
 

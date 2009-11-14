@@ -201,7 +201,7 @@ const Mappings = Module("mappings", {
      * @optional
      */
     add: function (modes, keys, description, action, extra) {
-        this._addMap(new Map(modes, keys, description, action, extra));
+        this._addMap(Map(modes, keys, description, action, extra));
     },
 
     /**
@@ -220,7 +220,7 @@ const Mappings = Module("mappings", {
         keys = keys.map(this._expandLeader);
         extra = extra || {};
         extra.user = true;
-        let map = new Map(modes, keys, description || "User defined mapping", action, extra);
+        let map = Map(modes, keys, description || "User defined mapping", action, extra);
 
         // remove all old mappings to this key sequence
         for (let [, name] in Iterator(map.names)) {

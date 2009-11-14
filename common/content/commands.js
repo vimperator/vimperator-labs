@@ -239,7 +239,7 @@ const Command = Class("Command", {
 /**
  * @instance commands
  */
-const ArgType = new Struct("description", "parse");
+const ArgType = Struct("description", "parse");
 const Commands = Module("commands", {
     init: function () {
         this._exCommands = [];
@@ -336,7 +336,7 @@ const Commands = Module("commands", {
      * @optional
      */
     add: function (names, description, action, extra) {
-        return this._addCommand(new Command(names, description, action, extra), false);
+        return this._addCommand(Command(names, description, action, extra), false);
     },
 
     /**
@@ -356,7 +356,7 @@ const Commands = Module("commands", {
         extra.user = true;
         description = description || "User defined command";
 
-        return this._addCommand(new Command(names, description, action, extra), replace);
+        return this._addCommand(Command(names, description, action, extra), replace);
     },
 
     /**

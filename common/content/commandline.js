@@ -121,7 +121,7 @@ const CommandLine = Module("commandline", {
         ////////////////////// VARIABLES ///////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////{{{
 
-        this._completionList = new ItemList("liberator-completions");
+        this._completionList = ItemList("liberator-completions");
         this._completions = null;
         this._history = null;
 

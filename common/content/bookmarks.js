@@ -34,8 +34,8 @@ const Bookmarks = Module("bookmarks", {
         // Source file: file://~firefox/components/nsTaggingService.js
         tagging.getTagsForURI(window.makeURI("http://mysterious.bug"), {});
 
-        const Bookmark = new Struct("url", "title", "icon", "keyword", "tags", "id");
-        const Keyword = new Struct("keyword", "title", "icon", "url");
+        const Bookmark = Struct("url", "title", "icon", "keyword", "tags", "id");
+        const Keyword = Struct("keyword", "title", "icon", "url");
         Bookmark.defaultValue("icon", function () getFavicon(this.url));
         Bookmark.prototype.__defineGetter__("extra", function () [
                                 ["keyword", this.keyword,         "Keyword"],
@@ -55,7 +55,7 @@ const Bookmarks = Module("bookmarks", {
             this.__defineGetter__("bookmarks", function () this.load());
 
             this.__defineGetter__("keywords",
-                function () [new Keyword(k.keyword, k.title, k.icon, k.url) for ([, k] in Iterator(self.bookmarks)) if (k.keyword)]);
+                function () [Keyword(k.keyword, k.title, k.icon, k.url) for ([, k] in Iterator(self.bookmarks)) if (k.keyword)]);
 
             this.__iterator__ = function () (val for ([, val] in Iterator(self.bookmarks)));
 
@@ -65,7 +65,7 @@ const Bookmarks = Module("bookmarks", {
                 let uri = util.newURI(node.uri);
                 let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
                 let tags = tagging.getTagsForURI(uri, {}) || [];
-                let bmark = new Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
+                let bmark = Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
 
                 bookmarks.push(bmark);
                 return bmark;

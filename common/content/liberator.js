@@ -110,7 +110,7 @@ const Liberator = Module("liberator", {
             return value;
         }
 
-        //const Extension = new Struct("id", "name", "description", "icon", "enabled", "version");
+        //const Extension = Struct("id", "name", "description", "icon", "enabled", "version");
         return extensions.map(function (e) ({
             id: e.id,
             name: e.name,

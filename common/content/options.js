@@ -526,7 +526,7 @@ const Options = Module("options", {
         if (!extraInfo)
             extraInfo = {};
 
-        let option = new Option(names, description, type, defaultValue, extraInfo);
+        let option = Option(names, description, type, defaultValue, extraInfo);
 
         if (!option)
             return false;

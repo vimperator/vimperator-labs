@@ -85,6 +85,8 @@ don't use them when the resulting code is hard to read.
 * Prefer lambda-style functions where suitable:
   Right: list.filter(function (elem) elem.good != elem.BAD);
   Wrong: list.filter(function (elem) { return elem.good != elem.BAD });
+  Right: list.forEach(function (elem) { window.alert(elem); });
+  Wrong: list.forEach(function (elem) window.alert(elem));
 
 * Anonymous function definitions should be formatted with a space after the
   keyword "function". Example: function () {}, not function() {}.
@@ -94,7 +96,7 @@ don't use them when the resulting code is hard to read.
   https://developer.mozilla.org/en/New_in_JavaScript_1.7#Block_scope_with_let
 
 * Reuse common local variable names E.g. "elem" is generally used for element,
-  "win" for windows etc.
+  "win" for windows, "func" for functions,  "ret" for return values etc.
 
 * Prefer // over /* */ comments (exceptions for big comments are usually OK)
   Right: if (HACK) // TODO: remove hack
