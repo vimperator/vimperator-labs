@@ -1289,6 +1289,20 @@ const Completion = Module("completion", {
     }, {
         EVAL_TMP: "__liberator_eval_tmp"
     })
+}, {
+    options: function () {
+        options.add(["jsdebugger", "jsd"],
+            "Switch on/off jsdebugger",
+            "boolean", false, {
+                setter: function(value) {
+                    if (value)
+                        services.get("debugger").on();
+                    else
+                        services.get("debugger").off();
+                },
+                getter: function () services.get("debugger").isOn
+            });
+    },
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

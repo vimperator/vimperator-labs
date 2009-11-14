@@ -1347,5 +1347,18 @@
     </description>
 </item>
 
+<item>
+    <tags>'jsd' 'jsdebugger'</tags>
+    <spec>'jsdebugger' 'jsd'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Use javascript debugger service at the completion list.
+            More list is shown up when it is on.
+        </p>
+    </description>
+</item>
+
 </document>
 <!-- vim:se sts=4 sw=4 et: -->
