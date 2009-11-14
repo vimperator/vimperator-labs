@@ -1115,14 +1115,7 @@ const Completion = Module("completion", {
                                 context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
                             if (obj == cache.evalContext)
                                 context.regenerate = true;
-                            context.generate = function () {
-                                try {
-                                    return self.objectKeys(obj, !recurse)
-                                }
-                                catch(e) {
-                                    liberator.reportError(e);
-                                }
-                            };
+                            context.generate = function () self.objectKeys(obj, !recurse);
                         };
                     }
                     // TODO: Make this a generic completion helper function.
@@ -1145,14 +1138,14 @@ const Completion = Module("completion", {
 
                     for (let [, obj] in Iterator(objects)) {
                         let name = obj[1] + " (substrings)";
-                        this.context.fork(obj[1], top[OFFSET], this, fill,
+                        this.context.fork(name, top[OFFSET], this, fill,
                             obj[0], name, compl,
                             false, filter, last, key.length);
                     }
 
                     for (let [, obj] in Iterator(objects)) {
                         let name = obj[1] + " (prototype substrings)";
-                        this.context.fork(obj[1], top[OFFSET], this, fill,
+                        this.context.fork(name, top[OFFSET], this, fill,
                             obj[0], name, function (a, b) compl(a, b, true),
                             false, filter, last, key.length);
                     }
