@@ -117,13 +117,13 @@ const Hints = Module("hints", {
      * @returns [text, showText]
      */
     _getInputHint: function (elem, doc) {
-        // <input type="submit|button|this._reset">   Always use the value
-        // <input type="radio|checkbox">        Use the value if it is not numeric or label or name
-        // <input type="password">              Never use the value, use label or name
-        // <input type="text|file"> <textarea>  Use value if set or label or name
-        // <input type="image">                 Use the alt text if present (showText) or label or name
-        // <input type="hidden">                Never gets here
-        // <select>                             Use the text of the selected item or label or name
+        // <input type="submit|button|reset"/>   Always use the value
+        // <input type="radio|checkbox"/>        Use the value if it is not numeric or label or name
+        // <input type="password"/>              Never use the value, use label or name
+        // <input type="text|file"/> <textarea/> Use value if set or label or name
+        // <input type="image"/>                 Use the alt text if present (showText) or label or name
+        // <input type="hidden"/>                Never gets here
+        // <select/>                             Use the text of the selected item or label or name
 
         let type = elem.type;
 
@@ -149,7 +149,7 @@ const Hints = Module("hints", {
                 else if (option == "label") {
                     if (elem.id) {
                         // TODO: (possibly) do some guess work for label-like objects
-                        let label = util.evaluateXPath("//label[@for='" + elem.id + "']", doc).snapshotItem(0);
+                        let label = util.evaluateXPath(["label[@for=" + elem.id.quote() + "]"], doc).snapshotItem(0);
                         if (label)
                             return [label.textContent.toLowerCase(), true];
                     }
@@ -400,7 +400,7 @@ const Hints = Module("hints", {
             for (let [, { doc: doc }] in Iterator(this._docs)) {
                 for (let elem in util.evaluateXPath(" {//*[@liberator:highlight and @number]", doc)) {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
-                    css.push(highlight.selector(group) + "[number='" + elem.getAttribute("number") + "'] { " + elem.style.cssText + " }");
+                    css.push(highlight.selector(group) + "[number=" + elem.getAttribute("number").quote() + "] { " + elem.style.cssText + " }");
                 }
             }
             styles.addSheet(true, "hint-positions", "*", css.join("\n"));

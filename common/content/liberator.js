@@ -1284,7 +1284,7 @@ const Liberator = Module("liberator", {
                     liberator.echoerr("E475: Invalid argument: " + arg);
                 }
                 catch (e) {
-                    liberator.echoerr("Error opening '" + arg + "': " + e);
+                    liberator.echoerr("Error opening " + arg.quote() + ": " + e);
                 }
             }, {
                 argCount: "1",

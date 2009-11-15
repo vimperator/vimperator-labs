@@ -80,7 +80,7 @@ const Events = Module("events", {
 
                 if (dirs.length > 0) {
                     for (let [, dir] in Iterator(dirs)) {
-                        liberator.echomsg('Searching for "macros/*" in "' + dir.path + '"', 2);
+                        liberator.echomsg('Searching for "macros/*" in ' + dir.path.quote(), 2);
                         liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
 
                         for (let file in dir.iterDirectory()) {

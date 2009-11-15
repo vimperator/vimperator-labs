@@ -986,7 +986,7 @@ const Commands = Module("commands", {
                                     var completer = liberator.eval(completeOpt);
 
                                     if (!(completer instanceof Function))
-                                        throw new TypeError("User-defined custom completer '" + completeOpt + "' is not a function");
+                                        throw new TypeError("User-defined custom completer " + completeOpt.quote() + " is not a function");
                                 }
                                 catch (e) {
                                     liberator.echo(":" + this.name + " ...");
