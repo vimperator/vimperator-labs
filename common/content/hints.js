@@ -6,19 +6,19 @@
 
 /** @scope modules */
 /** @instance hints */
-const ELEM = 0, TEXT = 1, SPAN = 2, IMG_SPAN = 3;
+
 const Hints = Module("hints", {
     requires: ["config"],
 
     init: function () {
 
-        this._hintMode;
-        this._submode    = ""; // used for extended mode, can be "o", "t", "y", etc.
-        this._hintString = ""; // the typed string part of the hint is in this string
-        this._hintNumber = 0;  // only the numerical part of the hint
-        this._usedTabKey = false; // when we used <Tab> to select an element
-        this._prevInput = "";    // record previous user input type, "text" || "number"
-        this._extendedhintCount;  // for the count argument of Mode#action (extended hint only)
+        this._hintMode = null;
+        this._submode    = "";           // used for extended mode, can be "o", "t", "y", etc.
+        this._hintString = "";           // the typed string part of the hint is in this string
+        this._hintNumber = 0;            // only the numerical part of the hint
+        this._usedTabKey = false;        // when we used <Tab> to select an element
+        this._prevInput = "";            // record previous user input type, "text" || "number"
+        this._extendedhintCount = null;  // for the count argument of Mode#action (extended hint only)
 
         // hints[] = [elem, text, span, imgSpan, elem.style.backgroundColor, elem.style.color]
         this._pageHints = [];
@@ -384,7 +384,7 @@ const Hints = Module("hints", {
                         imgSpan.style.top = (rect.top + offsetY) + "px";
                         imgSpan.style.width = (rect.right - rect.left) + "px";
                         imgSpan.style.height = (rect.bottom - rect.top) + "px";
-                        hint[IMG_SPAN] = imgSpan;
+                        hint[Hints.IMG_SPAN] = imgSpan;
                         span.parentNode.appendChild(imgSpan);
                     }
                     this._setClass(imgSpan, activeHint == hintnum);
@@ -431,8 +431,8 @@ const Hints = Module("hints", {
                 elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1)) {
                 let hint = this._pageHints[i];
-                if (!timeout || hint[ELEM] != firstElem)
-                    hint[ELEM].removeAttributeNS(NS.uri, "highlight");
+                if (!timeout || hint[Hints.ELEM] != firstElem)
+                    hint[Hints.ELEM].removeAttributeNS(NS.uri, "highlight");
             }
 
             // animate the disappearance of the first hint
@@ -489,10 +489,11 @@ const Hints = Module("hints", {
         if (timeout == 0)
             // force a possible mode change, based on whether an input field has focus
             events.onFocusChange();
+
         this.setTimeout(function () {
             if (modes.extended & modes.HINTS)
                 modes.reset();
-            this._hintMode.action(elem, elem.href || "", hints._extendedhintCount);
+            this._hintMode.action(elem, elem.href || "", this._extendedhintCount);
         }, timeout);
         return true;
     },
@@ -658,7 +659,7 @@ const Hints = Module("hints", {
              * @param {Array(string)} words The words to search in.
              * @param {boolean} allowWordOverleaping Whether matches may be
              *     non-contiguous.
-             * @returns boolean Whether all the strings matched.
+             * @returns {boolean} Whether all the strings matched.
              */
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping) {
                 let strIdx = 0;
@@ -743,7 +744,7 @@ const Hints = Module("hints", {
         this._submode = minor;
         this._hintString = filter || "";
         this._hintNumber = 0;
-        usedTab = false;
+        this._usedTabKey = false;
         this._prevInput = "";
         this._canUpdate = false;
 
@@ -886,6 +887,12 @@ const Hints = Module("hints", {
 
     //}}}
 }, {
+
+    ELEM: 0,
+    TEXT: 1,
+    SPAN: 2,
+    IMG_SPAN: 3,
+
     indexOf: (function () {
         const table = [
             [0x00c0, 0x00c6, ["A"]],
@@ -1022,6 +1029,7 @@ const Hints = Module("hints", {
             return -1;
         }
     })(),
+
     Mode: Struct("prompt", "action", "tags")
 }, {
     mappings: function () {
