@@ -1,4 +1,6 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -36,96 +38,24 @@ const Command = Class("Command", {
     requires: ["config"],
 
     init: function (specs, description, action, extraInfo) {
-        specs = Array.concat(specs);
+        specs = Array.concat(specs); // XXX
+        let expandedSpecs = Command.parseSpecs(specs);
 
         if (!extraInfo)
             extraInfo = {};
 
-        let expandedSpecs = Command.parseSpecs(specs);
-        /**
-         * @property {string[]} All of this command's name specs. e.g., "com[mand]"
-         */
-        this.specs      = specs;
-        /** @property {string[]} All of this command's short names, e.g., "com" */
-        this.shortNames = expandedSpecs.shortNames;
-        /**
-         * @property {string[]} All of this command's long names, e.g., "command"
-         */
-        this.longNames = expandedSpecs.longNames;
-
-        /** @property {string} The command's canonical name. */
+        this.specs = specs;
+        this.shortNames = expandedSpecs.map(function (n) n[1]);
+        this.longNames  = expandedSpecs.map(function (n) n[0]);
         this.name = this.longNames[0];
-        /** @property {string[]} All of this command's long and short names. */
-        this.names = expandedSpecs.names; // return all command name aliases
-
-        /** @property {string} This command's description, as shown in :exusage */
-        this.description = description || "";
-        /**
-         * @property {function (Args)} The function called to execute this command.
-         */
+        this.names = array(expandedSpecs).flatten();
+        this.description = description;
         this.action = action;
-        /**
-         * @property {string} This command's argument count spec.
-         * @see Commands#parseArguments
-         */
-        this.argCount = extraInfo.argCount || 0;
-        /**
-         * @property {function (CompletionContext, Args)} This command's completer.
-         * @see CompletionContext
-         */
-        this.completer = extraInfo.completer || null;
-        /** @property {boolean} Whether this command accepts a here document. */
-        this.hereDoc = extraInfo.hereDoc || false;
-        /**
-         * @property {Array} The options this command takes.
-         * @see Commands@parseArguments
-         */
-        this.options = extraInfo.options || [];
-        /**
-         * @property {boolean} Whether this command may be called with a bang,
-         *     e.g., :com!
-         */
-        this.bang = extraInfo.bang || false;
-        /**
-         * @property {boolean} Whether this command may be called with a count,
-         *     e.g., :12bdel
-         */
-        this.count = extraInfo.count || false;
-        /**
-         * @property {boolean} At what index this command's literal arguments
-         *     begin. For instance, with a value of 2, all arguments starting with
-         *     the third are parsed as a single string, with all quoting characters
-         *     passed literally. This is especially useful for commands which take
-         *     key mappings or Ex command lines as arguments.
-         */
-        this.literal = extraInfo.literal == null ? null : extraInfo.literal;
-        /**
-         * @property {function} Should return an array of <b>Object</b>s suitable
-         *     to be passed to {@link Commands#commandToString}, one for each past
-         *     invocation which should be restored on subsequent @liberator
-         *     startups.
-         */
-        this.serial = extraInfo.serial;
-        /**
-         * @property {boolean} When true, invocations of this command
-         *     may contain private data which should be purged from
-         *     saved histories when clearing private data.
-         */
-        this.privateData = Boolean(extraInfo.privateData);
 
-        /**
-         * @property {boolean} Specifies whether this is a user command.  User
-         *     commands may be created by plugins, or directly by users, and,
-         *     unlike basic commands, may be overwritten. Users and plugin authors
-         *     should create only user commands.
-         */
-        this.user = extraInfo.user || false;
-        /**
-         * @property {string} For commands defined via :command, contains the Ex
-         *     command line to be executed upon invocation.
-         */
-        this.replacementText = extraInfo.replacementText || null;
+        extraInfo.privateData = Boolean(extraInfo.privateData); // XXX
+        update(this, extraInfo);
     },
+
     /**
      * Execute this command.
      *
@@ -199,40 +129,108 @@ const Command = Class("Command", {
      * @returns {Args}
      * @see Commands#parseArgs
      */
-    parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra)
-
-}, {
+    parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra),
 
     /**
-     * convert command name abbreviation specs of the form
-     * 'shortname[optional-tail]' to short and long versions Eg. 'abc[def]' ->
-     * 'abc', 'abcdef'
+     * @property {string[]} All of this command's name specs. e.g., "com[mand]"
+     */
+    specs: null,
+    /** @property {string[]} All of this command's short names, e.g., "com" */
+    shortNames: null,
+    /**
+     * @property {string[]} All of this command's long names, e.g., "command"
+     */
+    longNames: null,
+
+    /** @property {string} The command's canonical name. */
+    name: null,
+    /** @property {string[]} All of this command's long and short names. */
+    names: null,
+
+    /** @property {string} This command's description, as shown in :exusage */
+    description: "",
+    /**
+     * @property {function (Args)} The function called to execute this command.
+     */
+    action: null,
+    /**
+     * @property {string} This command's argument count spec.
+     * @see Commands#parseArguments
+     */
+    argCount: 0,
+    /**
+     * @property {function (CompletionContext, Args)} This command's completer.
+     * @see CompletionContext
+     */
+    completer: null,
+    /** @property {boolean} Whether this command accepts a here document. */
+    hereDoc: false,
+    /**
+     * @property {Array} The options this command takes.
+     * @see Commands@parseArguments
+     */
+    options: [],
+    /**
+     * @property {boolean} Whether this command may be called with a bang,
+     *     e.g., :com!
+     */
+    bang: false,
+    /**
+     * @property {boolean} Whether this command may be called with a count,
+     *     e.g., :12bdel
+     */
+    count: false,
+    /**
+     * @property {boolean} At what index this command's literal arguments
+     *     begin. For instance, with a value of 2, all arguments starting with
+     *     the third are parsed as a single string, with all quoting characters
+     *     passed literally. This is especially useful for commands which take
+     *     key mappings or Ex command lines as arguments.
+     */
+    literal: null,
+    /**
+     * @property {function} Should return an array of <b>Object</b>s suitable
+     *     to be passed to {@link Commands#commandToString}, one for each past
+     *     invocation which should be restored on subsequent @liberator
+     *     startups.
+     */
+    serial: null,
+    /**
+     * @property {boolean} When true, invocations of this command
+     *     may contain private data which should be purged from
+     *     saved histories when clearing private data.
+     */
+    privateData: false,
+
+    /**
+     * @property {boolean} Specifies whether this is a user command.  User
+     *     commands may be created by plugins, or directly by users, and,
+     *     unlike basic commands, may be overwritten. Users and plugin authors
+     *     should create only user commands.
+     */
+    user: false,
+    /**
+     * @property {string} For commands defined via :command, contains the Ex
+     *     command line to be executed upon invocation.
+     */
+    replacementText: null
+}, {
+
+    // TODO: do we really need more than longNames as a convenience anyway?
+    /**
+     *  Converts command name abbreviation specs of the form
+     *  'shortname[optional-tail]' to short and long versions:
+     *      ["abc[def]", "ghijkl"] ->  [["abcdef", "abc"], ["ghijlk"]]
+     *
+     *  @param {Array} specs An array of command name specs to parse.
+     *  @returns {Array}
      */
     parseSpecs: function (specs) {
-        // Whoever wrote the following should be ashamed. :(
-        // Good grief! I have no words... -- djk ;-)
-        // let shortNames = longNames = names = [];
-        let names = [];
-        let longNames = [];
-        let shortNames = [];
-
-        for (let [, spec] in Iterator(specs)) {
-            let matches = spec.match(/(\w+)\[(\w+)\](\w*)/);
-
-            if (matches) {
-                shortNames.push(matches[1] + matches[3]);
-                longNames.push(matches[1] + matches[2] + matches[3]);
-                // order as long1, short1, long2, short2
-                names.push(matches[1] + matches[2]);
-                names.push(matches[1]);
-            }
-            else {
-                longNames.push(spec);
-                names.push(spec);
-            }
-        }
-
-        return { names: names, longNames: longNames, shortNames: shortNames };
+        return specs.map(function (spec) {
+            let long = spec.replace(/[[\]]/g, "");
+            let short = spec.replace(/\[.*]/, "");
+            return short == long ? [long] : [long, short];
+        });
     }
 });
 
