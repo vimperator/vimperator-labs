@@ -872,7 +872,7 @@ const Commands = Module("commands", {
     },
 
     completion: function () {
-        completion.setFunctionCompleter(commands.get, [function () ([c.name, c.description] for (c in commands))]);
+        JavaScript.setCompleter(this.get, [function () ([c.name, c.description] for (c in commands))]);
 
         completion.command = function command(context) {
             context.title = ["Command"];

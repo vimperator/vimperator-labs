@@ -1227,8 +1227,8 @@ const Options = Module("options", {
             });
     },
     completion: function () {
-        completion.setFunctionCompleter(options.get, [function () ([o.name, o.description] for (o in options))]);
-        completion.setFunctionCompleter([options.getPref, options.safeSetPref, options.setPref, options.resetPref, options.invertPref],
+        JavaScript.setCompleter(this.get, [function () ([o.name, o.description] for (o in options))]);
+        JavaScript.setCompleter([this.getPref, this.safeSetPref, this.setPref, this.resetPref, this.invertPref],
                 [function () options.allPrefs().map(function (pref) [pref, ""])]);
 
         completion.option = function option(context, scope) {

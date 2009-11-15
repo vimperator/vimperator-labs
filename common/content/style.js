@@ -696,7 +696,7 @@ Module("styles", {
         });
     },
     completion: function () {
-        completion.setFunctionCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
+        JavaScript.setCompleter(["get", "addSheet", "removeSheet", "findSheets"].map(function (m) styles[m]),
             [ // Prototype: (system, name, filter, css, index)
                 null,
                 function (context, obj, args) args[0] ? styles.systemNames : styles.userNames,

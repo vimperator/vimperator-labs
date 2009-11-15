@@ -105,6 +105,13 @@ const Services = Module("services", {
      * @param {string} name The class's cache key.
      */
     create: function (name) this.classes[name]()
+}, {
+}, {
+    completion: function () {
+        JavaScript.setCompleter(this.get, [function () services.services]);
+        JavaScript.setCompleter(this.create, [function () [[c, ""] for (c in services.classes)]]);
+
+    }
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

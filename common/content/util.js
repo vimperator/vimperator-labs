@@ -767,18 +767,20 @@ const Util = Module("util", {
     /**
      * Array utility methods.
      */
-    Array: Class("Array", {
+    Array: Class("Array", Array, {
         init: function (ary) {
             return {
                 __proto__: ary,
                 __iterator__: function () this.iteritems(),
                 __noSuchMethod__: function (meth, args) {
-                    let res = (util.Array[meth] || Array[meth]).apply(null, [this.__proto__].concat(args));
+                    var res = util.Array[meth].apply(null, [this.__proto__].concat(args));
+
                     if (util.Array.isinstance(res))
                         return util.Array(res);
                     return res;
                 },
-                concat: function () [].concat.apply(this.__proto__, arguments),
+                toString: function () this.__proto__.toString(),
+                concat: function () this.__proto__.concat.apply(this.__proto__, arguments),
                 map: function () this.__noSuchMethod__("map", Array.slice(arguments))
             };
         }
@@ -786,8 +788,6 @@ const Util = Module("util", {
         isinstance: function isinstance(obj) {
             return Object.prototype.toString.call(obj) == "[object Array]";
         },
-
-        toString: function () this.__proto__.toString(),
 
         /**
          * Converts an array to an object. As in lisp, an assoc is an
@@ -864,7 +864,7 @@ const Util = Module("util", {
             }
             return ret;
         }
-    })
+    }),
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

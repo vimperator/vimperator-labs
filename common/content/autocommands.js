@@ -250,7 +250,7 @@ const AutoCommands = Module("autocommands", {
         });
     },
     completion: function () {
-        completion.setFunctionCompleter(autocommands.get, [function () config.autocommands]);
+        JavaScript.setCompleter(this.get, [function () config.autocommands]);
 
         completion.autocmdEvent = function autocmdEvent(context) {
             context.completions = config.autocommands;

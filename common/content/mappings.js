@@ -470,18 +470,18 @@ const Mappings = Module("mappings", {
                                [mode.disp.toLowerCase()]);
     },
     completion: function () {
-        completion.setFunctionCompleter(mappings.get,
-        [
-            null,
-            function (context, obj, args) {
-                let mode = args[0];
-                return util.Array.flatten(
-                [
-                    [[name, map.description] for ([i, name] in Iterator(map.names))]
-                    for ([i, map] in Iterator(mappings._user[mode].concat(mappings._main[mode])))
-                ]);
-            }
-        ]);
+        JavaScript.setCompleter(this.get,
+            [
+                null,
+                function (context, obj, args) {
+                    let mode = args[0];
+                    return util.Array.flatten(
+                    [
+                        [[name, map.description] for ([i, name] in Iterator(map.names))]
+                        for ([i, map] in Iterator(mappings._user[mode].concat(mappings._main[mode])))
+                    ]);
+                }
+            ]);
 
         completion.userMapping = function userMapping(context, args, modes) {
             // FIXME: have we decided on a 'standard' way to handle this clash? --djk

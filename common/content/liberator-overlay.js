@@ -45,6 +45,7 @@
      "finder.js",
      "hints.js",
      "io.js",
+     "javascript.js",
      "mappings.js",
      "marks.js",
      "modes.js",

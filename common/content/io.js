@@ -975,7 +975,7 @@ lookup:
             });
     },
     completion: function () {
-        completion.setFunctionCompleter([this.File, File.expandPath],
+        JavaScript.setCompleter([this.File, File.expandPath],
             [function (context, obj, args) {
                 context.quote[2] = "";
                 completion.file(context, true);
