@@ -95,7 +95,7 @@ dist: $(XPI)
 	$(CURL) "$$@" --form-string "summary=$$summary" 			\
 		-F "filename=@$(XPI)"						\
 		-H "Authorization: Basic $$(echo -n "$(GOOGLE_USER):$(GOOGLE_PASS)" | $(B64ENCODE))" \
-		-i "$(GOOGLE)" | sed -n '/^Location/{p;q}'
+		-i "$(GOOGLE)" | sed -n '/^Location/{p;q;}'
 
 $(RDF): $(RDF_IN) Makefile
 	@echo "Preparing release..."
