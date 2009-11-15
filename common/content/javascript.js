@@ -9,7 +9,7 @@ const JavaScript = Module("javascript", {
     init: function () {
         this._stack = [];
         this._functions = [];
-        this._top = [];  // The element on the top of the stack.
+        this._top = {};  // The element on the top of the stack.
         this._last = ""; // The last opening char pushed onto the stack.
         this._lastNonwhite = ""; // Last non-whitespace character we saw.
         this._lastChar = "";     // Last character we saw, used for \ escaping quotes.
@@ -122,41 +122,51 @@ const JavaScript = Module("javascript", {
         }
     },
 
-    // Get an element from the stack. If @n is negative,
+    // Get an element from the stack. If @frame is negative,
     // count from the top of the stack, otherwise, the bottom.
-    // If @m is provided, return the @mth value of element @o
-    // of the stack entry at @n.
-    _get: function (n, m, o) {
-        let a = this._stack[n >= 0 ? n : this._stack.length + n];
-        if (o != null)
-            a = a[o];
-        if (m == null)
+    // If @nth is provided, return the @mth value of element @type
+    // of the stack entry at @frame.
+    _get: function (frame, nth, type) {
+        let a = this._stack[frame >= 0 ? frame : this._stack.length + frame];
+        if (type != null)
+            a = a[type];
+        if (nth == null)
             return a;
-        return a[a.length - m - 1];
+        return a[a.length - nth - 1];
     },
 
     // Push and pop the stack, maintaining references to 'top' and 'last'.
     _push: function push(arg) {
-        this._top = [this._i, arg, [this._i], [], [], [], []];
-        this._last = this._top[JavaScript.CHAR];
+        this._top = {
+            offset:     this._i,
+            char:       arg,
+            statements: [this._i],
+            dots:       [],
+            fullStatements: [],
+            comma:      [],
+            functions:  []
+        };
+        this._last = this._top.char;
         this._stack.push(this._top);
     },
 
     _pop: function pop(arg) {
-        if (this._top[JavaScript.CHAR] != arg) {
-            this.context.highlight(this._top[JavaScript.OFFSET], this._i - this._top[JavaScript.OFFSET], "SPELLCHECK");
-            this.context.highlight(this._top[JavaScript.OFFSET], 1, "FIND");
+        if (this._top.char != arg) {
+            this.context.highlight(this._top.offset, this._i - this._top.offset, "SPELLCHECK");
+            this.context.highlight(this._top.offset, 1, "FIND");
             throw new Error("Invalid JS");
         }
+
         if (this._i == this.context.caret - 1)
-            this.context.highlight(this._top[JavaScript.OFFSET], 1, "FIND");
+            this.context.highlight(this._top.offset, 1, "FIND");
+
         // The closing character of this stack frame will have pushed a new
         // statement, leaving us with an empty statement. This doesn't matter,
         // now, as we simply throw away the frame when we pop it, but it may later.
-        if (this._top[JavaScript.STATEMENTS][this._top[JavaScript.STATEMENTS].length - 1] == this._i)
-            this._top[JavaScript.STATEMENTS].pop();
+        if (this._top.statements[this._top.statements.length - 1] == this._i)
+            this._top.statements.pop();
         this._top = this._get(-2);
-        this._last = this._top[JavaScript.CHAR];
+        this._last = this._top.char;
         let ret = this._stack.pop();
         return ret;
     },
@@ -172,7 +182,7 @@ const JavaScript = Module("javascript", {
         if (this._str && filter.substr(0, this._str.length) == this._str) {
             this._i = this._str.length;
             if (this.popStatement)
-                this._top[JavaScript.STATEMENTS].pop();
+                this._top.statements.pop();
         }
         else {
             this._stack = [];
@@ -200,21 +210,21 @@ const JavaScript = Module("javascript", {
                 // A word character following a non-word character, or simply a non-word
                 // character. Start a new statement.
                 if (/[a-zA-Z_$]/.test(this._c) && !/[\w$]/.test(this._lastChar) || !/[\w\s$]/.test(this._c))
-                    this._top[JavaScript.STATEMENTS].push(this._i);
+                    this._top.statements.push(this._i);
 
                 // A "." or a "[" dereferences the last "statement" and effectively
                 // joins it to this logical statement.
                 if ((this._c == "." || this._c == "[") && /[\w$\])"']/.test(this._lastNonwhite)
                 ||  this._lastNonwhite == "." && /[a-zA-Z_$]/.test(this._c))
-                        this._top[JavaScript.STATEMENTS].pop();
+                        this._top.statements.pop();
 
                 switch (this._c) {
                 case "(":
                     // Function call, or if/while/for/...
                     if (/[\w$]/.test(this._lastNonwhite)) {
                         this._functions.push(this._i);
-                        this._top[JavaScript.FUNCTIONS].push(this._i);
-                        this._top[JavaScript.STATEMENTS].pop();
+                        this._top.functions.push(this._i);
+                        this._top.statements.pop();
                     }
                 case '"':
                 case "'":
@@ -226,16 +236,16 @@ const JavaScript = Module("javascript", {
                     this._push(this._c);
                     break;
                 case ".":
-                    this._top[JavaScript.DOTS].push(this._i);
+                    this._top.dots.push(this._i);
                     break;
                 case ")": this._pop("("); break;
                 case "]": this._pop("["); break;
                 case "}": this._pop("{"); // Fallthrough
                 case ";":
-                    this._top[JavaScript.FULL_STATEMENTS].push(this._i);
+                    this._top.fullStatements.push(this._i);
                     break;
                 case ",":
-                    this._top[JavaScript.COMMA].push(this._i);
+                    this._top.comma.push(this._i);
                     break;
                 }
 
@@ -247,7 +257,7 @@ const JavaScript = Module("javascript", {
         this.popStatement = false;
         if (!/[\w$]/.test(this._lastChar) && this._lastNonwhite != ".") {
             this.popStatement = true;
-            this._top[JavaScript.STATEMENTS].push(this._i);
+            this._top.statements.push(this._i);
         }
 
         this._lastIdx = this._i;
@@ -270,11 +280,11 @@ const JavaScript = Module("javascript", {
     // of inputting a command (let foo=bar; frob(foo); foo=foo.bar; ...),
     // we'll still use the old value. But, it's worth it.
     _getObj: function (frame, stop) {
-        let statement = this._get(frame, 0, JavaScript.STATEMENTS) || 0; // Current statement.
+        let statement = this._get(frame, 0, "statements") || 0; // Current statement.
         let prev = statement;
         let obj;
         let cacheKey;
-        for (let [, dot] in Iterator(this._get(frame)[JavaScript.DOTS].concat(stop))) {
+        for (let [, dot] in Iterator(this._get(frame).dots.concat(stop))) {
             if (dot < statement)
                 continue;
             if (dot > stop || dot <= prev)
@@ -295,9 +305,9 @@ const JavaScript = Module("javascript", {
     },
 
     _getObjKey: function (frame) {
-        let dot = this._get(frame, 0, JavaScript.DOTS) || -1; // Last dot in frame.
-        let statement = this._get(frame, 0, JavaScript.STATEMENTS) || 0; // Current statement.
-        let end = (frame == -1 ? this._lastIdx : this._get(frame + 1)[JavaScript.OFFSET]);
+        let dot = this._get(frame, 0, "dots") || -1; // Last dot in frame.
+        let statement = this._get(frame, 0, "statements") || 0; // Current statement.
+        let end = (frame == -1 ? this._lastIdx : this._get(frame + 1).offset);
 
         this._cacheKey = null;
         let obj = [[this.cache.evalContext, "Local Variables"],
@@ -356,7 +366,7 @@ const JavaScript = Module("javascript", {
         // TODO: Make this a generic completion helper function.
         let filter = key + (string || "");
         for (let [, obj] in Iterator(objects)) {
-            this.context.fork(obj[1], this._top[JavaScript.OFFSET], this, this._fill,
+            this.context.fork(obj[1], this._top.offset, this, this._fill,
                 obj[0], obj[1], compl,
                 true, filter, last, key.length);
         }
@@ -366,21 +376,21 @@ const JavaScript = Module("javascript", {
 
         for (let [, obj] in Iterator(objects)) {
             let name = obj[1] + " (prototypes)";
-            this.context.fork(name, this._top[JavaScript.OFFSET], this, this._fill,
+            this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, function (a, b) compl(a, b, true),
                 true, filter, last, key.length);
         }
 
         for (let [, obj] in Iterator(objects)) {
             let name = obj[1] + " (substrings)";
-            this.context.fork(name, this._top[JavaScript.OFFSET], this, this._fill,
+            this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, compl,
                 false, filter, last, key.length);
         }
 
         for (let [, obj] in Iterator(objects)) {
             let name = obj[1] + " (prototype substrings)";
-            this.context.fork(name, this._top[JavaScript.OFFSET], this, this._fill,
+            this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, function (a, b) compl(a, b, true),
                 false, filter, last, key.length);
         }
@@ -390,7 +400,7 @@ const JavaScript = Module("javascript", {
         if (this._last == "")
             return "";
         // After the opening [ upto the opening ", plus '' to take care of any operators before it
-        let key = this._str.substring(this._get(-2, 0, JavaScript.STATEMENTS), this._get(-1, null, JavaScript.OFFSET)) + "''";
+        let key = this._str.substring(this._get(-2, 0, "statements"), this._get(-1, null, "offset")) + "''";
         // Now eval the key, to process any referenced variables.
         return this.eval(key);
     },
@@ -419,7 +429,7 @@ const JavaScript = Module("javascript", {
         // Find any complete statements that we can eval before we eval our object.
         // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
         let prev = 0;
-        for (let [, v] in Iterator(this._get(0)[JavaScript.FULL_STATEMENTS])) {
+        for (let [, v] in Iterator(this._get(0).fullStatements)) {
             let key = this._str.substring(prev, v + 1);
             if (this._checkFunction(prev, v, key))
                 return null;
@@ -438,11 +448,11 @@ const JavaScript = Module("javascript", {
 
             // The top of the stack is the sting we're completing.
             // Wrap it in its delimiters and eval it to process escape sequences.
-            let string = this._str.substring(this._get(-1)[JavaScript.OFFSET] + 1, this._lastIdx);
+            let string = this._str.substring(this._get(-1).offset + 1, this._lastIdx);
             string = eval(this._last + string + this._last);
 
             // Is this an object accessor?
-            if (this._get(-2)[JavaScript.CHAR] == "[") { // Are we inside of []?
+            if (this._get(-2).char == "[") { // Are we inside of []?
                 // Stack:
                 //  [-1]: "...
                 //  [-2]: [...
@@ -450,24 +460,24 @@ const JavaScript = Module("javascript", {
 
                 // Yes. If the [ starts at the beginning of a logical
                 // statement, we're in an array literal, and we're done.
-                 if (this._get(-3, 0, JavaScript.STATEMENTS) == this._get(-2)[JavaScript.OFFSET])
+                 if (this._get(-3, 0, "statements") == this._get(-2).offset)
                     return null;
 
                 // Beginning of the statement upto the opening [
-                let obj = this._getObj(-3, this._get(-2)[JavaScript.OFFSET]);
+                let obj = this._getObj(-3, this._get(-2).offset);
 
                 return this._complete(obj, this._getKey(), null, string, this._last);
             }
 
             // Is this a function call?
-            if (this._get(-2)[JavaScript.CHAR] == "(") {
+            if (this._get(-2).char == "(") {
                 // Stack:
                 //  [-1]: "...
                 //  [-2]: (...
                 //  [-3]: base statement
 
                 // Does the opening "(" mark a function call?
-                if (this._get(-3, 0, JavaScript.FUNCTIONS) != this._get(-2)[JavaScript.OFFSET])
+                if (this._get(-3, 0, "functions") != this._get(-2).offset)
                     return null; // No. We're done.
 
                 let [offset, obj, func] = this._getObjKey(-3);
@@ -485,9 +495,9 @@ const JavaScript = Module("javascript", {
                     return null;
 
                 // Split up the arguments
-                let prev = this._get(-2)[JavaScript.OFFSET];
+                let prev = this._get(-2).offset;
                 let args = [];
-                for (let [, idx] in Iterator(this._get(-2)[JavaScript.COMMA])) {
+                for (let [, idx] in Iterator(this._get(-2).comma)) {
                     let arg = this._str.substring(prev + 1, idx);
                     prev = idx;
                     util.memoize(args, this._i, function () self.eval(arg));
@@ -533,26 +543,17 @@ const JavaScript = Module("javascript", {
             return null; // Not a word. Forget it. Can this even happen?
 
         try { // FIXME
-            var o = this._top[JavaScript.OFFSET];
-            this._top[JavaScript.OFFSET] = offset;
+            var o = this._top.offset;
+            this._top.offset = offset;
             return this._complete(obj, key);
         }
         finally {
-            this._top[JavaScript.OFFSET] = o;
+            this._top.offset = o;
         }
         return null;
     }
 }, {
     EVAL_TMP: "__liberator_eval_tmp",
-
-    // Internal use only
-    OFFSET: 0,
-    CHAR: 1,
-    STATEMENTS: 2,
-    DOTS: 3,
-    FULL_STATEMENTS: 4,
-    COMMA: 5,
-    FUNCTIONS: 6,
 
     /**
      * A map of argument completion functions for named methods. The

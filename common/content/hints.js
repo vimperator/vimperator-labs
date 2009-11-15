@@ -20,7 +20,6 @@ const Hints = Module("hints", {
         this._prevInput = "";            // record previous user input type, "text" || "number"
         this._extendedhintCount = null;  // for the count argument of Mode#action (extended hint only)
 
-        // hints[] = [elem, text, span, imgSpan, elem.style.backgroundColor, elem.style.color]
         this._pageHints = [];
         this._validHints = []; // store the indices of the "hints" array with valid elements
 
@@ -259,13 +258,12 @@ const Hints = Module("hints", {
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
 
-        let elem, text, span, rect, showText;
         let res = util.evaluateXPath(this._hintMode.tags(), doc, null, true);
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         let start = this._pageHints.length;
         for (let elem in res) {
-            showText = false;
+            let hint = { elem: elem, showText: false };
 
             // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
@@ -281,11 +279,11 @@ const Hints = Module("hints", {
                 continue;
 
             if (elem instanceof HTMLInputElement || elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
-                [text, showText] = this._getInputHint(elem, doc);
+                [hint.text, hint.showText] = this._getInputHint(elem, doc);
             else
-                text = elem.textContent.toLowerCase();
+                hint.text = elem.textContent.toLowerCase();
 
-            span = baseNodeAbsolute.cloneNode(true);
+            hint.span = baseNodeAbsolute.cloneNode(true);
 
             let leftPos = Math.max((rect.left + offsetX), offsetX);
             let topPos =  Math.max((rect.top + offsetY), offsetY);
@@ -293,11 +291,11 @@ const Hints = Module("hints", {
             if (elem instanceof HTMLAreaElement)
                 [leftPos, topPos] = this._getAreaOffset(elem, leftPos, topPos);
 
-            span.style.left = leftPos + "px";
-            span.style.top =  topPos + "px";
-            fragment.appendChild(span);
+            hint.span.style.left = leftPos + "px";
+            hint.span.style.top =  topPos + "px";
+            fragment.appendChild(hint.span);
 
-            this._pageHints.push([elem, text, span, null, elem.style.backgroundColor, elem.style.color, showText]);
+            this._pageHints.push(hint);
         }
 
         let body = doc.body || util.evaluateXPath(["body"], doc).snapshotItem(0);
@@ -348,8 +346,6 @@ const Hints = Module("hints", {
      * Display the hints in pageHints that are still valid.
      */
     _showHints: function () {
-
-        let elem, text, rect, span, imgSpan, _a, _b, showText;
         let hintnum = 1;
         let validHint = this._hintMatcher(this._hintString.toLowerCase());
         let activeHint = this._hintNumber || 1;
@@ -361,41 +357,39 @@ const Hints = Module("hints", {
         inner:
             for (let i in (util.interruptibleRange(start, end + 1, 500))) {
                 let hint = this._pageHints[i];
-                [elem, text, span, imgSpan, _a, _b, showText] = hint;
 
-                let valid = validHint(text);
-                span.style.display = (valid ? "" : "none");
-                if (imgSpan)
-                    imgSpan.style.display = (valid ? "" : "none");
+                let valid = validHint(hint.text);
+                hint.span.style.display = (valid ? "" : "none");
+                if (hint.imgSpan)
+                    hint.imgSpan.style.display = (valid ? "" : "none");
 
                 if (!valid) {
-                    elem.removeAttributeNS(NS.uri, "highlight");
+                    hint.elem.removeAttributeNS(NS.uri, "highlight");
                     continue inner;
                 }
 
-                if (text == "" && elem.firstChild && elem.firstChild instanceof HTMLImageElement) {
-                    if (!imgSpan) {
-                        rect = elem.firstChild.getBoundingClientRect();
+                if (hint.text == "" && hint.elem.firstChild && hint.elem.firstChild instanceof HTMLImageElement) {
+                    if (!hint.imgSpan) {
+                        rect = hint.elem.firstChild.getBoundingClientRect();
                         if (!rect)
                             continue;
 
-                        imgSpan = util.xmlToDom(<span highlight="Hint" liberator:class="HintImage" xmlns:liberator={NS}/>, doc);
-                        imgSpan.style.left = (rect.left + offsetX) + "px";
-                        imgSpan.style.top = (rect.top + offsetY) + "px";
-                        imgSpan.style.width = (rect.right - rect.left) + "px";
-                        imgSpan.style.height = (rect.bottom - rect.top) + "px";
-                        hint[Hints.IMG_SPAN] = imgSpan;
-                        span.parentNode.appendChild(imgSpan);
+                        hint.imgSpan = util.xmlToDom(<span highlight="Hint" liberator:class="HintImage" xmlns:liberator={NS}/>, doc);
+                        hint.imgSpan.style.left = (rect.left + offsetX) + "px";
+                        hint.imgSpan.style.top = (rect.top + offsetY) + "px";
+                        hint.imgSpan.style.width = (rect.right - rect.left) + "px";
+                        hint.imgSpan.style.height = (rect.bottom - rect.top) + "px";
+                        hint.span.parentNode.appendChild(hint.imgSpan);
                     }
-                    this._setClass(imgSpan, activeHint == hintnum);
+                    this._setClass(hint.imgSpan, activeHint == hintnum);
                 }
 
-                span.setAttribute("number", showText ? hintnum + ": " + text.substr(0, 50) : hintnum);
-                if (imgSpan)
-                    imgSpan.setAttribute("number", hintnum);
+                hint.span.setAttribute("number", hint.showText ? hintnum + ": " + hint.text.substr(0, 50) : hintnum);
+                if (hint.imgSpan)
+                    hint.imgSpan.setAttribute("number", hintnum);
                 else
-                    this._setClass(elem, activeHint == hintnum);
-                this._validHints.push(elem);
+                    this._setClass(hint.elem, activeHint == hintnum);
+                this._validHints.push(hint.elem);
                 hintnum++;
             }
         }
@@ -431,8 +425,8 @@ const Hints = Module("hints", {
                 elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1)) {
                 let hint = this._pageHints[i];
-                if (!timeout || hint[Hints.ELEM] != firstElem)
-                    hint[Hints.ELEM].removeAttributeNS(NS.uri, "highlight");
+                if (!timeout || hint.elem != firstElem)
+                    hint.elem.removeAttributeNS(NS.uri, "highlight");
             }
 
             // animate the disappearance of the first hint
@@ -887,12 +881,6 @@ const Hints = Module("hints", {
 
     //}}}
 }, {
-
-    ELEM: 0,
-    TEXT: 1,
-    SPAN: 2,
-    IMG_SPAN: 3,
-
     indexOf: (function () {
         const table = [
             [0x00c0, 0x00c6, ["A"]],
