@@ -789,6 +789,7 @@ const Completion = Module("completion", {
                 let ret = {};
 
                 try {
+                    let orig = obj;
                     let top = services.get("debugger").wrapValue(obj);
 
                     if (!toplevel)
@@ -804,10 +805,10 @@ const Completion = Module("completion", {
                             yield [prop.name.stringValue, top.getProperty(prop.name.stringValue).value.getWrappedValue()]
                         }
                     }
-                    for (let k in obj) {
-                        if (k in obj && !('|' + k in seen) && obj.hasOwnProperty(k) == toplevel)
-                            yield [k, getKey(obj, k)]
-                    }
+                    // The debugger doesn't list some properties. I can't guess why.
+                    for (let k in orig)
+                        if (k in orig && !('|' + k in seen) && obj.hasOwnProperty(k) == toplevel)
+                            yield [k, getKey(orig, k)]
                 }
                 catch(e) {
                     for (k in allkeys(obj))

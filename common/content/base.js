@@ -366,6 +366,7 @@ function Class() {
 
     var Constructor = eval("(function " + (name || superclass.name).replace(/\W/g, "_") +
             String.substr(constructor, 20) + ")");
+    Constructor.__proto__ = superclass;
     Constructor.name = name || superclass.name;
 
     if (!("init" in superclass.prototype)) {
@@ -428,61 +429,56 @@ Class.prototype = {
  *
  * @returns {function} The constructor for the new Struct.
  */
-const Struct = Class("Struct", {
+function Struct() {
+    let args = Array.slice(arguments);
+    const Struct = Class("Struct", StructBase, {
+        length: args.length,
+        members: args
+    });
+    args.forEach(function (name, i) {
+        Struct.prototype.__defineGetter__(name, function () this[i]);
+        Struct.prototype.__defineSetter__(name, function (val) { this[i] = val; });
+    });
+    return Struct;
+}
+const StructBase = Class("StructBase", {
     init: function () {
-        let args = this._args = Array.slice(arguments);
-        this.__defineGetter__("length", function () args.length);
-        this.__defineGetter__("members", function () args.slice());
-        for (let arg in Iterator(args)) {
-            let [i, name] = arg;
-            this.__defineGetter__(name, function () this[i]);
-            this.__defineSetter__(name, function (val) { this[i] = val; });
-        }
-        function Struct() {
-            let self = this instanceof arguments.callee ? this : new arguments.callee();
-            //for (let [k, v] in Iterator(Array.slice(arguments))) // That is makes using struct twice as slow as the following code:
-            for (let i = 0; i < arguments.length; i++) {
-                if (arguments[i] != undefined)
-                    self[i] = arguments[i];
-            }
-            return self;
-        }
-        Struct.prototype = this;
-        /**
-         * Sets a lazily constructed default value for a member of
-         * the struct. The value is constructed once, the first time
-         * it is accessed and memoized thereafter.
-         *
-         * @param {string} key The name of the member for which to
-         *     provide the default value.
-         * @param {function} val The function which is to generate
-         *     the default value.
-         */
-        Struct.defaultValue = function (key, val) {
-            let i = args.indexOf(key);
-            Struct.prototype.__defineGetter__(i, function () (this[i] = val.call(this), this[i])); // Kludge for FF 3.0
-            Struct.prototype.__defineSetter__(i, function (val) {
-                let value = val;
-                this.__defineGetter__(i, function () value);
-                this.__defineSetter__(i, function (val) { value = val; });
-            });
-        };
-        return this.constructor = Struct;
+        for (let i = 0; i < arguments.length; i++)
+            if (arguments[i] != undefined)
+                this[i] = arguments[i];
     },
 
-    clone: function clone() {
-        return this.constructor.apply(null, this.slice());
-    },
+    clone: function clone() this.constructor.apply(null, this.slice()),
+
     // Iterator over our named members
     __iterator__: function () {
         let self = this;
-        return ([v, self[v]] for ([k, v] in Iterator(self.members)))
+        return ([k, self[k]] for (k in values(self.members)))
+    }
+}, {
+    /**
+     * Sets a lazily constructed default value for a member of
+     * the struct. The value is constructed once, the first time
+     * it is accessed and memoized thereafter.
+     *
+     * @param {string} key The name of the member for which to
+     *     provide the default value.
+     * @param {function} val The function which is to generate
+     *     the default value.
+     */
+    defaultValue: function (key, val) {
+        let i = this.prototype.members.indexOf(key);
+        this.prototype.__defineGetter__(i, function () (this[i] = val.call(this), this[i])); // Kludge for FF 3.0
+        this.prototype.__defineSetter__(i, function (value) {
+            this.__defineGetter__(i, function () value);
+            this.__defineSetter__(i, function (val) { value = val; });
+        });
     }
 });
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or
 // get length() won't work.
-for (let [, k] in Iterator(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
-                            "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
-    Struct.prototype[k] = Array.prototype[k];
+for (let k in values(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
+                      "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
+    StructBase.prototype[k] = Array.prototype[k];
 
 // vim: set fdm=marker sw=4 ts=4 et:
