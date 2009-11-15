@@ -1049,7 +1049,7 @@ const Hints = Module("hints", {
                         promptHighlight: "Normal",
                         completer: function (context) {
                             context.compare = function () 0;
-                            context.completions = [[k, v.prompt] for ([k, v] in Iterator(this._hintModes))];
+                            context.completions = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
                         },
                         onChange: function () { modes.pop(); },
                         onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }

@@ -183,7 +183,7 @@ const CommandLine = Module("commandline", {
         });
         this.registerCallback("complete", modes.PROMPT, function (context) {
             if (self._input.complete)
-                context.fork("input", 0, commandline, input.complete);
+                context.fork("input", 0, commandline, self._input.complete);
         });
 
         function cancelPrompt(value) {
