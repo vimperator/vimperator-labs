@@ -689,13 +689,15 @@ const Util = Module("util", {
             urls = [str];
 
         return urls.map(function (url) {
-            try {
-                // Try to find a matching file.
-                let file = io.File(url);
-                if (file.exists() && file.isReadable())
-                    return services.get("io").newFileURI(file).spec;
+            if (url.substr(0, 5) != "file:") {
+                try {
+                    // Try to find a matching file.
+                    let file = io.File(url);
+                    if (file.exists() && file.isReadable())
+                        return services.get("io").newFileURI(file).spec;
+                }
+                catch (e) {}
             }
-            catch (e) {}
 
             // strip each 'URL' - makes things simpler later on
             url = url.replace(/^\s+|\s+$/, "");
