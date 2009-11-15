@@ -806,6 +806,15 @@ const Util = Module("util", {
         },
 
         /**
+         * Compacts an array, removing all elements that are null or undefined:
+         *    ["foo", null, "bar", undefined] -> ["foo", "bar"]
+         *
+         * @param {Array} ary
+         * @returns {Array}
+         */
+        compact: function compact(ary) ary.filter(function (item) item != null),
+
+        /**
          * Flattens an array, such that all elements of the array are
          * joined into a single array:
          *    [["foo", ["bar"]], ["baz"], "quux"] -> ["foo", ["bar"], "baz", "quux"]
