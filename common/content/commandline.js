@@ -1768,6 +1768,10 @@ const ItemList = Class("ItemList", {
                 nodes.down.style.display = "block";
             else
                 nodes.up.style.display = "block";
+            if (start == end) {
+                nodes.up.style.display = "none";
+                nodes.down.style.display = "none";
+            }
         }, this);
 
         this._divNodes.noCompletions.style.display = haveCompletions ? "none" : "block";
