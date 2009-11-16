@@ -34,43 +34,50 @@ const Map = Class("Map", {
         if (!extraInfo)
             extraInfo = {};
 
-        /** @property {number[]} All of the modes for which this mapping applies. */
         this.modes = modes;
-        /** @property {string[]} All of this mapping's names (key sequences). */
         this.names = keys.map(events.canonicalKeys);
-        /** @property {function (number)} The function called to execute this mapping. */
         this.action = action;
-        /** @property {string} This mapping's description, as shown in :viusage. */
-        this.description = description || "";
+        this.description = description;
 
-        /** @property {boolean} Whether this mapping accepts an argument. */
-        this.arg = extraInfo.arg || false;
-        /** @property {boolean} Whether this mapping accepts a count. */
-        this.count = extraInfo.count || false;
-        /**
-         * @property {boolean} Whether the mapping accepts a motion mapping
-         *     as an argument.
-         */
-        this.motion = extraInfo.motion || false;
-        /**
-         * @property {boolean} Whether the mapping's key events should be
-         *     propagated to the host application.
-         */
-        // TODO: I'm not sure this is the best name but it reflects that which it replaced. --djk
-        this.route = extraInfo.route || false;
-        /** @property {boolean} Whether the RHS of the mapping should expand mappings recursively. */
-        this.noremap = extraInfo.noremap || false;
-        /** @property {boolean} Whether any output from the mapping should be echoed on the command line. */
-        this.silent = extraInfo.silent || false;
-        /** @property {string} The literal RHS expansion of this mapping. */
-        this.rhs = extraInfo.rhs || null;
-        /**
-         * @property {boolean} Specifies whether this is a user mapping. User
-         *     mappings may be created by plugins, or directly by users. Users and
-         *     plugin authors should create only user mappings.
-         */
-        this.user = extraInfo.user || false;
+        update(this, extraInfo);
     },
+
+    /** @property {number[]} All of the modes for which this mapping applies. */
+    modes: null,
+    /** @property {string[]} All of this mapping's names (key sequences). */
+    names: null,
+    /** @property {function (number)} The function called to execute this mapping. */
+    action: null,
+    /** @property {string} This mapping's description, as shown in :viusage. */
+    description: "",
+
+    /** @property {boolean} Whether this mapping accepts an argument. */
+    arg: false,
+    /** @property {boolean} Whether this mapping accepts a count. */
+    count: false,
+    /**
+     * @property {boolean} Whether the mapping accepts a motion mapping
+     *     as an argument.
+     */
+    motion: false,
+    /**
+     * @property {boolean} Whether the mapping's key events should be
+     *     propagated to the host application.
+     */
+    // TODO: I'm not sure this is the best name but it reflects that which it replaced. --djk
+    route: false,
+    /** @property {boolean} Whether the RHS of the mapping should expand mappings recursively. */
+    noremap: false,
+    /** @property {boolean} Whether any output from the mapping should be echoed on the command line. */
+    silent: false,
+    /** @property {string} The literal RHS expansion of this mapping. */
+    rhs: null,
+    /**
+     * @property {boolean} Specifies whether this is a user mapping. User
+     *     mappings may be created by plugins, or directly by users. Users and
+     *     plugin authors should create only user mappings.
+     */
+    user: false,
 
     /**
      * Returns whether this mapping can be invoked by a key sequence matching

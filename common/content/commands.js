@@ -45,7 +45,7 @@ const Command = Class("Command", {
             extraInfo = {};
 
         this.specs = specs;
-        this.shortNames = expandedSpecs.map(function (n) n[1]);
+        this.shortNames = array(expandedSpecs).map(function (n) n[1]).compact();
         this.longNames  = expandedSpecs.map(function (n) n[0]);
         this.name = this.longNames[0];
         this.names = array(expandedSpecs).flatten();
