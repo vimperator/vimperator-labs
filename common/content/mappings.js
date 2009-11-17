@@ -1,4 +1,6 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -31,15 +33,13 @@ const Map = Class("Map", {
     init: function (modes, keys, description, action, extraInfo) {
         modes = Array.concat(modes).map(function (m) isobject(m) ? m.mask : m);
 
-        if (!extraInfo)
-            extraInfo = {};
-
         this.modes = modes;
         this.names = keys.map(events.canonicalKeys);
         this.action = action;
         this.description = description;
 
-        update(this, extraInfo);
+        if (extraInfo)
+            update(this, extraInfo);
     },
 
     /** @property {number[]} All of the modes for which this mapping applies. */

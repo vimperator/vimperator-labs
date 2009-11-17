@@ -28,9 +28,6 @@
  */
 const Option = Class("Option", {
     init: function (names, description, type, defaultValue, extraInfo) {
-        if (!extraInfo)
-            extraInfo = {};
-
         this.name = names[0];
         this.names = names;
         this.type = type;
@@ -39,7 +36,8 @@ const Option = Class("Option", {
         if (arguments.length > 3)
             this.defaultValue = defaultValue;
 
-        update(this, extraInfo);
+        if (extraInfo)
+            update(this, extraInfo);
 
         // add no{option} variant of boolean {option} to this.names
         if (this.type == "boolean")
@@ -165,7 +163,8 @@ const Option = Class("Option", {
 
     /**
      * @property {value} The option's current value. The option's local value,
-     * or if no local value is set, this is equal to the (@link #globalValue).
+     *     or if no local value is set, this is equal to the
+     *     (@link #globalValue).
      */
     get value() this.get(),
     set value(val) this.set(val),
@@ -330,7 +329,7 @@ const Option = Class("Option", {
 
     /**
      * @property {number} The scope of the option. This can be local, global,
-     * or both.
+     *     or both.
      * @see Option#SCOPE_LOCAL
      * @see Option#SCOPE_GLOBAL
      * @see Option#SCOPE_BOTH
@@ -344,8 +343,8 @@ const Option = Class("Option", {
 
     /**
      * @property {value} The option's default value. This value will be used
-     * unless the option is explicitly set either interactively or in an RC
-     * file or plugin.
+     *     unless the option is explicitly set either interactively or in an RC
+     *     file or plugin.
      */
     defaultValue: null,
 
@@ -364,7 +363,7 @@ const Option = Class("Option", {
     completer: null,
     /**
      * @property {function} The function called to validate the option's value
-     * when set.
+     *     when set.
      */
     validator: function () {
         if (this.completer)
@@ -373,15 +372,15 @@ const Option = Class("Option", {
     },
     /**
      * @property The function called to determine whether the option already
-     * contains a specified value.
+     *     contains a specified value.
      * @see #has
      */
     checkHas: null,
 
     /**
      * @property {boolean} Set to true whenever the option is first set. This
-     * is useful to see whether it was changed from its default value
-     * interactively or by some RC file.
+     *     is useful to see whether it was changed from its default value
+     *     interactively or by some RC file.
      */
     hasChanged: false,
 

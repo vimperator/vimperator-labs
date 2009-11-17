@@ -39,21 +39,18 @@ const Command = Class("Command", {
 
     init: function (specs, description, action, extraInfo) {
         specs = Array.concat(specs); // XXX
-        let expandedSpecs = Command.parseSpecs(specs);
-
-        if (!extraInfo)
-            extraInfo = {};
+        let parsedSpecs = Command.parseSpecs(specs);
 
         this.specs = specs;
-        this.shortNames = array(expandedSpecs).map(function (n) n[1]).compact();
-        this.longNames  = expandedSpecs.map(function (n) n[0]);
+        this.shortNames = array(parsedSpecs).map(function (n) n[1]).compact();
+        this.longNames = parsedSpecs.map(function (n) n[0]);
         this.name = this.longNames[0];
-        this.names = array(expandedSpecs).flatten();
+        this.names = array(parsedSpecs).flatten();
         this.description = description;
         this.action = action;
 
-        extraInfo.privateData = Boolean(extraInfo.privateData); // XXX
-        update(this, extraInfo);
+        if (extraInfo)
+            update(this, extraInfo);
     },
 
     /**
