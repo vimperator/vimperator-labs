@@ -218,7 +218,7 @@
     <spec>=</spec>
     <description>
         <p>
-            Increase volume by 10%.
+            Increase volume by 5% of the maximum.
         </p>
     </description>
 </item>
@@ -229,7 +229,7 @@
     <spec>-</spec>
     <description>
         <p>
-            Decrease volume by 10%.
+            Decrease volume by 5% of the maximum.
         </p>
     </description>
 </item>

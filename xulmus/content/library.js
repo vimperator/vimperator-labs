@@ -5,14 +5,20 @@
 // given in the LICENSE.txt file included with this file.
 
 
+// TODO: flesh this out
 const Library = Module("library", {
     init: function () {
         this.MAIN_LIBRARY = LibraryUtils.mainLibrary;
     },
 
+    /**
+     * Converts an XPCOM enumerator to a JavaScript array.
+     *
+     * @param {nsISimpleEnumerator|nsIStringEnumerator|nsIArray} enum The enumerator to convert.
+     * @returns {Array}
+     */
     _toJSArray: function _toJSArray(enum) ArrayConverter.JSArray(enum),
 
-    // TODO: return some actually useful objects. ;-)
     /**
      * Returns an array of all the artist names in the main library.
      *
@@ -20,12 +26,12 @@ const Library = Module("library", {
      */
     getArtists: function getArtists() this._toJSArray(this.MAIN_LIBRARY.getDistinctValuesForProperty(SBProperties.artistName)),
 
-    // FIXME: ken do we really want to remove duplicates? If so, why not tracks too? --djk
+    // FIXME: Prathyush do we really want to remove duplicates? If so, why not tracks too? --djk
     /**
      * Returns an array of all the album names for <b>artist</b> in the
      * main library.
      *
-     * @param {param} artist The artist name.
+     * @param {string} artist The artist's name.
      * @returns {string[]}
      */
     getAlbums: function getAlbums(artist) {
@@ -38,8 +44,8 @@ const Library = Module("library", {
      * Returns an array of all the track names for <b>artist</b> and
      * <b>album</b> in the main library.
      *
-     * @param {param} artist The artist name.
-     * @param {param} album  The album name.
+     * @param {string} artist The artist's name.
+     * @param {string} album The album's name.
      * @returns {string[]}
      */
     getTracks: function getTracks(artist, album) {

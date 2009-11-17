@@ -169,12 +169,22 @@ const Config = Module("config", ConfigBase, {
     }
 }, {
 
+    /**
+     * Shows or hides the main service pane.
+     *
+     * @param {boolean} value Show the service pane if true, hide it if false.
+     */
     showServicePane: function (value) {
         const key = "splitter.servicepane_splitter.was_collapsed";
         gServicePane.open = value;
         SBDataSetBoolValue(key, gServicePane.open);
     },
 
+    /**
+     * Opens the display panel with the specified <b>id<b>.
+     *
+     * @param {string} id The ID of the display pane.
+     */
     openDisplayPane: function (id) {
         if (id == "servicepane")
             this.showServicePane(true);
@@ -190,6 +200,11 @@ const Config = Module("config", ConfigBase, {
         }
     },
 
+    /**
+     * Closes the display panel with the specified <b>id</b>
+     *
+     * @param {string} id The ID of the display pane.
+     */
     closeDisplayPane: function (id) {
         if (id == "servicepane")
             this.showServicePane(false);
@@ -198,6 +213,10 @@ const Config = Module("config", ConfigBase, {
     },
 
     // FIXME: best way to format these args? Hyphenated? One word like :dialog?
+    /**
+     * @property {object} A map of display pane command argument strings to
+     *     panel element IDs.
+     */
     displayPanes: {
         "service pane left": "servicepane",
         "content pane bottom": "displaypane_contentpane_bottom",
@@ -287,9 +306,11 @@ const Config = Module("config", ConfigBase, {
             });
     },
     services: function () {
+        services.add("displayPaneManager", "@songbirdnest.com/Songbird/DisplayPane/Manager;1", Ci.sbIDisplayPaneManager);
+        services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
+        services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
         services.addClass("mutablePropertyArray", "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
             Ci.sbIMutablePropertyArray);
-        services.add("displayPaneManager", "@songbirdnest.com/Songbird/DisplayPane/Manager;1", Ci.sbIDisplayPaneManager);
     }
 });
 

@@ -16,20 +16,31 @@ const Player = Module("player", {
 
         gMM.addListener(this._mediaCoreListener);
     },
+
     destroy: function destroy() {
         gMM.removeListener(this._mediaCoreListener);
     },
 
-    // interval (milliseconds)
+    /**
+     * Adjusts the track position <b>interval</b> milliseconds forwards or
+     * backwards.
+     *
+     * @param {number} interval The time interval (ms) to move the track
+     *     position.
+     * @param {boolean} direction The direction in which to move the track
+     *     position, forward if true otherwise backwards.
+     * @private
+     */
     _seek: function _seek(interval, direction) {
         let position = gMM.playbackControl ? gMM.playbackControl.position : 0;
         player.seekTo(position + (direction ? interval : -interval));
     },
 
-    _focusTrack: function _focusTrack(mediaItem) {
-        SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
-    },
-
+    /**
+     * Listens for media core events and in response dispatches the appropriate
+     * autocommand events.
+     * @private
+     */
     _mediaCoreListener: {
         onMediacoreEvent: function (event) {
             switch (event.type) {
@@ -67,48 +78,73 @@ const Player = Module("player", {
             }
         }
     },
-    // TODO: check bounds and round, 0 - 1 or 0 - 100?
+
     /**
-     * @property {string} The player volume as a percentage.
+     * @property {number} The player volume in the range 0.0-1.0.
      */
     get volume() gMM.volumeControl.volume,
     set volume(value) {
         gMM.volumeControl.volume = value;
     },
 
-    // FIXME: can't be called from non-media tabs since 840e78
-    play: function play() {
-        // Check if there is any selection in place, else play first item of the visible view.
-        if (_SBGetCurrentView().selection.count != 0) {
-            // Play the selection.
-            gMM.sequencer.playView(_SBGetCurrentView(), _SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
-            this._focusTrack(gMM.sequencer.currentItem);
-        }
-        else {
-            gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
-            this._focusTrack(gMM.sequencer.currentItem);
-        }
+    /**
+     * Focuses the specified media item in the current media view.
+     *
+     * @param {sbIMediaItem} mediaItem The media item to focus.
+     */
+    focusTrack: function focusTrack(mediaItem) {
+        SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
     },
 
+    // FIXME: can't be called from non-media tabs since 840e78 (git)
+    // _SBGetCurrentView only returns the view in that tab - use SBGetBrowser().currentMediaListView
+    /**
+     * Plays the currently selected media item. If no item is selected the
+     * first item in the current media view is played.
+     */
+    play: function play() {
+        // Check if there is any selection in place, else play first item of the visible view.
+        // TODO: this approach, or similar, should be generalised for all commands, PT? --djk
+        if (_SBGetCurrentView().selection.count != 0)
+            gMM.sequencer.playView(_SBGetCurrentView(),
+                    _SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
+        else
+            gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
+
+        this.focusTrack(gMM.sequencer.currentItem);
+    },
+
+    /**
+     * Stops playback of the currently playing media item.
+     */
     stop: function stop() {
         gMM.sequencer.stop();
     },
 
+    /**
+     * Plays the next media item in the current media view.
+     */
     next: function next() {
-        gSongbirdWindowController.doCommand("cmd_control_next");
-        gSongbirdWindowController.doCommand("cmd_find_current_track");
+        ["cmd_control_next", "cmd_find_current_track"].forEach(gSongbirdWindowController.doCommand);
     },
 
+    /**
+     * Plays the previous media item in the current media view.
+     */
     previous: function previous() {
-        gSongbirdWindowController.doCommand("cmd_control_previous");
-        gSongbirdWindowController.doCommand("cmd_find_current_track");
+        ["cmd_control_previous", "cmd_find_current_track"].forEach(gSongbirdWindowController.doCommand);
     },
 
+    /**
+     * Toggles the play/pause status of the current media item.
+     */
     togglePlayPause: function togglePlayPause() {
-        gSongbirdWindowController.doCommand("cmd_control_playpause");
-        this._focusTrack(gMM.sequencer.currentItem);
+        ["cmd_control_playpause", "cmd_find_current_track"].forEach(gSongbirdWindowController.doCommand);
     },
 
+    /**
+     * Toggles the shuffle status of the sequencer.
+     */
     toggleShuffle: function toggleShuffle() {
         if (gMM.sequencer.mode != gMM.sequencer.MODE_SHUFFLE)
             gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE;
@@ -116,7 +152,11 @@ const Player = Module("player", {
             gMM.sequencer.mode = gMM.sequencer.MODE_FORWARD;
     },
 
-    // FIXME: not really toggling - good enough for now.
+    // FIXME: not really toggling (depending on your definition) - good enough for now.
+    /**
+     * Toggles between the sequencer's three repeat modes: Repeat-One,
+     * Repeat-All and Repeat-None.
+     */
     toggleRepeat: function toggleRepeat() {
         switch (gMM.sequencer.repeatMode) {
             case gMM.sequencer.MODE_REPEAT_NONE:
@@ -135,7 +175,7 @@ const Player = Module("player", {
     },
 
     /**
-     *  Seek forward <b>interval</b> milliseconds in the currently playing
+     *  Seeks forward <b>interval</b> milliseconds in the currently playing
      *  track.
      *
      *  @param {number} interval The time interval (ms) to advance the
@@ -146,7 +186,7 @@ const Player = Module("player", {
     },
 
     /**
-     *  Seek backwards <b>interval</b> milliseconds in the currently
+     *  Seeks backwards <b>interval</b> milliseconds in the currently
      *  playing track.
      *
      *  @param {number} interval The time interval (ms) to rewind the
@@ -157,7 +197,7 @@ const Player = Module("player", {
     },
 
     /**
-     * Seek to a specific position in the currently playing track.
+     * Seeks to a specific position in the currently playing track.
      *
      * @param {number} The new position (ms) in the track.
      */
@@ -172,50 +212,43 @@ const Player = Module("player", {
         gMM.playbackControl.position = util.Math.constrain(position, min, max);
     },
 
-    // FIXME: 10% ?
-    // I think just general increments of say 0.05 might be better --djk
+    /**
+     * Increases the volume by 5% of the maximum volume.
+     */
     increaseVolume: function increaseVolume() {
-        gMM.volumeControl.volume = gMM.volumeControl.volume * 1.1;
+        this.volume = util.Math.constrain(this.volume + 0.05, 0, 1);
     },
 
+    /**
+     * Decreases the volume by 5% of the maximum volume.
+     */
     decreaseVolume: function decreaseVolume() {
-        if (gMM.volumeControl.volume == 0)
-            gMM.volumeControl.volume = 0.1;
-        else
-            gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
+        this.volume = util.Math.constrain(this.volume - 0.05, 0, 1);
     },
 
+    // TODO: Document what this buys us over and above cmd_find_current_track
+    /**
+     * Focuses the currently playing track.
+     */
     focusPlayingTrack: function focusPlayingTrack() {
-        this._focusTrack(gMM.sequencer.currentItem);
+        this.focusTrack(gMM.sequencer.currentItem);
     },
 
-    listTracks: function listTracks(view) {
-        //let myView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary, args);
-        let length = view.length;
-        let tracksList = [];
-
-        for (let i = 0; i < length; i++) {
-            let mediaItem = view.getItemByIndex(i);
-            let trackName = mediaItem.getProperty(SBProperties.trackName);
-            let albumName = mediaItem.getProperty(SBProperties.albumName);
-            let artistName = mediaItem.getProperty(SBProperties.artistName);
-
-            tracksList[i] = [trackName, "Album : " + albumName + " Artist : " + artistName];
-        }
-
-        return tracksList;
-    },
-
-    searchView: function searchView(args) {
+    /**
+     * Searches the current media view for <b>str</b>
+     *
+     * @param {string} str The search string.
+     */
+    searchView: function searchView(str) {
         let currentView = _SBGetCurrentView();
         let mediaItemList = currentView.mediaList;
         let search = _getSearchString(currentView);
         let searchString = "";
 
-        if (search != "")
-            searchString = args + " " + search;
+        if (search != "") // XXX
+            searchString = str + " " + search;
         else
-            searchString = args;
+            searchString = str;
 
         this._lastSearchString = searchString;
 
@@ -224,12 +257,17 @@ const Player = Module("player", {
         if (mySearchView.length) {
             this._lastSearchView = mySearchView;
             this._lastSearchIndex = 0;
-            this._focusTrack(mySearchView.getItemByIndex(this._lastSearchIndex));
+            this.focusTrack(mySearchView.getItemByIndex(this._lastSearchIndex));
         }
         else
             liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
     },
 
+    /**
+     * Repeats the previous view search.
+     *
+     * @param {boolean} reverse
+     */
     searchViewAgain: function searchViewAgain(reverse) {
         function echo(str) {
             setTimeout(function () {
@@ -256,7 +294,7 @@ const Player = Module("player", {
 
         // FIXME: Implement for "?" --ken
         commandline.echo("/" + this._lastSearchString, null, commandline.FORCE_SINGLELINE);
-        this._focusTrack(this._lastSearchView.getItemByIndex(this._lastSearchIndex));
+        this.focusTrack(this._lastSearchView.getItemByIndex(this._lastSearchIndex));
 
     },
 
@@ -286,6 +324,11 @@ const Player = Module("player", {
         // TODO: restore the view state if altered by an 'incsearch' search
     },
 
+    /**
+     * Returns an array of all available playlists.
+     *
+     * @returns {sbIMediaList[]}
+     */
     getPlaylists: function getPlaylists() {
         let mainLibrary = LibraryUtils.mainLibrary;
         let playlists = [mainLibrary];
@@ -305,61 +348,73 @@ const Player = Module("player", {
         return playlists;
     },
 
-    // Play track at 'row' in 'playlist'
-    playPlaylist: function playPlaylist(playlist, row) {
-        gMM.sequencer.playView(playlist.createView(), row);
+    /**
+     * Plays the media item at <b>index</b> in <b>playlist</b>.
+     *
+     * @param {sbIMediaList} playlist
+     * @param {number} index
+     */
+    playPlaylist: function playPlaylist(playlist, index) {
+        gMM.sequencer.playView(playlist.createView(), index);
     },
 
+    /**
+     * Returns an array of all available media pages.
+     *
+     * @returns {sbIMediaPageInfo[]}
+     */
     getMediaPages: function getMediaPages() {
-        let list = gBrowser.currentMediaPage.mediaListView.mediaList;
+        let list = SBGetBrowser().currentMediaPage.mediaListView.mediaList;
         let pages = services.get("mediaPageManager").getAvailablePages(list);
         return ArrayConverter.JSArray(pages).map(function (page) page.QueryInterface(Ci.sbIMediaPageInfo));
     },
 
-    loadMediaPage: function loadMediaList(page, list, view) {
+    /**
+     * Loads the the specified media page into <b>view</b> with the given
+     * <b>list</b> of media items.
+     *
+     * @param {sbIMediaPage} page
+     * @param {sbIMediaList} list
+     * @param {sbIMediaView} view
+     */
+    loadMediaPage: function loadMediaPage(page, list, view) {
         services.get("mediaPageManager").setPage(list, page);
-        gBrowser.loadMediaList(list, null, null, view, null);
+        SBGetBrowser().loadMediaList(list, null, null, view, null);
     },
 
-    rateMediaItem: function rateMediaItem(rating) {
-        if (gMM.sequencer.currentItem)
-            gMM.sequencer.currentItem.setProperty(SBProperties.rating, rating);
+    /**
+     * Applys the specified <b>rating<b> to <b>mediaItem<b>.
+     *
+     * @param {sbIMediaItem} mediaItem The media item to rate.
+     * @param {number} rating The star rating (1-5).
+     */
+    rateMediaItem: function rateMediaItem(mediaItem, rating) {
+        mediaItem.setProperty(SBProperties.rating, rating);
     },
 
-    getUserViewable: function getUserViewable() {
-        let propManager = services.get("propertyManager");
-        let propEnumerator = propManager.propertyIDs;
-        let properties = [];
-
-        while (propEnumerator.hasMore()) {
-            let propertyId = propEnumerator.getNext();
-
-            if (propManager.getPropertyInfo(propertyId).userViewable) {
-                //liberator.dump("propertyId - " + propManager.getPropertyInfo(propertyId).id);
-                properties.push(propManager.getPropertyInfo(propertyId).displayName);
-            }
-        }
-
-        return properties;
-    },
-
-    sortBy: function sortBy(property, order) {
+    // TODO: add all fields, and ascending arg
+    /**
+     * Sorts the current media view by <b>field</b>.
+     *
+     * @param {string} field The sort field.
+     */
+    sortBy: function sortBy(property) {
         let properties = services.create("mutablePropertyArray");
 
         switch (property.string) {
             case "#":
             case "Title":
-                    properties.appendProperty(SBProperties.trackName, "a");
+                properties.appendProperty(SBProperties.trackName, "a");
                 break;
             case "Rating":
                 properties.appendProperty(SBProperties.rating, 1);
-            break;
+                break;
             case "Album":
                 properties.appendProperty(SBProperties.albumName, "a");
-            break;
+                break;
             default:
                 properties.appendProperty(SBProperties.trackName, "a");
-            break;
+                break;
         }
 
         _SBGetCurrentView().setSort(properties);
@@ -367,11 +422,12 @@ const Player = Module("player", {
 }, {
 }, {
     commandline: function () {
-        commandline.registerCallback("change", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchKeyPress(str); });
-        commandline.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, function (str) { player.onSearchSubmit(str); });
-        commandline.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, function () { player.onSearchCancel(); });
+        commandline.registerCallback("change", modes.SEARCH_VIEW_FORWARD, this.closure.onSearchKeyPress);
+        commandline.registerCallback("submit", modes.SEARCH_VIEW_FORWARD, this.closure.onSearchSubmit);
+        commandline.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, this.closure.onSearchCancel);
     },
     commands: function () {
+        // TODO: clear up filter/Filter confusion
         commands.add(["f[ilter]"],
                 "Filter tracks based on keywords {genre/artist/album/track}",
                 function (args) {
@@ -383,8 +439,8 @@ const Player = Module("player", {
                     else {
                          SBGetBrowser().loadMediaList(LibraryUtils.mainLibrary, null, null, view,
                                                          "chrome://songbird/content/mediapages/filtersPage.xul");
-                         // TODO: make this this._focusTrack work ?
-                         this._focusTrack(view.getItemByIndex(0));
+                         // TODO: make this this.focusTrack work ?
+                         this.focusTrack(view.getItemByIndex(0));
                     }
                 },
                 {
@@ -405,7 +461,7 @@ const Player = Module("player", {
                     for ([i, list] in Iterator(playlists)) {
                         if (util.compareIgnoreCase(arg, list.name) == 0) {
                             SBGetBrowser().loadMediaList(playlists[i]);
-                            this._focusTrack(_SBGetCurrentView().getItemByIndex(0));
+                            this.focusTrack(_SBGetCurrentView().getItemByIndex(0));
                             return;
                         }
                     }
@@ -479,7 +535,7 @@ const Player = Module("player", {
             "Change the current media view",
             function (args) {
                 // FIXME: is this a SB restriction? --djk
-                if (!gBrowser.currentMediaPage)
+                if (!SBGetBrowser().currentMediaPage)
                     return void liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
 
                 let arg = args[0];
@@ -489,7 +545,8 @@ const Player = Module("player", {
 
                     for ([, page] in Iterator(pages)) {
                         if (util.compareIgnoreCase(arg, page.contentTitle) == 0) {
-                            player.loadMediaPage(page, gBrowser.currentMediaListView.mediaList, gBrowser.currentMediaListView);
+                            player.loadMediaPage(page, SBGetBrowser().currentMediaListView.mediaList,
+                                    SBGetBrowser().currentMediaListView);
                             return;
                         }
                     }
@@ -503,21 +560,15 @@ const Player = Module("player", {
                 literal: 0
             });
 
+        // TODO: Add a completer and order option
         commands.add(["sort[view]"],
                 "Sort the current media view",
-                function (args) {
-                   player.sortBy(args, true);
-
-                });
+                function (args) { player.sortBy(args, true); });
 
         // FIXME: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
         commands.add(["qu[eue]"],
             "Queue tracks by artist/album/track",
             function (args) {
-                // Store the old view
-                // let prev_view = gMM.status.view;
-                let library = LibraryUtils.mainLibrary;
-                let mainView = library.createView();
                 let properties = services.create("mutablePropertyArray");
 
                 // args
@@ -533,7 +584,10 @@ const Player = Module("player", {
                         break;
                 }
 
-                gMM.sequencer.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(properties).queryElementAt(0, Ci.sbIMediaItem)));
+                let library = LibraryUtils.mainLibrary;
+                let mainView = library.createView();
+                gMM.sequencer.playView(mainView,
+                        mainView.getIndexForItem(library.getItemsByProperties(properties).queryElementAt(0, Ci.sbIMediaItem)));
                 player.focusPlayingTrack();
             },
             {
@@ -654,11 +708,11 @@ const Player = Module("player", {
             { count: true });
 
         mappings.add([modes.PLAYER],
-             ["=", "+"], "Increase volume by 10%",
+             ["=", "+"], "Increase volume by 5% of the maximum",
              function () { player.increaseVolume(); });
 
         mappings.add([modes.PLAYER],
-             ["-"], "Decrease volume by 10%",
+             ["-"], "Decrease volume by 5% of the maximum",
              function () { player.decreaseVolume(); });
 
         mappings.add([modes.PLAYER],
@@ -677,7 +731,14 @@ const Player = Module("player", {
             let (rating = i) {
                 mappings.add([modes.PLAYER],
                      ["<C-" + rating + ">"], "Rate the current media item " + rating,
-                     function () { player.rateMediaItem(rating); });
+                     function () {
+                         let item = gMM.sequencer.currentItem || _SBGetCurrentView().selection.currentMediaItem; // XXX: a bit too magic
+                         if (item)
+                             player.rateMediaItem(item, rating);
+                         else
+                             liberator.beep();
+                     }
+                );
             };
         }
     },
@@ -700,14 +761,9 @@ const Player = Module("player", {
             "Play tracks in shuffled order",
             "boolean", false,
             {
-                setter: function (value) value ? gMM.sequencer.mode = gMM.sequencer.MODE_SHUFFLE :
-                                                 gMM.sequencer.mode = gMM.sequencer.MODE_FORWARD,
+                setter: function (value) gMM.sequencer.mode = value ? gMM.sequencer.MODE_SHUFFLE : gMM.sequencer.MODE_FORWARD,
                 getter: function () gMM.sequencer.mode == gMM.sequencer.MODE_SHUFFLE
             });
-    },
-    services: function () {
-        services.add("mediaPageManager", "@songbirdnest.com/Songbird/MediaPageManager;1", Ci.sbIMediaPageManager);
-        services.add("propertyManager","@songbirdnest.com/Songbird/Properties/PropertyManager;1", Ci.sbIPropertyManager);
     }
 });
 
