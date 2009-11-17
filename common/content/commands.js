@@ -224,7 +224,7 @@ const Command = Class("Command", {
      */
     parseSpecs: function parseSpecs(specs) {
         return specs.map(function (spec) {
-            let [, head, tail] = spec.match(/(\w+)(?:\[(.*)])?/);
+            let [, head, tail] = spec.match(/([^[]+)(?:\[(.*)])?/);
             return tail ? [head + tail, head] : [head];
         });
     }
