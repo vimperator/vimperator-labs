@@ -5,8 +5,9 @@ BUGS:
 - broken commands:
   - :tabduplicate
   - :open songbird-internal-search searchString (broken because SB intercepts queries to this engine)
-  - <C-^> is off by one when alternating with the media tab
+  - <C-^> only works between browser tabs not the media tab
   - numbered tabs
+  - command-line option handling is broken in Xulmus only - it used to work.
 
 FEATURES:
 9 '?' - Reusing '/'.
