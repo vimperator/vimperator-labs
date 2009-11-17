@@ -873,7 +873,7 @@ const Util = Module("util", {
             }
             return ret;
         }
-    }),
+    })
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -740,7 +740,7 @@ const Completion = Module("completion", {
     }
     //}}}
 }, {
-    UrlCompleter: Struct("name", "description", "completer"),
+    UrlCompleter: Struct("name", "description", "completer")
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

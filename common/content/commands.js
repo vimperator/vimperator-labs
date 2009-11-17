@@ -222,11 +222,10 @@ const Command = Class("Command", {
      *  @param {Array} specs An array of command name specs to parse.
      *  @returns {Array}
      */
-    parseSpecs: function (specs) {
+    parseSpecs: function parseSpecs(specs) {
         return specs.map(function (spec) {
-            let long = spec.replace(/[[\]]/g, "");
-            let short = spec.replace(/\[.*]/, "");
-            return short == long ? [long] : [long, short];
+            let [, head, tail] = spec.match(/(\w+)(?:\[(.*)])?/);
+            return tail ? [head + tail, head] : [head];
         });
     }
 });

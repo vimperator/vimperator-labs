@@ -610,5 +610,5 @@ const JavaScript = Module("javascript", {
                 },
                 getter: function () services.get("debugger").isOn
             });
-    },
+    }
 })
