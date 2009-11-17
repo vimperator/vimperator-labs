@@ -1,11 +1,12 @@
 // Copyright (c) 2009 by Prathyush Thota <prathyushthota@gmail.com>
+// Copyright (c) 2009 by Doug Kearns <dougkearns@gmail.com>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
 
 
 const Player = Module("player", {
-    init: function () {
+    init: function init() {
         this._lastSearchString = "";
         this._lastSearchIndex = 0;
         this._lastSearchView = _SBGetCurrentView();
@@ -15,17 +16,17 @@ const Player = Module("player", {
 
         gMM.addListener(this._mediaCoreListener);
     },
-    destroy: function () {
+    destroy: function destroy() {
         gMM.removeListener(this._mediaCoreListener);
     },
 
     // interval (milliseconds)
-    _seek: function (interval, direction) {
+    _seek: function _seek(interval, direction) {
         let position = gMM.playbackControl ? gMM.playbackControl.position : 0;
         player.seekTo(position + (direction ? interval : -interval));
     },
 
-    _focusTrack: function (mediaItem) {
+    _focusTrack: function _focusTrack(mediaItem) {
         SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
     },
 
@@ -184,7 +185,7 @@ const Player = Module("player", {
             gMM.volumeControl.volume = gMM.volumeControl.volume * 0.9;
     },
 
-    focusPlayingTrack :function focusPlayingTrack() {
+    focusPlayingTrack: function focusPlayingTrack() {
         this._focusTrack(gMM.sequencer.currentItem);
     },
 
@@ -264,7 +265,7 @@ const Player = Module("player", {
      *
      * @param {string} str The contents of the search dialog.
      */
-    onSearchKeyPress: function (str) {
+    onSearchKeyPress: function onSearchKeyPress(str) {
         if (options["incsearch"])
             this.searchView(str);
     },
@@ -274,14 +275,14 @@ const Player = Module("player", {
      *
      * @param {string} str The contents of the search dialog.
      */
-    onSearchSubmit: function (str) {
+    onSearchSubmit: function onSearchSubmit(str) {
         this.searchView(str);
     },
 
     /**
      * The search dialog cancel callback.
      */
-    onSearchCancel: function () {
+    onSearchCancel: function onSearchCancel() {
         // TODO: restore the view state if altered by an 'incsearch' search
     },
 
@@ -343,26 +344,25 @@ const Player = Module("player", {
     },
 
     sortBy: function sortBy(property, order) {
-        let pa =  Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].createInstance(Ci.sbIMutablePropertyArray);
-        liberator.dump("Property: " + property);
+        let properties = services.create("mutablePropertyArray");
 
         switch (property.string) {
             case "#":
             case "Title":
-                    pa.appendProperty(SBProperties.trackName, "a");
+                    properties.appendProperty(SBProperties.trackName, "a");
                 break;
             case "Rating":
-                pa.appendProperty(SBProperties.rating, 1);
+                properties.appendProperty(SBProperties.rating, 1);
             break;
             case "Album":
-                pa.appendProperty(SBProperties.albumName, "a");
+                properties.appendProperty(SBProperties.albumName, "a");
             break;
             default:
-                pa.appendProperty(SBProperties.trackName, "a");
+                properties.appendProperty(SBProperties.trackName, "a");
             break;
         }
 
-        _SBGetCurrentView().setSort(pa);
+        _SBGetCurrentView().setSort(properties);
     }
 }, {
 }, {
@@ -518,23 +518,22 @@ const Player = Module("player", {
                 // let prev_view = gMM.status.view;
                 let library = LibraryUtils.mainLibrary;
                 let mainView = library.createView();
-                let customProps = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                                      .createInstance(Ci.sbIMutablePropertyArray);
+                let properties = services.create("mutablePropertyArray");
 
                 // args
                 switch (args.length) {
                     case 3:
-                        customProps.appendProperty(SBProperties.trackName, args[2]);
+                        properties.appendProperty(SBProperties.trackName, args[2]);
                     case 2:
-                        customProps.appendProperty(SBProperties.albumName, args[1]);
+                        properties.appendProperty(SBProperties.albumName, args[1]);
                     case 1:
-                        customProps.appendProperty(SBProperties.artistName, args[0]);
+                        properties.appendProperty(SBProperties.artistName, args[0]);
                         break;
                     default:
                         break;
                 }
 
-                gMM.sequencer.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(customProps).queryElementAt(0, Ci.sbIMediaItem)));
+                gMM.sequencer.playView(mainView, mainView.getIndexForItem(library.getItemsByProperties(properties).queryElementAt(0, Ci.sbIMediaItem)));
                 player.focusPlayingTrack();
             },
             {

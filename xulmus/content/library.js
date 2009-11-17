@@ -1,4 +1,5 @@
 // Copyright (c) 2009 by Prathyush Thota <prathyushthota@gmail.com>
+// Copyright (c) 2009 by Doug Kearns <dougkearns@gmail.com>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -9,7 +10,7 @@ const Library = Module("library", {
         this.MAIN_LIBRARY = LibraryUtils.mainLibrary;
     },
 
-    _toJSArray: function (enum) ArrayConverter.JSArray(enum),
+    _toJSArray: function _toJSArray(enum) ArrayConverter.JSArray(enum),
 
     // TODO: return some actually useful objects. ;-)
     /**
@@ -42,8 +43,7 @@ const Library = Module("library", {
      * @returns {string[]}
      */
     getTracks: function getTracks(artist, album) {
-        const properties = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                             .createInstance(Ci.sbIMutablePropertyArray);
+        let properties = services.create("mutablePropertyArray");
 
         properties.appendProperty(SBProperties.artistName, artist);
         properties.appendProperty(SBProperties.albumName, album);

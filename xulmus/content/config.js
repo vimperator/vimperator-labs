@@ -1,4 +1,6 @@
-// Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2009 by Prathyush Thota <prathyushthota@gmail.com>
+// Copyright (c) 2009 by Doug Kearns <dougkearns@gmail.com>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the LICENSE.txt file included with this file.
@@ -195,7 +197,7 @@ const Config = Module("config", ConfigBase, {
             this.showServicePane(true);
         else {
             let pane = document.getElementById(id);
-            let manager = Cc['@songbirdnest.com/Songbird/DisplayPane/Manager;1'].getService(Ci.sbIDisplayPaneManager);
+            let manager = services.get("displayPaneManager");
             let paneinfo = manager.getPaneInfo(pane._lastURL.stringValue);
 
             if (!paneinfo)
@@ -300,6 +302,11 @@ const Config = Module("config", ConfigBase, {
                 },
                 getter: function () !services.get("io").offline
             });
+    },
+    services: function () {
+        services.addClass("mutablePropertyArray", "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
+            Ci.sbIMutablePropertyArray);
+        services.add("displayPaneManager", "@songbirdnest.com/Songbird/DisplayPane/Manager;1", Ci.sbIDisplayPaneManager);
     }
 });
 
