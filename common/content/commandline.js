@@ -1432,13 +1432,13 @@ const CommandLine = Module("commandline", {
             function () {
                 // TODO: are all messages single line? Some display an aggregation
                 //       of single line messages at least. E.g. :source
-                if (this._messageHistory.length == 1) {
-                    let message = this._messageHistory.messages[0];
+                if (commandline._messageHistory.length == 1) {
+                    let message = commandline._messageHistory.messages[0];
                     commandline.echo(message.str, message.highlight, commandline.FORCE_SINGLELINE);
                 }
-                else if (this._messageHistory.length > 1) {
+                else if (commandline._messageHistory.length > 1) {
                     XML.ignoreWhitespace = false;
-                    let list = template.map(this._messageHistory.messages, function (message)
+                    let list = template.map(commandline._messageHistory.messages, function (message)
                         <div highlight={message.highlight + " Message"}>{message.str}</div>);
                     liberator.echo(list, commandline.FORCE_MULTILINE);
                 }
@@ -1447,7 +1447,7 @@ const CommandLine = Module("commandline", {
 
         commands.add(["messc[lear]"],
             "Clear the message this._history",
-            function () { this._messageHistory.clear(); },
+            function () { commandline._messageHistory.clear(); },
             { argCount: "0" });
 
         commands.add(["sil[ent]"],
