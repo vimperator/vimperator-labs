@@ -1115,7 +1115,7 @@ const Options = Module("options", {
                         liberator.assert(reference[0] || !stuff,
                             "E121: Undefined variable: " + name);
 
-                        let expr = liberator.evalExpression(expr);
+                        expr = liberator.evalExpression(expr);
                         liberator.assert(expr !== undefined, "E15: Invalid expression: " + expr);
 
                         if (!reference[0]) {
