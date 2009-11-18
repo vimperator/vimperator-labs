@@ -6,6 +6,7 @@
     * the help system is newly modularized
     * remove [c]:edit[c], [c]:tabedit[c], and [c]:winedit[c]
     * add 'jsdebugger' option - switch on/off javascript debugger service
+    * add "addons", "downloads", "extoptions" and "help" to the 'activate' option.
 
 2009-10-28:
     * version 2.2
