@@ -114,9 +114,9 @@
 <h2 tag="queue queueing">Queueing tracks</h2>
 
 <item>
-    <tags>p_f :f :filter</tags>
-    <spec>:f<oa>ilter</oa> <a>artist</a> <oa>album</oa> <oa>track</oa></spec>
-    <spec>f</spec>
+    <tags>p_Q :qu :queue</tags>
+    <spec>:qu<oa>eue</oa> <a>artist</a> <oa>album</oa> <oa>track</oa></spec>
+    <spec>Q</spec>
     <description>
         <p>
             Queue tracks by artist/album/track. If only <a>artist</a> is
@@ -132,9 +132,9 @@
 <h2 tag="filter filtering">Filtering the library</h2>
 
 <item>
-    <tags>p_F :F :Filter</tags>
-    <spec>:F<oa>ilter</oa> <a>keywords</a></spec>
-    <spec>F</spec>
+    <tags>p_f :f :filter</tags>
+    <spec>:f<oa>ilter</oa> <a>keywords</a></spec>
+    <spec>f</spec>
     <description>
         <p>
             Filter and show the tracks as a view. The tracks are filtered by
