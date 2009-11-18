@@ -203,8 +203,7 @@ const Browser = Module("browser", {
             "Show progress of current downloads",
             function () {
                 liberator.open("chrome://mozapps/content/downloads/downloads.xul",
-                    options.get("newtab").has("all", "downloads")
-                        ? liberator.NEW_TAB : liberator.CURRENT_TAB);
+                    { from: "downloads"});
             },
             { argCount: "0" });
 

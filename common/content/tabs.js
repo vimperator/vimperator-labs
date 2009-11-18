@@ -1060,9 +1060,13 @@ const Tabs = Module("tabs", {
         if (config.hasTabbrowser) {
             options.add(["activate", "act"],
                 "Define when tabs are automatically activated",
-                "stringlist", "homepage,quickmark,tabopen,paste",
+                "stringlist", "addons,downloads,extoptions,help,homepage,quickmark,tabopen,paste",
                 {
                     completer: function (context) [
+                        ["addons", ":addo[ns] command"],
+                        ["downloads", ":downl[oads] command"],
+                        ["extoptions", ":exto[ptions] command"],
+                        ["help", ":h[elp] command"],
                         ["homepage", "gH mapping"],
                         ["quickmark", "go and gn mappings"],
                         ["tabopen", ":tabopen[!] command"],
