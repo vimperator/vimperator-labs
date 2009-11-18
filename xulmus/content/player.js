@@ -392,28 +392,42 @@ const Player = Module("player", {
         mediaItem.setProperty(SBProperties.rating, rating);
     },
 
-    // TODO: add all fields, and ascending arg
+    // TODO: add more fields, and generate the list dynamically. PT should the
+    // available fields reflect only the visible view fields or offer others? --djk
     /**
-     * Sorts the current media view by <b>field</b>.
+     * Sorts the current media view by <b>field</b> in the order specified by
+     * <b>ascending</b>.
      *
      * @param {string} field The sort field.
+     * @param {boolean} ascending If true sort in ascending order, otherwise in
+     *     descending order.
      */
-    sortBy: function sortBy(property) {
+    sortBy: function sortBy(field, ascending) {
+        let order = ascending ? "a" : "d";
         let properties = services.create("mutablePropertyArray");
+        properties.strict = false;
 
-        switch (property.string) {
-            case "#":
-            case "Title":
-                properties.appendProperty(SBProperties.trackName, "a");
+        switch (field) {
+            case "title":
+                properties.appendProperty(SBProperties.trackName, order);
                 break;
-            case "Rating":
-                properties.appendProperty(SBProperties.rating, 1);
+            case "time":
+                properties.appendProperty(SBProperties.duration, order);
                 break;
-            case "Album":
-                properties.appendProperty(SBProperties.albumName, "a");
+            case "artist":
+                properties.appendProperty(SBProperties.artistName, order);
+                break;
+            case "album":
+                properties.appendProperty(SBProperties.albumName, order);
+                break;
+            case "genre":
+                properties.appendProperty(SBProperties.genre, order);
+                break;
+            case "rating":
+                properties.appendProperty(SBProperties.rating, order);
                 break;
             default:
-                properties.appendProperty(SBProperties.trackName, "a");
+                properties.appendProperty(SBProperties.trackName, order);
                 break;
         }
 
@@ -427,7 +441,6 @@ const Player = Module("player", {
         commandline.registerCallback("cancel", modes.SEARCH_VIEW_FORWARD, this.closure.onSearchCancel);
     },
     commands: function () {
-        // TODO: clear up filter/Filter confusion
         commands.add(["f[ilter]"],
                 "Filter tracks based on keywords {genre/artist/album/track}",
                 function (args) {
@@ -560,10 +573,19 @@ const Player = Module("player", {
                 literal: 0
             });
 
-        // TODO: Add a completer and order option
         commands.add(["sort[view]"],
                 "Sort the current media view",
-                function (args) { player.sortBy(args, true); });
+                function (args) {
+                    let order = args["-order"] || "up";
+                    player.sortBy(args[0], order == "up");
+                },
+                {
+                    argCount: "1",
+                    completer: function (context) completion.mediaListSort(context),
+                    options: [[["-order", "-o"], commands.OPTION_STRING,
+                        function (arg) /^(up|down)$/.test(arg),
+                        function () [["up", "Sort in ascending order"], ["down", "Sort in descending order"]]]]
+                });
 
         // FIXME: use :add -q like cmus? (not very vim-like are it's multi-option commands) --djk
         commands.add(["qu[eue]"],
@@ -644,6 +666,13 @@ const Player = Module("player", {
             context.anchored = false;
             context.keys = { text: "contentTitle", description: "contentUrl" };
             context.completions = player.getMediaPages();
+        };
+
+        completion.mediaListSort = function mediaListSort(context) {
+            context.title = ["Media List Sort Field", "Description"];
+            context.anchored = false;
+            context.completions = [["title", "Track name"], ["time", "Duration"], ["artist", "Artist name"],
+                ["album", "Album name"], ["genre", "Genre"], ["rating", "Rating"]]; // FIXME: generate this list dynamically - see #sortBy
         };
     },
     mappings: function () {
