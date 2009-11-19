@@ -9,7 +9,7 @@ const Player = Module("player", {
     init: function init() {
         this._lastSearchString = "";
         this._lastSearchIndex = 0;
-        this._lastSearchView = _SBGetCurrentView();
+        this._lastSearchView = this._currentView; //XXX
 
         // Get the focus to the visible playlist first
         //window._SBShowMainLibrary();
@@ -22,7 +22,7 @@ const Player = Module("player", {
     },
 
     /**
-     * Adjusts the track position <b>interval</b> milliseconds forwards or
+     * Moves the track position <b>interval</b> milliseconds forwards or
      * backwards.
      *
      * @param {number} interval The time interval (ms) to move the track
@@ -79,6 +79,9 @@ const Player = Module("player", {
         }
     },
 
+    /** @property {sbIMediaListView} The current media list view. @private */
+    get _currentView() SBGetBrowser().currentMediaListView,
+
     /**
      * @property {number} The player volume in the range 0.0-1.0.
      */
@@ -88,16 +91,14 @@ const Player = Module("player", {
     },
 
     /**
-     * Focuses the specified media item in the current media view.
+     * Focuses the specified media item in the current media list view.
      *
      * @param {sbIMediaItem} mediaItem The media item to focus.
      */
     focusTrack: function focusTrack(mediaItem) {
-        SBGetBrowser().mediaTab.mediaPage.highlightItem(_SBGetCurrentView().getIndexForItem(mediaItem));
+        SBGetBrowser().mediaTab.mediaPage.highlightItem(this._currentView.getIndexForItem(mediaItem));
     },
 
-    // FIXME: can't be called from non-media tabs since 840e78 (git)
-    // _SBGetCurrentView only returns the view in that tab - use SBGetBrowser().currentMediaListView
     /**
      * Plays the currently selected media item. If no item is selected the
      * first item in the current media view is played.
@@ -105,9 +106,9 @@ const Player = Module("player", {
     play: function play() {
         // Check if there is any selection in place, else play first item of the visible view.
         // TODO: this approach, or similar, should be generalised for all commands, PT? --djk
-        if (_SBGetCurrentView().selection.count != 0)
-            gMM.sequencer.playView(_SBGetCurrentView(),
-                    _SBGetCurrentView().getIndexForItem(_SBGetCurrentView().selection.currentMediaItem));
+        if (this._currentView.selection.count != 0)
+            gMM.sequencer.playView(this._currentView,
+                    this._currentView.getIndexForItem(this._currentView.selection.currentMediaItem));
         else
             gMM.sequencer.playView(SBGetBrowser().currentMediaListView, 0);
 
@@ -240,9 +241,7 @@ const Player = Module("player", {
      * @param {string} str The search string.
      */
     searchView: function searchView(str) {
-        let currentView = _SBGetCurrentView();
-        let mediaItemList = currentView.mediaList;
-        let search = _getSearchString(currentView);
+        let search = _getSearchString(this._currentView);
         let searchString = "";
 
         if (search != "") // XXX
@@ -252,12 +251,12 @@ const Player = Module("player", {
 
         this._lastSearchString = searchString;
 
-        let mySearchView = LibraryUtils.createStandardMediaListView(mediaItemList, searchString);
+        let searchView = LibraryUtils.createStandardMediaListView(this._currentView.mediaList, searchString);
 
-        if (mySearchView.length) {
-            this._lastSearchView = mySearchView;
+        if (searchView.length) {
+            this._lastSearchView = searchView;
             this._lastSearchIndex = 0;
-            this.focusTrack(mySearchView.getItemByIndex(this._lastSearchIndex));
+            this.focusTrack(searchView.getItemByIndex(this._lastSearchIndex));
         }
         else
             liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
@@ -266,7 +265,8 @@ const Player = Module("player", {
     /**
      * Repeats the previous view search.
      *
-     * @param {boolean} reverse
+     * @param {boolean} reverse Search in the reverse direction to the previous
+     *     search.
      */
     searchViewAgain: function searchViewAgain(reverse) {
         function echo(str) {
@@ -292,7 +292,7 @@ const Player = Module("player", {
                 this._lastSearchIndex = this._lastSearchIndex + 1;
         }
 
-        // FIXME: Implement for "?" --ken
+        // TODO: Implement for "?" --ken
         commandline.echo("/" + this._lastSearchString, null, commandline.FORCE_SINGLELINE);
         this.focusTrack(this._lastSearchView.getItemByIndex(this._lastSearchIndex));
 
@@ -431,7 +431,7 @@ const Player = Module("player", {
                 break;
         }
 
-        _SBGetCurrentView().setSort(properties);
+        this._currentView.setSort(properties);
     }
 }, {
 }, {
@@ -474,7 +474,7 @@ const Player = Module("player", {
                     for ([i, list] in Iterator(playlists)) {
                         if (util.compareIgnoreCase(arg, list.name) == 0) {
                             SBGetBrowser().loadMediaList(playlists[i]);
-                            this.focusTrack(_SBGetCurrentView().getItemByIndex(0));
+                            this.focusTrack(this._currentView.getItemByIndex(0));
                             return;
                         }
                     }
@@ -761,7 +761,7 @@ const Player = Module("player", {
                 mappings.add([modes.PLAYER],
                      ["<C-" + rating + ">"], "Rate the current media item " + rating,
                      function () {
-                         let item = gMM.sequencer.currentItem || _SBGetCurrentView().selection.currentMediaItem; // XXX: a bit too magic
+                         let item = gMM.sequencer.currentItem || this._currentView.selection.currentMediaItem; // XXX: a bit too magic
                          if (item)
                              player.rateMediaItem(item, rating);
                          else
