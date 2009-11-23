@@ -194,7 +194,12 @@ const AutoCommands = Module("autocommands", {
                 }
             }, {
                 bang: true,
-                completer: function (context) completion.autocmdEvent(context),
+                completer: function (context, args) {
+                    if (args.length == 1)
+                        return completion.autocmdEvent(context);
+                    if (args.length == 3)
+                        return args["-javascript"] ? completion.javascript(context) : completion.ex(context);
+                },
                 literal: 2,
                 options: [[["-javascript", "-js"], commands.OPTION_NOARG]]
             });
