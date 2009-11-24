@@ -2,9 +2,6 @@ Main developer/Project founder:
   * Martin Stubenschrott (stubenschrott@vimperator.org)
 
 Developers:
-  * Doug Kearns (dougkearns@gmail.com)
-  * Tim Hammerquist (penryu@gmail.com)
-  * Konstantin Stepanov (milezv@yandex.ru)
   * Kris Maglione
   * Ted Pavlic <ted@tedpavlic.com>
   * anekos <anekos@snca.net>
@@ -16,6 +13,9 @@ Inactive/former developers:
   * Viktor Kojouharov (Виктор Кожухаров)
   * Marco Candrian (mac@calmar.ws)
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
+  * Doug Kearns (dougkearns@gmail.com)
+  * Konstantin Stepanov (milezv@yandex.ru)
+  * Tim Hammerquist (penryu@gmail.com)
 
 Patches (in no special order):
   * Ruud Grosmann ('followhints' option)
