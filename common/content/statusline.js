@@ -61,9 +61,20 @@ const StatusLine = Module("statusline", {
     updateUrl: function updateUrl(url) {
         // ripped from Firefox; modified
         function losslessDecodeURI(url) {
+            // Countermeasure for "Error: malformed URI sequence".
+            // This error occurs when URL is encoded by not UTF-8 encoding.
+            function _decodeURI(url) {
+                try {
+                    return decodeURI(url);
+                }
+                catch (e) {
+                    return url;
+                }
+            };
+
             // 1. decodeURI decodes %25 to %, which creates unintended
             //    encoding sequences.
-            url = url.split("%25").map(decodeURI).join("%25");
+            url = url.split("%25").map(_decodeURI).join("%25");
             // 2. Re-encode whitespace so that it doesn't get eaten away
             //    by the location bar (bug 410726).
             url = url.replace(/[\r\n\t]/g, encodeURIComponent);
