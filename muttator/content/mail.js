@@ -35,17 +35,17 @@ const Mail = Module("mail", {
 
                     // Jump to a message when requested
                     let indices = [];
-                    if (this._selectMessageKeys.length > 0) {
-                        for (let j = 0; j < this._selectMessageKeys.length; j++)
-                            indices.push([gDBView.findIndexFromKey(this._selectMessageKeys[j], true), this._selectMessageKeys[j]]);
+                    if (mail._selectMessageKeys.length > 0) {
+                        for (let j = 0; j < mail._selectMessageKeys.length; j++)
+                            indices.push([gDBView.findIndexFromKey(mail._selectMessageKeys[j], true), mail._selectMessageKeys[j]]);
 
                         indices.sort();
-                        let index = this._selectMessageCount - 1;
-                        if (this._selectMessageReverse)
-                            index = this._selectMessageKeys.length - 1 - index;
+                        let index = mail._selectMessageCount - 1;
+                        if (mail._selectMessageReverse)
+                            index = mail._selectMessageKeys.length - 1 - index;
 
                         gDBView.selectMsgByKey(indices[index][1]);
-                        this._selectMessageKeys = [];
+                        mail._selectMessageKeys = [];
                     }
                 }
             }
