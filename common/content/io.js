@@ -950,16 +950,16 @@ lookup:
                     arg = "!" + arg;
 
                 // replaceable bang and no previous command?
-                liberator.assert(!/((^|[^\\])(\\\\)*)!/.test(arg) || this._lastRunCommand,
+                liberator.assert(!/((^|[^\\])(\\\\)*)!/.test(arg) || io._lastRunCommand,
                     "E34: No previous command");
 
                 // NOTE: Vim doesn't replace ! preceded by 2 or more backslashes and documents it - desirable?
                 // pass through a raw bang when escaped or substitute the last command
                 arg = arg.replace(/(\\)*!/g,
-                    function (m) /^\\(\\\\)*!$/.test(m) ? m.replace("\\!", "!") : m.replace("!", this._lastRunCommand)
+                    function (m) /^\\(\\\\)*!$/.test(m) ? m.replace("\\!", "!") : m.replace("!", io._lastRunCommand)
                 );
 
-                this._lastRunCommand = arg;
+                io._lastRunCommand = arg;
 
                 let output = io.system(arg);
 
