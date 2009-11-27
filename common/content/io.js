@@ -920,7 +920,7 @@ lookup:
             "List all sourced script names",
             function () {
                 let list = template.tabular(["<SNR>", "Filename"], ["text-align: right; padding-right: 1em;"],
-                    ([i + 1, file] for ([i, file] in Iterator(this._scriptNames))));  // TODO: add colon and remove column titles for pedantic Vim compatibility?
+                    ([i + 1, file] for ([i, file] in Iterator(io._scriptNames))));  // TODO: add colon and remove column titles for pedantic Vim compatibility?
 
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             },
