@@ -682,8 +682,11 @@ const Completion = Module("completion", {
         if (skip)
             context.advance(skip[0].length);
 
+        if (typeof complete === "undefined")
+            complete = options["complete"];
+
         // Will, and should, throw an error if !(c in opts)
-        Array.forEach(complete || options["complete"], function (c) {
+        Array.forEach(complete, function (c) {
             let completer = completion.urlCompleters[c];
             context.fork.apply(context, [c, 0, completion, completer.completer].concat(completer.args));
         });
