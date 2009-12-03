@@ -71,8 +71,8 @@ tedious unless you always visit the first link on a page.
         <p><a>mode</a> can be one of:</p>
 
         <ul>
-            <li><tag>;;</tag> <em>;</em> to focus a link and hover it with the mouse</li>
-            <li><tag>;?</tag> <em>?</em> to show information about the element (incomplete)</li>
+            <li><tag>;;</tag> <em>;</em> to focus an element</li>
+            <li><tag>;?</tag> <em>?</em> to show information about an element (incomplete)</li>
             <li><tag>;s</tag> <em>s</em> to save its destination</li>
             <li><tag>;a</tag> <em>a</em> to save its destination (prompting for save location)</li>
             <li><tag>;f</tag> <em>f</em> to focus a frame</li>
