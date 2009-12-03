@@ -385,7 +385,7 @@ const Mappings = Module("mappings", {
                 let [lhs, rhs] = args;
 
                 if (!rhs) // list the mapping
-                    mappings.list(modes, this._expandLeader(lhs));
+                    mappings.list(modes, mappings._expandLeader(lhs));
                 else {
                     // this matches Vim's behaviour
                     if (/^<Nop>$/i.test(rhs))
