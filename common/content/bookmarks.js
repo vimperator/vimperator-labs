@@ -580,7 +580,7 @@ const Bookmarks = Module("bookmarks", {
                 }
 
                 commandline.open(":",
-                    commands.commandToString({ command: "bmark", options: options, arguments: [buffer.URL], bang: bmarks.length == 1 }),
+                    commands.commandToString({ command: "bmark", options: options, arguments: [buffer.URL], bang: bmarks.length > 1 }),
                     modes.EX);
             });
 
