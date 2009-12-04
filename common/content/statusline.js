@@ -59,42 +59,9 @@ const StatusLine = Module("statusline", {
      * @default buffer.URL
      */
     updateUrl: function updateUrl(url) {
-        // ripped from Firefox; modified
-        function losslessDecodeURI(url) {
-            // Countermeasure for "Error: malformed URI sequence".
-            // This error occurs when URL is encoded by not UTF-8 encoding.
-            function _decodeURI(url) {
-                try {
-                    return decodeURI(url);
-                }
-                catch (e) {
-                    return url;
-                }
-            };
-
-            // 1. decodeURI decodes %25 to %, which creates unintended
-            //    encoding sequences.
-            url = url.split("%25").map(_decodeURI).join("%25");
-            // 2. Re-encode whitespace so that it doesn't get eaten away
-            //    by the location bar (bug 410726).
-            url = url.replace(/[\r\n\t]/g, encodeURIComponent);
-
-            // Encode invisible characters (soft hyphen, zero-width space, BOM,
-            // line and paragraph separator, word joiner, invisible times,
-            // invisible separator, object replacement character) (bug 452979)
-            url = url.replace(/[\v\x0c\x1c\x1d\x1e\x1f\u00ad\u200b\ufeff\u2028\u2029\u2060\u2062\u2063\ufffc]/g,
-                encodeURIComponent);
-
-            // Encode bidirectional formatting characters.
-            // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
-            url = url.replace(/[\u200e\u200f\u202a\u202b\u202c\u202d\u202e]/g,
-                encodeURIComponent);
-            return url;
-        };
-
         if (url == null)
             // TODO: this probably needs a more general solution.
-            url = losslessDecodeURI(buffer.URL);
+            url = util.losslessDecodeURI(buffer.URL);
 
         // make it even more Vim-like
         if (url == "about:blank") {

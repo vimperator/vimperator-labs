@@ -99,7 +99,7 @@ const Browser = Module("browser", {
     mappings: function () {
         mappings.add([modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { util.copyToClipboard(buffer.URL, true); });
+            function () { util.copyToClipboard(util.losslessDecodeURI(buffer.URL), true); });
 
         // opening websites
         mappings.add([modes.NORMAL],
