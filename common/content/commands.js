@@ -805,7 +805,7 @@ const Commands = Module("commands", {
 
             switch (Commands.QUOTE_STYLE) {
             case "vim-sucks":
-                if (res = str.match = str.match(/^()((?:[^\\\s]|\\.)+)((?:\\$)?)/))
+                if (res = str.match(/^()((?:[^\\\s]|\\.)+)((?:\\$)?)/))
                     arg += res[2].replace(/\\(.)/g, "$1");
                 break;
 
@@ -819,7 +819,7 @@ const Commands = Module("commands", {
                 break;
 
             case "rc-ish":
-                if ((res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
+                if ((res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
                 else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
                     arg += eval(res[0] + (res[3] ? "" : '"'));
@@ -828,7 +828,7 @@ const Commands = Module("commands", {
                 break;
 
             case "pythonesque":
-                if ((res = str.match = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
+                if ((res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
                 else if ((res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/)))
                     arg += res[2];
