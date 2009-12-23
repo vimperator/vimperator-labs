@@ -603,11 +603,26 @@ const Liberator = Module("liberator", {
         XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
         XML.prettyIndent = 4;
 
+        let lang = window.navigator.language;
+        function chooseByLang(elems) {
+            if (!elems)
+                return null;
+            function get(lang) {
+                let i = elems.length();
+                while (i-- > 0){
+                    if ((elems[i].@lang).toString() == lang)
+                        return elems[i];
+                }
+            }
+            return get(lang) || get(lang.split("-", 2).shift()) || get("") || get("en-US") || get("en") || elems[0] || elems;
+        }
         let body = XML();
-        for (let [, context] in Iterator(plugins.contexts))
-            if (context.INFO instanceof XML)
-                body += <h2 xmlns={NS.uri} tag={context.INFO.@name + '-plugin'}>{context.INFO.@summary}</h2> +
-                    context.INFO;
+        for (let [, context] in Iterator(plugins.contexts)) {
+            if (context.INFO instanceof XML) {
+                let info = chooseByLang(context.INFO);
+                body += <h2 xmlns={NS.uri} tag={info.@name + '-plugin'}>{info.@summary}</h2> + info;
+            }
+        }
 
         let help = '<?xml version="1.0"?>\n' +
                    '<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>\n' +
