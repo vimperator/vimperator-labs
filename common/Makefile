@@ -8,14 +8,19 @@ GOOGLE_PROJ   = vimperator-labs
 GOOGLE	      = https://$(GOOGLE_PROJ).googlecode.com/files
 
 LOCALEDIR     = locale
-DOC_FILES     = $(wildcard $(LOCALEDIR)/*/*.xml)
+ifeq ($(LOCALE),)
+	LOCALEDIR = locale/en-US
+else
+	LOCALEDIR = locale/en-US locale/$(LOCALE)
+endif
+DOC_FILES     = $(foreach dir,$(LOCALEDIR),$(wildcard $(dir)/*.xml))
 
 export VERSION BUILD_DATE
 MAKE_JAR      = sh $(BASE)/make_jar.sh
 
 # TODO: specify source files manually?
 JAR_BASES     = $(TOP) $(BASE)
-JAR_DIRS      = content skin locale
+JAR_DIRS      = content skin $(LOCALEDIR)
 JAR_TEXTS     = js css dtd xml xul html xhtml xsl
 JAR_BINS      = png
 
@@ -117,7 +122,7 @@ distclean:
 $(XPI): $(JAR)
 	@echo "Building XPI..."
 	mkdir -p $(XPI_PATH)
-	$(AWK) -v 'name=$(NAME)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
+	$(AWK) -v 'name=$(NAME)' -v 'locale=$(LOCALE)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
 	$(MAKE_JAR) "$(XPI)" "$(XPI_BASES)" "$(XPI_DIRS)" "$(XPI_TEXTS)" "$(XPI_BINS)" "$(XPI_FILES)"
 	@echo "SUCCESS: $@"
 
