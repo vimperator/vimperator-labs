@@ -8,7 +8,7 @@
     title="&liberator.appname; GUI"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h1 tag="gui">&liberator.appname;'s GUI</h1>
+<h1 tag="gui">&liberator.appname; の GUI</h1>
 <toc start="2"/>
 
 <p>
@@ -244,7 +244,7 @@
     </li>
 </ul>
 
-<h2 tag="toolbar">Toolbars</h2>
+<h2 tag="toolbar">ツールバー</h2>
 
 <item>
     <tags>:tbs :tbshow :toolbars :toolbarshow</tags>

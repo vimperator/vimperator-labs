@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='repeat' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Repeating Commands' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='repeating'>リピートコマンド</h1>
+<toc start='2'/>
+
+<p>&liberator.appname; はコマンドを何回も繰り返し実行したり、マクロを記録することができます。</p>
+
+<h2 tag='single-repeat'>単純な繰り返し</h2>
+
+<item>
+    <tags>.</tags>
+    <spec><oa>count</oa>.</spec>
+    <description>
+        <p>
+            マッピングされたキーの直前の入力を <oa>count</oa> 回繰り返します。
+            Vim と違って &liberator.appname; は主に編集用のコマンドを持たないため、これはもっぱらそれらには適用されないことに注意してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@:</tags>
+    <spec><oa>count</oa>@:</spec>
+    <description>
+        <p>最後に実行された ex コマンドを <oa>count</oa> 回実行します。</p>
+    </description>
+</item>
+
+
+
+<h2 tag='macros complex-repeat'>マクロ</h2>
+
+<item>
+    <tags>q</tags>
+    <spec>q<a>0-9a-zA-Z</a></spec>
+    <description>
+        <p>
+            一連のキー入力をマクロとして記録します。
+            利用可能なマクロ名は {0-9a-zA-Z} です ( 大文字が追加されています ) 。
+            記録を終了するには <k>q</k> を押してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:macros</tags>
+    <spec>:mac<oa>ros</oa> <oa>pat</oa></spec>
+    <description>
+        <p>
+            任意の正規表現 <oa>pat</oa> にマッチする記録済みのマクロを一覧表示します。
+            何も正規表現が与えられていない場合、すべてのマクロが表示されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:delmac :delmacros</tags>
+    <spec>:delmac<oa>ros</oa> <a>args</a></spec>
+    <spec>:delmac<oa>ros</oa>!</spec>
+    <description>
+        <p>
+            正規表現 <a>args</a> にマッチする記録済みのマクロを削除します。
+            <oa>!</oa> が与えられている場合すべてのマクロが削除されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@ :play</tags>
+    <spec>:pl<oa>ay</oa> <a>arg</a></spec>
+    <spec><oa>count</oa>@<a>arg</a></spec>
+    <description>
+        <p>
+            <a>arg</a> という名前のマクロの内容を <oa>count</oa> 回再生します。
+            <a>arg</a> として {0-9a-z} のみを受け付ける <k>@</k> というキーマッピングもあります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@@</tags>
+    <spec><oa>count</oa>@@</spec>
+    <description>
+        <p>直前に実行されたマクロを <oa>count</oa> 回再生します。</p>
+    </description>
+</item>
+
+
+
+<h2 tag='using-scripts'>スクリプトを使う</h2>
+
+<item>
+    <tags>:so :source</tags>
+    <spec>:so<oa>urce</oa><oa>!</oa> <a>file</a></spec>
+    <description>
+        <p>
+            ex コマンド、 JavaScript 、 CSS を <a>file</a> から読み込みます。
+            <ex>map &lt; gt</ex> のような ex コマンドを含むたいていのファイルや以下のような JavaScript コードを含むファイルを読み込むことができます:
+        </p>
+
+        <code><![CDATA[
+js <<EOF
+hello = function () {
+   alert("Hello world");
+}
+EOF
+]]></code>
+
+        <p>
+            もしくはもうひとつの方法として _.js_ で終わるファイルを読み込むこともできます。
+            これらのファイルは自動的に純粋な JavaScript ファイルとして読み込まれます。
+        </p>
+
+        <p>
+            注釈: いずれにしてもグローバルな window オブジェクトに関数を追加する必要がある場合、上記で示したようにしなければなりません。
+            以下のような関数は:
+        </p>
+
+        <code><![CDATA[
+function hello2() {
+    alert("Hello world");
+}
+]]></code>
+
+        <p>
+            そのスクリプトのスコープ内でのみ有効となります。
+        </p>
+
+        <p>
+            ホームディレクトリの <tt>.&liberator.name;rc</tt> ファイルや <tt>~/.&liberator.name;/plugin/</tt> のすべてのファイルは起動時に常に読み込まれます。
+            <tt>~</tt> は <tt>$HOME</tt> ディレクトリへのショートカットとして扱われます。
+            <oa>!</oa> が指定されている場合、エラーは表示されません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:lpl :loadplugins</tags>
+    <spec>:loadplugins</spec>
+    <description>
+        <p>
+            まだ読み込まれていないプラグインを直ちにすべて読み込みます。
+            プラグインは &liberator.name;rc が読み込まれた後に自動的に読み込まれますので、もしもプラグインによって実装されるコマンドを &liberator.name;rc が含んでいる場合、このコマンドは &liberator.name;rc ファイルの早い段階に書かれなければなりません。
+            さらに、このコマンドは &liberator.appname; の再起動を行うことなく新しいプラグインの読み込みを行うことを可能にします。
+</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ru :runtime</tags>
+    <spec>:runt<oa>ime</oa><oa>!</oa> <a>file</a> …</spec>
+    <description>
+        <p>
+            <o>runtimepath</o> の各々のディレクトリから指定されたファイルを読み込みます。例:
+        </p>
+        <code><ex>:runtime plugin/foobar.vimp</ex></code>
+        <p>
+            最初に見つかったファイルのみが読み込まれます。
+            <oa>!</oa> が与えられている場合、見つかったファイルすべてが読み込まれます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:scrip :scriptnames</tags>
+    <spec>:scrip<oa>tnames</oa></spec>
+    <description>
+        <p>読み込まれたスクリプト名を読み込まれた順番ですべて一覧表示します。 </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:fini :finish</tags>
+    <spec>:fini<oa>sh</oa></spec>
+    <description>
+        <p>
+            スクリプトファイルの読み込みを中止します。
+            &liberator.appname; スクリプトファイル内からのみ呼び出すことが可能です。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag='profile profiling'>分析</h2>
+
+<item>
+    <tags>:time</tags>
+    <spec>:<oa>count</oa>time<oa>!</oa> <a>code|:command</a></spec>
+    <description>
+        <p>
+            コード断片やコマンドを分析します。
+            <a>code</a> を <oa>count</oa> 回 ( デフォルトは 1 回です ) 実行し経過時間を返します。
+            <a>code</a> は常に JavaScript の eval() に渡されますが、これは遅いため結果は参考程度にとどめておいてください。
+        </p>
+
+        <p>
+            もし <a>code</a> が <ex>:</ex> で開始されている場合、 &liberator.appname; のコマンドとして実行されます。
+        </p>
+
+        <p>
+            統計分析の結果を表示することなくただ何らかのコマンドを複数回実行したい場合は <oa>!</oa> をつけた特殊なバージョンを使用してください。
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

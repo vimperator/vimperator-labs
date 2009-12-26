@@ -1,0 +1,370 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='tabs' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Tabs' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='tabs'>タブ</h1>
+<toc start='2'/>
+
+<p>
+    タブを使うことで同時にたくさんのウェブページを表示することができます。
+    各々のタブはまさにひとつのバッファ ( ひとつのタブに複数のバッファというのは対応していません ) です。
+    結果として、たくさんのバッファ用コマンドとタブ用コマンドは互換性があります。
+</p>
+
+<h2 tag='listing-tabs'>タブの列挙</h2>
+
+<item>
+    <tags>B :tabs :ls :files :buffers</tags>
+    <spec>:buffers <oa>filter</oa></spec>
+    <spec>B</spec>
+    <description>
+        <p>
+            <oa>filter</oa> にマッチするバッファ ( タブのことです ) の一覧を表示します。
+            <oa>filter</oa> の指定がない場合すべてのタブを表示します。
+        </p>
+
+        <p>バッファは以下のインジケータの一つでマークされるかもしれません:</p>
+
+        <dl>
+            <dt>%</dt><dd>現在のバッファ</dd>
+            <dt>#</dt><dd><ex>:e #</ex> と <k name='C-^'/> 用の代替バッファ</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>:keepa :keepalt</tags>
+    <spec>:keepa<oa>lt</oa> <a>cmd</a></spec>
+    <description>
+        <p>現在の代替バッファを変更しないでコマンドを実行します。</p>
+    </description>
+</item>
+
+
+<h2 tag='opening-tabs'>タブを開く</h2>
+
+<item>
+    <tags>:tab</tags>
+    <spec>:tab <a>cmd</a></spec>
+    <description>
+        <p>
+            <a>cmd</a> を実行しその結果を新しいタブに出力します。
+            現在、以下のコマンドのみ対応しています:
+        </p>
+
+        <ul>
+            <li><ex>:tab addons</ex></li>
+            <li><ex>:tab downloads</ex></li>
+            <li><ex>:tab extoptions</ex></li>
+            <li><ex>:tab help</ex></li>
+            <li><ex>:tab javascript!</ex></li>
+            <li><ex>:tab preferences!</ex></li>
+        </ul>
+    </description>
+</item>
+
+
+<item>
+    <!-- TODO: move this somewhere more appropriate -->
+    <tags>:window :wind</tags>
+    <spec>:wind<oa>ow</oa> <a>cmd</a></spec>
+    <description>
+        <p>
+            <a>cmd</a> を実行し、新しいウインドウに出力します。サポートするコマンドのリストは <ex>:tab</ex> を見てください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tabdu :tabduplicate</tags>
+    <spec>:<oa>count</oa>tabdu<oa>plicate</oa></spec>
+    <description>
+        <p>
+            現在のタブを複製し複製先のタブを選択します。もし <oa>count</oa> が与えられている場合、 <oa>count</oa> 回複製されます。
+        </p>
+    </description>
+</item>
+
+
+<!-- TODO: should the tab commands be moved back here? -->
+新しいタブを開く他の方法については <t>opening</t> を参照してください。
+
+<h2 tag='changing-tabs'>タブの変更</h2>
+
+<item>
+    <tags>gb</tags>
+    <spec><oa>count</oa>gb</spec>
+    <description>
+        <p>
+            直前の <ex>:buffer<oa>!</oa></ex> コマンドを繰り返します。似たような URL やタイトルを持つバッファ間の素早い移動に便利です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gB</tags>
+    <spec><oa>count</oa>gB</spec>
+    <description>
+        <p>
+            直前の <ex>:buffer<oa>!</oa></ex> コマンドを逆方向に繰り返します。<k>gb</k> と全く同様ですが方向が逆になります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gt</tags>
+    <spec><oa>count</oa>gt</spec>
+    <description>
+        <p>
+            次のタブを選択します。最後のタブが選択されている場合、最初のタブが選択されます。 もし <oa>count</oa> が指定されている場合 <oa>count</oa> 番目のタブが選択されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-PageDown> <C-Tab> <C-n>]]></tags>
+    <spec><oa>count</oa>&lt;C-n></spec>
+    <description>
+        <p>
+            次のタブを選択します。最後のタブが選択されている場合、最初のタブが選択されます。 もし <oa>count</oa> が指定されている場合 <oa>count</oa> 個次のタブが選択されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-PageUp> <C-S-Tab> <C-p> gT]]></tags>
+    <spec><oa>count</oa>gT</spec>
+    <description>
+        <p>
+            <a>count</a> 分前のタブを選択します。最初のタブが選択されている場合、最後のタブが選択されます。 もし <oa>count</oa> が指定されている場合 <oa>count</oa> 個前のタブが選択されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:bn :bnext :tn :tnext :tabn :tabnext</tags>
+    <spec>:<oa>count</oa>tabn<oa>ext</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>tn<oa>ext</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>bn<oa>ext</oa> <oa>count</oa></spec>
+    <description>
+        <p>
+            次もしくは <oa>count</oa> 番目のタブを選択します。
+            最後のタブが選択されていて <oa>count</oa> 指定がない場合、最初のタブが選択されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:bN :bNext :bp :bprevious :tN :tNext :tabN :tabNext :tp :tprevious :tabp :tabprevious</tags>
+    <spec>:<oa>count</oa>tabp<oa>revious</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>tp<oa>revious</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>tabN<oa>ext</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>bp<oa>revious</oa> <oa>count</oa></spec>
+    <spec>:<oa>count</oa>bN<oa>ext</oa> <oa>count</oa></spec>
+    <description>
+        <p>
+            前もしくは <oa>count</oa> 個前のタブを選択します。最初のタブの前は最後のタブとなります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-6> <C-^>]]></tags>
+    <spec><oa>count</oa>&lt;C-^></spec>
+    <description>
+        <p>
+            代替タブもしくは <oa>count</oa> 番目のタブを選択します。代替タブとは直前に選択されていたタブを指します。ふたつのタブを素早く切り替えるのに便利です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>b :b :buffer</tags>
+    <spec>:<oa>count</oa>b<oa>uffer</oa><oa>!</oa> <oa>url|index</oa></spec>
+    <spec><oa>count</oa>b</spec>
+    <description>
+        <p>
+            バッファリストから指定のバッファに移動します。引数には、バッファ番号かURL全体を指定できます。
+            <oa>count</oa> が指定されていれば、<oa>count</oa> 番目のバッファに移動します。
+        </p>
+
+        <p>
+            引数が完全な URL でもバッファ番号でもない場合でも、バッファを特定できるならそれが選択されます。
+            <oa>!</oa> を指定すると、ひとつに特定されいなくても、引数にマッチする次のバッファが選択されます。
+            このプロンプトを開くためのショートカットとして <k>b</k> を使用することができます。
+        </p>
+
+        <p>If argument is <em>#</em>, the alternate buffer will be selected (see <k name='C-^'/>).</p>
+        <p>もし引数が <em>#</em> の場合、代替バッファが選択されるでしょう ( <k name='C-^'/> を参照してください ) 。</p>
+
+        <p>引数が何も与えられていない場合は現在のバッファが選択されたままです。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>g^ g0 :bf :bfirst :br :brewind :tabfir :tabfirst :tabr :tabrewind</tags>
+    <spec>:tabr<oa>ewind</oa></spec>
+    <spec>:tabfir<oa>st</oa></spec>
+    <spec>:br<oa>ewind</oa></spec>
+    <spec>:bf<oa>irst</oa></spec>
+    <spec>g0</spec>
+    <spec>g^</spec>
+    <description>
+        <p>最初のタブに移動します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>g$ :bl :blast :tabl :tablast</tags>
+    <spec>:tabl<oa>ast</oa></spec>
+    <spec>:bl<oa>ast</oa></spec>
+    <spec>g$</spec>
+    <description>
+        <p>最後のタブに移動します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tabde :tabdetach</tags>
+    <spec>:tabde<oa>tach</oa></spec>
+    <description>
+        <p>
+            現在のタブを切り離し、新しいウィンドウで開き直します。
+            各ウィンドウは少なくとも一つのタブを持っている必要があり、最後のタブを切り離すことは出来ません。
+            <ex>:tabduplicate</ex> を使い、タブをコピーしてから <ex>:tabdetach</ex> を実行してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:taba :tabattach</tags>
+    <spec>:taba<oa>ttach</oa> <a>window-index</a> <oa>tab-index</oa></spec>
+    <description>
+        <p>
+            現在のタブを他のウィンドウに接続します。
+            {window-index} は開いているウィンドウへの番号で、<oa>tab-index</oa> は挿入する他のウィンドウ内のタブの番号です。
+            もし、このタブがウィンドウの最後のタブであれば、ウインドウは閉じます。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag='reordering-tabs'>タブの並べ替え</h2>
+
+<item>
+    <tags>:tabm :tabmove</tags>
+    <spec>:tabm<oa>ove</oa> <oa>N</oa></spec>
+    <spec>:tabm<oa>ove</oa><oa>!</oa> <oa>+N</oa> | <oa>-N</oa></spec>
+    <description>
+        <p>
+            現在のタブを <oa>N</oa> 番目のタブの後ろに移動します。
+            <oa>N</oa> が 0 のとき、現在のタブは最初の位置に移動します。
+            <oa>N</oa> の指定がない場合現在のタブは最後の位置に移動します。
+            <oa>N</oa> に "+" もしくは "-" を先頭につけて相対的な移動を指示することもできます。
+            <oa>!</oa> が指定されている場合、移動はタブ一覧の最初もしくは最後を循環します ( 訳注: 最後の次が最初となり、最初の前が最後となります ) 。
+        </p>
+    </description>
+</item>
+
+
+
+<h2 tag='closing-tabs'>タブを閉じる</h2>
+
+<item>
+    <tags>d :tabc :tabclose :bun :bunload :bw :bwipeout :bd :bdelete</tags>
+    <spec>:<oa>count</oa>bd<oa>elete</oa><oa>!</oa> <oa>arg</oa></spec>
+    <spec><oa>count</oa>d</spec>
+    <description>
+        <p>
+            現在のバッファ ( タブのことです ) を閉じます。
+            <oa>count</oa> が指定されている場合 <oa>count</oa> 個のタブが閉じられます。
+            その後、閉じられたタブの右のタブが選択されます。
+        </p>
+
+        <p>
+            <oa>arg</oa> を与えて使用した場合、ホスト名に <oa>arg</oa> を含むすべてのタブが閉じられます。
+            <oa>!</oa> の指定はタブの URL とタイトルも <oa>arg</oa> で検索するようになります。
+            使用には注意してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>D</tags>
+    <spec><oa>count</oa>D</spec>
+    <description>
+        <p><k>d</k> と同様ですが閉じたタブの左のタブを選択します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tabo :tabonly</tags>
+    <spec>:tabo<oa>nly</oa></spec>
+    <description>
+        <p>現在のタブ以外のすべてのタブを閉じます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>u :u :undo</tags>
+    <spec>:<oa>count</oa>u<oa>ndo</oa> <oa>url</oa></spec>
+    <spec><oa>count</oa>u</spec>
+    <description>
+        <p>
+            閉じたタブを復元します。
+            <oa>count</oa> が与えられている場合、最後に閉じたタブではなく <oa>count</oa> 番目に閉じたタブが復元されます。
+            <oa>url</oa> が指定されている場合 URL にマッチするタブが復元されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:undoa :undoall</tags>
+    <spec>:undoa<oa>ll</oa></spec>
+    <description>
+        <p>
+            閉じたタブをすべて復元します。 &liberator.host; は再起動ごとに閉じたタブを 10 個まで覚えています。
+        </p>
+    </description>
+</item>
+
+
+
+<h2 tag='looping-over-tabs'>タブのループ処理</h2>
+
+<item>
+    <tags>:tabd :tabdo :bufd :bufdo</tags>
+    <spec>:tabd<oa>o</oa> <a>cmd</a></spec>
+    <description>
+        <p>
+            各タブで <a>cmd</a> を実行します。
+            <a>cmd</a> は最初のタブから順に最後のタブまで各タブで実行され、最後のタブが現在のタブとなります。
+        </p>
+
+        <p>
+            <a>cmd</a> はタブの追加、削除、移動などによってタブリストを変更するべきではありません。
+        </p>
+    </description>
+</item>
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

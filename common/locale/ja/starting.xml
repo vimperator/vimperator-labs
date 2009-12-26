@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='starting' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Starting' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='starting'>Starting &liberator.appname;</h1>
+<toc start='2'/>
+
+<tags>startup-options</tags>
+
+<p>
+    &liberator.host; のオプション -&liberator.name; によって &liberator.appname; にコマンドラインオプションを渡すことが出来ます。
+    これらは一つの文字列の引数として渡されます。
+    ( 例: &liberator.hostbin; -&liberator.name; <str>++cmd 'set exrc' +u 'tempRcFile' ++noplugin</str> )
+</p>
+
+<item>
+    <tags>+c</tags>
+    <spec>+c <a>command</a></spec>
+    <description>
+        <p>
+            初期化完了後に一つの ex コマンドを実行します。
+            <t>initialization</t> を参照してください。
+        </p>
+
+        <p>このオプションは複数個指定できます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>++cmd</tags>
+    <spec>++cmd <a>command</a></spec>
+    <description>
+        <p>
+            初期化処理の前に一つのコマンドを実行します。
+            <t>initialization</t> を参照してください。
+        </p>
+
+        <p>このオプションは複数個指定できます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>+u</tags>
+    <spec>+u <a>rcfile</a></spec>
+    <description>
+        <p>
+            <a>rcfile</a> ファイルはユーザによる初期化コマンドにつかわれます。
+            <a>rcfile</a> が "NORC" であれば、プラグインのロード意外には初期化処理は一切行われません。
+            即ち、<t>initialization</t> におけるステップ 1. と 2. はスキップされます。
+            <a>rcfile</a> が "NONE" であれば、プラグインのロードもスキップされます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>++noplugin</tags>
+    <spec>++noplugin</spec>
+    <description>
+        <p>起動時にプラグインが読み込まれるのを防ぎます。 <o>loadplugins</o> を参照してください。</p>
+    </description>
+</item>
+
+
+<h2 tag='initialization startup'>初期化</h2>
+
+<p>起動時、&liberator.appname; は、以下の順番でタスクを処理します。</p>
+
+<ol>
+    <li>
+        &liberator.appname; はユーザによる初期化コマンドを実行します。
+
+        以下のうちのひとつが見つかった場合、それが実行され、他の場所のものは無視されます。
+
+        <ol>
+            <li tag='$&liberator.idname;_INIT'>
+                <em>$&liberator.idname;_INIT</em> — 一つの ex コマンドを書くことが出来ます。 ( 例: "<ex>:source <a>file</a></ex>").
+            </li>
+            <li tag='$MY_&liberator.idname;RC'>
+                <em>~/&liberator.name;rc</em> — Windows のみ。 このファイルがあれば、実行され、<em>$MY_&liberator.idname;RC</em> にそのパスがセットされます。
+            </li>
+            <li>
+                <em>~/.&liberator.name;rc</em> — このファイルがあれば、実行されます。
+            </li>
+        </ol>
+    </li>
+    <li>
+        <o>exrc</o> がセットされていて、+u コマンドラインオプションが指定されていなければ、
+        カレントディレクトリの全ての RC ファイルもまた読み込まれます。
+    </li>
+    <li>
+        <o>runtimepath</o> に設定されているすべてのディレクトリから "plugin" という下位ディレクトリが検索され、まだ読み込まれていないプラグインが読み込まれます。
+        各々のプラグインディレクトリにおいて、すべての <tt>*.{js,vimp}</tt> ファイル ( さらに下位のディレクトリに存在するものも含まれます ) がアルファベット順に読み込まれます。
+        以下の場合はプラグインが読み込まれません:
+
+        <ul>
+            <li><o>noloadplugins</o> がセットされている。</li>
+            <li>++noplugin コマンドラインオプションが指定されている。</li>
+            <li>+u=NONE コマンドラインオプションが指定されている。</li>
+        </ul>
+
+        すでに読み込まれている特殊なプラグインは再度読み込まれることはありません ( 例: <ex>:loadplugins</ex> コマンドによって先に読み込まれているものが相当します ) 。
+    </li>
+</ol>
+
+ユーザの ~ ( 例: "home" ) ディレクトリは以下のように決定されます:
+
+<ul>
+    <li>Unix と Mac の場合、環境変数 <em>$HOME</em> が使用されます。</li>
+    <li>
+        Windows の場合、 &liberator.appname; <em>%HOME%</em>、 <em>%USERPROFILE%</em>、 <em>%HOMEDRIVE%%HOMEPATH%</em> の順に存在を確認します。そして最初に見つかったものが使用されます。
+    </li>
+</ul>
+
+<h2 tag='save-settings'>設定の保存</h2>
+
+<item>
+    <tags>:mkv :mk&liberator.name;rc</tags>
+    <spec>:mkv<oa>imperatorrc</oa><oa>!</oa> <oa>file</oa></spec>
+    <description>
+        <p>
+            現在のキーマッピングやオプションの変更を <oa>file</oa> に書き出します。
+            もし <oa>file</oa> が指定されていない場合、<em>~/.&liberator.name;rc</em> というファイルが存在していなければそこに書き出します。
+            <oa>file</oa> を上書きする <ex>:mkvimperatorrc!</ex> という特別なコマンドもあります。
+        </p>
+
+        <p>
+            警告: これはカレントディレクトリにファイルを書き出すという Vim のデフォルトの振る舞いと異なります。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag='restarting'>再起動</h2>
+
+<item>
+    <tags>:res :restart</tags>
+    <spec>:res<oa>tart</oa></spec>
+    <description>
+        <p>&liberator.host; を強制的に再起動します。拡張機能をインストールするときに便利です。</p>
+    </description>
+</item>
+
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

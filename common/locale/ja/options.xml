@@ -1,0 +1,1338 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='options' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Options' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='options'>オプション</h1>
+<toc start='2'/>
+
+<p>
+    &liberator.appname; は多くの内部変数とスイッチによって、特殊な効果を得ることができます。
+</p>
+
+<dl>
+    <dt>boolean</dt>       <dd>on または off</dd>
+    <dt>number</dt>        <dd>整数値</dd>
+    <dt>string</dt>        <dd>文字列</dd>
+    <dt>charlist</dt>      <dd>stringに似ているが単一文字からなるもの</dd>
+    <dt>stringlist</dt>    <dd>カンマ(",")で区切られた文字列のリスト</dd>
+</dl>
+
+<h2 tag='set-option E764'>Setting options</h2>
+
+<item>
+    <tags>:set :se</tags>
+    <spec>:se[t]</spec>
+    <description short='true'>
+        <p>デフォルトではない値に設定されているオプションを表示します。</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] all</spec>
+    <description short='true'>
+        <p>すべてのオプションを表示します。</p>
+    </description>
+</item>
+
+<item>
+    <tags>E518 E519</tags>
+    <spec>:se[t] <a>option</a>?</spec>
+    <description>
+        <p><a>option</a> の値を表示します。</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] <a>option</a> […]</spec>
+    <description>
+        <dl>
+            <dt>Boolean オプション</dt> <dd>オンにします。</dd>
+            <dt>Number オプション</dt> <dd>値を表示します。</dd>
+            <dt>String オプション</dt> <dd>値を表示します。</dd>
+        </dl>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] no<a>option</a> […]</spec>
+    <description>
+        <p>Boolean オプション: オフにします。</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] <a>option</a>! […]</spec>
+    <spec>:se[t] inv<a>option</a> […]</spec>
+    <description>
+        <p>Boolean オプション: 有効無効を反転します。</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] inv<a>option</a>=<a>value</a> […]</spec>
+    <spec>:se[t] <a>option</a>!=<a>value</a> […]</spec>
+    <description>
+        <p>リストオプション用。指定の値を反転します。</p>
+
+        <code><ex>:set opt=foo,bar</ex></code>
+        <p>の時に</p>
+        <code><ex>:set opt!=foo,baz</ex></code>
+        <p>と、すると</p>
+        <code><ex>:set opt=bar,baz</ex></code>
+        <p>と、同じ事になります。</p>
+    </description>
+</item>
+
+<item>
+    <tags>:set-default</tags>
+    <spec>:se[t] <a>option</a>&amp; […]</spec>
+    <description>
+        <p>デフォルト値に戻します。</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] all&amp;</spec>
+    <description>
+        <p>全てのオプションをデフォルト値に戻します。</p>
+    </description>
+</item>
+
+<item>
+    <tags>:set-args E487 E521</tags>
+    <spec>:se[t] <a>option</a>=<a>value</a> […]</spec>
+    <description>
+        <p>
+            文字列または数値オプションを <a>value</a> にセットします。
+            数値オプションでは、値は十進法で与える必要があります。<k name='Tab'>をタイプすることで以前の値が挿入されます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set+=</tags>
+    <spec>:se[t] <a>option</a>+=<a>value</a> […]</spec>
+    <description>
+        <p>
+            <a>value</a> に数値オプションを加算します。または <a>value</a> を文字列オプションに加えます。
+            オプションがカンマ区切りのリストである場合、値が空であるときを除いて、カンマが付加されます。
+            オプションがフラグのリストである場合、余計なフラグは削除されます。
+            付加されるフラグがすでに存在している場合、オプションの値は変わりません。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set^=</tags>
+    <spec>:se[t] <a>option</a>^=<a>value</a> […]</spec>
+    <description>
+        <p>
+            <a>value</a> を数値オプションに乗算します。
+            または <a>value</a> を文字列オプションに加えます。 +
+            オプションがカンマ区切りのリストである場合、値が空であるときを除いて、カンマが付加されます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set-=</tags>
+    <spec>:se[t] <a>option</a>-=<a>value</a> […]</spec>
+    <description>
+        <p>
+            数値オプションから <a>value</a> を減算します。または文字列オプションから、もし存在するのなら、<a>value</a> を削除します。
+            <a>value</a> が文字列オプションに存在しない場合でも、エラーや警告はありません。
+            オプションがカンマ区切りのリストである場合、値が空になったときを除き、カンマは削除されます。
+            オプションがフラグのリストである場合、<a>value</a> はオプションにある通り正確でなければなりません。
+            問題を避けるため、ひとつずつフラグを削除します。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:setlocal :setl</tags>
+    <spec>:setl[ocal]</spec>
+    <spec>:setl[ocal] all</spec>
+    <spec>:setl[ocal] <a>option</a>?</spec>
+    <spec>:setl[ocal] <a>option</a></spec>
+    <spec>:setl[ocal] no<a>option</a></spec>
+    <spec>:setl[ocal] inv<a>option</a></spec>
+    <spec>:setl[ocal] <a>option</a>&amp;</spec>
+    <spec>:setl[ocal] all&amp;</spec>
+    <spec>:setl[ocal] <a>option</a>=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>+=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>^=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>-=<a>value</a></spec>
+    <description>
+        <p>
+            <ex>:set</ex> コマンドと同じですが、現在のタブにのみ有効です。
+            詳細は <ex>:set</ex> を見てください。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:setglobal :setg</tags>
+    <spec>:setg[lobal]</spec>
+    <spec>:setg[lobal] all</spec>
+    <spec>:setg[lobal] <a>option</a>?</spec>
+    <spec>:setg[lobal] <a>option</a></spec>
+    <spec>:setg[lobal] no<a>option</a></spec>
+    <spec>:setg[lobal] inv<a>option</a></spec>
+    <spec>:setg[lobal] <a>option</a>&amp;</spec>
+    <spec>:setg[lobal] all&amp;</spec>
+    <spec>:setg[lobal] <a>option</a>=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>+=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>^=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>-=<a>value</a></spec>
+    <description>
+        <p>
+            <ex>:set</ex> コマンドと同じですが、グローバルなオプションが対象です。
+            詳細は <ex>:set</ex> を見てください。
+        </p>
+    </description>
+</item>
+
+<tags>expand-environment-var expand-env :set_env</tags>
+
+<p>
+    環境変数は <o>cdpath</o> や <o>runtimepath</o> のようなパスを指定するオプションで展開されます。
+    変数の表記方法は <em>$VAR</em> ( 非単語文字で終端されます ) もしくは <em>$<a>VAR</a></em> です。
+    Windows では <em>%VAR%</em> もサポートされます。
+</p>
+
+<h2 tag='&liberator.host;-options preferences'>Setting &liberator.host; options</h2>
+
+<p>&liberator.host; options can be viewed and set with the following commands:</p>
+
+<item>
+    <tags>:prefs :preferences</tags>
+    <spec>:pref[erences]</spec>
+    <description>
+        <p>
+            &liberator.host; の設定用ダイアログを表示します。
+            ブラウザの設定をこのダイアログから変更することが可能です。
+            &liberator.appname; がキーバインドをいくらか書き換えたり GUI を変更したりするため、 &liberator.host; の設定がすべて動作するわけではないことに注意してください。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:prefs! :preferences!</tags>
+    <spec>:pref[erences]!</spec>
+    <description>
+        <p>
+            &liberator.host; の高度な設定を変更できる about:config を現在のタブに開きます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set! :set-!</tags>
+    <spec>:se[t]! <a>preference</a>=<a>value</a></spec>
+    <description>
+        <p>
+            &liberator.host; の <a>preference</a> を変更します ( about:config に存在するものです ) 。
+            <ex>:set! <a>preference</a>&amp;</ex> で設定をリセット / 削除できます。
+        </p>
+    </description>
+</item>
+
+<tags>overridden-preferences</tags>
+
+<p>
+    &liberator.appname; は起動時に &liberator.host; の設定をいくつか変更します。
+    たとえ望んでいなくても RC ファイルで <ex>:set! <a>preference</a>=<a>value</a></ex> を使っている場合、それらは異なった値に変更される可能性があります。
+</p>
+
+<p>The following preferences are set:</p>
+
+<ul>
+    <li><link topic='http://kb.mozillazine.org/Dom.popup_allowed_events'>dom.popup_allowed_events</link></li>
+    <li><link topic='http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart'>accessibility.typeaheadfind.autostart</link></li>
+    <li><link topic='http://kb.mozillazine.org/Accessibility.typeaheadfind'>accessibility.typeaheadfind</link></li>
+</ul>
+
+<!-- TODO: others? -->
+
+<h2 tag='list-options'>List of options</h2>
+
+<item>
+    <tags>'act' 'activate'</tags>
+    <spec>'activate' 'act'</spec>
+    <type>stringlist</type>
+    <default>addons,downloads,extensions,help,homepage,quickmark,tabopen,paste</default>
+    <description>
+        <p>自動的にタブが選択されるタイミングの設定です。 以下の値が使用できます:</p>
+
+        <dl>
+            <dt>addons</dt>        <dd><ex>:addo[ns]</ex> コマンド</dd>
+            <dt>downloads</dt>     <dd><ex>:downl[oads]</ex> コマンド</dd>
+            <dt>extoptions</dt>    <dd><ex>:exto[ptions]</ex> コマンド</dd>
+            <dt>help</dt>          <dd><ex>:h[elp]</ex> コマンド</dd>
+            <dt>homepage</dt>      <dd><k>gH</k> マッピング</dd>
+            <dt>quickmark</dt>     <dd><k>go</k> と <k>gn</k> マッピングs</dd>
+            <dt>tabopen</dt>       <dd><ex>:tabopen[!]</ex> コマンド</dd>
+            <dt>paste</dt>         <dd><k>P</k> と <k>gP</k> マッピングs</dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>$CDPATH</tags>
+    <tags>'cd' 'cdpath'</tags>
+    <spec>'cdpath' 'cd'</spec>
+    <type>string</type>
+    <default type='plain'><em>$CDPATH</em> か <str>,,</str> に相当</default>
+    <description>
+        <p>
+            <ex>:cd</ex> コマンドを実行するときに検索されるディレクトリのリストです。
+            これは相対パスにのみ使用され、絶対パスが指定された場合無視されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'cpt' 'complete'</tags>
+    <spec>'complete' 'cpt'</spec>
+    <type>charlist</type>
+    <default>slf</default>
+    <description>
+        <p><ex>:open</ex> プロンプトで補完される項目です。以下の値が使用できます。:</p>
+
+        <dl>
+            <dt>s</dt>     <dd>サーチエンジンの名前とブックマークキーワード</dd>
+            <dt>f</dt>     <dd>ローカルファイル</dd>
+            <dt>l</dt>     <dd>&liberator.host; のロケーションバーのエントリ (賢くソートされたブックマーク、履歴)</dd>
+            <dt>b</dt>     <dd>ブックマーク</dd>
+            <dt>h</dt>     <dd>履歴</dd>
+            <dt>S</dt>     <dd>サジェストエンジン</dd>
+            <dt>t</dt>     <dd>開かれているタブ</dd>
+        </dl>
+
+        <p>
+            値の指定順が重要で、<ex>:set complete=bs</ex> のときはブックマークが先に、次にサーチエンジンの名前とブックマークキーワードがきます。
+        </p>
+
+        <warning>
+            <em>b</em> や <em>h</em> は項目数が多いときにとても重くなります。
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ds' 'defsearch'</tags>
+    <spec>'defsearch' 'ds'</spec>
+    <type>string</type>
+    <default>google</default>
+    <description>
+        <p>
+            デフォルトで使用するサーチエンジンを指定します。
+            デフォルトサーチエンジン名は <ex>:open [arg]</ex> コマンドで、[arg] が URL や既定のサーチエンジンやキーワードの見えない場合に、使われます。
+        </p>
+
+        <p>
+            <o>defsearch</o> に "nicovideo" と設定した場合、 <ex>:open 猫</ex> は <ex>:open nicovideo 猫</ex> と同様に扱われます。
+従ってブックマークキーワードや "nicovideo" というサーチエンジンをまず最初に設定する必要があります。
+        </p>
+
+        <p>
+            <o>defsearch</o> が空の時、&liberator.host; は常に [arg] をそのまま開こうとします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'editor'</tags>
+    <spec>'editor'</spec>
+    <type>string</type>
+    <default>gvim -f</default>
+    <description>
+        <p>
+            外部エディタを指定します。
+            挿入モードもしくはテキストエリアモードで <k name='C-i'/> を押した際に起ち上がるエディタの設定です。
+        </p>
+
+        <warning>
+            &liberator.appname; では -f 指定のない gvim のような、プロセスをフォークするエディタは正常に動作しません。
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noex' 'noexrc'</tags>
+    <tags>'ex' 'exrc'</tags>
+    <spec>'exrc' 'ex'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            カレントディレクトリからの RC ファイルの読み込みができるようにします。
+            このファイルはデフォルトの RC ファイルが読み込まれたあとに追加で読み込まれます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'eht' 'extendedhinttags'</tags>
+    <spec>'extendedhinttags' 'eht'</spec>
+    <type>string</type>
+    <default>//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
+            @oncommand or @class='lk' or @role='link'] |
+        //input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
+        //a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
+        //textarea | //xhtml:textarea | //button | //xhtml:button |
+        //select | //xhtml:select</default>
+    <description>
+        <p><k>;</k> で有効になるヒント要素を指し示す XPath 式です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noeb' 'noerrorbells'</tags>
+    <tags>'eb' 'errorbells'</tags>
+    <spec>'errorbells' 'eb'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>エラーメッセージが表示される時にベルを鳴らします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ei' 'eventignore'</tags>
+    <spec>'eventignore'</spec>
+    <type>stringlist</type>
+    <default/>
+    <description>
+        <p>
+            無視するべきオートコマンドのイベント名のリスト。
+            このリストに <str>all</str> が含まれる場合、すべてのイベントが無視されます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'enc' 'encoding'</tags>
+    <spec>'encoding'</spec>
+    <type>string</type>
+    <default>UTF-8</default>
+    <description>
+        <p>
+            現在のバッファの文字エンコーディングを変更します。
+            現在のページにのみ有効です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'fenc' 'fileencoding'</tags>
+    <spec>'fileencoding'</spec>
+    <type>string</type>
+    <default>UTF-8</default>
+    <description>
+        <p>&liberator.appname; がファイルの読み書きに使う文字エンコーディングを変更します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nofc' 'nofocuscontent'</tags>
+    <tags>'fc' 'focuscontent'</tags>
+    <spec>'focuscontent' 'fc'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            ページが読み込まれたあと、文書にフォーカスします。
+            ウェブサイトを読んでいる際に常にノーマルモードにしておきたい場合に便利です。
+            このオプションが有効のとき、ページ読み込み時に自動的にフォーカスされるテキストボックスからフォーカスを外します。
+            <o>focuscontent</o> を有効にしている際に最初の入力フィールドにフォーカスしたいときは、 <k>gi</k> を使用してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'fh' 'followhints'</tags>
+    <spec>'followhints' 'fh'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>ヒントモードにおける<k name='Return'/> の挙動を変更します。</p>
+
+        <p>有効な値:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>入力されたテキストによってヒントがひとつに絞られた場合すぐにそれを辿ります。</dd>
+            <dt>1</dt>      <dd><k name='Return'/>　で選択されているヒントを辿ります。</dd>
+            <dt>2</dt>      <dd><k name='Return'/> で選択されているヒントを辿りますが、 <k name='Tab'/> によって選択されていなければなりません。</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nofs' 'nofullscreen'</tags>
+    <tags>'fs' 'fullscreen'</tags>
+    <spec>'fullscreen' 'fs'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            現在のウィンドウをフルスクリーン表示にします。
+            また、ステータスラインのような特定の GUI 要素も非表示にします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'go' 'guioptions'</tags>
+    <spec>'guioptions' 'go'</spec>
+    <type>charlist</type>
+    <default/>
+    <description>
+        <p>メニューバーやツールバーのような GUI 要素の表示 / 非表示を設定します。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>m</dt>      <dd>メニューバー</dd>
+            <dt>T</dt>      <dd>ツールバー</dd>
+            <dt>B</dt>      <dd>ブックマークバー</dd>
+            <dt>n</dt>      <dd>タブ番号</dd>
+            <dt>N</dt>      <dd>アイコンの上のタブ番号</dd>
+            <dt>b</dt>      <dd>下スクロールバー</dd>
+            <dt>r</dt>      <dd>右スクロールバー</dd>
+            <dt>l</dt>      <dd>左スクロールバー (<em>l</em> と <em>r</em> は同時指定できません。)</dd>
+        </dl>
+
+        <p><ex>:set showtabline=0</ex> でタブバーも非表示に出来ます。</p>
+
+        <note>スクロールバーの変更の効果はリロードしなければ現れません。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hf' 'helpfile'</tags>
+    <spec>'helpfile' 'hf'</spec>
+    <type>string</type>
+    <default>intro</default>
+    <description>
+        <p>
+            メインヘルプファイルの名前です。
+            ヘルプページを読んでいるときにステータスラインに表示される、 chrome URL の末尾部分です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hin' 'hintinputs'</tags>
+    <spec>'hintinputs' 'hin'</spec>
+    <type>stringlist</type>
+    <default>label,value</default>
+    <description>
+        <p>
+            明確な見出しを持たない input 要素のヒントは、ここで指定された方法で絞り込みが行えるようになります。
+            あなたが指定した順にオプションを試し、初めに見つかったものを使います。
+        </p>
+
+        <dl>
+            <dt>value</dt>      <dd>ヒントは、テキスト入力やドロップダウンの選択によって表示された値です。</dd>
+            <dt>label</dt>      <dd>入力要素用にと定義されたラベルの値。手動で追加されたラベルではうまくいかないでしょう。</dd>
+            <dt>name </dt>      <dd>input 要素の name 属性が使われます。name 属性はユーザが利用するようにはできていないでしょうが、ほとんどの場合 label でも同じ事です。</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hm' 'hintmatching'</tags>
+    <spec>'hintmatching' 'hm'</spec>
+    <type>string</type>
+    <default>contains</default>
+    <description>
+        <p>ヒントモードにおいてマッチに使うアルゴリズムを変更します。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>contains</dt>
+            <dd>
+                入力された文字列は空白で区切られ、それぞれの文字列はリンクテキストのどこかにマッチする必要があります。
+            </dd>
+            <dt>wordstartswith</dt>
+            <dd>
+                入力された文字列はリンクの最初の単語 ( <o>wordseparators</o> を参照してください ) からできるだけ長くマッチされます。
+                現在の単語がマッチしない場合、次の単語の最初からマッチがなされます。
+                単語はリンクに現れる順番でマッチされます。
+                入力された文字列が空白を含む場合、文字列は空白で区切られます。
+                これらの文字列は最初の単語からマッチしていき、リンクに現れる順に単語がマッチしていきます。 
+            </dd>
+            <dt>firstletters</dt>
+            <dd>
+                wordstartswith と同様に動作しますが、マッチしない単語をとばしません。
+            </dd>
+            <dt>custom</dt>
+            <dd>
+                カスタム関数 ( liberator.plugins.customHintMatcher(hintString) ) に処理をまかせます。
+            </dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ht' 'hinttags'</tags>
+    <spec>'hinttags' 'ht'</spec>
+    <type>string</type>
+    <default>//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
+     @oncommand or @class='lk' or @role='link'] |
+ //input[not(@type='hidden')] | //a | //area |
+ //iframe | //textarea | //button | //select |
+//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area |
+//xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select</default>
+    <description>
+        <p><k>f</k> と <k>F</k> で有効になるヒント要素を指し示す XPath 式です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hto' 'hinttimeout'</tags>
+    <spec>'hinttimeout' 'hto'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>
+            ひとつに絞られていない数字ヒントを自動的に確定するまでのタイムアウト時間です。
+            0 ( デフォルト値 ) に設定すると <k name="Return" /> が押されるかヒントがひとつに絞られるまでヒントを確定しません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hi' 'history'</tags>
+    <spec>'history' 'hi'</spec>
+    <type>number</type>
+    <default>500</default>
+    <description>
+        <p>ex コマンドと検索パターンのコマンドライン履歴への保存数です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noprivate' 'private'</tags>
+    <spec>'private'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            <str>プライベートブラウジング</str> モードを設定します。
+            プライベートブラウジングモードでは、
+            履歴、キャッシュ、クッキー、フォームのデータ、パスワード、ダウンロード履歴、
+            ローカル/URLマーク、コマンド履歴、マクロがプライベートブラウジングのセッション中のみ有効なものとなり、
+            通常のブラウジングモードに戻った際に削除されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nohls' 'nohlsearch'</tags>
+    <tags>'hls' 'hlsearch'</tags>
+    <spec>'hlsearch' 'hls'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>前回の検索パターンでマッチした場所を強調表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noic' 'noignorecase'</tags>
+    <tags>'ic' 'ignorecase'</tags>
+    <spec>'ignorecase' 'ic'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>検索パターンにおいて大文字小文字を区別しません。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nois' 'noincsearch'</tags>
+    <tags>'is' 'incsearch'</tags>
+    <spec>'incsearch' 'is'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>入力されると同時に検索パターンにマッチした場所を表示します。</p>
+
+        <note>インクリメンタルサーチは現在のところ前方検索においてのみ動作します。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noim' 'noinsertmode'</tags>
+    <tags>'im' 'insertmode'</tags>
+    <spec>'insertmode' 'im'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            テキストエリアにおいてデフォルトで挿入モードを使います。
+            テキストエリアを編集する際にモード変更なしのエディタとして ( 既存の &liberator.host; インターフェイスで ) 扱いたい場合に便利です。
+            このオプションの設定にかかわらず、input フィールドでは通常の &liberator.host; の挙動になります。
+        </p>
+
+        <p>
+            テキストエリアモードには、挿入モードから <k name='C-t'/> で入ることが出来ます。
+            <!-- TODO: <C-t> is not documented yet. -->
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ls' 'laststatus'</tags>
+    <spec>'laststatus' 'ls'</spec>
+    <type>number</type>
+    <default>2</default>
+    <description>
+        <p>ステータスラインを表示するタイミングを決定します。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>常に表示しません</dd>
+            <dt>1</dt>      <dd>複数のウィンドウがあるときのみ表示します</dd>
+            <dt>2</dt>      <dd>常に表示します</dd>
+        </dl>
+
+        <note>laststatus=1 はまだ実装されていません。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nolks' 'nolinksearch'</tags>
+    <tags>'lks' 'linksearch'</tags>
+    <spec>'linksearch' 'lks'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            検索対象をリンクテキストのみに制限します。
+            これには <str>href</str> 属性を持つ (X)HTML 要素と <str>simple</str> な XLink が含まれます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nolpl' 'lpl'</tags>
+    <tags>'noloadplugins' 'loadplugins'</tags>
+    <spec>'loadplugins' 'lpl'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            起動時にプラグインスクリプトを読み込みます。
+            その際、 &liberator.name;rc ファイルが読み込まれたあとで、まだ読み込まれていないプラグインが自動的に読み込まれます。
+            プラグインを早めに読み込むには、 &liberator.name;rc において <ex>:loadplugins</ex> コマンドを使ってください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'maxitems'</tags>
+    <spec>'maxitems'</spec>
+    <type>number</type>
+    <default>20</default>
+    <description>
+        <p>リストの一回における最大表示数です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'msgs' 'messages'</tags>
+    <spec>'messages' 'msgs'</spec>
+    <type>number</type>
+    <default>100</default>
+    <description>
+        <p>メッセージ履歴に保存するメッセージ数です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nomore' 'more'</tags>
+    <spec>'more'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>メッセージが一画面に収まりらない場合、メッセージ一覧を一時停止します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nextpattern'</tags>
+    <spec>'nextpattern'</spec>
+    <type>stringlist</type>
+    <default>\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b</default>
+    <description>
+        <p>
+            ページに分割されている文書において <o>次</o> のページを推測するために使われるパターンです。
+            <k>]]</k> の入力時に、ドキュメント内の次のページへのリンクを推測するために使われるパターンです。
+            それぞれのパターンは順番にすべてのリンクに対して試され、はじめにマッチしたものが使用されます。
+            パターンには正規表現を指定でき、検索時は大文字小文字は区別されません。
+            リンクとして対象となる要素は <o>hinttags</o> によって決まります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'newtab'</tags>
+    <spec>'newtab'</spec>
+    <type>stringlist</type>
+    <default/>
+    <description>
+        <p>
+            出力結果を自動的に新しいタブに開く ex コマンドの種類を設定します。
+            <ex>:tab command</ex> を使って手動で新しいタブに開くこともできます。
+        </p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>all</dt>            <dd>全てのコマンド</dd>
+            <dt>addons</dt>         <dd><ex>:addo[ns]</ex> コマンド</dd>
+            <dt>downloads</dt>      <dd><ex>:downl[oads]</ex> コマンド</dd>
+            <dt>extoptions</dt>     <dd><ex>:exto[ptions]</ex> コマンド</dd>
+            <dt>help</dt>           <dd><ex>:h[elp]</ex> コマンド</dd>
+            <dt>javascript</dt>     <dd><ex>:javascript!</ex> と <ex>:js!</ex> コマンド</dd>
+            <dt>prefs</dt>          <dd><ex>:pref[erences]!</ex> と <ex>:prefs!</ex> コマンド</dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'noonline' 'online'</tags>
+    <spec>'online'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>'オフライン作業' の状態を表示・設定します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'pageinfo' 'pa'</tags>
+    <spec>'pageinfo' 'pa'</spec>
+
+    <type>charlist</type>
+    <default>gfm</default>
+    <description>
+        <p><ex>:pageinfo</ex> で出力したい情報を設定します。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>g</dt>      <dd>一般的な情報</dd>
+            <dt>f</dt>      <dd>フィード</dd>
+            <dt>m</dt>      <dd>メタタグ</dd>
+        </dl>
+
+        <p>指定した順に表示されます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'pps' 'popups'</tags>
+    <spec>'popups' 'pps'</spec>
+    <type>stringlist</type>
+    <default>tab</default>
+    <description>
+        <p>
+            ポップアップウィンドウを表示する場所を設定します。
+            マウスの中ボタンによるクリックで開かれたウィンドウには適用されず、常に新しいタブで開かれます。
+            以下の値が使用できます:
+        </p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>tab</dt>            <dd>新しいタブ</dd>
+            <dt>window</dt>         <dd>新しいウィンドウ</dd>
+            <dt>resized</dt>        <dd>新しいウィンドウにリサイズされてポップアップ</dd>
+        </dl>
+
+        <p>
+            <em>tab</em> も <em>window</em> も指定されなければ、全てのポップアップは現在のタブに開きます。
+            <em>tab</em> and <em>window</em> は排他的で、最後に指定されているものが有効です。
+        </p>
+
+        <note>このオプションが &liberator.host; のポップアップブロッカーを変更することはありません。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'previouspattern'</tags>
+    <spec>'previouspattern'</spec>
+    <type>stringlist</type>
+    <default><![CDATA[\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$]]></default>
+    <description>
+        <p>
+            ページに分割されている文書において <o>前</o> のページを推測するために使われるパターンです。
+            <k>[[</k> の入力時に、ドキュメント内の前のページへのリンクを推測するために使われるパターンです。
+            それぞれのパターンは順番にすべてのリンクに対して試され、はじめにマッチしたものが使用されます。
+            パターンには正規表現を指定でき、検索時は大文字小文字は区別されません。
+            リンクとして対象となる要素は <o>hinttags</o> によって決まります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>$&liberator.idname;_RUNTIME</tags>
+    <tags>'rtp' 'runtimepath'</tags>
+    <spec>'runtimepath' 'rtp'</spec>
+    <type>stringlist</type>
+    <default type='plain'><str>$&liberator.idname;_RUNTIME</str> or
+    Unix, Mac: <str>~/.&liberator.name;</str>,
+    Windows: <str>~/&liberator.name;</str></default>
+    <description>
+        <p>以下のランタイムファイルを検索するディレクトリのリストです:</p>
+
+        <ul>
+            <li>colors/</li>
+            <li>macros/</li>
+            <li>plugin/</li>
+        </ul>
+
+        <p>例:</p>
+
+        <code><ex>:set runtimepath=<str>~/my&liberator.name;,~/.&liberator.name;</str></ex></code>
+
+        <p>
+            この設定は、
+            <str>~/my&liberator.name;/plugin</str> と <str>~/.&liberator.name;/plugin</str>
+            の両方からプラグインを検索します。
+        </p>
+
+        <p>
+            起動時に、環境変数 <em>$&liberator.idname;_RUNTIME</em> が存在しない場合、
+            &liberator.appname; はこの値を環境変数に設定します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'si' 'sanitizeitems'</tags>
+    <spec>'sanitizeitems' 'si'</spec>
+    <type>stringlist</type>
+    <default>cache,commandline,cookies,formdata,history,marks,sessions</default>
+    <description>
+        <p>削除するプライベート情報のデフォルトリスト。</p>
+
+        <dl>
+            <dt>cache       </dt>       <dd>キャッシュ</dd>
+            <dt>commandline </dt>       <dd>コマンドライン履歴</dd>
+            <dt>cookies     </dt>       <dd>クッキー</dd>
+            <dt>downloads   </dt>       <dd>ダウンロード履歴</dd>
+            <dt>formdata    </dt>       <dd>保存されたフォームと検索の履歴</dd>
+            <dt>history     </dt>       <dd>ブラウジング履歴</dd>
+            <dt>marks       </dt>       <dd>ローカル/URLマーク</dd>
+            <dt>macros      </dt>       <dd>マクロ</dd>
+            <dt>offlineapps </dt>       <dd>オフラインウェブサイトデータ</dd>
+            <dt>passwords   </dt>       <dd>保存されたパスワード</dd>
+            <dt>sessions    </dt>       <dd>認証されたセッション</dd>
+            <dt>sitesettings</dt>       <dd>サイトの設定</dd>
+        </dl>
+
+        <p>
+            履歴が除去されるとき、<ex>:open</ex>と<ex>:tabopen</ex>と<ex>:winopen</ex> のコマンドライン履歴もまた削除されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'sts' 'sanitizetimespan'</tags>
+    <spec>'sanitizetimespan' 'sts'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            デフォルトのプライベート情報除去期間。
+            この期間内に作成された項目だけが削除されます。
+        </p>
+
+        <note>これは <em>cookies</em>、<em>history</em>、<em>formdata</em>、<em>downloads</em> にのみ適用されます。</note>
+
+        <dl>
+            <dt>0</dt>      <dd>全ての期間</dd>
+            <dt>1</dt>      <dd>1時間以内</dd>
+            <dt>2</dt>      <dd>2時間以内</dd>
+            <dt>3</dt>      <dd>4時間以内</dd>
+            <dt>4</dt>      <dd>今日</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'scr' 'scroll'</tags>
+    <spec>'scroll' 'scr'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>
+            <k name='C-u'/> <k name='C-d'/> コマンドでスクロールする行数です。
+            デフォルトでのスクロール行数はウィンドウの高さの半分です。
+            <k name='C-u'/> <k name='C-d'/> に <oa>count</oa> が指定されている場合、<o>scroll</o> の値として設定され、スクロールします。
+            <ex>:set scroll=0</ex> でウィンドウの高さの半分にリセットできます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'shell' 'sh'</tags>
+    <spec>'shell' 'sh'</spec>
+    <type>string</type>
+    <default>_$SHELL_ or "sh", Win32: "cmd.exe"</default>
+    <description>
+        <p><ex>:!</ex> や <ex>:run</ex> コマンドを実行する際に使われるシェルです。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'shellcmdflag' 'shcf'</tags>
+    <spec>'shellcmdflag' 'shcf'</spec>
+    <type>string</type>
+    <default type='plain'><str>-c</str>, Win32: <str>/c</str></default>
+    <description>
+        <p><ex>:!</ex> や <ex>:run</ex> コマンドの実行時にシェルに渡されるフラグです。</p>
+
+        <example><str>bash -c gvim</str></example>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosmd' 'noshowmode'</tags>
+    <tags>'smd' 'showmode'</tags>
+    <spec>'showmode' 'smd'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>コマンドラインに現在のモードを表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ssli' 'showstatuslinks'</tags>
+    <spec>'showstatuslinks' 'ssli'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            カーソルの下にあるリンクのリンク先をステータスバーに表示します。
+            <k name="Tab"/> のようなキーボードコマンドによってフォーカスされたリンクでも表示されます。
+            以下の値が使用できます:
+        </p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>リンク先を表示しない</dd>
+            <dt>1</dt>      <dd>ステータスラインにリンク先を表示</dd>
+            <dt>2</dt>      <dd>コマンドラインにリンク先を表示</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'stal' 'showtabline'</tags>
+    <spec>'showtabline' 'stal'</spec>
+    <type>number</type>
+    <default>2</default>
+    <description>
+        <p>開かれているウェブページのタブバーを表示するタイミングを設定します。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>常に表示しません</dd>
+            <dt>1</dt>      <dd>複数のタブがあるときのみ表示します</dd>
+            <dt>2</dt>      <dd>常に表示します</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noscs' 'nosmartcase'</tags>
+    <tags>'scs' 'smartcase'</tags>
+    <spec>'smartcase' 'scs'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            検索パターンが大文字を含む場合 <o>ignorecase</o> オプションを無効にします。
+            このオプションは <o>ignorecase</o> オプションが有効になっているときのみ使用されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'suggestengines'</tags>
+    <spec>'suggestengines'</spec>
+    <type>stringlist</type>
+    <default>google</default>
+    <description>
+        <p>
+            補完時のサジェストに使用するサーチエンジンを設定します。
+            この機能を利用する場合は、<o>complete</o> オプションに <str>S</str> を追加してください。
+        </p>
+
+        <warning>
+            この機能はサーチエンジンの応答を待つ必要がありますので、タブキーによる補完が遅くなる可能性があります。
+            そのため、高速なインターネット回線を持っている場合のみ使用してください。
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'titlestring'</tags>
+    <spec>'titlestring'</spec>
+    <type>string</type>
+    <default>&liberator.appname;</default>
+    <description>
+        <p>
+            ブラウザウィンドウのタイトルを変更します。
+            &liberator.appname; はブラウザのタイトルを
+            <str>ウェブページのタイトル - Mozilla &liberator.host;</str> から <str>ページのタイトル - &liberator.appname; </str>
+            に変更します。
+            これが好ましくない場合、 以下のようにすることで元に戻せます。
+        </p>
+        <code><ex>:set titlestring=<str>Mozilla &liberator.host;</str></ex></code>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noum' 'nousermode'</tags>
+    <tags>'um' 'usermode'</tags>
+    <spec>'usermode' 'um'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>現在のウェブサイトを読みやすくするために最低限のスタイルシートで表示します。</p>
+
+        <note>現在のところこれはローカルオプションですが、将来的にはグローバルオプションとしてサポートされる予定です。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'urlseparator'</tags>
+    <spec>'urlseparator'</spec>
+    <type>string</type>
+    <default>,\s</default>
+    <description>
+        <p>
+            複数の URL を分割するための正規表現を設定します。
+            この正規表現を区切り文字として使うことで <ex>:open</ex> や類似のコマンドに対して複数の引数を指定することができます。
+            空白は一つだけの引数にも含まれることが多いので、空白のみを指定するのはたいてい実用的ではありません。
+            たとえば <ex>:open linus torvalds</ex> は <str>linus</str> と <str>torvalds</str> というキーワードによるひとつの検索として扱われるべきです。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'verbose', 'vbs'</tags>
+    <spec>'verbose' 'vbs'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            表示されるメッセージの種類を設定します。
+            0 より大きい場合、 &liberator.appname; は実行していることに関してのメッセージを表示します。
+            それらは <ex>:messages</ex> コマンドでいつでも表示できます。
+            最大値は 15 でもっとも詳細なモードになります。
+        </p>
+        <!-- TODO: list levels and associated messages -->
+    </description>
+</item>
+
+
+<item>
+    <tags>'novb' 'novisualbell'</tags>
+    <tags>'vb' 'visualbell'</tags>
+    <spec>'visualbell' 'vb'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            エラー時に鳴るビープ音の代わりにビジュアルベルを使います。
+            ビジュアルベルのスタイルは <ex>:hi Bell</ex> で設定できます。
+        </p>
+
+        <p>
+            もし、ベルを一切使いたくなければこのオプションとともに <ex>:hi Bell display: none;</ex> を使ってください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'wildcase' 'wic'</tags>
+    <spec>'wildcase' 'wic'</spec>
+    <type>string</type>
+    <default>smart</default>
+    <description>
+        <p>
+            補完のマッチ時の大文字小文字に関する挙動を設定します。
+            以下の値が使用できます:</p>
+
+        <dl>
+            <dt><str>smart</str></dt>  <dd>大文字が含まれる場合のみ大文字小文字を区別します</dd>
+            <dt><str>match</str></dt>  <dd>常に大文字小文字を区別します</dd>
+            <dt><str>ignore</str></dt> <dd>常に大文字小文字を区別しません</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'wildignore' 'wig'</tags>
+    <spec>'wildignore' 'wig'</spec>
+    <type>stringlist</type>
+    <default/>
+    <description>
+        <p>
+            ファイル名補完の際に無視するファイルのパターンの一覧です。
+            たとえばオブジェクトファイルと Vim のスワップファイルを無視するには、
+            <ex>:set wildignore=<str>.<em>\\.o,\\..</em>\\.s[a-z]\\<a>2</a></str></ex>
+            とします。
+        </p>
+
+        <note>Vim とは異なり、それぞれのパターンは glob ( 訳注: ワイルドカードのことだと思われます ) ではなく正規表現です。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'wim' 'wildmode'</tags>
+    <spec>'wildmode' 'wim'</spec>
+    <type>stringlist</type>
+    <default>list:full</default>
+    <description>
+        <p>
+            コマンドラインの補完動作方法を設定します。
+            コンマで区切られた以下の値のリストで、補完キーを押すたびにどのように動作すべきかをそれぞれの値で指定します。
+            1 番目の値で 1 回目の補完キーの動作を指定し、 2 番目の値で 2 回目の動作を指定、などとします。
+.
+        </p>
+
+        <p>それぞれのパートで、以下の値が使用できます:</p>
+
+        <dl>
+            <dt><str/></dt>             <dd>最初にマッチしたもののみを補完します。</dd>
+            <dt><str>full</str></dt>         <dd>マッチしたものを次々と完全に補完していきます。最後の候補はオリジナルの文字列です。</dd>
+            <dt><str>longest</str></dt>      <dd>共通する文字列の最も長いところまで補完します。</dd>
+            <dt><str>list</str></dt>         <dd>1 つ以上マッチするものがある場合、すべて一覧表示します。</dd>
+            <dt><str>list:full</str></dt>    <dd>1 つ以上マッチするものがある場合、すべて一覧表示し、次々と完全に補完していきます。</dd>
+            <dt><str>list:longest</str></dt>
+            <dd>
+                1 つ以上マッチするものがある場合、すべて一覧表示し、
+               共通する文字列のもっとも長いところまで補完します。
+               マッチするものがひとつの場合、無条件で完全に補完されます。
+            </dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'wop' 'wildoptions'</tags>
+    <spec>'wildoptions' 'wop'</spec>
+    <type>stringlist</type>
+    <default/>
+    <description>
+        <p>コマンドラインの補完がどのように行われるかを変更する単語のリストです。</p>
+
+        <p>以下の値が使用できます:</p>
+
+        <dl>
+            <dt>auto</dt>       <dd>入力するたびに自動で補完を表示します。</dd>
+            <dt>sort</dt>       <dd>常に補完リストをソートし、 <o>complete</o> オプションより優先されます。</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'wsp' 'wordseparators'</tags>
+    <spec>'wordseparators' 'wsp'</spec>
+    <type>string</type>
+    <default><![CDATA[[\.,!\?:;/\\"\^\$%&?\(\)\[\]\\<a>\\</a><>#\\*\+\\|=~ _\\-]]]></default>
+    <description>
+        <p>
+            <o>hintmatching</o> オプションの <str>wordstartswith</str> と <str>firstletters</str> でリンクのテキストが単語に分割する際に使用される正規表現です。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'jsd' 'jsdebugger'</tags>
+    <spec>'jsdebugger' 'jsd'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            JavaScript デバッガーサービスを補完リストで使います。
+            on の時、より多くのリストが得られます。
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

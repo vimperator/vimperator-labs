@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='pattern' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Patterns' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='text-search-commands'>テキスト検索コマンド</h1>
+<toc start='2'/>
+
+<p>
+    &liberator.appname; は &liberator.host; の標準的なテキスト検索機能に Vim のようなインターフェイスを提供します。
+    &liberator.host; そのものが正規表現による検索をサポートしていないように、検索コマンドでは正規表現を使うことはできません。
+    この機能が実装されることはないでしょう。
+</p>
+
+<item>
+    <tags>/</tags>
+    <spec>/<a>pattern</a>[/]&lt;CR></spec>
+    <description>
+        <p><a>pattern</a> による前方検索を行います。</p>
+
+        <p>
+            <str>\c</str> がパターンのどこかに指定されている場合、そのパターンすべてにおいて <o>ignorecase</o> がオンになっているとして扱われます。
+            <str>\C</str> はパターンすべてにおいて大文字小文字を区別するようになります。
+        </p>
+        <p>
+            <str>\l</str> がパターンのどこかに指定されている場合、 <o>linksearch</o> がオンになっているとして扱われ、リンクのテキストのみが検索されます。
+            <str>\L</str> はページのすべてを検索します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>?</tags>
+    <spec>?<a>pattern</a>[?]&lt;CR></spec>
+    <description>
+        <p><a>pattern</a> による後方検索を行います。</p>
+
+        <p><a>pattern</a> には <k>/</k> と同じ修飾子を使うことができます +</p>
+
+        <note>インクリメンタルサーチは現在のところ前方検索においてのみ動作します。</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>n</tags>
+    <spec>n</spec>
+    <description>
+        <p>
+            次を検索します。
+            直前の検索を 1 回 ( カウント指定がサポートされるまでですが ) 繰り返します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>N</tags>
+    <spec>N</spec>
+    <description>
+        <p>
+            前を検索します。
+            直前の検索を反対の方向へ 1 回 ( カウント指定がサポートされるまでですが ) 繰り返します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>*</tags>
+    <spec>*</spec>
+    <description>
+        <p>カーソルの下にある単語を前方検索します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>#</tags>
+    <spec>#</spec>
+    <description>
+        <p>カーソルの下にある単語を後方検索します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:noh :nohlsearch</tags>
+    <spec>:noh<oa>lsearch</oa></spec>
+    <description>
+        <p>
+            検索による強調表示を消去します。
+            文書の強調表示は新たに検索が行われたときもしくは <o>hlsearch</o> オプションが設定されたときに表示されるようになります。
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

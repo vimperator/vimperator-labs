@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='print' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Printing' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='printing'>印刷</h1>
+<toc start='2'/>
+
+<item>
+    <tags>:ha :hardcopy</tags>
+    <spec>:ha<oa>rdcopy</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            現在のページを印刷します。
+            プリンタの選択、印刷部数、方向の指定などができるダイアログを開きます。
+            <oa>!</oa> とともに使用された場合、ダイアログは表示されずデフォルトのプリンターが使用されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:ha<oa>rdcopy</oa><oa>!</oa> ><a>filename</a></spec>
+    <description>
+        <p><ex>:hardcopy</ex> と同様ですが、 <a>filename</a> に出力します。</p>
+        <note>注釈: Windows では利用できません。</note>
+    </description>
+</item>
+
+
+<h2 tag='&liberator.host;-print-dialogs'>&liberator.host; の印刷ダイアログ</h2>
+
+<p>
+    「印刷プレビュー」と「ページ設定」のダイアログは <ex>:dialog</ex> コマンドを使うことで開くことができます。
+</p>
+
+<p>印刷プレビュー</p>
+<code><ex>:dialog printpreview</ex></code>
+<p>ページ設定</p>
+<code><ex>:dialog printsetup</ex></code>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

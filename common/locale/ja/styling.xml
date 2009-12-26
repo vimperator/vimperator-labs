@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='styling' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Styling' xmlns='http://vimperator.org/namespaces/liberator'>
+<h1 tag='styling'>GUI とウェブページのスタイル変更</h1>
+<toc start='2'/>
+
+<p>
+    &liberator.appname; ではブラウザやウェブページの見た目をスタイル指定によって変更することができます。
+    スタイル指定はすべて CSS によって行います。
+    ユーザインターフェイスの見た目を <ex>:style</ex> コマンドで変更することができますが、 &liberator.appname; では <ex>:highlight</ex> コマンドで見た目の変更を行うほうが便利な場合が多々あります。
+</p>
+
+<item>
+    <tags>E185 :colo :colorscheme</tags>
+    <spec>:colo<oa>rscheme</oa> <a>name</a></spec>
+    <description>
+        <p>
+            カラースキームを読み込みます。<a>name</a> にはまず <o>runtimepath</o> を検索して colors/<a>name</a>.vimp に最初にマッチしたものが使用できます。
+        </p>
+
+        <p>
+            ColorScheme オートコマンドはカラースキームが読み込まれたあとに実行されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:hi :highlight</tags>
+    <spec>:hi<oa>ghlight</oa><oa>!</oa> <oa>-append</oa> <a>group</a> [[<a>selector</a>] <a>css</a>]</spec>
+    <description>
+        <p>
+            <a>group</a> を <a>css</a> で強調表示します。
+            <a>css</a> はカンマで区切られた一つ以上の CSS 宣言です。(例: <em>color: blue; background-color: red</em>)
+            通常、 <a>css</a> は適用される前に書式が正しいかチェックが行われます。
+            前もって書式が正しいとわかっている場合、 <oa>!</oa> でチェックを無効にすることで、 Vimperator の起動が速くなります。
+            <a>selector</a> には有効な CSS セレクタを <ex>:hover</ex> のように指定することができ、適用する部品を制限することができます。
+        </p>
+
+        <p>有効な group:</p>
+        <dl>
+            <dt>Bell</dt>              <dd>Vimperator のビジュアルベルル</dd>
+            <dt>Boolean</dt>           <dd>JavaScript の Boolean オブジェクト</dd>
+            <dt>CmdLine</dt>           <dd>コマンドライン</dd>
+            <dt>CmdOutput</dt>         <dd/>
+            <dt>CompDesc</dt>          <dd>補完リストの説明欄 ( 右側 )</dd>
+            <dt>CompGroup</dt>         <dd/>
+            <dt>CompIcon</dt>          <dd>補完リストの favicon</dd>
+            <dt>CompItem</dt>          <dd>補完リストの一行</dd>
+            <dt>CompItem[selected]</dt><dd>補完リストの選択している一行</dd>
+            <dt>CompLess</dt>          <dd>上にスクロール可能なことを示すマーク</dd>
+            <dt>CompLess::after</dt>   <dd>上にスクロール可能なことを示すマークとして使う文字ク</dd>
+            <dt>CompMore</dt>          <dd>下にスクロール可能なことを示すマーク</dd>
+            <dt>CompMore::after</dt>   <dd>下にスクロール可能なことを示すマークとして使う文字</dd>
+            <dt>CompMsg</dt>           <dd/>
+            <dt>CompResult</dt>        <dd>補完リストの結果欄 ( 左側 )</dd>
+            <dt>CompTitle</dt>         <dd>補完リストのタイトル</dd>
+            <dt>ErrorMsg</dt>          <dd>エラーメッセージ</dd>
+            <dt>Filter</dt>            <dd>補完リストでマッチしたテキスト</dd>
+            <dt>FrameIndicator</dt>    <dd>新しくフレームが選択された際の表示</dd>
+            <dt>Function</dt>          <dd>JavaScript の Function オブジェクト</dd>
+            <dt>Gradient</dt>          <dd/>
+            <dt>GradientLeft</dt>      <dd/>
+            <dt>GradientRight</dt>     <dd/>
+            <dt>Hint</dt>              <dd>ヒント表示。 <ex>:help hints</ex> を参照してください</dd>
+            <dt>HintActive</dt>        <dd><k name="Return"/> でリンク先を辿るヒント要素</dd>
+            <dt>HintElem</dt>          <dd>選択されうるヒント要素</dd>
+            <dt>HintImage</dt>         <dd>画像の上のヒント表示</dd>
+            <dt>Indicator</dt>         <dd/>
+            <dt>InfoMsg</dt>           <dd>通知メッセージ</dd>
+            <dt>Keyword</dt>           <dd>URLブックマークキーワード</dd>
+            <dt>LineNr</dt>            <dd>エラーの行番号</dd>
+            <dt>Message</dt>           <dd/>
+            <dt>ModeMsg</dt>           <dd>コマンドラインのモード表示</dd>
+            <dt>MoreMsg</dt>           <dd>さらに表示するテキストがある場合の表示</dd>
+            <dt>NonText</dt>           <dd/>
+            <dt>Normal</dt>            <dd>コマンドラインの通常テキスト</dd>
+            <dt>Null</dt>              <dd>JavaScript の Null オブジェクト</dd>
+            <dt>Number</dt>            <dd>JavaScript の Number オブジェクト</dd>
+            <dt>Object</dt>            <dd>JavaScript の Object オブジェクト</dd>
+            <dt>Preview</dt>           <dd/>
+            <dt>Question</dt>          <dd>決定を行うためのプロンプト</dd>
+            <dt>Search</dt>            <dd>ウェブページの検索結果の強調表示</dd>
+            <dt>StatusLine</dt>        <dd>ステータスバー</dd>
+            <dt>StatusLineBroken</dt>  <dd>安全でないウェブページにおけるステータスバー</dd>
+            <dt>StatusLineSecure</dt>  <dd>安全なウェブページにおけるステータスバー</dd>
+            <dt>StatusLineExtended</dt><dd>EV 認証による安全なウェブページにおけるステータスバー</dd>
+            <dt>String</dt>            <dd>JavaScript の String オブジェクト</dd>
+            <dt>TabClose</dt>          <dd>タブの閉じるボタン</dd>
+            <dt>TabIcon</dt>           <dd>タブのアイコン</dd>
+            <dt>TabIconNumber</dt>     <dd>アイコンの上に表示される、タブ番号</dd>
+            <dt>TabNumber</dt>         <dd>アイコンのとなりに表示される、タブ番号</dd>
+            <dt>TabText</dt>           <dd>タブのテキスト</dd>
+            <dt>Tag</dt>               <dd>URL のブックマークタグ</dd>
+            <dt>Title</dt>             <dd><ex>:pageinfo</ex> や <ex>:jumps</ex> などのリストのタイトル</dd>
+            <dt>URL</dt>               <dd>A URL</dd>
+            <dt>WarningMsg</dt>        <dd>警告メッセージ</dd>
+        </dl>
+
+        <p>
+            <oa>-append</oa> ( 簡易指定: <em>-a</em> ) が指定されている場合、現在の値に <a>css</a> が追加されますが、そうでない場合の呼び出しはすべて完全に以前のスタイル指定を差し替えます。
+<a>css</a> が指定されていない場合、 <a>group</a> にマッチするものが一覧表示されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:highlight-clear</tags>
+    <spec>:hi<oa>ghlight</oa> clear <oa><a>group</a> <oa><a>selector</a></oa></oa></spec>
+    <description>
+        <p>
+            <a>group</a> のスタイル指定を初期設定値に戻します。
+            <a>group</a> が与えられていない場合、すべてのグループを元に戻します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:sty :style</tags>
+    <spec>:sty<oa>le</oa><oa>!</oa> <oa>-name=<a>name</a></oa> <oa>-append</oa> <a>filter</a> [<a>css</a>]</spec>
+    <description>
+        <p>
+            ブラウザもしくはウェブページに CSS でのスタイル指定を追加します。
+            <a>filter</a> はコンマで区切られた適用する URL のリストです。
+            <em>*</em> で終わる URL はプリフィクスとして扱われ、 <em>:</em> や <em>/</em> を全く含まない URL はドメインとして扱われます。
+            <a>css</a> は完全な CSS ルールセットです。( 例: <tt>body { color: blue; }</tt> )
+        </p>
+
+        <p>
+            もし <a>name</a> ( 簡易指定: <em>-n</em> ) が指定されていると、存在する同名のスタイル指定は上書きされ、 <a>name</a> を使った最近のスタイル指定は削除される場合があります。
+            <oa>-append</oa> ( 簡易指定: <em>-a</em> ) が <ex>-name</ex> とともに指定されている場合、 <a>css</a> と <a>filter</a> は現在の値に追加されます。
+        </p>
+
+        <p><a>css</a> の指定がない場合、マッチしたスタイルが一覧表示されます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dels :delstyle</tags>
+    <spec>:dels<oa>tyle</oa> [-name=<a>name</a>] [-index=<a>index</a>] [<a>filter</a>] [<a>css</a>]</spec>
+    <description>
+        <p>
+            マッチしたスタイルをすべて削除します。
+            <a>filter</a> が指定されている場合、フィルタにマッチしたものだけが無効になります。
+            たとえば、 <str>mozilla.org</str> というフィルタが <str>www.google.com,mozilla.org</str> に適用されるスタイルに対して与えられた場合、 <str>www.google.com</str> へスタイルが適用されるようになります。
+            利用可能なオプションは以下になります:
+        </p>
+
+        <ul>
+            <li><em>-name</em>:  <ex>:style</ex> を適用する名前 ( 簡易指定: <em>-n</em> )</li>
+            <li><em>-index</em>: 名前のないスタイル指定のためのもので、 <ex>:style</ex> で表示されるインデックス ( 簡易指定: <em>-i</em> )</li>
+        </ul>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styleenable :stylee</tags>
+    <tags>:styenable :stye</tags>
+    <spec>:styled<oa>isable</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>マッチする全てのスタイルを有効にします。引数は <ex>:delstyle</ex>と同様です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styledisable :styled</tags>
+    <tags>:stydisable :styd</tags>
+    <spec>:stylee<oa>nable</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>マッチする全てのスタイルを無効にします。引数は <ex>:delstyle</ex>と同様です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styletoggle :stylet</tags>
+    <tags>:stytoggle :styt</tags>
+    <spec>:stylet<oa>oggle</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>マッチする全てのスタイルの有効/無効を切り替えます。引数は <ex>:delstyle</ex>と同様です。</p>
+    </description>
+</item>
+
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->
