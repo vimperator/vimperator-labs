@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="buffer"
+    title="&liberator.appname; Buffer"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="buffer document">バッファ</h1>
+<toc start="2"/>
+
+&liberator.appname; は各タブにつき 1 つのバッファオブジェクトを保持しています。
+それはたいてい高度な機能を持った (X)HTML 文書です。
+
+<h2 tag="buffer-information">バッファ情報</h2>
+
+<item>
+    <tags><![CDATA[<C-g>]]></tags>
+    <spec>&lt;C-g></spec>
+    <description>
+        <p>
+            現在のファイル名を表示します。
+            ファイルサイズや最終更新日付のような付加的な情報も表示します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[g<C-g>]]></tags>
+    <spec>g&lt;C-g></spec>
+    <description>
+        <p>
+            ファイルの情報を表示します。
+            <ex>:pa<oa>geinfo</oa></ex> と同様です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:pa :pageinfo</tags>
+    <spec>:pa<oa>geinfo</oa></spec>
+    <description>
+        <p>
+            ページのいろいろな情報を表示します。
+            利用可能なオプションについては <ex>:help <o>pageinfo</o></ex> を参照してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gf</tags>
+    <spec>gf</spec>
+    <description>
+        <p>
+            ソースを表示します。
+            内部エディタを使って、現在のウェブサイトのソースコードを現在のタブに開きます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gF</tags>
+    <spec>gF</spec>
+    <description>
+        <p>
+            外部エディタでソースを表示します。
+            <o>editor</o> オプションで指定した外部エディタを使って、現在のウェブサイトのソースコードを開きます。
+            現在のところ外部エディタは URL からファイルをダウンロードし、開くことができなければなりません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:vie :viewsource</tags>
+    <spec>:vie<oa>wsource</oa><oa>!</oa> <oa>url</oa></spec>
+    <description>
+        <p>
+            現在の文書のソースコードを表示します。
+            <oa>url</oa> が指定されている場合は、その文書のソースを表示します。
+            <oa>!</oa> が与えられている場合、外部エディタで開かれます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>|</tags>
+    <spec>|</spec>
+    <description>
+        <p>
+            レンダリングされた結果とソースコード表示を交互に切り替えます。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="motion scrolling">Motion commands</h2>
+
+<item>
+    <tags>^ 0</tags>
+    <spec>0</spec>
+    <description>
+        <p>
+            文書の一番左へスクロールします。
+            Vim と違って、 <k>0</k> と <k>^</k> は同じように動作します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>$</tags>
+    <spec>$</spec>
+    <description>
+        <p>文書の一番右へスクロールします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Home> gg]]></tags>
+    <spec><oa>count</oa>gg</spec>
+    <description>
+        <p>
+            文書の一番上へスクロールします。
+            <k>35gg</k> のように <oa>count</oa> とともに使用すると、文書の 35% の位置までスクロールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<End> G]]></tags>
+    <spec><oa>count</oa>G</spec>
+    <description>
+        <p>
+            文書の一番下へスクロールします。
+            <k>35G</k> のように <oa>count</oa> とともに使用すると、文書の 35% の位置までスクロールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>N%</tags>
+    <spec><a>count</a>%</spec>
+    <description>
+        <p>文書の <a>count</a>% の位置までスクロールします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Left> h]]></tags>
+    <spec><oa>count</oa>h</spec>
+    <description>
+        <p>
+            文書を左にスクロールします。
+            <oa>count</oa> が指定されている場合、 <oa>count</oa> 回のスクロール幅と同じ分スクロールします。
+        </p>
+        <p>
+            文書がそれ以上スクロールできない場合、ビープ音が鳴ります ( <o>visualbell</o> オプションがオフの場合 ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-e> <Down> j]]></tags>
+    <spec><oa>count</oa>j</spec>
+    <description>
+        <p>
+            文書を下にスクロールします。
+            <oa>count</oa> が指定されている場合、 <oa>count</oa> 回のスクロール幅と同じ分スクロールします。
+        </p>
+        <p>
+            文書がそれ以上スクロールできない場合、ビープ音が鳴ります ( <o>visualbell</o> オプションがオフの場合 ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-y> <Up> k]]></tags>
+    <spec><oa>count</oa>k</spec>
+    <description>
+        <p>
+            文書を上にスクロールします。
+            <oa>count</oa> が指定されている場合、 <oa>count</oa> 回のスクロール幅と同じ分スクロールします。
+        </p>
+        <p>
+            文書がそれ以上スクロールできない場合、ビープ音が鳴ります ( <o>visualbell</o> オプションがオフの場合 ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Right> l]]></tags>
+    <spec><oa>count</oa>l</spec>
+    <description>
+        <p>
+            文書を右にスクロールします。
+            <oa>count</oa> が指定されている場合、 <oa>count</oa> 回のスクロール幅と同じ分スクロールします。
+        </p>
+        <p>
+            文書がそれ以上スクロールできない場合、ビープ音が鳴ります ( <o>visualbell</o> オプションがオフの場合 ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-d>]]></tags>
+    <spec><oa>count</oa>&lt;C-d></spec>
+    <description>
+        <p>
+            バッファを下方にスクロールします。
+            <o>scroll</o> オプション ( デフォルト値はページの半分です ) でスクロールする行数を指定できます。
+            <oa>count</oa> が与えられている場合、まず <o>scroll</o> にその値が設定され、その後スクロールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-u>]]></tags>
+    <spec><oa>count</oa>&lt;C-u></spec>
+    <description>
+        <p>
+            バッファを上方にスクロールします。
+            <o>scroll</o> オプション ( デフォルト値はページの半分です ) でスクロールする行数を指定できます。
+            <oa>count</oa> が与えられている場合、まず <o>scroll</o> にその値が設定され、その後スクロールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<S-Space> <PageUp> <C-b>]]></tags>
+    <spec><oa>count</oa>&lt;C-b></spec>
+    <description>
+        <p>
+            1 ページ分上にスクロールします。
+            <oa>count</oa> ページ分バッファを上方に ( 後方に ) スクロールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Space> <PageDown> <C-f>]]></tags>
+    <spec><oa>count</oa>&lt;C-f></spec>
+    <description>
+        <p>
+            1ページ分下にスクロールします。
+            <oa>count</oa> ページ分バッファを下方に ( 前方に ) スクロールします。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="jumping">要素へジャンプ</h2>
+
+<item>
+    <tags><![CDATA[<Tab>]]></tags>
+    <spec>&lt;Tab></spec>
+    <description>
+        <p>次の要素にフォーカスを移します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<S-Tab>]]></tags>
+    <spec>&lt;S-Tab></spec>
+    <description>
+        <p>前の要素にフォーカスを移します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gi</tags>
+    <spec><oa>count</oa>gi</spec>
+    <description>
+        <p>
+            最後に使った入力フィールドにフォーカスします。
+            もしまだ入力フィールドを使っていないのであれば、最初の入力フィールドにフォーカスします。
+            <oa>count</oa> を指定すると <oa>count</oa> 番目の入力フィールドに直接飛びます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>]f</tags>
+    <spec><oa>count</oa>]f</spec>
+    <description>
+        <p>
+            次のフレームにフォーカスします。
+            <oa>count</oa> 個次のフレームにフォーカスを移します。
+            新しくフォーカスされたフレームは少しの間赤く光ります。
+            循環しません ( 訳注: 最後のフレームの次は最初のフレームにはなりません ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>[f</tags>
+    <spec><oa>count</oa>[f</spec>
+    <description>
+        <p>
+            前のフレームにフォーカスします。
+            <oa>count</oa> 個前のフレームにフォーカスします。
+            新しくフォーカスされたフレームは少しの間赤く光ります。
+            循環しません ( 訳注: 最初のフレームの前は最後のフレームにはなりません ) 。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>]]</tags>
+    <spec><oa>count</oa>]]</spec>
+    <description>
+        <p>
+            <str>next</str> や <str>></str> という名前のリンクが存在する場合、それを辿ります。
+            掲示板や説明書を読むときに便利です。
+            <o>nextpattern</o> オプションで挙動を変更できます。
+            ファイル間の関連も辿ることができます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>[[</tags>
+    <spec><oa>count</oa>[[</spec>
+    <description>
+        <p>
+            <str>prev</str> 、<str>previous</str> や <str>&lt;</str> という名前のリンクが存在する場合、それを辿ります。
+            掲示板や説明書を読むときに便利です。
+            <o>previouspattern</o> オプションで挙動を変更できます。
+            ファイル間の関連も辿ることができます。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="zooming zoom">ズーム</h2>
+
+ズームコマンドは二つのプロパティに依存しています。ズーム範囲と範囲内での一連のレベルです。
+
+ページズームの最終的な値は設定されたズーム範囲内に制限されます ( デフォルト: 30% ～ 300% ) 。
+ズームレベルは <k>zi</k> / <k>zo</k> や類似のコマンドでズーム値を段階的に変更する際に使用されます。
+デフォルトのズームレベルは 30% 、 50% 、 67% 、 80% 、 90% 、 100% 、 110% 、 120% 、 133% 、 150% 、 170% 、 200% 、 240% 、 300% となっています。
+
+有効なズーム範囲は &liberator.host; の設定の
+<link topic="http://kb.mozillazine.org/Zoom.minPercent">'zoom.minPercent'</link> と
+<link topic="http://kb.mozillazine.org/Zoom.maxPercent">'zoom.maxPercent'</link> で変更できます。
+ズームレベルは <link topic="http://kb.mozillazine.org/Toolkit.zoomManager.zoomValues">'toolkit.ZoomManager.zoomLevels'</link>
+設定で変更が可能です。
+
+<note>
+    'toolkit.ZoomManager.zoomLevels' はパーセントではなく、 0 から 1 の間の数値として指定します。
+</note>
+
+<item>
+    <tags>+ zi</tags>
+    <spec><oa>count</oa>zi</spec>
+    <description>
+        <p>
+            現在のウェブページのテキストを拡大します。
+            "z"oom "i"n と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zm</tags>
+    <spec><oa>count</oa>zm</spec>
+    <description>
+        <p>
+            現在のウェブページのテキストをより大きい倍率で拡大します。
+            "z"oom "m"ore と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>- zo</tags>
+    <spec><oa>count</oa>zo</spec>
+    <description>
+        <p>
+            現在のウェブページのテキストを縮小します。
+            "z"oom "o"ut と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zr</tags>
+    <spec><oa>count</oa>zr</spec>
+    <description>
+        <p>
+            現在のウェブページのテキストをより小さい倍率で縮小します。
+            "z"oom "r"educe と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zz</tags>
+    <spec><oa>count</oa>zz</spec>
+    <description>
+        <p>
+            現在のウェブページのテキストを指定の拡大率に変更します。
+            拡大率は 30 ～ 300% の値を指定できます。
+            指定がない場合、テキストの拡大率は 100% にリセットされます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zI</tags>
+    <spec><oa>count</oa>zI</spec>
+    <description>
+        <p>
+            現在のウェブページをすべて拡大します。
+            "z"oom "I"n と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zM</tags>
+    <spec><oa>count</oa>zM</spec>
+    <description>
+        <p>
+            現在のウェブページをすべてより大きい倍率で拡大します。
+            "z"oom "M"ore と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zO</tags>
+    <spec><oa>count</oa>zO</spec>
+    <description>
+        <p>
+            現在のウェブページをすべて縮小します。
+            "z"oom "O"ut と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zR</tags>
+    <spec><oa>count</oa>zR</spec>
+    <description>
+        <p>
+            現在のウェブページをすべてより小さい倍率で縮小します。
+            "z"oom "R"educe と覚えてください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zZ</tags>
+    <spec><oa>count</oa>zZ</spec>
+    <description>
+        <p>
+            現在のウェブページのすべてを指定の拡大率に変更します。
+            拡大率は 30 ～ 300% の値を指定できます。
+            指定がない場合、すべて拡大率は 100% にリセットされます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:zo :zoom</tags>
+    <spec>:zo<oa>om</oa><oa>!</oa> <oa>value</oa></spec>
+    <spec>:zo<oa>om</oa><oa>!</oa> +<a>value</a> | -<a>value</a></spec>
+    <description>
+        <p>
+            現在のウェブページの拡大率を変更します。
+            <oa>value</oa> には 30 ～ 300% の間の絶対指定か "-" か "+" を前につけた相対指定が可能です。
+            <oa>value</oa> の指定がない場合、拡大率は 100% にリセットされます。
+        </p>
+
+        <p>
+            通常このコマンドはテキストの拡大率を操作しますが、 <oa>!</oa> 付きで使用するとすべての拡大率を操作します。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="frames">フレーム上の操作</h2>
+
+<item>
+    <tags>:frameo :frameonly</tags>
+    <spec>:frameo<oa>nly</oa></spec>
+    <description>
+        <p>現在のフレームのページのみを表示します。</p>
+    </description>
+</item>
+
+
+<h2 tag="copying yanking">テキストのコピー</h2>
+
+X11 で動作している場合、以下のコマンドによってテキストはクリップボードにコピーされるだけではなく、
+X11 セレクションにも追加されマウスの中ボタンでペーストできるようになります:
+
+<item>
+    <tags>y</tags>
+    <spec>y</spec>
+    <description>
+        <p>
+            現在の URL をクリップボードにヤンクします。
+            X11 で動作している場合、 URL はセレクションに追加されマウスの中ボタンでペーストできるようになります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>Y</tags>
+    <spec>Y</spec>
+    <description>
+        <p>現在選択しているテキストをクリップボードにコピーします。</p>
+    </description>
+</item>
+
+
+<h2 tag="alternate-stylesheet">代替スタイルシート</h2>
+
+ページの制作者は HTML 文書に代替スタイルシートを指定するかもしれません。
+ユーザはこれらのスタイルシートの中からお気に入りのものを選んで使うことができます。
+
+<item>
+    <tags>:pagest :pagestyle</tags>
+    <spec>:pagest<oa>yle</oa> <oa>stylesheet</oa></spec>
+    <description>
+        <p>
+            ページに用意されているスタイルシートを選択し、適用します。
+            <oa>stylesheet</oa> が指定されていない場合、ページのデフォルトスタイルシートが使用されます。
+        </p>
+
+        <p>ページに用意されているスタイルシートはすべて <o>usermode</o> オプションの設定によって取り除くことができます。</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd" [
+    <!ENTITY tab "&#xa0;&#xa0;&#xa0;">
+]>
+
+<document
+    name="developer"
+    title="&liberator.appname; Developer information"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="developer-information">開発者向け情報</h1>
+<toc start="2"/>
+
+<h2 tag="writing-docs documentation">ドキュメントの書き方</h2>
+
+<p>
+    新しい機能はすべて、ドキュメントを書くことがパッチの採用において<em>必須</em>です。
+    ( 訳注: 以下の例は日本語ですが、実際にパッチを作成・送付する際は英語で記述してください。 )
+    ドキュメントは XHTML に似た XML で書かれ、少し特殊なタグがあります。
+    例えば:
+</p>
+
+<code><![CDATA[
+<item>
+    <tags><![CDATA[<F1> :help :h help]]]]><![CDATA[></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]]]><![CDATA[></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+]]></code>
+
+<p>
+    <ex>:help</ex> コマンドや <k name="F1"/> キーバインドに新たなヘルプを作成します。
+    また、コマンドやそのショートカット、キーバインド、一般的なトピックのタグが作成されます。
+    これらのタグは他のトピックに関して言及する時と <ex>:help</ex> コマンドのリンクとなります。
+    上記コードは以下の様に表示されます:
+</p>
+
+<html:div style="margin: 2em;">
+<item>
+    <tags><![CDATA[<F1> :help :h help]]></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+</html:div>
+
+<p>
+    もし、どのファイル/セクションに書けば良いか分からない場合は、
+    メーリングリストや <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>
+    に訊いてください。
+</p>
+
+<h3 tag="help-tags help-xml">ヘルプタグ</h3>
+
+<p>
+    以下はヘルプページにおける一般的なXMLタグのリストでハイライトされます。
+</p>
+
+<dl>
+    <dt>Layout</dt><dd/>
+    <dt>p</dt>         <dd>段落 (HelpParagraph)</dd>
+    <dt>h1</dt>        <dd>第一見出し (HelpHead)</dd>
+    <dt>h2</dt>        <dd>第二見出し (HelpSubhead)</dd>
+    <dt>h3</dt>        <dd>第三見出し (HelpSubsubhead)</dd>
+    <dt>code</dt>      <dd>コードブロック (HelpCode)</dd>
+    <dt>note</dt>      <dd><note style="margin: 0;">注釈 (HelpNote)</note></dd>
+    <dt>warning</dt>   <dd><warning style="margin: 0;">警告 (HelpWarning)</warning></dd>
+</dl>
+<dl>
+    <dt>Generic</dt><dd/>
+    <dt>link</dt>         <dd>リンク (HelpLink)</dd>
+    <dt>&tab;@topic</dt>  <dd>トピックリンク。または、完全なURI</dd>
+    <dt>em</dt>           <dd><em>強調</em> テキスト. (HelpEm)</dd>
+    <dt>str</dt>          <dd>引用符でくくられた <str>文字列</str> (HelpString)</dd>
+    <dt>logo</dt>         <dd>&liberator.appname; のロゴ (Logo)</dd>
+</dl>
+<dl>
+    <dt>Items</dt><dd/>
+    <dt>item</dt>       <dd>ヘルプ記事 (HelpItem)</dd>
+    <dt>&tab;tags</dt>  <dd>See the 'Tagging' section (HelpTags)</dd>
+    <dt>&tab;spec</dt>  <dd>コマンド例の様なヘルプ記事の定義 (HelpSpec)</dd>
+    <dt>&tab;type</dt>  <dd><em>数値</em>, <em>真偽値</em>, <em>文字列</em>, <em>文字列リスト</em>, <em>文字リスト</em> の類のオプション
+                            (HelpType)
+                        </dd>
+    <dt>&tab;default</dt>     <dd>デフォルト値 (HelpDefault)</dd>
+    <dt>&tab;description</dt> <dd>ヘルプ記事の概要 (HelpDescription)</dd>
+    <dt>a</dt>  <dd>必要とする <a>引数</a>. (HelpArg)</dd>
+    <dt>oa</dt> <dd>省略可能な <oa>引数</oa>. (HelpOptionalArg)</dd>
+</dl>
+<dl>
+    <dt>Tagging</dt><dd/>
+    <dt>tags</dt>   <dd>半角スペースで区切られたタグのリスト。右部に表示され相互のリンクに使用される (HelpTags)</dd>
+    <dt>@tag</dt>   <dd>タグ属性。どの要素にも付けることができ、&lt;tags> 要素を生成する (HelpTag)</dd>
+</dl>
+<dl>
+    <dt>Linking</dt><dd/>
+    <dt>o</dt>          <dd>オプションへのリンク (HelpOpt)</dd>
+    <dt>ex</dt>         <dd>ex コマンドへのリンク (HelpEx)</dd>
+    <dt>k</dt>          <dd>キー(キーバインド)へのリンク (HelpKey)</dd>
+    <dt>&tab;@name</dt> <dd>キーの値を指定する属性。&lt;<a>value</a>>と囲まれる
+                            例、 <em>&lt;k name="lt"/></em> は <em><k name="lt"/> となる</em>.
+                        </dd>
+    <dt>t</dt>          <dd>任意のヘルプとピックへのリンク (HelpTopic)</dd>
+</dl>
+<dl>
+    <dt>Plugins</dt><dd/>
+    <dt>plugin</dt>            <dd>プラグインが使用するコンテナとなるタグ</dd>
+    <dt>&tab;@name</dt>        <dd>プラグイン名。プラグインのヘルプのタグとして使用される</dd>
+    <dt>&tab;@version</dt>     <dd>プラグインのバージョン</dd>
+    <dt>&tab;@href</dt>        <dd>プラグインのホームページ</dd>
+    <dt>&tab;@summary</dt>     <dd>プラグインの概要で、セクションの先頭に表示される</dd>
+
+    <dt>project</dt>           <dd>どのプロジェクトのプラグインであるかを示す</dd>
+    <dt>&tab;@name</dt>        <dd>プロジェクト名 (例 <str>&liberator.name;</str>)</dd>
+    <dt>&tab;@minVersion</dt>  <dd>プラグインが動く最小バージョン</dd>
+    <dt>&tab;@maxVersion</dt>  <dd>プラグインが動く最大バージョン</dd>
+
+    <dt>author</dt>            <dd>プラグインの作者。複数してい可能</dd>
+    <dt>&tab;@href</dt>        <dd>作者のホームページ</dd>
+    <dt>&tab;@email</dt>       <dd>作者へのメールアドレス</dd>
+
+    <dt>license</dt>           <dd>プラグインのライセンス。複数指定可能</dd>
+    <dt>&tab;@href</dt>        <dd>ライセンスの説明がある URL</dd>
+</dl>
+
+<h2 tag="generating-docs">ドキュメント生成</h2>
+
+<p>
+    新たなコマンドやマッピングやオプションを作った後、XML のヘルプを自動生成することができます。
+</p>
+
+<example><ex>:echo util.generateHelp(commands.get(<str>addons</str>), <![CDATA[<p>Extra text</p>]]>)</ex></example>
+
+<h2 tag="writing-plugins">プラグインを書く</h2>
+
+<p>
+    &liberator.appname; プラグインを書くのはとても簡単です。
+    プラグインは Chrome特権下で動き、&liberator.appname; や &liberator.host; の API
+    にアクセスできる JavaScript ファイルです。
+    各プラグインはそれぞれグローバルオブジェクトを持ち、<em>window</em> や <em>liberator</em>
+    の名前空間を汚すこと無く変数や関数を作れることを意味します。
+    これは JavaScript 開発で良く使われるクロージャを使用しなくても良いことを意味します。
+
+    さらに、<o>runtimepath</o><em>/plugin</em> ディレクトリに置いたプラグインは
+    <em>plugins.&lt;pluginName</em> 以下にそのコンテキスト蓄積がされます。
+    開発やテストで重要でしょう。
+</p>
+
+<h3 tag="plugin-documentation">プラグインのドキュメント</h3>
+
+<p>
+    プラグインはその中にドキュメントを提供しているかもしれません。
+    それは <ex>:help plugins</ex> ページで表示されます。
+    ヘルプ記事のマークアップは上記と同様で、少し特殊なものを含みます。
+    ここに有名な <em>flashblock</em> の例を示します:
+</p>
+
+<code><![CDATA[
+var INFO = 
+<plugin name="flashblock" version="1.0"
+        href="http://ticket.vimperator.org/9"
+        summary="Flash Blocker"
+        xmlns="http://vimperator.org/namespaces/liberator">
+    <author email="maglione.k@gmail.com">Kris Maglione</author>
+    <license href="http://opensource.org/licenses/mit-license.php">MIT</license>
+    <project name="Vimperator" minVersion="2.0"/>
+    <p>
+        This plugin provides the same features as the ever popular FlashBlock
+        Firefox addon. Flash animations are substituted with place holders which
+        play the original animation when clicked. Additionally, this plugin provides
+        options to control which sites can play animations without restrictions, and
+        triggers to toggle the playing of animation on the current page.
+	commandline from the data in a given form.
+    </p>
+    <item>
+	<tags>'flashblock' 'fb'</tags>
+	<spec>'flashblock' 'fb'</spec>
+        <type>boolean</type>
+        <default>true</default>
+	<description>
+            <p>
+                Controls the blocking of flash animations. When true, place
+                holders are substituted for flash animations on untrusted sites.
+            </p>
+	</description>
+    </item>]]>
+    <em>…</em><![CDATA[
+</plugin>;
+]]>
+</code>
+
+<p>
+    インライン XML は <link topic="https://developer.mozilla.org/en/E4X">E4X</link>
+    で書くことが可能です。
+    重要なのは <em>INFO</em> 変数に割り当てることです。でないと &liberator.appname; は
+    ドキュメントを探し当てる事ができません。
+    ドキュメントは他の &liberator.appname; ドキュメントとまったく同じ振る舞いをし、
+    提供したタグは <ex>:help</ex> コマンドのタグの補完や参照が可能となります。
+    ドキュメントが要求されなくとも、プラグインのオプションやコマンド、特にマッピングの
+    最新に基づくドキュメントを提供することを強く推奨します。
+</p>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

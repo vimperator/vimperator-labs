@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<dl tag="dialog-list" replace="dialog-list">
+    <dt>about</dt>           <dd>Mozilla &liberator.host; について ( ヘルプ -> Mozilla &liberator.host; について )</dd>
+    <dt>addbookmark</dt>     <dd>現在のページをブックマークに追加 ( ブックマーク -> このページをブックマーク )</dd>
+    <dt>addons</dt>          <dd>アドオン ( ツール -> アドオン )</dd>
+    <dt>bookmarks</dt>       <dd>ブックマーク ( 表示 -> サイドバー -> ブックマーク )</dd>
+    <dt>checkupdates</dt>    <dd>ソフトウェアの更新を確認 ( ヘルプ -> ソフトウェアの更新を確認 )</dd>
+    <dt>cleardata</dt>       <dd>プライバシー情報の消去 ( ツール -> プライバシー情報の消去 )</dd>
+    <dt>cookies</dt>         <dd>クッキー一覧 ( ツール -> オプションからプライバシータブの「 Cookie を表示」をクリック )</dd>
+    <dt>console</dt>         <dd>エラーコンソール ( ツール -> エラーコンソール )</dd>
+    <dt>customizetoolbar</dt><dd>ツールバーのカスタマイズ ( 表示 -> ツールバー -> カスタマイズ )</dd>
+    <dt>dominspector</dt>    <dd>DOM Inspector ( ツール -> DOM Inspector )</dd>
+    <dt>downloads</dt>       <dd>ダウンロードマネージャ ( ツール -> ダウンロード )</dd>
+    <dt>history</dt>         <dd>履歴 ( 表示 -> サイドバー -> 履歴 )</dd>
+    <dt>import</dt>          <dd>設定移行ウィザード ( ファイル -> 設定とデータのインポート )</dd>
+    <dt>openfile</dt>        <dd>ファイルを開くダイアログ ( ファイル -> ファイルを開く )</dd>
+    <dt>pageinfo</dt>        <dd>ページの情報ダイアログ ( ツール -> ページの情報 )</dd>
+    <dt>pagesource</dt>      <dd>ページのソース ( 表示 -> ページのソース )</dd>
+    <dt>places</dt>          <dd>履歴とブックマークの管理 ( 履歴とブックマークの管理 )</dd>
+    <dt>preferences</dt>     <dd>&liberator.host; の設定ダイアログ ( ツール -> オプション )</dd>
+    <dt>printpreview</dt>    <dd>印刷プレビュー ( ファイル -> 印刷プレビュー )</dd>
+    <dt>printsetup</dt>      <dd>ページ設定ダイアログ ( ファイル -> ページ設定 )</dd>
+    <dt>print</dt>           <dd>印刷ダイアログ ( ファイル -> 印刷 )</dd>
+    <dt>saveframe</dt>       <dd>名前を付けて保存 ( ファイル -> 名前を付けてフレームを保存 )</dd>
+    <dt>savepage</dt>        <dd>名前を付けて保存 ( ファイル -> 名前を付けてページを保存 )</dd>
+    <dt>searchengines</dt>   <dd>サーチエンジンの管理 ( 検索バーの左側にある下向き矢印 -> 検索バーの管理 )</dd>
+    <dt>selectionsource</dt> <dd>選択部分のソース ( 選択後コンテキストメニューから「選択した部分のソースを表示」 )</dd>
+</dl>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

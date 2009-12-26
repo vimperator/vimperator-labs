@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="message"
+    title="&liberator.appname; Messages"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="messages">エラーと通知メッセージ</h1>
+<toc start="2"/>
+
+<tags>message-history</tags>
+
+<p>
+    &liberator.appname; はすべての情報メッセージ・エラーメッセージをメッセージ履歴に保存します。
+    出力される情報メッセージの種類は <o>verbose</o> オプションで制御できます。
+    保存するメッセージの数は <o>messages</o> オプションで設定できます。
+</p>
+
+<item>
+    <tags>:mes :messages</tags>
+    <spec>:mes<oa>sages</oa></spec>
+    <description>
+        <p>今までに表示されたメッセージを表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:messc :messclear</tags>
+    <spec>:messc<oa>lear</oa></spec>
+    <description>
+        <p>メッセージ履歴を消去します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[g<]]></tags>
+    <spec>g&lt;</spec>
+    <description>
+        <p>
+            直前のコマンドの出力を再表示します。
+            最新のコマンドの出力のみ利用可能です。
+        </p>
+    </description>
+</item>
+
+<tags>pager more-prompt</tags>
+
+<code>
+ -- More --
+ -- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit
+</code>
+
+<p>
+    このメッセージはメッセージウィンドウがメッセージで一杯になったときに表示されます。
+    <o>more</o> オプションが有効である場合のみ表示されます。
+    そして <em>MoreMsg</em> ハイライトグループで装飾されます。
+</p>
+
+<dl>
+    <dt><k name="CR"/> or j or <k name="Down"/>  </dt><dd>一行分下へ</dd>
+    <dt>d                                        </dt><dd>半ページ分下へ</dd>
+    <dt><k name="Space"/> or <k name="PageDown"/></dt><dd>1ページ分下へ</dd>
+    <dt>G                                        </dt><dd>最下部へ</dd>
+    <dt/><dd/>
+    <dt><k name="BS"/> or k or <k name="Up"/>    </dt><dd>一行分上へ</dd>
+    <dt>u                                        </dt><dd>半ページ分上へ</dd>
+    <dt>b or <k name="PageUp"/>                  </dt><dd>1ページ分上へ</dd>
+    <dt>g                                        </dt><dd>最上部へ</dd>
+    <dt/><dd/>
+    <dt>q, <k name="Esc"/> or CTRL-C             </dt><dd>読み取りを止めます(ウィンドウが閉じられます)</dd>
+    <dt>:                                        </dt><dd>読み取りを止めてコマンドライン入力へ移ります</dd>
+    <dt>;                                        </dt><dd>拡張ヒント(<t>extended-hints</t>) モードになります</dd>
+    <dt><k name="C-Y"/>                          </dt><dd>選択範囲をクリップボードにヤンク(コピー)します</dd>
+</dl>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

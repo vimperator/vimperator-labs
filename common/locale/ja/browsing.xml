@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="browsing"
+    title="&liberator.appname; Browsing"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="surfing browsing">ブラウジング</h1>
+<toc start="2"/>
+
+&liberator.appname; は Vim ユーザがより快適にブラウジングを行えるようにほとんどの &liberator.host; のキーを無効化します。
+まれにキー入力をそのまま &liberator.host; やウェブページに渡して本来の動作にしたい場合は、 2 つの方法があります。
+
+<item>
+    <tags><![CDATA[pass-through <C-z> CTRL-Z]]></tags>
+    <spec>CTRL-Z</spec>
+    <description>
+        <p>
+            <k name="Esc"/> をのぞくすべての &liberator.appname; キーを無効にして、次のイベントハンドラにそれらを渡します。
+            Gmail のリッチエディットフォームのような JavaScript で制御されているフォームが機能しない場合に、特に便利です。
+            このモードから抜けるには <k name="Esc"/> を押します。
+            もしこのモードで <k name="Esc"/> もウェブページに渡したいのであれば、事前に <k name="C-v"/> を押してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[send-key <C-v> CTRL-V]]></tags>
+    <spec>CTRL-V</spec>
+    <description>
+        <p>
+            JavaScript フォームや他の拡張に一回だけキーを渡す必要がある場合は <k name="C-v"/> を事前に押します。
+            また、これは <k name="C-o"/> のような &liberator.appname; によって無効にされている
+            &liberator.host; のショートカットを動作させるためにも用います。
+            &liberator.appname; のモードが <k name="C-z"/> によって一時的に無効にされている時、
+            <k name="C-v"/> はウェブページではなく &liberator.appname; にキーを渡します。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="opening">Web ページを開く</h2>
+
+<item>
+    <tags>o :o :open</tags>
+    <spec>:o<oa>pen</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>o</spec>
+    <description>
+        <p>
+            ひとつ以上の URL を開きます。
+            複数の URL を指定する場合は <o>urlseparator</o> ( デフォルト: ", " コンマの後にスペースが必要なことに注意してください ) で区切ってください。
+            最初の URL は現在のタブに、他のすべての URL は新しいタブに開かれます。
+            それぞれ順に解析されて開かれます。
+        </p>
+
+        <ol>
+            <li>
+                存在する相対もしくは絶対パスのファイル名である場合、そのローカルファイルが開かれます。
+                <ul>
+                    <li><ex>:open /etc/fstab</ex> はファイルシステムの一覧を開きます。</li>
+                    <li><ex>:open ../other/foo.html</ex> ホームディレクトリの <tt>/home/other/foo.html</tt> を開きます。</li>
+                </ul>
+            </li>
+            <li>
+                 トークンが検索文字列のように見え、初めの単語がサーチエンジン名の場合、
+                 指定されたサーチエンジンで開かれます ( <ex>:open wikipedia linus torvalds</ex> は
+                 linus torvalds の Wikipedia エントリが開かれます ) 。
+                 サーチエンジンの短縮名は自動的に名前から推測されます。
+                 別の名前を使いたい場合は <ex>:dialog searchengines</ex> で変更できます。
+            </li>
+            <li>
+                最初の単語がサーチエンジン名ではない場合、デフォルトのサーチエンジン
+                もしくはキーワード ( <o>defsearch</o> オプションで指定された値です ) で開かれます
+                ( <ex>:open linus torvalds</ex> は linus torvalds で Google 検索が開かれます ) 。
+           </li>
+           <li>
+               他のすべての場合はそのまま &liberator.host; に渡されます
+               ( <ex>:open www.osnews.com, www.slashdot.org</ex> は、OSNews が現在のタブに、
+               Slashdot が新しいタブにバックグラウンドで開かれます ) 。
+           </li>
+        </ol>
+
+        <p>
+            <ex>:open -tags linux torvalds<k name="Tab"/></ex> とすることで、
+            タグが "linux" であり "torvalds" を含むブックマークを補完することができます。
+            -tags は Tab キーによる補完でのみ有効で、実際のコマンドではないことに注意してください。
+            <k name="Tab"/> によって補完される項目は <o>complete</o> オプションで指定できます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>t :t :tabopen :tabnew</tags>
+    <spec>:tabopen<oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>t</spec>
+    <description>
+        <p>
+            <ex>:open</ex> と同様ですが最初に指定した URL も新しいタブに開かれます。
+            <oa>!</oa> をつけた場合、<o>activate</o> オプションの <em>tabopen</em> 指定を無効にします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>T</tags>
+    <spec>T</spec>
+    <description>
+        <p>
+            <ex>:tabopen</ex> に現在の URL があらかじめ入力された状態でコマンドが開始します。
+            現在の URL を編集してタブに開きたい場合に便利です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tabdu :tabduplicate</tags>
+    <spec>:<oa>count</oa>tabdu<oa>plicate</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            現在のタブを <oa>count</oa> 個複製します。
+            複製された最後のタブをアクティブにするかどうかの決定には <o>activate</o> オプションの <o>tabopen</o> 指定が使用されます。
+            <oa>!</oa> をつけた場合、 <em>tabopen</em> 指定が無効になります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>O</tags>
+    <spec>O</spec>
+    <description>
+        <p>
+            <ex>:open</ex> に現在の URL があらかじめ入力された状態でコマンドが開始します。
+            現在の URL を編集して開きたい場合に便利です。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>w :winopen :wopen</tags>
+    <spec>:wino<oa>pen</oa><oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>w</spec>
+    <description>
+        <p><ex>:tabopen</ex> と同様ですが結果のページを新しいウィンドウに開きます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>W</tags>
+    <spec>W</spec>
+    <description>
+        <p>
+            一つまたは複数の URL を新規ウィンドウに現在の URL を基準として開きます。
+            <k>w</k> と似た働きですが、<ex>:winopen</ex> に前もって現在の URL が付きます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<MiddleMouse> p]]></tags>
+    <spec>p</spec>
+    <description>
+        <p>
+            現在のバッファに、クリップボードの内容を元にした URL を開きます。
+            URL ではないテキストを選択 ( X11 ユーザでない場合はコピー ) することもでき、
+            その場合 <k>p</k> はデフォルトのサーチエンジンもしくはキーワード
+            ( <o>defsearch</o> オプションで指定します ) での検索が行われます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>P</tags>
+    <spec>P</spec>
+    <description>
+        <p>
+            新しいバッファにクリップボードの内容を元にした URL を開きます。
+            <k>p</k> のような動作ですが新しいタブに開かれます。
+        </p>
+        <p>
+            新しいバッファが選択されるかどうかは <o>activate</o> オプションに依存します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gP</tags>
+    <spec>gP</spec>
+    <description>
+        <p>
+            新しいバッファにクリップボードの内容を元にした URL を開きます。
+            <k>P</k> のような動作ですが <o>activate</o> オプションでの指定が逆になります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-x>]]></tags>
+    <spec><oa>count</oa>&lt;C-x></spec>
+    <description>
+        <p>
+            URL の最後の数値を 1 か、与えられている場合 <oa>count</oa> 分減少させます。
+            たいていの場合有益ではないので負の数にはなりません。
+            ですので 0 から減少させることはできません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-a>]]></tags>
+    <spec><oa>count</oa>&lt;C-a></spec>
+    <description>
+        <p>URL の最後の数値を 1 か、与えられている場合 <oa>count</oa> 分増加させます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>~</tags>
+    <spec>~</spec>
+    <description>
+        <p>
+            ホームディレクトリを開きます。
+            ヒントも併用することでおそらく地球上で最も速いファイルブラウザを得られるでしょう(´ω`)
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="navigating">バッファ操作</h2>
+
+<item>
+    <tags><![CDATA[H <C-o> CTRL-O :ba :back]]></tags>
+    <spec>:<oa>count</oa>ba<oa>ck</oa> <oa>url</oa></spec>
+    <spec>:ba<oa>ck</oa>!</spec>
+    <spec>CTRL-o</spec>
+    <description>
+        <p>
+            履歴を <oa>count</oa> ページ戻ります。
+            <oa>url</oa> が指定されている場合、最初にマッチした URL に戻ります。
+            <ex>:back!</ex> のときは特別で、履歴の最初まで戻ります。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[L <C-i> CTRL-i :fo :fw :forward]]></tags>
+    <spec>:<oa>count</oa>fo<oa>rward</oa> <oa>url</oa></spec>
+    <spec>:fo<oa>rward</oa>!</spec>
+    <spec>CTRL-i</spec>
+    <description>
+        <p>
+            履歴を <oa>count</oa> ページ進みます。
+            <oa>url</oa> が指定されている場合、最初にマッチした URL まで進みます。
+            <ex>:forward!</ex> のときは特別で、履歴の最後まで進みます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ju :jumps</tags>
+    <spec>:ju<oa>mps</oa></spec>
+    <description>
+        <p>すべてのジャンプ ( 現在のタブの履歴、つまりセッション履歴のことです ) を一覧表示します。</p>
+
+        <p>
+            現在の履歴の位置に > が表示され、 <ex>:back</ex> ( 0 より上の履歴です )
+            もしくは <ex>:forward</ex> ( 0 より下の履歴です ) で使われるジャンプ番号 ( 訳注: 一番左側の数字です ) が表示されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gh</tags>
+    <spec>gh</spec>
+    <description>
+        <p>ホームページを現在のタブに開きます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gH</tags>
+    <spec>gH</spec>
+    <description>
+        <p>
+            ホームページを新しいタブに開きます。
+            新しいタブが選択されるかどうかは <o>activate</o> オプションに依存します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gu</tags>
+    <spec><oa>count</oa>gu</spec>
+    <description>
+        <p>[count] 番目の親ディレクトリに移動します。</p>
+
+        <p>
+            <tt>http://www.example.com/dir1/dir2/file.htm</tt> 上で <k>2gu</k> を押すと
+            <tt>http://www.example.com/dir1/</tt> が開かれます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gU</tags>
+    <spec>gU</spec>
+    <description>
+        <p>サイトのルートディレクトリに移動します。</p>
+
+        <p>
+            <tt>http://www.example.com/dir1/dir2/file.htm</tt> 上で <k>gU</k> を押すと
+            <tt>http://www.example.com/</tt> が開かれます。
+            ローカルディレクトリを開いているときはルートディレクトリに移動します。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="reloading">再読み込み</h2>
+
+<item>
+    <tags>r</tags>
+    <spec>r</spec>
+    <description>
+        <p>現在のページを強制的に再読み込みします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>R</tags>
+    <spec>R</spec>
+    <description>
+        <p>キャッシュを使わすに現在のページを強制的に再読み込みします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:re :reload</tags>
+    <spec>:re<oa>load</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            現在のページを強制的に再読み込みします。
+            <oa>!</oa> が与えられている場合、キャッシュを使用しません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:reloada :reloadall</tags>
+    <spec>:reloada<oa>ll</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            すべてのページを再読み込みします。
+            <oa>!</oa> が与えられている場合、キャッシュを使用しません。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="stopping">読み込み中止</h2>
+
+<item>
+    <tags><![CDATA[<C-c>]]></tags>
+    <spec>&lt;C-c></spec>
+    <description>
+        <p>現在のページの読み込みを中止します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:st :stop</tags>
+    <spec>:st<oa>op</oa></spec>
+    <description>
+        <p>現在のページの読み込みを中止します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:stopa :stopall</tags>
+    <spec>:stopa<oa>ll</oa></spec>
+    <description>
+        <p>すべてのページの読み込みを中止します。</p>
+    </description>
+</item>
+
+
+<h2 tag="writing save-file">ページ保存</h2>
+
+<item>
+    <tags>:w :write :sav :saveas</tags>
+    <spec>:sav<oa>eas</oa><oa>!</oa> <oa>file</oa></spec>
+    <description>
+        <p>
+            現在のページをディスクに保存します。
+            <oa>file</oa> が省略された場合、デフォルトのファイル名で保存されます。
+            <oa>!</oa> が与えられている場合に限り、すでに存在するファイルを上書きします。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="quitting save-session">終了</h2>
+
+<item>
+    <tags>:q :quit</tags>
+    <spec>:q<oa>uit</oa></spec>
+    <description>
+        <p>
+            現在のタブを閉じます。
+            それがウィンドウ内の最後のタブだった場合、ウィンドウを閉じます。
+            そしてそれが最後のウィンドウであれば &liberator.appname; を終了します。
+            &liberator.appname; が終了するとき、セッションは保存されません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:qa :qall :quita :quitall</tags>
+    <spec>:quita<oa>ll</oa></spec>
+    <description>
+        <p>
+            &liberator.appname; を終了します。
+            どんなにタブやウィンドウが開かれていても &liberator.appname; を終了します。
+            セッションは保存されません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:wc :wclose :winc :winclose</tags>
+    <spec>:winc<oa>lose</oa></spec>
+    <description>
+        <p>ウィンドウを閉じます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:winon :winonly</tags>
+    <spec>:winon<oa>ly</oa></spec>
+    <description>
+        <p>他のブラウザウィンドウをすべて閉じます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:xa :xall :wq :wqa :wqall</tags>
+    <spec>:wqa<oa>ll</oa></spec>
+    <spec>:xa<oa>ll</oa></spec>
+    <description>
+        <p>
+            セッションを保存して終了します。
+            どんなにタブやウィンドウが開かれていても &liberator.appname; を終了します。
+            セッションは保存されます。
+            要望があったため、 <ex>:wq</ex> は 1 つのタブではなくウィンドウを閉じますので Vim とは動作が異なります。
+            もしこの点を変更したい場合はメーリングリストまで連絡をお願いします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>ZQ</tags>
+    <spec>ZQ</spec>
+    <description>
+        <p>
+            セッションを保存しないで終了します。
+            <ex>:qall</ex> のように動作します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>ZZ</tags>
+    <spec>ZZ</spec>
+    <description>
+        <p>
+            セッションを保存して終了します。
+            どんなにタブやウィンドウが開かれていても &liberator.appname; を終了します。
+            <ex>:xall</ex> のように動作します。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="current-directory">カレントディレクトリ</h2>
+
+<item>
+    <tags>:chd :chdir :cd</tags>
+    <spec>:cd <oa>-|path</oa></spec>
+    <description>
+        <p>
+            カレントディレクトリを変更します。
+            <ex>:cd -</ex> は直前のディレクトリに移動します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:pw :pwd</tags>
+    <spec>:pw<oa>d</oa></spec>
+    <description>
+        <p>カレントディレクトリを表示します。</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

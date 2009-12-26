@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<dl tag="autocommand-list" replace="autocommand-list">
+    <dt>BookmarkAdd</dt>       <dd>ページをブックマークした直後に発生します</dd>
+    <dt>ColorScheme</dt>       <dd>カラースキームを読み込んだ直後に発生します</dd>
+    <dt>DOMLoad</dt>           <dd>ページの DOM が完全に読み込まれた際に発生します</dd>
+    <dt>DownloadPost</dt>      <dd>ダウンロードが完了した際に発生します</dd>
+    <dt>Fullscreen</dt>        <dd>フルスクリーン状態が切り替わった際に発生します</dd>
+    <dt>LocationChange</dt>    <dd>タブを切り替えた際や新しい URL に移動した際に発生します</dd>
+    <dt>PageLoadPre</dt>       <dd>ページの読み込みが開始された直後に発生します</dd>
+    <dt>PageLoad</dt>          <dd>ページの ( 再 ) 読み込みが終了した際やページが開かれた際に発生します</dd>
+    <dt>PrivateMode</dt>       <dd>プライベートブラウジングに切り替えた際と元に戻った際に発生します</dd>
+    <dt>Sanitize</dt>	       <dd>プライベートデータを削除した際に発生します</dd>
+    <dt>ShellCmdPost</dt>      <dd><ex>:!</ex><a>cmd</a> でシェルコマンドが実行された直後に発生します</dd>
+    <dt>&liberator.appname;Enter</dt>   <dd>&liberator.host; が起動した直後に発生します</dd>
+    <dt>&liberator.appname;LeavePre</dt><dd>&liberator.host; が終了する直前、ちょうど各モジュールが破棄される直前に発生します</dd>
+    <dt>&liberator.appname;Leave</dt>   <dd>&liberator.host; が終了する直前に発生します</dd>
+</dl>
+
+<dl tag="autocommand-args" replace="autocommand-args">
+    <dt>&lt;url></dt>       <dd>イベントが適用された URL です。</dd>
+    <dt>&lt;title></dt>     <dd>ページ、ブックマークのタイトルもしくはダウンロードしたファイル名です。</dd>
+    <dt>&lt;doc></dt>       <dd>イベントが発生したドキュメントです。<em>DOMLoad</em>, <em>PageLoad</em> と <em>PageLoadPre</em> 専用です。</dd>
+    <dt>&lt;tab></dt>       <dd>イベントが発生したタブです。<em>DOMLoad</em>, <em>PageLoad</em> と <em>PageLoadPre</em> 専用です。</dd>
+    <dt>&lt;tags></dt>      <dd>&lt;url> につけられたタグ名です。 <em>BookmarkAdd</em> 専用です。</dd>
+    <dt>&lt;keyword></dt>   <dd>ブックマークにつけられたキーワードです。<em>BookmarkAdd</em> 専用です。</dd>
+    <dt>&lt;icon></dt>      <dd>&lt;url> に関連づけられたアイコンです。 <em>BookmarkAdd</em> 専用です。</dd>
+    <dt>&lt;size></dt>      <dd>ダウンロードされたファイルのサイズです。 <em>DownloadPost</em> 専用です。</dd>
+    <dt>&lt;file></dt>      <dd>ダウンロードした場所です。 <em>DownloadPost</em> 専用です。</dd>
+    <dt>&lt;state></dt>     <dd>切り替え後の状態です。 <em>Fullscreen</em> と <em>PrivateMode</em> 専用です。</dd>
+    <dt>&lt;name></dt>      <dd>アイテムの名前です。<em>ColorScheme</em> と <em>Sanitize</em> 専用です。</dd>
+</dl>
+
+</overlay>
+
+<!-- vim:se sts=4 sw=4 et: -->

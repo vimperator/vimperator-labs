@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="eval"
+    title="&liberator.appname; Expression Evaluation"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="expression expr eval">式の評価</h1>
+<toc start="2"/>
+
+<!-- INTRO TO BE WRITTEN… -->
+
+<item>
+    <tags>:ec :echo</tags>
+    <spec>:ec<oa>ho</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            式を評価してその結果を表示します。
+            情報メッセージを表示したいときに便利です。
+            複数行は \n で区切ることができます。
+            <a>expr</a> は引用符でくくられた文字列か、 4+5 のように eval() に与えることができる式です。
+            <a>expr</a> の返値がオブジェクトか関数の場合、それらのソースコードを表示することができます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:echoe :echoerr</tags>
+    <spec>:echoe<oa>rr</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            式を評価してその結果をエラーメッセージとして表示します。
+            <ex>:ec<oa>ho</oa></ex> と同様ですが結果は ErrorMsg として強調表示され、メッセージ履歴に保存されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:echom :echomsg</tags>
+    <spec>:echom<oa>sg</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            式を評価してその結果を情報メッセージとして表示します。
+            <ex>:ec<oa>ho</oa></ex> と同様ですが結果がメッセージ履歴に保存されます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exe :execute</tags>
+    <spec>:exe<oa>cute</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            <a>expr</a> を評価して得られた文字列を一つの ex コマンドとして実行します。
+            例: <ex>:execute "source " + io.getRCFile().path</ex> は適切な RC ファイルを読み込みます。
+        </p>
+
+        <p>注釈: これは Vim と異なり、現在 1 つの引数のみをサポートしています。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:js :javas :javascript</tags>
+    <spec>:javas<oa>cript</oa> <a>cmd</a></spec>
+    <spec>:javascript &lt;&lt;<a>endpattern</a>\n<a>empty</a><a>script</a>\n<a>empty</a><a>endpattern</a></spec>
+    <spec>:javascript<oa>!</oa></spec>
+    <description>
+        <p>
+            eval() を通して JavaScript を実行します。
+            eval() に引数を渡すことで JavaScript インタプリタとして動作します。
+            <ex>:javascript alert(<str>Hello world</str>)</ex> は "Hello world" と書かれたダイアログを表示します。
+            <ex>:javascript &lt;&lt;EOF</ex> は "EOF" ではじまる行が見つかるまですべての行を読み込み、 <em>eval()</em> 関数で実行します。
+        </p>
+
+        <p>特殊なバージョン <ex>:javascript!</ex> は &liberator.host; のエラーコンソールを開きます。</p>
+
+        <p>
+            <k name="Tab"/> による補完は <ex>:javascript {cmd}<k name="Tab"/></ex> で利用可能です
+            ( ただし <ex>:js &lt;&lt;EOF</ex> の複数行形式には未対応です ) 。
+            &liberator.appname; は補完のために <a>cmd</a> を eval() する必要があり、
+            望ましくない副作用をもたらす可能性があることに注意してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:let</tags>
+    <spec>:let <a>var-name</a> [+-.]= <a>expr1</a></spec>
+    <spec>:let <a>var-name</a></spec>
+    <spec>:let</spec>
+    <description>
+        <p>
+            変数を設定もしくは一覧表示します。
+            変数 {var-name} に式の値 <a>expr1</a> が設定されます。
+            式が与えられない場合、その変数の値を表示します。
+            引数がない場合、すべての変数を表示します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:unl :unlet</tags>
+    <spec>:unl<oa>et</oa><oa>!</oa> <a>name</a> …</spec>
+    <description>
+        <p>
+            変数 <a>name</a> を削除します。
+            複数の変数名を与えることができます。
+            <oa>!</oa> とともに使用した場合、存在しない変数に対するエラーメッセージは表示されません。
+        </p>
+    </description>
+</item>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

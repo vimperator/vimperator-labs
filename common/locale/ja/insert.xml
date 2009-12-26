@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="insert"
+    title="&liberator.appname; Insert Mode"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="Insert-mode Insert mode-insert">挿入モード</h1>
+<toc start="2"/>
+
+<p>
+    挿入モードはテキストボックスやテキストエリアでテキストを入力するために使用されます。
+    <o>insertmode</o> が設定されている場合、テキストエリアにフォーカスすると直ちに挿入モードに切り替わります。
+</p>
+
+<item>
+    <tags>i_i</tags>
+    <spec>i_i</spec>
+    <description>
+        <p><o>insertmode</o> が設定されていない場合、テキストエリアにおいて挿入モードを開始します。</p>
+    </description>
+</item>
+
+
+
+<h2 tag="ins-special-keys">挿入モードの特殊キー</h2>
+
+<item>
+    <tags><![CDATA[i_<C-i>]]></tags>
+    <spec>&lt;C-i></spec>
+    <description>
+        <p>外部エディタを起動します。 <o>editor</o> オプションを参照してください。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[i_<C-]>]]></tags>
+    <spec>&lt;C-]></spec>
+    <description>
+        <p>挿入モードで有効な略語を展開します。</p>
+    </description>
+</item>
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

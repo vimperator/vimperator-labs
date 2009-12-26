@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="hints"
+    title="&liberator.appname; Hints"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="quick-hints hints">ヒント</h1>
+<toc start="2"/>
+
+ヒントはページ上のリンクを &liberator.appname; に移動させることが出来る方法です。
+各リンクにヒントが付くことによって、すべてのリンクに最小限の動作でアクセスすることができます。
+マウスを使った従来の最初に望むリンクに標準を合わせなければならない方法や、
+ページの最初からタブを繰り返し押すという退屈な方法とはとても対象的です。
+
+<item>
+    <tags>f</tags>
+    <spec>f<a>hint</a></spec>
+    <description>
+        <p>
+            クイックヒントモードを開始します。
+            クイックヒントモードでは、ヒントが利用可能なアイテムすべて ( <o>hinttags</o> の XPath クエリーに一致するもの )
+            に対して番号が割り振られます。
+            この割り振られた番号か、<o>hintmatching</o> オプションで定義されるリンクの一部の文字を指定できます。
+            そして移動先がひとつに決まるとすぐにそのページへ移動することができます。
+            たいていの場合、移動先をひとつ選ぶには文字をいくつか打ち込んで候補を絞り込んでから、
+            数字をひとつ指定するというふたつのテクニックを組み合わせるのが便利です。
+            <k name="Leader"/> ( 初期設定は <ex>:let mapleader = "\"</ex> ) を押すことでエスケープモードへ切り替わり、
+            数字をテキストとして認識させることができます。 
+            <k name="Esc"/> でこのモードをいつでも中止することができます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>F</tags>
+    <spec>F<a>hint</a></spec>
+    <description>
+        <p>
+            クイックヒントモードを開始しますが、新しいタブでリンク先が開きます。
+            普通のクイックヒントモード ( <k>f</k> で起動します ) と同様ですが、リンク先は新しいタブで開きます。
+            &liberator.host; の設定 <str>browser.tabs.loadInBackground</str>
+            次第で新しいタブがバックグラウンドで読み込まれるかどうかが決定します。
+        </p>
+    </description>
+</item>
+
+
+<tags>extended-hints</tags>
+
+<item>
+    <tags>;</tags>
+    <spec>;<a>mode</a><a>empty</a><a>hint</a></spec>
+    <description>
+        <p>
+            拡張ヒントモードを開始します。
+            拡張ヒントモードではマウスの左クリックとは違ったことをヒント要素に対して操作したい場合に便利です。
+            例えば、 リンク先の URL をヤンクしたり、新しいウィンドウで開いたり、もしくは画像を保存したりできます。
+            もし <em>24</em> と表示されたヒントの URI をヤンクしたいときは、<k>;y</k> と押してヤンク用のヒントモードを開始し、
+            それから <em>24</em> と押せばいいのです。
+        </p>
+
+        <p><a>mode</a> 以下のいずれかひとつから選べます:</p>
+
+        <ul>
+            <li><tag>;;</tag> <em>;</em> 要素にフォーカスします</li>
+            <li><tag>;?</tag> <em>?</em> 要素の情報を表示します (未完成)</li>
+            <li><tag>;s</tag> <em>s</em> リンク先を保存します</li>
+            <li><tag>;a</tag> <em>a</em> リンク先を保存します ( 保存先を尋ねます )</li>
+            <li><tag>;f</tag> <em>f</em> フレームを選択します</li>
+            <li><tag>;o</tag> <em>o</em> 現在のタブで開きます</li>
+            <li><tag>;t</tag> <em>t</em> 新しいタブに開きます</li>
+            <li><tag>;b</tag> <em>b</em> 新しいバックグラウンドなタブに開きます</li>
+            <li><tag>;w</tag> <em>w</em> 新しいウィンドウに開きます</li>
+            <li><tag>;F</tag> <em>F</em> <k name="CR"/> を区切りとして連続でバックグラウンドなタブに開きます</li>
+            <li><tag>;O</tag> <em>O</em> <ex>:open</ex> コマンドに URL をセットします (<k>O</k> に似ています)</li>
+            <li><tag>;T</tag> <em>T</em> <ex>:tabopen</ex> コマンドに URL をセットします (<k>T</k> に似ています)</li>
+            <li><tag>;W</tag> <em>W</em> <ex>:winopen</ex> コマンドに URL をセットします</li>
+            <li><tag>;v</tag> <em>v</em> ヒント先のソースを表示します</li>
+            <li><tag>;V</tag> <em>V</em> ヒント先のソースを外部エディタで表示します</li>
+            <li><tag>;y</tag> <em>y</em> ヒント先の場所をヤンクします</li>
+            <li><tag>;Y</tag> <em>Y</em> ヒント先のテキストをヤンクします</li>
+            <li><tag>;c</tag> <em>c</em> コンテキストメニューを開きます</li>
+            <li><tag>;i</tag> <em>i</em> 画像を開きます</li>
+            <li><tag>;I</tag> <em>I</em> 画像を新しいタブに開きます</li>
+        </ul>
+
+        <p>
+            <k>;</k> プロンプトから <k name="Tab"/> で拡張ヒントモードのリストを
+            表示できるかは <o>complete</o> に依存します。
+        </p>
+
+        <p>
+            すべての拡張ヒントモードのヒント可能な要素は <o>extendedhinttags</o> の XPath 式で設定可能です。
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

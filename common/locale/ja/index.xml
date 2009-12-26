@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="index"
+    title="&liberator.appname; Index"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="index">Index</h1>
+<toc start="2"/>
+
+このファイルには利用可能なすべてのコマンドが記述されています。
+
+<h2 tag="insert-index">挿入モード</h2>
+
+<dl>
+    <dt><k name="C-i"/></dt> <dd>外部エディタを立ち上げます</dd>
+    <dt><k name="C-]"/></dt> <dd>挿入モードで有効な略語を展開します</dd>
+</dl>
+
+
+<h2 tag="normal-index">ノーマルモード</h2>
+
+<dl>
+    <dt><k name="C-^"/></dt> <dd>直前に選択していたタブもしくは <oa>count</oa> 番目のタブを選択します</dd>
+    <dt><k name="C-a"/></dt> <dd>URL の最後の数字をひとつ増加させます</dd>
+    <dt><k name="C-b"/></dt> <dd>1 ページ分上へスクロールします</dd>
+    <dt><k name="C-c"/></dt> <dd>読み込みを中止します</dd>
+    <dt><k name="C-d"/></dt> <dd>下へスクロールします</dd>
+    <dt><k name="C-f"/></dt> <dd>1 ページ分下へスクロールします</dd>
+    <dt><k name="C-g"/></dt> <dd>現在のファイル名を表示します</dd>
+    <dt><k name="C-i"/></dt> <dd>ジャンプリストを進みます</dd>
+    <dt><k name="C-l"/></dt> <dd>画面を再描画します</dd>
+    <dt><k name="C-o"/></dt> <dd>ジャンプリストを戻ります</dd>
+    <dt><k name="C-u"/></dt> <dd>上へスクロールします</dd>
+    <dt><k name="C-v"/></dt> <dd>次のキー入力において Vimperator キーバインドを無効にします</dd>
+    <dt><k name="C-x"/></dt> <dd>URL の最後の数字をひとつ減少させます</dd>
+    <dt><k name="C-z"/></dt> <dd>一時的にすべての &liberator.appname; キーバインドを無効にします</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="Esc"/></dt> <dd>ページにフォーカスします</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="F1"/></dt> <dd>ヘルプを開きます</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="S-Tab"/></dt> <dd>フォーカスを前へ戻します</dd>
+    <dt><k name="Tab"/></dt> <dd>フォーカスを次へ進めます</dd>
+</dl>
+
+
+<dl>
+    <dt><k>0</k></dt> <dd>ページの一番左へスクロールします</dd>
+    <dt><k>$</k></dt> <dd>ページの一番右へスクロールします</dd>
+</dl>
+
+
+<dl>
+    <dt><k>A</k></dt> <dd>現在の URL のブックマーク状態を切り替えます</dd>
+    <dt><k>B</k></dt> <dd>バッファ ( タブ ) 一覧を表示します</dd>
+    <dt><k>D</k></dt> <dd>現在のタブを閉じ、左のタブへフォーカスします</dd>
+    <dt><k>F</k></dt> <dd>リンクを新しいタブで開くクイックヒントモードを開始します</dd>
+    <dt><k>G</k></dt> <dd>ページの一番下へスクロールします</dd>
+    <dt><k>H</k></dt> <dd>履歴を戻ります</dd>
+    <dt><k>L</k></dt> <dd>履歴を進みます</dd>
+    <dt><k>M</k></dt> <dd>新しいクイックマークを現在の URL に追加します</dd>
+    <dt><k>N</k></dt> <dd>前を検索します</dd>
+    <dt><k>O</k></dt> <dd>現在の位置を基準としてひとつ以上の URL を開きます</dd>
+    <dt><k>P</k></dt> <dd>クリップボードの内容に基づいた URL を新しいタブに開きます</dd>
+    <dt><k>R</k></dt> <dd>キャッシュを使わずに再読み込みします</dd>
+    <dt><k>T</k></dt> <dd>現在の位置を基準としてひとつ以上の URL を新しいタブに開きます</dd>
+    <dt><k>Y</k></dt> <dd>選択したテキストか現在の単語をコピーします</dd>
+    <dt><k>W</k></dt> <dd>現在の位置を基準としてひとつ以上の URL を新しいウィンドウに開きます</dd>
+</dl>
+
+
+<dl>
+    <dt><k>a</k></dt> <dd>現在の URL をブックマークするためのコマンドをセットします</dd>
+    <dt><k>b</k></dt> <dd>バッファ ( タブ ) を切り替えるためのコマンドをセットします</dd>
+    <dt><k>d</k></dt> <dd>現在のタブを閉じます</dd>
+    <dt><k>f</k></dt> <dd>クイックヒントモードを開始します</dd>
+    <dt><k>h</k></dt> <dd>ページを左にスクロールします</dd>
+    <dt><k>i</k></dt> <dd>キャレットモードを開始します</dd>
+    <dt><k>j</k></dt> <dd>ページを下にスクロールします</dd>
+    <dt><k>k</k></dt> <dd>ページを上にスクロールします</dd>
+    <dt><k>l</k></dt> <dd>ページを右にスクロールします</dd>
+    <dt><k>m</k></dt> <dd>カーソルの位置にマークをつけます</dd>
+    <dt><k>n</k></dt> <dd>次を検索します</dd>
+    <dt><k>o</k></dt> <dd>ひとつ以上の URL を開きます</dd>
+    <dt><k>p</k></dt> <dd>クリップボードの内容に基づいた URL を現在のタブに開きます</dd>
+    <dt><k>q</k></dt> <dd>キー入力をマクロとして記録します</dd>
+    <dt><k>r</k></dt> <dd>現在のページを再読み込みします</dd>
+    <dt><k>t</k></dt> <dd>ひとつ以上の URL を新しいタブに開きます</dd>
+    <dt><k>u</k></dt> <dd>閉じたタブを復元します</dd>
+    <dt><k>y</k></dt> <dd>現在の URI をクリップボードにコピーします</dd>
+    <dt><k>w</k></dt> <dd>ひとつ以上の URL を新しいウィンドウに開きます</dd>
+</dl>
+
+
+<dl>
+    <dt><k>;</k></dt> <dd>拡張ヒントモードを開始します</dd>
+</dl>
+
+
+<dl>
+    <dt><k>:</k></dt> <dd>コマンドラインモードへ移行します</dd>
+</dl>
+
+
+<dl>
+    <dt><k>~</k></dt> <dd>ホームディレクトリを開きます</dd>
+</dl>
+
+
+<dl>
+    <dt><k>|</k></dt> <dd>Toggle between rendered and source view</dd>
+</dl>
+
+
+<dl>
+    <dt><k>/</k></dt> <dd>下方向への検索を開始します</dd>
+    <dt><k>?</k></dt> <dd>上方向への検索を開始します</dd>
+    <dt><k>*</k></dt> <dd>カーソルの下にある単語の下方向への検索を開始します</dd>
+    <dt><k>#</k></dt> <dd>カーソルの下にある単語の上方向への検索を開始します</dd>
+</dl>
+
+
+<dl>
+    <dt><k>N%</k></dt> <dd>ページの <a>count</a> パーセントのところまでスクロールします</dd>
+</dl>
+
+
+<dl>
+    <dt><k>'</k></dt> <dd>現在のページにあるマークのところまでジャンプします</dd>
+</dl>
+
+
+<dl>
+    <dt><k>@</k></dt> <dd>マクロを再生します</dd>
+</dl>
+
+
+<dl>
+    <dt><k>.</k></dt> <dd>直前のノーマルモードコマンドを繰り返します</dd>
+    <dt><k>@:</k></dt> <dd>直前の Ex コマンドを <oa>count</oa> 回繰り返します</dd>
+</dl>
+
+
+<dl>
+    <dt><k>]f</k></dt> <dd>次のフレームへフォーカスします</dd>
+    <dt><k>[f</k></dt> <dd>前のフレームへフォーカスします</dd>
+    <dt><k>]] </k></dt> <dd>'next' もしくは '>' という名前のリンクが存在する場合それを辿ります</dd>
+    <dt><k>[[ </k></dt> <dd>'prev' 、'previous' もしくは '&lt;' という名前のリンクが存在する場合それを辿ります</dd>
+</dl>
+
+
+<dl>
+    <dt><k>g$</k></dt> <dd>最後のタブを選択します</dd>
+    <dt><k>g&lt;</k></dt> <dd>直前に実行したコマンドの出力結果をもう一度表示します</dd>
+    <dt><k>g0</k></dt> <dd>最初のタブを選択します</dd>
+    <dt><k>g&lt;C-g></k></dt> <dd>ファイルの情報を表示します</dd>
+    <dt><k>gB</k></dt> <dd>直前に実行した <ex>:buffer<oa>!</oa></ex> を逆方向に繰り返します</dd>
+    <dt><k>gF</k></dt> <dd>外部エディタでページのソースを表示します</dd>
+    <dt><k>gH</k></dt> <dd>新しいタブにホームページを開きます</dd>
+    <dt><k>gP</k></dt> <dd>クリップボードの内容に基づいた URL を新しいタブに開きます</dd>
+    <dt><k>gT</k></dt> <dd>ひとつ左のタブを選択します</dd>
+    <dt><k>gU</k></dt> <dd>ウェブサイトのルートドメインへアクセスします</dd>
+    <dt><k>gb</k></dt> <dd>直前に実行した <ex>:buffer<oa>!</oa></ex> コマンドを繰り返します</dd>
+    <dt><k>gf</k></dt> <dd>ページのソースを表示します</dd>
+    <dt><k>gg</k></dt> <dd>ページの一番上へスクロールします</dd>
+    <dt><k>gh</k></dt> <dd>ホームページを開きます</dd>
+    <dt><k>gi</k></dt> <dd>直前に使用した入力フィールドにフォーカスします</dd>
+    <dt><k>gn</k></dt> <dd>新しいタブでクイックマークへジャンプします</dd>
+    <dt><k>go</k></dt> <dd>クイックマークへジャンプします</dd>
+    <dt><k>gt</k></dt> <dd>ひとつ右のタブを選択します</dd>
+    <dt><k>gu</k></dt> <dd>一階層上のディレクトリへアクセスします</dd>
+</dl>
+
+
+<dl>
+    <dt><k>ZQ</k></dt> <dd>セッションを保存せずに終了します</dd>
+    <dt><k>ZZ</k></dt> <dd>セッションを保存して終了します</dd>
+    <dt><k>zI</k></dt> <dd>現在のページをフルズームで拡大します</dd>
+    <dt><k>zM</k></dt> <dd>現在のページをより大きい倍率のフルズームで拡大します</dd>
+    <dt><k>zO</k></dt> <dd>現在のページをフルズームで縮小します</dd>
+    <dt><k>zR</k></dt> <dd>現在のページをより大きい倍率のフルズームで縮小します</dd>
+    <dt><k>zZ</k></dt> <dd>現在のページのフルズーム倍率を規定値に戻します</dd>
+    <dt><k>zi</k></dt> <dd>現在のページをテキストズームで拡大します</dd>
+    <dt><k>zm</k></dt> <dd>現在のページをより大きい倍率のテキストズームで拡大します</dd>
+    <dt><k>zo</k></dt> <dd>現在のページをテキストズームで縮小します</dd>
+    <dt><k>zr</k></dt> <dd>現在のページをより大きい倍率のテキストズームで縮小します</dd>
+    <dt><k>zz</k></dt> <dd>現在のページのテキストズーム倍率を規定値に戻します</dd>
+</dl>
+
+
+<h2 tag="ex-edit-index">コマンドラインの編集</h2>
+
+<dl>
+    <dt><k name="C-c"/></dt> <dd>実行することなくコマンドラインモードを中止します</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="C-]"/></dt> <dd>コマンドラインで略語を展開します</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="Up"/></dt> <dd>現在の入力にマッチするコマンド一覧を履歴から探し、その中のひとつ前のコマンドを呼び出します</dd>
+    <dt><k name="Down"/></dt> <dd>現在の入力にマッチするコマンド一覧を履歴から探し、その中のひとつ次のコマンドを呼び出します</dd>
+</dl>
+
+
+<dl>
+    <dt><k name="Tab"/></dt> <dd>カーソル直前の単語を <o>wildmode</o> で設定された挙動で補完します</dd>
+    <dt><k name="S-Tab"/></dt> <dd><o>wildmode</o> に "full" が含まれている場合、前方向に完全補完します</dd>
+</dl>
+
+
+<h2 tag="ex-cmd-index :index">Ex コマンド</h2>
+
+<dl>
+    <dt><ex>:!</ex></dt> <dd>コマンドを実行します</dd>
+    <dt><ex>:!!</ex></dt> <dd>最後に実行した <ex>:!<a>cmd</a></ex> を実行します</dd>
+    <dt><ex>:abbreviate</ex></dt> <dd>略語を定義します</dd>
+    <dt><ex>:abclear</ex></dt> <dd>略語をすべて消去します</dd>
+    <dt><ex>:addons</ex></dt> <dd>利用可能な拡張機能やテーマを管理します</dd>
+    <dt><ex>:autocmd</ex></dt> <dd>イベントが発生したときに自動的にコマンドを実行します</dd>
+    <dt><ex>:back</ex></dt> <dd>履歴を戻ります</dd>
+    <dt><ex>:bdelete</ex></dt> <dd>現在のタブを閉じます</dd>
+    <dt><ex>:beep</ex></dt> <dd>システムビープ音を鳴らします</dd>
+    <dt><ex>:bmark</ex></dt> <dd>ブックマークを追加します</dd>
+    <dt><ex>:bmarks</ex></dt> <dd>ブックマーク一覧を表示、または複数のブックマークを開きます</dd>
+    <dt><ex>:buffer</ex></dt> <dd>バッファ ( タブ ) を切り替えます</dd>
+    <dt><ex>:buffers</ex></dt> <dd>すべてのバッファ ( タブ ) を表示します</dd>
+    <dt><ex>:cabbrev</ex></dt> <dd>コマンドラインモードで有効な略語を定義します</dd>
+    <dt><ex>:cabclear</ex></dt> <dd>コマンドラインモードで有効な略語をすべて消去します</dd>
+    <dt><ex>:cd</ex></dt> <dd>カレントディレクトリを変更します</dd>
+    <dt><ex>:cmap</ex></dt> <dd>コマンドラインモードで有効なキーマッピングを定義します</dd>
+    <dt><ex>:cmapclear</ex></dt> <dd>コマンドラインモードで有効なキーマッピングをすべて消去します</dd>
+    <dt><ex>:cnoremap</ex></dt> <dd>コマンドラインモードで有効な再帰解釈しないキーマッピングを定義します</dd>
+    <dt><ex>:colorscheme</ex></dt> <dd>カラースキームを読み込みます</dd>
+    <dt><ex>:comclear</ex></dt> <dd>ユーザ定義コマンドをすべて消去します</dd>
+    <dt><ex>:command</ex></dt> <dd>ユーザ定義コマンドの一覧表示と定義を行います</dd>
+    <dt><ex>:cunabbrev</ex></dt> <dd>コマンドラインモードで有効な略語を消去します</dd>
+    <dt><ex>:cunmap</ex></dt> <dd>コマンドラインモードで有効なキーマッピングを消去します</dd>
+    <dt><ex>:delbmarks</ex></dt> <dd>ブックマークを削除します</dd>
+    <dt><ex>:delcommand</ex></dt> <dd>指定したユーザ定義コマンドを消去します</dd>
+    <dt><ex>:delmacros</ex></dt> <dd>マクロを削除します</dd>
+    <dt><ex>:delmarks</ex></dt> <dd>指定したマークを削除します</dd>
+    <dt><ex>:delqmarks</ex></dt> <dd>指定したクイックマークを削除します</dd>
+    <dt><ex>:delstyle</ex></dt> <dd>指定にマッチするスタイルをすべて消去します</dd>
+    <dt><ex>:dialog</ex></dt> <dd>&liberator.host; のダイアログを開きます</dd>
+    <dt><ex>:doautoall</ex></dt> <dd>指定した URL にマッチするオートコマンドをすべてのタブに適用します</dd>
+    <dt><ex>:doautocmd</ex></dt> <dd>指定した URL にマッチするオートコマンドを現在のタブに適用します</dd>
+    <dt><ex>:downloads</ex></dt> <dd>現在のダウンロード状況を表示します</dd>
+    <dt><ex>:echo</ex></dt> <dd>式を評価した結果を表示します</dd>
+    <dt><ex>:echoerr</ex></dt> <dd>式を評価した結果をエラーメッセージとして表示します</dd>
+    <dt><ex>:echomsg</ex></dt> <dd>式を評価した結果を通知メッセージとして表示します</dd>
+    <dt><ex>:emenu</ex></dt> <dd>コマンドラインで指定したメニューを実行します</dd>
+    <dt><ex>:execute</ex></dt> <dd>引数を Ex コマンドとして実行します</dd>
+    <dt><ex>:extadd</ex></dt> <dd>拡張機能をインストールします</dd>
+    <dt><ex>:extdelete</ex></dt> <dd>拡張機能をアンインストールします</dd>
+    <dt><ex>:extdisable</ex></dt> <dd>拡張機能を無効にします</dd>
+    <dt><ex>:extenable</ex></dt> <dd>拡張機能を有効にします</dd>
+    <dt><ex>:extensions</ex></dt> <dd>すべての拡張機能を一覧表示します</dd>
+    <dt><ex>:extoptions</ex></dt> <dd>拡張機能の設定ダイアログを開きます</dd>
+    <dt><ex>:exusage</ex></dt> <dd>すべての ex コマンドを簡易説明とともに一覧表示します</dd>
+    <dt><ex>:finish</ex></dt> <dd>スクリプトファイルの読み込みを中止します</dd>
+    <dt><ex>:forward</ex></dt> <dd>履歴を進みます</dd>
+    <dt><ex>:frameonly</ex></dt> <dd>現在フレームのページのみを表示します</dd>
+    <dt><ex>:hardcopy</ex></dt> <dd>現在のページを印刷します</dd>
+    <dt><ex>:help</ex></dt> <dd>ヘルプを表示します</dd>
+    <dt><ex>:helpall</ex></dt> <dd>ヘルプを一枚のページにして表示します</dd>
+    <dt><ex>:highlight</ex></dt> <dd>&liberator.appname; のスタイルを変更します</dd>
+    <dt><ex>:history</ex></dt> <dd>最近訪問した URL の履歴を表示します</dd>
+    <dt><ex>:iabbrev</ex></dt> <dd>挿入モードで有効な略語を定義します</dd>
+    <dt><ex>:iabclear</ex></dt> <dd>挿入モードで有効な略語をすべて消去します</dd>
+    <dt><ex>:imap</ex></dt> <dd>挿入モードで有効なキーマッピングを定義します</dd>
+    <dt><ex>:imapclear</ex></dt> <dd>挿入モードで有効なキーマッピングをすべて消去します</dd>
+    <dt><ex>:inoremap</ex></dt> <dd>挿入モードで有効な再帰解釈しないキーマッピングを定義します</dd>
+    <dt><ex>:iunabbrev</ex></dt> <dd>挿入モードで有効な略語を消去します</dd>
+    <dt><ex>:iunmap</ex></dt> <dd>挿入モードで有効なキーマッピングを消去します</dd>
+    <dt><ex>:javascript</ex></dt> <dd>JavaScript コードを eval() によって実行します</dd>
+    <dt><ex>:jumps</ex></dt> <dd>ジャンプリストを表示します</dd>
+    <dt><ex>:keepalt</ex></dt> <dd>現在の代替バッファを変更せずにコマンドを実行します</dd>
+    <dt><ex>:let</ex></dt> <dd>変数を設定もしくは一覧表示します</dd>
+    <dt><ex>:loadplugins</ex></dt> <dd>直ちにまだ読み込まれていないすべてのプラグインを読み込みます</dd>
+    <dt><ex>:macros</ex></dt> <dd>すべてのマクロを一覧表示します</dd>
+    <dt><ex>:map</ex></dt> <dd>キーマッピングを定義します</dd>
+    <dt><ex>:mapclear</ex></dt> <dd>すべてのキーマッピングを消去します</dd>
+    <dt><ex>:mark</ex></dt> <dd>ウェブページの現在の位置をマークします</dd>
+    <dt><ex>:marks</ex></dt> <dd>現在のウェブページにおけるすべてのマークを表示します</dd>
+    <dt><ex>:messages</ex></dt> <dd>以前表示されたメッセージを再度表示します</dd>
+    <dt><ex>:messclear</ex></dt> <dd>メッセージ履歴を消去します</dd>
+    <dt><ex>:mk&liberator.name;rc</ex></dt> <dd>現在のキーマッピングとオプションの変更を設定ファイルへ書き出します</dd>
+    <dt><ex>:nmap</ex></dt> <dd>ノーマルモードで有効なキーマッピングを定義します</dd>
+    <dt><ex>:nmapclear</ex></dt> <dd>ノーマルモードで有効なキーマッピングをすべて消去します</dd>
+    <dt><ex>:nnoremap</ex></dt> <dd>ノーマルモードで有効な再帰解釈しないキーマッピングを定義します</dd>
+    <dt><ex>:nohlsearch</ex></dt> <dd>検索の強調表示を消去します</dd>
+    <dt><ex>:noremap</ex></dt> <dd>再帰解釈しないキーマッピングを定義します</dd>
+    <dt><ex>:normal</ex></dt> <dd>ノーマルモードコマンドを実行します</dd>
+    <dt><ex>:nunmap</ex></dt> <dd>ノーマルモードで有効なキーマッピングを消去します</dd>
+    <dt><ex>:open</ex></dt> <dd>ひとつ以上の URL を開きます</dd>
+    <dt><ex>:optionusage</ex></dt> <dd>すべてのオプションを簡易説明とともに表示します</dd>
+    <dt><ex>:pageinfo</ex></dt> <dd>ページに関する様々な情報を表示します</dd>
+    <dt><ex>:pagestyle</ex></dt> <dd>そのページで用意されているスタイルシートのうち適用するものを選択します</dd>
+    <dt><ex>:play</ex></dt> <dd>記録済みのマクロを再生します</dd>
+    <dt><ex>:preferences</ex></dt> <dd>&liberator.host; の設定ダイアログを表示します</dd>
+    <dt><ex>:pwd</ex></dt> <dd>カレントディレクトリを表示します</dd>
+    <dt><ex>:qmark</ex></dt> <dd>素早くアクセスするために一文字のマーク ( クイックマーク ) を URL につけます</dd>
+    <dt><ex>:qmarks</ex></dt> <dd>すべてのクイックマークを表示します</dd>
+    <dt><ex>:quit</ex></dt> <dd>現在のタブを閉じます</dd>
+    <dt><ex>:quitall</ex></dt> <dd>すべてのタブを閉じ &liberator.appname; を終了します</dd>
+    <dt><ex>:redraw</ex></dt> <dd>画面を再描画します</dd>
+    <dt><ex>:reload</ex></dt> <dd>現在のページを再読み込みします</dd>
+    <dt><ex>:reloadall</ex></dt> <dd>すべてのタブのページを再読み込みします</dd>
+    <dt><ex>:restart</ex></dt> <dd>強制的に再起動します</dd>
+    <dt><ex>:runtime</ex></dt> <dd><o>runtimepath</o> に設定されている各々のディレクトリから指定されたファイルを読み込みます</dd>
+    <dt><ex>:sanitize</ex></dt> <dd>プライベートデータを消去します</dd>
+    <dt><ex>:saveas</ex></dt> <dd>現在のページを保存します</dd>
+    <dt><ex>:sbclose</ex></dt> <dd>サイドバーを閉じます</dd>
+    <dt><ex>:scriptnames</ex></dt> <dd>読み込まれたスクリプトの名前をすべて表示します</dd>
+    <dt><ex>:set</ex></dt> <dd>オプションを設定します</dd>
+    <dt><ex>:setglobal</ex></dt> <dd>グローバルオプションを設定します</dd>
+    <dt><ex>:setlocal</ex></dt> <dd>ローカルオプションを設定します</dd>
+    <dt><ex>:sidebar</ex></dt> <dd>サイドバーを開きます</dd>
+    <dt><ex>:silent</ex></dt> <dd>静かに(コマンドラインに出力せずに)コマンドを実行します</dd>
+    <dt><ex>:source</ex></dt> <dd>Ex コマンドをファイルから読み込みます</dd>
+    <dt><ex>:stop</ex></dt> <dd>読み込みを中止します</dd>
+    <dt><ex>:stopall</ex></dt> <dd>すべてのタブの読み込みを中止します</dd>
+    <dt><ex>:style</ex></dt> <dd>&liberator.appname; とウェブページのスタイルを変更します</dd>
+    <dt><ex>:styledisable</ex></dt> <dd>ユーザスタイルを無効にします</dd>
+    <dt><ex>:styleenable</ex></dt> <dd>ユーザスタイルを有効にします</dd>
+    <dt><ex>:styletoggle</ex></dt> <dd>Toggle a user style sheet</dd>
+    <dt><ex>:tab</ex></dt> <dd>コマンドを実行し結果を新しいタブに出力します</dd>
+    <dt><ex>:tabattach</ex></dt> <dd>現在のタブを他のウィンドウに移します</dd>
+    <dt><ex>:tabdetach</ex></dt> <dd>現在のタブを新しいウィンドウへ分離します</dd>
+    <dt><ex>:tabdo</ex></dt> <dd>各タブにコマンドを実行します</dd>
+    <dt><ex>:tabduplicate</ex></dt> <dd>現在のタブを複製します</dd>
+    <dt><ex>:tablast</ex></dt> <dd>最後のタブを選択します</dd>
+    <dt><ex>:tabmove</ex></dt> <dd>現在のタブを N 番目のタブの後ろに移動します</dd>
+    <dt><ex>:tabnext</ex></dt> <dd>ひとつ右のタブもしくは <oa>count</oa> 番目のタブを選択します</dd>
+    <dt><ex>:tabonly</ex></dt> <dd>現在のタブ以外のすべてのタブを閉じます</dd>
+    <dt><ex>:tabopen</ex></dt> <dd>ひとつ以上の URL を新しいタブで開きます</dd>
+    <dt><ex>:tabprevious</ex></dt> <dd>ひとつもしくは <oa>count</oa> 個左のタブを選択します</dd>
+    <dt><ex>:tabrewind</ex></dt> <dd>最初のタブを選択します</dd>
+    <dt><ex>:time</ex></dt> <dd>JavaScript コードやコマンドを複数回実行して速度を計測します</dd>
+    <dt><ex>:toolbarhide</ex></dt> <dd>名前付きツールバーを非表示にします</dd>
+    <dt><ex>:toolbarshow</ex></dt> <dd>名前付きツールバーを表示します</dd>
+    <dt><ex>:toolbartoggle</ex></dt> <dd>名前付きツールバーの表示/非表示を切り替えます</dd>
+    <dt><ex>:unabbreviate</ex></dt> <dd>略語を消去します</dd>
+    <dt><ex>:undo</ex></dt> <dd>閉じたタブを復元します</dd>
+    <dt><ex>:undoall</ex></dt> <dd>閉じたタブをすべて復元します</dd>
+    <dt><ex>:unlet</ex></dt> <dd>変数を削除します</dd>
+    <dt><ex>:unmap</ex></dt> <dd>キーマッピングを消去します</dd>
+    <dt><ex>:verbose</ex></dt> <dd><o>verbose</o> 値を設定してコマンドを実行します</dd>
+    <dt><ex>:version</ex></dt> <dd>バージョン情報を表示します</dd>
+    <dt><ex>:viewsource</ex></dt> <dd>現在のページのソースを表示します</dd>
+    <dt><ex>:viusage</ex></dt> <dd>すべてのキーマッピングを簡易説明とともに表示します</dd>
+    <dt><ex>:vmap</ex></dt> <dd>ヴィジュアルモードで有効なキーマッピングを定義します</dd>
+    <dt><ex>:vmapclear</ex></dt> <dd>ヴィジュアルモードで有効なキーマッピングをすべて消去します</dd>
+    <dt><ex>:vnoremap</ex></dt> <dd>ヴィジュアルモードで有効な再帰解釈しないキーマッピング定義をします</dd>
+    <dt><ex>:vunmap</ex></dt> <dd>ヴィジュアルモードで有効なキーマッピングを消去します</dd>
+    <dt><ex>:winclose</ex></dt> <dd>ウィンドウを閉じます</dd>
+    <dt><ex>:window</ex></dt> <dd>コマンドを実行して新しいウィンドウに表示します</dd>
+    <dt><ex>:winonly</ex></dt> <dd>他のウィンドウをすべて閉じます</dd>
+    <dt><ex>:winopen</ex></dt> <dd>ひとつ以上の URL を新しいウィンドウで開きます</dd>
+    <dt><ex>:wqall</ex></dt> <dd>セッションを保存して終了します</dd>
+    <dt><ex>:zoom</ex></dt> <dd>現在のページのズーム倍率を設定します</dd>
+</dl>
+
+
+<h2 tag="option-index">オプション</h2>
+
+<dl>
+    <dt><o>activate</o></dt> <dd>新しくタブが開かれたときに自動的に選択するかどうかを設定します</dd>
+    <dt><o>cdpath</o></dt> <dd><ex>:cd</ex> を実行する際にサーチするディレクトリの一覧を設定します</dd>
+    <dt><o>complete</o></dt> <dd><ex>:open</ex> コマンドで補完されるアイテムを設定します</dd>
+    <dt><o>defsearch</o></dt> <dd>デフォルトで使用するサーチエンジンを設定します</dd>
+    <dt><o>editor</o></dt> <dd>外部エディタを設定します</dd>
+    <dt><o>encoding</o></dt> <dd>現在のバッファのエンコーディングを変更します</dd>
+    <dt><o>errorbells</o></dt> <dd>エラーメッセージが表示されたときにベルを鳴らすかどうかを設定します</dd>
+    <dt><o>eventignore</o></dt> <dd>無視するオートコマンドのイベント名の一覧を設定します</dd>
+    <dt><o>exrc</o></dt> <dd>カレントディレクトリの RC ファイルを読み込むことを許可するかどうかを設定します</dd>
+    <dt><o>extendedhinttags</o></dt> <dd><k>;</k> によってヒントが表示される要素の XPath 式を設定します</dd>
+    <dt><o>fileencoding</o></dt> <dd>&liberator.appname; が読み書きに使用する文字コードを変更します</dd>
+    <dt><o>focuscontent</o></dt> <dd>ウェブページを読み込んだあとにノーマルモードになるように試行するかどうかを設定します</dd>
+    <dt><o>followhints</o></dt> <dd>ヒントモードにおける <k name="Return"/> の振る舞いを設定します</dd>
+    <dt><o>fullscreen</o></dt> <dd>現在のウィンドウをフルスクリーンに切り替えるかどうかを設定します</dd>
+    <dt><o>guioptions</o></dt> <dd>メニューバーやツールバーのような GUI 部品の表示・非表示を設定します</dd>
+    <dt><o>helpfile</o></dt> <dd>メインのヘルプファイル名を設定します</dd>
+    <dt><o>hintinputs</o></dt> <dd>入力欄におけるヒントの表示方法を設定します</dd>
+    <dt><o>hintmatching</o></dt> <dd>リンクをどのようにマッチさせるかを設定します</dd>
+    <dt><o>hinttags</o></dt> <dd><k>f</k> と <k>F</k> によってヒントが表示される要素の XPath 式を設定します</dd>
+    <dt><o>hinttimeout</o></dt> <dd>移動先がひとつに定まらない場合でも自動的にリンクを辿るタイムアウト時間を設定します</dd>
+    <dt><o>history</o></dt> <dd>コマンドライン履歴に記録しておく Ex コマンドの個数を設定します</dd>
+    <dt><o>hlsearch</o></dt> <dd>以前の検索結果を強調表示するかどうかを設定します</dd>
+    <dt><o>ignorecase</o></dt> <dd>検索時に大文字小文字を無視するかどうかを設定します</dd>
+    <dt><o>incsearch</o></dt> <dd>検索文字列を入力したらすぐにマッチする結果を表示するかどうかを設定します</dd>
+    <dt><o>insertmode</o></dt> <dd>テキストエリアにおいてデフォルトで挿入モードを使うかどうかを設定します</dd>
+    <dt><o>laststatus</o></dt> <dd>ステータスラインの表示方法を設定します</dd>
+    <dt><o>linksearch</o></dt> <dd>検索をリンクのみに制限するかどうかを設定します</dd>
+    <dt><o>loadplugins</o></dt> <dd>起動時にプラグインを読み込むかどうかを設定します</dd>
+    <dt><o>maxitems</o></dt> <dd>リスト表示する最大個数を設定します</dd>
+    <dt><o>messages</o></dt> <dd>メッセージ履歴に記録しておくメッセージの個数を設定します</dd>
+    <dt><o>more</o></dt> <dd>メッセージが一画面に収まりらない場合、メッセージ一覧を一時停止します</dd>
+    <dt><o>newtab</o></dt> <dd>デフォルトで新しいタブに表示するべきコマンドを設定します</dd>
+    <dt><o>nextpattern</o></dt> <dd>現在のページの '次' のページを推測するためのパターンを設定します</dd>
+    <dt><o>online</o></dt> <dd>'オフライン作業' にするかどうかを設定します</dd>
+    <dt><o>pageinfo</o></dt> <dd><ex>:pageinfo</ex> で表示したい情報を設定します</dd>
+    <dt><o>popups</o></dt> <dd>ポップアップウィンドウを表示する場所を設定します</dd>
+    <dt><o>previouspattern</o></dt> <dd>現在のページの '前' のページを推測するためのパターンを設定します</dd>
+    <dt><o>private</o></dt> <dd>'プライベートブラウジング'に設定します</dd>
+    <dt><o>runtimepath</o></dt> <dd>ランタイムファイルが存在するディレクトリの一覧を設定します</dd>
+    <dt><o>sanitizeitems</o></dt> <dd>個人データを削除するアイテムを設定します</dd>
+    <dt><o>sanitizetimespan</o></dt> <dd>個人データを残す期間を設定します</dd>
+    <dt><o>scroll</o></dt> <dd><k name="C-u"/> と <k name="C-d"/> でスクロールする行数を設定します</dd>
+    <dt><o>shell</o></dt> <dd><ex>:!</ex> や <ex>:run</ex> コマンドを実行する際に使用するシェルを設定します</dd>
+    <dt><o>shellcmdflag</o></dt> <dd><ex>:!</ex> や <ex>:run</ex> コマンドを実行する際に使用するシェルに渡されるオプションを設定します</dd>
+    <dt><o>showmode</o></dt> <dd>コマンドラインに現在のモードを表示するかどうかを設定します</dd>
+    <dt><o>showstatuslinks</o></dt> <dd>マウスカーソルの下のリンク先を表示する方法を設定します</dd>
+    <dt><o>showtabline</o></dt> <dd>ウェブページを開いた際にタブバーを表示するかどうかを設定します</dd>
+    <dt><o>smartcase</o></dt> <dd>検索パターンが大文字を含む場合 <o>ignorecase</o> オプションを無効にするかどうかを設定します</dd>
+    <dt><o>suggestengines</o></dt> <dd>サジェスト機能で使用するサーチエンジンの一覧を設定します</dd>
+    <dt><o>titlestring</o></dt> <dd>ウィンドウのタイトルを設定します</dd>
+    <dt><o>urlseparator</o></dt> <dd>複数の URL を引数に指定した際の区切り文字を正規表現で設定します</dd>
+    <dt><o>usermode</o></dt> <dd>現在のウェブサイトを必要最低限のスタイルシートで表示するための簡易的な手段です</dd>
+    <dt><o>verbose</o></dt> <dd>メッセージ出力する詳細度を設定します</dd>
+    <dt><o>visualbell</o></dt> <dd>エラー発生時にビープ音を鳴らす代わりにビジュアルベルを使用するかどうかを設定します</dd>
+    <dt><o>wildcase</o></dt> <dd>補完時のマッチ方法を設定します</dd>
+    <dt><o>wildignore</o></dt> <dd>ファイルの補完時に無視するファイルのパターン一覧を設定します</dd>
+    <dt><o>wildmode</o></dt> <dd>コマンドラインでの補完がどのように行なわれるかを設定します</dd>
+    <dt><o>wildoptions</o></dt> <dd>コマンドラインでの補完をどのように行うかを設定します</dd>
+    <dt><o>wordseparators</o></dt> <dd><o>hintmatching</o> においてどのように単語を区切るかを設定します</dd>
+</dl>
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

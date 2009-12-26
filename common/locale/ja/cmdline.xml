@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="cmdline"
+    title="&liberator.appname; Command-line"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="Command-line-mode Command-line mode-cmdline">コマンドラインモード</h1>
+<toc start="2"/>
+
+コマンドラインモードは Ex コマンド ( <k>:</k> ) と
+テキスト検索パターン ( <k>/</k> and <k>?</k> ) の入力に利用されます。
+
+<item>
+    <tags>:</tags>
+    <spec>:</spec>
+    <description>
+        <p>
+            コマンドラインモードを開始します。コマンドラインモードでは、
+            引数を指定することのできる拡張コマンドを実行することができます。
+        </p>
+    </description>
+</item>
+
+
+
+<h2 tag="cmdline-editing">Command-line editing</h2>
+
+<item>
+    <tags><![CDATA[c_<C-c>]]></tags>
+    <spec>&lt;C-c></spec>
+    <description>
+        <p>実行することなくコマンドラインモードを終了します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<C-]>]]></tags>
+    <spec>&lt;C-]></spec>
+    <description>
+        <p>コマンドラインで有効な略語を展開します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<Up>]]></tags>
+    <spec>&lt;Up></spec>
+    <description>
+        <p>
+            現在のコマンドラインにマッチする、
+            以前使用されたコマンドのうちひとつ前のものを履歴から呼び出します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<Down>]]></tags>
+    <spec>&lt;Down></spec>
+    <description>
+        <p>
+            現在のコマンドラインにマッチする、
+            以前使用されたコマンドのうちひとつ次のものを履歴から呼び出します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Up> c_<PageUp>]]></tags>
+    <spec>&lt;S-Up></spec>
+    <spec>&lt;PageUp></spec>
+    <description>
+        <p>以前使用されたコマンドのうちひとつ前のコマンドを履歴から呼び出します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Down> c_<PageDown>]]></tags>
+    <spec>&lt;S-Down></spec>
+    <spec>&lt;PageDown></spec>
+    <description>
+        <p>以前使用されたコマンドのうちひとつ次のものを履歴から呼び出します。</p>
+    </description>
+</item>
+
+
+<h2 tag="cmdline-completion">コマンドライン補完</h2>
+
+<item>
+    <tags><![CDATA[c_<Tab>]]></tags>
+    <spec>&lt;Tab></spec>
+    <description>
+        <p>
+            <o>wildmode</o> オプションで指定された挙動に準じてカーソルの前の単語を補完します。
+            <o>wildmode</o> オプションが "list" を含み、複数の候補がある場合、補完メニューが開きます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Tab>]]></tags>
+    <spec>&lt;S-Tab></spec>
+    <description>
+        <p><o>wildmode</o> オプションが "full" を含む場合、補完リストを逆にたどります。</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

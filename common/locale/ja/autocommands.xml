@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="autocommands"
+    title="&liberator.appname; Autocommands"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="autocommands">オートコマンド</h1>
+<toc start="2"/>
+
+<p>
+    オートコマンドは特定のイベントが発生した際にコードを自動的に
+    実行する手段です。
+</p>
+
+<item>
+    <tags>:au :autocmd</tags>
+    <spec>:au[tocmd]</spec>
+    <description>
+        <p>イベントが発生した際にコマンドを自動的に実行します。</p>
+
+        <p><ex>:au[tocmd]</ex> <a>event</a> <a>pat</a> <a>cmd</a></p>
+
+        <p>
+            もし、<em>-javascript</em>(短縮名:<em>-js</em>)がしてされた場合、
+            <a>cmd</a>は、JavaScriptコードとして実行されます。
+            また、どの変数も引数として渡されます。
+        </p>
+
+        <p>
+            <a>pat</a>にマッチする URL で<a>event</a>が発生した際に &liberator.appname;
+            が実行するコマンドのリストに<a>cmd</a>を追加します:
+        </p>
+
+        <ul>
+            <li><ex>:autocmd[!]</ex> <a>events</a> <a>pat</a>: <a>events</a>と<a>pat</a>にマッチするオートコマンドを一覧表示/削除します</li>
+            <li><ex>:autocmd[!]</ex> <a>events</a>: <a>events</a>にマッチするオートコマンドを一覧表示/削除します</li>
+            <li><ex>:autocmd[!]</ex> <a>pat</a>: <a>pat</a>にマッチするオートコマンドを一覧表示/削除します</li>
+            <li><ex>:autocmd[!]</ex>: すべてのオートコマンドを一覧表示/削除します</li>
+        </ul>
+
+        <p>利用可能な<a>events</a>:</p>
+
+        <dl tag="autocommand-list"/>
+
+        <p><a>pat</a>は正規表現です。すべての URL にマッチさせたい場合、<tt>.*</tt>を使ってください。</p>
+
+        <note><a>pat</a>に正規表現ではなくグロブを使う Vim とは異なります。</note>
+
+        <p>関連するイベントにおいて以下のキーワードが利用可能です:</p>
+
+        <dl tag="autocommand-args"/>
+    </description>
+</item>
+
+<item>
+    <tags>:doautoa :doautoall</tags>
+    <spec>:doautoa[ll] <a>event</a> <oa>url</oa></spec>
+    <description>
+        <p>
+            指定した URL にマッチするオートコマンドをすべてのバッファに適用します。
+            <oa>url</oa>が指定されていない場合、現在の URL が使用されます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:do :doautocmd</tags>
+    <spec>:do[autocmd] <a>event</a> <oa>url</oa></spec>
+    <description>
+        <p>
+            指定した URL にマッチするオートコマンドを現在のバッファに適用します。
+            <oa>url</oa>が指定されていない場合、現在の URL が使用されます。
+        </p>
+    </description>
+</item>
+<h2 tag="autocmd-examples">Examples</h2>
+
+<p>すべての Google サイトで <em>passthrough</em> モードを有効にします:</p>
+
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)</ex></code>
+
+<p><em>一部</em>の Google サイトで <em>passthrough</em> モードを有効にします:</p>
+
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)</ex></code>
+
+<p>
+    Gmail でメールを編集するときに filetype を設定します:
+</p>
+
+<code><!-- Why is the XSLT processor mangling newlines? -->
+<ex>:autocmd LocationChange .* :set editor=<str>gvim -f</str></ex>
+<ex>:autocmd LocationChange mail\\.google\\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
+</code>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

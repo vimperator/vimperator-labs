@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="gui"
+    title="&liberator.appname; GUI"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="gui">&liberator.appname;'s GUI</h1>
+<toc start="2"/>
+
+<p>
+    &liberator.appname; ではよく使われる &liberator.host; の機能を ex モードやノーマルモードにおける
+    コマンドによって提供していますが、ときには直接 GUI にアクセスする必要があるかもしれません。
+    メニューや標準のダイアログ、サイドバーにアクセスするためのコマンドがあります。
+</p>
+
+<h2 tag="menu">メニュー</h2>
+
+<item>
+    <tags>:emenu</tags>
+    <spec>:emenu <a>menu</a></spec>
+    <description>
+        <p>
+            コマンドラインから <a>menu</a> を実行します。
+            このコマンドは  &liberator.host; メニューバーから利用できるすべてのメニュー項目へ、コマンドラインによるアクセスを提供します。
+            <a>menu</a> は下位メニューがドットで区切られた階層的なパスです。
+            例: <ex>:emenu ファイル.ファイルを開く…</ex>
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="dialogs">ダイアログ</h2>
+
+<item>
+    <tags>:addo :addons</tags>
+    <spec>:addo<oa>ns</oa></spec>
+    <description>
+        <p>
+            &liberator.host; の拡張機能とテーマを表示します。
+            このダイアログから拡張機能を追加・削除・無効化することができます。
+            &liberator.appname; は &liberator.host; の一部のキーバインドを上書きし GUI を変更しますので、
+            すべての拡張機能が動くとは限らないことに注意してください。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dia :dialog</tags>
+    <spec>:dia<oa>log</oa> <oa>&liberator.host;-dialog</oa></spec>
+    <description>
+        <p>&liberator.host; のダイアログを開きます。</p>
+
+        <p>利用可能なダイアログは以下です ( 訳注: カッコ内は &liberator.host; においてそのダイアログを表示する手順です ):</p>
+
+        <dl tag="dialog-list">
+            <dt>about</dt>           <dd>Mozilla &liberator.host; について ( ヘルプ -> Mozilla &liberator.host; について )</dd>
+            <dt>addbookmark</dt>     <dd>現在のページをブックマークに追加 ( ブックマーク -> このページをブックマーク )</dd>
+            <dt>addons</dt>          <dd>アドオン ( ツール -> アドオン )</dd>
+            <dt>bookmarks</dt>       <dd>ブックマーク ( 表示 -> サイドバー -> ブックマーク )</dd>
+            <dt>checkupdates</dt>    <dd>ソフトウェアの更新を確認 ( ヘルプ -> ソフトウェアの更新を確認 )</dd>
+            <dt>cleardata</dt>       <dd>プライバシー情報の消去 ( ツール -> プライバシー情報の消去 )</dd>
+            <dt>cookies</dt>         <dd>クッキー一覧 ( ツール -> オプションからプライバシータブの「 Cookie を表示」をクリック )</dd>
+            <dt>console</dt>         <dd>エラーコンソール ( ツール -> エラーコンソール )</dd>
+            <dt>customizetoolbar</dt><dd>ツールバーのカスタマイズ ( 表示 -> ツールバー -> カスタマイズ )</dd>
+            <dt>dominspector</dt>    <dd>DOM Inspector ( ツール -> DOM Inspector )</dd>
+            <dt>downloads</dt>       <dd>ダウンロードマネージャ ( ツール -> ダウンロード )</dd>
+            <dt>history</dt>         <dd>履歴 ( 表示 -> サイドバー -> 履歴 )</dd>
+            <dt>import</dt>          <dd>設定移行ウィザード ( ファイル -> 設定とデータのインポート )</dd>
+            <dt>openfile</dt>        <dd>ファイルを開くダイアログ ( ファイル -> ファイルを開く )</dd>
+            <dt>pageinfo</dt>        <dd>ページの情報ダイアログ ( ツール -> ページの情報 )</dd>
+            <dt>pagesource</dt>      <dd>ページのソース ( 表示 -> ページのソース )</dd>
+            <dt>places</dt>          <dd>履歴とブックマークの管理 ( 履歴とブックマークの管理 )</dd>
+            <dt>preferences</dt>     <dd>&liberator.host; の設定ダイアログ ( ツール -> オプション )</dd>
+            <dt>printpreview</dt>    <dd>印刷プレビュー ( ファイル -> 印刷プレビュー )</dd>
+            <dt>printsetup</dt>      <dd>ページ設定ダイアログ ( ファイル -> ページ設定 )</dd>
+            <dt>print</dt>           <dd>印刷ダイアログ ( ファイル -> 印刷 )</dd>
+            <dt>saveframe</dt>       <dd>名前を付けて保存 ( ファイル -> 名前を付けてフレームを保存 )</dd>
+            <dt>savepage</dt>        <dd>名前を付けて保存 ( ファイル -> 名前を付けてページを保存 )</dd>
+            <dt>searchengines</dt>   <dd>サーチエンジンの管理 ( 検索バーの左側にある下向き矢印 -> 検索バーの管理 )</dd>
+            <dt>selectionsource</dt> <dd>選択部分のソース ( 選択後コンテキストメニューから「選択した部分のソースを表示」 )</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dl :downl :downloads</tags>
+    <spec>:downl<oa>oads</oa></spec>
+    <description>
+        <p>
+            現在のダウロードの進捗を表示します。
+            &liberator.host; のダウンロードダイアログを新しいタブに開きます。
+            ここでダウンロードの一時停止・キャンセル・再開ができます。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="extensions add-ons">アドオン</h2>
+
+<item>
+    <tags>:exta :extadd</tags>
+    <spec>:exta<oa>dd</oa> <a>file</a></spec>
+    <description>
+        <p>拡張機能をインストールします。<a>file</a> は拡張機能ファイル (*.xpi)です。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extde :extdelete</tags>
+    <spec>:extde<oa>lete</oa> <a>extension</a></spec>
+    <spec>:extde<oa>lete</oa>!</spec>
+    <description>
+        <p>
+            拡張機能をアンインストールします。<a>extension</a> は拡張機能の名前です。
+            <oa>!</oa> を付けるとすべての拡張機能をアンインストールします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extd :extdisable</tags>
+    <spec>:extd<oa>isable</oa> <a>extension</a></spec>
+    <spec>:extd<oa>isable</oa>!</spec>
+    <description>
+        <p>
+            拡張機能を無効にします。<a>extension</a> は拡張機能の名前です。
+            <oa>!</oa> を付けるとすべての拡張機能を無効にします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exte :extenable</tags>
+    <spec>:exte<oa>nable</oa> <a>extension</a></spec>
+    <spec>:exte<oa>nable</oa>!</spec>
+    <description>
+        <p>
+            拡張機能を有効にします。<a>extension</a> は拡張機能の名前です。
+            <oa>!</oa> を付けるとすべての拡張機能を有効にします。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extens :extensions</tags>
+    <spec>:extens<oa>ions</oa></spec>
+    <description>
+        <p>インストールしているすべての拡張機能を一覧表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exto :extoptions</tags>
+    <tags>:extp :extpreferences</tags>
+    <spec>:exto<oa>ptions</oa><oa>!</oa> <a>extension</a></spec>
+    <spec>:extp<oa>references</oa><oa>!</oa> <a>extension</a></spec>
+    <description>
+        <p>
+            拡張機能の設定ダイアログを開きます。<oa>!</oa>を付けると、ダイアログとして開き、
+            そうでなければ現在のバッファに開きます。 <o>newtab</o> を参照してください。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="sidebar">サイドバー</h2>
+
+<item>
+    <tags>:sbcl :sbclose</tags>
+    <spec>:sbcl<oa>ose</oa></spec>
+    <description>
+        <p>サイドバーを閉じます。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:sbope :sbopen :sb :sbar :sideb :sidebar</tags>
+    <spec>:sidebar <a>name</a></spec>
+    <description>
+        <p>
+            サイドバーを開きます。
+            <a>name</a> は通常の &liberator.host; メニューの「表示 -> サイドバー」に表示されるものです。
+            アドオン、設定 ( 訳注: アドレスバーに about:config と打ち込むと表示されるものです )、ダウンロードはサイドバーでも利用可能です。
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="status-line status-bar">ステータスライン</h2>
+
+<p>
+    ステータスラインがそれぞれのウィンドウに表示されます。
+    <o>laststatus</o> オプションでステータスラインが表示されるかどうかを定義できます。
+</p>
+
+<p>
+    ステータスラインには現在のバッファの情報がいくつか含まれています。
+    それらは順に:
+    The status line contains several fields that provide information about the
+    state of the current buffer. These are, in order:
+</p>
+
+<ul>
+    <li>
+        URL: 現在読み込まれている URL 。
+        読み込み中のとき、この項目には進行状況が出されます。
+    </li>
+    <li>
+        履歴とブックマーク状態 ([+-]❤):
+        そのタブが持っている履歴中の現在表示しているページの位置が + と - で戻る事が可能か、進む事が可能か示します。
+        ❤ はそのページがブックマークされているかを示します。
+    </li>
+    <li>
+        タブ位置 ([N/M]): N は現在選択しているタブの位置で、 M はそのウィンドウ中の全タブの数。
+    </li>
+    <li>
+        縦方向のスクロール位置: 現在バッファのスクロール位置(%表記)。
+        Top は 0% で Bot は 100% です。
+    </li>
+    <li><!-- 訳全然自信無し 修正求む -->
+        セキュリティ: &liberator.host; と同様に、必要に応じてセキュリティ情報ボタン(訳注: 鍵マーク)が表示されます。
+        ステータスバーの色は読み込んでいるページのセキュリティ状態を反映します。
+        <ul>
+            <li>黒 - そのサイトは未検証で通信が暗号化されていない</li>
+            <li>青 - そのドメインは検証済で通信が暗号化されている</li>
+            <li>緑 - そのドメインはEV(Extended Validation)証明書により完全に検証済で通信が暗号化されている</li>
+        </ul>
+    </li>
+    <li>
+        拡張機能: &liberator.host; にインストールした拡張機能が付加したボタンは
+        ステータスラインの後部に表示されます。
+    </li>
+</ul>
+
+<h2 tag="toolbar">Toolbars</h2>
+
+<item>
+    <tags>:tbs :tbshow :toolbars :toolbarshow</tags>
+    <spec>:toolbarshow <a>name</a></spec>
+    <description>
+        <p>名前付きツールバーを表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tbh :tbhide :toolbarh  :toolbarhide</tags>
+    <spec>:toolbarhide <a>name</a></spec>
+    <description>
+        <p>名前付きツールバーを非表示にします。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tbt :tbtoggle :toolbart :toolbartoggle</tags>
+    <spec>:toolbartoggle <a>name</a></spec>
+    <description>
+        <p>名前付きツールバーの表示/非表示を切り替えます。</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

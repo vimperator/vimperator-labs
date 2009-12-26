@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="map"
+    title="&liberator.appname; Key Mappings"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1>キーマッピング、略語、ユーザ定義コマンドに関して</h1>
+<toc start="2"/>
+
+<h2 tag="key-mapping mapping map macro">キーマッピング</h2>
+
+<p>
+    キーマッピングコマンドは標準キーバインドの再定義や新しいキーバインドの定義のために利用されます。
+    キーマッピングは文字列で表現されたキー及びキーの並び(<t>key-sequence</t>)で構成されます。
+    例:
+</p>
+<code><ex>:map <k name="F2"/> :echo new Date().toDateString()<k name="CR"/></ex></code>
+<p>
+    は <k name="F2"/> が押されたときにコマンドラインに現在の日付を表示します。
+</p>
+
+<tags>:map-modes</tags>
+
+<p>
+    以下の4つのキーマッピングを定義できます:
+</p>
+
+<ul>
+    <li>ノーマルモード: 通常のブラウジング時</li>
+    <li>ヴィジュアルモード: カーソルでテキストを選択している時</li>
+    <li>挿入モード: Webサイトでテキストを入力している時</li>
+    <li>コマンドラインモード: &liberator.appname; のコマンドラインで入力している時</li>
+</ul>
+
+<warning>
+    マッピングはセッション間で保存されません。
+    &liberator.name;rc ファイルに書くのを忘れないでください！
+</warning>
+
+<h3 tag=":map-commands">マップコマンド</h3>
+
+<item>
+    <tags>:map</tags>
+    <spec>:map <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nm :nmap</tags>
+    <spec>:nm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vm :vmap</tags>
+    <spec>:vm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:im :imap</tags>
+    <spec>:im<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cm :cmap</tags>
+    <spec>:cm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>
+            一連のキー入力(<t>key-sequence</t>) <a>lhs</a> を <a>rhs</a> にマップします。
+            入れ子や再帰的なマッピングを可能にするため <a>rhs</a> は再びマップされます。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:no :noremap</tags>
+    <spec>:no<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nn :nnoremap</tags>
+    <spec>:nn<oa>oremap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vn :vnoremap</tags>
+    <spec>:vn<oa>oremap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:ino :inoremap</tags>
+    <spec>:ino<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cno :cnoremap</tags>
+    <spec>:cno<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>
+            一連のキー入力(<t>key-sequence</t>) <a>lhs</a> を <a>rhs</a> にマップします。
+            <a>rhs</a> の再マップは行われません。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:unm :unmap</tags>
+    <spec>:map <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nun :nunmap</tags>
+    <spec>:nun<oa>map</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vun :vunmap</tags>
+    <spec>:vun<oa>map</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:iu :iunmap</tags>
+    <spec>:iu<oa>nmap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cu :cunmap</tags>
+    <spec>:cu<oa>nmap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>そのモードの <a>lhs</a> のマッピングを削除します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:mapc :mapclear</tags>
+    <spec>:mapc<oa>lear</oa></spec>
+    <tags>:nmapc :nmapclear</tags>
+    <spec>:nmapc<oa>lear</oa></spec>
+    <tags>:vmapc :vmapclear</tags>
+    <spec>:vmapc<oa>lear</oa></spec>
+    <tags>:imapc :imapclear</tags>
+    <spec>:imapc<oa>lear</oa></spec>
+    <tags>:cmapc :cmapclear</tags>
+    <spec>:cmapc<oa>lear</oa></spec>
+    <description>
+        <p>
+            そのモードのマップをすべて削除します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:map</spec>
+    <spec>:nm<oa>ap</oa></spec>
+    <spec>:vm<oa>ap</oa></spec>
+    <spec>:im<oa>ap</oa></spec>
+    <spec>:cm<oa>ap</oa></spec>
+    <description>
+        <p>そのモードのマッピングを一覧表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:map_l</tags>
+    <spec>:map <a>lhs</a></spec>
+    <tags>:nmap_l</tags>
+    <spec>:nm<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:vmap_l</tags>
+    <spec>:vm<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:imap_l</tags>
+    <spec>:im<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:cmap_l</tags>
+    <spec>:cm<oa>ap</oa> <a>lhs</a></spec>
+    <description>
+        <p>そのモードで <a>lhs</a> にマッピングされているものをすべて表示します。</p>
+    </description>
+</item>
+
+
+
+<h3 tag=":map-arguments">特殊な引数</h3>
+
+<tags>:map-&lt;silent></tags>
+
+<p>
+    コマンドの第一引数が <k name="silent"/> の時、
+    <a>rhs</a> だけでなく、コマンドが完了するまでコマンドラインに何も出力しません。
+</p>
+
+
+<p>
+    以下、各マップコマンドが適用されるモードの概要:
+</p>
+
+<!-- TODO: table format -->
+
+<code>
+:map   :noremap   :unmap   :mapclear  - ノーマルとヴィジュアルモードの両方
+:nmap  :nnoremap  :nunmap  :nmapclear - ノーマルモード
+:vmap  :vnoremap  :vunmap  :vmapclear - ヴィジュアルモード
+:imap  :inoremap  :iunmap  :imapclear - 挿入モード
+:cmap  :cnoremap  :cunmap  :cmapclear - コマンドラインモード
+</code>
+
+<h3 tag="key-notation,key-sequence">一連のキー入力</h3>
+
+<p>
+    ほとんどのキー、一連のキーは見たままの文字ですが、多くの文字をサポートするために
+    いくつかの例外があります。
+</p>
+
+<ul>
+    <li><k name="lt"/>, <k>&lt;</k>, <k name="Space"/>, <k>\ </k> は &lt; や 半角スペース 文字です。</li>
+    <li>'、 " と \ は引用符やバックスラッシュのエスケープを回避するために用いられます。</li>
+    <li>
+        <k name="Left"/> <k name="Right"/> <k name="Up"/>
+        <k name="Down"/> <k name="PageUp"/> <k name="PageDown"/>
+        <k name="Esc"/> <k name="CR"/> (Enter キー)
+    </li>
+    <li><k name="CapsLock"/> <k name="NumLock"/> <k name="Ins"/> <k name="Del"/> <k name="Tab"/> <k name="BS"/> (BackSpace キー)</li>
+    <li><k name="F1"/> から <k name="F12"/> は期待通りのキーです</li>
+</ul>
+
+<p>
+    ほとんどのキーボードは Ctrl、Alt、や Metaキーのような修飾子があります。
+    これらのキーを使用して正しくマッピングするためには山括弧(&lt;, &gt;)を使用しなければなりません。
+</p>
+
+<ol>
+    <li><k name="C-x"/>: Ctrl キー</li>
+    <li><k name="A-x"/>: Alt キー</li>
+    <li><k name="M-x"/>: Meta や Windows または Command キー</li>
+    <li><k name="S-x"/>: Shift キー</li>
+</ol>
+
+<p>
+    これらの接頭文字は見たままに組み合わせられますが、アルファベット文字はすべて小文字と
+    解釈されることに注意してください。
+    大文字で解釈させたい場合は、S- 接頭文字を付けなければなりません。
+    さらに、数値や句読点には例えShiftを押しながら入力する文字であっても S- を付けてはなりません。
+    そうしても入力したようなマッピングにはなりません。
+    水平タブや半角スペースといった非文字キーにおいて、S- 修飾子は C-、A-、や M- の様な働きをします。
+    いくつかの事例で理解できるでしょう:
+</p>
+
+<ol>
+    <li><k>xc</k>: x をタイプし、それから c をタイプします</li>
+    <li><k name="C-x">c</k>: Ctrl キーを押しながら x をタイプし、それから Ctrl キーを離して c をタイプします</li>
+    <li><k name="C-2"/>: Ctrl キーを押しながら 2 をタイプします</li>
+    <li><k name="C-@"/>: Ctrl キーを押しながら @ をタイプします</li>
+    <li><k name="S-Space"/>: Shift キーを押しながらスペースキーをタイプします</li>
+    <li><k name="C-A-j"/>: Ctrl キーと Alt キーを押しながら j をタイプします</li>
+    <li><k name="C-A-J"/>: 上記とまったく同じです</li>
+    <li><k name="C-A-S-j"/>: Ctrl キーと Alt キーを押しながら J をタイプします</li>
+</ol>
+
+<h3 tag=":map-special-chars">特殊文字</h3>
+
+<item>
+    <tags><![CDATA[<Nop>]]></tags>
+    <spec>&lt;Nop></spec>
+    <description>
+        <p>
+            何もしません。
+            このコマンドは既定のキーマッピングを無効にする際に便利です。
+            <ex>:map <k name="C-n"/> <k name="Nop"/></ex> は <k name="C-n"/> が何らかの動作をすることを防止します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<CR> map_return]]></tags>
+    <spec>&lt;CR></spec>
+    <description>
+        <p>
+            キーマッピングにおいて行の終端に展開されます。
+            マッピングの <a>rhs</a> に指定される Ex コマンドはマッピング展開後に実行されるために行の終端を必要とします。
+            <k name="CR"/> はこの目的のために使われるべきです。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Leader> mapleader]]></tags>
+    <spec>&lt;Leader></spec>
+    <description>
+        <p>
+            キーマッピングにおいて "mapleader" 変数の値に展開されます。
+            "mapleader" が設定されていない、もしくは空の場合、 <str>\</str> が使用されます。
+            例:
+        </p>
+        <code><ex>:map <k name="Leader"/>h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <p>は次のように動作します</p>
+        <code><ex>:map \h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <p>しかし、</p>
+        <code><ex>let mapleader = <str>,</str></ex></code>
+        <p>のように値を変更した後では</p>
+        <code><ex>:map ,h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <p>のように動作します</p>
+    </description>
+</item>
+
+
+<h2 tag="abbreviations">略語</h2>
+
+<p>
+    &liberator.appname; は略語として認識できる単語の置換を自動的に行うことができます。
+    この機能はキータイプ数を節約したりミスしやすいスペルを正したりするのに使えるでしょう。
+    略語は構成される文字の型によってみっつのタイプのうちのひとつに分類されます。
+    ここでは説明の便宜上、空白と引用符以外の文字をキーワードとして扱います。
+</p>
+
+<ol>
+    <li>"full-id" はキーワードのみで構成された略語です (例: "teh", "msoft") 。</li>
+    <li>"end-id" は最後の文字のみキーワードで構成された略語です (例: "'i") 。</li>
+    <li>"non-id" は最後の文字がキーワードではなく、他の文字が空白文字ではない略語です (例: "def'") 。</li>
+</ol>
+
+<p>
+    "a'b" や "a b" のようなものを含む文字列は略語として扱われません。
+</p>
+
+<p>
+    略語の直後にスペースキー、引用符、もしくは <k name="C-]"/> が押された場合に略語であるかが判断されます。
+    初期設定では何も略語は定義されていません。また、再帰的に解釈されません。
+</p>
+
+<item>
+    <tags>:ab :abbreviate</tags>
+    <spec>:ab<oa>breviate</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ab<oa>breviate</oa> <a>lhs</a></spec>
+    <spec>:ab<oa>breviate</oa></spec>
+    <description>
+        <p>
+            一連のキー入力を略語として定義します。
+            <a>rhs</a> を <a>lhs</a> という略語として定義します。
+            <a>lhs</a> だけを与えた場合、 <a>lhs</a> ではじまるすべての略語を一覧表示します。
+            何も引数を与えなかった場合、すべての略語を一覧表示します。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ca :cabbrev</tags>
+    <spec>:ca<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ca<oa>bbrev</oa> <a>lhs</a></spec>
+    <spec>:ca<oa>bbrev</oa></spec>
+    <description>
+        <p>
+            一連のキー入力をコマンドラインモード用の略語として定義します。
+            <ex>:ab<oa>reviate</oa></ex> と同様ですが、コマンドラインモードのみで有効な略語の定義を行います。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ia :iabbrev</tags>
+    <spec>:ia<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ia<oa>bbrev</oa> <a>lhs</a></spec>
+    <spec>:ia<oa>bbrev</oa></spec>
+    <description>
+        <p>
+            一連のキー入力を挿入モード用の略語として定義します。
+            <ex>:ab<oa>reviate</oa></ex> と同様ですが、挿入モードのみで有効な略語の定義を行います。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:una :unabbreviate</tags>
+    <spec>:una<oa>bbreviate</oa> <a>lhs</a></spec>
+    <description>
+        <p>略語を削除します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:cuna :cunabbrev</tags>
+    <spec>:cuna<oa>bbrev</oa> <a>lhs</a></spec>
+    <description>
+        <p>
+            コマンドラインモード用の略語を削除します。
+            <ex>:una<oa>bbreviate</oa></ex> と同様ですが、コマンドラインモードのみで有効な略語の削除を行います。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:iuna :iunabbrev</tags>
+    <spec>:iuna<oa>bbrev</oa> <a>lhs</a></spec>
+    <description>
+        <p>
+            挿入モード用の略語を削除します。
+            <ex>:una<oa>bbreviate</oa></ex> と同様ですが、挿入モード用のみで有効な略語の削除を行います。
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:abc :abclear</tags>
+    <spec>:abc<oa>lear</oa></spec>
+    <description>
+        <p>すべての略語を削除します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:cabc :cabclear</tags>
+    <spec>:cabc<oa>lear</oa></spec>
+    <description>
+        <p>コマンドラインモード用の略語を削除します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:iabc :iabclear</tags>
+    <spec>:iabc<oa>lear</oa></spec>
+    <description>
+        <p>挿入モード用の略語を削除します。</p>
+    </description>
+</item>
+
+
+<h2 tag="user-commands">ユーザ定義コマンド</h2>
+
+<item>
+    <tags>:com :command</tags>
+    <spec>:com<oa>mand</oa></spec>
+    <description>
+        <p>すべてのユーザ定義コマンドを一覧表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:com<oa>mand</oa> <a>cmd</a></spec>
+    <description>
+        <p><a>cmd</a> ではじまるすべてのユーザ定義コマンドを一覧表示します。</p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:com<oa>mand</oa><oa>!</oa> <oa><a>attr</a>…</oa> <a>cmd</a> <a>rep</a></spec>
+    <description>
+        <p>
+            新しいユーザ定義コマンドを定義します。
+            コマンド名は <a>cmd</a> 、置換テキストは <a>rep</a> となります。
+            コマンドの属性は <a>attr</a> です。
+            指定された名前のコマンドが既に存在している場合 <oa>!</oa> を指定しない限りエラーが表示されますが、
+            <oa>!</oa> を指定した場合コマンドは再定義されます。
+            Vim と違い、コマンド名を小文字ではじめることができます。
+        </p>
+
+        <p>
+            コマンドを定義する際に属性を与えることでコマンドの振る舞いを指定できます。
+        </p>
+
+        <p tag="E175 E176 :command-nargs">
+            引数の扱い
+        </p>
+
+        <p>
+            デフォルトではユーザ定義コマンドは引数を取りません。
+            これは -nargs 属性を指定することで変更できます。
+        </p>
+
+        <p>有効な値は以下です:</p>
+
+        <dl>
+            <dt>-nargs=0</dt><dd>引数を取らない ( デフォルト )</dd>
+            <dt>-nargs=1</dt><dd>引数を 1 個だけ取る</dd>
+            <dt>-nargs=*</dt><dd>0 個以上の引数を取る</dd>
+            <dt>-nargs=?</dt><dd>0 もしくは 1 個の引数を取る</dd>
+            <dt>-nargs=+</dt><dd>1 個以上の引数を取る</dd>
+        </dl>
+
+        <p tag="E180 E181 :command-complete">
+            引数の補完
+        </p>
+
+        <p>
+            デフォルトではユーザ定義コマンドの引数に対する補完は利用できません。
+            補完はコマンド定義の際に -complete オプションに以下の引数のうちひとつを指定することで利用できるようになります。
+        </p>
+
+        <dl>
+            <dt>altstyle</dt>     <dd>ページ制作者の提供する代替スタイルシート</dd>
+            <dt>bookmark</dt>     <dd>ブックマーク</dd>
+            <dt>buffer</dt>       <dd>バッファ</dd>
+            <dt>color</dt>        <dd>カラースキーム</dd>
+            <dt>command</dt>      <dd>Ex コマンド</dd>
+            <dt>dialog</dt>       <dd>&liberator.host; ダイアログ</dd>
+            <dt>dir</dt>          <dd>ディレクトリ</dd>
+            <dt>environment</dt>  <dd>環境変数</dd>
+            <dt>event</dt>        <dd>オートコマンドのイベント名</dd>
+            <dt>file</dt>         <dd>ファイル</dd>
+            <dt>help</dt>         <dd>ヘルプタグ</dd>
+            <dt>highlight</dt>    <dd>ハイライトグループ</dd>
+            <dt>javascript</dt>   <dd>JavaScript の式</dd>
+            <dt>macro</dt>        <dd>名前付きマクロ</dd>
+            <dt>mapping</dt>      <dd>ユーザマッピング</dd>
+            <dt>menu</dt>         <dd>メニューの項目</dd>
+            <dt>option</dt>       <dd>&liberator.appname; のオプション</dd>
+            <dt>preference</dt>   <dd>&liberator.host; の設定</dd>
+            <dt>search</dt>       <dd>サーチエンジンとブックマークキーワード</dd>
+            <dt>shellcmd</dt>     <dd>シェルのコマンド</dd>
+            <dt>sidebar</dt>      <dd>スライドバーのパネル名</dd>
+            <dt>url</dt>          <dd>URL</dd>
+            <dt>usercommand</dt>  <dd>ユーザ定義コマンド</dd>
+            <dt>custom,<a>func</a></dt><dd><a>func</a> で提供されるカスタム補完関数</dd>
+        </dl>
+
+        <p tag="E467 E468 :command-completion-custom">
+            カスタム補完
+        </p>
+
+        <p>
+            カスタム補完は -complete に <str>custom,<a>func</a></str> 引数を指定することで利用できます。
+            <a>func</a> は補完コンテキストとコマンドの引数が入ったオブジェクトの 2 つの引数とともに呼ばれます。
+            関数は補完コンテキストの <str>completions</str> プロパティをセットするか、<str>start</str> と <str>items</str>
+            (それぞれ補完を記述するプロパティと置換が始まる位置を指定するプロパティ) を持つオブジェクトを返すべきです。
+        </p>
+
+        <p>
+            <em>start</em> は補完によって選出された値が使用されるべき単語の位置番号です。
+            <em>completions</em> は以下の形式の二次元配列です: [[引数1, 説明1], [引数2, 説明2], …]
+        </p>
+
+        <!-- TODO: add examples -->
+
+        <p tag="E177 E178 :command-count">
+            カウントの扱い
+        </p>
+
+        <p>
+            デフォルトではユーザ定義コマンドはカウントを受け付けません。
+            カウントをユーザ定義コマンドに渡したい場合は、 -count 属性を使ってください。
+            これは引数における &lt;count> の展開を有効にします。
+        </p>
+
+        <p tag=":command-bang">
+            特殊なケース
+        </p>
+
+        <p>
+            デフォルトではユーザ定義コマンドは特殊なバージョンを持ちません。
+            たとえば <oa>!</oa> とともに実行されるようなバージョンです。
+            -bang 属性を与えることでこれが有効になり引数における &lt;bang> 指定が有効になります。
+        </p>
+
+        <p tag=":command-description">
+            コマンドの概要
+        </p>
+
+        <p>
+            コマンドの概要は -description で付けることができます。付けない場合は既定値の
+            "User-defined command" が付きます。
+        </p>
+
+        <p tag=":command-replacement-text">
+            置換テキスト
+        </p>
+
+        <p>
+            置換テキスト <a>rep</a> においてエスケープシーケンスはスキャンされ、ユーザがコマンドラインに入力した値で置換されます。
+            それから処理結果の文字列が Ex コマンドとして実行されます。
+        </p>
+
+        <p>有効なエスケープシーケンスは以下です:</p>
+
+        <dl>
+            <dt>&lt;args></dt> <dd>与えられた引数そのものに置換されます。</dd>
+            <dt>&lt;count></dt><dd>カウント数 ( 例: 5 ) に置換されます。</dd>
+            <dt>&lt;bang></dt> <dd>! とともにで実行されていれば ! に置換されます。</dd>
+            <dt>&lt;lt></dt>
+            <dd>
+                エスケープシーケンスそのものを許可するためにリテラル '&lt;' に置換されます。
+                たとえば &lt;args> はリテラル &lt;args> に展開されます。
+            </dd>
+        </dl>
+
+        <p>
+            式を評価させる形式にするために、値をクオートできるようにエスケープシーケンスの前に "q-" を付加することができます。
+            例: &lt;q-args>
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:comc :comclear</tags>
+    <spec>:comc<oa>lear</oa></spec>
+    <description>
+        <p>すべてのユーザ定義コマンドを削除します。</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:delc :delcommand</tags>
+    <spec>:delc<oa>ommand</oa> <a>cmd</a></spec>
+    <description>
+        <p>ユーザ定義コマンド <a>cmd</a> を削除します。</p>
+    </description>
+</item>
+
+
+<h2 tag="command-examples">例</h2>
+
+<p>グーグルを使って検索する :Google コマンドを追加します:</p>
+<code><ex>:command -nargs=* Google open google &lt;args></ex></code>
+
+<!-- TODO: add decent examples -->
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

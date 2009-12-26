@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="tutorial"
+    title="&liberator.appname; Tutorial"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<!-- Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu) -->
+
+<h1 tag="tutorial">クイックスタート・チュートリアル</h1>
+
+<html:p style="text-align: center">
+    これは新規ユーザが &liberator.appname; を使いはじめるためのクイックスタートチュートリアルです。
+    ここではすべての機能を説明することを意図していません。
+</html:p>
+
+<p>
+    全くゼロからのスタート ( 何もカスタマイズしていない状態 ) であれば、
+    メニューバーやナビゲーションバーなどのないウインドウで、このヘルプを見ているはずです。
+    前書き(<t>intro</t>) での注意を見逃しているのであれば、以下のコマンドでそれらを取り戻すことができます。
+</p>
+
+<code><ex>:set go+=mTB<key name="CR"/></ex></code>
+
+<p>
+    <k name="CR"/> のところで <k name="Enter"/> か <k name="Return"/> キーを押します。
+    あなたがベテランの Vim ユーザであれば、これはよく見る書き方かもしれません。
+</p>
+
+<p>
+    しかしながら作者の意見では、&liberator.appname; を使いこなすためにはこれらを無効にすることがベストです。
+    ( 上記の操作は <ex>:set go=<k name="CR"/></ex> で元に戻す事ができます )
+    これについては <t>option</t> の <o>guioptions</o> の項目でさらに詳しく知ることができます。
+</p>
+
+<h2 tag="modal">&liberator.appname; のモーダルインターフェイス</h2>
+
+<p>
+    Vim のように、&liberator.appname; のパワーはモーダルなインターフェイスに依っています。
+    キーにはモード毎に異なった意味があります。
+    &liberator.appname; は複数のモードを持ちますが、重要なのは<em>ノーマル</em>モードと<em>コマンドライン</em>モードです。
+</p>
+
+<p>
+    &liberator.appname; が起動するとき、デフォルトではノーマルモードになっています。
+    これは恐らくあなたが最も長い時間を過ごすところです。
+</p>
+
+<p>
+    &liberator.appname; のもうひとつの中心的なモード、コマンドラインモードは、<k>:</k> (コロン) を入力することで開始することができます。
+    あなたは頻繁に <k>:</k> (このあとに続くものがコマンド名です) ではじまる &liberator.appname; コマンドを目にするでしょう。
+</p>
+
+<p>
+    コマンドラインモードからノーマルモードに戻るには <k name="Esc"/> を押してください。
+    <k name="Esc"/> を押すことで &liberator.appname; のたいていの他のモードからもノーマルモードに戻ることができます。
+</p>
+
+<h2 tag="getting-help">ヘルプを表示する</h2>
+
+<p>
+    Vim はすばらしいエディタですがウェブブラウザとしては難があります。
+    そのためベテランの Vim ユーザでさえも、たぶんいずれは &liberator.appname; の文書を見なければならなくなるでしょう。
+    &liberator.appname; の機能に関するほとんどの文書は <ex>:help</ex> コマンドを使用することで簡単に見つけ出すことができます。
+    たとえば、 <ex>:help</ex> コマンドのヘルプは以下のように入力することで得ることができます。
+</p>
+
+<code><ex>:help :help<key name="CR"/></ex></code>
+
+<p>
+    同様に、設定可能なオプションに関するヘルプは <ex>:help '<a>option_name</a>'</ex> で参照できます。
+    ( Vim のようにオプション名をシングルクォート ' で囲むことに注意してください。 )
+    すべての利用可能なオプションに関する情報は、あなたの予想通り <ex>:help options</ex> で参照できます。
+</p>
+
+<p>
+    <k>gt</k> と <k>gT</k> というキーマッピングについては以下で参照することができます
+</p>
+
+<code>
+<ex>:help gt<key name="CR"/></ex>
+<ex>:help gT<key name="CR"/></ex>
+</code>
+
+<p>
+    最後に、これらのヘルプシステムに加えて
+    <ex>:exusage</ex>、<ex>:viusage</ex> や <ex>:optionusage</ex> コマンドがクイックリファレンスとして便利です。
+</p>
+
+<h2 tag="living-mouseless">マウスレス</h2>
+
+<em>
+    - または私はいかにして心配するのをやめてすでにある 80 以上ものボタンを好きになったか
+    ( 訳注: 「博士の異常な愛情」のパロディですね。「キーボードへの異常な愛情」ってところですか。 )
+</em>
+
+<p>
+    &liberator.appname; の効率は、元となった伝説的なエディタと同様に指をもっとも活かすことができるキーボードと、
+    そのキーボードをうまく使いこなせるユーザの存在に依っています。
+    たとえば GUI デザインやいくつかのゲームなどにおいては明らかにマウスのほうが優れているところもありますが、
+    &liberator.appname; はそういったよくあるウェブブラウザである必要はないという前提で作られています。
+</p>
+
+<p>
+    一般的にマウスが代替不可能と思われている分野や、 &liberator.appname;
+    においてどのようにそういった先入観を断ち切るかについてを以下に挙げています。
+</p>
+
+<h2 tag="keyboard-scrolling">スクロール</h2>
+
+<p>
+    ブラウザウィンドウのスクロールは単純なキー入力で済みます:
+</p>
+
+<ul>
+    <li><k>j</k>/<k>k</k> -
+        それぞれ、ウィンドウを 1 行下 / 上へスクロールします
+    </li>
+    <li><k>h</k>/<k>l</k> -
+        ウィンドウを左 / 右にスクロールします
+    </li>
+    <li><k name="Space"/>/<k name="C-b"/> -
+        1 ページ下 / 上へスクロールします
+    </li>
+    <li><k name="C-d"/>/<k name="C-u"/> -
+        1/2 ページ下 / 上へスクロールします
+    </li>
+</ul>
+
+<p>
+    標準的なボタン ( <k name="Up"/>/<k name="Down"/>/<k name="PgUp"/>/<k name="PgDn"/> ) は予想通りに動作するでしょう。
+</p>
+
+<h2 tag="history-navigation tab-navigation">履歴とタブ</h2>
+
+<p>
+    履歴の操作 ( 例:<em>戻る</em>、<em>進む</em> ) もスクロールと同様に行います
+</p>
+
+<ul>
+    <li><k name="C-o"/>/<k name="C-i"/> -
+        それぞれ、現在のウィンドウやタブの履歴を戻ります / 進みます
+    </li>
+</ul>
+
+<p>
+    タブ間の移動にはタブ移動を使用している Vim 使いにはおなじみの以下のキー入力を使用します。
+</p>
+
+<ul>
+    <li><k>gt</k>/<k name="C-n"/> -
+        次のタブに移動します
+    </li>
+    <li><k>gT</k>/<k name="C-p"/> -
+        前のタブに移動します
+    </li>
+    <li><k>g0</k>/<k>g$</k> -
+        最初 / 最後のタブに移動します
+    </li>
+    <li><k>d</k> -
+        アクティブなタブを閉じます ( バッファを閉じます )
+    </li>
+</ul>
+
+<p>
+    新しいタブでウェブページを開くには <ex>:tabopen <a>url</a></ex> を使用してください。
+    また、現在のタブで URL を開くには <ex>:open</ex> を使用してください。
+    ノーマルモードにおけるキー <k>t</k> と <k>o</k> はそれぞれ、これらのコマンドに割り当てられていますので、以下の一連の入力は同等です:
+</p>
+
+<code>
+<ex>:open my.webmail.com<key name="CR"/></ex>
+<k>o</k>my.webmail.com<key name="CR"/>
+
+<ex>:tabopen vimperator.org<key name="CR"/></ex>
+<k>t</k>vimperator.org<key name="CR"/>
+</code>
+
+<h2 tag="hints-tutorial">ネットサーフィンにおけるヒント</h2>
+
+<p>
+    すでにあなたは &liberator.appname; を使えるようになっています。
+    しかしちょっと待ってください…、ウェブページにリンクされているページやタブをどうやって「開く」のでしょうか ?
+    マウスなしでそれらのリンクをどうやって <em>クリック</em> するのでしょう ?
+</p>
+
+<p>
+    答えは <em>ヒント</em> です。
+    ヒントを起動することで &liberator.appname; が検出できるすべてのリンクのとなりに番号が表示されます。
+    リンクを辿るには、単にヒントに対応する番号 ( デフォルトでは赤い四角の中に白い数字として表示されます ) を入力するだけです。
+</p>
+
+<p>
+    テキストリンクにはさらにショートカットがあります。
+    リンクに含まれる一部のテキストを入力することで &liberator.appname; 
+    はすべてのリンクを検索してマッチするリンクを見つけ出し、一覧を絞り込むことができます。
+    あなたが入力したテキストによって与えられたリンクがひとつに絞られると、 &liberator.appname; 
+    はそれ以上のユーザの入力なしで直ちにリンクを辿ります。
+</p>
+
+<p>
+    目的のリンクを選択するためにどちらの方法を選んだとしても、 &liberator.appname; 
+    があなたが辿りたいリンクを強調表示したら、単に <k name="Enter"/> を入力することで開くことができます。
+</p>
+
+<p>
+    もっとも一般的なヒントモードは クイックヒント(<t>quick-hints</t>) と呼ばれています。
+    クイックヒントモードを開始するには、 <k>f</k> か <k>F</k> を押してください。
+    小文字の <k>f</k> はリンクを現在のタブに開きますが、大文字の <k>F</k> は新しいタブに開きます。
+</p>
+
+<p>
+    動作を確かめるために、このリンクを開いてみてください: <link target="http://vimperator.org/">&liberator.appname; Homepage</link> 。
+    <k>f</k> もしくは <k>F</k> でクイックヒントモードを開始して現在見えているリンクをすべて強調表示させてください。
+    それからリンクのテキストを入力してください。
+    リンクはすぐにひとつに絞られ、 &liberator.appname; がそれを開くでしょう。
+    その操作を行う前に、ここに戻ってくるためには <k name="C-o"/> (<em>履歴を戻る</em>) もしくは <k>d</k> (<em>バッファを閉じる</em>) 
+    を使うということを覚えておいてください ( どちらを使うかはクイックヒントモードを起動するために使ったキーによって異なります ) 。
+</p>
+
+<h2 tag="common-issues">キャンセル</h2>
+
+<p>
+    さて、新しい URL の入力を半分ほど終わらせたところで、すでに前のタブにページを開いていることを思い出しました。
+    このときコマンドラインは以下のようになっているでしょう:
+</p>
+
+<code><ex>:open my.partial.url/fooba</ex></code>
+
+<p>
+    コマンドラインを抜けてすでに読み込まれているページへアクセスするには以下のようにします:
+</p>
+
+<code><k name="Esc"/></code>
+
+<h2 tag="vimperatorrc">設定の保存 - vimperatorrc</h2>
+
+<p>
+    一回 &liberator.appname; を好みのオプション、キーマッピング、そしてコマンドに設定してしまうと、
+    たぶん次に &liberator.appname; を起ち上げたときにもそれらを使いたいと思うでしょう。
+    Vim と同様に、これは vimperatorrc ファイルによって行われます。
+</p>
+
+<p>
+    現在の設定を保存して次回 &liberator.appname; を起動したときに自動的にそれらを読み込ませるようにするためには、
+    <ex>:mkv</ex> コマンドを実行してください。
+</p>
+
+<p>
+    これはあなたの設定を書き込んだ <em>$HOME/.vimperatorrc</em> ファイルを作成します。
+    それはまさに vimrc のようなもので、あなたの好みにあうように簡単に編集することもできる単純なテキストファイルです。
+</p>
+
+<h2 tag="quitting-without-menus">即終了できる</h2>
+
+<p>
+    &liberator.appname; は Vim に存在している終了するための伝統的な手段をすべてサポートしています。
+    &liberator.appname; supports all of Vim's classic methods of exiting.
+</p>
+
+<ul>
+    <li><ex>:xall</ex> - 次回起動時のために現在のセッションを保存し終了するコマンドです ( デフォルトです )</li>
+    <li><ex>:qall</ex> - セッションを保存<em>せずに</em>終了するコマンドです</li>
+    <li><k>ZZ</k> - <ex>:xall</ex> と同等のノーマルモードでのキーマッピングです</li>
+    <li><k>ZQ</k> - <ex>:qall</ex> と同等のノーマルモードでのキーマッピングです</li>
+</ul>
+
+<h2 tag="whither-&liberator.host;">&liberator.host; はどこへ？</h2>
+
+<p>
+    あなたはいま少し混乱しているかもしれません。
+    しかし心配しないでください。
+    これでも &liberator.host; が下に隠れているだけなのです。
+    &liberator.appname; から &liberator.host; を操作する方法を以下に列挙します。
+    これらのコマンドやキーマッピングを適切に扱うための詳しい情報に関しては <ex>:help</ex> を参照してください。
+</p>
+
+<ul>
+    <li><ex>:dialog</ex> -
+        &liberator.host; が持つたくさんのダイアログウィンドウの一部にアクセスするために <ex>:dialog</ex> コマンドが使用できます。
+        <ex>:help :dialog</ex> を参照してください。
+    </li>
+    <li><ex>:bmarks</ex> -
+        &liberator.appname; はブックマークのために見慣れないインターフェイスを提供しますが、
+        それらはやはり標準的な &liberator.host; のブックマークを内部で使っています。
+        <ex>:bmark</ex> は新しいブックマークを追加しますが、 <ex>:bmarks</ex> は現在追加済みのブックマークを一覧表示します。
+    </li>
+    <li><ex>:history</ex> -
+        これはまさに言葉の通りの意味です。
+        このコマンドは色のついた、スクロール可能かつクリック可能な形式で &liberator.appname; の履歴にある URL の一覧を表示します。
+    </li>
+    <li><ex>:emenu</ex> -
+        &liberator.host; のメニューに &liberator.appname; のコマンドラインからアクセスします。
+    </li>
+</ul>
+
+<p>
+    ここから先は遠慮することなくいろいろと試してみてください。
+    もし <ex>:tabopen</ex> コマンドを使うなら、このページに戻ってくるには <k>gt</k>/<k>gT</k> 
+    というキーマッピングを使うことを覚えておいてください。
+    また、もし <ex>:open</ex> コマンドを使うなら、戻ってくるには履歴用のキー ( 例: <k>H</k> ) を使ってください。
+    もしも現在どこにいるかわからなくなってしまったら、戻ってくるために 
+    <ex>:help<k name="CR"/></ex> と入力して <em>Tutorial</em> のリンクをクリックしてください。
+</p>
+
+
+<!-- TODO: other sections? -->
+
+
+<h2 tag="removal">ここから出してくれ！</h2>
+
+<p>
+    もし試しに使ってみただけとかもう使わないことを決めたなら…以下のことをする必要があります。
+</p>
+
+<p>
+    &liberator.appname; では <ex>:addons</ex> というコマンドで削除を行うことができます。
+    ただしこのコマンドの実行は &liberator.host; のアドオンダイアログを表示するだけです。
+    あとはいつものように削除することができます。
+    一覧から &liberator.appname; を選択して <em>削除</em> をクリック ( クリックでかまいません ) するだけです。
+</p>
+
+<p>
+    または、以前からの方法で削除することもできます。
+    すでに示したように、 <ex>:set go+=m</ex> と実行しメニューバーを有効にしてから、<em>ツール</em>メニューから<em>アドオン</em>を選びます。
+</p>
+
+
+<h2 tag="support">サポート</h2>
+
+<p>
+    &liberator.appname; は活動的で成長する意欲のあるユーザに支えられています。
+    もし &liberator.appname; を使っていて自分では解決できないような問題や、
+    バグかもしれないと思われる現象を発見したらぜひ我々に知らせてください !
+    <link target="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link> や 
+    <link target="http://freenode.net/">freenode</link> の <link target="irc://irc.freenode.net/vimperator">#vimperator</link>
+    IRC チャンネルが助けになります。
+</p>
+
+<p>
+    もし機能のリクエストがあったり ( よりよいのは ) 援助をしてくれるなら、ぜひ連絡をください。
+    &liberator.appname; の開発者は可能ならすぐに取り組みます、がしかし、私たちは無限でも全能でもありません。
+    その点はご了承ください。
+    もし私たちが着手するのを待てないのであれば、確実に動作するパッチを受け付けています !
+    より詳しい情報は、開発者向け情報(<t>developer</t>) を参照してください。
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

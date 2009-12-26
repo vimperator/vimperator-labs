@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="marks"
+    title="&liberator.appname; Marks"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="different-marks marks">マーク</h1>
+<toc start="2"/>
+
+<p>
+    &liberator.appname; は多くの種類のマークをサポートしています:
+</p>
+
+<ul>
+    <li>お気に入りのページに簡単にアクセスできるブックマーク。</li>
+    <li>よく訪れる 62 個 ( a-zA-Z0-9 ) のウェブサイト ( もしくはサイト群 ) を定義できるクイックマーク。</li>
+    <li>ウェブページ内での位置を保存できるローカルマーク。</li>
+    <li>履歴は特殊なマークです。過去に訪れたサイトを &liberator.appname; が自動的に記憶しています。</li>
+</ul>
+
+<h1 tag="bookmarks">ブックマーク</h1>
+<toc start="2"/>
+
+<item>
+    <tags>a :bma :bmark</tags>
+    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tag=tag1,tag2</oa> <oa>url</oa></spec>
+    <spec>a</spec>
+    <description>
+        <p>ブックマークを追加します。</p>
+
+        <p>以下のオプションが利用可能です:</p>
+
+        <ul>
+            <li>-title="変更したタイトル" ( 簡易指定: -t )</li>
+            <li>-tags=コンマで,区切られた,タグの,リストです ( 簡易指定: -T )</li>
+            <li>-keyword=キーワード ( 簡易指定: -k )</li>
+        </ul>
+
+        <p>
+            [!] が存在する場合、常に新しいブックマークが追加されます。
+            そうでない場合、最初に <oa>url</oa> にマッチしたブックマークが更新されます。
+        </p>
+
+        <p>
+            新しいブックマークを作る際に <oa>-title</oa> が与えられていないと、ウェブページのタイトルか URL が使用されます。
+            <oa>url</oa> は省略可能なので <ex>:bmark</ex> を実行すると現在のウェブページをそのページのタイトルで、
+            タグなしでブックマークできます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>A</tags>
+    <spec>A</spec>
+    <description>
+        <p>
+            現在の URL のブックマーク状態を切り替えます。
+            既にブックマークされていればそれを削除し、そうでなければブックマークします。
+            <ex>:bmark</ex> コマンドとは対照的にそのブックマークに<em>スターがつけられる</em>だけです。
+            つまりブックマークメニューではなく<em>未整理のブックマーク</em>フォルダに置かれます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:bmarks</tags>
+    <spec>:bmarks[!] <oa>filter</oa></spec>
+    <description>
+        <p>
+            複数のブックマークを一覧表示もしくは開きます。
+            タイトルか URL が <oa>filter</oa> にマッチするすべてのブックマークとともにメッセージウィンドウが画面下部に開かれます。
+            <k>;o</k> のような拡張ヒントからブックマークを開くことができます。
+        </p>
+
+        <p>
+            特殊なバージョン <ex>:bmarks!</ex> は <ex>:bmarks</ex> と同様ですが、
+            見つかったブックマークすべてを新しいタブに開きます。
+        </p>
+
+        <p>フィルタには以下のオプションを含めることができます:</p>
+
+        <ul>
+            <li>-tags=コンマで,区切られた,タグの,リストです ( 簡易指定: -T )</li>
+            <li>-max=N ( 簡易指定: -m )</li>
+        </ul>
+    </description>
+</item>
+
+<item>
+    <tags>:delbm :delbmarks</tags>
+    <spec>:delbm[arks] <oa>url</oa></spec>
+    <spec>:delbm[arks]!</spec>
+    <description>
+        <p>
+            ブックマークを削除します。
+            <oa>url</oa> にマッチする<em>すべて</em>のブックマークを削除します。
+            もし省略された場合、 <oa>url</oa> は現在のバッファの URL となります。
+            削除したい URL を補完するには <k name="Tab"/> キーを使用してください。
+        </p>
+
+        <p>! が指定されるとすべてのブックマークが削除されます。</p>
+    </description>
+</item>
+<!-- TODO: why is this duplicated in browsing? -->
+<h1 tag="history">履歴</h1>
+<toc start="2"/>
+
+<item>
+    <tags><![CDATA[<C-o>]]></tags>
+    <spec><![CDATA[[count]<C-o>]]></spec>
+    <description>
+        <p>
+            ジャンプリストのひとつ古い位置へ移動します。
+            現在、ジャンプリストとはブラウザ履歴のことです。
+            <oa>count</oa> が指定されると、<oa>count</oa> 個戻ります。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags><![CDATA[<C-i>]]></tags>
+    <spec><![CDATA[[count]<C-i>]]></spec>
+    <description>
+        <p>
+            ジャンプリストのひとつ新しい位置へ移動します。
+            現在、ジャンプリストとはブラウザ履歴のことです。
+            <oa>count</oa> が指定されると、<oa>count</oa> 個進みます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags><![CDATA[<M-Left> <A-Left> H]]></tags>
+    <spec>[count]H</spec>
+    <description>
+        <p>
+            ブラウザ履歴を戻ります。
+            <oa>count</oa> が指定された場合 <oa>count</oa> ページ分戻ります。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags><![CDATA[<M-Right> <A-Right> L]]></tags>
+    <spec>[count]L</spec>
+    <description>
+        <p>
+            ブラウザ履歴を進みます。
+            <oa>count</oa> が指定された場合 <oa>count</oa> ページ分進みます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:ba :back</tags>
+    <spec>:[count]ba[ck] <oa>url</oa></spec>
+    <spec>:[count]ba[ck]!</spec>
+    <description>
+        <p>
+            ブラウザ履歴を戻ります。
+            <oa>count</oa> が指定された場合 <oa>count</oa> ページ分戻ります。
+        </p>
+        <p>
+            特殊なバージョン <ex>:back!</ex> はブラウザ履歴の最初まで戻ります。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:fw :fo :forward</tags>
+    <spec>:[count]fo[rward] <oa>url</oa></spec>
+    <spec>:[count]fo[rward]!</spec>
+    <description>
+        <p>
+            ブラウザ履歴を進みます。
+            <oa>count</oa> が指定された場合 <oa>count</oa> ページ分進みます。
+        </p>
+        <p>
+            特殊なバージョン <ex>:forward!</ex> はブラウザ履歴の最後まで進みます。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:hs :hist :history</tags>
+    <spec>:hist[ory][!] <oa>filter</oa></spec>
+    <description>
+        <p>
+            最近訪れた URL を表示します。
+            タイトルか URL が <oa>filter</oa> にマッチするすべての履歴とともにメッセージウィンドウが画面下部に開かれます。
+        </p>
+
+        <p>
+            特殊なバージョン <ex>:history!</ex> は <ex>:history</ex> と同様ですが、見つかった履歴すべてを新しいタブに開きます。
+        </p>
+
+        <p>フィルタには以下のオプションを含めることができます:</p>
+
+        <ul>
+            <li>-max=N ( 簡易指定: -m )</li>
+        </ul>
+    </description>
+</item>
+
+<h1 tag="quickmarks">クイックマーク</h1>
+<toc start="2"/>
+
+<item>
+    <tags>go</tags>
+    <spec>a-zA-Z0-9</spec>
+    <description>
+        <p>
+            現在のタブでクイックマークへ移動します。
+            現在のタブに任意のクイックマークを開きます。
+            <k>M</k><a>a-zA-Z0-9</a> で URL をマークすることができます。
+            クイックマークはブラウザのセッションをまたいでも有効 ( 訳注: ブラウザを終了しても次回起動時に有効です ) です。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>gn</tags>
+    <spec>a-zA-Z0-9</spec>
+    <description>
+        <p>
+            新しいタブでクイックマークへ移動します。
+            <k>go</k><a>a-zA-Z0-9</a> と同様ですがクイックマークを新しいタブで開きます。
+            新しいタブが選択されるかどうかは <o>activate</o> オプションによって決まります。
+        </p>
+        <p>
+            覚え方: "G"o in a "N"ew tab. <k>gt</k> の方が覚えやすいですが、すでに使われています。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>M</tags>
+    <spec>a-zA-Z0-9</spec>
+    <description>
+        <p>
+            現在の URL を新しいクイックマークとして追加します。
+            <k>go</k><a>a-zA-Z0-9</a> で現在のタブに
+            <k>gn</k><a>a-zA-Z0-9</a> で新しいタブにマークされた URL を開くことができます。
+            クイックマークはブラウザのセッションをまたいでも有効 ( 訳注: ブラウザを狩猟しても次回起動時に有効です ) です。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:delqm :delqmarks</tags>
+    <spec>marks</spec>
+    <spec>:delqm[arks]!</spec>
+    <description>
+        <p>
+            指定したクイックマークを削除します。
+            クイックマークはリストで与えます。
+        </p>
+
+
+        <p>例:</p>
+
+        <ul>
+            <li><ex>:delqmarks Aa b p</ex> クイックマーク A, a, b, p を削除します</li>
+            <li><ex>:delqmarks b-p</ex> b から p のクイックマークを削除します</li>
+            <li><ex>:delqmarks!</ex> すべてのクイックマークを削除します</li>
+        </ul>
+    </description>
+</item>
+
+<item>
+    <tags>:qma :qmark</tags>
+    <spec>a-zA-Z0-9</spec>
+    <description>
+        <p>
+            素早くアクセスするために URL に 1 文字のマークをつけます。
+            以下のようにグループをすべてマークすることもできます:
+        </p>
+
+        <p>
+             <ex>:qmark f http://forum1.com, http://forum2.com, imdb some artist</ex>
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:qmarks</tags>
+    <spec>:qmarks <oa>arg</oa></spec>
+    <description>
+        <p>
+            すべてのクイックマークを表示します。
+            <oa>arg</oa> が指定されている場合、指定されたもののみ表示します。
+        </p>
+    </description>
+</item>
+<h1 tag="localmarks">ローカルマーク</h1>
+<toc start="2"/>
+
+<item>
+    <tags>m</tags>
+    <spec>a-zA-Z</spec>
+    <description>
+        <p>
+            カーソル位置にマークを設定します。
+            a-z のマークはそのバッファのみ有効ですが A-Z は全バッファで共通です。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>` '</tags>
+    <spec>a-zA-Z</spec>
+    <description>
+        <p>
+            現在のバッファでマークへ移動します。
+            a-z のマークはそのバッファのみ有効ですが A-Z は全バッファで共通です。
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:delm :delmarks</tags>
+    <spec>marks</spec>
+    <spec>:delm[arks]!</spec>
+    <description>
+        <p>指定のマークを削除します。マークはリストとして与えます。</p>
+
+        <p>例:</p>
+
+        <ul>
+            <li><ex>:delmarks Aa b p</ex> マーク A, a, b, p を削除します</li>
+            <li><ex>:delmarks b-p</ex> b から p のマークを削除します</li>
+            <li><ex>:delmarks!</ex> すべてのマークを削除します</li>
+        </ul>
+
+    </description>
+</item>
+
+<item>
+    <tags>:ma :mark</tags>
+    <spec>a-zA-Z</spec>
+    <description>
+        <p>ウェブページ内の現在の位置をマークします。</p>
+    </description>
+</item>
+
+<item>
+    <tags>:marks</tags>
+    <spec>:marks <oa>arg</oa></spec>
+    <description>
+        <p>
+            現在のウェブページのすべてのマークを表示します。
+            <oa>arg</oa> が指定されている場合、指定されたもののみ表示します。
+        </p>
+    </description>
+</item>
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

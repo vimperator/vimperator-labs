@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="intro"
+    title="&liberator.appname; Introduction"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<html:p style="text-align: center; font-weight: bold;">
+はじめに航海するもの Navigator ありき、そして探検するもの Explorer があらわれた。
+のちに征服するもの Konqueror がとってかわり、支配するもの Imperator 、
+すなわち VIMperator の時代となる(ﾟ∀ﾟ)
+</html:p>
+
+<h1 tag="intro">前書き</h1>
+<link topic="http://vimperator.org">&liberator.appname;</link> はテキストエディタ
+<link topic="http://www.vim.org">Vim</link> のように見せ、振る舞うフリーブラウザの &liberator.host; 用アドオンです。
+Vim に似たキーバインドを持ち、モード変更が可能なウェブブラウザ ( モードによって異なるキーバインドを持っています ) として使うことができます。
+
+<warning tag="warning">
+    できるだけ Vim と同じにするため、 &liberator.host; のメニューバーとツールバーは表示されなくなります。
+</warning>
+
+<p>それらが必要になった場合、 <ex>:set guioptions+=mT</ex> と入力してください。これで表示されます。</p>
+<p>
+    もし仮に &liberator.appname; がイヤになった場合は、
+    <ex>:extdelete &liberator.appname;</ex> としてアンインストールするか
+    <ex>:extdisable &liberator.appname;</ex> として無効化することができます。
+</p>
+<p>
+    気に入ったけどショートカットを覚えられないといった場合は <k name="F1"/> を押すか <ex>:help</ex> と入力することでもう一度このヘルプを表示することができます。
+</p>
+
+<tags>author donaton sponsor</tags>
+<strut/>
+<p>
+    &liberator.appname; は <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link> 
+    により開発が始まり、今では多くの<link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">貢献者</link>
+    によって開発されています。
+    &liberator.appname; をいいな、開発を応援したいなと思ってくれた方はぜひはげましのおたよりやパッチ、寄付を送ってください。
+    (既に <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Donors">これらの方々</link> から寄付を寄せて頂いています。)
+</p>
+
+<pan><handle/></pan>
+
+<p>
+    お金で製品を得ることの方が好みなら、いくつかの素晴らしい Tシャツやマグカップのような
+    <link topic="http://www.zazzle.com/maxauthority*">商品</link>を購入して頂くことでもサポートとなります。
+    オープンソースソフトウェア信者だったら使って、薦めて、気に入ってくれるだけじゃなくて、
+    本当に &liberator.appname; が好きでお金があったほうがいいと思ったらもちろん寄付してくれるよね (・∀・) 。
+</p>
+
+<h2 tag="overview">ヘルプトピック</h2>
+
+<ol>
+    <li>
+        <link topic="tutorial">クイックスタート・チュートリアル</link>:
+        新規ユーザのためのクイックスタート・チュートリアル。
+    </li>
+    <li>
+        <link topic="starting">&liberator.appname; を始める</link>:
+        どこの設定ファイルをどうやって読み込んで &liberator.appname; が起動するのかについて。
+    </li>
+    <li>
+        <link topic="browsing">ブラウジング</link>:
+        ウェブページを見るために必要な基本的なキーマッピングとコマンド
+        ( ウェブページを開いたり履歴をもどったりするにはどうすればいいのかなど ) について。
+    </li>
+    <li>
+        <link topic="buffer">バッファ</link>:
+        見ているページの画面スクロールやテキストコピーの操作とかについて。
+    </li>
+    <li>
+        <link topic="cmdline">コマンドラインモード</link>:
+        コマンドライン操作について。
+    </li>
+    <li>
+        <link topic="insert">挿入モード</link>:
+        挿入モードでの編集について。
+    </li>
+    <li>
+        <link topic="options">オプション</link>:
+        すべてのオプションが記述してあります。
+    </li>
+    <li>
+        <link topic="pattern">テキスト検索</link>:
+        見ているページでのテキスト検索について。
+    </li>
+    <li>
+        <link topic="tabs">タブ</link>:
+        タブを使ってウェブページを見る方法について。
+    </li>
+    <li>
+        <link topic="hints">ヒント</link>:
+        リンクの選択について。
+    </li>
+    <li>
+        <link topic="">キーマッピング、略語、ユーザコマンド</link>:
+        新しいキーマッピングやユーザコマンドや略語の定義について。
+    </li>
+    <li>
+        <link topic="eval">式の評価</link>:
+        JavaScript の実行方法について。
+    </li>
+    <li>
+        <link topic="marks">マーク</link>:
+        ブックマーク、履歴、クイックマークやローカルマークの使い方について。
+    </li>
+    <li>
+        <link topic="repeat">コマンドの繰り返し</link>:
+        処理手順を再利用できるマクロの使い方について。
+    </li>
+    <li>
+        <link topic="autocommands">オートコマンド</link>:
+        何らかのイベントごとに自動的に実行される動作について。
+    </li>
+    <li>
+        <link topic="print">印刷</link>:
+        ページの印刷について。
+    </li>
+    <li>
+        <link topic="gui">&liberator.appname; の GUI</link>:
+        &liberator.host; のメニュー、ダイアログやサイドバーの操作方法について。
+    </li>
+    <li>
+        <link topic="styling">GUI と Web ページのスタイル</link>:
+        見ているページや &liberator.appname; 自体のスタイルを変更する方法について。
+    </li>
+    <li>
+        <link topic="message">メッセージとエラー</link>:
+        メッセージやエラーメッセージについて。
+    </li>
+    <li>
+        <link topic="developer">開発者向け情報</link>:
+        ドキュメントやプラグインの書き方について。
+    </li>
+    <li>
+        <link topic="various">その他のコマンド</link>:
+        どのカテゴリにも属さないそのほかのことについて。
+    </li>
+    <li>
+        <link topic="plugins">プラグイン</link>:
+        インストールしているプラグインのドキュメント
+    </li>
+    <li>
+        <link topic="index">索引</link>:
+        すべてのコマンドやオプションの索引。
+    </li>
+</ol>
+
+<p>
+<ex>:help o</ex> や <ex>:help :set</ex> と打つと指定されたコマンドについてのヘルプを直接表示することもできます。
+</p>
+
+<h2 tag="features">機能</h2>
+
+<ul>
+    <li>Vim のようなキーバインド (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, などなど)</li>
+    <li>Ex コマンドが利用可能 (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …</li>
+    <li>'wildmode' に 'longest' を設定すると補完されるようになるすべてのコマンドで、 Tab キーによる補完を利用可能。</li>
+    <li>links のナビゲーションに相当する Hit-a-hint 機能 ( <k>f</k> でリンクを辿ることができる )</li>
+    <li>ブックマークや履歴に存在する URL を補完する高度な機能 ( URL だけでなくタイトルも検索 )</li>
+    <li>Vim のようなステータスラインと wget のようなプログレスバー</li>
+    <li>最低限の GUI (<ex>:set guioptions=</ex> でいらないメニューバーやツールバーを簡単に非表示にできる)</li>
+    <li>JavaScript ファイルを <ex>:source</ex> でき、vimperator.vim をインストールしていれば、<em>~/.vimperatorrc</em> ファイルをハイライト表示が可能</li>
+    <li>&liberator.host; のブックマークキーワードやサーチエンジンによる簡単で素早い検索機能 ( <ex>:open ほげ</ex> は「ほげ」を google で検索、 <ex>:open amazon ガンダム</ex> は「ガンダム」を Amazon で検索 )</li>
+    <li>たくさんのコマンドで数値の指定が可能 ( <em>3</em><k name="C-o"/> は 3 ページ分もどる )</li>
+    <li>エラーが発生したときに警告音を鳴らす機能</li>
+    <li>マーク機能 ( <k>m</k><em>a</em> でウェブページにマークをつけて、 <k>'</k><em>a</em> でその場所にいける )</li>
+    <li>クイックマーク機能 (<k>go</k><a>a-zA-Z0-9</a> で以前マークしたウェブページに素早くいける)</li>
+    <li><ex>:map</ex> と <ex>:command</ex> の提供 ( スクリプトを書く人向けに feedkeys() も )</li>
+    <li>分析に使える <ex>:time</ex> を提供</li>
+    <li>Vim と全く同じキー操作によるカーソルの移動やビジュアルモードによるテキストのコピーが可能</li>
+    <li>外部エディタを利用可能</li>
+    <li>キー入力を再生するマクロ機能</li>
+    <li>何らかのイベントで動作が実行されるオートコマンド機能</li>
+    <li>すべてのコマンド、キーマッピングやオプションを説明している総合的なヘルプ</li>
+</ul>
+
+<h2 tag="contact">連絡先</h2>
+
+<p>
+    どんな質問にもちゃんと答えていますので、ぜひメーリングリストに意見・バグレポート・パッチを送ってください。
+    または IRC で <link target="http://www.freenode.net/">Freenode</link> の 
+    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> チャンネルに参加したり
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Wiki">Wiki</link> の 
+    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/FAQ">frequently asked questions (FAQ)</link>
+    をチェックしてみてください。
+    ただしまず最初に TODO ファイルを読んで、その問題に対して私が時間を割くことで、
+    改善したりパッチを適用したりできるかに気付いているかどうかを確認してください。
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->
