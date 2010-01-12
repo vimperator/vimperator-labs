@@ -824,7 +824,7 @@ const Events = Module("events", {
              return;
 
         if (modes.isRecording) {
-            if (key == "q") { // TODO: should not be hardcoded
+            if (key == "q" && liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA) { // TODO: should not be hardcoded
                 modes.isRecording = false;
                 liberator.log("Recorded " + this._currentMacro + ": " + this._macros.get(this._currentMacro), 9);
                 liberator.echomsg("Recorded macro '" + this._currentMacro + "'");
