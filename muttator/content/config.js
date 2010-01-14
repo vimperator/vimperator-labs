@@ -101,8 +101,9 @@ const Config = Module("config", ConfigBase, {
                 liberator.mode = modes.MESSAGE;
         }
     },
-
-    get browser() getBrowser(),
+    // 2010.01.11 tspires - getBrowser function doesn't exist
+    // trying to use window.gBrowser instead.
+    get browser() window.gBrowser,
     tabbrowser: {
         __proto__: document.getElementById("tabmail"),
         get mTabContainer() this.tabContainer,
