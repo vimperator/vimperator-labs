@@ -359,12 +359,23 @@ const Hints = Module("hints", {
                 let hint = this._pageHints[i];
 
                 let valid = validHint(hint.text);
-                hint.span.style.display = (valid ? "" : "none");
-                if (hint.imgSpan)
-                    hint.imgSpan.style.display = (valid ? "" : "none");
+                let display = valid && (
+                    this._hintNumber == 0 ||
+                    String(hintnum).indexOf(String(activeHint)) == 0
+                );
 
-                if (!valid) {
+                hint.span.style.display = (display ? "" : "none");
+                if (hint.imgSpan)
+                    hint.imgSpan.style.display = (display ? "" : "none");
+
+                if (!valid || !display) {
                     hint.elem.removeAttributeNS(NS.uri, "highlight");
+
+                    if (valid) {
+                        this._validHints.push(hint.elem);
+                        hintnum++;
+                    }
+
                     continue inner;
                 }
 
