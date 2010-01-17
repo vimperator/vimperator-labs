@@ -1054,7 +1054,7 @@ const Hints = Module("hints", {
         mappings.add(myModes, [";"],
             "Start an extended hint mode",
             function (count) {
-                this._extendedhintCount = count;
+                hints._extendedhintCount = count;
                 commandline.input(";", null,
                     {
                         promptHighlight: "Normal",
