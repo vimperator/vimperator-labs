@@ -130,7 +130,7 @@ See <t>opening</t> for other ways to open new tabs.
     <spec><oa>count</oa>gt</spec>
     <description>
         <p>
-            Go to the next tab. Cycles to the first tab when the last is selected. +
+            Go to the next tab. Cycles to the first tab when the last is selected.
             If <oa>count</oa> is specified go to the <oa>count</oa>th tab.
         </p>
     </description>
@@ -142,7 +142,7 @@ See <t>opening</t> for other ways to open new tabs.
     <spec><oa>count</oa>&lt;C-n></spec>
     <description>
         <p>
-            Go to the next tab. Cycles to the first tab when the last is selected. +
+            Go to the next tab. Cycles to the first tab when the last is selected.
             If <oa>count</oa> is specified go to the <oa>count</oa>th next tab.
         </p>
     </description>
@@ -154,7 +154,7 @@ See <t>opening</t> for other ways to open new tabs.
     <spec><oa>count</oa>gT</spec>
     <description>
         <p>
-            Go to the previous tab. Cycles to the last tab when the first is selected. +
+            Go to the previous tab. Cycles to the last tab when the first is selected.
             If <oa>count</oa> is specified go to the <oa>count</oa>th previous tab.
         </p>
     </description>
