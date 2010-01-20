@@ -214,13 +214,13 @@ See <t>opening</t> for other ways to open new tabs.
         </p>
 
         <p>
-            If argument is neither a full URL nor an index but uniquely identifies a
+            If the argument is neither a full URL nor an index but uniquely identifies a
             buffer, it is selected. With <oa>!</oa> the next buffer matching the argument is
             selected, even if it cannot be identified uniquely. Use <k>b</k> as a
             shortcut to open this prompt.
         </p>
 
-        <p>If argument is <em>#</em>, the alternate buffer will be selected (see <k name="C-^"/>).</p>
+        <p>If the argument is <em>#</em>, the alternate buffer will be selected (see <k name="C-^"/>).</p>
 
         <p>If no argument is given the current buffer remains current.</p>
     </description>

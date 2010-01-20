@@ -40,7 +40,7 @@
     creates a new help section for the command <ex>:help</ex> and for
     the related key binding, <k name="F1"/>. It also creates help tags
     for the command, its shortcuts, the key binding, and the general
-    topic, 'help'. These tags enable linking to this section when from
+    topic, 'help'. These tags enable linking to this section from
     other mentions of the topic and from the <ex>:help</ex> command.
     The above code displays as:
 </p>
@@ -116,7 +116,7 @@
     <dt>ex</dt>         <dd>Link to an ex command. (HelpEx)</dd>
     <dt>k</dt>          <dd>Link to a key. (HelpKey)</dd>
     <dt>&tab;@name</dt> <dd>The name attribute to &lt;k>. When provided, &lt;<a>value</a>> is prepended to
-                            the element's contents, i.e., <em>&lt;k name="lt"/></em> becomes <em><k name="lt"/></em>.
+                            the element's contents, i.e., <em>&lt;k name="F1"/></em> becomes <em><k name="F1"/></em>.
                         </dd>
     <dt>t</dt>          <dd>Links to an arbitrary help topic. (HelpTopic)</dd>
 </dl>

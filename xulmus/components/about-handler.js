@@ -1,16 +1,14 @@
-// Header:
+// Copyright (c) 2009 by Doug Kearns
+//
+// This work is licensed for reuse under an MIT license. Details are
+// given in the License.txt file included with this file.
+
 const Name = "Xulmus";
 /*
  * We can't load our modules here, so the following code is sadly
  * duplicated: .w !sh
 vimdiff ../../*'/components/about-handler.js'
  */
-
-// Copyright (c) 2009 by Doug Kearns
-//
-// This work is licensed for reuse under an MIT license. Details are
-// given in the License.txt file included with this file.
-
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const Cc = Components.classes;
@@ -35,7 +33,7 @@ AboutHandler.prototype = {
         return channel;
     },
 
-    getURIFlags: function (uri) Ci.nsIAboutModule.ALLOW_SCRIPT,
+    getURIFlags: function (uri) Ci.nsIAboutModule.ALLOW_SCRIPT
 };
 
 function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler])

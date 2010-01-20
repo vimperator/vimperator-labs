@@ -213,8 +213,8 @@ const Tabs = Module("tabs", {
     /**
      * Removes the specified <b>tab</b> from the tab list.
      *
-     * @param {Object} tab
-     * @param {number} count
+     * @param {Object} tab The tab to remove.
+     * @param {number} count How many tabs to remove.
      * @param {boolean} focusLeftTab Focus the tab to the left of the removed tab.
      * @param {number} quitOnLastTab Whether to quit if the tab being
      *     deleted is the only tab in the tab list:

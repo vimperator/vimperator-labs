@@ -188,7 +188,7 @@ const Events = Module("events", {
      * Replays a macro.
      *
      * @param {string} The name of the macro to replay.
-     * @return {boolean}
+     * @returns {boolean}
      */
     playMacro: function (macro) {
         let res = false;
@@ -409,7 +409,7 @@ const Events = Module("events", {
      * <S-@> where @ is a non-case-changable, non-space character.
      *
      * @param {string} keys The string to parse.
-     * @return {Array[Object]}
+     * @returns {Array[Object]}
      */
     fromString: function (input) {
         let out = [];

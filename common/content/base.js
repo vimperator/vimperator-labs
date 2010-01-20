@@ -67,11 +67,13 @@ function keys(obj) {
     if (iter !== undefined)
         obj.__iterator__ = iter;
 }
+
 function values(obj) {
     for (var k in obj)
         if (obj.hasOwnProperty(k))
             yield obj[k];
 }
+
 function foreach(iter, fn, self) {
     for (let val in iter)
         fn.call(self, val);
@@ -206,7 +208,7 @@ function call(fn) {
  *     function foo(a, b, c) [a, b, c].join(" ");
  *     curry(foo)(1, 2, 3) -> "1 2 3";
  *     curry(foo)(4)(5, 6) -> "4 5 6";
- *     curry(foo)(4)(8)(9) -> "7 8 9";
+ *     curry(foo)(7)(8)(9) -> "7 8 9";
  *
  * @param {function} fn The function to curry.
  * @param {integer} length The number of arguments expected.
@@ -292,7 +294,7 @@ function update(target) {
 /**
  * Extends a subclass with a superclass. The subclass's
  * prototype is replaced with a new object, which inherits
- * from the super class's prototype, {@see update}d with the
+ * from the superclass's prototype, {@see update}d with the
  * members of 'overrides'.
  *
  * @param {function} subclass
@@ -421,7 +423,7 @@ Class.prototype = {
  * a fixed set of named members. Each argument should be the name of
  * a member in the resulting objects. These names will correspond to
  * the arguments passed to the resultant constructor. Instances of
- * the new struct may be treated vary much like arrays, and provide
+ * the new struct may be treated very much like arrays, and provide
  * many of the same methods.
  *
  *     const Point = Struct("x", "y", "z");
