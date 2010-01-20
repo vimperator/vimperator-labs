@@ -39,6 +39,13 @@ BUGS:
   Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
 - The MOW shouldn't close when executing hints and ;F isn't working.
 
+(the new XML help system bugs):
+- security errors at startup (e.g. "Security Error: Content at
+  moz-nullprincipal:{e7a578b6-bf79-4028-8ee6-ef3a40ba4508} may not load or link
+  to chrome://liberator/locale/print.xml.")
+- util.generateHelp() is not there
+
+
 FEATURES:
 8 Document Textarea, Caret and Visual modes.
 8 Incremental searches should retreat to their starting position on <Backspace>
