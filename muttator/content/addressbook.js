@@ -1,7 +1,7 @@
 // Copyright (c) 2008 by Christian Dietrich <stettberger@dokucode.de>
 //
 // This work is licensed for reuse under an MIT license. Details are
-// given in the LICENSE.txt file included with this file.
+// given in the License.txt file included with this file.
 
 const Addressbook = Module("addressbook", {
     init: function () {

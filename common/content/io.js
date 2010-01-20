@@ -2,7 +2,7 @@
 // Some code based on Venkman
 //
 // This work is licensed for reuse under an MIT license. Details are
-// given in the LICENSE.txt file included with this file.
+// given in the License.txt file included with this file.
 
 
 /** @scope modules */
