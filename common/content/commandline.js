@@ -164,7 +164,7 @@ const CommandLine = Module("commandline", {
 
         this.registerCallback("submit", modes.EX, function (command) {
             commands.repeat = command;
-            liberator.execute(command);
+            liberator.trapErrors(function () liberator.execute(command));
         });
         this.registerCallback("complete", modes.EX, function (context) {
             context.fork("ex", 0, completion, "ex");
