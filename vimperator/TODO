@@ -25,7 +25,6 @@ BUGS:
 - ;s saves the page rather than the image
 - RC file is sourced once per window
 - :undo seems to be effected by the tabstrip state
-- the :help version-information page is no longer generated
 
 (recent CVS regressions):
 - visual caret mode is broken, requires a manual page focus first anyway or

@@ -1,0 +1,1162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="version"
+    title="Version Information"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+
+<h1 tag="version-information">Version Information</h1>
+
+<h2 tag="version-2.2">Version 2.2</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> Vimperator's licence has changed from the MPL/GPL/LGPL
+        tri-license to the MIT license.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> Map.flags has been replaced with individual properties.
+        Mappings defined in plugins with mappings.add will need to be updated.
+        E.g.
+        <code><![CDATA[
+            mappings.add(...,
+            { flags: Mappings.flags.ARGUMENT |
+            Mappings.flags.COUNT |
+            Mappings.flags.MOTION |
+            Mappings.flags.ALLOW_EVENT_ROUTING });
+            ]]></code>
+        is now
+        <code>
+            <![CDATA[mappings.add(...,
+            { arg: true, count: true, motion: true, route: true });]]></code>
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> Shifted key notation now matches Vim's behaviour. E.g. <k name="C-a"/>
+        and <k name="C-A"/> are equivalent, to map the uppercase character use <k name="C-S-A"/>.
+        (this might change again, as this is REALLY inconsistent, and i don't
+        know if I like copying bugs)
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning><o>popups</o> now takes a stringlist rather than a number.
+    </li>
+    <li>
+        add <ex>:winonly</ex>
+    </li>
+    <li>
+        add <ex>:tabattach</ex>
+    </li>
+    <li>
+        add <ex>:keepalt</ex>
+    </li>
+    <li>
+        add <ex>:styledisable</ex>, <ex>:styleenable</ex>, and <ex>:styletoggle</ex>
+    </li>
+    <li>
+        add <ex>:sanitize</ex>, <o>sanitizetimespan</o> and <o>sanitizeitems</o>
+    </li>
+    <li>
+        add <ex>:verbose</ex>
+    </li>
+    <li>
+        add <ex>:window</ex> to run a command in a new window
+    </li>
+    <li>
+        add ! version of <ex>:delbmarks</ex> to delete all bookmarks
+    </li>
+    <li>
+        add <ex>:toolbaropen</ex>, <ex>:toolbarclose</ex>, and <ex>:toolbartoggle</ex>
+    </li>
+    <li>
+        make <ex>:open</ex> behavior match that of <ex>:tabopen</ex> and <ex>:winopen</ex>
+        when no argument is specified
+    </li>
+    <li>
+        add extension related commands - <ex>:extadd</ex>, <ex>:extdelete</ex>,
+        <ex>:extdisable</ex>, <ex>:extenable</ex>, <ex>:extensions</ex>, <ex>:extoptions</ex>
+    </li>
+    <li>
+        add <em>-javascript</em> flag to <ex>:autocommand</ex>
+    </li>
+    <li>
+        add <o>private</o> - enter private browsing mode, matching <em>PrivateMode</em>
+        autocommand
+    </li>
+    <li>
+        add <em>-description</em> option to <ex>:command</ex>
+    </li>
+    <li>
+        command-line options are now supported via the host application's
+        <em>-liberator</em> option
+    </li>
+    <li>
+        add <k>;i</k> and <k>;I</k> for opening image location (in new tab)
+    </li>
+    <li>
+        add <link topic="all">all.html</link> to show all help sections in a single page - available via
+        <ex>:helpall</ex>
+    </li>
+    <li>
+        add <k>;c</k> extended hint mode - open the context menu
+    </li>
+    <li>
+        add <k>@:</k> mapping - repeat the last Ex command
+    </li>
+    <li>
+        add <k>|</k> mapping - toggle between rendered and source view
+    </li>
+</ul>
+
+
+<h2 tag="version-2.1">Version 2.1</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> Default value of <o>complete</o> has been changed from "sfl" to "slf"
+    </li>
+    <li>
+        massively speed up <ex>:open</ex> completions
+    </li>
+    <li>
+        TabMixPlus (and other tab extensions) should work much better now
+        together with Vimperator unless you <ex>:set guioptions+=[nN]</ex>
+    </li>
+    <li>
+        remove <o>preload</o> option. You can fake it by some custom JavaScript in your RC file.
+    </li>
+    <li>
+        add <ex>:frameonly</ex>
+    </li>
+    <li>
+        add <ex>:stopall</ex>
+    </li>
+    <li>
+        add <ex>:tabdo</ex>
+    </li>
+    <li>
+        add <o>encoding</o>
+    </li>
+    <li>
+        add <o>hintinputs</o>
+    </li>
+    <li>
+        add <ex>:silent</ex>
+    </li>
+    <li>
+<!-- FIXME this link does not work -->
+        add <link topic="$MY_&liberator.idname;RC">$MY_&liberator.idname;RC</link>
+    </li>
+    <li>
+        add ' and " local marks
+    </li>
+    <li>
+        add <k>w</k> and <k>W</k> Normal mode mappings for symmetry with
+        <k>o</k>/<k>O</k> and <k>t</k>/<k>T</k>
+    </li>
+    <li>
+        add <ex>:messclear</ex>
+    </li>
+    <li>
+        add <o>maxitems</o>
+    </li>
+    <li>
+        as usual many small bug fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-2.0">Version 2.0</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> For compatibility with Vim, the <o>guioptions</o> "b" value has been renamed
+        to "B". "b" now represents the bottom scrollbar.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning><ex>:set</ex> now sets multiple options, as in Vim. Spaces in values
+        must be quoted or escaped.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> Due to much improved autocompletion, changed default <o>complete</o> option
+        value to "sfl", listing intelligent Firefox location bar results. Using "b" or "h"
+        might cause problems/massive slowdowns, use with care!
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> AlwaysHint mode with <k>;F</k> mode changed the semantics slightly.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> Command actions now take an args object, returned from
+        commands.parseArgs, as their first argument. This will break any commands
+        not using the args parser explicitly.  The old string value is now
+        available via args.string.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning><o>verbose</o> is now used for message levels. Logging is
+        controlled by the <em>extensions.liberator.loglevel</em> preference.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> <ex>:viusage</ex> and <ex>:exusage</ex> now jump to the help index, use the
+        special versions for the old behavior.
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> renamed Startup and Quit autocmd events to <em>VimperatorEnter</em> and
+        <em>VimperatorLeave</em> respectively.
+    </li>
+    <li>
+
+        <warning>IMPORTANT:</warning> <o>verbose</o> is now by default at 1, set to 0 to not show any status messages.
+
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> $VIMPERATOR_HOME is no longer used.
+    </li>
+    <li>
+        Selecting an &lt;input type="file"&gt; with hints now causes the command line to prompt
+        for file input (instead of doing nothing).
+    </li>
+    <li>
+        <k name="C-n"/> now goes to the <oa>count</oa>th next tab rather than the <oa>count</oa>th tab.
+    </li>
+    <li>
+        add ~/.vimperator/info/<a>profile</a>/, similar to viminfo
+    </li>
+    <li>
+<!-- FIXME this link does not work -->
+        add <link topic="$&liberator.idname;_RUNTIME">$&liberator.idname;_RUNTIME</link>,<link topic="$&liberator.idname;_INIT">$&liberator.idname;_INIT</link>
+    </li>
+    <li>
+        <ex>:hardcopy</ex> now supports output redirection to a file on Unix and MacUnix
+    </li>
+    <li>
+        add <k>;f</k> extended hint mode to focus a frame
+    </li>
+    <li>
+        add "r", "l", and "b" to <o>guioptions</o> to toggle the scrollbars.
+    </li>
+    <li>
+        remove spaces and newlines when opening urls starting with http:// or similar
+        before :o http://linux .com would search for http://linux and for .com, now
+        it just opens linux.com. Also handy when pasting broken urls with <k>p</k> or <k>P</k>.
+    </li>
+    <li>
+        add <o>wildcase</o> option
+    </li>
+    <li>
+        <o>linkbgcolor</o>, <o>linkfgcolor</o>, ... have been replaced with highlight
+        groups, <em>HintElem</em> and <em>HintActive</em>
+    </li>
+    <li>
+        new <o>followhints</o> option
+    </li>
+    <li>
+        <ex>:buffers</ex> supports a filter now to only list buffers matching filter (Vim
+        incompatible, but consistent with other commands)
+    </li>
+    <li>
+        Favicon support in many places
+    </li>
+    <li>
+        add <em>Fullscreen</em> autocommmand
+    </li>
+    <li>
+        add <ex>:colorscheme</ex>
+    </li>
+    <li>
+        multibyte support for hints (thanks Xie&amp;Tian)
+    </li>
+    <li>
+        add <o>exrc</o>
+    </li>
+    <li>
+        add <o>errorbells</o>
+    </li>
+    <li>
+        add shell command completion for <ex>:!</ex>
+    </li>
+    <li>
+        add <ex>:map &lt;silent&gt;</ex> to prevent a mapping from being echoed (might be slow currently, however)
+    </li>
+    <li>
+        add guioptions=nN to number tabs
+    </li>
+    <li>
+        add <ex>:loadplugins</ex> command
+    </li>
+    <li>
+        add <k>.</k> mapping
+    </li>
+    <li>
+        add <k>N%</k> normal mode command
+    </li>
+    <li>
+        add interpolation for items such as <em>&lt;url&gt;</em> to autocommands
+    </li>
+    <li>
+        add <em>-nargs</em>, <em>-complete</em>, <em>-bang</em>, and <em>-count</em> attribute support to <ex>:command</ex>
+    </li>
+    <li>
+        much improved completion support, including javascript, option, and search keyword
+    </li>
+    <li>
+        add <k name="PageUp"/>/<k name="S-Up"/> and <k name="PageDown"/>/<k name="S-Down"/> command-line mappings for
+        selecting the previous and next history items
+    </li>
+    <li>
+        remove <o>hintstyle</o>, <o>hlsearchstyle</o>, <o>t_vb</o> and <o>visualbellstyle</o> - use
+        <ex>:highlight <a>Hint,Search,Bell</a></ex>
+    </li>
+    <li>
+        add <ex>:highlight</ex>
+    </li>
+    <li>
+        add <ex>:optionusage</ex>
+    </li>
+    <li>
+        add <ex>:doautocmd</ex> and <ex>:doautoall</ex>
+    </li>
+    <li>
+        add <ex>:style</ex> and <ex>:delstyle</ex> commands, allow <ex>:so</ex> to source stylesheets
+    </li>
+    <li>
+        add <em>DOMLoad</em> autocmd event
+    </li>
+    <li>
+        add <ex>:messages</ex> and <o>messages</o>
+    </li>
+    <li>
+        add <ex>:runtime</ex>
+    </li>
+    <li>
+        add <o>runtimepath</o>
+    </li>
+    <li>
+        allow <k>;</k> hints to work in the multiline output widget
+    </li>
+    <li>
+        add <ex>:scriptnames</ex>
+    </li>
+    <li>
+        add command-line completion to <o>activate</o>, <o>cpt</o>, <o>defsearch</o>, <o>pageinfo</o>,
+        <o>newtab</o> and <o>popups</o>
+    </li>
+    <li>
+        add <o>helpfile</o> option
+    </li>
+    <li>
+        add <o>wildignore</o> option
+    </li>
+    <li>
+        add <ex>:finish</ex> command
+    </li>
+    <li>
+        new events <em>BookmarkAdd</em>, <em>ShellCmdPost</em>, <em>VimperatorLeavePre</em>, <em>DownloadPost</em>
+    </li>
+    <li>
+        add <o>cdpath</o> option
+    </li>
+    <li>
+        allow <ex>:dialog</ex> to open the cookies manager
+    </li>
+    <li>
+        add <o>loadplugins</o> option
+    </li>
+    <li>
+        add count support to <k name="C-^"/> (Kazuo)
+    </li>
+    <li>
+        add <o>eventignore</o> option
+    </li>
+    <li>
+        add <ex>:tabdetach</ex> command
+    </li>
+    <li>
+        new <k>;b</k> extended hint mode (thanks Daniel Schaffrath)
+    </li>
+    <li>
+        <ex>:qa!</ex> and <ex>:q!</ex> quit forcefully, as in Vim
+    </li>
+    <li>
+        stop macro playback on <k name="C-c"/>
+    </li>
+    <li>
+        <ex>:bmark</ex> now updates a bookmark, if possible. <ex>:bmark!</ex> adds a new one
+    </li>
+    <li>
+        <ex>:dialog</ex> and <ex>:sidebar</ex> arguments are now case-insensitive
+    </li>
+    <li>
+        many bug fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-1.2">Version 1.2</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> changed <ex>:command</ex> to behave like Vim's version.
+    </li>
+    Eg. An alert command specified previously as
+    <code><![CDATA[
+        :command AlertMe alert(args)
+        ]]></code>
+    should now be defined as
+    <code><![CDATA[
+        :command AlertMe :js alert(&lt;args&gt;)
+        ]]></code>
+    <li>
+        <warning>IMPORTANT:</warning> changed (again) the default keybinding to temporarily disable all
+        Vimperator keybindings from <k name="C-q"/> to <k name="C-z"/> since many users complained
+        about hitting <k name="C-q"/> twice and exiting Vimperator
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> removed old <ex>:buffers!</ex> buffer window, as it was ugly and slightly broken
+        use <k>B</k> or <ex>:buffers</ex> instead
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> input fields are not blured anymore by default after a page has loaded
+        use <ex>:set [no]focuscontent</ex> to control the behavior (thanks Paul Sobey for the
+        generous donation which made this behavior possible)
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> <k name="C-x"/>/<k name="C-a"/> never take possible negative URLs into account, it was just
+        too unpredictable
+    </li>
+    <li>
+        performance fix by using cached history, should save about 5ms on each pageload
+    </li>
+    <li>
+        add <ex>:emenu</ex> for accessing the Firefox main menu items from the command line
+    </li>
+    <li>
+        add <o>shell</o> and <o>shellcmdflag</o> options
+    </li>
+    <li>
+        <ex>:tabprevious</ex>, <ex>:bprevious</ex>, <ex>:tabnext</ex>, <ex>:bnext</ex> and friends now accept a prefix count
+    </li>
+    <li>
+        add <ex>:comclear</ex> and <ex>:delcommand</ex>
+    </li>
+    <li>
+        add a special version to <ex>:hardcopy</ex> to skip the Print dialog
+    </li>
+    <li>
+        add <ex>:bl[ast]</ex>, <ex>:bf[irst]</ex>, <ex>:br[ewind]</ex> to go to first/last tab
+    </li>
+    <li>
+        add <ex>:bn[ext]</ex>, <ex>:bp[revious]</ex>, <ex>:bN[ext]</ex> to switch to next/previous tab
+    </li>
+    <li>
+        add <ex>:pagestyle</ex> command to allow for switching between alternate style sheets
+    </li>
+    <li>
+        add <ex>:b</ex># to select the alternate buffer
+    </li>
+    <li>
+        add <ex>:tabduplicate</ex> command
+    </li>
+    <li>
+        new <o>urlseparator</o> option for specifying the regex used to split the arg to
+        <ex>:open</ex>, <ex>:tabopen</ex> and <ex>:winopen</ex>
+    </li>
+    <li>
+        <o>editor</o> now accepts quoting/escaping to use an editor with spaces in the path
+    </li>
+    <li>
+        support for <em>:%foo</em> as a count for commands (not yet widely used)
+    </li>
+    <li>
+        show informative message when a background tab was loaded, especially useful
+        with a hidden tab bar.
+    </li>
+    <li>
+        new "l" flag for <o>complete</o> to reuse the Firefox awesome bar for getting better
+        completions for <ex>:open</ex>. Works only when <o>wildoptions</o> contains "auto" and can
+        be a little buggy if you are typing too fast.
+    </li>
+    <li>
+        new <o>wildoptions</o> option (default off for now), to automatically list
+        completions without the need to press the tab key
+    </li>
+    <li>
+        new argument parser for Ex commands, should tell better error messages when
+        you do things like <ex>:bmark -tag=a,b</ex> instead of <ex>:bmark -tags=a,b</ex>
+    </li>
+    <li>
+        some option values can be tab-completed now; e.g., <ex>:set wim=&lt;tab&gt;</ex>
+    </li>
+    <li>
+        <ex>:bdelete</ex> accepts an optional argument now
+    </li>
+    <li>
+        renamed some <ex>:autocmd</ex>, mainly BrowserStartup -> Startup and BrowserExit -> Quit
+    </li>
+    <li>
+        don't pass certain keys like <k name="C-o"/> or <k name="C-n"/> to Firefox in insert mode
+    </li>
+    <li>
+        keywords in <ex>:open &lt;arg&gt;</ex> have higher priority than local files now
+    </li>
+    <li>
+        add <o>online</o> to control the "work offline" menu item
+    </li>
+    <li>
+        add <ex>:jumps</ex> command to list current tab's history
+    </li>
+    <li>
+        add <ex>:setlocal</ex> &amp; <ex>:setglobal</ex> commands, so options can be local (per tab) &amp; global
+    </li>
+    <li>
+        many small bug fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-1.1">Version 1.1</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> security update for suggest engines
+    </li>
+    <li>
+        try to add .exe automatically to filenames on windows, so <ex>:set editor=gvim -f</ex>
+        will automatically invoke gvim.exe (if it's in the path). Thanks to
+        Guido Van Hoecke
+    </li>
+    <li>
+        readded <o>visualbellstyle</o> (thanks mauke)
+    </li>
+    <li>
+        new <o>popups</o> option
+    </li>
+    <li>
+        many bug fixes as usual
+    </li>
+</ul>
+
+
+<h2 tag="version-1.0">Version 1.0</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> THIS VERSION ONLY WORKS WITH FIREFOX 3.0 beta3 or newer
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> Major hints rewrite
+        read up the new help for the <k>f</k>, <k>F</k> and <k>;</k> commands for details
+        removed the following hint options: <o>hintchars</o> <o>maxhints</o>
+        added the following hint options: <o>hinttimeout</o>, <o>hintmatching</o>, <o>wordseperators</o>
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> changed <k>I</k> key to <k name="C-q"/> to also work in textboxes
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> <ex>:bmarks</ex>! and <ex>:history</ex>! open the matching items now in a tab, instead
+        of bringing up the bookmarks/history window
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> <k>B</k> mapping now works just like <ex>:buffers</ex>, old bufferwindow will be removed
+        at some time. Use B5gt to jump to the 5th tab.
+    </li>
+    <li>
+        also go to INSERT mode for HTMLSelectElements, so you can type text to go to element
+        in drop down boxes
+    </li>
+    <li>
+        new "S" flag for <o>complete</o> to list google suggestions in <ex>:open vimp</ex> and
+        pressing tab (disabled by default). Also added new <o>suggestengines</o> option.
+    </li>
+    <li>
+        <k>gi</k> accepts now a count to jump to the nth input field
+    </li>
+    <li>
+        <k name="C-t"/> on input fields starts a very basic vi-mode
+    </li>
+    <li>
+        <ex>:play</ex> for playing a recorded macro
+    </li>
+    <li>
+        <ex>:[del]macros [regex]</ex> for listing/deleting recorded macros
+    </li>
+    <li>
+        <ex>:set!</ex> now lets you change about:config prefs similar to <ex>:set</ex>
+    </li>
+    <li>
+        new <ex>:command</ex> to add user defined commands
+    </li>
+    <li>
+        new setCustomMode for plugin writers
+    </li>
+    <li>
+        <ex>:au[tocmd]</ex> executes commands on events (only <o>PageLoad</o> actually) on websites
+    </li>
+    <li>
+        <k>@@</k> to repeat last macro
+    </li>
+    <li>
+        new macro commands <k>q[a-z0-9]</k> and <k>@[a-z0-9]</k> to replay them (thanks Marco!)
+    </li>
+    <li>
+        scroll commands like <k>j</k>/<k>k</k>/<k>gg</k>/etc. have a much better heuristic to find a scrollable frame
+    </li>
+    <li>
+        <ex>:imap</ex>, <ex>:inoremap</ex>, <ex>:iunmap</ex> and <ex>:imapclear</ex> added
+    </li>
+    <li>
+        new <k>g0</k> and <k>g$</k> mappings to go to the first/last tab
+    </li>
+    <li>
+        new <k>gf</k> and <k>gF</k> mappings and <k>;v</k> and <k>;V</k> hints mode to view the source code
+    </li>
+    <li>
+        new <o>history</o> option for specifying the number of Ex commands and
+        search patterns to store in the command-line history
+    </li>
+    <li>
+        new <k name="C-x"/> and <k name="C-a"/> mappings to increment the last number in the URL
+    </li>
+    <li>
+        new ~ mapping to open the home directory
+    </li>
+    <li>
+        <ex>:open</ex> tries to open a relative filename now, if you do a <ex>:open foo.html</ex>
+        or <ex>:open ../hello.txt</ex>
+    </li>
+    <li>
+        new <ex>:cd</ex> and <ex>:pwd</ex> commands
+    </li>
+    <li>
+        new <ex>:dialog</ex> command to open various Firefox dialogs
+    </li>
+    <li>
+        new <k>a</k> and <k>A</k> mappings to deal with bookmarks
+    </li>
+    <li>
+        added <k>]]</k> and <k>[[</k> to navigate to the next/previous document based on
+        the regex specified in <o>nextpattern</o> and <o>previouspattern</o> (thanks kidd)
+    </li>
+    <li>
+        abbreviations for text fields (<ex>:abbr</ex> etc.) (thanks calmar)
+    </li>
+    <li>
+        you can edit textfields with <k name="C-i"/> now using an external editor (thanks to Joseph Xu)
+    </li>
+    <li>
+        <ex>:open</ex>, <ex>:bmarks</ex>, etc. filter on space separated tokens now, so you can
+        search with <ex>:open linux windows &lt;Tab&gt;</ex> all your bookmarks/history
+        which contain linux AND windows in the url or title
+    </li>
+    <li>
+        tags and keyword support for <ex>:bmark</ex>
+    </li>
+    <li>
+        added full zoom, and changed keybindings slightly for text zoom
+    </li>
+    <li>
+        improvements for scrollable --more-- prompt
+    </li>
+    <li>
+        sites like msn.com or yahoo.com don't focus search field anymore on keydown
+    </li>
+    <li>
+        new gi browser command to focus last used (or the first as a fallback) input box
+    </li>
+    <li>
+        edit TEXTAREAs with many Vim commands in a Vim and even visual mode if you set <o>noinsertmode</o>
+    </li>
+    <li>
+        support for emacs/bash-like <k name="C-e"/>/<k>a</k>/<k>u</k>/<k>k</k>/<k>h</k> keys in single line text fields
+    </li>
+    <li>
+        support for <k>*</k> and <k>#</k> mappings to search for the text selection or the text under the cursor
+    </li>
+    <li>
+        Escape finally clears any selection made in the document
+    </li>
+    <li>
+        initial start of caret mode. Start with <k>i</k>, stop with <k name="Esc"/>
+    </li>
+    <li>
+        new <o>newtab</o> option for opening the command output in a new tab and better <ex>:tab</ex> support
+    </li>
+    <li>
+        many small bug fixes and enhancements
+    </li>
+</ul>
+
+
+<h2 tag="version-0.5.3">Version 0.5.3</h2>
+<ul>
+    <li>
+        <warning>IMPORTANT:</warning> options are no longer automatically stored - use the
+        ~/.vimperatorrc file instead for persistent options
+    </li>
+    <li>
+        <ex>:tabnext</ex> and <ex>:tabprevious</ex> now accept an argument
+    </li>
+    <li>
+        the count to <k>gT</k> now specifies a relative tab motion like Vim
+    </li>
+    <li>
+        new <ex>:pa[geinfo]</ex> command, and <k name="C-g"/> and <k>g<k name="C-g"/></k> mappings (thanks Marco Candrian)
+    </li>
+    <li>
+        added new <ex>:mkvimperatorrc</ex> command
+    </li>
+    <li>
+        remove <ex>:redraw</ex> and <k name="C-L"/> commands as they rely on FF3 features
+    </li>
+    <li>
+        <ex>:ls</ex>, <ex>:history</ex> and <ex>:bmarks</ex> output is now hyperlinked
+    </li>
+    <li>
+        new <k>gb</k> and <k>gB</k> mappings to repeat the last <ex>:buffer<oa>!</oa></ex> command,
+    </li>
+    <li>
+        <ex>:q</ex> doesn't close the whole browser, if there are more than one windows
+    </li>
+    <li>
+        new <ex>:winclose</ex> command
+    </li>
+    <li>
+        <k>b</k> calls <ex>:buffer!</ex> now instead of <ex>:buffer</ex>
+    </li>
+    <li>
+        [+], [-] and [+-] in the statusline, whether we can go back, forward, or both
+    </li>
+    <li>
+        <ex>:set showtabline</ex> now finally works as expected for all values
+    </li>
+    <li>
+        many other small bug fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-0.5.2">Version 0.5.2</h2>
+<ul>
+    <li>
+        changed semantics of <ex>:set<oa>!</oa></ex> and <ex>:prefs<oa>!</oa></ex> a little, <ex>:set</ex> shows now all non-default
+        options, use <ex>:prefs!</ex> to get the about:config window
+    </li>
+    <li>
+        added "s" and "a" mappings to extended hints mode for saving hint targets
+    </li>
+    <li>
+        <k>d</k>, <k>D</k> and <ex>:bdelete</ex> support count now
+    </li>
+    <li>
+        <ex>:back</ex>/<ex>:forward</ex> can use tab-completion
+    </li>
+    <li>
+        <ex>:undoall</ex> support, and tab-completion for <ex>:undo &lt;Tab&gt;</ex>
+    </li>
+    <li>
+        new <ex>:redraw</ex> and <k name="C-L"/> commands for forced redrawing of the screen
+    </li>
+    <li>
+        added new <o>laststatus</o> option and removed "s" value from <o>guioptions</o>
+    </li>
+    <li>
+        Tab-completion improvements for <ex>:javascript</ex> and <ex>:open</ex>
+    </li>
+    <li>
+        <warning>IMPORTANT:</warning> changed semantics of <ex>:echo</ex> and <ex>:echoerr:</ex> strings must be quoted with " or ' now,
+        but you can do things like <ex>:echo 3+2</ex> or <ex>:echo window.document</ex> now
+    </li>
+    <li>
+        statusline is now white on black with bold font by default (like in (g)vim)
+        (change with userChrome.css if you don't like it until we have <ex>:colorscheme</ex>)
+    </li>
+    <li>
+        <ex>:let mapleader=","</ex>  and <k name="Leader"/> in <ex>:map</ex> support
+    </li>
+    <li>
+        added new <ex>:let</ex> and <ex>:unlet</ex> commands
+    </li>
+    <li>
+        <ex>:b2</ex> now allowed, no space required before the 2 anymore
+    </li>
+    <li>
+        <ex>:!</ex> to run commands through system()
+    </li>
+    <li>
+        separated search and Ex command history
+    </li>
+    <li>
+        added <o>visualbellstyle</o> for styling/hiding the visual bell
+    </li>
+    <li>
+        merge the existing status bar with the standard FF status bar so that
+        security information and extension buttons are included
+    </li>
+    <li>
+        <ex>:buffer</ex> partial_string works now as in Vim, and with ! even better
+    </li>
+    <li>
+        new <ex>:time</ex> command for profiling
+    </li>
+    <li>
+        added new <ex>:sidebar</ex> and <ex>:sbclose</ex> commands
+    </li>
+    <li>
+        added <o>more</o> and standard more-prompt key mappings to control
+        behaviour of the message list pager
+    </li>
+    <li>
+        added <o>hlsearchstyle</o> option to allow for user CSS styling of the
+        highlighted text strings when <o>hlsearch</o> is set
+    </li>
+    <li>
+        added <o>linksearch</o> option to restrict page searches to link text - <em>\L</em>
+        and <em>\l</em> can be used in the search pattern to override <o>linksearch</o>
+    </li>
+    <li>
+        Vimperator trys to stay in command mode after loading pages instead
+        of having a text field focused
+    </li>
+    <li>
+        added a visual bell and replaced <o>beep</o> with <o>visualbell</o>
+    </li>
+    <li>
+        added Vimperator logo (can be seen in the addons manager)
+    </li>
+    <li>
+        added <o>hlsearch</o>,<o>incsearch</o>, <o>ignorecase</o> and <o>smartcase</o> options
+    </li>
+    <li>
+        many small bug fixes and enhancments
+    </li>
+</ul>
+
+
+<h2 tag="version-0.5.1">Version 0.5.1</h2>
+<ul>
+    <li>
+        native <k>/</k> and <k>?</k> search and <k>n</k> and <k>N</k> working again
+    </li>
+    <li>
+        the URL in the status line can be selected with the mouse again
+    </li>
+    <li>
+        the Windows default RC file is now ~/_vimperatorrc and the plugin
+        directory is ~/vimperator/plugin
+    </li>
+    <li>
+        command-line history now works properly on Windows
+    </li>
+    <li>
+        filename completion now works on Windows
+    </li>
+    <li>
+        the Bookmarks Toolbar Folder is now read when bookmarks are first
+        loaded - it was skipped entirely in the past
+    </li>
+    <li>
+        fixed search for <ex>:open</ex> (previously needed to do <ex>:o &lt;Tab&gt;</ex> ONCE to
+        initialize them)
+    </li>
+    <li>
+<!-- FIXME the <a> tag ignored inside <ex> ? -->
+        added <ex>:set <a>option</a>!</ex> support to toggle a boolean option's value
+    </li>
+    <li>
+        added <ex>:set all</ex> and <ex>:set all&amp;</ex> support to show the current value of all
+        options and to reset all options to their default value
+    </li>
+    <li>
+        <ex>:tabmove!</ex> wrapping works again
+    </li>
+</ul>
+
+
+<h2 tag="version-0.5">Version 0.5</h2>
+<ul>
+    <li>
+        <ex>:map</ex> support (also <ex>:noremap</ex>, <ex>:unmap</ex>)
+    </li>
+    <li>
+        <ex>:bmarks</ex> and <ex>:history</ex> now use the multiline message window for output
+    </li>
+    <li>
+        rename <ex>:bm</ex>, <ex>:bmadd</ex>, and <ex>:bmdel</ex> to <ex>:bmarks</ex>, <ex>:bmark</ex>, and <ex>:delbmarks</ex> respectively
+    </li>
+    <li>
+        new <ex>:normal</ex> command
+    </li>
+    <li>
+        the command line keeps focus now, even when clicking outside of it
+    </li>
+    <li>
+        vimperator.events.feedkeys("2zi") support for scripts
+    </li>
+    <li>
+        <k name="C-u"/>/<k name="C-d"/> for scrolling the window up/down and the associated
+        <o>scroll</o> option
+    </li>
+    <li>
+        files in ~/.vimperator/plugin/ are auto-sourced
+    </li>
+    <li>
+        <ex>:winopen</ex> support (multiple windows still very very experimental)
+    </li>
+    <li>
+        <o>activate</o> option implemented
+    </li>
+    <li>
+        search engines which use POST instead of GET work now
+    </li>
+    <li>
+        <ex>:javascript &lt;&lt;EOF</ex> uses a better multiline input widget now
+    </li>
+    <li>
+        new <ex>:map</ex>, <ex>:noremap</ex>, <ex>:mapclear</ex> and <ex>:unmap</ex> commands
+    </li>
+    <li>
+        <ex>:saveas</ex> finally works (by calmar)
+    </li>
+    <li>
+        <k name="S-Insert"/> pastes the X11 selection content in text fields now
+    </li>
+    <li>
+        Changed "|" to ", " as a URL seperator in <ex>:open</ex>
+    </li>
+    <li>
+        <k name="C-^"/> mapping for selecting the alternate tab/buffer
+    </li>
+    <li>
+        QuickMarks support (new commands <ex>:qmark</ex>/<ex>:qmarks</ex>/<ex>:delqmarks</ex> and
+    </li>
+    <li>
+        Multiline echo support
+    </li>
+    <li>
+        Command line is now cleared on most redraws like in Vim
+    </li>
+    <li>
+        The RSS feed button in the address bar works again
+    </li>
+    <li>
+        reload/stop buttons update enabled state again
+    </li>
+    <li>
+        added local/url marks support (thanks Viktor Kojouharov)
+    </li>
+    <li>
+        temporary shortcut <k>Y</k> to yank current selection (for non X11-users)
+    </li>
+    <li>
+        Flashing frame with <k>]f</k> now works as expected
+    </li>
+    <li>
+        many help fixes (most of them by Doug Kearns)
+    </li>
+    <li>
+        new <ex>:reloadall</ex> command
+    </li>
+    <li>
+        <ex>:hardcopy</ex> works now and shows the printing dialog
+    </li>
+    <li>
+        changed <k>R</k> to reload without cache instead of reload all due to popular request
+    </li>
+    <li>
+        changed secure sites -> green, broken sites -> red in the statusbar
+    </li>
+    <li>
+        Vimperator now sets the window title, so it's "vimperator.mozdev.org -
+        Vimperator" instead of "vimperator.mozdev.org - Mozilla Firefox"
+        Use <ex>:set titlestring=...</ex> to change it back (help from Hannes Rist)
+    </li>
+    <li>
+        <ex>:tabmove</ex> command (by Doug Kearns)
+    </li>
+    <li>
+        <o>showstatuslinks</o> option to control where/if we show the destination of
+        a hovered link
+    </li>
+    <li>
+        <ex>:version!</ex> shows Firefox version page
+    </li>
+    <li>
+        hovered links appear in the command line again, not statusbar
+    </li>
+    <li>
+        <ex>:help</ex> now opens in the current tab even for XHTML pages like "about:"
+    </li>
+    <li>
+        hints work on xhtml pages now (you need to reset the <o>hinttags</o> and
+        <o>extendedhinttags</o> settings with <ex>:set hinttags&amp;</ex> and <ex>:set extendedhinttags&amp;</ex>)
+    </li>
+    <li>
+        <ex>:set option&amp;</ex> resets the option to the default value
+    </li>
+    <li>
+        added <ex>:tabonly</ex> and <ex>:tabrewind</ex> and <ex>:tablast</ex> commands and some futher aliases <ex>:tabNext</ex>, etc. (by Doug Kearns)
+    </li>
+    <li>
+        added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
+    </li>
+    <li>
+        Added keyword support for bookmarks to the <ex>:[tab]open</ex> commands
+    </li>
+    <li>
+        many small bug fixes and enhancements
+    </li>
+</ul>
+
+
+<h2 tag="version-0.4.1">Version 0.4.1</h2>
+<ul>
+    <li>
+        Fixed bug that <ex>:open google.com/mail</ex> opened ".com/mail" in google search
+    </li>
+    <li>
+        made <k name="Tab"/>, <k name="Up"/>, <k name="Down"/> etc. perform the default action, so menus kinda
+        work, and it doesn't beep anymore on tab.
+    </li>
+    <li>
+        added <o>defsearch</o> setting for setting default search engine
+    </li>
+</ul>
+
+
+<h2 tag="version-0.4">Version 0.4</h2>
+<ul>
+    <li>
+        extension GUID was changed to 'vimperator@mozdev.net' -> YOU WILL HAVE
+        TO UNINSTALL ANY OLD VIMPERATOR INSTALLATION BEFORE INSTALLING THIS VERSION
+    </li>
+    <li>
+        support for internal search engines was dropped. Now we use Firefox search engines.
+    </li>
+    <li>
+        support for <o>wildmode</o> completion setting with support for matching the
+        longest common substring. Also new <o>wildoptions</o> setting.
+    </li>
+    <li>
+        added "f" to the <o>complete</o> option to allow listing of filenames in <ex>:open</ex> prompt
+    </li>
+    <li>
+        changed regex search to normal text search for completion -> massive speedup, but limited functionality
+    </li>
+    <li>
+        support for <ex>:open ./</ex> , <ex>:open ..</ex> and <ex>:open ...</ex> (patch from Lee Hinman)
+        <k>gu</k> and <k name="BS"/> goes up a directory component, <k>gU</k> and <k name="C-BS"/> to the root directory
+    </li>
+    <li>
+        <k name="Esc"/> now doesn't stop loading the webpage, use <k name="C-c"/> instead, <ex>:stop </ex>command added
+    </li>
+    <li>
+        changed <o>hinttags</o> to work with dict.leo.org and hintstyle to work with digg.com
+    </li>
+    <li>
+        <ex>:back!</ex> goes to beginning of history now
+    </li>
+    <li>
+        disabled Firefox 3.0 support for now, as there are just too many small
+        bugs
+    </li>
+    <li>
+        new Makefile instead of build.sh (only important for developers)
+    </li>
+    <li>
+        newly designed help page
+    </li>
+    <li>
+        <ex>:help section</ex> supported, <ex>:help :set</ex> will show help for the <ex>:set</ex> command
+        (patch from Viktor Kojouharov)
+    </li>
+    <li>
+        <ex>:source</ex> support, and auto-sourcing ~/.vimperatorrc on startup
+    </li>
+    <li>
+        <ex>:javascript &lt;&lt;EOF</ex> support to execute multiline JavaScript code
+        also changed <ex>:exec</ex> to behave more Vim like
+    </li>
+    <li>
+        fixed saving of session
+    </li>
+    <li>
+        fixed hints display when zooming in/out of a web page
+    </li>
+    <li>
+        added <k>B</k> command for continous buffer display
+    </li>
+    <li>
+        changed <o>hintsize</o> to 12px by default
+    </li>
+    <li>
+        <o>previewheight</o> setting to set the maximum size for the preview window
+    </li>
+    <li>
+        showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
+    </li>
+    <li>
+        <k>gh</k> goes home :) <k>gH</k> in a new tab
+    </li>
+    <li>
+        <ex>:open!</ex> bypasses cache
+    </li>
+    <li>
+        <ex>:buffer</ex> and <ex>:buffers</ex> support (patch from Lars Kindler)
+    </li>
+    <li>
+        added <ex>:edit</ex>, <ex>:e</ex> and <ex>:tabedit</ex> aliases for <ex>:open</ex>, <ex>:tabopen</ex>
+    </li>
+    <li>
+        settings can now be changed with += and -= like in Vim (patch from Виктор Кожухаров)
+    </li>
+    <li>
+        Support for <k name="Space"/>/<k name="S-Space"/>/<k name="A-Left"/>/<k name="A-Right"/> keys without beeping
+    </li>
+    <li>
+        <ex>:open</ex> without argument reloads current page, <ex>:tabopen</ex> opens an empty tab
+    </li>
+    <li>
+        added <k>n</k> and <k>N</k> to repeat a search
+    </li>
+    <li>
+        many small bug fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-0.3">Version 0.3</h2>
+<ul>
+    <li>
+        added <k name="C-v"/> support to pass one key to Firefox (patch by Muthu Kannan)
+    </li>
+    <li>
+        also <k>I</k> will go to "ignorekeys" mode until <k name="Esc"/> is pressed, presenting a workaround
+        for many JavaScript form fields like GMail, until something better comes along
+    </li>
+    <li>
+        Vimperator can now be automatically updated in the <ex>:addons</ex> screen like other extensions
+    </li>
+    <li>
+        fixed <ex>:tabnext</ex>/<ex>:tabprevious</ex> commands
+    </li>
+    <li>
+        documented "s" and "b" <o>guioptions</o> flags for statusbar/bookmark bar
+    </li>
+    <li>
+        implemented the possibility to use <k name="C-["/> as an alternative to <k name="Esc"/>, to leave the command line
+    </li>
+    <li>
+        added <k name="C-Tab"/> and <k name="C-S-Tab"/> support for switching tabs without beeping
+    </li>
+    <li>
+        ability to use shift and ctrl with special keys like <k name="F1"/> in mappings
+    </li>
+    <li>
+        small documentation and other fixes
+    </li>
+</ul>
+
+
+<h2 tag="version-0.2">Version 0.2</h2>
+<ul>
+    <li>
+        first public release
+    </li>
+</ul>
+</document>
