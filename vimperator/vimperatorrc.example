@@ -1,20 +1,51 @@
-" TODO: add some useful examples
+" Vimperator customization file
+" These are just a few (hopefully) useful examples; it's all JavaScript and
+" pseudo-VimL, sky's the limit.
+" Use the Vimperator :help command for a description of commands and options
+" below as well as for other details and tips.
+
 
 " I don't like beeps
 set visualbell
+" useful for command-line completion
+set wildoptions=auto
+set wildmode=list:longest,full
 
-" autoignore mode on certain pages
-:autocmd PageLoad .* :js modes.passAllKeys = /gmail\.com/.test(buffer.URL)
+
+" automatic pass-through mode on certain pages (do ':h autocommands' for details)
+autocmd LocationChange .* :js modes.passAllKeys = /gmail\.com/.test(buffer.URL)
 
 
-" embedded javascript is possible
-" You can even add new functions which are then available in the :js command
+" embedded JavaScript is possible:
+" move the RSS icon from the now-hidden location bar to the status bar instead
 javascript <<EOF
-hello = function(name)
-{
-	alert("Hello world: " + name);
-}
+(function(){
+    var feedPanel = document.createElement("statusbarpanel");
+    feedPanel.setAttribute("id", "feed-panel-clone");
+    feedPanel.appendChild(document.getElementById("feed-button"));
+    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
+    document.getElementById("status-bar")
+            .insertBefore(feedPanel, document.getElementById("security-button"));
+})();
 EOF
+
+" you can even add new functions which are then available to the :js command
+js <<EOF
+    toggle_element = function (name) {
+        document.getElementById(name).collapsed ^= 1;
+    }
+EOF
+" and now use it in mappings (':h key-notation'):
+map <silent> <F8> :js toggle_element('toolbar-menubar')<CR>
+map <silent> <F9> :js toggle_element('nav-bar')<CR>
+
+
+" define a keyword bookmark
+bmark -keyword=mozjscoreref https://developer.mozilla.org/Special:Search?search=%s&type=fulltext
+" ... and a command line abbreviation for the keyword
+ca j mozjscoreref
+" now in Vimperator type 'tj<Space>getElementById<CR>' and there you go
+
 
 echo "vimperatorrc sourced"
 
