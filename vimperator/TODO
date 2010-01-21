@@ -43,7 +43,19 @@ BUGS:
 - security errors at startup (e.g. "Security Error: Content at
   moz-nullprincipal:{e7a578b6-bf79-4028-8ee6-ef3a40ba4508} may not load or link
   to chrome://liberator/locale/print.xml.")
+- markup/links breakage:
+  - except for Ex commands and alphabetic mappings (like m), most elements seem
+    to link correctly *only* inside a single page (when added after '#' to the
+    URI, i.e. liberator://help/foo#bar, but not as liberator://help-tag/bar, which
+    is by far the most common unless using all.xml (which is not very usable
+    because of the long loading time))
+  - the <t> tag does not linkify at all
+  - nested tags don't work (e.g. <ex>:set <a>option</a>!</ex>) and often break
+    the markup (hide content)
 - util.generateHelp() is not there
+- the help system seems to take quite some time to set up, so when you have
+  some help file opened and saved in a session, you get "File not found"
+  initially at start up and have to reload the page
 
 
 FEATURES:
