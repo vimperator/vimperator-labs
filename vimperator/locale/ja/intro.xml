@@ -180,17 +180,19 @@ Vim に似たキーバインドを持ち、モード変更が可能なウェブ�
     <li>すべてのコマンド、キーマッピングやオプションを説明している総合的なヘルプ</li>
 </ul>
 
-<h2 tag="contact">連絡先</h2>
+<h2 tag="contact bugs patches">連絡先</h2>
 
 <p>
-    どんな質問にもちゃんと答えていますので、ぜひメーリングリストに意見・バグレポート・パッチを送ってください。
-    または IRC で <link target="http://www.freenode.net/">Freenode</link> の 
-    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> チャンネルに参加したり
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Wiki">Wiki</link> の 
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/FAQ">frequently asked questions (FAQ)</link>
-    をチェックしてみてください。
-    ただしまず最初に TODO ファイルを読んで、その問題に対して私が時間を割くことで、
-    改善したりパッチを適用したりできるかに気付いているかどうかを確認してください。
+    バグレポートや機能のリクエストは、プロジェクトの<link topic="http://code.google.com/p/vimperator-labs/issues/list">bug tracker</link> を使ってください。
+    パッチを添付することも出来ます。
+    他の方法としては、<link topic="http://www.mozdev.org/mailman/listinfo/vimperator">メーリングリスト</link> があります。
+    <link target="http://www.freenode.net/">Freenode</link> サーバの <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> IRC チャンネルにも私たちはいます。
+
+    <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">Wiki</link> の
+    <link topic="http://code.google.com/p/vimperator-labs/wiki/&liberator.appname;FAQ">
+    frequently asked questions (FAQ)</link> には、情報やTIPSがあります。
+
+    認識済みの問題であったりすることも多いので、はじめに <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/TODO">TODO</link> を読んでください。
 </p>
 
 </document>

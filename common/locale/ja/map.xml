@@ -8,7 +8,7 @@
     title="&liberator.appname; Key Mappings"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h1>キーマッピング、略語、ユーザ定義コマンドに関して</h1>
+<h1 tag="map">キーマッピング、略語、ユーザ定義コマンドに関して</h1>
 <toc start="2"/>
 
 <h2 tag="key-mapping mapping map macro">キーマッピング</h2>

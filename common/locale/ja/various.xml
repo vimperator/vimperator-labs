@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
 
 <!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd"><document name='various' xmlns:html='http://www.w3.org/1999/xhtml' title='&liberator.appname; Other' xmlns='http://vimperator.org/namespaces/liberator'>
-<h1>その他のヘルプ</h1>
+<h1 tag="other-help">その他のヘルプ</h1>
 <toc start='2'/>
 
 <h2 tag='various'>色々なコマンド</h2>
