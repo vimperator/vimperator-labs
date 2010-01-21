@@ -138,6 +138,7 @@
     <dt>&tab;@href</dt>        <dd>ライセンスの説明がある URL</dd>
 </dl>
 
+<!-- FIXME this is no longer true after XMLization
 <h2 tag="generating-docs">ドキュメント生成</h2>
 
 <p>
@@ -145,6 +146,7 @@
 </p>
 
 <example><ex>:echo util.generateHelp(commands.get(<str>addons</str>), <![CDATA[<p>Extra text</p>]]>)</ex></example>
+-->
 
 <h2 tag="writing-plugins">プラグインを書く</h2>
 
