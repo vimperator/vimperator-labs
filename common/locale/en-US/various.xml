@@ -8,7 +8,7 @@
     title="&liberator.appname; Other"
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
-<h1>Other help</h1>
+<h1 tag="other-help">Other help</h1>
 <toc start="2"/>
 
 <h2 tag="various">Various commands</h2>
