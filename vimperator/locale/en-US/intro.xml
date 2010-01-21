@@ -191,8 +191,7 @@ or <ex>:help :set</ex>.
     <li>A comprehensive help system, explaining all commands, mappings and options</li>
 </ul>
 
-<tags>bugs patches</tags>
-<h2 tag="contact">Contact</h2>
+<h2 tag="contact bugs patches">Contact</h2>
 <p>
     Please report any bugs/feature requests using the project's <link topic="http://code.google.com/p/vimperator-labs/issues/list">bug tracker</link>.
     You can also attach patches there.
