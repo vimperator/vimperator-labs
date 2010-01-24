@@ -26,17 +26,21 @@
  *         noremap - see {@link Map#noremap}
  *         rhs     - see {@link Map#rhs}
  *         silent  - see {@link Map#silent}
+ * @param {RegExp|string} URL matching pattern for URL local mapping.
  * @optional
  * @private
  */
 const Map = Class("Map", {
-    init: function (modes, keys, description, action, extraInfo) {
+    init: function (modes, keys, description, action, extraInfo, local) {
         modes = Array.concat(modes).map(function (m) isobject(m) ? m.mask : m);
 
         this.modes = modes;
         this.names = keys.map(events.canonicalKeys);
         this.action = action;
         this.description = description;
+        this.local = local ? local instanceof RegExp ? local
+                                                     : RegExp(local)
+                           : null;
 
         if (extraInfo)
             update(this, extraInfo);
@@ -50,6 +54,8 @@ const Map = Class("Map", {
     action: null,
     /** @property {string} This mapping's description, as shown in :viusage. */
     description: "",
+    /** @property {string} URL matching pattern for URL local mapping. */
+    local: null,
 
     /** @property {boolean} Whether this mapping accepts an argument. */
     arg: false,
@@ -87,6 +93,21 @@ const Map = Class("Map", {
      * @returns {boolean}
      */
     hasName: function (name) this.names.indexOf(name) >= 0,
+
+    /**
+     * Returns true if <local> is matched this.local pattern or
+     * <b>local</b> equals this.local.
+     *
+     * @param {RegExp|string} URL matching pattern or URL.
+     * @returns {boolean}
+     */
+    localMatch: function (local) {
+        if (!local)
+            return !this.local;
+        if (local instanceof RegExp)
+            return this.local && (local.toString() == this.local.toString());
+        return !this.local || this.local.test(local);
+    },
 
     /**
      * Execute the action for this mapping.
@@ -134,26 +155,29 @@ const Mappings = Module("mappings", {
         map.modes.forEach(function (mode) {
             if (!(mode in where))
                 where[mode] = [];
-            where[mode].push(map);
+            // URL local mappings should be searched first.
+            where[mode][map.local ? 'unshift' : 'push'](map);
         });
     },
 
-    _getMap: function (mode, cmd, stack) {
+    _getMap: function (mode, cmd, local, stack) {
         let maps = stack[mode] || [];
 
         for (let [, map] in Iterator(maps)) {
-            if (map.hasName(cmd))
+            if (map.hasName(cmd) && map.localMatch(local))
                 return map;
         }
 
         return null;
     },
 
-    _removeMap: function (mode, cmd) {
+    _removeMap: function (mode, cmd, local) {
         let maps = this._user[mode] || [];
         let names;
 
         for (let [i, map] in Iterator(maps)) {
+            if (!map.localMatch(local))
+                continue;
             for (let [j, name] in Iterator(map.names)) {
                 if (name == cmd) {
                     map.names.splice(j, 1);
@@ -221,18 +245,19 @@ const Mappings = Module("mappings", {
      * @param {function} action The action invoked by each key sequence.
      * @param {Object} extra An optional extra configuration hash (see
      *     {@link Map#extraInfo}).
+     * @param {RegExp|string} URL matching pattern or URL.
      * @optional
      */
-    addUserMap: function (modes, keys, description, action, extra) {
+    addUserMap: function (modes, keys, description, action, extra, local) {
         keys = keys.map(this._expandLeader);
         extra = extra || {};
         extra.user = true;
-        let map = Map(modes, keys, description || "User defined mapping", action, extra);
+        let map = Map(modes, keys, description || "User defined mapping", action, extra, local);
 
         // remove all old mappings to this key sequence
         for (let [, name] in Iterator(map.names)) {
             for (let [, mode] in Iterator(map.modes))
-                this._removeMap(mode, name);
+                this._removeMap(mode, name, local);
         }
 
         this._addMap(map);
@@ -243,11 +268,12 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The map name to match.
+     * @param {RegExp|string} URL matching pattern or URL.
      * @returns {Map}
      */
-    get: function (mode, cmd) {
+    get: function (mode, cmd, local) {
         mode = mode || modes.NORMAL;
-        return this._getMap(mode, cmd, this._user) || this._getMap(mode, cmd, this._main);
+        return this._getMap(mode, cmd, local, this._user) || this._getMap(mode, cmd, local, this._main);
     },
 
     /**
@@ -255,11 +281,12 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The map name to match.
+     * @param {RegExp|string} URL matching pattern or URL.
      * @returns {Map}
      */
-    getDefault: function (mode, cmd) {
+    getDefault: function (mode, cmd, local) {
         mode = mode || modes.NORMAL;
-        return this._getMap(mode, cmd, this._main);
+        return this._getMap(mode, cmd, local, this._main);
     },
 
     /**
@@ -268,13 +295,17 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} prefix The map prefix string to match.
+     * @param {string} URL or URL matching pattern
+     * @param {RegExp|string} URL matching pattern or URL.
      * @returns {Map[]}
      */
-    getCandidates: function (mode, prefix) {
+    getCandidates: function (mode, prefix, local) {
         let mappings = this._user[mode].concat(this._main[mode]);
         let matches = [];
 
         for (let [, map] in Iterator(mappings)) {
+            if (!map.localMatch(local))
+                continue;
             for (let [, name] in Iterator(map.names)) {
                 if (name.indexOf(prefix) == 0 && name.length > prefix.length) {
                     // for < only return a candidate if it doesn't look like a <c-x> mapping
@@ -305,9 +336,10 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The candidate key mapping.
+     * @param {regexpr/string} cmd The candidate key mapping.
      * @returns {boolean}
      */
-    hasMap: function (mode, cmd) this._user[mode].some(function (map) map.hasName(cmd)),
+    hasMap: function (mode, cmd, local) this._user[mode].some(function (map) map.hasName(cmd) && map.localMatch(local)),
 
     /**
      * Remove the user-defined mapping named <b>cmd</b> for <b>mode</b>.
