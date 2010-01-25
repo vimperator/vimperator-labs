@@ -333,8 +333,8 @@ const Mappings = Module("mappings", {
      * @returns {boolean}
      */
     hasMap:
-        let (self = this)
-            function (mode, cmd, patternOrUrl)
+        function (mode, cmd, patternOrUrl)
+            let (self = this)
                 this._user[mode].some(function (map) map.hasName(cmd) && self._matchingUrlsTest(map, patternOrUrl)),
 
     /**
