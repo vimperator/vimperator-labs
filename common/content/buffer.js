@@ -1286,7 +1286,6 @@ const Buffer = Module("buffer", {
         };
 
         completion.buffer = function buffer(context) {
-            filter = context.filter.toLowerCase();
             context.anchored = false;
             context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
