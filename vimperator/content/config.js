@@ -58,7 +58,7 @@ const Config = Module("config", ConfigBase, {
         ["checkupdates",     "Check for updates",
             function () { window.checkForUpdates(); }],
         ["cleardata",        "Clear private data",
-            function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
+            function () { Cc["@mozilla.org/browser/browserglue;1"].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
         ["cookies",          "List your cookies",
             function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["console",          "JavaScript console",
