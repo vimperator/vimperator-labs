@@ -482,6 +482,7 @@
             <dt>file</dt>         <dd>files</dd>
             <dt>help</dt>         <dd>help tags</dd>
             <dt>highlight</dt>    <dd>highlight groups</dd>
+            <dt>history</dt>      <dd>history</dd>
             <dt>javascript</dt>   <dd>JavaScript expressions</dd>
             <dt>macro</dt>        <dd>named macros</dd>
             <dt>mapping</dt>      <dd>user mappings</dd>

@@ -478,6 +478,7 @@
             <dt>file</dt>         <dd>ファイル</dd>
             <dt>help</dt>         <dd>ヘルプタグ</dd>
             <dt>highlight</dt>    <dd>ハイライトグループ</dd>
+            <dt>history</dt>      <dd>履歴</dd>
             <dt>javascript</dt>   <dd>JavaScript の式</dd>
             <dt>macro</dt>        <dd>名前付きマクロ</dd>
             <dt>mapping</dt>      <dd>ユーザマッピング</dd>
