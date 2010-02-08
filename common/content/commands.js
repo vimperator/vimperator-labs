@@ -992,7 +992,7 @@ const Commands = Module("commands", {
                             };
                         }
                         else
-                            completeFunc = completion[completeOptionMap[completeOpt]];
+                            completeFunc = function (context) completion[completeOptionMap[completeOpt]](context);
                     }
 
                     let added = commands.addUserCommand([cmd],
