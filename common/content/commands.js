@@ -947,11 +947,11 @@ const Commands = Module("commands", {
             bookmark: "bookmark", buffer: "buffer", color: "colorScheme",
             command: "command", dialog: "dialog", dir: "directory",
             environment: "environment", event: "autocmdEvent", file: "file",
-            help: "help", highlight: "highlightGroup", javascript: "javascript",
-            macro: "macro", mapping: "userMapping", menu: "menuItem",
-            option: "option", preference: "preference", search: "search",
-            shellcmd: "shellCommand", sidebar: "sidebar", url: "url",
-            usercommand: "userCommand"
+            help: "help", highlight: "highlightGroup", history: "history",
+            javascript: "javascript", macro: "macro", mapping: "userMapping",
+            menu: "menuItem", option: "option", preference: "preference",
+            search: "search", shellcmd: "shellCommand", sidebar: "sidebar",
+            url: "url", usercommand: "userCommand"
         };
 
         // TODO: Vim allows commands to be defined without {rep} if there are {attr}s
