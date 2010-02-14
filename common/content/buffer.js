@@ -1598,7 +1598,7 @@ const Buffer = Module("buffer", {
             "Desired info in the :pageinfo output",
             "charlist", "gfm",
             {
-                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(this.pageInfo))]
+                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(buffer.pageInfo))]
             });
 
         options.add(["scroll", "scr"],
