@@ -250,7 +250,7 @@ const Mappings = Module("mappings", {
         // remove all old mappings to this key sequence
         for (let [, name] in Iterator(map.names)) {
             for (let [, mode] in Iterator(map.modes))
-                this._removeMap(mode, name, extra.matchingUrls);
+                this._removeMap(mode, name, map.matchingUrls);
         }
 
         this._addMap(map);
