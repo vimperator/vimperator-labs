@@ -421,11 +421,13 @@ const Mappings = Module("mappings", {
 
                     mappings.addUserMap(modes, [lhs],
                         "User defined mapping",
-                        function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); }, {
+                        function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); },
+                        {
                             count: true,
                             rhs: events.canonicalKeys(rhs),
                             noremap: !!noremap,
-                            silent: "<silent>" in args
+                            silent: "<silent>" in args,
+                            urls: args["-urls"]
                         });
                 }
             }
@@ -439,10 +441,20 @@ const Mappings = Module("mappings", {
                     && /^[nv](nore)?map$/.test(cmd);
             }
 
+            function regexpValidator(expr) {
+                try {
+                    RegExp(expr);
+                    return true;
+                }
+                catch (e) {}
+                return false;
+            }
+
             const opts = {
                     completer: function (context, args) completion.userMapping(context, args, modes),
                     options: [
-                        [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
+                        [["<silent>", "<Silent>"],  commands.OPTION_NOARG],
+                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator],
                     ],
                     literal: 1,
                     serial: function () {
