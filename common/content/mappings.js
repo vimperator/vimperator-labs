@@ -458,11 +458,20 @@ const Mappings = Module("mappings", {
                     ],
                     literal: 1,
                     serial: function () {
+                        function options (map) {
+                            let opts = {};
+                            if (map.silent)
+                                opts["<silent>"] = null;
+                            if (map.matchingUrls)
+                                opts["-urls"] = map.matchingUrls.source;
+                            return opts;
+                        }
+
                         let noremap = this.name.indexOf("noremap") > -1;
                         return [
                             {
                                 command: this.name,
-                                options: map.silent ? { "<silent>": null } : {},
+                                options: options(map),
                                 arguments: [map.names[0]],
                                 literalArg: map.rhs
                             }
