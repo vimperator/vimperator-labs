@@ -684,8 +684,14 @@ const Commands = Module("commands", {
                 context.filter = args.completeFilter;
                 if (typeof opt[3] == "function")
                     var compl = opt[3](context, args);
-                else
+                else {
+                    if (opt[1] === commands.OPTION_LIST) {
+                        let [, prefix] = context.filter.match(/^(.*,)[^,]*$/) || [];
+                        if (prefix)
+                            context.advance(prefix.length);
+                    }
                     compl = opt[3] || [];
+                }
                 context.title = [opt[0][0]];
                 context.quote = args.quote;
                 context.completions = compl;
