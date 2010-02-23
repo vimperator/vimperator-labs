@@ -427,7 +427,7 @@ const Mappings = Module("mappings", {
                             rhs: events.canonicalKeys(rhs),
                             noremap: !!noremap,
                             silent: "<silent>" in args,
-                            urls: args["-urls"]
+                            matchingUrls: args["-urls"]
                         });
                 }
             }
