@@ -362,8 +362,9 @@ const Mappings = Module("mappings", {
      *
      * @param {number[]} modes An array of modes to search.
      * @param {string} filter The filter string to match.
+     * @param {RegExp|string} URL matching pattern or URL.
      */
-    list: function (modes, filter) {
+    list: function (modes, filter, urlPattern) {
         let modeSign = "";
 
         // TODO: Vim hides "nv" in a :map and "v" and "n" in :vmap and
@@ -377,6 +378,8 @@ const Mappings = Module("mappings", {
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
             maps = [map for (map in maps) if (map.names[0] == filter)];
+        if (urlPattern)
+            maps = [map for (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
 
         let list = <table>
                 {
@@ -405,15 +408,17 @@ const Mappings = Module("mappings", {
             // 1 arg  -> list the maps starting with args
             // 2 args -> map arg1 to arg*
             function map(args, modes, noremap) {
+                let urls = args['-urls'];
+
                 if (!args.length) {
-                    mappings.list(modes);
+                    mappings.list(modes, null, urls && RegExp(urls));
                     return;
                 }
 
                 let [lhs, rhs] = args;
 
                 if (!rhs) // list the mapping
-                    mappings.list(modes, mappings._expandLeader(lhs));
+                    mappings.list(modes, mappings._expandLeader(lhs), urls && RegExp(urls));
                 else {
                     // this matches Vim's behaviour
                     if (/^<Nop>$/i.test(rhs))
@@ -427,7 +432,7 @@ const Mappings = Module("mappings", {
                             rhs: events.canonicalKeys(rhs),
                             noremap: !!noremap,
                             silent: "<silent>" in args,
-                            matchingUrls: args["-urls"]
+                            matchingUrls: urls
                         });
                 }
             }
