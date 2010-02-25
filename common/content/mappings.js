@@ -288,7 +288,6 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} prefix The map prefix string to match.
-     * @param {string} URL or URL matching pattern
      * @param {RegExp|string} URL matching pattern or URL.
      * @returns {Map[]}
      */
