@@ -378,7 +378,7 @@ const Mappings = Module("mappings", {
         if (filter)
             maps = [map for (map in maps) if (map.names[0] == filter)];
         if (urlPattern)
-            maps = [map for (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
+            maps = [map for each (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
 
         let list = <table>
                 {
