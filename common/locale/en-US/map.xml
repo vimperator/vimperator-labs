@@ -161,6 +161,15 @@
 </p>
 
 
+<tags>:map-urls</tags>
+
+<p>
+    The mapping becomes an effective mapping only on the page specifed by <a>urlpattern</a>,
+    if <a>-urls=<a>urlpattern</a></a> is given to a mappings command.
+    <a>urlpattern</a> must be regular expression.
+</p>
+
+
 <p>
     Below is an overview of which modes each map command applies to:
 </p>

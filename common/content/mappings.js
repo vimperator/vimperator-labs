@@ -250,7 +250,7 @@ const Mappings = Module("mappings", {
         // remove all old mappings to this key sequence
         for (let [, name] in Iterator(map.names)) {
             for (let [, mode] in Iterator(map.modes))
-                this._removeMap(mode, name, extra.matchingUrls);
+                this._removeMap(mode, name, map.matchingUrls);
         }
 
         this._addMap(map);
@@ -288,7 +288,6 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} prefix The map prefix string to match.
-     * @param {string} URL or URL matching pattern
      * @param {RegExp|string} URL matching pattern or URL.
      * @returns {Map[]}
      */
@@ -362,8 +361,9 @@ const Mappings = Module("mappings", {
      *
      * @param {number[]} modes An array of modes to search.
      * @param {string} filter The filter string to match.
+     * @param {RegExp|string} URL matching pattern or URL.
      */
-    list: function (modes, filter) {
+    list: function (modes, filter, urlPattern) {
         let modeSign = "";
 
         // TODO: Vim hides "nv" in a :map and "v" and "n" in :vmap and
@@ -377,6 +377,8 @@ const Mappings = Module("mappings", {
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
             maps = [map for (map in maps) if (map.names[0] == filter)];
+        if (urlPattern)
+            maps = [map for each (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
 
         let list = <table>
                 {
@@ -405,15 +407,17 @@ const Mappings = Module("mappings", {
             // 1 arg  -> list the maps starting with args
             // 2 args -> map arg1 to arg*
             function map(args, modes, noremap) {
+                let urls = args['-urls'];
+
                 if (!args.length) {
-                    mappings.list(modes);
+                    mappings.list(modes, null, urls && RegExp(urls));
                     return;
                 }
 
                 let [lhs, rhs] = args;
 
                 if (!rhs) // list the mapping
-                    mappings.list(modes, mappings._expandLeader(lhs));
+                    mappings.list(modes, mappings._expandLeader(lhs), urls && RegExp(urls));
                 else {
                     // this matches Vim's behaviour
                     if (/^<Nop>$/i.test(rhs))
@@ -421,11 +425,13 @@ const Mappings = Module("mappings", {
 
                     mappings.addUserMap(modes, [lhs],
                         "User defined mapping",
-                        function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); }, {
+                        function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); },
+                        {
                             count: true,
                             rhs: events.canonicalKeys(rhs),
                             noremap: !!noremap,
-                            silent: "<silent>" in args
+                            silent: "<silent>" in args,
+                            matchingUrls: urls
                         });
                 }
             }
@@ -439,18 +445,37 @@ const Mappings = Module("mappings", {
                     && /^[nv](nore)?map$/.test(cmd);
             }
 
+            function regexpValidator(expr) {
+                try {
+                    RegExp(expr);
+                    return true;
+                }
+                catch (e) {}
+                return false;
+            }
+
             const opts = {
                     completer: function (context, args) completion.userMapping(context, args, modes),
                     options: [
-                        [["<silent>", "<Silent>"],  commands.OPTION_NOARG]
+                        [["<silent>", "<Silent>"],  commands.OPTION_NOARG],
+                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator],
                     ],
                     literal: 1,
                     serial: function () {
+                        function options (map) {
+                            let opts = {};
+                            if (map.silent)
+                                opts["<silent>"] = null;
+                            if (map.matchingUrls)
+                                opts["-urls"] = map.matchingUrls.source;
+                            return opts;
+                        }
+
                         let noremap = this.name.indexOf("noremap") > -1;
                         return [
                             {
                                 command: this.name,
-                                options: map.silent ? { "<silent>": null } : {},
+                                options: options(map),
                                 arguments: [map.names[0]],
                                 literalArg: map.rhs
                             }
