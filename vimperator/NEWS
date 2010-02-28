@@ -7,6 +7,7 @@
     * remove [c]:edit[c], [c]:tabedit[c], and [c]:winedit[c]
     * add 'jsdebugger' option - switch on/off javascript debugger service
     * add "addons", "downloads", "extoptions" and "help" to the 'activate' option.
+    * add *-urls* option to mapping commands.
 
 2009-10-28:
     * version 2.2
