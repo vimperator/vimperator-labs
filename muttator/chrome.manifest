@@ -1,7 +1,8 @@
 # Thunderbird
 content  muttator              content/
 skin     muttator classic/1.0  skin/
-locale   liberator en-US locale/en-US/
+locale   muttator en-US locale/en-US/
+locale   liberator en-US ../common/locale/en-US/
 
 content  liberator             ../common/content/
 resource liberator             ../common/modules/

@@ -660,7 +660,7 @@ const Liberator = Module("liberator", {
         liberator.assert(page != null, "E149: Sorry, no help for " + topic);
 
         liberator.open("liberator://help/" + page, { from: "help" });
-        if (options.get("activate").has("all", "help"))
+        if (!options["activate"] || options.get("activate").has("all", "help"))
             content.postMessage("fragmentChange", "*");
     },
 
@@ -789,9 +789,9 @@ const Liberator = Module("liberator", {
 
         let where = params.where || liberator.CURRENT_TAB;
         if ("from" in params && liberator.has("tabs")) {
-            if (!('where' in params) && options.get("newtab").has("all", params.from))
+            if (!('where' in params) && options["newtab"] && options.get("newtab").has("all", params.from))
                 where = liberator.NEW_BACKGROUND_TAB;
-            if (options.get("activate").has("all", params.from)) {
+            if (!options["activate"] || options.get("activate").has("all", params.from)) {
                 if (where == liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
                 else if (where == liberator.NEW_BACKGROUND_TAB)

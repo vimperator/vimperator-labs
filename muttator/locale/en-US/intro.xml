@@ -217,13 +217,13 @@ mutt.
 <h2 tag="intro">Introduction</h2>
 
 http://vimperator.org/muttator[&liberator.appname;] is a free browser add-on for
-&liberator.hostapp;, which makes it look and behave like the http://www.vim.org[Vim]
+&liberator.host;, which makes it look and behave like the http://www.vim.org[Vim]
 text editor. It has similar key bindings, and you could call it a modal mail
 client, as key bindings differ according to which mode you are in.
 
 |warning| +
 Warning:
-To provide the most authentic Vim experience, the &liberator.hostapp; menubar and toolbar were hidden. +
+To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar were hidden. +
 If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back. +
 If you don't like &liberator.appname; at all, you can uninstall it by typing
 <ex>:addons</ex> and remove/disable it. +
@@ -236,7 +236,7 @@ If you appreciate my work on &liberator.appname; and want to encourage me workin
 more, you can either send me greetings, patches or make a donation:
 
 NOTE: If this link does not work, go to http://vimperator.org/muttator and
-click the donation button there, because &liberator.hostapp; seems to have a problem
+click the donation button there, because &liberator.host; seems to have a problem
 when this link is inside an e-mail (which this help screen actually is).
 
 <pan><handle/></pan>
