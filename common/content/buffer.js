@@ -1617,13 +1617,16 @@ const Buffer = Module("buffer", {
                 ]
             });
 
-        options.add(["usermode", "um"],
-            "Show current website with a minimal style sheet to make it easily accessible",
-            "boolean", false,
-            {
-                setter: function (value) config.browser.markupDocumentViewer.authorStyleDisabled = value,
-                getter: function () config.browser.markupDocumentViewer.authorStyleDisabled
-            });
+        // TODO: Fix the compose window
+        if (!config.isComposeWindow) {
+            options.add(["usermode", "um"],
+                "Show current website with a minimal style sheet to make it easily accessible",
+                "boolean", false,
+                {
+                    setter: function (value) config.browser.markupDocumentViewer.authorStyleDisabled = value,
+                    getter: function () config.browser.markupDocumentViewer.authorStyleDisabled
+                });
+        }
     }
 });
 

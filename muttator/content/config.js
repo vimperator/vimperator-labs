@@ -17,7 +17,7 @@ const Config = Module("config", ConfigBase, {
     get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["hints", "mail", "marks", "addressbook", "tabs"],
+    features: this.isComposeWindow ? [] : ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
         guioptions: "frb",
         showtabline: 1,
@@ -101,9 +101,7 @@ const Config = Module("config", ConfigBase, {
                 liberator.mode = modes.MESSAGE;
         }
     },
-    // 2010.01.11 tspires - getBrowser function doesn't exist
-    // trying to use window.gBrowser instead.
-    get browser() window.gBrowser,
+    get browser() this.isComposeWindow ? null : window.getBrowser(), // XXX: Does the composer really don't have a browser object?
     tabbrowser: {
         __proto__: document.getElementById("tabmail"),
         get mTabContainer() this.tabContainer,
@@ -163,7 +161,7 @@ const Config = Module("config", ConfigBase, {
             "<Down>": modes.NORMAL | modes.INSERT
         };
     },
-    optons: function () {
+    options: function () {
         // FIXME: comment obviously incorrect
         // 0: never automatically edit externally
         // 1: automatically edit externally when message window is shown the first time
@@ -172,17 +170,19 @@ const Config = Module("config", ConfigBase, {
             "Edit message with external editor by default",
             "boolean", false);
 
-        options.add(["online"],
-            "Set the 'work offline' option",
-            "boolean", true,
-            {
-                setter: function (value) {
-                    if (MailOfflineMgr.isOnline() != value)
-                        MailOfflineMgr.toggleOfflineStatus();
-                    return value;
-                },
-                getter: function () MailOfflineMgr.isOnline()
-            });
+        if (!this.isComposeWindow) {
+            options.add(["online"],
+                "Set the 'work offline' option",
+                "boolean", true,
+                {
+                    setter: function (value) {
+                        if (MailOfflineMgr.isOnline() != value)
+                            MailOfflineMgr.toggleOfflineStatus();
+                        return value;
+                    },
+                    getter: function () MailOfflineMgr.isOnline()
+                });
+        }
     }
 });
 

@@ -30,6 +30,8 @@
 
     let prefix = [BASE];
 
+    // TODO: This list is much too long, we should try to minimize
+    // the number of required components for easier porting to new applications
     ["base.js",
      "modules.js",
      "autocommands.js",
