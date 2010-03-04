@@ -454,11 +454,20 @@ const Mappings = Module("mappings", {
                 return false;
             }
 
+            function urlsCompleter () {
+                let completions = [];
+                if (buffer.URL)
+                    completions.push([util.escapeRegex(buffer.URL), "Current buffer URL"]);
+                if (content.document && content.document.domain)
+                    completions.push([util.escapeRegex(content.document.domain), "Current buffer domain"]);
+                return completions;
+            }
+
             const opts = {
                     completer: function (context, args) completion.userMapping(context, args, modes),
                     options: [
                         [["<silent>", "<Silent>"],  commands.OPTION_NOARG],
-                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator],
+                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator, urlsCompleter],
                     ],
                     literal: 1,
                     serial: function () {
