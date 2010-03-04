@@ -930,8 +930,10 @@ const Commands = Module("commands", {
 
         completion.userCommand = function userCommand(context) {
             context.title = ["User Command", "Definition"];
-            context.keys = { text: "name", description: "replacementText" };
-            context.completions = commands.getUserCommands();
+            context.completions = [
+                [command.name, command.replacementText || "function () { ... }"]
+                for each (command in commands.getUserCommands())
+            ];
         };
     },
 
