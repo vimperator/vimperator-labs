@@ -1,5 +1,6 @@
 2009-XX-XX
     * version 0.6a1pre
+    * add ! mapping to toggle "junk" state of a message
     * asciidoc is no longer required to build Muttator
     * The full help system now available for Muttator.
     * add 'titlestring' option

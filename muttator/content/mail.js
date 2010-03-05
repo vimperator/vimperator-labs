@@ -671,6 +671,10 @@ const Mail = Module("mail", {
             "Archive message",
             function () { this._moveOrCopy(false, options["archivefolder"]); });
 
+        mappings.add(myModes, ["!"],
+            "Mark/unmark selected messages as junk",
+            function () { JunkSelectedMessages(!SelectedMessagesAreJunk()); });
+
         mappings.add(myModes, ["]s"],
             "Select next starred message",
             function (count) { mail.selectMessage(function (msg) msg.isFlagged, true, true, false, count); },
