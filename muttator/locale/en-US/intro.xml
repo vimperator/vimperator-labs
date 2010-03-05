@@ -12,238 +12,41 @@
 <logo/>
 
 <html:p style="text-align: center; font-weight: bold;">
-First there was a Navigator, then there was an Explorer.
-Later it was time for a Konqueror. Now it's time for an Imperator, the
-VIMperator :)
-</html:p>
-
-<h1 tag="intro">Introduction</h1>
-
-<link topic="http://vimperator.org">&liberator.appname;</link> is a free browser add-on for &liberator.host;,
-which makes it look and behave like the
-<link topic="http://www.vim.org">Vim</link>
-text editor. It has similar key bindings, and you could call it a modal
-web browser, as key bindings differ according to which mode you are in.
-
-<warning tag="warning">
-    To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar are hidden.
-</warning>
-
-<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.</p>
-<p>
-    If you don't like &liberator.appname; at all, you can uninstall it by typing
-    <ex>:extdelete &liberator.appname;</ex> or <ex>:extdisable &liberator.appname;</ex> to disable it.
-</p>
-<p>
-    If you like it but can't remember the shortcuts, then press
-    <key name="F1"/> or <ex>:help</ex> to get this help window back.
-</p>
-
-<tags>author donaton sponsor</tags>
-<p>
-    &liberator.appname; was initially written by
-    <link topic="mailto:stubenschrott@vimperator.org">Martin
-    Stubenschrott</link> but has found many other
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">contributors</link>
-    in the meanwhile. If you appreciate the work on &liberator.appname; and want to
-    encourage us working on it more, you can send us greetings, patches, or
-    donations (thanks a lot to
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Donors">these
-        people</link>
-    who already did):
-</p>
-
-<html:form style="text-align: center;" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick"/>
-<input type="image" src="chrome://liberator/content/x-click-but21.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!"/>
-<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----"/>
-</html:form>
-
-<p>
-    If you prefer getting some nice products for your money, you can also support
-    us by buying some cool
-    <link topic="http://www.zazzle.com/maxauthority*">merchandise</link> like
-    t-shirts or mugs. Of course, as we believe in free, open source software, only
-    support us financially if you really like &liberator.appname; and the money doesn't hurt
-    — otherwise just use it, recommend it, and like it :)
-</p>
-
-<h2 tag="overview">Help topics</h2>
-
-<ol>
-    <li>
-        <link topic="tutorial">Quick-start tutorial</link>:
-        A quick-start tutorial for new users.
-    </li>
-    <li>
-        <link topic="starting">Starting &liberator.appname;</link>:
-        How &liberator.appname; starts up, where it reads the config file…
-    </li>
-    <li>
-        <link topic="browsing">Browsing</link>:
-        Basic mappings and commands needed for a browsing session (how to open
-        a web page or go back in history).
-    </li>
-    <li>
-        <link topic="buffer">Buffer</link>:
-        Operations on the current document like scrolling or copying text.
-    </li>
-    <li>
-        <link topic="cmdline">Command-line mode</link>:
-        Command-line editing.
-    </li>
-    <li>
-        <link topic="insert">Insert mode</link>:
-        Insert-mode editing.
-    </li>
-    <li>
-        <link topic="options">Options</link>:
-        A description of all options.
-    </li>
-    <li>
-        <link topic="pattern">Text search commands</link>:
-        Searching for text in the current buffer.
-    </li>
-    <li>
-        <link topic="tabs">Tabs</link>:
-        Managing your tabbed browsing session.
-    </li>
-    <li>
-        <link topic="hints">Hints</link>:
-        Selecting hyperlinks and other page elements.
-    </li>
-    <li>
-        <link topic="">Key mappings, abbreviations, and user-defined commands</link>:
-        Defining new key mappings, abbreviations and user commands.
-    </li>
-    <li>
-        <link topic="eval">Expression evaluation</link>:
-        Executing JavaScript.
-    </li>
-    <li>
-        <link topic="marks">Marks</link>:
-        Using bookmarks, QuickMarks, history and local marks.
-    </li>
-    <li>
-        <link topic="repeat">Repeating commands</link>:
-        Using macros to repeat recurring workflows.
-    </li>
-    <li>
-        <link topic="autocommands">Automatic commands</link>:
-        Automatically executing code on certain events.
-    </li>
-    <li>
-        <link topic="print">Printing</link>:
-        Printing pages.
-    </li>
-    <li>
-        <link topic="gui">&liberator.appname;'s GUI</link>:
-        Accessing &liberator.host; menus, dialogs and the sidebar.
-    </li>
-    <li>
-        <link topic="styling">Styling the GUI and web pages</link>:
-        Changing the styling of content pages and &liberator.appname; itself.
-    </li>
-    <li>
-        <link topic="message">Error and informational messages</link>:
-        A description of messages and error messages.
-    </li>
-    <li>
-        <link topic="developer">Developer information</link>:
-        How to write docs or plugins.
-    </li>
-    <li>
-        <link topic="various">Various commands</link>:
-        Other help which didn't fit into any other category.
-    </li>
-    <li>
-        <link topic="index">Index</link>:
-        An index of all commands and options.
-    </li>
-</ol>
-
-<p>
-You can also jump directly to the help of a specific command with <ex>:help o</ex>
-or <ex>:help :set</ex>.
-</p>
-
-<h2 tag="features">Features</h2>
-
-<ul>
-    <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)</li>
-    <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …)</li>
-    <li>Tab completion available for all commands with support for "longest" matching when set in 'wildmode'</li>
-    <li>Hit-a-hint like navigation of links (start with <k>f</k> to follow a link)</li>
-    <li>Advanced completion of bookmark and history URLs (searching also in title, not only URL)</li>
-    <li>Vim-like statusline with a Wget-like progress bar</li>
-    <li>Minimal GUI (easily hide useless menubar and toolbar with <ex>:set guioptions=</ex>)</li>
-    <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.vimperatorrc</em> file with syntax highlighting if you install vimperator.vim</li>
-    <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
-    <li>Count supported for many commands (<em>3</em><k name="C-o"/> will go back 3 pages)</li>
-    <li>Beep on errors</li>
-    <li>Marks support (<k>m</k><em>a</em> to set mark a on a web page, <k>'</k><em>a</em> to go there)</li>
-    <li>QuickMarks support (quickly go to previously marked web pages with <k>go</k><a>a-zA-Z0-9</a>)</li>
-    <li><ex>:map</ex> and <ex>:command</ex> support (and feedkeys() for script writers)</li>
-    <li><ex>:time</ex> support for profiling</li>
-    <li>Move the text cursor and select text with Vim keys and a Visual mode</li>
-    <li>External editor support</li>
-    <li>Macros to replay key strokes</li>
-    <li>AutoCommands to execute actions on certain events</li>
-    <li>A comprehensive help system, explaining all commands, mappings and options</li>
-</ul>
-
-<h2 tag="contact">Contact</h2>
-
-<p>
-    Please send comments/bug reports/patches to the mailing list, where we will
-    properly answer any questions. You can also join the
-    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> IRC channel
-    on <link target="http://www.freenode.net/">Freenode</link> or check the
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Wiki">Wiki</link> for
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/FAQ">
-        frequently asked questions (FAQ)
-    </link>. Make sure, you have read the TODO file first, as we are aware of many
-    things which can be improved when we find time for it or receive patches.
-</p>
-
-
-<logo/>
-
-<html:p style="text-align: center; font-weight: bold;">
 All mail clients suck. Mutt just sucks less. This one just sucks less than
 mutt.
 </html:p>
 
-<h2 tag="intro">Introduction</h2>
+<h1 tag="intro">Introduction</h1>
 
-http://vimperator.org/muttator[&liberator.appname;] is a free browser add-on for
-&liberator.host;, which makes it look and behave like the http://www.vim.org[Vim]
+<link topic="http://vimperator.org/muttator">&liberator.appname;</link> is a free browser add-on for
+&liberator.host;, which makes it look and behave like the <link topic="http://www.vim.org">Vim</link>
 text editor. It has similar key bindings, and you could call it a modal mail
 client, as key bindings differ according to which mode you are in.
 
-|warning| +
-Warning:
-To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar were hidden. +
-If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back. +
-If you don't like &liberator.appname; at all, you can uninstall it by typing
-<ex>:addons</ex> and remove/disable it. +
-If you like it, but can't remember the shortcuts, press <k>F1</k> or
-<ex>:help</ex> to get this help window back.
+<warning tag="warning">
+To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar were hidden.
+</warning>
 
-|author| |donation| +
-&liberator.appname; was written by mailto:stubenschrott@vimperator.org[Martin Stubenschrott].
+<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.</p>
+<p>If you don't like &liberator.appname; at all, you can uninstall it by typing
+<ex>:addons</ex> and remove/disable it.</p>
+<p>If you like it, but can't remember the shortcuts, press <k>F1</k> or
+<ex>:help</ex> to get this help window back.</p>
+
+<tags>author donation</tags>
+<p>&liberator.appname; was written by <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link>.
 If you appreciate my work on &liberator.appname; and want to encourage me working on it
-more, you can either send me greetings, patches or make a donation:
-
-NOTE: If this link does not work, go to http://vimperator.org/muttator and
-click the donation button there, because &liberator.host; seems to have a problem
-when this link is inside an e-mail (which this help screen actually is).
+more, you can either send me greetings, patches or make a donation:</p>
 
 <pan><handle/></pan>
 
-Of course as a believer in free open source software, only make a donation
+<p>NOTE: If this link does not work, go to the <link topic="http://vimperator.org/muttator">&liberator.appname; homepage</link> and
+click the donation button there, because &liberator.host; seems to have a problem
+when this link is inside an e-mail (which this help screen actually is).</p>
+
+<p>Of course as a believer in free open source software, only make a donation
 if you really like &liberator.appname; and the money doesn't hurt -- otherwise just use
-it, recommend it and like it :)
+it, recommend it and like it :)</p>
 
 <h2 tag="overview">Help topics</h2>
 
@@ -337,13 +140,12 @@ it, recommend it and like it :)
 
 <!-- TO BE WRITTEN... -->
 
-For now use <ex>:viusage!</ex>, <ex>:exusage!</ex> and <ex>:optionusage!</ex> to find
+<p>For now use <ex>:viusage!</ex>, <ex>:exusage!</ex> and <ex>:optionusage!</ex> to find
 out about available mappings, commands and options. When in Message mode
-(activated by <k>i</k>), most mappings from &liberator.appname; are available.
+(activated by <k>i</k>), most mappings from &liberator.appname; are available.</p>
 
-
-You can also jump directly to the help of a specific command with
-<ex>:help o</ex> or <ex>:help :set</ex>.
+<p>You can also jump directly to the help of a specific command with
+<ex>:help o</ex> or <ex>:help :set</ex>.</p>
 
 <h2 tag="features">Features</h2>
 
