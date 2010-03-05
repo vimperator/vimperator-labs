@@ -157,8 +157,8 @@ const Config = Module("config", ConfigBase, {
         this.ignoreKeys = {
             "<Return>": modes.NORMAL | modes.INSERT,
             "<Space>": modes.NORMAL | modes.INSERT,
-            "<Up>": modes.NORMAL | modes.INSERT,
-            "<Down>": modes.NORMAL | modes.INSERT
+            "<Up>": modes.INSERT,
+            "<Down>": modes.INSERT
         };
     },
     options: function () {
