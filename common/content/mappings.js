@@ -328,7 +328,7 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The candidate key mapping.
-     * @param {regexpr/string} cmd The candidate key mapping.
+     * @param {RegExp|string} URL matching pattern or URL.
      * @returns {boolean}
      */
     hasMap:
