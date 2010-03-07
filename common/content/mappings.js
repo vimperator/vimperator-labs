@@ -121,6 +121,16 @@ const Map = Class("Map", {
             mappings.repeat = repeat;
 
         return liberator.trapErrors(repeat);
+    },
+
+    /**
+     * Returns true if same mapping.
+     *
+     * @param {Mapping}
+     * @returns {boolean}
+     */
+    equals: function (map) {
+        return this.rhs == map.rhs && this.names[0] == map.names && this.matchingUrls == map.matchingUrls;
     }
 
 });
@@ -190,7 +200,7 @@ const Mappings = Module("mappings", {
         modes = modes.slice();
         return (map for ([i, map] in Iterator(stack[modes.shift()]))
             if (modes.every(function (mode) stack[mode].some(
-                        function (m) m.rhs == map.rhs && m.names[0] == map.names[0]))))
+                        function (m) map.equals(m)))))
     },
 
     // NOTE: just normal mode for now
@@ -328,7 +338,7 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The candidate key mapping.
-     * @param {regexpr/string} cmd The candidate key mapping.
+     * @param {RegExp|string} URL matching pattern or URL.
      * @returns {boolean}
      */
     hasMap:
@@ -341,9 +351,10 @@ const Mappings = Module("mappings", {
      *
      * @param {number} mode The mode to search.
      * @param {string} cmd The map name to match.
+     * @param {RegExp|string} URL matching pattern or URL.
      */
-    remove: function (mode, cmd) {
-        this._removeMap(mode, cmd);
+    remove: function (mode, cmd, patternOrUrl) {
+        this._removeMap(mode, cmd, patternOrUrl);
     },
 
     /**
@@ -454,20 +465,28 @@ const Mappings = Module("mappings", {
                 return false;
             }
 
-            function urlsCompleter () {
-                let completions = [];
-                if (buffer.URL)
-                    completions.push([util.escapeRegex(buffer.URL), "Current buffer URL"]);
-                if (content.document && content.document.domain)
-                    completions.push([util.escapeRegex(content.document.domain), "Current buffer domain"]);
-                return completions;
+            function urlsCompleter (modes, current) {
+                return function () {
+                    let completions = util.Array.uniq([
+                        m.matchingUrls.source
+                        for (m in mappings.getUserIterator(modes))
+                        if (m.matchingUrls)
+                    ]).map(function (re) [re, re]);
+                    if (current) {
+                        if (buffer.URL)
+                            completions.unshift([util.escapeRegex(buffer.URL), "Current buffer URL"]);
+                        if (content.document && content.document.domain)
+                            completions.unshift([util.escapeRegex(content.document.domain), "Current buffer domain"]);
+                    }
+                    return completions;
+                };
             }
 
             const opts = {
                     completer: function (context, args) completion.userMapping(context, args, modes),
                     options: [
                         [["<silent>", "<Silent>"],  commands.OPTION_NOARG],
-                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator, urlsCompleter],
+                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator, urlsCompleter(modes, true)],
                     ],
                     literal: 1,
                     serial: function () {
@@ -516,8 +535,8 @@ const Mappings = Module("mappings", {
 
                     let found = false;
                     for (let [, mode] in Iterator(modes)) {
-                        if (mappings.hasMap(mode, args)) {
-                            mappings.remove(mode, args);
+                        if (mappings.hasMap(mode, args, args["-urls"])) {
+                            mappings.remove(mode, args, args["-urls"]);
                             found = true;
                         }
                     }
@@ -526,6 +545,9 @@ const Mappings = Module("mappings", {
                 },
                 {
                     argCount: "1",
+                    options: [
+                        [["-urls", "-u"],  commands.OPTION_STRING, regexpValidator, urlsCompleter(modes)],
+                    ],
                     completer: function (context, args) completion.userMapping(context, args, modes)
                 });
         }
@@ -555,9 +577,14 @@ const Mappings = Module("mappings", {
         completion.userMapping = function userMapping(context, args, modes) {
             // FIXME: have we decided on a 'standard' way to handle this clash? --djk
             modes = modes || [modules.modes.NORMAL];
+            let urls = args["-urls"] && RegExp(args["-urls"]);
 
             if (args.completeArg == 0) {
-                let maps = [[m.names[0], ""] for (m in mappings.getUserIterator(modes))];
+                let maps = [
+                    [m.names[0], ""]
+                    for (m in mappings.getUserIterator(modes))
+                    if (mappings._matchingUrlsTest(m, urls))
+                ];
                 context.completions = maps;
             }
         };
