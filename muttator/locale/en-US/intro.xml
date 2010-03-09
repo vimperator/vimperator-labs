@@ -18,7 +18,7 @@ mutt.
 
 <h1 tag="intro">Introduction</h1>
 
-<link topic="http://vimperator.org/muttator">&liberator.appname;</link> is a free browser add-on for
+<link topic="http://vimperator.org/muttator">&liberator.appname;</link> is a free add-on for
 &liberator.host;, which makes it look and behave like the <link topic="http://www.vim.org">Vim</link>
 text editor. It has similar key bindings, and you could call it a modal mail
 client, as key bindings differ according to which mode you are in.
@@ -50,7 +50,16 @@ it, recommend it and like it :)</p>
 
 <h2 tag="overview">Help topics</h2>
 
+<p>&liberator.appname; is in an early development stage. There's not too much documentation available yet. However, the <link topic="tutorial">Tutorial</link> should provide some basic information to help you get up and running for now.</p> 
+<p>Please also note that navigation in this help screen is quite limited yet - <em>using the links within the help system will likely not work</em> as expected, so you have to manually navigate using the <ex>:help subject</ex> command. So to go on with the tutorial now, please type:</p>
+
+<code><ex>:help tutorial<key name="CR"/></ex></code>
+
+<!--
 <ol>
+    <li>
+        <link topic="tutorial">Quick-start tutorial</link>: A quick-start tutorial for new users.
+    </li>
     <li>
         <link topic="starting">Starting &liberator.appname;</link>:
         How &liberator.appname; starts up, where it reads the config file…
@@ -138,11 +147,9 @@ it, recommend it and like it :)</p>
     </li>
 </ol>
 
-<!-- TO BE WRITTEN... -->
+-->
 
-<p>For now use <ex>:viusage!</ex>, <ex>:exusage!</ex> and <ex>:optionusage!</ex> to find
-out about available mappings, commands and options. When in Message mode
-(activated by <k>i</k>), most mappings from &liberator.appname; are available.</p>
+<!-- TO BE WRITTEN... -->
 
 <p>You can also jump directly to the help of a specific command with
 <ex>:help o</ex> or <ex>:help :set</ex>.</p>

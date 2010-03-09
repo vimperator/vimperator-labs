@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="tutorial"
+    title="&liberator.appname; Tutorial"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<!-- Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu) -->
+
+<h1 tag="tutorial">Quick-start tutorial</h1>
+
+<html:p style="text-align: center">
+    This is a quickstart tutorial to help get new users up and running
+    in &liberator.appname;. It is not intended as a full reference explaining all
+    features.
+</html:p>
+
+<p>
+    If you've started using &liberator.appname; from scratch (i.e., without any
+    customization), you might miss your menu bar.
+    In case you missed the notice in the <t>intro</t>, you can
+    regain it by issuing the command
+</p>
+
+<code><ex>:set guioptions+=m</ex><key name="CR"/></code>
+
+<p>
+    However, in this author's opinion, the best way to get familiar with
+    &liberator.appname; is to leave this disabled for now. (The above action can be
+    reversed with <ex>:set guioptions-=m<key name="CR"/></ex>) You can look at the entry for <o>guioptions</o> in
+    <t>options</t> for more information on this.
+</p>
+
+<h2 tag="modal">&liberator.appname;'s modal interface</h2>
+
+<p>
+    &liberator.appname;'s power, like Vim's, comes from it's modal interface. Keys have
+    different meanings depending on which mode &liberator.host; is in. &liberator.appname; has four basic modes: 
+    Normal mode and Message mode when viewing messages and Insert mode as well as Compose mode when writing a new message.
+</p>
+
+<p>You can (almost) always use <ex>:viusage!</ex>, <ex>:exusage!</ex> and <ex>:optionusage!</ex> for a quick reference 
+about available mappings, commands and options. When in Message mode
+(activated by <k>i</k>), most mappings from Vimperator are also available.</p>
+
+<p>
+    When &liberator.appname; starts, it is in <em>Normal mode</em> by default with the focus staying at the message list. This is probably where
+    you will spend the majority of your time. Here you can trigger actions like replying a message (press <k>r</k>), deleting (<k>d</k>), changing folder (<k>c</k>), etc. If the focus is "somewhere", you should (almost...) always be able to switch to correct focus and Normal mode by pressing <k>Esc</k>.
+</p>
+
+<p>The <em>Message mode</em> is started by "inspecting" a message (press <k>i</k> or click inside the message body). There you can use <k>h</k>, <k>j</k>, <k>k</k>, <k>l</k> etc. to navigate the message body. You can also press <k>f</k> to start hinting mode (which works similar to Vimperator). Pressing <k>Esc</k> brings you back to Normal mode.</p> 
+
+<p>When opening up the compose window (i.e. for writing a new message, triggered by <k>m</k> or <ex>:mail</ex>), you should end up in <em>Insert mode</em> (if not, please click in the subject line and in the body again as workaround for now...) where you can edit your mail with the usual &liberator.host; key bindings.</p>
+
+<p>Pressing <k>Esc</k> in Insert mode brings you into <em>Compose mode</em>. This allows commands to be performed with the current message like <k>y</k> to send the message or <k>t</k> to focus the "To:" field.</p>
+
+<p>
+    Another core mode of &liberator.appname;, the Command-line mode, can be entered from
+    most modes by typing a <k>:</k> (colon). You will frequently see &liberator.appname;
+    commands start with a <k>:</k>, indicating that what follows is a command.
+</p>
+
+<p>
+    To return to Normal mode from Command-line mode, type <k name="Esc"/>. Pressing
+    <k name="Esc"/> will also return you to Normal mode from most other modes in
+    &liberator.appname;.
+</p>
+
+<h2 tag="getting-help">Getting help</h2>
+
+<p>
+    Vim is a great editor but it's not much of a mail client. So even seasoned Vim
+    users will probably have to look at &liberator.appname; documentation sooner or later.
+    Most of the documentation for &liberator.appname;'s features are easily found using the
+    <ex>:help</ex> command. For example, you can find help on the <ex>:help</ex> command
+    by typing
+</p>
+
+<code><ex>:help :help<key name="CR"/></ex></code>
+
+<p>
+    Similarly, help on configurable options is available with
+    <ex>:help '<a>option_name</a>'</ex>. (Note the single quotes
+    around the option name as in Vim.) Information on all available
+    options is, predictably, <ex>:help options</ex>.
+</p>
+
+<p>
+    And you can find out about the <k>gt</k> and <k>gT</k> mapping with
+</p>
+
+<code>
+<ex>:help gt<key name="CR"/></ex>
+<ex>:help gT<key name="CR"/></ex>
+</code>
+
+<p>
+    Finally, in addition to the help system itself, <ex>:exusage!</ex>, <ex>:viusage!</ex>
+    and <ex>:optionusage!</ex> are useful quick-reference commands.
+</p>
+
+<h2 tag="living-mouseless">Mouseless</h2>
+
+<em>– or how I learned to stop worrying and love the 80+ buttons I already have.</em>
+
+<p>
+    The efficiency of &liberator.appname;, as with the legendary editor it was inspired by,
+    relies on the user being able to keep his fingers on the keyboard where they
+    can do the most good. While there are some areas where the mouse is clearly
+    superior at, such as GUI design or some games, &liberator.appname; acts on the
+    assumption that a mail client doesn't have to be one of those.
+</p>
+
+<p>
+    The following sections describe the basic usability plan behind &liberator.appname;.
+</p>
+
+<h2 tag="keyboard-scrolling">Reading mails</h2>
+
+<p>When starting &liberator.host;, you shall find yoursef in &liberator.appname;'s <em>Normal mode</em>. You can effectively read mails in the current folder with the following keys:</p>
+
+<ul>
+    <li><k>j</k>/<k>k</k>/<k name="Left"/>/<k name="Right"/> –
+        cycle through messages (inspired by Vim's as well as KMail's bindings)
+    </li>
+    <li><k name="Up"/>/<k name="Down"/> –
+        scroll message in message pane (inspired by KMail's bindings)
+    </li>
+    <li><k name="Space"/>/<k>Shift-Space</k> –
+        scroll down/up message by one page, cycle to next unread message at the end of current one
+    </li>
+</ul>
+
+<p>To further inspect a mail, press <k>i</k>. This will bring you in <em>Message mode</em>. Here, you can use:
+</p>
+
+<ul>
+    <li><k>j</k>/<k>k</k> –
+        scroll window down/up by one line, respectively
+    </li>
+    <li><k>h</k>/<k>l</k> –
+        scroll window left/right
+    </li>
+    <li><k name="Space"/>/<k>Shift-Space</k> –
+        scroll down/up by one page
+    </li>
+    <li><k name="C-d"/>/<k name="C-u"/> –
+        scroll down/up by 1/2 page
+    </li>
+</ul>
+
+<h2 tag="hints-tutorial">Opening links</h2>
+
+<p>
+    So now you can navigate around in &liberator.appname;. But wait… how do you <em>open</em> a
+    page or tab linked in a web page? How do you <em>click</em> on all those links
+    without your tailed friend?
+</p>
+
+<p>
+    The answer is <em>hints</em>. Activating hints displays a number next to every link
+    &liberator.appname; can find. To follow the link, simply type the number corresponding
+    to the hint, a white number inside a red square by default.
+</p>
+
+<p>
+    For text links, there's an additional shortcut; you can type some text
+    contained in the link and &liberator.appname; will search all the links it can find and
+    only hint the matching links, further narrowing down the list. If the text you
+    type uniquely identifies any given link, &liberator.appname; will follow that link
+    immediately without any further user input.
+</p>
+
+<p>
+    Whichever way you choose to indicate your target link, once &liberator.appname; has
+    highlighted the link you want, simply hit <k name="Enter"/> to open it.
+</p>
+
+<p>
+    The most common hint mode is called <t>quick-hints</t>.
+    To activate QuickHint mode, press <k>f</k>. 
+</p>
+
+<h2 tag="quitting-without-menus">Find the exit nearest you</h2>
+
+<p>
+    &liberator.appname; supports all of Vim's classic methods of exiting.
+</p>
+
+<ul>
+    <li><ex>:xall</ex> – command to quit and save the current browsing
+        session for next time; the default.
+    </li>
+    <li><ex>:qall</ex> – command to quit <em>without</em> saving the session
+    </li>
+    <li><k>ZZ</k> – Normal mode mapping equivalent to <ex>:xall</ex>
+    </li>
+    <li><k>ZQ</k> – Normal mode mapping equivalent to <ex>:qall</ex>
+    </li>
+</ul>
+
+<h2 tag="whither-&liberator.host;">Where did &liberator.host; go?</h2>
+
+<p>
+    You might feel pretty disoriented now. Don't worry. This is still &liberator.host;
+    underneath. Here are some ways &liberator.appname; allows &liberator.host; to shine through. See
+    the <ex>:help</ex> for these commands and mappings for more information on how to
+    make the best use of them.
+</p>
+
+<ul>
+    <li><ex>:dialog</ex> –
+        To access some of &liberator.host;'s many dialog windows, you can use the
+        <ex>:dialog</ex> command. See <ex>:help :dialog</ex>.
+    </li>
+    <li><ex>:emenu</ex> –
+        Access the &liberator.host; menus through the &liberator.appname; command line.
+    </li>
+</ul>
+
+<p>
+    Feel free to explore at this point. So far, we unfortunately don't have too much other documentation now - so please feel free to ask at the Muttator mailing list - frequently asked questions might result in additional documentation to be written soon. :-)
+</p>
+
+
+<h2 tag="support">I'm interested… but lost!</h2>
+
+<p>
+    &liberator.appname; has an energetic and growing user base. If you've run into a problem
+    that you can't seem to solve with &liberator.appname;, or if you think you might have
+    found a bug, please let us know! There is support available on the
+    <link target="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link>
+    or in the <link target="irc://irc.freenode.net/vimperator">#vimperator</link> IRC
+    channel on <link target="http://freenode.net/">freenode</link>.
+</p>
+
+<p>
+    If you have any feature requests or (even better) offers to help, we'd love to
+    hear from you as well. Developers work on &liberator.appname; whenever possible, but we
+    are neither infinite nor omnipotent; please bear with us. If you can't wait for
+    us to get around to it, rest assured patches are welcome! See the
+    <t>developer</t> page for more information.
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

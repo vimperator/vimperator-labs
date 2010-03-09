@@ -6,6 +6,9 @@
 <overlay
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
+
+<include href="tutorial" tag="tutorial.html" insertafter="intro.html" />
+
 </overlay>
 
 <!-- vim:se sts=4 sw=4 et: -->
