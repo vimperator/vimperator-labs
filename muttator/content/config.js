@@ -158,7 +158,11 @@ const Config = Module("config", ConfigBase, {
             "<Return>": modes.NORMAL | modes.INSERT,
             "<Space>": modes.NORMAL | modes.INSERT,
             "<Up>": modes.INSERT,
-            "<Down>": modes.INSERT
+            "<Down>": modes.INSERT,
+            // FIXME: Ctrl-v/Ctrl-z binding will likely be removed
+            //        in common code soon, temporary workaround for muttator
+            "<C-v>": modes.MESSAGE | modes.INSERT,
+            "<C-z>": modes.MESSAGE | modes.INSERT
         };
     },
     options: function () {
