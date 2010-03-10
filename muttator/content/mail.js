@@ -612,9 +612,19 @@ const Mail = Module("mail", {
             function (count) { buffer.scrollLines(Math.max(count, 1)); },
             { count: true });
 
+        mappings.add(myModes, ["+"],
+            "Scroll message down pagewise",
+            function (count) { buffer.scrollPages(Math.max(count, 1)); },
+            { count: true });
+
         mappings.add(myModes, ["<Up>"],
             "Scroll message up",
             function (count) { buffer.scrollLines(-Math.max(count, 1)); },
+            { count: true });
+
+        mappings.add(myModes, ["-"],
+            "Scroll message up pagewise",
+            function (count) { buffer.scrollPages(-Math.max(count, 1)); },
             { count: true });
 
         mappings.add([modes.MESSAGE], ["<Left>"],
