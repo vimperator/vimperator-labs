@@ -556,8 +556,8 @@ const Editor = Module("editor", {
     getAbbreviations: function (filter, lhs) {
         // ! -> list all, on c or i ! matches too
         let searchFilter = (filter == "!") ? "!ci" : filter + "!";
-        return list = [[mode, left, right] for ([left, [mode, right]] in this.abbrevs())
-                          if (searchFilter.indexOf(mode) >= 0 && left.indexOf(lhs || "") == 0)];
+        return [[mode, left, right] for ([left, [mode, right]] in this.abbrevs())
+                   if (searchFilter.indexOf(mode) >= 0 && left.indexOf(lhs || "") == 0)];
     },
 
     /**
