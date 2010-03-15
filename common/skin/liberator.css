@@ -2,7 +2,8 @@
 
 /* Applied to all content */
 [liberator|activeframe] {
-    -moz-binding: url(chrome://liberator/content/bindings.xml#frame);
+    /* disabled for now, since it throws SecurityErrors to the console */
+    /* -moz-binding: url(chrome://liberator/content/bindings.xml#frame); */
 }
 
 [liberator|highlight~=HintImage],
@@ -33,7 +34,8 @@
 }
 [liberator|highlight~=CompItem] > *,
 [liberator|highlight~=CompTitle] > * {
-    -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td);
+    /* disabled for now, since it throws SecurityErrors to the console */
+    /* -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td); */
     display: table-cell;
     vertical-align: middle;
 }
