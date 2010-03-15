@@ -1459,10 +1459,6 @@ const Buffer = Module("buffer", {
             "View source with an external editor",
             function () { buffer.viewSource(null, true); });
 
-        mappings.add(myModes, ["|"],
-            "Toggle between rendered and source view",
-            function () { buffer.viewSource(null, false); });
-
         mappings.add(myModes, ["gi"],
             "Focus last used input field",
             function (count) {

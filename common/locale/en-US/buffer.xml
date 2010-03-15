@@ -51,8 +51,8 @@
     <spec>gf</spec>
     <description>
         <p>
-            View source. Opens the source code of the current web site with the internal
-            editor in the current tab.
+            Toggle between rendered and source view. Alternates the page in the current tab
+            between a normally rendered view and the internal editor source view.
         </p>
     </description>
 </item>
@@ -83,17 +83,6 @@
     </description>
 </item>
 
-
-<item>
-    <tags>|</tags>
-    <spec>|</spec>
-    <description>
-        <p>
-            Toggle between rendered and source view. Alternates the page in the current tab
-            between a normally rendered view and the internal editor source view.
-        </p>
-    </description>
-</item>
 
 
 <h2 tag="motion scrolling">Motion commands</h2>
