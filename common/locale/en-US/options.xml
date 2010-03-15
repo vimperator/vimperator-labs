@@ -483,6 +483,8 @@
             <o>focuscontent</o> but sometimes you'd like to focus the first
             input field, you can use <k>gi</k> to jump to it.
         </p>
+        <note>Some pages use JavaScript to focus the textfield, then 'focuscontent'
+        might not work as expected.</note>
     </description>
 </item>
 

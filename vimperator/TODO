@@ -40,9 +40,6 @@ BUGS:
 - The MOW shouldn't close when executing hints and ;F isn't working.
 
 (the new XML help system bugs):
-- security errors at startup (e.g. "Security Error: Content at
-  moz-nullprincipal:{e7a578b6-bf79-4028-8ee6-ef3a40ba4508} may not load or link
-  to chrome://liberator/locale/print.xml.")
 - markup/links breakage:
   - except for Ex commands and alphabetic mappings (like m), most elements seem
     to link correctly *only* inside a single page (when added after '#' to the

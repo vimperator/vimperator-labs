@@ -27,13 +27,10 @@ web browser, as key bindings differ according to which mode you are in.
     To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar are hidden.
 </warning>
 
-<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.</p>
-<p>
+<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.
     If you don't like &liberator.appname; at all, you can uninstall it by typing
     <ex>:extdelete &liberator.appname;</ex> or <ex>:extdisable &liberator.appname;</ex> to disable it.
-</p>
-<p>
-    If you like it but can't remember the shortcuts, then press
+    If you like it but just can't remember the shortcuts, then press
     <key name="F1"/> or <ex>:help</ex> to get this help window back.
 </p>
 

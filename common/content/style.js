@@ -162,7 +162,7 @@ Highlights.prototype.CSS = <![CDATA[
 
     HelpParagraph,html|p,liberator://help/*     display: block; margin: 1em 0em;
     HelpParagraph:first-child                   margin-top: 0;
-    HelpSpec                                    display: block; margin-left: -10em; float: left; clear: left; color: #527BBD;
+    HelpSpec                                    display: block; margin-left: -10em; float: left; clear: left; color: #FF00FF;
 
     HelpString                                  display: inline-block; color: green; font-weight: normal; vertical-align: text-top;
     HelpString::before                          content: '"';
@@ -208,7 +208,7 @@ Highlights.prototype.CSS = <![CDATA[
     HelpTabDescription,html|dd,liberator://help/*  display: table-cell; padding: .1ex 1ex; border-width: 0px;
     HelpTabRow,html|dl>html|tr,liberator://help/*  display: table-row;
 
-    HelpTag                                     display: inline-block; color: #527BBD; margin-left: 1ex; font-size: 8pt; font-weight: bold;
+    HelpTag                                     display: inline-block; color: #999; margin-left: 1ex; font-size: 8pt; font-weight: bold;
     HelpTags                                    display: block; float: right; clear: right;
     HelpTopic                                   color: #102663;
     HelpType                                    margin-right: 2ex;
