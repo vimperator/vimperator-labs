@@ -17,11 +17,26 @@ VIMperator :)
 
 <h1 tag="intro">Introduction</h1>
 
-<link topic="http://vimperator.org">&liberator.appname;</link> is a free browser add-on for &liberator.host;,
-which makes it look and behave like the
-<link topic="http://www.vim.org">Vim</link>
-text editor. It has similar key bindings, and you could call it a modal
-web browser, as key bindings differ according to which mode you are in.
+<p>
+<link topic="http://vimperator.org">&liberator.appname;</link> is a
+<link topic="http://www.mozilla.com/firefox/">Firefox</link>
+browser extension with strong inspiration from the Vim text editor,
+with a mind towards faster and more efficient browsing. It has similar key
+bindings and you could call it a modal web browser, as key bindings differ
+according to which mode you are in. For example, it has a special Hint mode,
+where you can follow links easily with the keyboard only. Also most
+functionality is available as commands, typing <ex>:back</ex> will go back
+within the current page history, just like hitting the back button in the
+toolbar.
+</p>
+        
+<p>
+But Vimperator is more than just a simple command interface to Firefox — it is a
+complete development environment as well. If you are a web developer, you can
+enjoy an interactive JavaScript shell — even with completion support. Or if you
+want to extend Vimperator, you can easily do that by just dropping a JavaScript
+file in its plugin directory.
+</p>
 
 <warning tag="warning">
     To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar are hidden.
@@ -40,13 +55,14 @@ web browser, as key bindings differ according to which mode you are in.
     &liberator.appname; was initially written by
     <link topic="mailto:stubenschrott@vimperator.org">Martin
     Stubenschrott</link> but has found many other
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">contributors</link>
-    in the meanwhile. If you appreciate the work on &liberator.appname; and want to
+    <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/AUTHORS/">invaluable contributors</link>
+    who helped out fixing bugs and adding new features.
+    We also owe Vim and Conkeror a great debt for their inspiration,
+    and the latter especially for early cross pollination.
+    
+    If you appreciate the work on &liberator.appname; and want to
     encourage us working on it more, you can send us greetings, patches, or
-    donations (thanks a lot to
-    <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Donors">these
-        people</link>
-    who already did):
+    donations:
 </p>
 
 <pan><handle/></pan>
