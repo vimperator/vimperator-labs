@@ -1,5 +1,9 @@
 2009-XX-XX
     * version 0.6a1pre
+    * remove special handling of Ctrl-v/Ctrl-z in insert mode so that usual
+      copy'n'paste actions will work again when writing a message
+    * add +/- mapping in normal mode for pagewise scrolling of message
+      (like <Space>, but without automatic jump to next unread message)
     * add ! mapping to toggle "junk" state of a message
     * asciidoc is no longer required to build Muttator
     * The full help system now available for Muttator.
