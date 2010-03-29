@@ -54,6 +54,8 @@ const Config = Module("config", ConfigBase, {
             function () { window.openAddonsMgr(); }],
         ["addressbook",      "Address book",
             function () { window.toAddressBook(); }],
+        ["accounts",      "Account Manager",
+            function () { MsgAccountManager(); }],
         ["checkupdates",     "Check for updates",
             function () { window.checkForUpdates(); }],
         /*["cleardata",        "Clear private data",

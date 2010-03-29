@@ -1,3 +1,6 @@
+2010-xx-xx
+    * add ":dialog accounts" to open Thunderbird's account manager
+
 2010-03-29
     * version 0.6
     * remove special handling of Ctrl-v/Ctrl-z in insert mode so that usual
