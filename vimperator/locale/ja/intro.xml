@@ -16,9 +16,20 @@
 </html:p>
 
 <h1 tag="intro">前書き</h1>
-<link topic="http://vimperator.org">&liberator.appname;</link> はテキストエディタ
-<link topic="http://www.vim.org">Vim</link> のように見せ、振る舞うフリーブラウザの &liberator.host; 用アドオンです。
-Vim に似たキーバインドを持ち、モード変更が可能なウェブブラウザ ( モードによって異なるキーバインドを持っています ) として使うことができます。
+<p>
+<link topic="http://vimperator.org">&liberator.appname;</link> は、
+テキストエディタ Vim に強くインスピレーションを受け、
+より高速かつ効率的に、の精神で作られた <link topic="http://www.mozilla.com/firefox/">Firefox</link> 用の拡張です。
+Vim と似たキーバインドを持ち、 モードによって異なるキーバインドを持つモーダルなウェブブラウザと言えます。
+たとえば、キーボードのみによってリンク先に移動することが可能な、ヒントモードを持っています。
+また、殆どの機能はコマンドとして提供され、<ex>:back</ex> とタイプすることで、ツールバー戻るボタンを押したときと同じように、現在のページの履歴から前のページへ戻ることができたりします。
+</p>
+
+<p>
+しかし、Vimperator は単なる Firefox のコマンドインターフェイスではなく、完全な開発環境でもあります。
+あなたが Web 開発者であれば、補完機能をもったインタラクティブな JavaScript Shell を満喫できるでしょう。
+また、Vimperator を拡張したいと望めば、プラグインディレクトリに JavaScript ファイルを放り込むだけで、それが可能です。
+</p>
 
 <warning tag="warning">
     できるだけ Vim と同じにするため、 &liberator.host; のメニューバーとツールバーは表示されなくなります。
