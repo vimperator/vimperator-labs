@@ -262,11 +262,14 @@ const Hints = Module("hints", {
 
         let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
         let start = this._pageHints.length;
-        for (let elem in res) {
+        let elem;
+
+        while (elem = res.iterateNext()) {
             let hint = { elem: elem, showText: false };
 
             // TODO: for iframes, this calculation is wrong
             rect = elem.getBoundingClientRect();
+
             if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
                 continue;
 
@@ -432,7 +435,12 @@ const Hints = Module("hints", {
         let firstElem = this._validHints[0] || null;
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
-            for (let elem in util.evaluateXPath("//*[@liberator:highlight='hints']", doc))
+            let result = util.evaluateXPath("//*[@liberator:highlight='hints']", doc, null, true);
+            let hints = new Array();
+            let elem;
+            while (elem = result.iterateNext())
+                hints.push(elem);
+            while (elem = hints.pop())
                 elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1)) {
                 let hint = this._pageHints[i];
