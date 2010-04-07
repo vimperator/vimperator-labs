@@ -438,6 +438,8 @@ const Hints = Module("hints", {
             let result = util.evaluateXPath("//*[@liberator:highlight='hints']", doc, null, true);
             let hints = new Array();
             let elem;
+            // Lucas de Vries: Deleting elements while iterating creates
+            // problems, therefore store the items in a temporary array first.
             while (elem = result.iterateNext())
                 hints.push(elem);
             while (elem = hints.pop())
