@@ -12,6 +12,42 @@
 
 <h1 tag="version-information">Version Information</h1>
 
+<h2 tag="version-2.3">Version 2.3</h2>
+<ul>
+    <li>
+        remove <k>|</k> mapping to toggle source view, as <k>gf</k> already does
+        exactly that and <k>|</k> might be of use for some future piping feature
+    </li>
+    <li>
+        add basic plugin authorship documentation
+    </li>
+    <li>
+        plugins may now provide full-fleged <ex>:help</ex> documentation
+    </li>
+    <li>
+        asciidoc is no longer required to build Vimperator
+    </li>
+    <li>
+        the help system is newly modularized
+    </li>
+    <li>
+        remove <ex>:edit</ex>, <ex>:tabedit</ex>, and <ex>:winedit</ex>
+    </li>
+    <li>
+        add <o>jsdebugger</o> option - switch on/off javascript debugger service
+    </li>
+    <li>
+        add "addons", "downloads", "extoptions" and "help" to the <o>activate</o> option
+    </li>
+    <li>
+        add <em>-urls</em> option to mapping commands
+    </li>
+    <li>
+        many more small bug fixes
+    </li>
+</ul>
+
+
 <h2 tag="version-2.2">Version 2.2</h2>
 <ul>
     <li>
