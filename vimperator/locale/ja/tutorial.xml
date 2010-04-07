@@ -213,7 +213,7 @@
 </p>
 
 <p>
-    動作を確かめるために、このリンクを開いてみてください: <link target="http://vimperator.org/">&liberator.appname; Homepage</link> 。
+    動作を確かめるために、このリンクを開いてみてください: <link topic="http://vimperator.org/">&liberator.appname; Homepage</link> 。
     <k>f</k> もしくは <k>F</k> でクイックヒントモードを開始して現在見えているリンクをすべて強調表示させてください。
     それからリンクのテキストを入力してください。
     リンクはすぐにひとつに絞られ、 &liberator.appname; がそれを開くでしょう。
@@ -335,8 +335,8 @@
     &liberator.appname; は活動的で成長する意欲のあるユーザに支えられています。
     もし &liberator.appname; を使っていて自分では解決できないような問題や、
     バグかもしれないと思われる現象を発見したらぜひ我々に知らせてください !
-    <link target="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link> や 
-    <link target="http://freenode.net/">freenode</link> の <link target="irc://irc.freenode.net/vimperator">#vimperator</link>
+    <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link> や
+    <link topic="http://freenode.net/">freenode</link> の <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>
     IRC チャンネルが助けになります。
 </p>
 
