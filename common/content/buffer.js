@@ -367,14 +367,14 @@ const Buffer = Module("buffer", {
     /**
      * @property {string} The current top-level document's URL.
      */
-    get URL() window.content.location.href,
+    get URL() config.browser.currentURI.spec,
 
     /**
      * @property {string} The current top-level document's URL, sans any
      *     fragment identifier.
      */
     get URI() {
-        let loc = window.content.location;
+        let loc = config.browser.contentWindow.location;
         return loc.href.substr(0, loc.href.length - loc.hash.length);
     },
 
