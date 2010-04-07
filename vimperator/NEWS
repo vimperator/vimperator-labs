@@ -1,3 +1,8 @@
+2010-xx-xx:
+    * version 2.4
+    * gH should work with multiple homepages
+    * fix 'activate' option for some values
+
 2010-03-29:
     * version 2.3
     * remove | mapping to toggle source view, as gf already does

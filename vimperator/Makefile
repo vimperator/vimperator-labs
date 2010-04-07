@@ -1,6 +1,6 @@
 #### configuration
 
-VERSION       = 2.3
+VERSION       = 2.4pre
 NAME          = vimperator
 
 include ../common/Makefile

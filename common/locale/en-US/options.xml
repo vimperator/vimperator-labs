@@ -275,11 +275,12 @@
     <tags>'act' 'activate'</tags>
     <spec>'activate' 'act'</spec>
     <type>stringlist</type>
-    <default>addons,downloads,extensions,help,homepage,quickmark,tabopen,paste</default>
+    <default>addons,downloads,extoptions,help,homepage,quickmark,tabopen,paste</default>
     <description>
         <p>Define when tabs are automatically activated. Available items:</p>
 
         <dl>
+            <dt>all</dt>           <dd><ex>All tabs created by any commands and mappings</dd>
             <dt>addons</dt>        <dd><ex>:addo[ns]</ex> command</dd>
             <dt>downloads</dt>     <dd><ex>:downl[oads]</ex> command</dd>
             <dt>extoptions</dt>    <dd><ex>:exto[ptions]</ex> command</dd>

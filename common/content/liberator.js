@@ -788,10 +788,15 @@ const Liberator = Module("liberator", {
                 flags |= Ci.nsIWebNavigation["LOAD_FLAGS_" + flag];
 
         let where = params.where || liberator.CURRENT_TAB;
+        if (liberator.forceNewTab)
+            where = liberator.NEW_TAB;
+        else if (liberator.forceNewWindow)
+            where = liberator.NEW_WINDOW;
+
         if ("from" in params && liberator.has("tabs")) {
             if (!('where' in params) && options["newtab"] && options.get("newtab").has("all", params.from))
-                where = liberator.NEW_BACKGROUND_TAB;
-            if (!options["activate"] || options.get("activate").has("all", params.from)) {
+                where = liberator.NEW_TAB;
+            if (options["activate"] && !options.get("activate").has("all", params.from)) {
                 if (where == liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
                 else if (where == liberator.NEW_BACKGROUND_TAB)
@@ -837,13 +842,6 @@ const Liberator = Module("liberator", {
             }
             catch(e) {}
         }
-
-        if (liberator.forceNewTab)
-            where = liberator.NEW_TAB;
-        else if (liberator.forceNewWindow)
-            where = liberator.NEW_WINDOW;
-        else if (!where)
-            where = liberator.CURRENT_TAB;
 
         for (let [, url] in Iterator(urls)) {
             open(url, where);

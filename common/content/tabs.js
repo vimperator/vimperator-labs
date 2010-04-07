@@ -630,7 +630,6 @@ const Tabs = Module("tabs", {
                 literal: 0
             });
 
-        // TODO: this should open in a new tab positioned directly after the current one, not at the end
         commands.add(["tab"],
             "Execute a command and tell it to output in a new tab",
             function (args) {
@@ -800,11 +799,13 @@ const Tabs = Module("tabs", {
                     let special = args.bang;
                     args = args.string;
 
+                    if (options.get("activate").has("all", "tabopen"))
+                        special = !special;
                     let where = special ? liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB;
                     if (args)
-                        liberator.open(args, { from: "tabopen", where: where });
+                        liberator.open(args, { where: where });
                     else
-                        liberator.open("about:blank", { from: "tabopen", where: where });
+                        liberator.open("about:blank", { where: where });
                 }, {
                     bang: true,
                     completer: function (context) completion.url(context),
@@ -1063,6 +1064,7 @@ const Tabs = Module("tabs", {
                 "stringlist", "addons,downloads,extoptions,help,homepage,quickmark,tabopen,paste",
                 {
                     completer: function (context) [
+                        ["all", "All tabs created by any commands and mappings"],
                         ["addons", ":addo[ns] command"],
                         ["downloads", ":downl[oads] command"],
                         ["extoptions", ":exto[ptions] command"],

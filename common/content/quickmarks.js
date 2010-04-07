@@ -153,7 +153,7 @@ const QuickMarks = Module("quickmarks", {
             ["gn"], "Jump to a QuickMark in a new tab",
             function (arg) {
                 quickmarks.jumpTo(arg,
-                    /\bquickmark\b/.test(options["activate"]) ?
+                    options.get("activate").has("all", "quickmark") ?
                     liberator.NEW_TAB : liberator.NEW_BACKGROUND_TAB);
             },
             { arg: true });

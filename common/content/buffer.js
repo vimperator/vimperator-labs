@@ -1499,7 +1499,7 @@ const Buffer = Module("buffer", {
             function () {
                 let url = util.readFromClipboard();
                 liberator.assert(url);
-                liberator.open(url, { from: "activate", where: liberator.NEW_TAB });
+                liberator.open(url, { from: "paste", where: liberator.NEW_TAB });
             });
 
         // reloading
