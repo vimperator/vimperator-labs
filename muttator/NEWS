@@ -1,4 +1,5 @@
 2010-xx-xx
+    * fix all l* (label read/starred/etc.) mappings for new Thunderbirds
     * add ":dialog accounts" to open Thunderbird's account manager
 
 2010-03-29

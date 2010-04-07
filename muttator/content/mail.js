@@ -802,7 +802,7 @@ const Mail = Module("mail", {
         mappings.add(myModes, ["l"],
             "Label message",
             function (arg) {
-                if (!GetSelectedMessages())
+                if (!gDBView.numSelected)
                     return void liberator.beep();
 
                 switch (arg) {
