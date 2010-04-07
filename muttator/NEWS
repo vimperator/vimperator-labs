@@ -1,4 +1,5 @@
 2010-xx-xx
+    * add l1,l2,...,l5 to directly tag a message with the 1st, 2nd, ... tag
     * fix all l* (label read/starred/etc.) mappings for new Thunderbirds
     * add ":dialog accounts" to open Thunderbird's account manager
 

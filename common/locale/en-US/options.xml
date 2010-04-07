@@ -280,7 +280,7 @@
         <p>Define when tabs are automatically activated. Available items:</p>
 
         <dl>
-            <dt>all</dt>           <dd><ex>All tabs created by any commands and mappings</dd>
+            <dt>all</dt>           <dd>All tabs created by any commands and mappings</dd>
             <dt>addons</dt>        <dd><ex>:addo[ns]</ex> command</dd>
             <dt>downloads</dt>     <dd><ex>:downl[oads]</ex> command</dd>
             <dt>extoptions</dt>    <dd><ex>:exto[ptions]</ex> command</dd>

@@ -808,12 +808,34 @@ const Mail = Module("mail", {
                 switch (arg) {
                     case "r": MsgMarkMsgAsRead(); break;
                     case "s": MsgMarkAsFlagged(); break;
-                    case "i": ToggleMessageTagKey(1); break; // Important
-                    case "w": ToggleMessageTagKey(2); break; // Work
-                    case "p": ToggleMessageTagKey(3); break; // Personal
-                    case "t": ToggleMessageTagKey(4); break; // TODO
-                    case "l": ToggleMessageTagKey(5); break; // Later
-                    default:  liberator.beep();
+
+                    case "i": // Important
+                    case "1":
+                        ToggleMessageTagKey(1);
+                        break;
+
+                    case "w": // Work
+                    case "2":
+                        ToggleMessageTagKey(2);
+                        break;
+
+                    case "p": // Personal
+                    case "3":
+                        ToggleMessageTagKey(3);
+                        break;
+
+                    case "t": // TODO
+                    case "4":
+                        ToggleMessageTagKey(4);
+                        break;
+
+                    case "l": // Later
+                    case "5":
+                        ToggleMessageTagKey(5);
+                        break;
+
+                    default:
+                        liberator.beep();
                 }
             },
             {
