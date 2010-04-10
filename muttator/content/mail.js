@@ -623,7 +623,7 @@ const Mail = Module("mail", {
 
         mappings.add(myModes, ["<Return>", "i"],
             "Inspect (focus) message",
-            function () { content.focus(); });
+            function () { config.browser.contentWindow.focus(); });
 
         mappings.add(myModes, ["I"],
             "Open the message in new tab",

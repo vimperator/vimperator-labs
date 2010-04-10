@@ -1023,8 +1023,9 @@ const Buffer = Module("buffer", {
             return elem;
         }
 
-        if (content.getSelection().rangeCount)
-            var elem = find(content.getSelection().getRangeAt(0).startContainer);
+        let win = config.browser.contentWindow;
+        if (win.getSelection().rangeCount)
+            var elem = find(win.getSelection().getRangeAt(0).startContainer);
         if (!(elem instanceof Element)) {
             let doc = Buffer.findScrollableWindow().document;
             elem = find(doc.body || doc.getElementsByTagName("body")[0] ||

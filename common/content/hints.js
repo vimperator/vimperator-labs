@@ -245,11 +245,11 @@ const Hints = Module("hints", {
      * Pushes the hints into the pageHints object, but does not display them.
      *
      * @param {Window} win The window for which to generate hints.
-     * @default window.content
+     * @default config.browser.contentWindow
      */
     _generate: function (win) {
         if (!win)
-            win = window.content;
+            win = config.browser.contentWindow;
 
         let doc = win.document;
         let height = win.innerHeight;
@@ -1080,7 +1080,10 @@ const Hints = Module("hints", {
     options: function () {
         const DEFAULT_HINTTAGS =
             util.makeXPath(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
-                + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']";
+                + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']"
+                + (config.name == "Muttator" ?
+                    " | //xhtml:div[@class='wrappedsender']/xhtml:div[contains(@class,'link')]" :
+                    "");
 
         function checkXPath(val) {
             try {
