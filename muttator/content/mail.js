@@ -536,10 +536,8 @@ const Mail = Module("mail", {
                 let folder = mail.getFolders(arg, true, true)[count];
                 if (!folder)
                     liberator.echoerr("Exxx: Folder \"" + arg + "\" does not exist");
-                else if (liberator.forceNewTab)
-                    MsgOpenNewTabForFolder(folder.URI);
                 else
-                    SelectFolder(folder.URI);
+                    liberator.open(folder);
             },
             {
                 argCount: "?",
@@ -633,7 +631,7 @@ const Mail = Module("mail", {
                 if (gDBView && gDBView.selection.count < 1)
                     return void liberator.beep();
 
-                MsgOpenNewTabForMessage();
+                OpenMessageInNewTab({shiftKey: options.getPref("mail.tabs.loadInBackground") });
             });
 
         /*mappings.add([modes.NORMAL],
@@ -853,7 +851,7 @@ const Mail = Module("mail", {
             "Select next folder",
             function (count) {
                 count = Math.max(1, count);
-                let newPos = this._getCurrentFolderIndex() + count;
+                let newPos = mail._getCurrentFolderIndex() + count;
                 if (newPos >= gFolderTreeView.rowCount) {
                     newPos = newPos % gFolderTreeView.rowCount;
                     commandline.echo("search hit BOTTOM, continuing at TOP", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
@@ -865,7 +863,7 @@ const Mail = Module("mail", {
         mappings.add(myModes, ["<C-N>"],
             "Go to next mailbox with unread messages",
             function (count) {
-                this._selectUnreadFolder(false, count);
+                mail._selectUnreadFolder(false, count);
             },
             { count: true });
 
@@ -873,7 +871,7 @@ const Mail = Module("mail", {
             "Select previous folder",
             function (count) {
                 count = Math.max(1, count);
-                let newPos = this._getCurrentFolderIndex() - count;
+                let newPos = mail._getCurrentFolderIndex() - count;
                 if (newPos < 0) {
                     newPos = (newPos % gFolderTreeView.rowCount) + gFolderTreeView.rowCount;
                     commandline.echo("search hit TOP, continuing at BOTTOM", commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES);
@@ -885,7 +883,7 @@ const Mail = Module("mail", {
         mappings.add(myModes, ["<C-P>"],
             "Go to previous mailbox with unread messages",
             function (count) {
-                this._selectUnreadFolder(true, count);
+                mail._selectUnreadFolder(true, count);
             },
             { count: true });
 
