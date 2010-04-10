@@ -3,6 +3,8 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
 
+const DEFAULT_FAVICON = "chrome://global/skin/icons/Portrait.png";
+
 const Config = Module("config", ConfigBase, {
     init: function () {
         // don't wait too long when selecting new messages
@@ -17,7 +19,7 @@ const Config = Module("config", ConfigBase, {
     get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: this.isComposeWindow ? [] : ["hints", "mail", "marks", "addressbook", "tabs"],
+    get features() this.isComposeWindow ? [] : ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
         guioptions: "frb",
         showtabline: 1,
@@ -94,9 +96,12 @@ const Config = Module("config", ConfigBase, {
             function () { buffer.viewSelectionSource(); }]*/
     ],
 
+    get hasTabbrowser() !this.isComposeWindow,
+
     focusChange: function (win) {
         // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
-        if (win && win.document instanceof HTMLDocument || liberator.focus instanceof HTMLAnchorElement) {
+        if (win && (win.document instanceof HTMLDocument || win.document instanceof XMLDocument) ||
+            liberator.focus instanceof HTMLAnchorElement) {
             if (config.isComposeWindow)
                 modes.set(modes.INSERT, modes.TEXTAREA);
             else if (liberator.mode != modes.MESSAGE)
@@ -110,7 +115,15 @@ const Config = Module("config", ConfigBase, {
         get mTabs() this.tabContainer.childNodes,
         get mCurrentTab() this.tabContainer.selectedItem,
         get mStrip() this.tabStrip,
-        get browsers() [browser for (browser in Iterator(this.mTabs))]
+        get browsers() {
+            let browsers = [];
+            for ([,tab] in Iterator(this.tabInfo)) {
+                let func = tab.mode.getBrowser || tab.mode.tabType.getBrowser;
+                if (func)
+                    browsers.push(func.call(tab.mode.tabType, tab));
+            }
+            return browsers;
+        }
     },
 
     // they are sorted by relevance, not alphabetically

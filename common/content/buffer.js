@@ -367,7 +367,7 @@ const Buffer = Module("buffer", {
     /**
      * @property {string} The current top-level document's URL.
      */
-    get URL() config.browser.currentURI.spec,
+    get URL() window.content ? window.content.location.href : config.browser.currentURI.spec,
 
     /**
      * @property {string} The current top-level document's URL, sans any

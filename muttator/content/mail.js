@@ -4,6 +4,8 @@
 // given in the License.txt file included with this file.
 
 const Mail = Module("mail", {
+    requires: ["liberator"],
+
     init: function () {
         services.add("smtpService", "@mozilla.org/messengercompose/smtp;1", Ci.nsISmtpService);
 
@@ -15,6 +17,8 @@ const Mail = Module("mail", {
         this._mailSession = Cc["@mozilla.org/messenger/services/session;1"].getService(Ci.nsIMsgMailSession);
         this._notifyFlags = Ci.nsIFolderListener.intPropertyChanged | Ci.nsIFolderListener.event;
         this._mailSession.AddFolderListener(this._folderListener, this._notifyFlags);
+
+        liberator.open = this.open;
     },
 
     _folderListener: {
@@ -391,6 +395,134 @@ const Mail = Module("mail", {
         gPrefBranch.setIntPref("mailnews.display.html_as", values[value][1]);
         gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", values[value][2]);
         ReloadMessage();
+    },
+
+    /**
+     * open folders and URLs
+     * @param {Object} targets
+     * @param {Object|Number} params
+     */
+    open: function (targets, params) {
+        let tabmail = document.getElementById("tabmail");
+
+        if (!(targets instanceof Array))
+            targets = [targets]; 
+
+        if (!params)
+            params = {};
+        else if (params instanceof Array)
+            params = { where: params };
+
+        let where = params.where || liberator.CURRENT_TAB;
+        if (liberator.forceNewTab || liberator.forceNewWindow || !tabmail.currentTabInfo.canClose)
+            where = liberator.NEW_TAB;
+
+        if ("from" in params) {
+            if (!("where" in params) && options["newtab"] && options.get("newtab").has("all", params.from))
+                where = liberator.NEW_TAB;
+            if (options["activate"] && !options.get("activate").has("all", params.from)) {
+                if (where == liberator.NEW_TAB)
+                    where = liberator.NEW_BACKGROUND_TAB;
+                else if (where == liberator.NEW_BACKGROUND_TAB)
+                    where = liberator.NEW_TAB;
+            }
+        }
+
+        function openTarget(target, where) {
+            if (target instanceof Ci.nsIMsgFolder) {
+                if (where == liberator.CURRENT_TAB && tabmail.currentTabInfo.mode.name == "folder") {
+                    SelectFolder(target.URI);
+                    return;
+                }
+                let args = {
+                    folder: target,
+                    background: where != liberator.NEW_TAB
+                };
+                ["folderPaneVisible", "messagePaneVisible", "msgHdr"].forEach(function(opt){
+                    if (opt in params)
+                        args[opt] = params[opt];
+                });
+                tabmail.openTab("folder", args);
+                return;
+            }
+            if (typeof target == "string") {
+                try {
+                    target = util.createURI(target);
+                } catch(e) {
+                    return;
+                }
+            }
+            if (!(target instanceof Ci.nsIURI))
+                return;
+
+            if (target.schemeIs("mailto")){
+                mail.composeNewMail({to: target.path});
+                return;
+            }
+            switch (where) {
+            case liberator.CURRENT_TAB:
+                if (tabmail.currentTabInfo.mode.name == "contentTab") {
+                    tabmail.currentTabInfo.browser.loadURI(target.spec);
+                    break;
+                }
+            case liberator.NEW_TAB:
+            case liberator.NEW_WINDOW:
+            case liberator.NEW_BACKGROUND_TAB:
+                let tab = tabmail.openTab("contentTab", {
+                    contentPage: target.spec,
+                    background: where != liberator.NEW_TAB,
+                    clickHandler: "liberator.modules.mail.siteClickHandler(event)"
+                });
+                let browser = tab.browser;
+                if (browser.hasAttribute("disablehistory")) {
+                    browser.webNavigation.sessionHistory =
+                        Cc["@mozilla.org/browser/shistory;1"].createInstance(Ci.nsISHistory);
+                    browser.removeAttribute("disablehistory");
+                }
+                break;
+            }
+        }
+
+        for (let [,target] in Iterator(targets)) {
+            openTarget(target, where);
+            where = liberator.NEW_BACKGROUND_TAB;
+        }
+    },
+
+    /**
+     * @see specialTabs.siteClickHandler
+     */
+    siteClickHandler: function(event){
+        if (!event.isTrusted || event.getPreventDefault() || event.button)
+            return true;
+
+        let href = hRefForClickEvent(event, true);
+
+        let isOpenExternal = true;
+        if (href) {
+            let uri = makeURI(href);
+            switch(uri.scheme){
+            case "http":
+            case "https":
+            case "chrome":
+            case "about":
+                isOpenExternal = false;
+                break;
+            case "liberator":
+                if (event.target.ownerDocument.location.protocol == "liberator:")
+                    config.browser.loadURI(uri.spec);
+                event.preventDefault();
+                return true;
+            default:
+                if (specialTabs._protocolSvc.isExposedProtocol(uri.scheme))
+                    isOpenExternal = false;
+            }
+
+            if (isOpenExternal) {
+                event.preventDefault();
+                openLinkExternally(href);
+            }
+        }
     }
 }, {
 }, {

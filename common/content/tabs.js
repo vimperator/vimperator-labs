@@ -238,8 +238,8 @@ const Tabs = Module("tabs", {
                     }
                 },
                 Thunderbird: function (tab) {
-                    if (config.tabbrowser.mTabs.length > 1)
-                        config.tabbrowser.removeTab(tab);
+                    if (config.tabbrowser.mTabs.length > 1 && !tab.hasAttribute("first-tab"))
+                        config.tabbrowser.closeTab(tab);
                     else
                         liberator.beep();
                 },

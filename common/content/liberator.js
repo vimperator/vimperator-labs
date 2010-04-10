@@ -1157,6 +1157,8 @@ const Liberator = Module("liberator", {
                     N: ["Tab number over icon", highlight.selector("TabIconNumber")]
                 },
                 setter: function (opts) {
+                    if (!liberator.has("tabs"))
+                        return;
                     const self = this;
                     let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
                     let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
