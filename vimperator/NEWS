@@ -1,5 +1,10 @@
 2010-xx-xx:
     * version 2.4
+    * Fix relative paths in :cd
+
+2010-04-07:
+    * version 2.3.1
+    * Fix a problem in the XPI which caused problems for some users
     * gH should work with multiple homepages
     * fix 'activate' option for some values
 
