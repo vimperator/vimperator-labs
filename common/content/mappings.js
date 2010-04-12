@@ -531,12 +531,13 @@ const Mappings = Module("mappings", {
             commands.add([ch + "unm[ap]"],
                 "Remove a mapping" + modeDescription,
                 function (args) {
-                    args = args[0];
+                    let lhs = args[0];
+                    let urls = args["-urls"] && RegExp(args["-urls"]);
 
                     let found = false;
                     for (let [, mode] in Iterator(modes)) {
-                        if (mappings.hasMap(mode, args, args["-urls"])) {
-                            mappings.remove(mode, args, args["-urls"]);
+                        if (mappings.hasMap(mode, lhs, urls)) {
+                            mappings.remove(mode, lhs, urls);
                             found = true;
                         }
                     }
