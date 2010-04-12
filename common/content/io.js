@@ -418,9 +418,9 @@ const IO = Module("io", {
     setCurrentDirectory: function (newDir) {
         newDir = newDir || "~";
 
-        if (newDir == "-")
+        if (newDir == "-") {
             [this._cwd, this._oldcwd] = [this._oldcwd, this.getCurrentDirectory()];
-        else {
+        } else {
             let dir = File(newDir);
 
             if (!dir.exists() || !dir.isDirectory()) {
@@ -428,10 +428,11 @@ const IO = Module("io", {
                 return null;
             }
 
+            dir.normalize();
             [this._cwd, this._oldcwd] = [dir, this.getCurrentDirectory()];
         }
 
-        return self.getCurrentDirectory();
+        return this.getCurrentDirectory();
     },
 
     /**
@@ -813,9 +814,9 @@ lookup:
             function (args) {
                 let arg = args.literalArg;
 
-                if (!arg)
+                if (!arg) {
                     arg = "~";
-                else if (arg == "-") {
+                } else if (arg == "-") {
                     liberator.assert(io._oldcwd, "E186: No previous directory");
                     arg = io._oldcwd.path;
                 }
@@ -824,12 +825,10 @@ lookup:
 
                 // go directly to an absolute path or look for a relative path
                 // match in 'cdpath'
-                // TODO: handle ../ and ./ paths
                 if (File.isAbsolutePath(arg)) {
                     if (io.setCurrentDirectory(arg))
                         liberator.echomsg(io.getCurrentDirectory().path);
-                }
-                else {
+                } else {
                     let dirs = File.getPathsFromPathList(options["cdpath"]);
                     let found = false;
 
