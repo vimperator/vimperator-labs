@@ -860,7 +860,7 @@ const Mail = Module("mail", {
             },
             { count: true });
 
-        mappings.add(myModes, ["<C-N>"],
+        mappings.add(myModes, ["<C-S-N>"],
             "Go to next mailbox with unread messages",
             function (count) {
                 mail._selectUnreadFolder(false, count);
@@ -880,7 +880,7 @@ const Mail = Module("mail", {
             },
             { count: true });
 
-        mappings.add(myModes, ["<C-P>"],
+        mappings.add(myModes, ["<C-S-P>"],
             "Go to previous mailbox with unread messages",
             function (count) {
                 mail._selectUnreadFolder(true, count);
