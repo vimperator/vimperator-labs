@@ -414,7 +414,7 @@ const Mail = Module("mail", {
             params = { where: params };
 
         let where = params.where || liberator.CURRENT_TAB;
-        if (liberator.forceNewTab || liberator.forceNewWindow || !tabmail.currentTabInfo.canClose)
+        if (liberator.forceNewTab || liberator.forceNewWindow)
             where = liberator.NEW_TAB;
 
         if ("from" in params) {
@@ -537,7 +537,7 @@ const Mail = Module("mail", {
                 if (!folder)
                     liberator.echoerr("Exxx: Folder \"" + arg + "\" does not exist");
                 else
-                    liberator.open(folder);
+                    liberator.open(folder, {from: "goto"});
             },
             {
                 argCount: "?",
