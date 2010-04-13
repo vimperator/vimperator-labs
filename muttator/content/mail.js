@@ -809,7 +809,7 @@ const Mail = Module("mail", {
 
         mappings.add(myModes, ["<C-s>"],
             "Archive message",
-            function () { mail._moveOrCopy(false, options["archivefolder"]); });
+            function () { MsgArchiveSelectedMessages(); });
 
         mappings.add(myModes, ["!"],
             "Mark/unmark selected messages as junk",
@@ -1042,16 +1042,6 @@ const Mail = Module("mail", {
             });
     },
     options: function () {
-        // FIXME: why does this default to "Archive", I don't have one? The default
-        // value won't validate now. mst please fix. --djk
-        options.add(["archivefolder"],
-            "Set the archive folder",
-            "string", "Archive",
-            {
-                completer: function (context) completion.mailFolder(context),
-                validator: Option.validateCompleter
-            });
-
         // TODO: generate the possible values dynamically from the menu
         options.add(["layout"],
             "Set the layout of the mail window",

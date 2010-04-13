@@ -3,6 +3,8 @@
     * Fix ctrl-shift-n/p going to next/prev unread folder (thanks temerako)
     * fix all l* (label read/starred/etc.) mappings for new Thunderbirds
     * add ":dialog accounts" to open Thunderbird's account manager
+    * change archive action (<C-s>) to use Thunderbird3 default feature
+    * remove "archivefolder" option
     * More small fixes
 
 2010-03-29
