@@ -1119,15 +1119,17 @@ const Commands = Module("commands", {
         let re = RegExp("[" + list + "]", "g");
         return function (str) q + String.replace(str, re, function ($0) $0 in Commands.quoteMap ? Commands.quoteMap[$0] : ("\\" + $0)) + q;
     };
+    function vimSingleQuote(s)
+        s.replace(/'/g, "''");
     Commands.complQuote = { // FIXME
         '"': ['"', quote("", '\n\t"\\\\'), '"'],
-        "'": ["'", quote("", "\\\\'"), "'"],
-        "":  ["", quote("",  "\\\\ "), ""]
+        "'": ["'", vimSingleQuote, "'"],
+        "":  ["", quote("",  "\\\\'\" "), ""]
     };
     Commands.quoteArg = {
         '"': quote('"', '\n\t"\\\\'),
-        "'": quote("'", "\\\\'"),
-        "":  quote("",  "\\\\ ")
+        "'": vimSingleQuote,
+        "":  quote("",  "\\\\'\" ")
     };
 
     Commands.parseBool = function (arg) {
