@@ -579,7 +579,7 @@ const Mail = Module("mail", {
 
         commands.add(["copy[to]"],
             "Copy selected messages",
-            function (args) { this._moveOrCopy(true, args.literalArg); },
+            function (args) { mail._moveOrCopy(true, args.literalArg); },
             {
                 argCount: 1,
                 completer: function (context) completion.mailFolder(context),
@@ -588,7 +588,7 @@ const Mail = Module("mail", {
 
         commands.add(["move[to]"],
             "Move selected messages",
-            function (args) { this._moveOrCopy(false, args.literalArg); },
+            function (args) { mail._moveOrCopy(false, args.literalArg); },
             {
                 argCount: 1,
                 completer: function (context) completion.mailFolder(context),
@@ -712,7 +712,7 @@ const Mail = Module("mail", {
             "Compose a new message to the sender of selected mail",
             function () {
               try {
-                  let to = this._escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
+                  let to = mail._escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
                   commandline.open(":", "mail " + to + " -subject=", modes.EX);
               }
               catch (e) {
@@ -809,7 +809,7 @@ const Mail = Module("mail", {
 
         mappings.add(myModes, ["<C-s>"],
             "Archive message",
-            function () { this._moveOrCopy(false, options["archivefolder"]); });
+            function () { mail._moveOrCopy(false, options["archivefolder"]); });
 
         mappings.add(myModes, ["!"],
             "Mark/unmark selected messages as junk",
@@ -1020,7 +1020,7 @@ const Mail = Module("mail", {
             function () {
                 try {
                     if (mail.currentAccount.server.type == "rss")
-                        util.copyToClipboard(this._getRSSUrl(), true);
+                        util.copyToClipboard(mail._getRSSUrl(), true);
                     else
                         util.copyToClipboard(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor, true);
                 }
@@ -1033,7 +1033,7 @@ const Mail = Module("mail", {
             function () {
                 try {
                     if (mail.currentAccount.server.type == "rss")
-                        messenger.launchExternalURL(this._getRSSUrl());
+                        messenger.launchExternalURL(mail._getRSSUrl());
                     // TODO: what to do for non-rss message?
                 }
                 catch (e) {
