@@ -1,7 +1,9 @@
 2010-xx-xx
     * add l1,l2,...,l5 to directly tag a message with the 1st, 2nd, ... tag
+    * Fix ctrl-shift-n/p going to next/prev unread folder (thanks temerako)
     * fix all l* (label read/starred/etc.) mappings for new Thunderbirds
     * add ":dialog accounts" to open Thunderbird's account manager
+    * More small fixes
 
 2010-03-29
     * version 0.6
