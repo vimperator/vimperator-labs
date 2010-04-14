@@ -28,7 +28,7 @@
                 src="chrome://global/locale/charsetTitles.properties"/>
         </stringbundleset>
 
-        <keyset id="mainKeyset">
+        <keyset id="&liberator.idkeyset;">
             <key id="key_open_vimbar" key=":" oncommand="window.liberator &and; liberator.modules.commandline.open(':', '', liberator.modules.modes.EX);" modifiers=""/>
             <key id="key_stop" keycode="VK_ESCAPE" oncommand="window.liberator &and; liberator.modules.events.onEscape();"/>
             <!-- other keys are handled inside the event loop in events.js -->

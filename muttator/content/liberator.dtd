@@ -10,4 +10,5 @@
 <!ENTITY liberator.hostbin "thunderbird">
 <!ENTITY liberator.statusBefore "">
 <!ENTITY liberator.statusAfter "statusTextBox">
+<!ENTITY liberator.idkeyset "mailKeys">
 
