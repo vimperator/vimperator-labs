@@ -695,6 +695,17 @@ const Events = Module("events", {
                 return;
             }
 
+            if (Editor.windowIsEditable(win)) {
+                if (options["insertmode"])
+                    modes.set(modes.INSERT);
+                else if (win.getSelection().toString() != "")
+                    modes.set(modes.VISUAL, modes.TEXTAREA);
+                else
+                    modes.main = modes.TEXTAREA;
+                buffer.lastInputField = win;
+                return;
+            }
+
             if (config.focusChange) {
                 config.focusChange(win);
                 return;
@@ -861,8 +872,6 @@ const Events = Module("events", {
             let stop = false;
 
             let win = document.commandDispatcher.focusedWindow;
-            if (win && win.document && "designMode" in win.document && win.document.designMode == "on" && !config.isComposeWindow)
-                stop = true;
             // menus have their own command handlers
             if (modes.extended & modes.MENU)
                 stop = true;

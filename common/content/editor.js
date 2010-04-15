@@ -91,18 +91,25 @@ const Editor = Module("editor", {
     },
 
     unselectText: function () {
-        let elem = liberator.focus;
-        // A error occurs if the element has been removed when "elem.selectionStart" is executed.
-        try {
-            if (elem && elem.selectionEnd)
-                elem.selectionEnd = elem.selectionStart;
+        let e = Editor.getEditor();
+        if (e instanceof Window) {
+            e.getSelection().collapseToStart();
+        } else {
+            // A error occurs if the element has been removed when "e.selectionStart" is executed.
+            try {
+                if (e && e.selectionEnd)
+                    e.selectionEnd = e.selectionStart;
+            }
+            catch (e) {}
         }
-        catch (e) {}
     },
 
     selectedText: function () {
-        let text = Editor.getEditor().value;
-        return text.substring(Editor.getEditor().selectionStart, Editor.getEditor().selectionEnd);
+        let e = Editor.getEditor();
+        if (e instanceof Window)
+            return e.getSelection().toString();
+        let text = e.value;
+        return text.substring(e.selectionStart, e.selectionEnd);
     },
 
     pasteClipboard: function () {
@@ -640,7 +647,15 @@ const Editor = Module("editor", {
                 this.removeAbbreviation(filter, lhs);
     }
 }, {
-    getEditor: function () liberator.focus,
+    getEditor: function () {
+        let e = liberator.focus;
+        if (!e) {
+            e = document.commandDispatcher.focusedWindow;
+            if (!Editor.windowIsEditable(e))
+                return null;
+        }
+        return e;
+    },
 
     getController: function () {
         let ed = Editor.getEditor();
@@ -648,6 +663,21 @@ const Editor = Module("editor", {
             return null;
 
         return ed.controllers.getControllerForCommand("cmd_beginLine");
+    },
+
+    windowIsEditable: function (win) {
+        if (!win)
+            win = document.commandDispatcher.focusedWindow;
+        if (!(win instanceof Window))
+            return false;
+        let editingSession = win
+            .QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIWebNavigation)
+            .QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIEditingSession);
+        return editingSession.windowIsEditable(win) &&
+               win.document.body &&
+               util.computedStyle(win.document.body).getPropertyValue("-moz-user-modify") == "read-write";
     }
 }, {
     commands: function () {

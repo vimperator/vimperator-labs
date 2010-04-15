@@ -5,6 +5,9 @@
     * add ":dialog accounts" to open Thunderbird's account manager
     * change archive action (<C-s>) to use Thunderbird3 default feature
     * remove "archivefolder" option
+    * Support rich text editor written by HTML.
+      mode is into editing mode (INSERT, TEXTAREA, VISUAL) if the focused window is editable.
+      And update map [m]i[m]: into be editing mode if editable otherwise MESSAGE mode.
     * More small fixes
 
 2010-03-29

@@ -1356,9 +1356,18 @@ const Buffer = Module("buffer", {
         mappings.add(myModes, ["i", "<Insert>"],
             "Start caret mode",
             function () {
-                // setting this option notifies an observer which takes care of the
-                // mode setting
-                options.setPref("accessibility.browsewithcaret", true);
+                if (Editor.windowIsEditable()) {
+                    if (options["insertmode"])
+                        modes.set(modes.INSERT);
+                    else if (win.getSelection().toString() != "")
+                        modes.set(modes.VISUAL, modes.TEXTAREA);
+                    else
+                        modes.main = modes.TEXTAREA;
+                } else {
+                    // setting this option notifies an observer which takes care of the
+                    // mode setting
+                    options.setPref("accessibility.browsewithcaret", true);
+                }
             });
 
         mappings.add(myModes, ["<C-c>"],
@@ -1467,9 +1476,12 @@ const Buffer = Module("buffer", {
                     buffer.focusElement(buffer.lastInputField);
                 else {
                     let xpath = ["input[not(@type) or @type='text' or @type='password' or @type='file']",
-                                 "textarea[not(@disabled) and not(@readonly)]"];
+                                 "textarea[not(@disabled) and not(@readonly)]",
+                                 "iframe"];
 
                     let elements = [m for (m in util.evaluateXPath(xpath))].filter(function (match) {
+                        if (match instanceof HTMLIFrameElement && !Editor.windowIsEditable(match.contentWindow))
+                            return false;
                         let computedStyle = util.computedStyle(match);
                         return computedStyle.visibility != "hidden" && computedStyle.display != "none";
                     });
