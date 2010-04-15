@@ -3,101 +3,77 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
 
-function Compose() { //{{{
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////// PRIVATE SECTION /////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+const Compose = Module("compose", {
+    init: function () {
+        var stateListener = {
+            QueryInterface: function (id) {
+                if (id.equals(Ci.nsIDocumentStateListener))
+                    return this;
+                throw Cr.NS_NOINTERFACE;
+            },
 
-    config.features = ["addressbook"]; // the composer has no special features
+            // this is (also) fired once the new compose window loaded the message for the first time
+            NotifyDocumentStateChanged: function (nowDirty) {
+                // only edit with external editor if this window was not cached!
+                liberator.log("NotifyDocumentStateChanged", 0);
+                if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
+                    window.messageWasEditedExternally = true;
+                    editor.editFieldExternally();
+                }
 
-    var stateListener = {
-        QueryInterface: function (id) {
-            if (id.equals(Ci.nsIDocumentStateListener))
-                return this;
-            throw Cr.NS_NOINTERFACE;
-        },
+            },
+            NotifyDocumentCreated: function () {},
+            NotifyDocumentWillBeDestroyed: function () {}
+        };
 
-        // this is (also) fired once the new compose window loaded the message for the first time
-        NotifyDocumentStateChanged: function (nowDirty) {
-            // only edit with external editor if this window was not cached!
-            if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
-                window.messageWasEditedExternally = true;
-                editor.editFieldExternally();
+        // XXX: Hack!
+        window.addEventListener("load", function () {
+            if (window.messageWasEditedExternally === undefined) {
+                window.messageWasEditedExternally = false;
+                GetCurrentEditor().addDocumentStateListener(stateListener);
             }
+        }, true);
 
-        },
-        NotifyDocumentCreated: function () {},
-        NotifyDocumentWillBeDestroyed: function () {}
-    };
-
-    // XXX: Hack!
-    window.document.addEventListener("load", function () {
-        if (window.messageWasEditedExternally === undefined) {
+        window.addEventListener("compose-window-close", function () {
             window.messageWasEditedExternally = false;
-            GetCurrentEditor().addDocumentStateListener(stateListener);
-        }
-    }, true);
+        }, true);
+    }
+}, {
+}, {
+    mappings: function () {
+        mappings.add([modes.COMPOSE],
+            ["e"], "Edit message",
+            function () { editor.editFieldExternally(); });
 
-    window.addEventListener("compose-window-close", function () {
-        window.messageWasEditedExternally = false;
-    }, true);
+        mappings.add([modes.COMPOSE],
+            ["y"], "Send message now",
+            function () { window.goDoCommand("cmd_sendNow"); });
 
-    /*window.document.addEventListener("unload", function () {
-        GetCurrentEditor().removeDocumentStateListener(config.stateListener);
-    }, true);*/
+        mappings.add([modes.COMPOSE],
+            ["Y"], "Send message later",
+            function () { window.goDoCommand("cmd_sendLater"); });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// OPTIONS /////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+        // FIXME: does not really work reliably
+        mappings.add([modes.COMPOSE],
+            ["t"], "Select To: field",
+            function () { awSetFocus(0, awGetInputElement(1)); });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// MAPPINGS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+        mappings.add([modes.COMPOSE],
+            ["s"], "Select Subject: field",
+            function () { GetMsgSubjectElement().focus(); });
 
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// COMMANDS ////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
+        mappings.add([modes.COMPOSE],
+            ["i"], "Select message body",
+            function () { SetMsgBodyFrameFocus(); });
 
-    mappings.add([modes.COMPOSE],
-        ["e"], "Edit message",
-        function () { editor.editFieldExternally(); });
+        mappings.add([modes.COMPOSE],
+            ["q"], "Close composer, ask when for unsaved changes",
+            function () { DoCommandClose(); });
 
-    mappings.add([modes.COMPOSE],
-        ["y"], "Send message now",
-        function () { window.goDoCommand("cmd_sendNow"); });
-
-    mappings.add([modes.COMPOSE],
-        ["Y"], "Send message later",
-        function () { window.goDoCommand("cmd_sendLater"); });
-
-    // FIXME: does not really work reliably
-    mappings.add([modes.COMPOSE],
-        ["t"], "Select To: field",
-        function () { awSetFocus(0, awGetInputElement(1)); });
-
-    mappings.add([modes.COMPOSE],
-        ["s"], "Select Subject: field",
-        function () { GetMsgSubjectElement().focus(); });
-
-    mappings.add([modes.COMPOSE],
-        ["i"], "Select message body",
-        function () { SetMsgBodyFrameFocus(); });
-
-    mappings.add([modes.COMPOSE],
-        ["q"], "Close composer, ask when for unsaved changes",
-        function () { DoCommandClose(); });
-
-    mappings.add([modes.COMPOSE],
-        ["Q", "ZQ"], "Force closing composer",
-        function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
-
-    /////////////////////////////////////////////////////////////////////////////}}}
-    ////////////////////// PUBLIC SECTION //////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////{{{
-
-    return {};
-
-    //}}}
-} //}}}
+        mappings.add([modes.COMPOSE],
+            ["Q", "ZQ"], "Force closing composer",
+            function () { MsgComposeCloseWindow(true); /* cache window for better performance*/ });
+    }
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:
