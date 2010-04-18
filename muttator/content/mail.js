@@ -1128,6 +1128,27 @@ const Mail = Module("mail", {
                 validator: Option.validateCompleter
             });
 
+        options.add(["foldermode", "folder"],
+            "Set the folder mode",
+            "string", "smart",
+            {
+                getter: function () gFolderTreeView.mode,
+                setter: function (value) {
+                    gFolderTreeView.mode = value;
+                    return value;
+                },
+                completer: function (context) {
+                    let modes = gFolderTreeView._modeNames;
+                    return modes.map(function(mode) {
+                        let name = (mode in gFolderTreeView._modeDisplayNames) ?
+                                   gFolderTreeView._modeDisplayNames[mode] :
+                                   document.getElementById("bundle_messenger").getString("folderPaneHeader_" + mode);
+                        return [mode, name];
+                    });
+                },
+                validator: Option.validateCompleter
+            });
+
         /*options.add(["threads"],
             "Use threading to group messages",
             "boolean", true,
