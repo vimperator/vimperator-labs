@@ -189,6 +189,51 @@ const Mail = Module("mail", {
         msgComposeService.OpenComposeWindowWithParams(null, params);
     },
 
+    /**
+     * returns Generator of all folders in the current view
+     * @param {Boolean} includeServers
+     * @param {Boolean} includeMsgFolders
+     * @return {Generator}
+     *         [
+     *           [{Object ftvItem} row, {String} folderPath]
+     *           ...
+     *         ]
+     */
+    getAllFolderRowMap: function (includeServers, includeMsgFolders) {
+        if (includeServers === undefined)
+            includeServers = false;
+        if (includeMsgFolders === undefined)
+            includeMsgFolders = true;
+
+        function walkChildren(children, prefix) {
+            for (let [, row] in Iterator(children)) {
+                let folder = row._folder;
+                let folderString = prefix + "/" +
+                                   (row.useServerNameOnly ? folder.server.prettyName : folder.abbreviatedName);
+                yield [row, folderString];
+                if (row.children.length > 0)
+                    for (let child in walkChildren(row.children, folderString))
+                        yield child;
+            }
+        }
+        for (let i = 0; i < gFolderTreeView.rowCount; i++) {
+            let row = gFolderTreeView._rowMap[i];
+            if (row.level != 0)
+                continue;
+
+            let folder = row._folder;
+            let folderString = folder.server.prettyName + ": " +
+                               (row.useServerNameOnly ? folder.server.prettyName : folder.abbreviatedName);
+
+            if ((folder.isServer && includeServers) || (!folder.isServer && includeMsgFolders))
+                yield [row, folderString];
+
+            if (includeMsgFolders && row.children.length > 0)
+                for (let child in walkChildren(row.children, folderString))
+                    yield child;
+        }
+    },
+
     // returns an array of nsIMsgFolder objects
     getFolders: function (filter, includeServers, includeMsgFolders) {
         let folders = [];
@@ -197,24 +242,27 @@ const Mail = Module("mail", {
         else
             filter = filter.toLowerCase();
 
-        if (includeServers === undefined)
-            includeServers = false;
-        if (includeMsgFolders === undefined)
-            includeMsgFolders = true;
-
-        for (let i = 0; i < gFolderTreeView.rowCount; i++) {
-            let resource = gFolderTreeView._rowMap[i]._folder;
-            if ((resource.isServer && !includeServers) || (!resource.isServer && !includeMsgFolders))
-                continue;
-
-            let folderString = resource.server.prettyName + ": " + resource.name;
-
-            if (resource.prettiestName.toLowerCase().indexOf(filter) >= 0)
-                folders.push(resource);
-            else if (folderString.toLowerCase().indexOf(filter) >= 0)
-                folders.push(resource);
+        for (let [row, name] in this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
+            let folder = row._folder;
+            // XXX: row._folder.prettyName is needed ? -- teramako
+            if (name.toLowerCase().indexOf(filter) >= 0)
+                folders.push(row._folder);
         }
         return folders;
+    },
+
+    /**
+     * returns array of nsIMsgFolder objects
+     * @param {Number} flag
+     *        e.g.) Ci.nsMsgFolderFlags.Inbox
+     * @see Ci.nsMsgFolderFlags
+     * @return {nsIMsgFolder[]}
+     */
+    getFoldersWithFlag: function (flag) {
+        if (flag) {
+            return [row._folder for ([row] in this.getAllFolderRowMap(true,true)) if (row._folder.flags & flag)]
+        }
+        return [];
     },
 
     getNewMessages: function (currentAccountOnly) {
@@ -531,9 +579,11 @@ const Mail = Module("mail", {
             "Select a folder",
             function (args) {
                 let count = Math.max(0, args.count - 1);
-                let arg = args.literalArg || "Inbox";
+                let arg = args.literalArg;
 
-                let folder = mail.getFolders(arg, true, true)[count];
+                let folder = arg ?
+                             mail.getFolders(arg, true, true)[count] :
+                             mail.getFoldersWithFlag(Ci.nsMsgFolderFlags.Inbox)[count];
                 if (!folder)
                     liberator.echoerr("Exxx: Folder \"" + arg + "\" does not exist");
                 else
@@ -610,12 +660,10 @@ const Mail = Module("mail", {
     },
     completion: function () {
         completion.mailFolder = function mailFolder(context) {
-            let folders = mail.getFolders(context.filter);
             context.anchored = false;
             context.quote = false;
-            context.completions = folders.map(function (folder)
-                    [folder.server.prettyName + ": " + folder.name,
-                     "Unread: " + folder.getNumUnread(false)]);
+            context.completions = [[row[1], "Unread: " + row[0]._folder.getNumUnread(false)]
+                                   for (row in mail.getAllFolderRowMap(true,true))];
         };
     },
     mappings: function () {
@@ -839,7 +887,7 @@ const Mail = Module("mail", {
         mappings.add(myModes, ["gi"],
             "Go to inbox",
             function (count) {
-                let folder = mail.getFolders("Inbox", false, true)[(count > 0) ? (count - 1) : 0];
+                let folder = mail.getFoldersWithFlag(Ci.nsMsgFolderFlags.Inbox)[(count > 0) ? (count - 1) : 0]
                 if (folder)
                     SelectFolder(folder.URI);
                 else
