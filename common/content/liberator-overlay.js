@@ -34,6 +34,7 @@
     // the number of required components for easier porting to new applications
     ["base.js",
      "modules.js",
+     "abbreviations.js",
      "autocommands.js",
      "buffer.js",
      "commandline.js",

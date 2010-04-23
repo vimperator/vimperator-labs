@@ -1479,13 +1479,13 @@ const CommandLine = Module("commandline", {
             ["<Space>", '"', "'"], "Expand command line abbreviation",
             function () {
                 commandline.resetCompletions();
-                return editor.expandAbbreviation("c");
+                return editor.expandAbbreviation(modes.COMMAND_LINE);
             },
             { route: true });
 
         mappings.add(myModes,
             ["<C-]>", "<C-5>"], "Expand command line abbreviation",
-            function () { editor.expandAbbreviation("c"); });
+            function () { editor.expandAbbreviation(modes.COMMAND_LINE); });
 
         mappings.add([modes.NORMAL],
             ["g<"], "Redisplay the last command output",

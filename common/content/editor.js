@@ -11,63 +11,13 @@
 
 /** @instance editor */
 const Editor = Module("editor", {
-    requires: ["config"],
+    requires: ["config", "abbreviations"],
 
     init: function () {
         // store our last search with f, F, t or T
         //
         this._lastFindChar = null;
         this._lastFindCharFunc = null;
-        // XXX: this strikes me as a rather odd ds; everyone's a critic --djk
-        this._abbreviations = {}; // this._abbreviations["lhr"][0]["{i,c,!}","rhs"]
-
-        // (summarized from Vim's ":help this._abbreviations")
-        //
-        // There are three types of this._abbreviations:
-        //
-        // full-id: Consists entirely of keyword characters.
-        //          ("foo", "g3", "-1")
-        //
-        // end-id: Ends in a keyword character, but all other
-        //         are not keyword characters.
-        //         ("#i", "..f", "$/7")
-        //
-        // non-id: Ends in a non-keyword character, but the
-        //         others can be of any type other than space
-        //         and tab.
-        //         ("def#", "4/7$")
-        //
-        // Example strings that cannot be this._abbreviations:
-        //         "a.b", "#def", "a b", "_$r"
-        //
-        // For now, a keyword character is anything except for \s, ", or '
-        // (i.e., whitespace and quotes). In Vim, a keyword character is
-        // specified by the 'iskeyword' setting and is a much less inclusive
-        // list.
-        //
-        // TODO: Make keyword definition closer to Vim's default keyword
-        //       definition (which differs across platforms).
-        //
-
-        let nonkw = "\\s\"'";
-        let keyword = "[^" + nonkw + "]";
-        let nonkeyword = "[" + nonkw + "]";
-
-        let fullId = keyword + "+";
-        let endId = nonkeyword + "+" + keyword;
-        let nonId = "\\S*" + nonkeyword;
-
-        // Used in addAbbrevation and expandAbbreviation
-        this._abbrevmatch = fullId + "|" + endId + "|" + nonId;
-
-    },
-
-    // For the record, some of this code I've just finished throwing
-    // away makes me want to pull someone else's hair out. --Kris
-    abbrevs: function () {
-        for (let [lhs, abbr] in Iterator(this._abbreviations))
-            for (let [, rhs] in Iterator(abbr))
-                yield [lhs, rhs];
     },
 
     line: function () {
@@ -425,227 +375,35 @@ const Editor = Module("editor", {
         return;
     },
 
-    // Abbreviations {{{
-
-    // NOTE: I think this comment block is trying to say something but no
-    // one is listening. In space, no one can hear you scream. --djk
-    //
-    // System for adding this._abbreviations:
-    //
-    // filter == ! delete all, and set first (END)
-    //
-    // if filter == ! remove all and add it as only END
-    //
-    // variant 1: rhs matches anywhere in loop
-    //
-    //          1 mod matches anywhere in loop
-    //                  a) simple replace and
-    //                      I)  (maybe there's another rhs that matches?  not possible)
-    //                          (when there's another item, it's opposite mod with different rhs)
-    //                          (so do nothing further but END)
-    //
-    //          2 mod does not match
-    //                  a) the opposite is there -> make a ! and put it as only and END
-    //                 (b) a ! is there. do nothing END)
-    //
-    // variant 2: rhs matches *no*were in loop and filter is c or i
-    //            every kind of current combo is possible to 1 {c,i,!} or two {c and i}
-    //
-    //          1 mod is ! split into two i + c END
-    //          1 not !: opposite mode (first), add/change 'second' and END
-    //          1 not !: same mode (first), overwrite first this END
-    //
-    // TODO: I don't like these funky filters, I am a funky filter hater. --djk
-    //     : make this a separate object
-    //     : use Struct for individual this._abbreviations
-    //     : rename "filter" arg "mode"
-    /**
-     * Adds a new abbreviation. Abbreviations consist of a LHS (the text
-     * that is replaced when the abbreviation is expanded) and a RHS (the
-     * replacement text).
-     *
-     * @param {string} filter The mode filter. This specifies the modes in
-     *     which this abbreviation is available. Either:
-     *       "c" - applies in command-line mode
-     *       "i" - applies in insert mode
-     *       "!" - applies in both command-line and insert modes
-     * @param {string} lhs The LHS of the abbreviation.
-     * @param {string} rhs The RHS of the abbreviation.
-     */
-    addAbbreviation: function (filter, lhs, rhs) {
-        if (!this._abbreviations[lhs]) {
-            this._abbreviations[lhs] = [];
-            this._abbreviations[lhs][0] = [filter, rhs];
-            return;
-        }
-
-        if (filter == "!") {
-            if (this._abbreviations[lhs][1])
-                this._abbreviations[lhs][1] = "";
-            this._abbreviations[lhs][0] = [filter, rhs];
-            return;
-        }
-
-        for (let i = 0; i < this._abbreviations[lhs].length; i++) {
-            if (this._abbreviations[lhs][i][1] == rhs) {
-                if (this._abbreviations[lhs][i][0] == filter) {
-                    this._abbreviations[lhs][i] = [filter, rhs];
-                    return;
-                }
-                else {
-                    if (this._abbreviations[lhs][i][0] != "!") {
-                        if (this._abbreviations[lhs][1])
-                            this._abbreviations[lhs][1] = "";
-                        this._abbreviations[lhs][0] = ["!", rhs];
-                        return;
-                    }
-                    else
-                        return;
-                }
-            }
-        }
-
-        if (this._abbreviations[lhs][0][0] == "!") {
-            let tmpOpp = ("i" == filter) ? "c" : "i";
-            this._abbreviations[lhs][1] = [tmpOpp, this._abbreviations[lhs][0][1]];
-            this._abbreviations[lhs][0] = [filter, rhs];
-            return;
-        }
-
-        if (this._abbreviations[lhs][0][0] != filter)
-            this._abbreviations[lhs][1] = [filter, rhs];
-        else
-            this._abbreviations[lhs][0] = [filter, rhs];
-    },
-
     /**
      * Expands an abbreviation in the currently active textbox.
      *
      * @param {string} filter The mode filter.
      * @see #addAbbreviation
      */
-    expandAbbreviation: function (filter) {
+    expandAbbreviation: function (mode) {
         let textbox   = Editor.getEditor();
         if (!textbox)
             return false;
         let text      = textbox.value;
         let currStart = textbox.selectionStart;
         let currEnd   = textbox.selectionEnd;
-        let foundWord = text.substring(0, currStart).replace(RegExp("^(.|\\n)*?\\s*(" + this._abbrevmatch + ")$", "m"), "$2"); // get last word \b word boundary
+        let foundWord = text.substring(0, currStart).replace(RegExp("^(.|\\n)*?\\s*(" + abbreviations._match + ")$", "m"), "$2"); // get last word \b word boundary
         if (!foundWord)
             return true;
 
-        for (let lhs in this._abbreviations) {
-            for (let i = 0; i < this._abbreviations[lhs].length; i++) {
-                if (lhs == foundWord && (this._abbreviations[lhs][i][0] == filter || this._abbreviations[lhs][i][0] == "!")) {
-                    // if found, replace accordingly
-                    let len = foundWord.length;
-                    let abbrText = this._abbreviations[lhs][i][1];
-                    text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
-                    textbox.value = text;
-                    textbox.selectionStart = currStart - len + abbrText.length;
-                    textbox.selectionEnd   = currEnd   - len + abbrText.length;
-                    break;
-                }
-            }
+        let abbrev = abbreviations.get(mode, foundWord);
+        if (abbrev) {
+            let len = foundWord.length;
+            let abbrText = abbrev.text;
+            text = text.substring(0, currStart - len) + abbrText + text.substring(currStart);
+            textbox.value = text;
+            textbox.selectionStart = currStart - len + abbrText.length;
+            textbox.selectionEnd   = currEnd   - len + abbrText.length;
         }
+
         return true;
     },
-
-    /**
-     * Returns all abbreviations matching <b>filter</b> and <b>lhs</b>.
-     *
-     * @param {string} filter The mode filter.
-     * @param {string} lhs The LHS of the abbreviation.
-     * @returns {Array} The matching abbreviations [mode, lhs, rhs]
-     * @see #addAbbreviation
-     */
-    getAbbreviations: function (filter, lhs) {
-        // ! -> list all, on c or i ! matches too
-        let searchFilter = (filter == "!") ? "!ci" : filter + "!";
-        return [[mode, left, right] for ([left, [mode, right]] in this.abbrevs())
-                   if (searchFilter.indexOf(mode) >= 0 && left.indexOf(lhs || "") == 0)];
-    },
-
-    /**
-     * Lists all abbreviations matching <b>filter</b> and <b>lhs</b>.
-     *
-     * @param {string} filter The mode filter.
-     * @param {string} lhs The LHS of the abbreviation.
-     * @see #addAbbreviation
-     */
-    listAbbreviations: function (filter, lhs) {
-        let list = this.getAbbreviations(filter, lhs);
-
-        if (!list.length)
-            liberator.echomsg("No this._abbreviations found");
-        else if (list.length == 1) {
-            let [mode, lhs, rhs] = list[0];
-
-            liberator.echo(mode + "  " + lhs + "   " + rhs, commandline.FORCE_SINGLELINE); // 2 spaces, 3 spaces
-        }
-        else {
-            list = template.tabular(["", "LHS", "RHS"], [], list);
-            commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-        }
-    },
-
-    /**
-     * Deletes all abbreviations matching <b>filter</b> and <b>lhs</b>.
-     *
-     * @param {string} filter The mode filter.
-     * @param {string} lhs The LHS of the abbreviation.
-     * @see #addAbbreviation
-     */
-    removeAbbreviation: function (filter, lhs) {
-        if (!lhs) {
-            liberator.echoerr("E474: Invalid argument");
-            return false;
-        }
-
-        if (this._abbreviations[lhs]) { // this._abbreviations exists
-            if (filter == "!") {
-                this._abbreviations[lhs] = "";
-                return true;
-            }
-            else {
-                if (!this._abbreviations[lhs][1]) { // only one exists
-                    if (this._abbreviations[lhs][0][0] == "!") { // exists as ! -> no 'full' delete
-                        this._abbreviations[lhs][0][0] = (filter == "i") ? "c" : "i";   // ! - i = c; ! - c = i
-                        return true;
-                    }
-                    else if (this._abbreviations[lhs][0][0] == filter) {
-                        this._abbreviations[lhs] = "";
-                        return true;
-                    }
-                }
-                else { // two this._abbreviations exist ( 'i' or 'c' (filter as well))
-                    if (this._abbreviations[lhs][0][0] == "c" && filter == "c")
-                        this._abbreviations[lhs][0] = this._abbreviations[lhs][1];
-
-                    this._abbreviations[lhs][1] = "";
-
-                    return true;
-                }
-            }
-        }
-
-        liberator.echoerr("E24: No such abbreviation");
-        return false;
-    },
-
-    /**
-     * Removes all abbreviations matching <b>filter</b>.
-     *
-     * @param {string} filter The mode filter.
-     * @see #addAbbreviation
-     */
-    removeAllAbbreviations: function (filter) {
-        let searchFilter = (filter == "!") ? "!ci" : filter + "!";
-        for (let [lhs, [mode, rhs]] in this.abbrevs())
-            if (searchFilter.indexOf(mode) >= 0)
-                this.removeAbbreviation(filter, lhs);
-    }
 }, {
     getEditor: function () {
         let e = liberator.focus;
@@ -680,67 +438,6 @@ const Editor = Module("editor", {
                util.computedStyle(win.document.body).getPropertyValue("-moz-user-modify") == "read-write";
     }
 }, {
-    commands: function () {
-        // mode = "i" -> add :iabbrev, :iabclear and :iunabbrev commands
-        function addAbbreviationCommands(ch, modeDescription) {
-            let mode = ch || "!";
-            modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
-
-            commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
-                "Abbreviate a key sequence" + modeDescription,
-                function (args) {
-                    let matches = args.string.match(RegExp("^\\s*($|" + editor._abbrevmatch + ")(?:\\s*$|\\s+(.*))"));
-                    liberator.assert(matches, "E474: Invalid argument");
-
-                    let [, lhs, rhs] = matches;
-                    if (rhs)
-                        editor.addAbbreviation(mode, lhs, rhs);
-                    else
-                        editor.listAbbreviations(mode, lhs || "");
-                }, {
-                    completer: function (context, args) completion.abbreviation(context, args, mode),
-                    literal: 0,
-                    serial: function () [ {
-                            command: this.name,
-                            arguments: [lhs],
-                            literalArg: abbr[1]
-                        }
-                        for ([lhs, abbr] in editor.abbrevs())
-                        if (abbr[0] == mode)
-                    ]
-                });
-
-            commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],
-                "Remove an abbreviation" + modeDescription,
-                function (args) { editor.removeAbbreviation(mode, args.literalArg); }, {
-                    argCount: "1",
-                    completer: function (context, args) completion.abbreviation(context, args, mode),
-                    literal: 0
-                });
-
-            commands.add([ch + "abc[lear]"],
-                "Remove all this._abbreviations" + modeDescription,
-                function () { editor.removeAllAbbreviations(mode); },
-                { argCount: "0" });
-        }
-
-        addAbbreviationCommands("", "");
-        addAbbreviationCommands("i", "insert");
-        addAbbreviationCommands("c", "command line");
-    },
-
-    completion: function () {
-        // TODO: shouldn't all of these have a standard signature (context, args, ...)? --djk
-        completion.abbreviation = function abbreviation(context, args, mode) {
-            mode = mode || "!";
-
-            if (args.completeArg == 0) {
-                let abbreviations = editor.getAbbreviations(mode);
-                context.completions = [[lhs, ""] for ([, [, lhs,]] in Iterator(abbreviations))];
-            }
-        };
-    },
-
     mappings: function () {
         var myModes = [modes.INSERT, modes.COMMAND_LINE];
 
@@ -900,16 +597,16 @@ const Editor = Module("editor", {
 
         mappings.add([modes.INSERT],
             ["<Space>", "<Return>"], "Expand insert mode abbreviation",
-            function () { editor.expandAbbreviation("i"); },
+            function () { editor.expandAbbreviation(modes.INSERT); },
             { route: true });
 
         mappings.add([modes.INSERT],
             ["<Tab>"], "Expand insert mode abbreviation",
-            function () { editor.expandAbbreviation("i"); document.commandDispatcher.advanceFocus(); });
+            function () { editor.expandAbbreviation(modes.INSERT); document.commandDispatcher.advanceFocus(); });
 
         mappings.add([modes.INSERT],
             ["<C-]>", "<C-5>"], "Expand insert mode abbreviation",
-            function () { editor.expandAbbreviation("i"); });
+            function () { editor.expandAbbreviation(modes.INSERT); });
 
         // textarea mode
         mappings.add([modes.TEXTAREA],
