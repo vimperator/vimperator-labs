@@ -5,6 +5,7 @@
 
 const Addressbook = Module("addressbook", {
     init: function () {
+        services.add("abManager", "@mozilla.org/abmanager;1", Ci.nsIAbManager);
     },
 
     // TODO: add option for a format specifier, like:
@@ -41,7 +42,7 @@ const Addressbook = Module("addressbook", {
     // TODO: add telephone number support
     list: function (filter, newMail) {
         let addresses = [];
-        let dirs = abManager.directories;
+        let dirs = services.get("abManager").directories;
         let lowerFilter = filter.toLowerCase();
 
         while (dirs.hasMoreElements()) {
@@ -96,7 +97,7 @@ const Addressbook = Module("addressbook", {
                 let lastName    = args["-lastname"] || null;
                 let displayName = args["-name"] || null;
                 if (!displayName)
-                    displayName = this.generateDisplayName(firstName, lastName);
+                    displayName = addressbook.generateDisplayName(firstName, lastName);
 
                 if (addressbook.add(mailAddr, firstName, lastName, displayName))
                     liberator.echomsg("Added address: " + displayName + " <" + mailAddr + ">", 1, commandline.FORCE_SINGLELINE);
