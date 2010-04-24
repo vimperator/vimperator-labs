@@ -8,6 +8,7 @@
     * Support rich text editor written by HTML.
       mode is into editing mode (INSERT, TEXTAREA, VISUAL) if the focused window is editable.
       And update map [m]i[m]: into be editing mode if editable otherwise MESSAGE mode.
+    * enable to edit a HTML message on HTML compose mode.
     * new 'foldermode' option to change folder panel view.
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * More small fixes

@@ -43,7 +43,10 @@ const Compose = Module("compose", {
     mappings: function () {
         mappings.add([modes.COMPOSE],
             ["e"], "Edit message",
-            function () { editor.editFieldExternally(); });
+            function () {
+                GetCurrentEditorElement().contentWindow.focus();
+                editor.editFieldExternally();
+            });
 
         mappings.add([modes.COMPOSE],
             ["y"], "Send message now",

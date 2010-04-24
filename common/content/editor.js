@@ -298,9 +298,20 @@ const Editor = Module("editor", {
         if (!options["editor"])
             return;
 
-        let textBox = null;
-        if (!(config.isComposeWindow))
+        let textBox = null, nsEditor = null;
+        if (Editor.windowIsEditable()) {
+            let win = document.commandDispatcher.focusedWindow;
+            nsEditor = win.QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsIWebNavigation)
+                    .QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsIEditingSession)
+                    .getEditorForWindow(win);
+            nsEditor instanceof Ci.nsIPlaintextEditor;
+            nsEditor instanceof Ci.nsIHTMLEditor;
+        }
+        else {
             textBox = liberator.focus;
+        }
 
         if (!forceEditing && textBox && textBox.type == "password") {
             commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
@@ -312,22 +323,34 @@ const Editor = Module("editor", {
         }
 
         let text = ""; // XXX
-        if (textBox)
+        let isHTML = false;
+        if (textBox) {
             text = textBox.value;
-        else if (typeof GetCurrentEditor == "function") // Thunderbird composer
-            text = GetCurrentEditor().outputToString("text/plain", 2);
-        else
+        }
+        else if (nsEditor) {
+            isHTML = nsEditor.flags & Ci.nsIPlaintextEditor.eEditorPlaintextMask ? false : true;
+            text = isHTML ?
+                   nsEditor.outputToString("text/html", Ci.nsIDocumentEncoder.OutputBodyOnly) :
+                   nsEditor.outputToString("text/plain", Ci.nsIDocumentEncoder.OutpuFormatted);
+        }
+        else {
             return;
+        }
 
-        let oldBg, tmpBg;
+        let elem, oldBg, tmpBg;
         try {
             let res = io.withTempFiles(function (tmpfile) {
                 if (textBox) {
                     textBox.setAttribute("readonly", "true");
-                    oldBg = textBox.style.backgroundColor;
-                    tmpBg = "yellow";
-                    textBox.style.backgroundColor = "#bbbbbb";
+                    elem = textBox;
                 }
+                else if (nsEditor) {
+                    nsEditor.flags |= Ci.nsIPlaintextEditor.eEditorReadonlyMask;
+                    elem = nsEditor.rootElement;
+                }
+                oldBg = elem.style.backgroundColor;
+                tmpBg = "yellow";
+                elem.style.backgroundColor = "#bbbbbb";
 
                 if (!tmpfile.write(text))
                     throw Error("Input contains characters not valid in the current " +
@@ -335,20 +358,28 @@ const Editor = Module("editor", {
 
                 this.editFileExternally(tmpfile.path);
 
-                if (textBox)
-                    textBox.removeAttribute("readonly");
-
                 let val = tmpfile.read();
-                if (textBox)
+                if (textBox) {
+                    textBox.removeAttribute("readonly");
                     textBox.value = val;
-                else {
-                    let editor = GetCurrentEditor();
-                    let wholeDocRange = editor.document.createRange();
-                    let rootNode = editor.rootElement.QueryInterface(Ci.nsIDOMNode);
+                }
+                else if (nsEditor) {
+                    nsEditor.flags &= ~Ci.nsIPlaintextEditor.eEditorReadonlyMask;
+                    let wholeDocRange = nsEditor.document.createRange();
+                    let rootNode = nsEditor.rootElement.QueryInterface(Ci.nsIDOMNode);
                     wholeDocRange.selectNodeContents(rootNode);
-                    editor.selection.addRange(wholeDocRange);
-                    editor.selection.deleteFromDocument();
-                    editor.insertText(val);
+                    nsEditor.selection.addRange(wholeDocRange);
+                    nsEditor.selection.deleteFromDocument();
+                    if (isHTML) {
+                        let doc = nsEditor.document;
+                        let htmlFragment = doc.implementation.createDocument(null, 'html', null);
+                        let range = doc.createRange();
+                        range.setStartAfter(doc.body);
+                        doc.body.appendChild(range.createContextualFragment(val));
+                    }
+                    else {
+                        nsEditor.insertText(val);
+                    }
                 }
             }, this);
             if (res == false)
@@ -363,10 +394,10 @@ const Editor = Module("editor", {
         }
 
         // blink the textbox after returning
-        if (textBox) {
+        if (elem) {
             let colors = [tmpBg, oldBg, tmpBg, oldBg];
             (function () {
-                textBox.style.backgroundColor = colors.shift();
+                elem.style.backgroundColor = colors.shift();
                 if (colors.length > 0)
                     setTimeout(arguments.callee, 100);
             })();
