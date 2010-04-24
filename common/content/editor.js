@@ -388,9 +388,10 @@ const Editor = Module("editor", {
         let text      = textbox.value;
         let currStart = textbox.selectionStart;
         let currEnd   = textbox.selectionEnd;
-        let foundWord = text.substring(0, currStart).replace(RegExp("^(.|\\n)*?\\s*(" + abbreviations._match + ")$", "m"), "$2"); // get last word \b word boundary
+        let foundWord = text.substring(0, currStart).replace(/.*\n/gm, '').match(RegExp('(' + abbreviations._match + ')$'), '');
         if (!foundWord)
             return true;
+        foundWord = foundWord[0];
 
         let abbrev = abbreviations.get(mode, foundWord);
         if (abbrev) {
