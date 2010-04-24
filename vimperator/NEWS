@@ -5,6 +5,7 @@
       mode is into editing mode (INSERT, TEXTAREA, VISUAL) if the focused window is editable.
       And update map [m]i[m]: into be editing mode if editable otherwise CARET mode.
     * Strings starting with a "." are no longer treated as urls by :open et.al.
+    * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
 
 2010-04-07:
     * version 2.3.1

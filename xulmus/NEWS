@@ -14,6 +14,7 @@
     * add 'repeat' and 'shuffle'
     * add 'jsdebugger' option - switch on/off javascript debugger service
     * add "addons", "downloads", "extoptions" and "help" to the 'activate' option.
+    * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
 
 2009-03-28:
     * version 0.1

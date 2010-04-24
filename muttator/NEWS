@@ -9,6 +9,7 @@
       mode is into editing mode (INSERT, TEXTAREA, VISUAL) if the focused window is editable.
       And update map [m]i[m]: into be editing mode if editable otherwise MESSAGE mode.
     * new 'foldermode' option to change folder panel view.
+    * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * More small fixes
 
 2010-03-29
