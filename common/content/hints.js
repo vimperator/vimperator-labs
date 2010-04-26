@@ -240,6 +240,33 @@ const Hints = Module("hints", {
     },
 
     /**
+     * Returns true if element is visible.
+     *
+     * Only called by {@link #_generate}.
+     */
+    _isVisible: function (elem, win) {
+        let doc = win.document;
+        let height = win.innerHeight;
+        let width  = win.innerWidth;
+
+        // TODO: for iframes, this calculation is wrong
+        let rect = elem.getBoundingClientRect();
+
+        if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
+            return false;
+
+        rect = elem.getClientRects()[0];
+        if (!rect)
+            return false;
+
+        let computedStyle = doc.defaultView.getComputedStyle(elem, null);
+        if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
+            return false;
+
+        return true;
+    },
+
+    /**
      * Generate the hints in a window.
      *
      * Pushes the hints into the pageHints object, but does not display them.
@@ -252,8 +279,6 @@ const Hints = Module("hints", {
             win = config.browser.contentWindow;
 
         let doc = win.document;
-        let height = win.innerHeight;
-        let width  = win.innerWidth;
         let [offsetX, offsetY] = this._getContainerOffsets(doc);
 
         let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
@@ -264,25 +289,14 @@ const Hints = Module("hints", {
         let start = this._pageHints.length;
         let elem;
 
-        while (elem = res.iterateNext()) {
+        let that = this;
+
+        function makeHint (elem) {
+            let rect = elem.getClientRects()[0];
             let hint = { elem: elem, showText: false };
 
-            // TODO: for iframes, this calculation is wrong
-            rect = elem.getBoundingClientRect();
-
-            if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
-                continue;
-
-            rect = elem.getClientRects()[0];
-            if (!rect)
-                continue;
-
-            let computedStyle = doc.defaultView.getComputedStyle(elem, null);
-            if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
-                continue;
-
             if (elem instanceof HTMLInputElement || elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
-                [hint.text, hint.showText] = this._getInputHint(elem, doc);
+                [hint.text, hint.showText] = that._getInputHint(elem, doc);
             else
                 hint.text = elem.textContent.toLowerCase();
 
@@ -292,13 +306,42 @@ const Hints = Module("hints", {
             let topPos =  Math.max((rect.top + offsetY), offsetY);
 
             if (elem instanceof HTMLAreaElement)
-                [leftPos, topPos] = this._getAreaOffset(elem, leftPos, topPos);
+                [leftPos, topPos] = that._getAreaOffset(elem, leftPos, topPos);
 
             hint.span.style.left = leftPos + "px";
             hint.span.style.top =  topPos + "px";
+
             fragment.appendChild(hint.span);
 
-            this._pageHints.push(hint);
+            that._pageHints.push(hint);
+        }
+
+        while (elem = res.iterateNext()) {
+            let rect = elem.getBoundingClientRect();
+
+            // If the rect has a zero dimension, it may contain
+            // floated children. In that case, the children's rects
+            // are most probably where the hints should be at.
+            if (rect.width == 0 || rect.height == 0) {
+                let hasFloatChild = false;
+                for (let i = 0; i < elem.childNodes.length; i++) {
+                    if (elem.childNodes[i].nodeType != 1) // nodeType 1: elem_NODE
+                      continue;
+
+                    let computedStyle = doc.defaultView.getComputedStyle(elem.childNodes[i], null);
+                    if (computedStyle.getPropertyValue('float') != 'none'
+                        && this._isVisible(elem.childNodes[i], win)) {
+                      makeHint(elem.childNodes[i]);
+                      hasFloatChild = true;
+                      break;
+                    }
+                }
+                if (hasFloatChild)
+                    continue;
+            }
+
+            if (this._isVisible(elem, win))
+                makeHint(elem);
         }
 
         let body = doc.body || util.evaluateXPath(["body"], doc).snapshotItem(0);
