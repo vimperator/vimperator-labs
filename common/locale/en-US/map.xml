@@ -313,14 +313,16 @@
 
 <item>
     <tags>:ab :abbreviate</tags>
-    <spec>:ab<oa>breviate</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ab<oa>breviate</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ab<oa>breviate</oa> <a>lhs</a></spec>
     <spec>:ab<oa>breviate</oa></spec>
     <description>
         <p>
-            Abbreviate a key sequence. Abbreviate <a>lhs</a> to <a>rhs</a>. If only <a>lhs</a> is given,
-            list all abbreviations that start with <a>lhs</a>. If no arguments are given,
-            list all abbreviations.
+            Abbreviate a key sequence. Abbreviate <a>lhs</a> to <a>rhs</a>.
+            If <oa>-javascript</oa> is given and <a>rhs</a> is given JavaScript code,
+            <a>rhs</a> will be expanded to the result of the JavaScript code.
+            If only <a>lhs</a> is given, list all abbreviations that start with <a>lhs</a>.
+            If no arguments are given, list all abbreviations.
         </p>
     </description>
 </item>
@@ -328,7 +330,7 @@
 
 <item>
     <tags>:ca :cabbrev</tags>
-    <spec>:ca<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ca<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ca<oa>bbrev</oa> <a>lhs</a></spec>
     <spec>:ca<oa>bbrev</oa></spec>
     <description>
@@ -342,7 +344,7 @@
 
 <item>
     <tags>:ia :iabbrev</tags>
-    <spec>:ia<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ia<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ia<oa>bbrev</oa> <a>lhs</a></spec>
     <spec>:ia<oa>bbrev</oa></spec>
     <description>

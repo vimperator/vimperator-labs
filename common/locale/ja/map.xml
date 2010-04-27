@@ -308,13 +308,15 @@
 
 <item>
     <tags>:ab :abbreviate</tags>
-    <spec>:ab<oa>breviate</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ab<oa>breviate</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ab<oa>breviate</oa> <a>lhs</a></spec>
     <spec>:ab<oa>breviate</oa></spec>
     <description>
         <p>
             一連のキー入力を略語として定義します。
             <a>rhs</a> を <a>lhs</a> という略語として定義します。
+            <a>-javascript</a> が与えられ、<a>rhs</a> として JavaScript のコードを与えた場合、
+            そのコードが返す値に展開されます。
             <a>lhs</a> だけを与えた場合、 <a>lhs</a> ではじまるすべての略語を一覧表示します。
             何も引数を与えなかった場合、すべての略語を一覧表示します。
         </p>
@@ -324,7 +326,7 @@
 
 <item>
     <tags>:ca :cabbrev</tags>
-    <spec>:ca<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ca<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ca<oa>bbrev</oa> <a>lhs</a></spec>
     <spec>:ca<oa>bbrev</oa></spec>
     <description>
@@ -338,7 +340,7 @@
 
 <item>
     <tags>:ia :iabbrev</tags>
-    <spec>:ia<oa>bbrev</oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ia<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
     <spec>:ia<oa>bbrev</oa> <a>lhs</a></spec>
     <spec>:ia<oa>bbrev</oa></spec>
     <description>
