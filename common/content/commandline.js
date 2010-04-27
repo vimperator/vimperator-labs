@@ -1127,7 +1127,7 @@ const CommandLine = Module("commandline", {
             let str = commandline.command;
             return str.substring(this.prefix.length, str.length - this.suffix.length);
         },
-        set completion set_completion(completion) {
+        set completion(completion) {
             this.previewClear();
 
             // Change the completion text.
