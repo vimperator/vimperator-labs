@@ -218,12 +218,17 @@ const Abbreviations = Module("abbreviations", {
 
     commands: function () {
         function addAbbreviationCommands(modes, ch, modeDescription) {
+            function splitArg (arg) {
+                return arg.match(RegExp("^\\s*($|" + abbreviations._match + ")(?:\\s*$|\\s+(.*))"));
+            }
+
             modeDescription = modeDescription ? " in " + modeDescription + " mode" : "";
 
             commands.add([ch ? ch + "a[bbrev]" : "ab[breviate]"],
                 "Abbreviate a key sequence" + modeDescription,
                 function (args) {
-                    let matches = args.literalArg.match(RegExp("^\\s*($|" + abbreviations._match + ")(?:\\s*$|\\s+(.*))"));
+                    let matches = splitArg(args.literalArg);
+
                     liberator.assert(matches, "E474: Invalid argument");
 
                     let [, lhs, rhs] = matches;
@@ -240,7 +245,12 @@ const Abbreviations = Module("abbreviations", {
                     }
                 }, {
                     options: [[["-javascript", "-j"], commands.OPTION_NOARG, null]],
-                    completer: function (context, args) completion.abbreviation(context, args, modes),
+                    completer: function (context, args) {
+                        let [, lhs, rhs] = splitArg(args.literalArg);
+                        if (rhs && args["-javascript"])
+                            return completion.javascript(context);
+                        completion.abbreviation(context, args, modes)
+                    },
                     literal: 0,
                     serial: function () [ {
                             command: this.name,
