@@ -27,7 +27,7 @@
 
 <item>
     <tags>a :bma :bmark</tags>
-    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tag=tag1,tag2</oa> <oa>url</oa></spec>
+    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>url</oa></spec>
     <spec>a</spec>
     <description>
         <p>ブックマークを追加します。</p>

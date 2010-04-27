@@ -516,7 +516,7 @@
     </li>
     <li>
         new argument parser for Ex commands, should tell better error messages when
-        you do things like <ex>:bmark -tag=a,b</ex> instead of <ex>:bmark -tags=a,b</ex>
+        you do things like <ex>:bmark -tags=a,b</ex> instead of <ex>:bmark -tags=a,b</ex>
     </li>
     <li>
         some option values can be tab-completed now; e.g., <ex>:set wim=&lt;tab&gt;</ex>

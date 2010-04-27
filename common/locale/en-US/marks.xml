@@ -27,7 +27,7 @@
 
 <item>
     <tags>a :bma :bmark</tags>
-    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tag=tag1,tag2</oa> <oa>url</oa></spec>
+    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>url</oa></spec>
     <spec>a</spec>
     <description>
         <p>Add a bookmark.</p>
@@ -36,7 +36,7 @@
 
         <ul>
             <li>-title="custom title" (short option: -t)</li>
-            <li>-tag=comma,separated,tag,list (short option: -T)</li>
+            <li>-tags=comma,separated,tag,list (short option: -T)</li>
             <li>-keyword=keyword (short option: -k)</li>
         </ul>
 
@@ -86,7 +86,7 @@
         <p>Filter can also contain the following options:</p>
 
         <ul>
-            <li>-tag=comma,separated,tag,list (short option: -T)</li>
+            <li>-tags=comma,separated,tag,list (short option: -T)</li>
             <li>-max=N (short options: -m)</li>
         </ul>
     </description>

@@ -318,8 +318,8 @@
     <spec>:ab<oa>breviate</oa></spec>
     <description>
         <p>
-            Abbreviate a key sequence. Abbreviate <a>lhs</a> to <a>rhs</a>.
-            If <oa>-javascript</oa> is given and <a>rhs</a> is given JavaScript code,
+            Define an abbreviation. Expand <a>lhs</a> to <a>rhs</a>.
+            If <oa>-javascript</oa> is given and <a>rhs</a> contains JavaScript code,
             <a>rhs</a> will be expanded to the result of the JavaScript code.
             If only <a>lhs</a> is given, list all abbreviations that start with <a>lhs</a>.
             If no arguments are given, list all abbreviations.
@@ -335,7 +335,7 @@
     <spec>:ca<oa>bbrev</oa></spec>
     <description>
         <p>
-            Abbreviate a key sequence for Command-line mode. Same as <ex>:ab<oa>breviate</oa></ex>,
+            Define an abbreviation for Command-line mode. Same as <ex>:ab<oa>breviate</oa></ex>,
             but for Command-line mode only.
         </p>
     </description>
@@ -349,7 +349,7 @@
     <spec>:ia<oa>bbrev</oa></spec>
     <description>
         <p>
-            Abbreviate a key sequence for Insert mode. Same as <ex>:ab<oa>breviate</oa></ex> but
+            Define an abbreviation for Insert mode. Same as <ex>:ab<oa>breviate</oa></ex> but
             for Insert mode only.
         </p>
     </description>
