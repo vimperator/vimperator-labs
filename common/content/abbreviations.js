@@ -235,7 +235,7 @@ const Abbreviations = Module("abbreviations", {
                     if (rhs) {
                         if (args["-javascript"]) {
                             let expr = rhs;
-                            rhs = (function () eval(expr));
+                            rhs = function () liberator.eval(expr);
                             rhs.toString = function () expr;
                         }
                         abbreviations.add(modes, lhs, rhs);
