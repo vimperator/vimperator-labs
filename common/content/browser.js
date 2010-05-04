@@ -99,7 +99,7 @@ const Browser = Module("browser", {
     mappings: function () {
         mappings.add([modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { util.copyToClipboard(util.losslessDecodeURI(buffer.URL), true); });
+            function () { util.copyToClipboard(util.losslessDecodeURI(buffer.URL, 'conservative'), true); });
 
         // opening websites
         mappings.add([modes.NORMAL],
@@ -108,7 +108,7 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["O"],
             "Open one or more URLs, based on current location",
-            function () { commandline.open(":", "open " + buffer.URL, modes.EX); });
+            function () { commandline.open(":", "open " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
@@ -116,7 +116,7 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open(":", "tabopen " + buffer.URL, modes.EX); });
+            function () { commandline.open(":", "tabopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL], ["w"],
             "Open one or more URLs in a new window",
@@ -124,7 +124,7 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["W"],
             "Open one or more URLs in a new window, based on current location",
-            function () { commandline.open(":", "winopen " + buffer.URL, modes.EX); });
+            function () { commandline.open(":", "winopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",
