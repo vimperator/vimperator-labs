@@ -1,4 +1,11 @@
 2010-xx-xx
+    * IMPORTANT: It is possible to yank more fields now, but it destroies previous key bindings.
+      [m]yf[m] or [m]yy[m] to copy "From:"
+      [m]ys[m] to copy Subject
+      [m]y#[m] to copy Message ID
+      [m]yt[m] to copy "To:"
+      [m]yr[m] to copy recipients, To: + Cc:
+      [m]yu[m] to copy URL of feed (only for RSS)
     * add l1,l2,...,l5 to directly tag a message with the 1st, 2nd, ... tag
     * Fix ctrl-shift-n/p going to next/prev unread folder (thanks temerako)
     * fix all l* (label read/starred/etc.) mappings for new Thunderbirds
@@ -12,13 +19,6 @@
     * new 'foldermode' option to change folder panel view.
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * More small fixes
-    * IMPORTANT: It is possible to yank more fields now, but it destroies previous key bindings.
-      [m]ya[m] or [m]yy[m] to copy Author
-      [m]ys[m] to copy Subject
-      [m]y#[m] to copy Message ID
-      [m]yr[m] to copy recipients, only To:
-      [m]yR[m] to copy recipients, To: + Cc:
-      [m]yu[m] to copy URL of feed (only for RSS)
 
 2010-03-29
     * version 0.6

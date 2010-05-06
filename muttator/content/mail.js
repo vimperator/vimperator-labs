@@ -1059,35 +1059,36 @@ const Mail = Module("mail", {
                 try {
                     let text = "";
                     switch (arg) {
-                    case "a":
-                    case "y":
-                        text = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
-                        break;
-                    case "s":
-                        text = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
-                        break;
-                    case "#":
-                        text = gDBView.hdrForFirstSelectedMessage.messageId;
-                        break;
-		    case "r":
-			text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients;
-			break;
-                    case "R":
+                        case "f":
+                        case "y":
+                            text = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+                            break;
+                        case "s":
+                            text = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
+                            break;
+                        case "#":
+                            text = gDBView.hdrForFirstSelectedMessage.messageId;
+                            break;
+                        case "t":
+                            text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients;
+                            break;
+                        case "r": // all recipients
                             let cc = gDBView.hdrForFirstSelectedMessage.ccList;
                             text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients + (cc ? ", " + cc : "");
-			break;
-                    case "u":
-                        if (mail.currentAccount.server.type == "rss") {
-                            text = util.this._getRSSUrl();
-                        }	// if else, yank nothing
-                        break;
-                    default:  liberator.beep();
+                            break;
+                        case "u":
+                            if (mail.currentAccount.server.type == "rss") {
+                                text = util.this._getRSSUrl(); // TODO: util.this?
+                            } // if else, yank nothing
+                            break;
+                        default:
+                            liberator.beep();
                     }
                     util.copyToClipboard(text, true);
                 }
                 catch (e) { liberator.beep(); }
             },
-	    {
+        {
                 arg: true
             });
 
