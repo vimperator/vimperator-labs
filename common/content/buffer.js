@@ -324,6 +324,18 @@ const Buffer = Module("buffer", {
     },
 
     /**
+     * @property {Array[Window]} All frames in the current buffer.
+     */
+    get allFrames() {
+        let frames = [];
+        (function (win) {
+            frames.push(win);
+            Array.slice(win.frames).forEach(arguments.callee);
+        })(window.content);
+        return frames;
+    },
+
+    /**
      * @property {Object} A map of page info sections to their
      *     content generating functions.
      */
@@ -450,24 +462,30 @@ const Buffer = Module("buffer", {
     // FIXME: getSelection() doesn't always preserve line endings, see:
     // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
     getCurrentWord: function () {
-        let selection = window.content.getSelection();
-        let range = selection.getRangeAt(0);
-        if (selection.isCollapsed) {
-            let selController = this.selectionController;
-            let caretmode = selController.getCaretEnabled();
-            selController.setCaretEnabled(true);
-            // Only move backwards if the previous character is not a space.
-            if (range.startOffset > 0 && !/\s/.test(range.startContainer.textContent[range.startOffset - 1]))
-                selController.wordMove(false, false);
+        function _getCurrentWord (win) {
+            let selection = win.getSelection();
+            if (selection.rangeCount <= 0)
+                return;
+            let range = selection.getRangeAt(0);
+            if (selection.isCollapsed) {
+                let selController = this.selectionController;
+                let caretmode = selController.getCaretEnabled();
+                selController.setCaretEnabled(true);
+                // Only move backwards if the previous character is not a space.
+                if (range.startOffset > 0 && !/\s/.test(range.startContainer.textContent[range.startOffset - 1]))
+                    selController.wordMove(false, false);
 
-            selController.wordMove(true, true);
-            selController.setCaretEnabled(caretmode);
-            return String.match(selection, /\w*/)[0];
+                selController.wordMove(true, true);
+                selController.setCaretEnabled(caretmode);
+                return String.match(selection, /\w*/)[0];
+            }
+            if (util.computedStyle(range.startContainer).whiteSpace == "pre"
+                && util.computedStyle(range.endContainer).whiteSpace == "pre")
+                return String(range);
+            return String(selection);
         }
-        if (util.computedStyle(range.startContainer).whiteSpace == "pre"
-            && util.computedStyle(range.endContainer).whiteSpace == "pre")
-            return String(range);
-        return String(selection);
+
+        return util.Array.compact(buffer.allFrames.map(_getCurrentWord)).join("\n");
     },
 
     /**
