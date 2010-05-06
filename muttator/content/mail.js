@@ -1053,26 +1053,42 @@ const Mail = Module("mail", {
             });
 
         // YANKING TEXT
-        mappings.add(myModes, ["Y"],
-            "Yank subject",
-            function () {
-                try {
-                    let subject = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
-                    util.copyToClipboard(subject, true);
-                }
-                catch (e) { liberator.beep(); }
-            });
-
         mappings.add(myModes, ["y"],
-            "Yank sender or feed URL",
-            function () {
+            "Yank field",
+            function (arg) {
                 try {
-                    if (mail.currentAccount.server.type == "rss")
-                        util.copyToClipboard(mail._getRSSUrl(), true);
-                    else
-                        util.copyToClipboard(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor, true);
+                    let text = "";
+                    switch (arg) {
+                    case "a":
+                    case "y":
+                        text = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor;
+                        break;
+                    case "s":
+                        text = gDBView.hdrForFirstSelectedMessage.mime2DecodedSubject;
+                        break;
+                    case "#":
+                        text = gDBView.hdrForFirstSelectedMessage.messageId;
+                        break;
+		    case "r":
+			text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients;
+			break;
+                    case "R":
+                            let cc = gDBView.hdrForFirstSelectedMessage.ccList;
+                            text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients + (cc ? ", " + cc : "");
+			break;
+                    case "u":
+                        if (mail.currentAccount.server.type == "rss") {
+                            text = util.this._getRSSUrl();
+                        }	// if else, yank nothing
+                        break;
+                    default:  liberator.beep();
+                    }
+                    util.copyToClipboard(text, true);
                 }
                 catch (e) { liberator.beep(); }
+            },
+	    {
+                arg: true
             });
 
         // RSS specific mappings
