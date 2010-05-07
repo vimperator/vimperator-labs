@@ -732,9 +732,7 @@ const Editor = Module("editor", {
                     modes.set(modes.TEXTAREA);
                 }
                 else {
-                    let sel = window.content.document.getSelection();
-                    liberator.assert(sel);
-                    util.copyToClipboard(sel, true);
+                    util.copyToClipboard(buffer.getCurrentWord(), true);
                 }
             });
 
