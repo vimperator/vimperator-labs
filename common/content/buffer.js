@@ -468,7 +468,7 @@ const Buffer = Module("buffer", {
                 return;
             let range = selection.getRangeAt(0);
             if (selection.isCollapsed) {
-                let selController = this.selectionController;
+                let selController = buffer.selectionController;
                 let caretmode = selController.getCaretEnabled();
                 selController.setCaretEnabled(true);
                 // Only move backwards if the previous character is not a space.
