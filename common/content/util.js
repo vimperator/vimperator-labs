@@ -59,7 +59,7 @@ const Util = Module("util", {
      * @returns {Object}
      */
     computedStyle: function computedStyle(node) {
-        while (node instanceof Text && node.parentNode)
+        while ((node instanceof Text || node instanceof Comment) && node.parentNode)
             node = node.parentNode;
         return node.ownerDocument.defaultView.getComputedStyle(node, null);
     },
