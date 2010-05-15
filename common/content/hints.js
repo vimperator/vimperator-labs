@@ -328,8 +328,9 @@ const Hints = Module("hints", {
                     if (elem.childNodes[i].nodeType != 1) // nodeType 1: elem_NODE
                       continue;
 
+                    // getComputedStyle returns null, if the owner frame is not visible.
                     let computedStyle = doc.defaultView.getComputedStyle(elem.childNodes[i], null);
-                    if (computedStyle.getPropertyValue('float') != 'none'
+                    if (computedStyle && computedStyle.getPropertyValue('float') != 'none'
                         && this._isVisible(elem.childNodes[i], win)) {
                       makeHint(elem.childNodes[i]);
                       hasFloatChild = true;
