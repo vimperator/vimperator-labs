@@ -383,12 +383,11 @@
     <tags>'eht' 'extendedhinttags'</tags>
     <spec>'extendedhinttags' 'eht'</spec>
     <type>string</type>
-    <default>//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
-            @oncommand or @class='lk' or @role='link'] |
-        //input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
-        //a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
-        //textarea | //xhtml:textarea | //button | //xhtml:button |
-        //select | //xhtml:select</default>
+    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
+//a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
+//textarea | //xhtml:textarea | //button | //xhtml:button | //select |
+//xhtml:select |
+//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']</default>
     <description>
         <p><k>;</k> で有効になるヒント要素を指し示す XPath 式です。</p>
     </description>
@@ -599,12 +598,11 @@
     <tags>'ht' 'hinttags'</tags>
     <spec>'hinttags' 'ht'</spec>
     <type>string</type>
-    <default>//*[@onclick or @onmouseover or @onmousedown or @onmouseup or
-     @oncommand or @class='lk' or @role='link'] |
- //input[not(@type='hidden')] | //a | //area |
- //iframe | //textarea | //button | //select |
-//xhtml:input[not(@type='hidden')] | //xhtml:a | //xhtml:area |
-//xhtml:iframe | //xhtml:textarea | //xhtml:button | //xhtml:select</default>
+    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
+//a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
+//textarea | //xhtml:textarea | //button | //xhtml:button | //select |
+//xhtml:select |
+//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']</default>
     <description>
         <p><k>f</k> と <k>F</k> で有効になるヒント要素を指し示す XPath 式です。</p>
     </description>
