@@ -18,6 +18,7 @@ Inactive/former developers:
   * Tim Hammerquist (penryu@gmail.com)
 
 Patches (in no special order):
+  * caisui ('hintchars')
   * Jez <jezreel@gmail.com>
   * Ruud Grosmann ('followhints' option)
   * Xie&Tian (multibyte support for hints, doc fixes)

@@ -564,6 +564,18 @@
     </description>
 </item>
 
+<item>
+    <tags>'hc' 'hintchars'</tags>
+    <spec>'hintinputs' 'hc'</tags>
+    <type>string</type>
+    <default>0123456789</default>
+    <description>
+        <p>
+            Controls which characters are used to generate hint labels.
+            Case-sensitive.
+        </p>
+    </description>
+</item>
 
 <item>
     <tags>'hin' 'hintinputs'</tags>

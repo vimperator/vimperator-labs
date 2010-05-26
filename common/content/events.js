@@ -928,7 +928,7 @@ const Events = Module("events", {
                     if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
                         || key == mappings.getMapLeader()
                         || (key == "<BS>" && hints.previnput == "number")
-                        || (/^[0-9]$/.test(key) && !hints.escNumbers)) {
+                        || (hints._isHintNumber(key) && !hints.escNumbers)) {
                         hints.onEvent(event);
                         this._input.buffer = "";
                         throw killEvent();

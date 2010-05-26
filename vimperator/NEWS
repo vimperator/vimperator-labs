@@ -1,5 +1,7 @@
 2010-xx-xx:
     * version 2.4
+    * Support for configurable hint characters; This basically brings back the old
+      hint behavior for those who prefer it. See the 'hintchars' option. Patch by caisui
     * Fix hints display on some pages like stackoverflow (thanks Jez)
     * Fix relative paths in :cd
     * Support rich text editor written by HTML.

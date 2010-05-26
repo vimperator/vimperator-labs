@@ -98,7 +98,7 @@ const Hints = Module("hints", {
      * Display the current status to the user.
      */
     _updateStatusline: function () {
-        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber || ""));
+        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber ? this._num2chars(this._hintNumber) : ""));
     },
 
     /**
@@ -397,6 +397,7 @@ const Hints = Module("hints", {
         let validHint = this._hintMatcher(this._hintString.toLowerCase());
         let activeHint = this._hintNumber || 1;
         this._validHints = [];
+        let activeHintChars = this._num2chars(activeHint);
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
             let [offsetX, offsetY] = this._getContainerOffsets(doc);
@@ -406,9 +407,10 @@ const Hints = Module("hints", {
                 let hint = this._pageHints[i];
 
                 let valid = validHint(hint.text);
+                let hintnumchars = this._num2chars(hintnum);
                 let display = valid && (
                     this._hintNumber == 0 ||
-                    String(hintnum).indexOf(String(activeHint)) == 0
+                    hintnumchars.indexOf(String(activeHintChars)) == 0
                 );
 
                 hint.span.style.display = (display ? "" : "none");
@@ -442,9 +444,9 @@ const Hints = Module("hints", {
                     this._setClass(hint.imgSpan, activeHint == hintnum);
                 }
 
-                hint.span.setAttribute("number", hint.showText ? hintnum + ": " + hint.text.substr(0, 50) : hintnum);
+                hint.span.setAttribute("number", hint.showText ? hintnumchars + ": " + hint.text.substr(0, 50) : hintnumchars);
                 if (hint.imgSpan)
-                    hint.imgSpan.setAttribute("number", hintnum);
+                    hint.imgSpan.setAttribute("number", hintnumchars);
                 else
                     this._setClass(hint.elem, activeHint == hintnum);
                 this._validHints.push(hint.elem);
@@ -502,6 +504,30 @@ const Hints = Module("hints", {
 
         this._reset();
     },
+
+    _num2chars: function (num) {
+        let hintchars = options["hintchars"];
+        let chars = "";
+        let base = hintchars.length;
+        do {
+            chars = hintchars[((num % base))] + chars;
+            num = Math.floor(num / base);
+        } while (num > 0);
+
+        return chars;
+    },
+
+    _chars2num: function (chars) {
+        let num = 0;
+        let hintchars = options["hintchars"];
+        let base = hintchars.length;
+        for (let i = 0, l = chars.length; i < l; ++i) {
+            num = base * num + hintchars.indexOf(chars[i]);
+        }
+        return num;
+    },
+
+    _isHintNumber: function (key) options["hintchars"].indexOf(key) >= 0,
 
     /**
      * Finish hinting.
@@ -564,7 +590,7 @@ const Hints = Module("hints", {
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
-        if (this._hintNumber > 0 && this._hintNumber * 10 <= this._validHints.length) {
+        if (this._hintNumber > 0 && this._hintNumber * options["hintchars"].length <= this._validHints.length) {
             let timeout = options["hinttimeout"];
             if (timeout > 0)
                 this._activeTimeout = this.setTimeout(function () { this._processHints(true); }, timeout);
@@ -894,16 +920,16 @@ const Hints = Module("hints", {
            return;
 
         default:
-            if (/^\d$/.test(key)) {
+            if (this._isHintNumber(key)) {
                 this._prevInput = "number";
 
                 let oldHintNumber = this._hintNumber;
                 if (this._hintNumber == 0 || this._usedTabKey) {
                     this._usedTabKey = false;
-                    this._hintNumber = parseInt(key, 10);
+                    this._hintNumber = this._chars2num(key);
                 }
                 else
-                    this._hintNumber = parseInt(String(this._hintNumber) + key, 10);
+                    this._hintNumber = this._chars2num(this._num2chars(this._hintNumber) + key);
 
                 this._updateStatusline();
 
@@ -1178,6 +1204,31 @@ const Hints = Module("hints", {
                     ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
                     ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"]
                 ]
+            });
+
+        options.add(["hintchars", "hc"],
+            "What characters to use for labeling hints",
+            "string", "0123456789",
+            {
+                setter: function (value) {
+                    if (modes.extended & modes.HINTS)
+                        hints._showHints();
+                    return value;
+                },
+                completer: function (context) [
+                    ["0123456789", "Numbers only"],
+                    ["hjklasdf", "Home row"],
+                    ["hjklasdfgyuiopqwertnmzxcvb", "Smart order"],
+                    ["abcdefghijklmnopqrstuvwxyz", "Alphabetically ordered"],
+                ],
+                validator: function (arg) {
+                    let prev;
+                    let list = arg.split("");
+                    list.sort();
+                    let ret = list.some(function (n) prev == (prev=n));
+
+                    return !ret;
+                }
             });
 
         options.add(["wordseparators", "wsp"],

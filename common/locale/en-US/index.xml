@@ -398,6 +398,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>fullscreen</o></dt> <dd>Show the current window fullscreen</dd>
     <dt><o>guioptions</o></dt> <dd>Show or hide certain GUI elements like the menu or toolbar</dd>
     <dt><o>helpfile</o></dt> <dd>Name of the main help file</dd>
+    <dt><o>hintchars</o></dt> <dd>Characters used for hinting</dd>
     <dt><o>hintinputs</o></dt> <dd>How text input fields are hinted</dd>
     <dt><o>hintmatching</o></dt> <dd>How links are matched</dd>
     <dt><o>hinttags</o></dt> <dd>XPath string of hintable elements activated by <k>f</k> and <k>F</k></dd>

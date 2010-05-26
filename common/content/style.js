@@ -109,6 +109,7 @@ Highlights.prototype.CSS = <![CDATA[
         font-family: monospace;
         font-size: 10px;
         font-weight: bold;
+        text-transform: uppercase;
         color: white;
         background-color: red;
         border-color: ButtonShadow;
