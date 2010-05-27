@@ -244,15 +244,14 @@ const Hints = Module("hints", {
      *
      * Only called by {@link #_generate}.
      */
-    _isVisible: function (elem, win) {
-        let doc = win.document;
-        let height = win.innerHeight;
-        let width  = win.innerWidth;
+    _isVisible: function (elem, screen) {
+        let doc = elem.ownerDocument;
+        let win = doc.defaultView;
 
         // TODO: for iframes, this calculation is wrong
         let rect = elem.getBoundingClientRect();
 
-        if (!rect || rect.top > height || rect.bottom < 0 || rect.left > width || rect.right < 0)
+        if (!rect || rect.top > screen.bottom || rect.bottom < screen.top || rect.left > screen.right || rect.right < screen.left)
             return false;
 
         rect = elem.getClientRects()[0];
@@ -274,9 +273,11 @@ const Hints = Module("hints", {
      * @param {Window} win The window for which to generate hints.
      * @default config.browser.contentWindow
      */
-    _generate: function (win) {
+    _generate: function (win, screen) {
         if (!win)
             win = config.browser.contentWindow;
+        if (!screen)
+            screen = {top: 0, left: 0, bottom: win.innerHeight, right: win.innerWidth};
 
         let doc = win.document;
         let [offsetX, offsetY] = this._getContainerOffsets(doc);
@@ -302,8 +303,8 @@ const Hints = Module("hints", {
 
             hint.span = baseNodeAbsolute.cloneNode(true);
 
-            let leftPos = Math.max((rect.left + offsetX), offsetX);
-            let topPos =  Math.max((rect.top + offsetY), offsetY);
+            let leftPos = Math.max((rect.left + offsetX), offsetX + screen.left);
+            let topPos =  Math.max((rect.top + offsetY), offsetY + screen.top);
 
             if (elem instanceof HTMLAreaElement)
                 [leftPos, topPos] = that._getAreaOffset(elem, leftPos, topPos);
@@ -331,7 +332,7 @@ const Hints = Module("hints", {
                     // getComputedStyle returns null, if the owner frame is not visible.
                     let computedStyle = doc.defaultView.getComputedStyle(elem.childNodes[i], null);
                     if (computedStyle && computedStyle.getPropertyValue('float') != 'none'
-                        && this._isVisible(elem.childNodes[i], win)) {
+                        && this._isVisible(elem.childNodes[i], screen)) {
                       makeHint(elem.childNodes[i]);
                       hasFloatChild = true;
                       break;
@@ -341,7 +342,7 @@ const Hints = Module("hints", {
                     continue;
             }
 
-            if (this._isVisible(elem, win))
+            if (this._isVisible(elem, screen))
                 makeHint(elem);
         }
 
@@ -352,7 +353,17 @@ const Hints = Module("hints", {
         }
 
         // also _generate hints for frames
-        Array.forEach(win.frames, this.closure._generate);
+        for (let frame in util.Array.itervalues(win.frames)) {
+            elem = frame.frameElement;
+            if (!this._isVisible(elem, screen)) continue;
+            let rect = elem.getBoundingClientRect();
+            this._generate(frame,{
+              top    : Math.max(0, screen.top - rect.top),
+              left   : Math.max(0, screen.left - rect.left),
+              bottom : Math.min(frame.innerHeight, screen.bottom - rect.top),
+              right  : Math.min(frame.innerWidth,  screen.right  - rect.left)
+            });
+        }
 
         return true;
     },
