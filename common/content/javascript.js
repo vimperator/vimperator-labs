@@ -60,7 +60,7 @@ const JavaScript = Module("javascript", {
                     yield [k, this.getKey(orig, k)]
         }
         catch(e) {
-            for (k in allkeys(obj))
+            for (let k in allkeys(obj))
                 if (obj.hasOwnProperty(k) == toplevel)
                     yield [k, this.getKey(obj, k)];
         }
