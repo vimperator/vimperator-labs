@@ -462,7 +462,7 @@ const Options = Module("options", {
             // Trigger any setters.
             let opt = options.get(option);
             if (event == "change" && opt)
-                opt.set(opt.value, Option.SCOPE_GLOBAL);
+                opt.set(opt.globalValue, Option.SCOPE_GLOBAL);
         }
 
         storage.newMap("options", { store: false });
