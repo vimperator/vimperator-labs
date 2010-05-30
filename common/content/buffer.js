@@ -498,7 +498,7 @@ const Buffer = Module("buffer", {
     focusElement: function (elem) {
         let doc = window.content.document;
         if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
-            elem.contentWindow.focus();
+            Buffer.focusedWindow = elem.contentWindow;
         else if (elem instanceof HTMLInputElement && elem.type == "file") {
             Buffer.openUploadPrompt(elem);
             buffer.lastInputField = elem;
@@ -632,11 +632,15 @@ const Buffer = Module("buffer", {
         });
     },
 
+
     /**
      * @property {nsISelectionController} The current document's selection
      *     controller.
      */
-    get selectionController() config.browser.docShell
+    get selectionController() Buffer.focusedWindow
+            .QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIWebNavigation)
+            .QueryInterface(Ci.nsIDocShell)
             .QueryInterface(Ci.nsIInterfaceRequestor)
             .getInterface(Ci.nsISelectionDisplay)
             .QueryInterface(Ci.nsISelectionController),
@@ -974,6 +978,39 @@ const Buffer = Module("buffer", {
     ZOOM_MIN: "ZoomManager" in window && Math.round(ZoomManager.MIN * 100),
     ZOOM_MAX: "ZoomManager" in window && Math.round(ZoomManager.MAX * 100),
 
+    get focusedWindow() this.getForcusedWindow(),
+    set focusedWindow(win) {
+        try{
+        if (win === this.focusedWindow) return;
+
+        // XXX: if win has frame, win.focus() cannot focus.
+        if (win.frames.length) {
+            let html = win.document.documentElement;
+            let selection = win.getSelection();
+
+            let ranges = let(it = (function () {for (let i in util.range(0, selection.rangeCount)) yield selection.getRangeAt(i);})()) [r for(r in it)];
+
+            html.focus();
+            html.blur();
+
+            selection.removeAllRanges();
+            for (let [,r] in Iterator(ranges))
+                selection.addRange(r);
+        } else
+            win.focus();
+        }catch(ex){liberator.echoerr(ex);}
+    },
+
+    getForcusedWindow: function (win) {
+        win = win || content.window;
+        let elem = win.document.activeElement;
+        let doc;
+        while (doc = elem.contentDocument) {
+            elem = doc.activeElement;
+        }
+        return elem.ownerDocument.defaultView;
+    },
+
     setZoom: function setZoom(value, fullZoom) {
         liberator.assert(value >= Buffer.ZOOM_MIN || value <= Buffer.ZOOM_MAX,
             "Zoom value out of range (" + Buffer.ZOOM_MIN + " - " + Buffer.ZOOM_MAX + "%)");
@@ -1003,7 +1040,7 @@ const Buffer = Module("buffer", {
     },
 
     findScrollableWindow: function findScrollableWindow() {
-        let win = window.document.commandDispatcher.focusedWindow;
+        let win = this.focusedWindow;
         if (win && (win.scrollMaxX > 0 || win.scrollMaxY > 0))
             return win;
 
@@ -1041,7 +1078,7 @@ const Buffer = Module("buffer", {
             return elem;
         }
 
-        let win = config.browser.contentWindow;
+        let win = this.focusedWindow;
         if (win.getSelection().rangeCount)
             var elem = find(win.getSelection().getRangeAt(0).startContainer);
         if (!(elem instanceof Element)) {

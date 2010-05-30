@@ -40,7 +40,7 @@ const Hints = Module("hints", {
             "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
             s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
             a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
-            f: Mode("Focus frame",                          function (elem) elem.ownerDocument.defaultView.focus(), function () util.makeXPath(["body"])),
+            f: Mode("Focus frame",                          function (elem) Buffer.focusedWindow = elem.ownerDocument.defaultView, function () util.makeXPath(["body"])),
             o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
             t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
             b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
