@@ -441,7 +441,7 @@ const Hints = Module("hints", {
 
                 if (hint.text == "" && hint.elem.firstChild && hint.elem.firstChild instanceof HTMLImageElement) {
                     if (!hint.imgSpan) {
-                        rect = hint.elem.firstChild.getBoundingClientRect();
+                        let rect = hint.elem.firstChild.getBoundingClientRect();
                         if (!rect)
                             continue;
 
