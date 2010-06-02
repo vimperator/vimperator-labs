@@ -79,6 +79,8 @@ const Config = Module("config", ConfigBase, {
             function () { window.BrowserPageInfo(); }],
         ["pagesource",       "View page source",
             function () { window.BrowserViewSourceOfDocument(content.document); }],
+        ["passwords",        "Show passwords window",
+           function () { window.openDialog("chrome://passwordmgr/content/passwordManager.xul"); }],
         ["places",           "Places Organizer: Manage your bookmarks and history",
             function () { PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); }],
         ["preferences",      "Show Firefox preferences dialog",

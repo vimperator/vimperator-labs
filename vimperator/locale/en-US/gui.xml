@@ -24,6 +24,7 @@
     <dt>openfile</dt>        <dd>Open the file selector dialog</dd>
     <dt>pageinfo</dt>        <dd>Show information about the current page</dd>
     <dt>pagesource</dt>      <dd>View page source</dd>
+    <dt>passwords</dt>       <dd>View saved passwords</dd>
     <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
     <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
     <dt>printpreview</dt>    <dd>Preview the page before printing</dd>
