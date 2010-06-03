@@ -10,6 +10,7 @@
       And update map [m]i[m]: into be editing mode if editable otherwise CARET mode.
     * Strings starting with a "." are no longer treated as urls by :open et.al.
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
+    * :history -remove , remove history items by name/tags/url (only by date with :sanitize).
 
 2010-04-07:
     * version 2.3.1

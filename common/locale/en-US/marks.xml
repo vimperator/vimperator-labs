@@ -183,7 +183,7 @@
 
 <item>
     <tags>:hs :hist :history</tags>
-    <spec>:hist[ory][!] <oa>filter</oa></spec>
+    <spec>:hist[ory][!] <oa>-max=N</oa> <oa>-remove</oa> <oa>filter</oa></spec>
     <description>
         <p>
             Show recently visited URLs. Open the message window at the bottom of the screen
@@ -199,7 +199,14 @@
 
         <ul>
             <li>-max=N (short options: -m)</li>
+            <li>-remove (short options: -r)</li>
         </ul>
+
+        <p>
+            With the <oa>-remove</oa> option all history items which match <oa>filter</oa> either
+            in the title or URL are removed from the history.
+            If no filter is given, the 1000 last entries are deleted.
+        </p>
     </description>
 </item>
 

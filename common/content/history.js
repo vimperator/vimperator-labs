@@ -189,11 +189,29 @@ const History = Module("history", {
 
         commands.add(["hist[ory]", "hs"],
             "Show recently visited URLs",
-            function (args) { history.list(args.join(" "), args.bang, args["-max"] || 1000); }, {
+            function (args) { 
+                if (args["-remove"]) {
+                    let items = completion.runCompleter("history", args.join(" "), args["-max"] || 1000);
+                    if (items.length == 0)
+                        liberator.echoerr("No matching history items for " + args.join(" "));
+                    else {
+                        var browserHistory = Components.classes["@mozilla.org/browser/nav-history-service;1"]
+                                            .getService(Components.interfaces.nsIBrowserHistory);
+                        var urls = [];
+                        items.map(function (i) { urls.push(makeURI(i.url)) });
+                        browserHistory.removePages(urls, urls.length, false);
+                        if (urls.length == 1)
+                            liberator.echo("Removed history item " + urls[0].spec);
+                        else
+                            liberator.echo("Removed " + urls.length + " history items matching " + args.join(" "));
+                    }
+                } else 
+                    history.list(args.join(" "), args.bang, args["-max"] || 1000);
+            }, {
                 bang: true,
                 completer: function (context) { context.quote = null; completion.history(context); },
-                // completer: function (filter) completion.history(filter)
-                options: [[["-max", "-m"], commands.OPTION_INT]]
+                options: [[["-max", "-m"], commands.OPTION_INT],
+                          [["-remove", "-r"], commands.OPTION_NOARG]]
             });
     },
     completion: function () {
