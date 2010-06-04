@@ -978,13 +978,12 @@ const Buffer = Module("buffer", {
     ZOOM_MIN: "ZoomManager" in window && Math.round(ZoomManager.MIN * 100),
     ZOOM_MAX: "ZoomManager" in window && Math.round(ZoomManager.MAX * 100),
 
-    get focusedWindow() this.getForcusedWindow(),
+    get focusedWindow() this.getFocusedWindow(),
     set focusedWindow(win) {
-        try{
-        if (win === this.focusedWindow) return;
+        if (win === document.commandDispatcher.focusedWindow) return;
 
-        // XXX: if win has frame, win.focus() cannot focus.
-        if (win.frames.length) {
+        // XXX: if win has frame and win is not content's focus window, win.focus() cannot focus.
+        if (win.frames.length && win !== this.focusedWindow) {
             let html = win.document.documentElement;
             let selection = win.getSelection();
 
@@ -996,12 +995,12 @@ const Buffer = Module("buffer", {
             selection.removeAllRanges();
             for (let [,r] in Iterator(ranges))
                 selection.addRange(r);
+            events.onFocusChange({});
         } else
             win.focus();
-        }catch(ex){liberator.echoerr(ex);}
     },
 
-    getForcusedWindow: function (win) {
+    getFocusedWindow: function (win) {
         win = win || content.window;
         let elem = win.document.activeElement;
         let doc;
