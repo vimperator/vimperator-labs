@@ -566,7 +566,7 @@
 
 <item>
     <tags>'hc' 'hintchars'</tags>
-    <spec>'hintinputs' 'hc'</tags>
+    <spec>'hintinputs' 'hc'</spec>
     <type>string</type>
     <default>0123456789</default>
     <description>
