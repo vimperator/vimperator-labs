@@ -537,6 +537,19 @@
     </description>
 </item>
 
+<item>
+    <tags>'hc' 'hintchars'</tags>
+    <spec>'hintchars' 'hc'</spec>
+    <type>string</type>
+    <default>0123456789</default>
+    <description>
+        <p>
+            ヒントの見出し(label)に利用する文字を設定。
+            大文字小文字は区別します。
+            また、設定した文字はマッチで利用できません。
+        </p>
+    </description>
+</item>
 
 <item>
     <tags>'hin' 'hintinputs'</tags>
