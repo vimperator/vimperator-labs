@@ -463,6 +463,9 @@ const Buffer = Module("buffer", {
     // https://www.mozdev.org/bugs/show_bug.cgi?id=19303
     getCurrentWord: function () {
         function _getCurrentWord (win) {
+            let elem = win.frameElement;
+            if (elem && elem.getClientRects().length === 0)
+                return;
             let selection = win.getSelection();
             if (selection.rangeCount <= 0)
                 return;
