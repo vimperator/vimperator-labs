@@ -739,7 +739,12 @@ lookup:
 
             // TODO: implement 'shellredir'
             if (liberator.has("Win32")) {
-                command = "cd /D " + this._cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
+                if (options["shell"] == "cmd.exe") {
+                    command = "cd /D " + this._cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
+                } else {
+                    // in this case, assume the shell is unix-like
+                    command = "cd " + escape(this._cwd.path) + " && " + command + " > " + escape(stdout.path) + " 2>&1" + " < " + escape(stdin.path);
+                }
                 var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
             }
             else {
