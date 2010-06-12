@@ -552,29 +552,6 @@
 </item>
 
 <item>
-    <tags>'hcsc' 'hintcharsshowcase'</tags>
-    <spec>'hintcharsshowcase' 'hcsc'</spec>
-    <type>stringlist</type>
-    <default>none</default>
-    <description>
-        <p>
-            ヒントの見出し(label)の大文字小文字を変換して表示します。
-        </p>
-        <dl>
-            <dt>none</dt>  <dd>変換無し</dd>
-            <dt>uppercase</dt> <dd>大文字に変換</dd>
-            <dt>lowercase</dt> <dd>小文字に変換</dd>
-        </dl>
-        <p>
-            <ex>:set hintcharsshowcase=uppercase</ex> とすると <o>hintchars</o>が小文字でも、ラベルは大文字に変換されます。
-        </p>
-        <note>
-            <o>hintchars</o>に大文字と小文字が混在するときは、<ex>:set hintcharsshowcase=none</ex>を推奨します。
-        </note>
-    </description>
-</item>
-
-<item>
     <tags>'hin' 'hintinputs'</tags>
     <spec>'hintinputs' 'hin'</spec>
     <type>stringlist</type>

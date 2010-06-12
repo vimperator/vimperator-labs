@@ -409,11 +409,6 @@ const Hints = Module("hints", {
         let activeHint = this._hintNumber || 1;
         this._validHints = [];
         let activeHintChars = this._num2chars(activeHint);
-        let transform = function (n) n;
-        switch (options.hintcharsshowcase) {
-            case "uppercase": transform = function (n) n.toUpperCase(); break;
-            case "lowercase": transform = function (n) n.toLowerCase(); break;
-        }
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
             let [offsetX, offsetY] = this._getContainerOffsets(doc);
@@ -460,8 +455,7 @@ const Hints = Module("hints", {
                     this._setClass(hint.imgSpan, activeHint == hintnum);
                 }
 
-                let showhintchars = transform(hintnumchars);
-                hint.span.setAttribute("number", hint.showText ? showhintchars + ": " + hint.text.substr(0, 50) : showhintchars);
+                hint.span.setAttribute("number", hint.showText ? hintnumchars + ": " + hint.text.substr(0, 50) : hintnumchars);
                 if (hint.imgSpan)
                     hint.imgSpan.setAttribute("number", hintnumchars);
                 else
@@ -1246,22 +1240,6 @@ const Hints = Module("hints", {
 
                     return !ret;
                 }
-            });
-
-        options.add(["hintcharsshowcase", "hcsc"],
-            "hint label's capitalization effects",
-            "stringlist", "none",
-            {
-                setter: function (value) {
-                    if (modes.extended & modes.HINTS)
-                        hints._showHints();
-                    return value;
-                },
-                completer: function (context) [
-                    ["none",      "no capitalization effects."],
-                    ["uppercase", "hint label transform uppercase"],
-                    ["lowercase", "hint label transform lowercase"],
-                ]
             });
 
         options.add(["wordseparators", "wsp"],

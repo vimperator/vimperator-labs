@@ -578,26 +578,6 @@
 </item>
 
 <item>
-    <tags>'hcsc' 'hintcharsshowcase'</tags>
-    <spec>'hintcharsshowcase' 'hcsc'</spec>
-    <type>stringlist</type>
-    <default>none</default>
-    <description>
-        <p>
-            controls capitalization effects of a hint label.
-        </p>
-        <dl>
-            <dt>none</dt>  <dd>no capitalization effects.</dd>
-            <dt>uppercase</dt> <dd>transform uppercase.</dd>
-            <dt>lowercase</dt> <dd>transform lowercase.</dd>
-        </dl>
-        <note>
-            when <o>hintchars</o> contains uppercase and lowercase, recommaned <ex>:set hintcharsshowcase=none</ex>.
-        </note>
-    </description>
-</item>
-
-<item>
     <tags>'hin' 'hintinputs'</tags>
     <spec>'hintinputs' 'hin'</spec>
     <type>stringlist</type>
