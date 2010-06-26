@@ -90,7 +90,8 @@ tedious unless you always visit the first link on a page.
             <li><tag>;Y</tag> <em>Y</em> to yank its text description</li>
             <li><tag>;c</tag> <em>c</em> to open its context menu</li>
             <li><tag>;i</tag> <em>i</em> to open an image</li>
-            <li><tag>;I</tag> <em>I</em> to open an image in a new tab.</li>
+            <li><tag>;I</tag> <em>I</em> to open an image in a new tab</li>
+            <li><tag>;A</tag> <em>A</em> to display an image's title text, or alt text if none.</li>
         </ul>
 
         <p>

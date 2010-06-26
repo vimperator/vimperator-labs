@@ -55,7 +55,8 @@ const Hints = Module("hints", {
             Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
             c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
             i: Mode("Show image",                           function (elem) liberator.open(elem.src),                              images),
-            I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images)
+            I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images),
+            A: Mode("Show image's title or alt text",       function (elem) liberator.echo(elem.title ? elem.title : elem.title ? elem.title : "(none)"), images)
         };
 
         /**
