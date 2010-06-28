@@ -33,13 +33,15 @@ const Hints = Module("hints", {
         const Mode = Hints.Mode;
         Mode.defaultValue("tags", function () function () options.hinttags);
         function extended() options.extendedhinttags;
-        function images() util.makeXPath(["img"]);
+        function images() "//*[@src]";
 
         this._hintModes = {
             ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
             "?": Mode("Show information for hint",          function (elem) buffer.showElementInfo(elem),                          extended),
-            s: Mode("Save hint",                            function (elem) buffer.saveLink(elem, true)),
-            a: Mode("Save hint with prompt",                function (elem) buffer.saveLink(elem, false)),
+            s: Mode("Save link",                            function (elem) buffer.saveLink(elem, true)),
+            S: Mode("Save object",                          function (elem) buffer.saveLink(elem, true),                           images),
+            a: Mode("Save link with prompt",                function (elem) buffer.saveLink(elem, false)),
+            A: Mode("Save object with prompt",              function (elem) buffer.saveLink(elem, false),                          images),
             f: Mode("Focus frame",                          function (elem) Buffer.focusedWindow = elem.ownerDocument.defaultView, function () util.makeXPath(["body"])),
             o: Mode("Follow hint",                          function (elem) buffer.followLink(elem, liberator.CURRENT_TAB)),
             t: Mode("Follow hint in a new tab",             function (elem) buffer.followLink(elem, liberator.NEW_TAB)),
@@ -54,9 +56,9 @@ const Hints = Module("hints", {
             y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
             Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
             c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
-            i: Mode("Show image",                           function (elem) liberator.open(elem.src),                              images),
-            I: Mode("Show image in a new tab",              function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images),
-            A: Mode("Show image's title or alt text",       function (elem) liberator.echo(elem.title ? elem.title : elem.title ? elem.title : "(none)"), images)
+            i: Mode("Show media object",                    function (elem) liberator.open(elem.src),                              images),
+            I: Mode("Show media object in a new tab",       function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images),
+            x: Mode("Show hint's title or alt text",        function (elem) liberator.echo(elem.title ? "title: "+elem.title : "alt: "+elem.alt), function() "//*[@title or @alt]")
         };
 
         /**

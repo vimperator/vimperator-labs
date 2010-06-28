@@ -73,8 +73,10 @@ tedious unless you always visit the first link on a page.
         <ul>
             <li><tag>;;</tag> <em>;</em> to focus an element</li>
             <li><tag>;?</tag> <em>?</em> to show information about an element (incomplete)</li>
-            <li><tag>;s</tag> <em>s</em> to save its destination</li>
-            <li><tag>;a</tag> <em>a</em> to save its destination (prompting for save location)</li>
+            <li><tag>;s</tag> <em>s</em> to save a link's destination</li>
+            <li><tag>;S</tag> <em>S</em> to save a media object</li>
+            <li><tag>;a</tag> <em>a</em> to save a link's destination (prompting for save location)</li>
+            <li><tag>;A</tag> <em>B</em> to save a media object (prompting for save location)</li>
             <li><tag>;f</tag> <em>f</em> to focus a frame</li>
             <li><tag>;o</tag> <em>o</em> to open its location in the current tab</li>
             <li><tag>;t</tag> <em>t</em> to open its location in a new tab</li>
@@ -89,9 +91,9 @@ tedious unless you always visit the first link on a page.
             <li><tag>;y</tag> <em>y</em> to yank its destination location</li>
             <li><tag>;Y</tag> <em>Y</em> to yank its text description</li>
             <li><tag>;c</tag> <em>c</em> to open its context menu</li>
-            <li><tag>;i</tag> <em>i</em> to open an image</li>
-            <li><tag>;I</tag> <em>I</em> to open an image in a new tab</li>
-            <li><tag>;A</tag> <em>A</em> to display an image's title text, or alt text if none.</li>
+            <li><tag>;i</tag> <em>i</em> to open a media object</li>
+            <li><tag>;I</tag> <em>I</em> to open a media object in a new tab</li>
+            <li><tag>;x</tag> <em>A</em> to display an element's title text, or alt text if none.</li>
         </ul>
 
         <p>

@@ -668,7 +668,7 @@ const Buffer = Module("buffer", {
      */
     saveLink: function (elem, skipPrompt) {
         let doc  = elem.ownerDocument;
-        let url  = window.makeURLAbsolute(elem.baseURI, elem.href);
+        let url  = window.makeURLAbsolute(elem.baseURI, elem.href ? elem.href : elem.src);
         let text = elem.textContent;
 
         try {

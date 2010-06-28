@@ -11,7 +11,9 @@
     * Strings starting with a "." are no longer treated as urls by :open et.al.
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * :history -remove , remove history items by name/tags/url (only by date with :sanitize).
-    * Add [m];A[m] hint mode to show images' title or alt text.
+    * Add image-related hint modes: [m];x[m] for title/alt text, and [m];S[m] and [m];A[m]
+      for saving.
+    * Image hints now work on anything with a *src* tag.
 
 2010-04-07:
     * version 2.3.1
