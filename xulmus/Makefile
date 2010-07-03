@@ -1,6 +1,6 @@
 #### configuration
 
-VERSION       = 0.2a1pre
+VERSION       = 0.2
 NAME          = xulmus
 
 include ../common/Makefile

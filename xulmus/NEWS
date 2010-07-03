@@ -1,3 +1,7 @@
+2010-XX-XX:
+    * version 0.2
+    * Support for maxVersion 1.8.*
+
 2009-XX-XX:
     * version 0.2pre
     * asciidoc is no longer required to build Xulmus
