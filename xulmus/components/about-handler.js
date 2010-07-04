@@ -36,6 +36,9 @@ AboutHandler.prototype = {
     getURIFlags: function (uri) Ci.nsIAboutModule.ALLOW_SCRIPT
 };
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler])
+if(XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([AboutHandler]);
+else
+    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler]);
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -154,6 +154,9 @@ Liberator.prototype = {
 
 var components = [ChromeData, Liberator];
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule(components)
+if(XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
+else
+    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule(components);
 
 // vim: set fdm=marker sw=4 ts=4 et:

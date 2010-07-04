@@ -43,6 +43,9 @@ CommandLineHandler.prototype = {
     }
 };
 
-function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler])
+if(XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([CommandLineHandler]);
+else
+    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([CommandLineHandler]);
 
 // vim: set ft=javascript fdm=marker sw=4 ts=4 et:
