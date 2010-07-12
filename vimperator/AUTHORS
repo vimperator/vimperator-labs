@@ -2,23 +2,23 @@ Main developer/Project founder:
   * Martin Stubenschrott (stubenschrott@vimperator.org)
 
 Developers:
-  * Kris Maglione
   * Ted Pavlic <ted@tedpavlic.com>
   * anekos <anekos@snca.net>
   * teramako <teramako@gmail.com>
   * janus_wel <janus.wel.3@gmail.com>
   * Conrad Irwin
+  * caisui
 
 Inactive/former developers:
+  * Kris Maglione
+  * Doug Kearns (dougkearns@gmail.com)
   * Viktor Kojouharov (Виктор Кожухаров)
   * Marco Candrian (mac@calmar.ws)
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
-  * Doug Kearns (dougkearns@gmail.com)
   * Konstantin Stepanov (milezv@yandex.ru)
   * Tim Hammerquist (penryu@gmail.com)
 
 Patches (in no special order):
-  * caisui ('hintchars')
   * Jez <jezreel@gmail.com>
   * Ruud Grosmann ('followhints' option)
   * Xie&Tian (multibyte support for hints, doc fixes)
@@ -44,3 +44,4 @@ Patches (in no special order):
   * Jarkko Oranen ('maxitems' option)
   * Gary Katsevman ('private' option)
   * Srinath Krishna (disable password field editing)
+  * Viktor Bielawski (Firefox4 compatibility, and more)
