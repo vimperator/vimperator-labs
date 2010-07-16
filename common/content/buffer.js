@@ -1536,12 +1536,9 @@ const Buffer = Module("buffer", {
                                  "textarea[not(@disabled) and not(@readonly)]",
                                  "iframe"];
 
-                    let elements = [m for (m in util.evaluateXPath(xpath))].filter(function (match) {
-                        if (match instanceof HTMLIFrameElement && !Editor.windowIsEditable(match.contentWindow))
-                            return false;
-                        let computedStyle = util.computedStyle(match);
-                        return computedStyle.visibility != "hidden" && computedStyle.display != "none";
-                    });
+                    let elements = [m for (m in util.evaluateXPath(xpath))
+                        if(m.getClientRects().length && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
+                    ];
 
                     liberator.assert(elements.length > 0);
                     buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
