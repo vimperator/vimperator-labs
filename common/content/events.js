@@ -671,7 +671,7 @@ const Events = Module("events", {
             if (elem && elem.readOnly)
                 return;
 
-            if ((elem instanceof HTMLInputElement && /^(text|password)$/.test(elem.type)) ||
+            if ((elem instanceof HTMLInputElement && /^(text|password|search|tel)$/.test(elem.type)) ||
                 (elem instanceof HTMLSelectElement)) {
                 liberator.mode = modes.INSERT;
                 if (hasHTMLDocument(win))
