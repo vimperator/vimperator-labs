@@ -88,7 +88,7 @@ const Modes = Module("modes", {
         case modes.VISUAL:
             if (newMode == modes.CARET) {
                 try { // clear any selection made; a simple if (selection) does not work
-                    let selection = window.content.getSelection();
+                    let selection = Buffer.focusedWindow.getSelection();
                     selection.collapseToStart();
                 }
                 catch (e) {}

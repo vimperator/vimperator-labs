@@ -762,7 +762,7 @@ const Events = Module("events", {
         switch (liberator.mode) {
         case modes.NORMAL:
             // clear any selection made
-            let selection = window.content.getSelection();
+            let selection = Buffer.focusedWindow.getSelection();
             try { // a simple if (selection) does not seem to work
                 selection.collapseToStart();
             }
