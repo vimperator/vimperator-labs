@@ -573,7 +573,7 @@ const Buffer = Module("buffer", {
         let ret = followFrame(window.content);
         if (!ret)
             // only loop through frames if the main content didn't match
-            ret = Array.some(window.content.frames, followFrame);
+            ret = Array.some(buffer.allFrames.slice(1), followFrame);
 
         if (!ret)
             liberator.beep();
