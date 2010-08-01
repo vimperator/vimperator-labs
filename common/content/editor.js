@@ -419,7 +419,7 @@ const Editor = Module("editor", {
         let text      = textbox.value;
         let currStart = textbox.selectionStart;
         let currEnd   = textbox.selectionEnd;
-        let foundWord = text.substring(0, currStart).replace(/.*\n/gm, '').match(RegExp('(' + abbreviations._match + ')$'), '');
+        let foundWord = text.substring(0, currStart).replace(/.*\n/gm, '').match(RegExp('(' + abbreviations._match + ')$'));
         if (!foundWord)
             return true;
         foundWord = foundWord[0];
