@@ -729,7 +729,7 @@ const Options = Module("options", {
      * Returns the value of the preference <b>name</b>.
      *
      * @param {string} name The preference name.
-     * @param {value} forcedDefault The the default value for this
+     * @param {value} forcedDefault The default value for this
      *     preference. Used for internal liberator preferences.
      */
     getPref: function (name, forcedDefault) {

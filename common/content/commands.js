@@ -13,7 +13,7 @@
 
 /**
  * A class representing Ex commands. Instances are created by
- * the {@link Commands} class.
+ * the {@link Command} class.
  *
  * @param {string[]} specs The names by which this command can be invoked.
  *     These are specified in the form "com[mand]" where "com" is a unique
