@@ -19,7 +19,7 @@ const Config = Module("config", ConfigBase, {
     get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    get features() this.isComposeWindow ? [] : ["hints", "mail", "marks", "addressbook", "tabs"],
+    get features() this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
         guioptions: "frb",
         showtabline: 1,
