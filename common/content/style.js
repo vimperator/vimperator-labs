@@ -801,10 +801,10 @@ Module("highlight", {
                 serial: function () [
                     {
                         command: this.name,
-                        arguments: [k],
-                        literalArg: v
+                        arguments: [v.class],
+                        literalArg: v.value
                     }
-                    for ([k, v] in Iterator(highlight))
+                    for (v in highlight)
                     if (v.value != v.default)
                 ]
             });
