@@ -571,9 +571,14 @@ const Buffer = Module("buffer", {
         }
 
         let ret = followFrame(window.content);
-        if (!ret)
-            // only loop through frames if the main content didn't match
-            ret = Array.some(buffer.allFrames.slice(1), followFrame);
+        if (!ret) {
+            // only loop through frames (ordered by size) if the main content didn't match
+            let frames = buffer.allFrames.slice(1)
+                .sort( function(a, b) {
+                    return ((b.scrollMaxX+b.innerWidth)*(b.scrollMaxY+b.innerHeight)) - ((a.scrollMaxX+a.innerWidth)*(a.scrollMaxY+a.innerHeight))
+                } );
+            ret = Array.some(frames, followFrame);
+        }
 
         if (!ret)
             liberator.beep();
