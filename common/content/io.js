@@ -536,7 +536,10 @@ lookup:
         }
 
         if (!file || !file.exists()) {
-            liberator.echoerr("Command not found: " + program);
+            liberator.callInMainThread(function() {
+                if (services.get("threadManager").isMainThread) // does not really seem to work but at least doesn't crash Firefox
+                    liberator.echoerr("Command not found: " + program);
+            }, this);
             return -1;
         }
 
