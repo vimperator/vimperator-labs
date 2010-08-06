@@ -88,10 +88,11 @@ const Abbreviations = Module("abbreviations", {
         let nonkeyword = "[" + nonkw + "]";
 
         let fullId = keyword + "+";
+        let endId = nonkeyword + "+" + keyword;
         let nonId = "\\S*" + nonkeyword;
 
         // Used in add and expand
-        this._match = fullId + "|" + nonId;
+        this._match = fullId + "|" + endId + "|" + nonId;
     },
 
     /**
