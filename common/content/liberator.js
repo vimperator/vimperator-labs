@@ -7,6 +7,11 @@
 /** @scope modules */
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
+try { 
+    Cu.import("resource://gre/modules/AddonManager.jsm")
+} catch (e) {
+    AddonManager = null;
+}
 
 const plugins = { __proto__: modules };
 const userContext = { __proto__: modules };
@@ -68,6 +73,15 @@ const Liberator = Module("liberator", {
         this.profileName = services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
 
         config.features.push(Liberator.getPlatformFeature());
+        
+        if (AddonManager) {
+            this._extensions = [];
+            AddonManager.getAddonsByTypes(["extension"], function (e) _extensions = e);
+            this.onEnabled = this.onEnabling = this.onDisabled = this.onDisabling = this.onInstalled = 
+                this.onInstalling = this.onUninstalled = this.onUninstalling = 
+                function () AddonManager.getAddonsByTypes(["extension"], function (e) _extensions = e);
+            AddonManager.addAddonListener(this);
+        }
     },
 
     destroy: function () {
@@ -90,7 +104,20 @@ const Liberator = Module("liberator", {
     /** @property {Element} The currently focused element. */
     get focus() document.commandDispatcher.focusedElement,
 
+    // TODO: Do away with this getter when support for 1.9.x is dropped
     get extensions() {
+        if (AddonManager)
+            return _extensions.map(function (e) ({
+                id: e.id,
+                name: e.name,
+                description: e.description,
+                enabled: e.isActive,
+                icon: e.iconURL,
+                options: e.optionsURL,
+                version: e.version,
+                original: e
+            }));
+        
         const rdf = services.get("rdf");
         const extensionManager = services.get("extensionManager");
 
@@ -505,7 +532,10 @@ const Liberator = Module("liberator", {
      * @returns {boolean}
      */
     hasExtension: function (name) {
-        let extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
+        if (AddonManager)
+            var extensions = this._extensions;
+        else
+            var extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
         return extensions.some(function (e) e.name == name);
     },
 
@@ -840,7 +870,7 @@ const Liberator = Module("liberator", {
                     break;
                 }
             }
-            catch(e) {}
+            catch (e) {}
         }
 
         for (let [, url] in Iterator(urls)) {
@@ -1352,7 +1382,10 @@ const Liberator = Module("liberator", {
                 let file = io.File(args[0]);
 
                 if (file.exists() && file.isReadable() && file.isFile())
-                    services.get("extensionManager").installItemFromFile(file, "app-profile");
+                    if (AddonManager)
+                        AddonManager.getInstallForFile(file, function (a) a.install());
+                    else
+                        services.get("extensionManager").installItemFromFile(file, "app-profile");
                 else {
                     if (file.exists() && file.isDirectory())
                         liberator.echomsg("Cannot install a directory: \"" + file.path + "\"", 0);
@@ -1378,20 +1411,27 @@ const Liberator = Module("liberator", {
                 name: "exte[nable]",
                 description: "Enable an extension",
                 action: "enableItem",
-                filter: function ({ item: e }) !e.enabled
+                filter: function ({ item: e }) (!e.enabled || (e.original && e.original.userDisabled))
             },
             {
                 name: "extd[isable]",
                 description: "Disable an extension",
                 action: "disableItem",
-                filter: function ({ item: e }) e.enabled
+                filter: function ({ item: e }) (e.enabled || (e.original && !e.original.userDisabled))
             }
         ].forEach(function (command) {
             commands.add([command.name],
                 command.description,
                 function (args) {
                     let name = args[0];
-                    function action(e) { services.get("extensionManager")[command.action](e.id); };
+                    function action(e) {
+                        if (!AddonManager)
+                            services.get("extensionManager")[command.action](e.id);
+                        else if (command.action == "uninstallItem")
+                            e.original.uninstall();
+                        else
+                            e.original.userDisabled = command.action == "disableItem";
+                    };
 
                     if (args.bang)
                         liberator.extensions.forEach(function (e) { action(e); });
