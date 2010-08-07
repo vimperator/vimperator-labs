@@ -140,7 +140,11 @@ const Util = Module("util", {
 
             // Encode trailing punctuation (http://en.wiktionary.org/wiki/e.g.)
             // XXX: Much more could be put here, if it's desirable.
-            url = url.replace(/[.,]$/, 
+            url = url.replace(/[.,]$/,
+                function(x) '%' + x.charCodeAt(0).toString(16).toUpperCase());
+
+            // Encode ' and " to facialiate using the URL in shell context
+            url = url.replace(/['"]/g,
                 function(x) '%' + x.charCodeAt(0).toString(16).toUpperCase());
         }
          
