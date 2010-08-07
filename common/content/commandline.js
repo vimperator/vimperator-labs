@@ -1133,8 +1133,10 @@ const CommandLine = Module("commandline", {
             // Change the completion text.
             // The second line is a hack to deal with some substring
             // preview corner cases.
-            commandline._commandWidget.value = this.prefix + completion + this.suffix;
-            this.editor.selection.focusNode.textContent = commandline._commandWidget.value;
+            let (str = this.prefix + completion + this.suffix) {
+                commandline._commandWidget.value = str;
+                this.editor.selection.focusNode.textContent = str;
+            }
 
             // Reset the caret to one position after the completion.
             this.caret = this.prefix.length + completion.length;
