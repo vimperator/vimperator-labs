@@ -274,13 +274,13 @@
             Expands to the value of the "mapleader" variable in key mapping. If
             "mapleader" is unset or empty then <str>\</str> is used. Example:
         </p>
-        <code><ex>:map <k name="Leader"/>h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <code><ex>:map <k name="Leader"/>h :echo "Hello"<k name="CR"/></ex></code>
         <p>works like</p>
-        <code><ex>:map \h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <code><ex>:map \h :echo "Hello"<k name="CR"/></ex></code>
         <p>but after</p>
-        <code><ex>let mapleader = <str>,</str></ex></code>
+        <code><ex>let mapleader = ","</ex></code>
         <p>it works like</p>
-        <code><ex>:map ,h :echo <str>Hello</str><k name="CR"/></ex></code>
+        <code><ex>:map ,h :echo "Hello"<k name="CR"/></ex></code>
     </description>
 </item>
 
