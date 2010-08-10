@@ -1,8 +1,9 @@
 2010-xx-xx:
     * version 2.4
-    * :dialog passwords
-    * Support for configurable hint characters; This basically brings back the old
+    * IMPORTANT: Support for configurable hint characters; This basically brings back the old
       hint behavior for those who prefer it. See the 'hintchars' option. Patch by caisui
+    * Better escape certain characters when yanking links to improve pasting in other applications
+    * :dialog passwords
     * Fix hints display on some pages like stackoverflow (thanks Jez)
     * Fix relative paths in :cd
     * Support rich text editor written by HTML.
