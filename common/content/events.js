@@ -1115,7 +1115,7 @@ const Events = Module("events", {
                 completer: function (context) completion.macro(context)
             });
 
-        commands.add(["macros"],
+        commands.add(["mac[ros]"],
             "List all macros",
             function (args) { completion.listCompleter("macro", args[0]); }, {
                 argCount: "?",
