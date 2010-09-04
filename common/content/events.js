@@ -24,7 +24,7 @@ const Events = Module("events", {
 
         this.sessionListeners = [];
 
-        this._macros = storage.newMap("macros", true, { privateData: true });
+        this._macros = storage.newMap("macros", { store: true, privateData: true });
 
         // NOTE: the order of ["Esc", "Escape"] or ["Escape", "Esc"]
         //       matters, so use that string as the first item, that you
