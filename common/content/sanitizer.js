@@ -1,4 +1,5 @@
-// Copyright (c) 2009 by Doug Kearns <dougkearns@gmail.com>
+// Copyright (c) 2009      by Kris Maglione <maglione.k at Gmail>
+// Copyright (c) 2009-2010 by Doug Kearns <dougkearns@gmail.com>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
@@ -11,7 +12,7 @@
 //   - integrate with the Clear Private Data dialog?
 
 // FIXME:
-//   - finish 1.9.0 support if we're going to support sanitizing in Xulmus
+//   - finish 1.9.0+ support if we're going to support sanitizing in Xulmus
 
 const Sanitizer = Module("sanitizer", {
     requires: ["liberator"],
@@ -20,13 +21,8 @@ const Sanitizer = Module("sanitizer", {
         const self = this;
         liberator.loadScript("chrome://browser/content/sanitize.js", Sanitizer);
         this.__proto__.__proto__ = new Sanitizer.Sanitizer; // Good enough.
-
-        // TODO: remove this version test
-        if (/^1.9.1/.test(services.get("xulAppInfo").platformVersion))
-            self.prefDomain = "privacy.cpd.";
-        else
-            self.prefDomain = "privacy.item.";
-
+        Sanitizer.getClearRange = Sanitizer.Sanitizer.getClearRange; // XXX
+        self.prefDomain = "privacy.cpd.";
         self.prefDomain2 = "extensions.liberator.privacy.cpd.";
     },
 
@@ -81,15 +77,8 @@ const Sanitizer = Module("sanitizer", {
 
     get prefNames() util.Array.flatten([this.prefDomain, this.prefDomain2].map(options.allPrefs))
 }, {
-    prefArgList: [["commandLine",  "commandline"],
-                  ["offlineApps",  "offlineapps"],
-                  ["siteSettings", "sitesettings"]],
-    prefToArg: function (pref) {
-        pref = pref.replace(/.*\./, "");
-        return util.Array.toObject(Sanitizer.prefArgList)[pref] || pref;
-    },
-
-    argToPref: function (arg) [k for ([k, v] in values(Sanitizer.prefArgList)) if (v == arg)][0] || arg
+    argToPref: function (arg) ["commandLine", "offlineApps", "siteSettings"].filter(function (pref) pref.toLowerCase() == arg)[0] || arg,
+    prefToArg: function (pref) pref.toLowerCase().replace(/.*\./, "")
 }, {
     commands: function () {
         commands.add(["sa[nitize]"],
@@ -213,7 +202,6 @@ const Sanitizer = Module("sanitizer", {
             {
                 setter: function (values) {
                     for (let [, pref] in Iterator(sanitizer.prefNames)) {
-                        continue;
                         options.setPref(pref, false);
 
                         for (let [, value] in Iterator(this.parseValues(values))) {
