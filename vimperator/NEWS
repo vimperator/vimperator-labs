@@ -2,6 +2,8 @@
     * version 2.4
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old
       hint behavior for those who prefer it. See the 'hintchars' option. Patch by caisui
+    * History, bookmarks and :open output limit the width of the URL column to 50% so you can
+      always see (and interact with hints) the title column as well
     * Better escape certain characters when yanking links to improve pasting in other applications
     * :dialog passwords
     * Fix hints display on some pages like stackoverflow (thanks Jez)

@@ -53,8 +53,8 @@ Highlights.prototype.CSS = <![CDATA[
     CompItem>*           padding: 0 .5ex;
     CompIcon             width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
     CompIcon>img         max-width: 16px; max-height: 16px; vertical-align: middle;
-    CompResult           width: 45%; overflow: hidden;
-    CompDesc             color: gray; width: 50%;
+    CompResult           width: 500px; max-width: 500px; overflow: hidden;
+    CompDesc             width: 500px; max-width: 500px; color: gray;
     CompLess             text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
     CompLess::after      content: "\2303" /* Unicode up arrowhead */
     CompMore             text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
@@ -65,7 +65,7 @@ Highlights.prototype.CSS = <![CDATA[
     GradientRight   background-color: white;
 
     Indicator   color: blue;
-    Filter      font-weight: bold;
+    Filter      font-weight: bold; background-color: yellow;
 
     Keyword     color: red;
     Tag         color: blue;

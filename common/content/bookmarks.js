@@ -629,7 +629,7 @@ const Bookmarks = Module("bookmarks", {
                     keyword, true);
 
             let item = keywords.filter(function (k) k.keyword == keyword)[0];
-            if (item && item.url.indexOf("%s") > -1)
+            if (item && item.url.indexOf("%s") > -1) {
                 context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
                     context.title = [keyword + " Quick Search"];
@@ -656,6 +656,7 @@ const Bookmarks = Module("bookmarks", {
                         }).filter(util.identity);
                     };
                 });
+            }
         };
 
         completion.searchEngineSuggest = function searchEngineSuggest(context, engineAliases, kludge) {
