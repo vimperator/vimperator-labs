@@ -132,11 +132,11 @@ const Template = Module("template", {
             case "xml":
                 return arg;
             default:
-                return <![CDATA[<unknown type>]]>;
+                return <><![CDATA[<unknown type>]]></>;
             }
         }
         catch (e) {
-            return<![CDATA[<unknown>]]>;
+            return <><![CDATA[<unknown>]]></>;
         }
     },
 

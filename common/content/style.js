@@ -17,7 +17,7 @@
  *            | groupname css-selector
  */
 // <css>
-Highlights.prototype.CSS = <![CDATA[
+Highlights.prototype.CSS = <><![CDATA[
     Boolean     color: red;
     Function    color: navy;
     Null        color: blue;
@@ -224,7 +224,7 @@ Highlights.prototype.CSS = <![CDATA[
         color: black;
         background-color: yellow;
     }
-    ]]>.toString();
+    ]]></>.toString();
 
 /**
  * A class to manage highlighting rules. The parameters are the
@@ -743,7 +743,7 @@ Module("highlight", {
         commands.add(["hi[ghlight]"],
             "Set the style of certain display elements",
             function (args) {
-                let style = <![CDATA[
+                let style = <><![CDATA[
                     ;
                     display: inline-block !important;
                     position: static !important;
@@ -751,7 +751,7 @@ Module("highlight", {
                     width: 3em !important; min-width: 3em !important; max-width: 3em !important;
                     height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                     overflow: hidden !important;
-                ]]>;
+                ]]></>;
                 let clear = args[0] == "clear";
                 if (clear)
                     args.shift();

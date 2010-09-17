@@ -613,7 +613,7 @@ const Util = Module("util", {
                 hasValue = false;
             }
             for (let i in object) {
-                let value = <![CDATA[<no value>]]>;
+                let value = <><![CDATA[<no value>]]></>;
                 try {
                     value = object[i];
                 }
