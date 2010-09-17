@@ -876,7 +876,7 @@ const Util = Module("util", {
          * @param {Array} ary
          * @returns {Array}
          */
-        flatten: function flatten(ary) Array.concat.apply([], ary),
+        flatten: function flatten(ary) Array.prototype.concat.apply([], ary),
 
         /**
          * Returns an Iterator for an array's values.
