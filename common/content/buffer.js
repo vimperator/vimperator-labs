@@ -168,7 +168,7 @@ const Buffer = Module("buffer", {
     // called when the active document is scrolled
     _updateBufferPosition: function _updateBufferPosition() {
         statusline.updateBufferPosition();
-        modes.show();
+        // modes.show();
     },
 
     onDOMContentLoaded: function onDOMContentLoaded(event) {
@@ -185,10 +185,6 @@ const Buffer = Module("buffer", {
             let doc = event.originalTarget;
             // document is part of a frameset
             if (doc.defaultView.frameElement) {
-                // hacky way to get rid of "Transfering data from ..." on sites with frames
-                // when you click on a link inside a frameset, because asyncUpdateUI
-                // is not triggered there (Gecko bug?)
-                setTimeout(function () { statusline.updateUrl(); }, 10);
                 return;
             }
 
@@ -236,7 +232,6 @@ const Buffer = Module("buffer", {
                 // only thrown for the current tab, not when another tab changes
                 if (flags & Ci.nsIWebProgressListener.STATE_START) {
                     buffer.loaded = 0;
-                    statusline.updateProgress(0);
 
                     autocommands.trigger("PageLoadPre", { url: buffer.URL });
 
@@ -249,44 +244,26 @@ const Buffer = Module("buffer", {
                 }
                 else if (flags & Ci.nsIWebProgressListener.STATE_STOP) {
                     buffer.loaded = (status == 0 ? 1 : 2);
-                    statusline.updateUrl();
                 }
             }
         },
         // for notifying the user about secure web pages
-        onSecurityChange: function (webProgress, request, state) {
-            // TODO: do something useful with STATE_SECURE_MED and STATE_SECURE_LOW
-            if (state & Ci.nsIWebProgressListener.STATE_IS_INSECURE)
-                statusline.setClass("insecure");
-            else if (state & Ci.nsIWebProgressListener.STATE_IS_BROKEN)
-                statusline.setClass("broken");
-            else if (state & Ci.nsIWebProgressListener.STATE_IDENTITY_EV_TOPLEVEL)
-                statusline.setClass("extended");
-            else if (state & Ci.nsIWebProgressListener.STATE_SECURE_HIGH)
-                statusline.setClass("secure");
-        },
-        onStatusChange: function (webProgress, request, status, message) {
-            statusline.updateUrl(message);
-        },
-        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) {
-            statusline.updateProgress(curTotalProgress/maxTotalProgress);
-        },
-        // happens when the users switches tabs
+        onSecurityChange: function (webProgress, request, state) { },
+        onStatusChange: function (webProgress, request, status, message) { },
+        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) { },
+        // also happens when the users switches tabs
         onLocationChange: function () {
             statusline.updateUrl();
-            statusline.updateProgress();
 
             autocommands.trigger("LocationChange", { url: buffer.URL });
 
             // if this is not delayed we get the position of the old buffer
-            setTimeout(function () { statusline.updateBufferPosition(); }, 500);
+            setTimeout(function () { statusline.updateBufferPosition(); }, 250);
         },
         // called at the very end of a page load
-        asyncUpdateUI: function () {
-            setTimeout(function () { statusline.updateUrl(); }, 100);
-        },
+        asyncUpdateUI: function () { },
         setOverLink: function (link, b) {
-            let ssli = options["showstatuslinks"];
+            /*let ssli = options["showstatuslinks"];
             if (link && ssli) {
                 if (ssli == 1)
                     statusline.updateUrl("Link: " + link);
@@ -299,7 +276,7 @@ const Buffer = Module("buffer", {
                     statusline.updateUrl();
                 else if (ssli == 2)
                     modes.show();
-            }
+                }*/
         },
 
         // nsIXULBrowserWindow stubs
@@ -1108,6 +1085,7 @@ const Buffer = Module("buffer", {
 
         elem.scrollTop += number * increment;
     },
+
     scrollHorizontal: function scrollHorizontal(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, true);
         let fontSize = parseInt(util.computedStyle(elem).fontSize);

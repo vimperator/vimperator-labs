@@ -197,53 +197,13 @@
 </item>
 
 
-<h2 tag="status-line status-bar">Status line</h2>
+<h2 tag="status-line status-bar">Status bar</h2>
 
 <p>
-    The status line appears at the bottom of each window. The <o>laststatus</o>
-    option can be used to specify when the status line appears.
+    The status line appears at the bottom right of each window. The <o>statusfields</o>
+    option can be used to specify which elements appear in the status bar and in which order.
 </p>
 
-<p>
-    The status line contains several fields that provide information about the
-    state of the current buffer. These are, in order:
-</p>
-
-<ul>
-    <li>
-        URL: The URL of the currently loaded page. While the page is loading
-        progress messages are also output to this field.
-    </li>
-    <li>
-        History and bookmark status ([+-❤]): The position of the current page in
-        the tab's session history; + and - indicate that it's possible to move
-        backwards and forwards through the history respectively. ❤ indicates that
-        the current page is bookmarked.
-    </li>
-    <li>
-        Tab index ([N/M]): N is the index of the currently selected tab and M is
-        the total number of tabs in the current window.
-    </li>
-    <li>
-        Vertical scroll: The vertical scroll percentage of the current buffer.
-        This is a percentage or Top for 0% and Bot for 100%.
-    </li>
-    <li>
-        Security: The security information button is displayed when appropriate
-        as per &liberator.host;. The color of the status bar also changes to reflect the
-        current security status of the loaded page.
-        <ul>
-            <li>black – the site's identity is unverified and the connection is unencrypted</li>
-            <li>blue – the site's domain has been verified and the connection is encrypted</li>
-            <li>green – the site's domain and owner have been fully verified via an</li>
-        </ul>
-        Extended Validation certificate and the connection is encrypted
-    </li>
-    <li>
-        Extensions: Any extension buttons that would normally be installed to the
-        &liberator.host; status bar are appended to the end of the status line.
-    </li>
-</ul>
 
 <h2 tag="toolbar">Toolbars</h2>
 

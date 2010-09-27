@@ -95,10 +95,6 @@ const CommandLine = Module("commandline", {
         this._statusTimer = new Timer(5, 100, function statusTell() {
             if (self._completions == null)
                 return;
-            if (self._completions.selected == null)
-                statusline.updateProgress("");
-            else
-                statusline.updateProgress("match " + (self._completions.selected + 1) + " of " + self._completions.items.length);
         });
 
         this._autocompleteTimer = new Timer(200, 500, function autocompleteTell(tabPressed) {
@@ -443,7 +439,6 @@ const CommandLine = Module("commandline", {
         this._completions = null;
         this._history = null;
 
-        statusline.updateProgress(""); // we may have a "match x of y" visible
         liberator.focusContent(false);
 
         this._multilineInputWidget.collapsed = true;

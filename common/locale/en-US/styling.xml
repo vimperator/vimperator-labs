@@ -94,9 +94,6 @@
             <dt>Question</dt>          <dd>A prompt for a decision</dd>
             <dt>Search</dt>            <dd>Highlighted search results in a web page</dd>
             <dt>StatusLine</dt>        <dd>The status bar</dd>
-            <dt>StatusLineBroken</dt>  <dd>The status bar for a broken web page</dd>
-            <dt>StatusLineSecure</dt>  <dd>The status bar for a secure web page</dd>
-            <dt>StatusLineExtended</dt><dd>The status bar for a secure web page with an Extended Validation(EV) certificate</dd>
             <dt>String</dt>            <dd>A JavaScript String object</dd>
             <dt>TabClose</dt>          <dd>The close button of a browser tab</dd>
             <dt>TabIcon</dt>           <dd>The icon of a browser tab</dd>

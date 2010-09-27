@@ -191,7 +191,6 @@ const Bookmarks = Module("bookmarks", {
         let bookmarkObserver = function (key, event, arg) {
             if (event == "add")
                 autocommands.trigger("BookmarkAdd", arg);
-            statusline.updateUrl();
         };
 
         this._cache = storage.newObject("bookmark-cache", Cache, { store: false });

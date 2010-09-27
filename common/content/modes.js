@@ -114,7 +114,7 @@ const Modes = Module("modes", {
             if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
-            statusline.updateUrl();
+            statusline.updateUrl(); // TODO: Why?
             liberator.focusContent(true);
         }
     },

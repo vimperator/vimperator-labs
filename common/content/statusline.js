@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2006-2010 by Martin Stubenschrott <stubenschrott@vimperator.org>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
@@ -7,53 +7,26 @@
 
 const StatusLine = Module("statusline", {
     init: function () {
-        this._statusBar = document.getElementById("status-bar");
-        this._statusBar.collapsed = true; // it is later restored unless the user sets laststatus=0
-
         // our status bar fields
-        this._statuslineWidget     = document.getElementById("liberator-statusline");
-        this._urlWidget            = document.getElementById("liberator-statusline-field-url");
-        this._inputBufferWidget    = document.getElementById("liberator-statusline-field-inputbuffer");
-        this._progressWidget       = document.getElementById("liberator-statusline-field-progress");
-        this._tabCountWidget       = document.getElementById("liberator-statusline-field-tabcount");
-        this._bufferPositionWidget = document.getElementById("liberator-statusline-field-bufferposition");
-    },
-
-    /**
-     * Update the status bar to indicate how secure the website is:
-     * extended - Secure connection with Extended Validation(EV) certificate.
-     * secure -   Secure connection with valid certificate.
-     * broken -   Secure connection with invalid certificate, or
-     *            mixed content.
-     * insecure - Insecure connection.
-     *
-     * @param {'extended'|'secure'|'broken'|'insecure'} type
-     */
-    setClass: function setClass(type) {
-        const highlightGroup = {
-            extended: "StatusLineExtended",
-            secure:   "StatusLineSecure",
-            broken:   "StatusLineBroken",
-            insecure: "StatusLine"
-        };
-
-        this._statusBar.setAttributeNS(NS.uri, "highlight", highlightGroup[type]);
+        this._statusfields = {};
+        this._statuslineWidget = document.getElementById("liberator-statusfields");
     },
 
     // update all fields of the statusline
     update: function update() {
-        this.updateUrl();
-        this.updateInputBuffer();
-        this.updateProgress();
-        this.updateTabCount();
-        this.updateBufferPosition();
+        let text = "";
+        let statusfields = this._statusfields;
+        options.get("statusfields").values.forEach(function(field) {
+            if (statusfields[field])
+                text += " " + statusfields[field];
+            });
+
+        this._statuslineWidget.value = text;
+        // liberator.dump("updating text to: " + text);
     },
 
     /**
-     * Update the URL displayed in the status line. Also displays status
-     * icons, [+-♥], when there are next and previous pages in the
-     * current tab's history, and when the current URL is bookmarked,
-     * respectively.
+     * Update the URL displayed in the status line
      *
      * @param {string} url The URL to display.
      * @default buffer.URL
@@ -73,26 +46,7 @@ const StatusLine = Module("statusline", {
                      .replace(RegExp("^liberator://help/(\\S+)"), "$1 [Help]");
         }
 
-        // when session information is available, add [+] when we can go
-        // backwards, [-] when we can go forwards
-        let modified = "";
-        if (window.getWebNavigation) {
-            let sh = window.getWebNavigation().sessionHistory;
-            if (sh && sh.index > 0)
-                modified += "+";
-            if (sh && sh.index < sh.count - 1)
-                modified += "-";
-        }
-        if (modules.bookmarks) {
-            if (bookmarks.isBookmarked(buffer.URL))
-                modified += "\u2764"; // a heart symbol: ❤
-                //modified += "\u2665"; // a heart symbol: ♥
-        }
-
-        if (modified)
-            url += " [" + modified + "]";
-
-        this._urlWidget.value = url;
+        this.updateField("location", url);
     },
 
     /**
@@ -107,38 +61,7 @@ const StatusLine = Module("statusline", {
         if (!buffer || typeof buffer != "string")
             buffer = "";
 
-        this._inputBufferWidget.value = buffer;
-    },
-
-    /**
-     * Update the page load progress bar.
-     *
-     * @param {string|number} progress The current progress, as follows:
-     *    A string          - Displayed literally.
-     *    A ratio 0 < n < 1 - Displayed as a progress bar.
-     *    A number n <= 0   - Displayed as a "Loading" message.
-     *    Any other number  - The progress is cleared.
-     */
-    updateProgress: function updateProgress(progress) {
-        if (!progress)
-            progress = "";
-
-        if (typeof progress == "string")
-            this._progressWidget.value = progress;
-        else if (typeof progress == "number") {
-            let progressStr = "";
-            if (progress <= 0)
-                progressStr = "[ Loading...         ]";
-            else if (progress < 1) {
-                progress = Math.floor(progress * 20);
-                progressStr = "["
-                    + "====================".substr(0, progress)
-                    + ">"
-                    + "                    ".substr(0, 19 - progress)
-                    + "]";
-            }
-            this._progressWidget.value = progressStr;
-        }
+        this.updateField("input", buffer);
     },
 
     /**
@@ -161,7 +84,7 @@ const StatusLine = Module("statusline", {
                 for (let [i, tab] in util.Array.iteritems(config.browser.mTabs))
                     tab.setAttribute("ordinal", i + 1);
 
-            this._tabCountWidget.value = "[" + (tabs.index() + 1) + "/" + tabs.count + "]";
+            this.updateField("tabcount", "[" + (tabs.index() + 1) + "/" + tabs.count + "]");
         }
     },
 
@@ -192,31 +115,41 @@ const StatusLine = Module("statusline", {
         else
             bufferPositionStr = percent + "%";
 
-        this._bufferPositionWidget.value = bufferPositionStr;
+        this.updateField("position", bufferPositionStr);
+    },
+
+    /**
+     * Set any field in the statusbar
+     *
+     * @param fieldname
+     * @param value
+     */
+    updateField: function updateField(fieldname, value) {
+        // liberator.dump("updating field " + fieldname + " to value " + value);
+        this._statusfields[fieldname] = value;
+        this.update();
     }
 
 }, {
 }, {
     options: function () {
-        options.add(["laststatus", "ls"],
-            "Show the status line",
-            "number", 2,
+        options.add(["statusfields", "sf"],
+            "Define which information to show in the status bar",
+            "stringlist", "input,location,tabcount,position",
             {
                 setter: function setter(value) {
-                    if (value == 0)
-                        document.getElementById("status-bar").collapsed = true;
-                    else if (value == 1)
-                        liberator.echoerr("show status line only with > 1 window not implemented yet");
-                    else
-                        document.getElementById("status-bar").collapsed = false;
-
+                    statusline.update();
                     return value;
                 },
                 completer: function completer(context) [
-                    ["0", "Never display status line"],
-                    ["1", "Display status line only if there are multiple windows"],
-                    ["2", "Always display status line"]
-                ]
+                    ["input",    "Any partially entered key mapping"],
+                    ["location", "The currently loaded URL"],
+                    ["tabcount", "The number of currently selected tab and total number of tabs"],
+                    ["position", "The vertical scroll position"]
+                ],
+                validator: function (value) {
+                    return true; // we allow all values for now for easy extendability of 'statusfields' by plugins
+                }
             });
     }
 });

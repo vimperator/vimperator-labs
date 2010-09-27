@@ -83,9 +83,6 @@
             <dt>Question</dt>          <dd>決定を行うためのプロンプト</dd>
             <dt>Search</dt>            <dd>ウェブページの検索結果の強調表示</dd>
             <dt>StatusLine</dt>        <dd>ステータスバー</dd>
-            <dt>StatusLineBroken</dt>  <dd>安全でないウェブページにおけるステータスバー</dd>
-            <dt>StatusLineSecure</dt>  <dd>安全なウェブページにおけるステータスバー</dd>
-            <dt>StatusLineExtended</dt><dd>EV 認証による安全なウェブページにおけるステータスバー</dd>
             <dt>String</dt>            <dd>JavaScript の String オブジェクト</dd>
             <dt>TabClose</dt>          <dd>タブの閉じるボタン</dd>
             <dt>TabIcon</dt>           <dd>タブのアイコン</dd>

@@ -40,7 +40,7 @@ Highlights.prototype.CSS = <><![CDATA[
     NonText     color: blue; min-height: 16px; padding-left: 2px;
     Preview     color: gray;
 
-    CmdLine,>*  font-family: monospace; padding: 1px;
+    CmdLine,>*  font-family: monospace; padding: 2px; vertical-align: middle; background-color: white;
     CmdOutput   white-space: pre;
 
     CompGroup
@@ -73,10 +73,7 @@ Highlights.prototype.CSS = <><![CDATA[
     LineNr      color: orange; background: white;
     Question    color: green; background: white; font-weight: bold;
 
-    StatusLine          color: white; background: black;
-    StatusLineBroken    color: black; background: #FFa0a0 /* light-red */
-    StatusLineSecure    color: black; background: #a0a0FF /* light-blue */
-    StatusLineExtended  color: black; background: #a0FFa0 /* light-green */
+    StatusLine  color: gray; background: white;
 
     TabClose,.tab-close-button
     TabIcon,.tab-icon

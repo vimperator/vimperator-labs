@@ -408,7 +408,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>ignorecase</o></dt> <dd>Ignore case in search patterns</dd>
     <dt><o>incsearch</o></dt> <dd>Show where the search pattern matches as it is typed</dd>
     <dt><o>insertmode</o></dt> <dd>Use Insert mode as the default for text areas</dd>
-    <dt><o>laststatus</o></dt> <dd>Show the status line</dd>
     <dt><o>linksearch</o></dt> <dd>Limit the search to hyperlink text</dd>
     <dt><o>loadplugins</o></dt> <dd>Load plugin scripts when starting up</dd>
     <dt><o>maxitems</o></dt> <dd>Maximum number of items to display at once in a listing</dd>
@@ -431,6 +430,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>showstatuslinks</o></dt> <dd>Show the destination of the link under the cursor in the status bar</dd>
     <dt><o>showtabline</o></dt> <dd>Control when to show the tab bar of opened web pages</dd>
     <dt><o>smartcase</o></dt> <dd>Override the <o>ignorecase</o> option if the pattern contains uppercase characters</dd>
+    <dt><o>statusfields</o></dt> <dd>Show certain elements in the status bar</dd>
     <dt><o>suggestengines</o></dt> <dd>Engine Alias which has a feature of suggest</dd>
     <dt><o>titlestring</o></dt> <dd>Change the title of the window</dd>
     <dt><o>urlseparator</o></dt> <dd>Set the separator regex used to separate multiple URL args</dd>

@@ -738,22 +738,22 @@
 
 
 <item>
-    <tags>'ls' 'laststatus'</tags>
-    <spec>'laststatus' 'ls'</spec>
-    <type>number</type>
-    <default>2</default>
+    <tags>'sf' 'statusfields'</tags>
+    <spec>'statusfields' 'sf'</spec>
+    <type>stringlist</type>
+    <default>input,location,tabcount,position</default>
     <description>
-        <p>Determines when the last window will have a status line.</p>
+        <p>Determines which elements to show in the status bar.</p>
 
         <p>Possible values:</p>
 
         <dl>
-            <dt>0</dt>      <dd>Never</dd>
-            <dt>1</dt>      <dd>Only if there are multiple windows</dd>
-            <dt>2</dt>      <dd>Always</dd>
+            <dt>input</dt>      <dd>A partial command like 'g' if you just start typing 'gg'</dd>
+            <dt>location</dt>   <dd>The URL of the currently loaded page</dd>
+            <dt>tabcount</dt>   <dd>[N/M]: N is the index of the currently selected tab and M is
+                                    the total number of tabs in the current window.</dd>
+            <dt>position</dt>   <dd>The vertical scroll position</dd>
         </dl>
-
-        <note>laststatus=1 not implemented yet.</note>
     </description>
 </item>
 

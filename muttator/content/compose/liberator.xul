@@ -70,6 +70,21 @@
             </hbox>
         </stack>
 
+        <hbox liberator:highlight="CmdLine">
+            <stack orient="horizontal" align="stretch" class="liberator-container" flex="1">
+                <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
+                <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
+                    <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                    <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                        oninput="window.liberator &and; liberator.modules.commandline.onEvent(event);"
+                        onkeyup="window.liberator &and; liberator.modules.commandline.onEvent(event);"
+                        onfocus="window.liberator &and; liberator.modules.commandline.onEvent(event);"
+                        onblur="window.liberator &and; liberator.modules.commandline.onEvent(event);"/>
+                </hbox>
+            </stack>
+            <label liberator:highlight="StatusLine" class="plain" id="liberator-statusline" flex="0" align="right"/>
+        </hbox>
+
         <vbox class="liberator-container" hidden="false" collapsed="false">
             <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
                 onkeypress="liberator.modules.commandline.onMultilineInputEvent(event);"
@@ -78,20 +93,6 @@
         </vbox>
 
     </window>
-
-    <statusbar id="status-bar" liberator:highlight="StatusLine">
-        <hbox insertbefore="&liberator.statusBefore;" insertafter="&liberator.statusAfter;"
-              id="liberator-statusline" flex="1" hidden="false" align="center">
-            <textbox class="plain" id="liberator-statusline-field-url" readonly="false" flex="1" crop="end"/>
-            <label class="plain" id="liberator-statusline-field-inputbuffer"    flex="0"/>
-            <label class="plain" id="liberator-statusline-field-progress"       flex="0"/>
-            <label class="plain" id="liberator-statusline-field-tabcount"       flex="0"/>
-            <label class="plain" id="liberator-statusline-field-bufferposition" flex="0"/>
-        </hbox>
-        <!-- just hide them since other elements expect them -->
-        <statusbarpanel id="statusbar-display" hidden="true"/>
-        <statusbarpanel id="statusbar-progresspanel" hidden="true"/>
-    </statusbar>
 
 </overlay>
 

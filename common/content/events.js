@@ -817,6 +817,9 @@ const Events = Module("events", {
             modes.reset();
             break;
         }
+
+        // clear any command output, if we have any
+        modes.show();
     },
 
     // this keypress handler gets always called first, even if e.g.

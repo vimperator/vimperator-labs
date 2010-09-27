@@ -1,19 +1,6 @@
 Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
-ARCHITECTURE:
-- decide on how to document Arrays in our jsdoc(ish) documentation. Host docs
-  on the website - is there even a documentation tool that can parse our source
-  sensibly?
-
-  There are a few that can, to some extent. We more or less follow the
-  ScriptDoc standard, and we're very close to a few other standards.
-  Unfortunately, nearly all of the parsers are lacking in some way, bloated to
-  hell, and/or lack support for JS 1.8. --Kris
-
-REFACTORING:
-- remove unnecessary usage of "self"
-
 BUGS:
 - Class#closure seems to be throwing [Exception... "Could not convert
   JavaScript argument"  nsresult: "0x80570009 (NS_ERROR_XPC_BAD_CONVERT_JS)"]
@@ -56,7 +43,6 @@ BUGS:
 
 
 FEATURES:
-8 Document Textarea, Caret and Visual modes.
 8 Incremental searches should retreat to their starting position on <Backspace>
 8 Replace config.name tests in liberator with more specific feature
   tests or overridable APIs where at all feasible.
@@ -77,7 +63,6 @@ FEATURES:
   should be the only hint mode that changes based on loadInBackground.
   --Ted
 8 add support for filename special characters such as %
-8 :redir and 'verbosefile'
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
 8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
@@ -109,13 +94,8 @@ FEATURES:
 7 make an option to disable session saving by default when you close Firefox
 7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
-6 :mksession
 6 add [count] support to :b* and :tab* commands where missing
-6 registers
-  Here, unlike Vim, y and "*y would be equivalent. That is, the pasteboard would
-  always be the default register. --Ted
 6 check/correct spellings in insert mode with some mappings
-6 add more autocommands (TabClose, TabOpen, TabChanged etc)
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 pipe selected text/link/website to an external command
@@ -128,10 +108,6 @@ FEATURES:
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
 4 } { should jump to the next paragraph of the page
-3 A format for 'guitablabel' and 'statusline'
-3 add a command-line window (:help cmdline-window in Vim).
-3 Splitting Windows with [:sp :vsp ctrl-w,s ctrl-w,v] and closing with [ctrl-w,q], moving with [ctrl-w,w or tab]
-  have a look into the split browser extension
 1 Add information to liberator/HACKING file about testing and optimization
 1 Document remote branches in liberator/HACKING
 1 Reformat liberator/HACKING so that git diff can find sections and report changes @ somewhere
