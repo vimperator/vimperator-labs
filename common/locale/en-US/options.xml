@@ -527,7 +527,7 @@
     <tags>'go' 'guioptions'</tags>
     <spec>'guioptions' 'go'</spec>
     <type>charlist</type>
-    <default></default>
+    <default>Tbr</default>
     <description>
         <p>Show or hide certain GUI elements like the menu or toolbar.</p>
 

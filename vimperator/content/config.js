@@ -17,7 +17,7 @@ const Config = Module("config", ConfigBase, {
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows"],
     defaults: {
         complete: "slf",
-        guioptions: "rb",
+        guioptions: "Trb",
         showtabline: 2,
         titlestring: "Vimperator"
     },
