@@ -200,7 +200,7 @@
 <h2 tag="status-line status-bar">Status bar</h2>
 
 <p>
-    The status line appears at the bottom right of each window. The <o>statusfields</o>
+    The status line appears at the bottom right of each window. The <o>status</o>
     option can be used to specify which elements appear in the status bar and in which order.
 </p>
 

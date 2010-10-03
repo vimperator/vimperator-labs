@@ -9,14 +9,14 @@ const StatusLine = Module("statusline", {
     init: function () {
         // our status bar fields
         this._statusfields = {};
-        this._statuslineWidget = document.getElementById("liberator-statusfields");
+        this._statuslineWidget = document.getElementById("liberator-status");
     },
 
     // update all fields of the statusline
     update: function update() {
         let text = "";
         let statusfields = this._statusfields;
-        options.get("statusfields").values.forEach(function(field) {
+        options.get("status").values.forEach(function(field) {
             if (statusfields[field])
                 text += " " + statusfields[field];
             });
@@ -133,7 +133,7 @@ const StatusLine = Module("statusline", {
 }, {
 }, {
     options: function () {
-        options.add(["statusfields", "sf"],
+        options.add(["status"],
             "Define which information to show in the status bar",
             "stringlist", "input,location,tabcount,position",
             {
@@ -148,7 +148,7 @@ const StatusLine = Module("statusline", {
                     ["position", "The vertical scroll position"]
                 ],
                 validator: function (value) {
-                    return true; // we allow all values for now for easy extendability of 'statusfields' by plugins
+                    return true; // we allow all values for now for easy extendability of 'status' by plugins
                 }
             });
     }

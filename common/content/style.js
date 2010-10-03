@@ -32,8 +32,8 @@ Highlights.prototype.CSS = <><![CDATA[
 
     Normal      color: black; background: white;
     ErrorMsg    color: white; background: red; font-weight: bold;
-    InfoMsg     color: black; background: white;
-    ModeMsg     color: black; background: white;
+    InfoMsg     color: magenta; background: white;
+    ModeMsg     color: green; background: white;
     MoreMsg     color: green; background: white;
     WarningMsg  color: red; background: white;
     Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;

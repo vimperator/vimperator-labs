@@ -5,10 +5,11 @@
       and even some more (rss feeds, better security information, ...)
     * IMPORTANT: The statusbar and command line have been merged in a single row as also Firefox
       4 hides the statusbar by default now
-    * IMPORTANT: Removed 'laststatus' option but add a 'statusfields' option in contrast
+    * IMPORTANT: Removed 'laststatus' option but add a 'status' option in contrast
       to decide which elements are shown in the new style status bar
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old
       hint behavior for those who prefer it. See the 'hintchars' option. Patch by caisui
+    * Some colors have changed their default values (like InfoMsg and ModeMsg)
     * Pressing Escape now clears any previous command output. Scrolling the web page, however, does NOT
       not clear it anymore (as it used to do)
     * History, bookmarks and :open output limit the width of the URL column to 50% so you can

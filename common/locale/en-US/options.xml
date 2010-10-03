@@ -738,8 +738,8 @@
 
 
 <item>
-    <tags>'sf' 'statusfields'</tags>
-    <spec>'statusfields' 'sf'</spec>
+    <tags>'status'</tags>
+    <spec>'status'</spec>
     <type>stringlist</type>
     <default>input,location,tabcount,position</default>
     <description>
