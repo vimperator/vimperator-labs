@@ -134,7 +134,7 @@ const CommandLine = Module("commandline", {
         this._messageBox = document.getElementById("liberator-message");
 
         this._commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
-        this._messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
+        //this._messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
 
         // the widget used for multiline output
         this._multilineOutputWidget = document.getElementById("liberator-multiline-output");
@@ -254,9 +254,9 @@ const CommandLine = Module("commandline", {
         if (!this._commandShown())
             commandline.hide();
 
-        let field = this._messageBox.inputField;
+        /*let field = this._messageBox.inputField;
         if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
-            this._echoMultiline(<span highlight="Message">{str}</span>, highlightGroup);
+            this._echoMultiline(<span highlight="Message">{str}</span>, highlightGroup);*/
     },
 
     /**
