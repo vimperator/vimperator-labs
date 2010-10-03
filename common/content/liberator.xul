@@ -71,7 +71,7 @@
                     <label class="plain" collapsed="false" id="liberator-message" flex="1" crop="end" liberator:highlight="Normal"/>
                     <label class="plain" id="liberator-status" flex="10000000" crop="center" style="text-align: right;" liberator:highlight="StatusLine"/>
                 </hbox>
-                <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
+                <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CommandLine">
                     <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
                     <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                         oninput="window.liberator &and; liberator.modules.commandline.onEvent(event);"

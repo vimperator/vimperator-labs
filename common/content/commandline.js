@@ -408,11 +408,10 @@ const CommandLine = Module("commandline", {
 
         this._setPrompt(this._currentPrompt);
         this._setCommand(this._currentCommand);
-        this._commandlineWidget.collapsed = false;
 
         modes.set(modes.COMMAND_LINE, this._currentExtendedMode);
 
-        this._commandWidget.focus();
+        this.show();
 
         this._history = CommandLine.History(this._commandWidget.inputField, (modes.extended == modes.EX) ? "command" : "search");
         this._completions = CommandLine.Completions(this._commandWidget.inputField);
@@ -461,8 +460,18 @@ const CommandLine = Module("commandline", {
      * are under it.
      */
     hide: function hide() {
-        this._commandlineWidget.collapsed = true;
+        this._commandlineWidget.style.opacity = "0";
+        this._commandWidget.blur();
     },
+
+    /**
+     * Make the command line visible, hiding the status messages below
+     */
+    show: function () {
+        this._commandlineWidget.style.opacity = "1";
+        this._commandWidget.focus();
+    },
+
 
     /**
      * Output the given string onto the command line. With no flags, the

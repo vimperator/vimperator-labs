@@ -29,7 +29,7 @@ const Modes = Module("modes", {
         this.addMode("NORMAL",   { char: "n", display: -1 });
         this.addMode("INSERT",   { char: "i", input: true });
         this.addMode("VISUAL",   { char: "v", display: function () "VISUAL" + (this._extended & modes.LINE ? " LINE" : "") });
-        this.addMode("COMMAND_LINE", { char: "c", input: true });
+        this.addMode("COMMAND_LINE", { char: "c", input: true, display: -1 });
         this.addMode("CARET"); // text cursor is visible
         this.addMode("TEXTAREA", { char: "i" });
         this.addMode("EMBED",    { input: true });

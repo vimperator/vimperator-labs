@@ -43,6 +43,8 @@ Highlights.prototype.CSS = <><![CDATA[
     CmdLine,>*  font-family: monospace; padding: 2px; vertical-align: middle; background-color: white;
     CmdOutput   white-space: pre;
 
+    CommandLine 	     background: white; -moz-transition: all 0.5s;
+
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: .5em;
     CompTitle            color: magenta; background: white; font-weight: bold;
