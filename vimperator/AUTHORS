@@ -2,7 +2,6 @@ Main developer/Project founder:
   * Martin Stubenschrott (stubenschrott@vimperator.org)
 
 Developers:
-  * Ted Pavlic <ted@tedpavlic.com>
   * anekos <anekos@snca.net>
   * teramako <teramako@gmail.com>
   * janus_wel <janus.wel.3@gmail.com>
@@ -17,8 +16,9 @@ Inactive/former developers:
   * Daniel Bainton (dpb .AT. driftaway .DOT. org)
   * Konstantin Stepanov (milezv@yandex.ru)
   * Tim Hammerquist (penryu@gmail.com)
+  * Ted Pavlic <ted@tedpavlic.com>
 
-Patches (in no special order):
+Patches (in no special order and unfortunately incomplete):
   * Jez <jezreel@gmail.com>
   * Ruud Grosmann ('followhints' option)
   * Xie&Tian (multibyte support for hints, doc fixes)
@@ -45,3 +45,5 @@ Patches (in no special order):
   * Gary Katsevman ('private' option)
   * Srinath Krishna (disable password field editing)
   * Viktor Bielawski (Firefox4 compatibility, and more)
+  * Kei Shiratsuchi (gu improvement)
+  * Zoltan Klinger (better :bmarks filtering)

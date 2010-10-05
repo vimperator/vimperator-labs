@@ -325,11 +325,17 @@ have 2 possibilities:
     <description>
         <p>Go to <oa>count</oa>th parent directory.</p>
 
-        <p>
-            <k>2gu</k> on
-            <tt>http://www.example.com/dir1/dir2/file.htm</tt> opens
-            <tt>http://www.example.com/dir1/</tt>.
-        </p>
+        <p>Pressing <k>gu</k> repeatedly would ascend the URL in this order:</p>
+        <ul>
+            <li><tt>http://www.example.com/path/to/file.txt?query=value#anchor</tt></li>
+            <li><tt>http://www.example.com/path/to/file.txt?query=value</tt></li>
+            <li><tt>http://www.example.com/path/to/file.txt</tt></li>
+            <li><tt>http://www.example.com/path/to/</tt></li>
+            <li><tt>http://www.example.com/path/</tt></li>
+            <li><tt>http://www.example.com/</tt></li>
+            <li><tt>http://example.com/</tt></li>
+        </ul>
+
     </description>
 </item>
 
