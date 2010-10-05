@@ -87,6 +87,7 @@
 
         <ul>
             <li>-tags=comma,separated,tag,list (short option: -T)</li>
+            <li>-keyword=keyword (short option: -k)</li>
             <li>-max=N (short options: -m)</li>
         </ul>
     </description>

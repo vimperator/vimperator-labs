@@ -94,8 +94,8 @@ const History = Module("history", {
         //   Why the hell doesn't it make sense? --Kris
         // See comment at bookmarks.list --djk
         if (!openItems)
-            return completion.listCompleter("history", filter, maxItems);
-        let items = completion.runCompleter("history", filter, maxItems);
+            return completion.listCompleter("history", filter, maxItems, null, null, CompletionContext.Filter.textAndDescription);
+        let items = completion.runCompleter("history", filter, maxItems, null, null, CompletionContext.Filter.textAndDescription);
 
         if (items.length)
             return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
@@ -209,7 +209,12 @@ const History = Module("history", {
                     history.list(args.join(" "), args.bang, args["-max"] || 1000);
             }, {
                 bang: true,
-                completer: function (context) { context.quote = null; completion.history(context); },
+                completer: function (context, args) {
+                    context.filter = args.join(" ");
+                    context.filters = [CompletionContext.Filter.textAndDescription];
+                    context.quote = null;
+                    completion.history(context);
+                },
                 options: [[["-max", "-m"], commands.OPTION_INT],
                           [["-remove", "-r"], commands.OPTION_NOARG]]
             });
@@ -219,7 +224,6 @@ const History = Module("history", {
             context.format = history.format;
             context.title = ["History"];
             context.compare = CompletionContext.Sort.unsorted;
-            //context.background = true;
             if (context.maxItems == null)
                 context.maxItems = 100;
             context.regenerate = true;

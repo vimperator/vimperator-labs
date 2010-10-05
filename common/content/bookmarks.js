@@ -200,7 +200,7 @@ const Bookmarks = Module("bookmarks", {
     get format() ({
         anchored: false,
         title: ["URL", "Info"],
-        keys: { text: "url", description: "title", icon: "icon", extra: "extra", tags: "tags" },
+        keys: { text: "url", description: "title", icon: "icon", extra: "extra", tags: "tags", keyword: "keyword" },
         process: [template.icon, template.bookmarkDescription]
     }),
 
@@ -417,16 +417,17 @@ const Bookmarks = Module("bookmarks", {
     },
 
     // if openItems is true, open the matching bookmarks items in tabs rather than display
-    list: function list(filter, tags, openItems, maxItems) {
+    list: function list(filter, tags, openItems, maxItems, keyword) {
         // FIXME: returning here doesn't make sense
         //   Why the hell doesn't it make sense? --Kris
         // Because it unconditionally bypasses the final error message
         // block and does so only when listing items, not opening them. In
         // short it breaks the :bmarks command which doesn't make much
         // sense to me but I'm old-fashioned. --djk
+        let kw = (keyword == "") ? undefined : {keyword:keyword};
         if (!openItems)
-            return completion.listCompleter("bookmark", filter, maxItems, tags);
-        let items = completion.runCompleter("bookmark", filter, maxItems, tags);
+            return completion.listCompleter("bookmark", filter, maxItems, tags, kw, CompletionContext.Filter.textAndDescription);
+        let items = completion.runCompleter("bookmark", filter, maxItems, tags, kw, CompletionContext.Filter.textAndDescription);
 
         if (items.length)
             return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
@@ -475,10 +476,8 @@ const Bookmarks = Module("bookmarks", {
         }
 
         function keyword(context, args) {
-            if (!args.bang)
-                return [];
-            context.keys.text = "keyword";
-            return bookmarks.get(args.join(" "), args["-tags"], null, { keyword: context.filter, title: args["-title"] });
+            let keywords = util.Array.uniq(util.Array.flatten([b.keyword for ([k, b] in Iterator(bookmarks._cache.keywords))]));
+            return [[kw, kw] for ([i, kw] in Iterator(keywords)) ];
         }
 
         commands.add(["bma[rk]"],
@@ -513,17 +512,20 @@ const Bookmarks = Module("bookmarks", {
         commands.add(["bmarks"],
             "List or open multiple bookmarks",
             function (args) {
-                bookmarks.list(args.join(" "), args["-tags"] || [], args.bang, args["-max"]);
+                bookmarks.list(args.join(" "), args["-tags"] || [], args.bang, args["-max"], args["-keyword"] || []);
             },
             {
                 bang: true,
                 completer: function completer(context, args) {
                     context.quote = null;
                     context.filter = args.join(" ");
-                    completion.bookmark(context, args["-tags"]);
+                    context.filters = [CompletionContext.Filter.textAndDescription];
+                    let kw = (args["-keyword"]) ? {keyword: args["-keyword"]} : undefined;
+                    completion.bookmark(context, args["-tags"], kw);
                 },
-                options: [[["-tags", "-T"], commands.OPTION_LIST, null, tags],
-                          [["-max", "-m"], commands.OPTION_INT]]
+                options: [[["-tags", "-T"],    commands.OPTION_LIST, null, tags],
+                          [["-max", "-m"],     commands.OPTION_INT],
+                          [["-keyword", "-k"], commands.OPTION_STRING, null, keyword]]
             });
 
         commands.add(["delbm[arks]"],
@@ -604,7 +606,7 @@ const Bookmarks = Module("bookmarks", {
             for (let val in Iterator(extra || [])) {
                 let [k, v] = val; // Need block scope here for the closure
                 if (v)
-                    context.filters.push(function (item) this._match(v, item[k]));
+                    context.filters.push(function (item) this._match(v, item[k] || ""));
             }
             // Need to make a copy because set completions() checks instanceof Array,
             // and this may be an Array from another window.

@@ -63,9 +63,9 @@ const Template = Module("template", {
         // </e4x>
     },
 
-    bookmarkDescription: function (item, text)
+    bookmarkDescription: function (item, text, filter)
     <>
-        <a href={item.item.url} highlight="URL">{text}</a>&#160;
+        <a href={item.item.url} highlight="URL">({template.highlightFilter(text, filter)})</a>&#160;
         {
             !(item.extra && item.extra.length) ? "" :
             <span class="extra-info">
@@ -141,25 +141,32 @@ const Template = Module("template", {
     },
 
     highlightFilter: function highlightFilter(str, filter, highlight) {
-        return this.highlightSubstrings(str, (function () {
-            if (filter.length == 0)
-                return;
+        if (filter.length == 0)
+            return str;
+
+        let filterArr = filter.split(" ");
+        let matchArr = [];
+        for (let [, item] in Iterator(filterArr)) {
             let lcstr = String.toLowerCase(str);
-            let lcfilter = filter.toLowerCase();
+            let lcfilter = item.toLowerCase();
             let start = 0;
             while ((start = lcstr.indexOf(lcfilter, start)) > -1) {
-                yield [start, filter.length];
-                start += filter.length;
+                matchArr.push({pos:start, len:lcfilter.length});
+                start += lcfilter.length;
             }
-        })(), highlight || template.filter);
+        }
+        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
+        return this.highlightSubstrings(str, matchArr, highlight || template.filter);
     },
 
     highlightRegexp: function highlightRegexp(str, re, highlight) {
-        return this.highlightSubstrings(str, (function () {
-            let res;
-            while ((res = re.exec(str)) && res[0].length)
-                yield [res.index, res[0].length];
-        })(), highlight || template.filter);
+        let matchArr = [];
+        let res;
+        while ((res = re.exec(str)) && res[0].length)
+            matchArr.push({pos:res.index, len:res[0].length});
+
+        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
+        return this.highlightSubstrings(str, matchArr, highlight || template.filter);
     },
 
     highlightSubstrings: function highlightSubstrings(str, iter, highlight) {
@@ -172,13 +179,13 @@ const Template = Module("template", {
         let s = <></>;
         let start = 0;
         let n = 0;
-        for (let [i, length] in iter) {
+        for (let [, item] in Iterator(iter)) {
             if (n++ > 50) // Prevent infinite loops.
                 return s + <>{str.substr(start)}</>;
             XML.ignoreWhitespace = false;
-            s += <>{str.substring(start, i)}</>;
-            s += highlight(str.substr(i, length));
-            start = i + length;
+            s += <>{str.substring(start, item.pos)}</>;
+            s += highlight(str.substr(item.pos, item.len));
+            start = item.pos + item.len;
         }
         return s + <>{str.substr(start)}</>;
     },

@@ -383,9 +383,12 @@ const CompletionContext = Class("CompletionContext", {
         let process = this._process;
         process = [process[0] || template.icon, process[1] || function (item, k) k];
         let first = process[0];
+        let second = process[1];
         let filter = this.filter;
-        if (!this.anchored)
+        if (!this.anchored){
             process[0] = function (item, text) first.call(self, item, template.highlightFilter(item.text, filter));
+            process[1] = function (item, text) second.call(self, item, item.description, filter);
+        }
         return process;
     },
     set process(process) {
@@ -531,13 +534,26 @@ const CompletionContext = Class("CompletionContext", {
 
     // FIXME
     _match: function _match(filter, str) {
-        if (this.ignoreCase) {
-            filter = filter.toLowerCase();
-            str = str.toLowerCase();
-        }
-        if (this.anchored)
-            return str.substr(0, filter.length) == filter;
-        return str.indexOf(filter) > -1;
+        if (!filter)
+            return true;
+
+        let ignoreCase = this.ignoreCase;
+        let filterArr = filter.split(" ");
+        let res = filterArr.filter(function(word) {
+            if (!word)
+                return false;
+
+            if (ignoreCase) {
+                word =word.toLowerCase();
+                str = str.toLowerCase();
+            }
+            if (this.anchored)
+               return str.substr(0, word.length) == word;
+            else
+               return str.indexOf(word) > -1;
+         });
+
+        return res.length == filterArr.length;
     },
 
     match: function match(str) {
@@ -618,6 +634,9 @@ const CompletionContext = Class("CompletionContext", {
         },
         textDescription: function (item) {
             return CompletionContext.Filter.text.call(this, item) || this.match(item.description);
+        },
+        textAndDescription: function (item) {
+            return this.match(item.text + item.description);
         }
     }
 });
@@ -632,9 +651,11 @@ const Completion = Module("completion", {
     get setFunctionCompleter() JavaScript.setCompleter, // Backward compatibility
 
     // FIXME
-    _runCompleter: function _runCompleter(name, filter, maxItems) {
-        let context = CompletionContext(filter);
+    _runCompleter: function _runCompleter(name, filter, maxItems, tags, keyword, contextFilter) {
+        let context = CompletionContext(filter || "");
         context.maxItems = maxItems;
+        if (contextFilter)
+            context.filters = [contextFilter];
         let res = context.fork.apply(context, ["run", 0, this, name].concat(Array.slice(arguments, 3)));
         if (res) // FIXME
             return { items: res.map(function (i) ({ item: i })) };
@@ -642,14 +663,16 @@ const Completion = Module("completion", {
         return context.allItems;
     },
 
-    runCompleter: function runCompleter(name, filter, maxItems) {
+    runCompleter: function runCompleter(name, filter, maxItems, tags, keyword, contextFilter) {
         return this._runCompleter.apply(this, Array.slice(arguments))
                    .items.map(function (i) i.item);
     },
 
-    listCompleter: function listCompleter(name, filter, maxItems) {
+    listCompleter: function listCompleter(name, filter, maxItems, tags, keyword, contextFilter) {
         let context = CompletionContext(filter || "");
         context.maxItems = maxItems;
+        if (contextFilter)
+            context.filters = [contextFilter];
         context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 3)));
         context = context.contexts["/list"];
         context.wait();
@@ -716,30 +739,6 @@ const Completion = Module("completion", {
         context.anchored = false;
         if (!context.title)
             context.title = ["URL", "Title"];
-
-        context.fork("additional", 0, this, function (context) {
-            context.title[0] += " (additional)";
-            context.filter = context.parent.filter; // FIXME
-            context.completions = context.parent.completions;
-            // For items whose URL doesn't exactly match the filter,
-            // accept them if all tokens match either the URL or the title.
-            // Filter out all directly matching strings.
-            let match = context.filters[0];
-            context.filters[0] = function (item) !match.call(this, item);
-            // and all that don't match the tokens.
-            let tokens = context.filter.split(/\s+/);
-            context.filters.push(function (item) tokens.every(
-                    function (tok) contains(item.url, tok) ||
-                                   contains(item.title, tok)));
-
-            let re = RegExp(tokens.filter(util.identity).map(util.escapeRegex).join("|"), "g");
-            function highlight(item, text, i) process[i].call(this, item, template.highlightRegexp(text, re));
-            let process = [template.icon, function (item, k) k];
-            context.process = [
-                function (item, text) highlight.call(this, item, item.text, 0),
-                function (item, text) highlight.call(this, item, text, 1)
-            ];
-        });
     }
     //}}}
 }, {

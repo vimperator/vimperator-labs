@@ -1,5 +1,11 @@
 2010-xx-xx:
     * version 2.4
+    * :bmarks and :history commands support multiple space separated filter entries and
+      match them on both URL and title. Multi filter highlighting for results in
+      the URL and title fields.
+    * remove "URL (additional)" entries from the search results. Only list urls which
+      match either the url or description
+    * :bmarks -k[eyword] to search bookmarks by a keyword
     * IMPORTANT: The default UI now shows the toolbar by default. This was done since we got rid
       off the statusbar and the toolbar (preferably with small icons) shows exactly the same information
       and even some more (rss feeds, better security information, ...)
