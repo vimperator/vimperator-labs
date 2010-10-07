@@ -147,6 +147,8 @@ const Template = Module("template", {
         let filterArr = filter.split(" ");
         let matchArr = [];
         for (let [, item] in Iterator(filterArr)) {
+            if (!item)
+                continue;
             let lcstr = String.toLowerCase(str);
             let lcfilter = item.toLowerCase();
             let start = 0;
