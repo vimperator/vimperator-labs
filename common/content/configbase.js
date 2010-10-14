@@ -11,8 +11,8 @@ const ConfigBase = Class(ModuleBase, {
      */
     autocommands: [],
 
-    browser: window.gBrowser,
-    tabbrowser: window.gBrowser,
+    get browser() window.gBrowser,
+    get tabbrowser() window.gBrowser,
 
     get browserModes() [modes.NORMAL],
 

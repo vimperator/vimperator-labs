@@ -1,14 +1,12 @@
 // Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
 // Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
-// Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
+// Copyright (c) 2008-2010 by Kris Maglione <maglione.k at Gmail>
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
-
+"use strict";
 
 /** @scope modules */
-
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
 const Point = Struct("x", "y");
 
@@ -145,10 +143,6 @@ const Buffer = Module("buffer", {
     },
 
     destroy: function () {
-        try {
-            config.browser.removeProgressListener(this.progressListener);
-        }
-        catch (e) {} // Why? --djk
     },
 
     _triggerLoadAutocmd: function _triggerLoadAutocmd(name, doc) {
@@ -217,20 +211,19 @@ const Buffer = Module("buffer", {
     /**
      * @property {Object} The document loading progress listener.
      */
-    progressListener: {
-        QueryInterface: XPCOMUtils.generateQI([
-            Ci.nsIWebProgressListener,
-            Ci.nsIXULBrowserWindow
-        ]),
+    progressListener: update(Object.create(window.XULBrowserWindow || {}), {
+        QueryInterface: XPCOMUtils.generateQI([Ci.nsISupportsWeakReference, Ci.nsIWebProgressListener]),
 
         // XXX: function may later be needed to detect a canceled synchronous openURL()
-        onStateChange: function (webProgress, request, flags, status) {
+        onStateChange: function onStateChange(webProgress, request, flags, status) {
+            onStateChange.superapply(this, arguments);
             // STATE_IS_DOCUMENT | STATE_IS_WINDOW is important, because we also
             // receive statechange events for loading images and other parts of the web page
             if (flags & (Ci.nsIWebProgressListener.STATE_IS_DOCUMENT | Ci.nsIWebProgressListener.STATE_IS_WINDOW)) {
                 // This fires when the load event is initiated
                 // only thrown for the current tab, not when another tab changes
                 if (flags & Ci.nsIWebProgressListener.STATE_START) {
+                    webProgress.DOMWindow.document.pageIsFullyLoaded = 0;
                     buffer.loaded = 0;
 
                     autocommands.trigger("PageLoadPre", { url: buffer.URL });
@@ -243,16 +236,24 @@ const Buffer = Module("buffer", {
                     }
                 }
                 else if (flags & Ci.nsIWebProgressListener.STATE_STOP) {
+                    webProgress.DOMWindow.document.pageIsFullyLoaded = (status == 0 ? 1 : 2);
                     buffer.loaded = (status == 0 ? 1 : 2);
                 }
             }
         },
         // for notifying the user about secure web pages
-        onSecurityChange: function (webProgress, request, state) { },
-        onStatusChange: function (webProgress, request, status, message) { },
-        onProgressChange: function (webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) { },
-        // also happens when the users switches tabs
-        onLocationChange: function () {
+        onSecurityChange: function onSecurityChange(webProgress, request, state) {
+            onSecurityChange.superapply(this, arguments);
+        },
+        onStatusChange: function onStatusChange(webProgress, request, status, message) {
+            onStatusChange.superapply(this, arguments);
+        },
+        onProgressChange: function onProgressChange(webProgress, request, curSelfProgress, maxSelfProgress, curTotalProgress, maxTotalProgress) {
+            onProgressChange.superapply(this, arguments);
+        },
+        // happens when the users switches tabs
+        onLocationChange: function onLocationChange() {
+            onLocationChange.superapply(this, arguments);
             statusline.updateUrl();
 
             autocommands.trigger("LocationChange", { url: buffer.URL });
@@ -261,9 +262,12 @@ const Buffer = Module("buffer", {
             setTimeout(function () { statusline.updateBufferPosition(); }, 250);
         },
         // called at the very end of a page load
-        asyncUpdateUI: function () { },
-        setOverLink: function (link, b) {
-            /*let ssli = options["showstatuslinks"];
+        asyncUpdateUI: function asyncUpdateUI() {
+            asyncUpdateUI.superapply(this, arguments);
+        },
+        setOverLink: function setOverLink(link, b) {
+            setOverLink.superapply(this, arguments);
+            let ssli = options["showstatuslinks"];
             if (link && ssli) {
                 if (ssli == 1)
                     statusline.updateUrl("Link: " + link);
@@ -276,17 +280,9 @@ const Buffer = Module("buffer", {
                     statusline.updateUrl();
                 else if (ssli == 2)
                     modes.show();
-                }*/
+                }
         },
-
-        // nsIXULBrowserWindow stubs
-        setJSDefaultStatus: function (status) {},
-        setJSStatus: function (status) {},
-
-        // Stub for something else, presumably. Not in any documented
-        // interface.
-        onLinkIconAvailable: function () {}
-    },
+    }),
 
     /**
      * @property {Array} The alternative style sheets for the current
