@@ -84,20 +84,6 @@ const Template = Module("template", {
 
     filter: function (str) <span highlight="Filter">{str}</span>,
 
-    gradient: function (left, right)
-        <div highlight="Gradient">
-            <div style="height: 0px">
-                <div highlight={right + " Gradient"}
-                     style="border: 0 !important; margin: 0 !important; padding: 0 !important;"/>
-            </div>
-            <table width="100%" style="height: 100%">
-                <tr>
-                    { template.map(util.range(0, 100), function (i)
-                      <td highlight={left} style={"opacity: " + (1 - i / 100)}/>) }
-                </tr>
-            </table>
-        </div>,
-
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
     highlight: function highlight(arg, processStrings, clip) {

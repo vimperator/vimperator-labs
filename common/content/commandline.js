@@ -1633,9 +1633,6 @@ const ItemList = Class("ItemList", {
 
         this._doc.body.id = id + "-content";
         this._doc.body.appendChild(this._doc.createTextNode(""));
-        this._doc.body.style.borderTop = "1px solid black"; // FIXME: For cases where this._completions/MOW are shown at once, or ls=0. Should use :highlight.
-
-        this._gradient = template.gradient("GradientLeft", "GradientRight");
 
         this._items = null;
         this._startIndex = -1;  // The index of the first displayed item
@@ -1691,12 +1688,9 @@ const ItemList = Class("ItemList", {
                     <div highlight="Completions">
                         { context.createRow(context.title || [], "CompTitle") }
                     </div>
-                    { this._gradient }
                     <div key="message" highlight="CompMsg"/>
-                    <div key="up" highlight="CompLess"/>
                     <div key="items" highlight="Completions"/>
                     <div key="waiting" highlight="CompMsg">{ItemList.WAITING_MESSAGE}</div>
-                    <div key="down" highlight="CompMore"/>
                 </div>, context.cache.nodes);
             this._divNodes.completions.appendChild(context.cache.nodes.root);
         }, this);
@@ -1747,8 +1741,6 @@ const ItemList = Class("ItemList", {
                 nodes.message.textContent = context.message;
             nodes.message.style.display = context.message ? "block" : "none";
             nodes.waiting.style.display = waiting ? "block" : "none";
-            nodes.up.style.opacity = "0";
-            nodes.down.style.display = "none";
 
             for (let [i, row] in Iterator(context.getRows(start, end, this._doc)))
                 nodes[i] = row;
@@ -1767,17 +1759,6 @@ const ItemList = Class("ItemList", {
                 }
                 else if (!display && row.parentNode == items)
                     items.removeChild(row);
-            }
-            if (context.items.length == 0)
-                return;
-            nodes.up.style.opacity = (start == 0) ? "0" : "1";
-            if (end != context.items.length)
-                nodes.down.style.display = "block";
-            else
-                nodes.up.style.display = "block";
-            if (start == end) {
-                nodes.up.style.display = "none";
-                nodes.down.style.display = "none";
             }
         }, this);
 

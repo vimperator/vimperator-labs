@@ -9,6 +9,7 @@
       to decide which elements are shown in the new style status bar
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old
       hint behavior for those who prefer it. See the 'hintchars' option. Patch by caisui
+    * Lots of restyled content and changed colors
     * gu works now better for urls with anchors and GET arguments (like url.com/file?query=foo#anchor)
     * :bmarks and :history commands support multiple space separated filter entries and
       match them on both URL and title. Multi filter highlighting for results in

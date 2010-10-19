@@ -49,10 +49,6 @@
             <dt>CompIcon</dt>          <dd>補完リストの favicon</dd>
             <dt>CompItem</dt>          <dd>補完リストの一行</dd>
             <dt>CompItem[selected]</dt><dd>補完リストの選択している一行</dd>
-            <dt>CompLess</dt>          <dd>上にスクロール可能なことを示すマーク</dd>
-            <dt>CompLess::after</dt>   <dd>上にスクロール可能なことを示すマークとして使う文字ク</dd>
-            <dt>CompMore</dt>          <dd>下にスクロール可能なことを示すマーク</dd>
-            <dt>CompMore::after</dt>   <dd>下にスクロール可能なことを示すマークとして使う文字</dd>
             <dt>CompMsg</dt>           <dd/>
             <dt>CompResult</dt>        <dd>補完リストの結果欄 ( 左側 )</dd>
             <dt>CompTitle</dt>         <dd>補完リストのタイトル</dd>
@@ -60,9 +56,6 @@
             <dt>Filter</dt>            <dd>補完リストでマッチしたテキスト</dd>
             <dt>FrameIndicator</dt>    <dd>新しくフレームが選択された際の表示</dd>
             <dt>Function</dt>          <dd>JavaScript の Function オブジェクト</dd>
-            <dt>Gradient</dt>          <dd/>
-            <dt>GradientLeft</dt>      <dd/>
-            <dt>GradientRight</dt>     <dd/>
             <dt>Hint</dt>              <dd>ヒント表示。 <ex>:help hints</ex> を参照してください</dd>
             <dt>HintActive</dt>        <dd><k name="Return"/> でリンク先を辿るヒント要素</dd>
             <dt>HintElem</dt>          <dd>選択されうるヒント要素</dd>

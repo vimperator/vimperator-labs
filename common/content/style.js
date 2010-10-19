@@ -1,4 +1,6 @@
 // Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
+// Copyright (c) 2008-2010 by Martin Stubenschrott <stubenschrott@vimperator.org>
+//
 //
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
@@ -43,12 +45,12 @@ Highlights.prototype.CSS = <><![CDATA[
     CmdLine,>*  font-family: monospace; padding: 2px; vertical-align: middle; background-color: white;
     CmdOutput   white-space: pre;
 
-    CommandLine 	     background: white; -moz-transition: all 0.5s;
+    CommandLine 	     background: white; color: black; -moz-transition: all 0.25s;
 
     CompGroup
-    CompGroup:not(:first-of-type)  margin-top: .5em;
-    CompTitle            color: magenta; background: white; font-weight: bold;
-    CompTitle>*          padding: 0 .5ex;
+    CompGroup:not(:first-of-type)  margin-top: 1ex;
+    CompTitle            color: black; font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #DBDBDB, #D9D9D9, #E7E7E7 100%);
+    CompTitle>*          border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 2px; text-shadow: 1px 1px 1px #EEE;
     CompMsg              font-style: italic; margin-left: 16px;
     CompItem
     CompItem[selected]   background: yellow;
@@ -57,14 +59,6 @@ Highlights.prototype.CSS = <><![CDATA[
     CompIcon>img         max-width: 16px; max-height: 16px; vertical-align: middle;
     CompResult           width: 500px; max-width: 500px; overflow: hidden;
     CompDesc             width: 500px; max-width: 500px; color: gray;
-    CompLess             text-align: center; height: 0;    line-height: .5ex; padding-top: 1ex;
-    CompLess::after      content: "\2303" /* Unicode up arrowhead */
-    CompMore             text-align: center; height: .5ex; line-height: .5ex; margin-bottom: -.5ex;
-    CompMore::after      content: "\2304" /* Unicode down arrowhead */
-
-    Gradient        height: 1px; margin-bottom: -1px; margin-top: -1px;
-    GradientLeft    background-color: magenta;
-    GradientRight   background-color: white;
 
     Indicator   color: blue;
     Filter      font-weight: bold; background-color: yellow;

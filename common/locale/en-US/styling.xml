@@ -60,10 +60,6 @@
             <dt>CompIcon</dt>          <dd>The favicon of a completion row</dd>
             <dt>CompItem</dt>          <dd>A row of completion list</dd>
             <dt>CompItem[selected]</dt><dd>A selected row of completion list</dd>
-            <dt>CompLess</dt>          <dd>The indicator shown when completions may be scrolled up</dd>
-            <dt>CompLess::after</dt>   <dd>The character of indicator shown when completions may be scrolled up</dd>
-            <dt>CompMore</dt>          <dd>The indicator shown when completions may be scrolled down</dd>
-            <dt>CompMore::after</dt>   <dd>The character of indicator shown when completions may be scrolled down</dd>
             <dt>CompMsg</dt>           <dd></dd>
             <dt>CompResult</dt>        <dd>The result column of the completion list</dd>
             <dt>CompTitle</dt>         <dd>Completion row titles</dd>
@@ -71,9 +67,6 @@
             <dt>Filter</dt>            <dd>The matching text in a completion list</dd>
             <dt>FrameIndicator</dt>    <dd>The indicator shown when a new frame is selected</dd>
             <dt>Function</dt>          <dd>A JavaScript Function object</dd>
-            <dt>Gradient</dt>          <dd></dd>
-            <dt>GradientLeft</dt>      <dd></dd>
-            <dt>GradientRight</dt>     <dd></dd>
             <dt>Hint</dt>              <dd>A hint indicator. See <ex>:help hints</ex></dd>
             <dt>HintActive</dt>        <dd>The hint element of link which will be followed by <k name="Return"/></dd>
             <dt>HintElem</dt>          <dd>The hintable element</dd>
