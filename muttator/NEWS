@@ -1,4 +1,7 @@
 2010-xx-xx
+    * version 1.0
+    * IMPORTANT: With the redesign of Vimperator for version 3.0 lots of things have
+      changed also for Muttator. Please read Vimperator's release notes as well this time.
     * IMPORTANT: It is possible to yank more fields now, but it destroies previous key bindings.
       [m]yf[m] or [m]yy[m] to copy "From:"
       [m]ys[m] to copy Subject

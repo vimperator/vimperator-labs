@@ -1,5 +1,5 @@
 2010-xx-xx:
-    * version 2.4
+    * version 3.0
     * IMPORTANT: The default UI now shows the toolbar by default. This was done since we got rid
       off the statusbar and the toolbar (preferably with small icons) shows exactly the same information
       and even some more (rss feeds, better security information, ...)
