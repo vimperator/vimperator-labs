@@ -59,7 +59,8 @@ const File = Class("File", {
             else
                 file.initWithPath(expandedPath);
         }
-        let self = XPCSafeJSObjectWrapper(file);
+        //let self = XPCSafeJSObjectWrapper(file);
+        let self = XPCNativeWrapper(file);
         self.__proto__ = File.prototype;
         return self;
     },
