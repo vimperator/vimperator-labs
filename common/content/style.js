@@ -29,28 +29,30 @@ Highlights.prototype.CSS = <><![CDATA[
 
     Key         font-weight: bold;
 
-    Enabled     color: blue;
+    Enabled     color: green;
     Disabled    color: red;
 
     Normal      color: black; background: white;
     ErrorMsg    color: white; background: red; font-weight: bold;
     InfoMsg     color: magenta; background: white;
-    ModeMsg     color: green; background: white;
+    ModeMsg     color: purple; background: white;
     MoreMsg     color: green; background: white;
     WarningMsg  color: red; background: white;
     Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
     NonText     color: blue; min-height: 16px; padding-left: 2px;
     Preview     color: gray;
+    Prompt      font-weight: bold; text-shadow: 0px 0px 3px purple;
 
     CmdLine,>*  font-family: monospace; padding: 2px; vertical-align: middle; background-color: white;
     CmdOutput   white-space: pre;
 
-    CommandLine 	     background: white; color: black; -moz-transition: all 0.25s;
+    CommandLine 	         background: white; color: black; -moz-transition: all 0.25s;
+    ContentSeparator         border-top: 1px dotted gray;
 
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: 1ex;
-    CompTitle            color: black; font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #DBDBDB, #D9D9D9, #E7E7E7 100%);
-    CompTitle>*          border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 2px; text-shadow: 1px 1px 1px #EEE;
+    CompTitle            color: #333; font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #DBDBDB, #D9D9D9, #E7E7E7 100%);
+    CompTitle>*          border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 2px; text-shadow: 1px 1px 1px #DDD;
     CompMsg              font-style: italic; margin-left: 16px;
     CompItem
     CompItem[selected]   background: yellow;

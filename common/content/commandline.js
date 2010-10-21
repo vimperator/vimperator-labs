@@ -1660,6 +1660,16 @@ const ItemList = Class("ItemList", {
         this.setTimeout(function () { this._container.height -= commandline.getSpaceNeeded(); }, 0);
     },
 
+    // Our dotted separator does not look good in combination with
+    // the completion window visible
+    // FIXME: Probably not the right thing to do for some themes
+    //        Rather set a pseudo style which can be handled with :highlight
+    _updateSeparatorVisibility: function () {
+        let mowVisible = !(document.getElementById("liberator-multiline-output").parentNode.collapsed);
+        let separator = document.getElementById("liberator-separator");
+        separator.collapsed = this.visible() && !mowVisible;
+    },
+
     _getCompletion: function (index) this._completionElements.snapshotItem(index - this._startIndex),
 
     _init: function () {
@@ -1770,8 +1780,8 @@ const ItemList = Class("ItemList", {
     },
 
     clear: function clear() { this.setItems(); this._doc.body.innerHTML = ""; },
-    hide: function hide() { this._container.collapsed = true; },
-    show: function show() { this._container.collapsed = false; },
+    hide: function hide() { this._container.collapsed = true; this._updateSeparatorVisibility(); },
+    show: function show() { this._container.collapsed = false; this._updateSeparatorVisibility(); },
     visible: function visible() !this._container.collapsed,
 
     reset: function () {

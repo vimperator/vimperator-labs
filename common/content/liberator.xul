@@ -49,6 +49,9 @@
             events="select"
             oncommandupdate="if (window.liberator &and; liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
 
+        <!-- a visual seperator between the content and our command line -->
+        <div id="liberator-separator" liberator:highlight="ContentSeparator"/>
+
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->
         <vbox class="liberator-container" hidden="false" collapsed="true">
@@ -63,7 +66,7 @@
                 onclick="window.liberator &and; liberator.modules.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
-        <hbox liberator:highlight="CmdLine">
+        <hbox liberator:highlight="CmdLine" id="liberator-bottombar">
             <stack orient="horizontal" align="stretch" class="liberator-container" flex="1">
                 <hbox id="liberator-statusline" hidden="false" collapsed="false" class="liberator-container">
                     <!-- the flex values are like they are to make sure the liberator-message always gets
@@ -72,7 +75,7 @@
                     <label class="plain" id="liberator-status" flex="10000000" crop="center" style="text-align: right;" liberator:highlight="StatusLine"/>
                 </hbox>
                 <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CommandLine">
-                    <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                    <label class="plain" id="liberator-commandline-prompt" liberator:highlight="Prompt" flex="0" crop="end" value="" collapsed="true"/>
                     <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                         oninput="window.liberator &and; liberator.modules.commandline.onEvent(event);"
                         onkeyup="window.liberator &and; liberator.modules.commandline.onEvent(event);"
