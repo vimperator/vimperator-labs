@@ -299,12 +299,14 @@ const Buffer = Module("buffer", {
     /**
      * @property {Array[Window]} All frames in the current buffer.
      */
-    get allFrames() {
+    getAllFrames: function(win) {
         let frames = [];
-        (function (win) {
-            frames.push(win);
-            Array.slice(win.frames).forEach(arguments.callee);
-        })(window.content);
+        (function rec(frame) {
+            if (frame.document.body instanceof HTMLBodyElement)
+                frames.push(frame);
+                Array.forEach(frame.frames, rec);
+        })(win || window.content);
+
         return frames;
     },
 
@@ -461,7 +463,7 @@ const Buffer = Module("buffer", {
             return String(selection);
         }
 
-        return util.Array.compact(buffer.allFrames.map(_getCurrentWord)).join("\n");
+        return util.Array.compact(buffer.getAllFrames().map(_getCurrentWord)).join("\n");
     },
 
     /**
@@ -546,7 +548,7 @@ const Buffer = Module("buffer", {
         let ret = followFrame(window.content);
         if (!ret) {
             // only loop through frames (ordered by size) if the main content didn't match
-            let frames = buffer.allFrames.slice(1)
+            let frames = buffer.getAllFrames().slice(1)
                 .sort( function(a, b) {
                     return ((b.scrollMaxX+b.innerWidth)*(b.scrollMaxY+b.innerHeight)) - ((a.scrollMaxX+a.innerWidth)*(a.scrollMaxY+a.innerHeight))
                 } );
