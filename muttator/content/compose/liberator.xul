@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ***** BEGIN LICENSE BLOCK ***** {{{
-// Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
-//
-// This work is licensed for reuse under an MIT license. Details are
-// given in the License.txt file included with this file.
+ Copyright (c) 2006-2010 by Martin Stubenschrott <stubenschrott@vimperator.org>
+
+ This work is licensed for reuse under an MIT license. Details are
+ given in the License.txt file included with this file.
 }}} ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://liberator/skin/liberator.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "liberator.dtd" [
     <!ENTITY liberator.content "chrome://liberator/content/">
+    <!ENTITY and "&amp;&amp;">
 ]>
 
 <overlay id="liberator"
@@ -22,10 +23,14 @@
     <script type="application/x-javascript;version=1.8" src="&liberator.content;liberator-overlay.js"/>
 
     <window id="&liberator.mainWindow;">
+        <stringbundleset id="liberator-stringbundles">
+            <stringbundle id="liberator-charset-bundle"
+                src="chrome://global/locale/charsetTitles.properties"/>
+        </stringbundleset>
 
-        <keyset id="mainKeyset">
-            <key id="key_open_vimbar" key=":" oncommand="liberator.modules.commandline.open(':', '', liberator.modules.modes.EX);" modifiers=""/>
-            <key id="key_stop" keycode="VK_ESCAPE" oncommand="liberator.modules.events.onEscape();"/>
+        <keyset id="&liberator.idkeyset;">
+            <key id="key_open_vimbar" key=":" oncommand="window.liberator &and; liberator.modules.commandline.open('', '', liberator.modules.modes.EX);" modifiers=""/>
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="window.liberator &and; liberator.modules.events.onEscape();"/>
             <!-- other keys are handled inside the event loop in events.js -->
         </keyset>
 
@@ -38,43 +43,40 @@
         <commandset id="onVimperatorFocus"
             commandupdater="true"
             events="focus"
-            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onFocusChange(event);"/>
+            oncommandupdate="if (window.liberator &and; liberator.modules.events != undefined) liberator.modules.events.onFocusChange(event);"/>
         <commandset id="onVimperatorSelect"
             commandupdater="true"
             events="select"
-            oncommandupdate="if (liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
+            oncommandupdate="if (window.liberator &and; liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
+
+        <!-- a visual seperator between the content and our command line -->
+        <div id="liberator-separator" liberator:highlight="ContentSeparator"/>
 
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->
         <vbox class="liberator-container" hidden="false" collapsed="true">
             <iframe id="liberator-multiline-output" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
-                onclick="liberator.modules.commandline.onMultilineOutputEvent(event)"/>
+                onclick="window.liberator &and; liberator.modules.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
         <vbox class="liberator-container" hidden="false" collapsed="true">
             <iframe id="liberator-completions" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
-                onclick="liberator.modules.commandline.onMultilineOutputEvent(event)"/>
+                onclick="window.liberator &and; liberator.modules.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
-        <stack orient="horizontal" align="stretch" class="liberator-container" liberator:highlight="CmdLine">
-            <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
-            <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
-                <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
-                <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
-                    oninput="liberator.modules.commandline.onEvent(event);"
-                    onkeyup="liberator.modules.commandline.onEvent(event);"
-                    onfocus="liberator.modules.commandline.onEvent(event);"
-                    onblur="liberator.modules.commandline.onEvent(event);"/>
-            </hbox>
-        </stack>
-
-        <hbox liberator:highlight="CmdLine">
+        <hbox id="liberator-bottombar">
             <stack orient="horizontal" align="stretch" class="liberator-container" flex="1">
-                <textbox class="plain" id="liberator-message" flex="1" readonly="true" liberator:highlight="Normal"/>
-                <hbox id="liberator-commandline" hidden="false" collapsed="true" class="liberator-container" liberator:highlight="Normal">
-                    <label class="plain" id="liberator-commandline-prompt"  flex="0" crop="end" value="" collapsed="true"/>
+                <hbox id="liberator-statusline" hidden="false" collapsed="false" class="liberator-container">
+                    <!-- the flex values are like they are to make sure the liberator-message always gets
+                         maximum size up to the screen size, but still do not enlarge the whole window for very, very long strings-->
+                    <label class="plain" collapsed="false" id="liberator-message" flex="1" crop="end" liberator:highlight="Normal"/>
+                    <label class="plain" id="liberator-status" flex="10000000" crop="center" style="text-align: end;" liberator:highlight="StatusLine"/>
+                </hbox>
+                <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CmdLine">
+                    <label class="plain" id="liberator-commandline-prompt-text" liberator:highlight="PromptText" flex="0" crop="end" value="" collapsed="false"/>
+                    <label class="plain" id="liberator-commandline-prompt" liberator:highlight="Prompt" flex="0" crop="none" value="" collapsed="false"/>
                     <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
                         oninput="window.liberator &and; liberator.modules.commandline.onEvent(event);"
                         onkeyup="window.liberator &and; liberator.modules.commandline.onEvent(event);"
@@ -82,17 +84,17 @@
                         onblur="window.liberator &and; liberator.modules.commandline.onEvent(event);"/>
                 </hbox>
             </stack>
-            <label liberator:highlight="StatusLine" class="plain" id="liberator-statusline" flex="0" align="right"/>
         </hbox>
 
-        <vbox class="liberator-container" hidden="false" collapsed="false">
-            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true"
-                onkeypress="liberator.modules.commandline.onMultilineInputEvent(event);"
-                oninput="liberator.modules.commandline.onMultilineInputEvent(event);"
-                onblur="liberator.modules.commandline.onMultilineInputEvent(event);"/>
+        <vbox class="liberator-container" hidden="false" collapsed="false" liberator:highlight="CmdLine">
+            <textbox id="liberator-multiline-input" class="plain" flex="1" rows="1" hidden="false" collapsed="true" multiline="true" liberator:highlight="Normal"
+                onkeypress="window.liberator &and; liberator.modules.commandline.onMultilineInputEvent(event);"
+                oninput="window.liberator &and; liberator.modules.commandline.onMultilineInputEvent(event);"
+                onblur="window.liberator &and; liberator.modules.commandline.onMultilineInputEvent(event);"/>
         </vbox>
 
     </window>
+
 
 </overlay>
 

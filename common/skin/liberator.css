@@ -82,30 +82,42 @@
 }
 
 /* fixes the min-height: 22px from firefox */
-#status-bar,
+/*#status-bar,
 statusbarpanel {
     -moz-appearance: none !important;
 	min-height: 18px !important;
     border: none !important;
     font-weight: bold;
     font-family: monospace;
-}
+}*/
 
 #liberator-statusline {
     font-family: monospace;
     margin: 0px;
+/*    padding: 2px;*/
 }
-#liberator-statusline > label {
+
+/* all elements in the statusline and commandline need some padding to look good */
+#liberator-statusline > *,
+#liberator-commandline > * {
+    padding: 2px;
+    font-family: monospace;
+}
+
+#liberator-commandline {
+    /*padding: 2px;*/
+}
+/*#liberator-statusline > label {
     padding: 0px 0px 0px 8px;
 }
 #liberator-statusline > label:first-child {
     padding: 0px;
-}
+}*/
 
 /* no longer at the window's bottom right corner */
-.statusbar-resizerpanel {
+/*.statusbar-resizerpanel {
     display: none;
-}
+}*/
 
 #liberator-commandline-prompt {
     background-color: inherit;

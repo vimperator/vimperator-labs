@@ -104,27 +104,27 @@ const Browser = Module("browser", {
         // opening websites
         mappings.add([modes.NORMAL],
             ["o"], "Open one or more URLs",
-            function () { commandline.open(":", "open ", modes.EX); });
+            function () { commandline.open("", "open ", modes.EX); });
 
         mappings.add([modes.NORMAL], ["O"],
             "Open one or more URLs, based on current location",
-            function () { commandline.open(":", "open " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () { commandline.open("", "open " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
-            function () { commandline.open(":", "tabopen ", modes.EX); });
+            function () { commandline.open("", "tabopen ", modes.EX); });
 
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open(":", "tabopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () { commandline.open("", "tabopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL], ["w"],
             "Open one or more URLs in a new window",
-            function () { commandline.open(":", "winopen ", modes.EX); });
+            function () { commandline.open("", "winopen ", modes.EX); });
 
         mappings.add([modes.NORMAL], ["W"],
             "Open one or more URLs in a new window, based on current location",
-            function () { commandline.open(":", "winopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () { commandline.open("", "winopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
 
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",

@@ -220,7 +220,7 @@ const Finder = Module("finder", {
      */
     openPrompt: function (mode) {
         this._backwards = mode == modes.SEARCH_BACKWARD;
-        commandline.open(this._backwards ? "?" : "/", "", mode);
+        commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         // TODO: focus the top of the currently visible screen
     },
 

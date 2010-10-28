@@ -698,11 +698,11 @@ const Player = Module("player", {
 
         mappings.add([modes.PLAYER],
             ["Q"], "Queue tracks by artist/album/track",
-            function () { commandline.open(":", "queue ", modes.EX); });
+            function () { commandline.open("", "queue ", modes.EX); });
 
         mappings.add([modes.PLAYER],
             ["f"], "Loads current view filtered by the keywords",
-            function () { commandline.open(":", "filter ", modes.EX); });
+            function () { commandline.open("", "filter ", modes.EX); });
 
         mappings.add([modes.PLAYER],
             ["i"], "Select current track",
@@ -746,7 +746,7 @@ const Player = Module("player", {
 
         mappings.add([modes.PLAYER],
              ["/"], "Search forward for a track",
-             function (args) { commandline.open("/", "", modes.SEARCH_VIEW_FORWARD); });
+             function (args) { commandline.open("Find track", "", modes.SEARCH_VIEW_FORWARD); });
 
         mappings.add([modes.PLAYER],
              ["n"], "Find the next track",

@@ -32,6 +32,9 @@ const StatusLine = Module("statusline", {
      * @default buffer.URL
      */
     updateUrl: function updateUrl(url) {
+        if (typeof(buffer) == "undefined") // quick hack to make the muttator compose work, needs more thought
+            return;
+
         if (url == null)
             // TODO: this probably needs a more general solution.
             url = util.losslessDecodeURI(buffer.URL);

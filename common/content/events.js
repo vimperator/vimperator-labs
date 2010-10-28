@@ -837,6 +837,8 @@ const Events = Module("events", {
         if (!key)
              return;
 
+        let url = typeof(buffer) != "undefined" ? buffer.URL : "";
+
         if (modes.isRecording) {
             if (key == "q" && liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA) { // TODO: should not be hardcoded
                 modes.isRecording = false;
@@ -845,7 +847,7 @@ const Events = Module("events", {
                 killEvent();
                 return;
             }
-            else if (!mappings.hasMap(liberator.mode, this._input.buffer + key, buffer.URL))
+            else if (!mappings.hasMap(liberator.mode, this._input.buffer + key, url))
                 this._macros.set(this._currentMacro, this._macros.get(this._currentMacro) + key);
         }
 
@@ -955,9 +957,9 @@ const Events = Module("events", {
             let inputStr = this._input.buffer + key;
             let countStr = inputStr.match(/^[1-9][0-9]*|/)[0];
             let candidateCommand = inputStr.substr(countStr.length);
-            let map = mappings[event.noremap ? "getDefault" : "get"](liberator.mode, candidateCommand, buffer.URL);
+            let map = mappings[event.noremap ? "getDefault" : "get"](liberator.mode, candidateCommand, url);
 
-            let candidates = mappings.getCandidates(liberator.mode, candidateCommand, buffer.URL);
+            let candidates = mappings.getCandidates(liberator.mode, candidateCommand, url);
             if (candidates.length == 0 && !map) {
                 map = this._input.pendingMap;
                 this._input.pendingMap = null;
@@ -1013,7 +1015,7 @@ const Events = Module("events", {
                         stop = false;
                 }
             }
-            else if (mappings.getCandidates(liberator.mode, candidateCommand, buffer.URL).length > 0 && !event.skipmap) {
+            else if (mappings.getCandidates(liberator.mode, candidateCommand, url).length > 0 && !event.skipmap) {
                 this._input.pendingMap = map;
                 this._input.buffer += key;
             }
@@ -1140,7 +1142,7 @@ const Events = Module("events", {
         // add the ":" mapping in all but insert mode mappings
         mappings.add(modes.matchModes({ extended: false, input: false }),
             [":"], "Enter command line mode",
-            function () { commandline.open(":", "", modes.EX); });
+            function () { commandline.open("", "", modes.EX); });
 
         // focus events
         mappings.add([modes.NORMAL, modes.PLAYER, modes.VISUAL, modes.CARET],

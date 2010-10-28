@@ -684,7 +684,7 @@ const Mail = Module("mail", {
 
         /*mappings.add([modes.NORMAL],
             ["o"], "Open a message",
-            function () { commandline.open(":", "open ", modes.EX); });*/
+            function () { commandline.open("", "open ", modes.EX); });*/
 
         mappings.add(myModes, ["<Space>"],
             "Scroll message or select next unread one",
@@ -754,14 +754,14 @@ const Mail = Module("mail", {
         // SENDING MESSAGES
         mappings.add(myModes, ["m"],
             "Compose a new message",
-            function () { commandline.open(":", "mail -subject=", modes.EX); });
+            function () { commandline.open("", "mail -subject=", modes.EX); });
 
         mappings.add(myModes, ["M"],
             "Compose a new message to the sender of selected mail",
             function () {
               try {
                   let to = mail._escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
-                  commandline.open(":", "mail " + to + " -subject=", modes.EX);
+                  commandline.open("", "mail " + to + " -subject=", modes.EX);
               }
               catch (e) {
                   liberator.beep();
@@ -845,15 +845,15 @@ const Mail = Module("mail", {
         // MOVING MAIL
         mappings.add(myModes, ["c"],
             "Change folders",
-            function () { commandline.open(":", "goto ", modes.EX); });
+            function () { commandline.open("", "goto ", modes.EX); });
 
         mappings.add(myModes, ["s"],
             "Move selected messages",
-            function () { commandline.open(":", "moveto ", modes.EX); });
+            function () { commandline.open("", "moveto ", modes.EX); });
 
         mappings.add(myModes, ["S"],
             "Copy selected messages",
-            function () { commandline.open(":", "copyto ", modes.EX); });
+            function () { commandline.open("", "copyto ", modes.EX); });
 
         mappings.add(myModes, ["<C-s>"],
             "Archive message",

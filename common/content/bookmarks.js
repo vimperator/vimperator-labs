@@ -579,7 +579,7 @@ const Bookmarks = Module("bookmarks", {
                         options["-title"] = buffer.title;
                 }
 
-                commandline.open(":",
+                commandline.open("",
                     commands.commandToString({ command: "bmark", options: options, arguments: [buffer.URL], bang: bmarks.length > 1 }),
                     modes.EX);
             });

@@ -126,8 +126,8 @@ const CommandLine = Module("commandline", {
 
         // the containing box for the this._promptWidget and this._commandWidget
         this._commandlineWidget = document.getElementById("liberator-commandline");
-        // the prompt for the current command, for example : or /. Can be blank
-        this._promptWidget = document.getElementById("liberator-commandline-prompt");
+        // the text part of the prompt for the current command, for example "Find" or "Follow hint". Can be blank
+        this._promptWidget = document.getElementById("liberator-commandline-prompt-text");
         // the command bar which contains the current command
         this._commandWidget = document.getElementById("liberator-commandline-command");
 
@@ -145,7 +145,7 @@ const CommandLine = Module("commandline", {
         // the widget used for multiline intput
         this._multilineInputWidget = document.getElementById("liberator-multiline-input");
 
-        // we need to save the mode which were in before opening the command line
+        // we need to save the mode which we were in before opening the command line
         // this is then used if we focus the command line again without the "official"
         // way of calling "open"
         this._currentExtendedMode = null;     // the extended mode which we last openend the command line for
@@ -182,6 +182,9 @@ const CommandLine = Module("commandline", {
                 context.fork("input", 0, commandline, self._input.complete);
         });
 
+        this.hide();
+        this._setHighlightGroup(this.HL_NORMAL);
+
         function cancelPrompt(value) {
             let callback = self._input.cancel;
             self._input = {};
@@ -202,6 +205,9 @@ const CommandLine = Module("commandline", {
      */
     _setHighlightGroup: function (group) {
         this._messageBox.setAttributeNS(NS.uri, "highlight", group);
+        // also the underlying element needs to take on our color group
+        // otherwise e.g. a red background doesn't stretch the whole width
+        document.getElementById('liberator-statusline').setAttributeNS(NS.uri, "highlight", group);
     },
 
     /**
@@ -220,9 +226,9 @@ const CommandLine = Module("commandline", {
      */
     _setPrompt: function (val, highlightGroup) {
         this._promptWidget.value = val;
-        this._promptWidget.size = val.length;
         this._promptWidget.collapsed = (val == "");
-        this._promptWidget.setAttributeNS(NS.uri, "highlight", highlightGroup || commandline.HL_NORMAL);
+        // we need this explicit width setting to show our slide in animation
+        // let computedWidth = document.defaultView.getComputedStyle(document.getElementById('liberator-commandline-prompt-text'), null).getPropertyValue('width');
     },
 
     /**
@@ -567,7 +573,7 @@ const CommandLine = Module("commandline", {
 
         this._setPrompt(prompt, extra.promptHighlight || this.HL_QUESTION);
         this._setCommand(extra.default || "");
-        this._commandlineWidget.collapsed = false;
+        // this._commandlineWidget.collapsed = false;
         this._commandWidget.focus();
 
         this._completions = CommandLine.Completions(this._commandWidget.inputField);
@@ -789,7 +795,7 @@ const CommandLine = Module("commandline", {
             break; // handled globally in events.js:onEscape()
 
         case ":":
-            commandline.open(":", "", modes.EX);
+            commandline.open("", "", modes.EX);
             return;
 
         // down a line

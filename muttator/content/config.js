@@ -33,7 +33,8 @@ const Config = Module("config", ConfigBase, {
         F: ["Folder list header", ["folderPaneHeader"]]
     },
 
-    get isComposeWindow() window.wintype == "msgcompose",
+    //get isComposeWindow() window.wintype == "msgcompose",
+    get isComposeWindow() window.document.location == "chrome://messenger/content/messengercompose/messengercompose.xul",
     get browserModes() [modes.MESSAGE],
     get mailModes() [modes.NORMAL],
     // focusContent() focuses this widget

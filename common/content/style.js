@@ -32,22 +32,23 @@ Highlights.prototype.CSS = <><![CDATA[
     Enabled     color: green;
     Disabled    color: red;
 
-    Normal      color: black; background: white;
-    ErrorMsg    color: white; background: red; font-weight: bold;
-    InfoMsg     color: magenta; background: white;
-    ModeMsg     color: purple; background: white;
-    MoreMsg     color: green; background: white;
-    WarningMsg  color: red; background: white;
-    Message     white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
-    NonText     color: blue; min-height: 16px; padding-left: 2px;
-    Preview     color: gray;
-    Prompt      font-weight: bold; text-shadow: 0px 0px 3px purple;
+    Normal          color: black; background: white;
+    ErrorMsg        color: white; background: red; font-weight: bold;
+    InfoMsg         color: magenta; background: white;
+    ModeMsg         color: purple; background: white;
+    MoreMsg         color: green; background: white;
+    WarningMsg      color: red; background: white;
+    Message         white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block;
+    NonText         color: blue; min-height: 16px; padding-left: 2px;
+    Preview         color: gray;
+    Prompt          background: url("chrome://liberator/skin/prompt.png"); width: 10px; background-position: center; background-repeat: no-repeat;
+    PromptText      color: white; background: purple;
 
-    CmdLine,>*  font-family: monospace; padding: 2px; vertical-align: middle; background-color: white;
-    CmdOutput   white-space: pre;
+    CmdOutput             white-space: pre;
+    CmdLine               background: white; color: black; -moz-transition: all 0.25s;
+    CmdLine>*             font-family: monospace;
 
-    CommandLine 	         background: white; color: black; -moz-transition: all 0.25s;
-    ContentSeparator         border-top: 1px dotted gray;
+    ContentSeparator      border-top: 1px dotted gray;
 
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: 1ex;
@@ -71,7 +72,7 @@ Highlights.prototype.CSS = <><![CDATA[
     LineNr      color: orange; background: white;
     Question    color: green; background: white; font-weight: bold;
 
-    StatusLine  color: gray; background: white;
+    StatusLine  color: gray; background: transparent; font-weight: normal;
 
     TabClose,.tab-close-button
     TabIcon,.tab-icon

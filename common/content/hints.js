@@ -48,9 +48,9 @@ const Hints = Module("hints", {
             b: Mode("Follow hint in a background tab",      function (elem) buffer.followLink(elem, liberator.NEW_BACKGROUND_TAB)),
             w: Mode("Follow hint in a new window",          function (elem) buffer.followLink(elem, liberator.NEW_WINDOW),         extended),
             F: Mode("Open multiple hints in tabs",          followAndReshow),
-            O: Mode("Generate an ':open URL' using hint",   function (elem, loc) commandline.open(":", "open " + loc, modes.EX)),
-            T: Mode("Generate a ':tabopen URL' using hint", function (elem, loc) commandline.open(":", "tabopen " + loc, modes.EX)),
-            W: Mode("Generate a ':winopen URL' using hint", function (elem, loc) commandline.open(":", "winopen " + loc, modes.EX)),
+            O: Mode("Generate an ':open URL' using hint",   function (elem, loc) commandline.open("", "open " + loc, modes.EX)),
+            T: Mode("Generate a ':tabopen URL' using hint", function (elem, loc) commandline.open("", "tabopen " + loc, modes.EX)),
+            W: Mode("Generate a ':winopen URL' using hint", function (elem, loc) commandline.open("", "winopen " + loc, modes.EX)),
             v: Mode("View hint source",                     function (elem, loc) buffer.viewSource(loc, false),                    extended),
             V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
             y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
@@ -837,7 +837,7 @@ const Hints = Module("hints", {
         this._hintMode = this._hintModes[minor];
         liberator.assert(this._hintMode);
 
-        commandline.input(this._hintMode.prompt + ": ", null, { onChange: this.closure._onInput });
+        commandline.input(this._hintMode.prompt, null, { onChange: this.closure._onInput });
         modes.extended = modes.HINTS;
 
         this._submode = minor;

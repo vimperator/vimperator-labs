@@ -978,7 +978,7 @@ const Tabs = Module("tabs", {
                     if (count != null)
                         tabs.switchTo(String(count));
                     else
-                        commandline.open(":", "buffer! ", modes.EX);
+                        commandline.open("", "buffer! ", modes.EX);
                 },
                 { count: true });
 

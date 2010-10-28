@@ -7,6 +7,7 @@
 "use strict";
 
 /** @scope modules */
+Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 
 const Point = Struct("x", "y");
 
