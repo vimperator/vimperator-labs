@@ -762,7 +762,7 @@ Module("highlight", {
                          "text-align: center"],
                         ([h.class,
                           <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
-                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g)]
+                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) <span style="font-weight: bold;">{str}</span>)]
                             for (h in highlight)
                             if (!key || h.class.indexOf(key) > -1)));
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
