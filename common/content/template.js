@@ -186,7 +186,8 @@ const Template = Module("template", {
     },
 
     commandOutput: function generic(xml) {
-        return <>:{commandline.command}<br/>{xml}</>;
+        //return <>:{commandline.command}<br/>{xml}</>;
+        return <>{xml}</>;
     },
 
     // every item must have a .xml property which defines how to draw itself
@@ -223,9 +224,9 @@ const Template = Module("template", {
     options: function options(title, opts) {
         // <e4x>
         return this.commandOutput(
-            <table>
-                <tr highlight="Title" align="left">
-                    <th>--- {title} ---</th>
+            <table style="width: 100%">
+                <tr highlight="CompTitle" align="left">
+                    <th>{title}</th>
                 </tr>
                 {
                     this.map(opts, function (opt)
@@ -240,6 +241,7 @@ const Template = Module("template", {
         // </e4x>
     },
 
+    // only used by showPageInfo: look for some refactoring
     table: function table(title, data, indent) {
         let table =
         // <e4x>
@@ -265,8 +267,8 @@ const Template = Module("template", {
         // TODO: This might be mind-bogglingly slow. We'll see.
         // <e4x>
         return this.commandOutput(
-            <table>
-                <tr highlight="Title" align="left">
+            <table style="width: 100%">
+                <tr highlight="CompTitle" align="left">
                 {
                     this.map(headings, function (h)
                     <th>{h}</th>)

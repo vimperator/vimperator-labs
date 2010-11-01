@@ -68,7 +68,7 @@ const Modes = Module("modes", {
             ext += " (menu)";
         ext += " --" + macromode;
 
-        if (this._main in this._modeMap && typeof this._modeMap[this._main].display == "function")
+        if (this._main in this._modeMap && typeof this._modeMap[this._main].display === "function")
             return "-- " + this._modeMap[this._main].display() + ext;
         return macromode;
     },
@@ -114,7 +114,7 @@ const Modes = Module("modes", {
             if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
-            statusline.updateUrl(); // TODO: Why?
+            //statusline.updateUrl(); // TODO: Why?
             liberator.focusContent(true);
         }
     },
@@ -189,6 +189,7 @@ const Modes = Module("modes", {
                 this._handleModeChange(oldMain, mainMode, oldExtended);
         }
         liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended], stack);
+        //liberator.dump("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended);
 
         if (!silent)
             this.show();

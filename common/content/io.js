@@ -976,7 +976,7 @@ lookup:
 
                 autocommands.trigger("ShellCmdPost", {});
             }, {
-                argCount: "?", // TODO: "1" - probably not worth supporting weird Vim edge cases. The dream is dead. --djk
+                argCount: "?",
                 bang: true,
                 completer: function (context) completion.shellCommand(context),
                 literal: 0

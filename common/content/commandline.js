@@ -216,7 +216,7 @@ const CommandLine = Module("commandline", {
      * @returns {boolean}
      */
     _commandShown: function () modes.main == modes.COMMAND_LINE &&
-            !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE)),
+        !(modes.extended & (modes.INPUT_MULTILINE | modes.OUTPUT_MULTILINE)),
 
     /**
      * Set the command-line prompt.
