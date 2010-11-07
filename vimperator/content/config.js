@@ -55,8 +55,9 @@ const Config = Module("config", ConfigBase, {
             function () { window.BrowserOpenAddonsMgr(); }],
         ["bookmarks",        "List your bookmarks",
             function () { window.openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); }],
-        ["checkupdates",     "Check for updates",
-            function () { window.checkForUpdates(); }],
+        ["checkupdates",     "Check for updates", // show the About dialog which includes the Check For Updates button
+            function () { window.openDialog("chrome://browser/content/aboutDialog.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
+            /*function () { window.checkForUpdates(); }],*/
         ["cleardata",        "Clear private data",
             function () { Cc["@mozilla.org/browser/browserglue;1"].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
         ["cookies",          "List your cookies",
