@@ -81,11 +81,8 @@ const AutoCommands = Module("autocommands", {
             }
         });
 
-        let list = template.commandOutput(
+        let list = template.genericOutput("Auto Commands",
             <table>
-                <tr highlight="Title">
-                    <td colspan="2">----- Auto Commands -----</td>
-                </tr>
                 {
                     template.map(cmds, function ([event, items])
                     <tr highlight="Title">

@@ -972,7 +972,7 @@ lookup:
                 let output = io.system(arg);
 
                 commandline.command = "!" + arg;
-                commandline.echo(template.commandOutput(<span highlight="CmdOutput">{output}</span>));
+                commandline.echo(template.genericOutput("Command Output: " + arg, <span highlight="CmdOutput">{output}</span>));
 
                 autocommands.trigger("ShellCmdPost", {});
             }, {

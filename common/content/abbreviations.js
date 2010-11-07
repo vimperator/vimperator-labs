@@ -166,7 +166,7 @@ const Abbreviations = Module("abbreviations", {
         }
         else {
             list = list.map(function (abbr) [abbr.modeChar, abbr.lhs, abbr.rhs]);
-            list = template.tabular(["", "LHS", "RHS"], [], list);
+            list = template.tabular(["Mode", "Abbreviation", "Expanded text"], ["padding-left: 1ex",,"width: 100%"], list);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
     },

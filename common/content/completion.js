@@ -677,7 +677,7 @@ const Completion = Module("completion", {
         context = context.contexts["/list"];
         context.wait();
 
-        let list = template.commandOutput(
+        let list = template.genericOutput("",
             <div highlight="Completions">
                 { template.completionRow(context.title, "CompTitle") }
                 { template.map(context.items, function (item) context.createRow(item), null, 100) }

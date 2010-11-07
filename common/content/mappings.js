@@ -375,39 +375,39 @@ const Mappings = Module("mappings", {
      * @param {RegExp|string} URL matching pattern or URL.
      */
     list: function (modes, filter, urlPattern) {
-        let modeSign = "";
-
-        // TODO: Vim hides "nv" in a :map and "v" and "n" in :vmap and
-        //       :nmap respectively if the map is not exclusive.
-        modes.forEach(function (mode) {
-            for (let m in modules.modes.mainModes)
-                if (mode == m.mask && modeSign.indexOf(m.char) == -1)
-                    modeSign += m.char;
-        });
-
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
             maps = [map for (map in maps) if (map.names[0] == filter)];
         if (urlPattern)
             maps = [map for each (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
 
-        let list = <table>
-                {
-                    template.map(maps, function (map)
-                        template.map(map.names, function (name)
-                        <tr>
-                            <td>{modeSign} {name}</td>
-                            <td>{map.noremap ? "*" : " "}</td>
-                            <td>{map.rhs || "function () { ... }"}</td>
-                        </tr>))
-                }
-                </table>;
-
-        // TODO: Move this to an ItemList to show this automatically
-        if (list.*.length() == list.text().length()) {
+        if (maps.length == 0) {
             liberator.echomsg("No mapping found");
             return;
         }
+
+        // build results
+        let displayMaps = [];
+        for each (map in maps) {
+            let modes = "";
+            map.modes.forEach(function (mode) {
+                for (let m in modules.modes.mainModes)
+                    if (mode == m.mask)// && modeSign.indexOf(m.char) == -1)
+                        //modeSign += (modeSign ? "" : ",") + m.name;
+                        modes += (modes ? ", " : "") + m.name;
+            });
+            let option = <></>;
+            if (map.silent)
+                option += <span highlight="Keyword">silent</span>;
+            if (map.noremap) {
+                if (map.silent)
+                    option += <>, </>;
+                option += <span highlight="Keyword">noremap</span>;
+            }
+            displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option]);
+        }
+
+        let list = template.tabular(["Mapping", "Expression", "Modes", "Options"], ["color: magenta",,"color: purple", "width: 100%"], displayMaps);
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     }
 }, {

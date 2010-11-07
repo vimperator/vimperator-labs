@@ -1626,11 +1626,8 @@ const Liberator = Module("liberator", {
                         else
                             totalUnits = "msec";
 
-                        let str = template.commandOutput(
+                        let str = template.genericOutput("Code execution summary",
                                 <table>
-                                    <tr highlight="Title" align="left">
-                                        <th colspan="3">Code execution summary</th>
-                                    </tr>
                                     <tr><td>&#xa0;&#xa0;Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
                                     <tr><td>&#xa0;&#xa0;Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
                                     <tr><td>&#xa0;&#xa0;Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
@@ -1697,7 +1694,7 @@ const Liberator = Module("liberator", {
                 if (args.bang)
                     liberator.open("about:");
                 else
-                    liberator.echo(template.commandOutput(<>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
+                    liberator.echo(template.genericOutput("Version Information", <>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
             }, {
                 argCount: "0",
                 bang: true

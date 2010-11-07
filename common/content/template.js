@@ -185,9 +185,19 @@ const Template = Module("template", {
             return str;
     },
 
-    commandOutput: function generic(xml) {
-        //return <>:{commandline.command}<br/>{xml}</>;
-        return <>{xml}</>;
+    // A generic output function which can have an (optional)
+    // title and the output can be an XML which is just passed on
+    genericOutput: function generic(title, xml) {
+        if (title)
+            return <><table style="width: 100%">
+                       <tr style="text-align: left;" highlight="CompTitle">
+                           <th>{title}</th>
+                       </tr>
+                       </table>
+                       {xml}
+                   </>;
+        else
+            return <>{xml}</>;
     },
 
     // every item must have a .xml property which defines how to draw itself
@@ -203,7 +213,7 @@ const Template = Module("template", {
 
     jumps: function jumps(index, elems) {
         // <e4x>
-        return this.commandOutput(
+        return this.genericOutput("",
             <table>
                 <tr style="text-align: left;" highlight="Title">
                     <th colspan="2">jump</th><th>title</th><th>URI</th>
@@ -223,7 +233,7 @@ const Template = Module("template", {
 
     options: function options(title, opts) {
         // <e4x>
-        return this.commandOutput(
+        return this.genericOutput("",
             <table style="width: 100%">
                 <tr highlight="CompTitle" align="left">
                     <th>{title}</th>
@@ -266,7 +276,7 @@ const Template = Module("template", {
     tabular: function tabular(headings, style, iter) {
         // TODO: This might be mind-bogglingly slow. We'll see.
         // <e4x>
-        return this.commandOutput(
+        return this.genericOutput("",
             <table style="width: 100%">
                 <tr highlight="CompTitle" align="left">
                 {
@@ -279,7 +289,7 @@ const Template = Module("template", {
                     <tr>
                     {
                         template.map(Iterator(row), function ([i, d])
-                        <td style={style[i] || ""}>{d}</td>)
+                        <td style={style[i] || ""}>{template.maybeXML(d)}</td>)
                     }
                     </tr>)
                 }
@@ -289,7 +299,7 @@ const Template = Module("template", {
 
     usage: function usage(iter) {
         // <e4x>
-        return this.commandOutput(
+        return this.genericOutput("Usage",
             <table>
             {
                 this.map(iter, function (item)
