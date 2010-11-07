@@ -381,11 +381,6 @@ const Mappings = Module("mappings", {
         if (urlPattern)
             maps = [map for each (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
 
-        if (maps.length == 0) {
-            liberator.echomsg("No mapping found");
-            return;
-        }
-
         // build results
         let displayMaps = [];
         for each (map in maps) {
@@ -405,6 +400,11 @@ const Mappings = Module("mappings", {
                 option += <span highlight="Keyword">noremap</span>;
             }
             displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option]);
+        }
+
+        if (displayMaps.length == 0) {
+            liberator.echomsg("No mapping found");
+            return;
         }
 
         let list = template.tabular(["Mapping", "Expression", "Modes", "Options"], ["color: magenta",,"color: purple", "width: 100%"], displayMaps);
