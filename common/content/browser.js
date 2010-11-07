@@ -53,7 +53,6 @@ const Browser = Module("browser", {
             });
 
         // only available in FF 3.5
-        services.add("privateBrowsing", "@mozilla.org/privatebrowsing;1", Ci.nsIPrivateBrowsingService);
         if (services.get("privateBrowsing")) {
             options.add(["private", "pornmode"],
                 "Set the 'private browsing' option",

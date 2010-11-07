@@ -7,11 +7,7 @@
 /** @scope modules */
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
-try { 
-    Cu.import("resource://gre/modules/AddonManager.jsm")
-} catch (e) {
-    AddonManager = null;
-}
+Cu.import("resource://gre/modules/AddonManager.jsm")
 
 const plugins = { __proto__: modules };
 const userContext = { __proto__: modules };
@@ -25,7 +21,7 @@ const Storage = Module("storage", {
     requires: ["services"],
 
     init: function () {
-        Components.utils.import("resource://liberator/storage.jsm", this);
+        Cu.import("resource://liberator/storage.jsm", this);
         modules.Timer = this.Timer; // Fix me, please.
 
         try {
@@ -106,48 +102,17 @@ const Liberator = Module("liberator", {
 
     // TODO: Do away with this getter when support for 1.9.x is dropped
     get extensions() {
-        if (AddonManager)
-            return _extensions.map(function (e) ({
-                id: e.id,
-                name: e.name,
-                description: e.description,
-                enabled: e.isActive,
-                icon: e.iconURL,
-                options: e.optionsURL,
-                version: e.version,
-                original: e
-            }));
-        
-        const rdf = services.get("rdf");
-        const extensionManager = services.get("extensionManager");
-
-        let extensions = extensionManager.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-
-        function getRdfProperty(item, property) {
-            let resource = rdf.GetResource("urn:mozilla:item:" + item.id);
-            let value = "";
-
-            if (resource) {
-                let target = extensionManager.datasource.GetTarget(resource,
-                    rdf.GetResource("http://www.mozilla.org/2004/em-rdf#" + property), true);
-                if (target && target instanceof Ci.nsIRDFLiteral)
-                    value = target.Value;
-            }
-
-            return value;
-        }
-
-        //const Extension = Struct("id", "name", "description", "icon", "enabled", "version");
-        return extensions.map(function (e) ({
+        return _extensions.map(function (e) ({
             id: e.id,
             name: e.name,
-            description: getRdfProperty(e, "description"),
-            enabled: getRdfProperty(e, "isDisabled") != "true",
+            description: e.description,
+            enabled: e.isActive,
             icon: e.iconURL,
-            options: getRdfProperty(e, "optionsURL"),
-            version: e.version
+            options: e.optionsURL,
+            version: e.version,
+            original: e
         }));
-    },
+      },
 
     getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
 
@@ -532,11 +497,7 @@ const Liberator = Module("liberator", {
      * @returns {boolean}
      */
     hasExtension: function (name) {
-        if (AddonManager)
-            var extensions = this._extensions;
-        else
-            var extensions = services.get("extensionManager").getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
-        return extensions.some(function (e) e.name == name);
+        return this._extensions.some(function (e) e.name == name);
     },
 
     /**
@@ -1382,10 +1343,7 @@ const Liberator = Module("liberator", {
                 let file = io.File(args[0]);
 
                 if (file.exists() && file.isReadable() && file.isFile())
-                    if (AddonManager)
-                        AddonManager.getInstallForFile(file, function (a) a.install());
-                    else
-                        services.get("extensionManager").installItemFromFile(file, "app-profile");
+                    AddonManager.getInstallForFile(file, function (a) a.install());
                 else {
                     if (file.exists() && file.isDirectory())
                         liberator.echomsg("Cannot install a directory: \"" + file.path + "\"", 0);
@@ -1425,9 +1383,7 @@ const Liberator = Module("liberator", {
                 function (args) {
                     let name = args[0];
                     function action(e) {
-                        if (!AddonManager)
-                            services.get("extensionManager")[command.action](e.id);
-                        else if (command.action == "uninstallItem")
+                        if (command.action == "uninstallItem")
                             e.original.uninstall();
                         else
                             e.original.userDisabled = command.action == "disableItem";

@@ -13,35 +13,116 @@
 const Services = Module("services", {
     init: function () {
         this.classes = {};
-        this.services = {};
-
-        this.add("appStartup",          "@mozilla.org/toolkit/app-startup;1",               Ci.nsIAppStartup);
-        this.add("autoCompleteSearch",  "@mozilla.org/autocomplete/search;1?name=history",  Ci.nsIAutoCompleteSearch);
-        this.add("bookmarks",           "@mozilla.org/browser/nav-bookmarks-service;1",     Ci.nsINavBookmarksService);
-        this.add("browserSearch",       "@mozilla.org/browser/search-service;1",            Ci.nsIBrowserSearchService);
-        this.add("cache",               "@mozilla.org/network/cache-service;1",             Ci.nsICacheService);
-        this.add("console",             "@mozilla.org/consoleservice;1",                    Ci.nsIConsoleService);
-        this.add("liberator:",          "@mozilla.org/network/protocol;1?name=liberator");
-        this.add("debugger",            "@mozilla.org/js/jsd/debugger-service;1",           Ci.jsdIDebuggerService);
-        this.add("directory",           "@mozilla.org/file/directory_service;1",            Ci.nsIProperties);
-        this.add("downloadManager",     "@mozilla.org/download-manager;1",                  Ci.nsIDownloadManager);
-        this.add("environment",         "@mozilla.org/process/environment;1",               Ci.nsIEnvironment);
-        this.add("extensionManager",    "@mozilla.org/extensions/manager;1",                Ci.nsIExtensionManager);
-        this.add("favicon",             "@mozilla.org/browser/favicon-service;1",           Ci.nsIFaviconService);
-        this.add("history",             "@mozilla.org/browser/global-history;2",            [Ci.nsIGlobalHistory3, Ci.nsINavHistoryService, Ci.nsIBrowserHistory]);
-        this.add("io",                  "@mozilla.org/network/io-service;1",                Ci.nsIIOService);
-        this.add("json",                "@mozilla.org/dom/json;1",                          Ci.nsIJSON, "createInstance");
-        this.add("livemark",            "@mozilla.org/browser/livemark-service;2",          Ci.nsILivemarkService);
-        this.add("observer",            "@mozilla.org/observer-service;1",                  Ci.nsIObserverService);
-        this.add("pref",                "@mozilla.org/preferences-service;1",               [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]);
-        this.add("profile",             "@mozilla.org/toolkit/profile-service;1",           Ci.nsIToolkitProfileService);
-        this.add("rdf",                 "@mozilla.org/rdf/rdf-service;1",                   Ci.nsIRDFService);
-        this.add("sessionStore",        "@mozilla.org/browser/sessionstore;1",              Ci.nsISessionStore);
-        this.add("subscriptLoader",     "@mozilla.org/moz/jssubscript-loader;1",            Ci.mozIJSSubScriptLoader);
-        this.add("threadManager",       "@mozilla.org/thread-manager;1",                    Ci.nsIThreadManager);
-        this.add("windowMediator",      "@mozilla.org/appshell/window-mediator;1",          Ci.nsIWindowMediator);
-        this.add("windowWatcher",       "@mozilla.org/embedcomp/window-watcher;1",          Ci.nsIWindowWatcher);
-        this.add("xulAppInfo",          "@mozilla.org/xre/app-info;1",                      Ci.nsIXULAppInfo);
+        this.services = {
+            "appStartup": {
+                class_: "@mozilla.org/toolkit/app-startup;1",
+                iface:  Ci.nsIAppStartup
+            },
+            "autoCompleteSearch": {
+                class_: "@mozilla.org/autocomplete/search;1?name=history",
+                iface:  Ci.nsIAutoCompleteSearch
+            },
+            "bookmarks": {
+                class_: "@mozilla.org/browser/nav-bookmarks-service;1",
+                iface:  Ci.nsINavBookmarksService
+            },
+            "browserSearch": {
+                class_: "@mozilla.org/browser/search-service;1",
+                iface:  Ci.nsIBrowserSearchService
+            },
+            "cache": {
+                class_: "@mozilla.org/network/cache-service;1",
+                iface:  Ci.nsICacheService
+            },
+            "console": {
+                class_: "@mozilla.org/consoleservice;1",
+                iface:  Ci.nsIConsoleService
+            },
+            "liberator:": {
+                class_: "@mozilla.org/network/protocol;1?name=liberator"
+            },
+            "debugger": {
+                class_: "@mozilla.org/js/jsd/debugger-service;1",
+                iface:  Ci.jsdIDebuggerService
+            },
+            "directory": {
+                class_: "@mozilla.org/file/directory_service;1",
+                iface:  Ci.nsIProperties
+            },
+            "downloadManager": {
+                class_: "@mozilla.org/download-manager;1",
+                iface:  Ci.nsIDownloadManager
+            },
+            "environment": {
+                class_: "@mozilla.org/process/environment;1",
+                iface:  Ci.nsIEnvironment
+            },
+            "favicon": {
+                class_: "@mozilla.org/browser/favicon-service;1",
+                iface:  Ci.nsIFaviconService
+            },
+            "history": {
+                class_: "@mozilla.org/browser/global-history;2",
+                iface:  [Ci.nsIGlobalHistory3, Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
+            },
+            "io": {
+                class_: "@mozilla.org/network/io-service;1",
+                iface:  Ci.nsIIOService
+            },
+            "json": {
+                class_: "@mozilla.org/dom/json;1",
+                iface:  Ci.nsIJSON,
+                meth:   "createInstance"
+            },
+            "livemark": {
+                class_: "@mozilla.org/browser/livemark-service;2",
+                iface:  Ci.nsILivemarkService
+            },
+            "observer": {
+                class_: "@mozilla.org/observer-service;1",
+                iface:  Ci.nsIObserverService
+            },
+            "pref": {
+                class_: "@mozilla.org/preferences-service;1",
+                iface:  [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]
+            },
+            "privateBrowsing": {
+                class_: "@mozilla.org/privatebrowsing;1",
+                iface:  Ci.nsIPrivateBrowsingService
+            },
+            "profile": {
+                class_: "@mozilla.org/toolkit/profile-service;1",
+                iface:  Ci.nsIToolkitProfileService
+            },
+            "rdf": {
+                class_: "@mozilla.org/rdf/rdf-service;1",
+                iface:  Ci.nsIRDFService
+            },
+            "sessionStore": {
+                class_: "@mozilla.org/browser/sessionstore;1",
+                iface:  Ci.nsISessionStore
+            },
+            "subscriptLoader": {
+                class_: "@mozilla.org/moz/jssubscript-loader;1",
+                iface:  Ci.mozIJSSubScriptLoader
+            },
+            "threadManager": {
+                class_: "@mozilla.org/thread-manager;1",
+                iface:  Ci.nsIThreadManager
+            },
+            "windowMediator": {
+                class_: "@mozilla.org/appshell/window-mediator;1",
+                iface:  Ci.nsIWindowMediator
+            },
+            "windowWatcher": {
+                class_: "@mozilla.org/embedcomp/window-watcher;1",
+                iface:  Ci.nsIWindowWatcher
+            },
+            "xulAppInfo": {
+                class_: "@mozilla.org/xre/app-info;1",
+                iface:  Ci.nsIXULAppInfo
+            }
+        };
 
         this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);
         this.addClass("file:",      "@mozilla.org/network/protocol;1?name=file", Ci.nsIFileProtocolHandler);
@@ -76,7 +157,7 @@ const Services = Module("services", {
      *     the service.
      */
     add: function (name, class_, ifaces, meth) {
-        return this.services[name] = this._create(class_, ifaces, meth);
+        this.services[name] = {"class_": class_, "iface": ifaces, "meth": meth};
     },
 
     /**
@@ -97,7 +178,15 @@ const Services = Module("services", {
      *
      * @param {string} name The service's cache key.
      */
-    get: function (name) this.services[name],
+    get: function (name) {
+        if (!this.services[name]["reference"]) {
+            var currentService = this.services[name];
+
+            this.services[name]["reference"] = this._create(currentService["class_"], currentService["iface"], currentService["meth"]);
+        }
+
+        return this.services[name]["reference"];
+    },
 
     /**
      * Returns a new instance of the cached class with the specified name.
