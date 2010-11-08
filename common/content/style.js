@@ -53,11 +53,11 @@ Highlights.prototype.CSS = <><![CDATA[
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: 1ex;
     CompTitle            font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #DBDBDB, #D9D9D9, #E7E7E7 100%);
-    CompTitle>*          color: #333; border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 2px; text-shadow: 1px 1px 0px #E0E0E0;
+    CompTitle>*          color: #333; border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 1px 0.5ex; text-shadow: 1px 1px 0px #E0E0E0;
     CompMsg              font-style: italic; margin-left: 16px;
     CompItem
     CompItem[selected]   background: #FFEC8B; box-shadow: 0px 0px 1px #CC0;
-    CompItem>*           height: 18px; min-height: 18px; padding: 0 .5ex;
+    CompItem>*           height: 18px; min-height: 18px; padding: 0 0.5ex;
     CompIcon             width: 16px; min-width: 16px; display: inline-block; margin-right: .5ex;
     CompIcon>img         max-width: 16px; max-height: 16px; vertical-align: middle;
     CompResult           width: 500px; max-width: 500px; overflow: hidden;

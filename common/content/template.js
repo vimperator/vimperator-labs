@@ -286,7 +286,7 @@ const Template = Module("template", {
                 </tr>
                 {
                     this.map(iter, function (row)
-                    <tr>
+                    <tr highlight="CompItem">
                     {
                         template.map(Iterator(row), function ([i, d])
                         <td style={style[i] || ""}>{template.maybeXML(d)}</td>)
