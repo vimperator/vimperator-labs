@@ -98,7 +98,7 @@ const CommandLine = Module("commandline", {
         });
 
         this._autocompleteTimer = new Timer(200, 500, function autocompleteTell(tabPressed) {
-            if (!events.feedingKeys && self._completions && options.get("wildoptions").has("auto")) {
+            if (!events.feedingKeys && self._completions && options["autocomplete"]) {
                 self._completions.complete(true, false);
                 self._completions.itemList.show();
             }
@@ -1595,18 +1595,9 @@ const CommandLine = Module("commandline", {
                 }
             });
 
-        options.add(["wildoptions", "wop"],
-            "Change how command line completion is done",
-            "stringlist", "",
-            {
-                completer: function completer(value) {
-                    return [
-                        ["",     "Default completion that won't show or sort the results"],
-                        ["auto", "Automatically show this._completions while you are typing"],
-                        ["sort", "Always sort the completion list"]
-                    ];
-                }
-            });
+        options.add(["autocomplete", "ac"],
+            "Automatically list completions while typing",
+            "boolean", true);
     },
     styles: function () {
         let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;

@@ -51,11 +51,11 @@ syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperator
 syn region vimperatorSet matchgroup=vimperatorCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
     \ end="$" keepend oneline contains=vimperatorOption,vimperatorString
 
-syn keyword vimperatorOption act activate cd cdpath complete cpt defsearch ds editor eht ei enc encoding eventignore
+syn keyword vimperatorOption ac act activate autocomplete cd cdpath complete cpt defsearch ds editor eht ei enc encoding eventignore
     \ extendedhinttags fenc fileencoding fh followhints go guioptions helpfile hf hi hin hintinputs hintmatching hinttags
-    \ hinttimeout history hm ht hto laststatus ls maxitems messages msgs newtab nextpattern pa pageinfo popups pps previouspattern
+    \ hinttimeout history hm ht hto maxitems messages msgs newtab nextpattern pa pageinfo popups pps previouspattern
     \ rtp runtimepath si sanitizeitems sts sanitizetimespan scr scroll sh shcf shell shellcmdflag showstatuslinks showtabline ssli
-    \ stal suggestengines titlestring urlseparator vbs verbose wic wig wildcase wildignore wildmode wildoptions wim wop
+    \ stal status suggestengines titlestring urlseparator vbs verbose wic wig wildcase wildignore wildmode wim
     \ wordseparators wsp
     \ contained nextgroup=vimperatorSetMod
 

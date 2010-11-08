@@ -296,6 +296,18 @@
 
 
 <item>
+    <tags>'ac' 'autocomplete'</tags>
+    <spec>'autocomplete' 'ac'</spec>
+    <type>boolean</type>
+    <default>true</default>
+    <description>
+        <p>If set, automatically list completions while typing.</p>
+        <warning>Setting this option might be slow on older hardware, so turn that option off if you experience unwanted slowdowns.</warning>
+    </description>
+</item>
+
+
+<item>
     <tags>$CDPATH</tags>
     <tags>'cd' 'cdpath'</tags>
     <spec>'cdpath' 'cd'</spec>
@@ -1328,24 +1340,6 @@
             </dd>
         </dl>
 
-    </description>
-</item>
-
-
-<item>
-    <tags>'wop' 'wildoptions'</tags>
-    <spec>'wildoptions' 'wop'</spec>
-    <type>stringlist</type>
-    <default></default>
-    <description>
-        <p>A list of words that change how command-line completion is done.</p>
-
-        <p>Possible words:</p>
-
-        <dl>
-            <dt>auto</dt>       <dd>Automatically show completions while you are typing.</dd>
-            <dt>sort</dt>       <dd>Always sort the completion list, overriding the <o>complete</o> option.</dd>
-        </dl>
     </description>
 </item>
 

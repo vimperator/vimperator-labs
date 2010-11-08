@@ -52,11 +52,11 @@ syn match xulmusAutoEventList "\(\a\+,\)*\a\+" contained contains=xulmusAutoEven
 syn region xulmusSet matchgroup=xulmusCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%[ocal]\|setg\%[lobal]\|set\=\)\=\>"
     \ end="$" keepend oneline contains=xulmusOption,xulmusString
 
-syn keyword xulmusOption activate act cdpath cd complete cpt defsearch ds editor encoding enc eventignore ei extendedhinttags eht
+syn keyword xulmusOption activate act autocomplete ac cdpath cd complete cpt defsearch ds editor encoding enc eventignore ei extendedhinttags eht
     \ fileencoding fenc followhints fh guioptions go helpfile hf hintinputs hin hintmatching hm hinttags ht hinttimeout hto
-    \ history hi laststatus ls maxitems messages msgs newtab nextpattern pageinfo pa popups pps previouspattern repeat runtimepath
-    \ rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal suggestengines titlestring urlseparator
-    \ verbose vbs wildcase wic wildignore wig wildmode wim wildoptions wop wordseparators wsp
+    \ history hi maxitems messages msgs newtab nextpattern pageinfo pa popups pps previouspattern repeat runtimepath
+    \ rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal status suggestengines titlestring urlseparator
+    \ verbose vbs wildcase wic wildignore wig wildmode wim wordseparators wsp
     \ contained nextgroup=xulmusSetMod
 
 " toggle options

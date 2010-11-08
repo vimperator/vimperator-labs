@@ -367,7 +367,7 @@ const CompletionContext = Class("CompletionContext", {
         if (this.maxItems)
             filtered = filtered.slice(0, this.maxItems);
 
-        if (options.get("wildoptions").has("sort") && this.compare)
+        if (this.compare)
             filtered.sort(this.compare);
         let quote = this.quote;
         if (quote)

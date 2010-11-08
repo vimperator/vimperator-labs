@@ -383,6 +383,7 @@ This file contains a list of all available commands, mappings and options.
 
 <dl>
     <dt><o>activate</o></dt> <dd>Define when tabs are automatically activated</dd>
+    <dt><o>autocomplete</o></dt> <dd>Change how command-line completion is done</dd>
     <dt><o>cdpath</o></dt> <dd>List of directories searched when executing <ex>:cd</ex></dd>
     <dt><o>complete</o></dt> <dd>Items which are completed at the <ex>:open</ex> prompts</dd>
     <dt><o>defsearch</o></dt> <dd>Set the default search engine</dd>
@@ -440,7 +441,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>wildcase</o></dt> <dd>Completion case matching mode</dd>
     <dt><o>wildignore</o></dt> <dd>List of file patterns to ignore when completing files</dd>
     <dt><o>wildmode</o></dt> <dd>Define how command-line completion works</dd>
-    <dt><o>wildoptions</o></dt> <dd>Change how command-line completion is done</dd>
     <dt><o>wordseparators</o></dt> <dd>How words are split for hintmatching</dd>
 </dl>
 
