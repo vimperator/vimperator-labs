@@ -1234,43 +1234,6 @@
 
 
 <item>
-    <tags>'wildcase' 'wic'</tags>
-    <spec>'wildcase' 'wic'</spec>
-    <type>string</type>
-    <default>smart</default>
-    <description>
-        <p>
-            補完のマッチ時の大文字小文字に関する挙動を設定します。
-            以下の値が使用できます:</p>
-
-        <dl>
-            <dt><str>smart</str></dt>  <dd>大文字が含まれる場合のみ大文字小文字を区別します</dd>
-            <dt><str>match</str></dt>  <dd>常に大文字小文字を区別します</dd>
-            <dt><str>ignore</str></dt> <dd>常に大文字小文字を区別しません</dd>
-        </dl>
-    </description>
-</item>
-
-
-<item>
-    <tags>'wildignore' 'wig'</tags>
-    <spec>'wildignore' 'wig'</spec>
-    <type>stringlist</type>
-    <default/>
-    <description>
-        <p>
-            ファイル名補完の際に無視するファイルのパターンの一覧です。
-            たとえばオブジェクトファイルと Vim のスワップファイルを無視するには、
-            <ex>:set wildignore=<str>.<em>\\.o,\\..</em>\\.s[a-z]\\<a>2</a></str></ex>
-            とします。
-        </p>
-
-        <note>Vim とは異なり、それぞれのパターンは glob ( 訳注: ワイルドカードのことだと思われます ) ではなく正規表現です。</note>
-    </description>
-</item>
-
-
-<item>
     <tags>'wim' 'wildmode'</tags>
     <spec>'wildmode' 'wim'</spec>
     <type>stringlist</type>

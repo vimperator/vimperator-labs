@@ -330,14 +330,11 @@ const CompletionContext = Class("CompletionContext", {
         }
     },
 
+    // TODO: Is this actually broken anyway?
     get ignoreCase() {
         if ("_ignoreCase" in this)
             return this._ignoreCase;
-        let mode = options["wildcase"];
-        if (mode == "match")
-            return this._ignoreCase = false;
-        if (mode == "ignore")
-            return this._ignoreCase = true;
+        // smart case by default unless overriden above
         return this._ignoreCase = !/[A-Z]/.test(this.filter);
     },
     set ignoreCase(val) this._ignoreCase = val,

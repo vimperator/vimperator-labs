@@ -436,8 +436,6 @@
     <dt><o>usermode</o></dt> <dd>現在のウェブサイトを必要最低限のスタイルシートで表示するための簡易的な手段です</dd>
     <dt><o>verbose</o></dt> <dd>メッセージ出力する詳細度を設定します</dd>
     <dt><o>visualbell</o></dt> <dd>エラー発生時にビープ音を鳴らす代わりにビジュアルベルを使用するかどうかを設定します</dd>
-    <dt><o>wildcase</o></dt> <dd>補完時のマッチ方法を設定します</dd>
-    <dt><o>wildignore</o></dt> <dd>ファイルの補完時に無視するファイルのパターン一覧を設定します</dd>
     <dt><o>wildmode</o></dt> <dd>コマンドラインでの補完がどのように行なわれるかを設定します</dd>
     <dt><o>wildoptions</o></dt> <dd>コマンドラインでの補完をどのように行うかを設定します</dd>
     <dt><o>wordseparators</o></dt> <dd><o>hintmatching</o> においてどのように単語を区切るかを設定します</dd>

@@ -1276,40 +1276,6 @@
 
 
 <item>
-    <tags>'wildcase' 'wic'</tags>
-    <spec>'wildcase' 'wic'</spec>
-    <type>string</type>
-    <default>smart</default>
-    <description>
-        <p>Defines how completions are matched with regard to character case. Possible values:</p>
-
-        <dl>
-            <dt><str>smart</str></dt>  <dd>Case is significant when capital letters are typed</dd>
-            <dt><str>match</str></dt>  <dd>Case is always significant</dd>
-            <dt><str>ignore</str></dt> <dd>Case is never significant</dd>
-        </dl>
-    </description>
-</item>
-
-
-<item>
-    <tags>'wildignore' 'wig'</tags>
-    <spec>'wildignore' 'wig'</spec>
-    <type>stringlist</type>
-    <default></default>
-    <description>
-        <p>
-            List of file patterns to ignore when completing files. E.g., to ignore object
-            files and Vim swap files
-            <ex>:set wildignore=<str>.<em>\\.o,\\..</em>\\.s[a-z]\\<a>2</a></str></ex>
-        </p>
-
-        <note>Unlike Vim each pattern is a regex rather than a glob.</note>
-    </description>
-</item>
-
-
-<item>
     <tags>'wim' 'wildmode'</tags>
     <spec>'wildmode' 'wim'</spec>
     <type>stringlist</type>

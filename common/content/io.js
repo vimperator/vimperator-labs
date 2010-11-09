@@ -1035,11 +1035,6 @@ lookup:
             context.compare = function (a, b)
                         b.isdir - a.isdir || String.localeCompare(a.text, b.text);
 
-            if (options["wildignore"]) {
-                let wigRegexp = RegExp("(^" + options.get("wildignore").values.join("|") + ")$");
-                context.filters.push(function ({item: f}) f.isDirectory() || !wigRegexp.test(f.leafName));
-            }
-
             // context.background = true;
             context.key = dir;
             context.generate = function generate_file() {

@@ -438,8 +438,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>usermode</o></dt> <dd>Show current website with a minimal style sheet to make it easily accessible</dd>
     <dt><o>verbose</o></dt> <dd>Define which info messages are displayed</dd>
     <dt><o>visualbell</o></dt> <dd>Use visual bell instead of beeping on errors</dd>
-    <dt><o>wildcase</o></dt> <dd>Completion case matching mode</dd>
-    <dt><o>wildignore</o></dt> <dd>List of file patterns to ignore when completing files</dd>
     <dt><o>wildmode</o></dt> <dd>Define how command-line completion works</dd>
     <dt><o>wordseparators</o></dt> <dd>How words are split for hintmatching</dd>
 </dl>

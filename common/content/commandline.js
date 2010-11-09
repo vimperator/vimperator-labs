@@ -1549,33 +1549,6 @@ const CommandLine = Module("commandline", {
                 completer: function (context) array(values(completion.urlCompleters))
             });
 
-        options.add(["wildcase", "wic"],
-            "Completion case matching mode",
-            "string", "smart",
-            {
-                completer: function () [
-                    ["smart", "Case is significant when capital letters are typed"],
-                    ["match", "Case is always significant"],
-                    ["ignore", "Case is never significant"]
-                ]
-            });
-
-        options.add(["wildignore", "wig"],
-            "List of file patterns to ignore when completing files",
-            "stringlist", "",
-            {
-                validator: function validator(values) {
-                    // TODO: allow for escaping the ","
-                    try {
-                        RegExp("^(" + values.join("|") + ")$");
-                        return true;
-                    }
-                    catch (e) {
-                        return false;
-                    }
-                }
-            });
-
         options.add(["wildmode", "wim"],
             "Define how command line completion works",
             "stringlist", "list:full",
