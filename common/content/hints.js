@@ -1182,12 +1182,12 @@ const Hints = Module("hints", {
         options.add(["extendedhinttags", "eht"],
             "XPath string of hintable elements activated by ';'",
             "string", DEFAULT_HINTTAGS,
-            { validator: checkXPath });
+            { validator: checkXPath, scope: Option.SCOPE_BOTH });
 
         options.add(["hinttags", "ht"],
             "XPath string of hintable elements activated by 'f' and 'F'",
             "string", DEFAULT_HINTTAGS,
-            { validator: checkXPath });
+            { validator: checkXPath, scope: Option.SCOPE_BOTH });
 
         options.add(["hinttimeout", "hto"],
             "Timeout before automatically following a non-unique numerical hint",

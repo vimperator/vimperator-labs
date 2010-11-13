@@ -22,6 +22,7 @@
     * new 'foldermode' option to change folder panel view.
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * More small fixes
+    * enable 'hinttags' and 'extenedhinttags' to setlocal
 
 2010-03-29
     * version 0.6

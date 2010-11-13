@@ -39,6 +39,7 @@
     * Add image-related hint modes: [m];x[m] for title/alt text, and [m];S[m] and [m];A[m]
       for saving.
     * Image hints now work on anything with a *src* tag.
+    * enable 'hinttags' and 'extenedhinttags' to setlocal
 
 2010-04-07:
     * version 2.3.1
