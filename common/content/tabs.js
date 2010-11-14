@@ -25,8 +25,12 @@ const Tabs = Module("tabs", {
 
         // hide tabs initially to prevent flickering when 'stal' would hide them
         // on startup
+        /* The code needs fixing since it destroys AppTabs sizes after a restart
+         * Maybe we should just get completely rid of it, as 'stal' is broken
+         * currently anyway
         if (config.hasTabbrowser)
-            config.tabbrowser.mTabContainer.collapsed = true; // FIXME: see 'stal' comment
+             config.tabbrowser.mTabContainer.collapsed = true; // FIXME: see 'stal' comment
+        */
     },
 
     _updateTabCount: function () {
