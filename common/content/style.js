@@ -595,9 +595,7 @@ Module("styles", {
                     let list = Array.concat([i for (i in styles.userNames)],
                                             [i for (i in styles.userSheets) if (!i[1].name)]);
                     let str = template.tabular(["", "Name", "Filter", "CSS"],
-                        ["min-width: 1em; text-align: center; color: red; font-weight: bold;",
-                         "padding: 0 1em 0 1ex; vertical-align: top;",
-                         "padding: 0 1em 0 0; vertical-align: top;"],
+                                               ["min-width: 1em; text-align: center; color: red; font-weight: bold;"],
                         ([sheet.enabled ? "" : "\u00d7",
                           key,
                           sheet.sites.join(","),
@@ -757,11 +755,10 @@ Module("highlight", {
 
                 if (!css && !clear) {
                     // List matching keys
-                    let str = template.tabular(["Key", "Sample", "CSS"],
-                        ["padding: 0 1em 0 0; vertical-align: top",
-                         "text-align: center"],
+                    let str = template.tabular(["Key", "Sample",             "CSS"],
+                                               ["",    "text-align: center", ""],
                         ([h.class,
-                          <span style={"text-align: center; line-height: 1em;" + h.value + style}>XXX</span>,
+                          <span style={h.value + style}>XXX</span>,
                           template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) <span style="font-weight: bold;">{str}</span>)]
                             for (h in highlight)
                             if (!key || h.class.indexOf(key) > -1)));

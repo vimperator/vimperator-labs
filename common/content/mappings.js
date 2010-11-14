@@ -407,7 +407,7 @@ const Mappings = Module("mappings", {
             return;
         }
 
-        let list = template.tabular(["Mapping", "Expression", "Modes", "Options"], ["color: magenta",,"color: purple", "width: 100%"], displayMaps);
+        let list = template.tabular(["Mapping", "Expression", "Modes", "Options"], ["color: magenta",,"color: purple"], displayMaps);
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     }
 }, {

@@ -194,7 +194,7 @@ const Template = Module("template", {
                            <th>{title}</th>
                        </tr>
                        </table>
-                       {xml}
+                       <div style="padding-left: 0.5ex; padding-right: 0.5ex">{xml}</div>
                    </>;
         else
             return <>{xml}</>;
@@ -273,15 +273,23 @@ const Template = Module("template", {
         return XML();
     },
 
+    // This is a generic function which can display
+    // tabular data in a nice way.
+    // @param {string|array} headings
     tabular: function tabular(headings, style, iter) {
-        // TODO: This might be mind-bogglingly slow. We'll see.
+        function createHeadings(headings) {
+            if (typeof(headings) == "string")
+                return <th colspan={(iter && iter[0].length) || 1}>{headings}</th>;
+            else
+                return template.map(headings, function (h) <th>{h}</th>);
+        }
+
         // <e4x>
         return this.genericOutput("",
             <table style="width: 100%">
                 <tr highlight="CompTitle" align="left">
                 {
-                    this.map(headings, function (h)
-                    <th>{h}</th>)
+                    createHeadings(headings)
                 }
                 </tr>
                 {
@@ -289,7 +297,7 @@ const Template = Module("template", {
                     <tr highlight="CompItem">
                     {
                         template.map(Iterator(row), function ([i, d])
-                        <td style={style[i] || ""}>{template.maybeXML(d)}</td>)
+                        <td style={(style[i] || "") + (i == (row.length - 1) ? "; width: 100%" : "")}>{template.maybeXML(d)}</td>)
                     }
                     </tr>)
                 }

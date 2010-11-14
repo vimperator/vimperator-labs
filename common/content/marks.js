@@ -175,7 +175,7 @@ const Marks = Module("marks", {
 
         let list = template.tabular(
             ["Mark",   "Line",              "Column",            "File"],
-            ["",       "text-align: right", "text-align: right", "color: green; width: 100%"],
+            ["",       "text-align: right", "text-align: right", "color: green;"],
             ([mark[0],
               Math.round(mark[1].position.x * 100) + "%",
               Math.round(mark[1].position.y * 100) + "%",

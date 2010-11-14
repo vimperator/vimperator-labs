@@ -1453,7 +1453,7 @@ const Liberator = Module("liberator", {
                 }
                 else {
                     if (filter)
-                        liberator.echoerr("Exxx: No extension matching \"" + filter + "\"");
+                        liberator.echoerr("No extension matching \"" + filter + "\"");
                     else
                         liberator.echoerr("No extensions installed");
                 }
@@ -1628,9 +1628,9 @@ const Liberator = Module("liberator", {
 
                         let str = template.genericOutput("Code execution summary",
                                 <table>
-                                    <tr><td>&#xa0;&#xa0;Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
-                                    <tr><td>&#xa0;&#xa0;Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>&#xa0;&#xa0;Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                    <tr><td>Executed:</td><td align="right"><span class="times-executed">{count}</span></td><td>times</td></tr>
+                                    <tr><td>Average time:</td><td align="right"><span class="time-average">{each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
+                                    <tr><td>Total time:</td><td align="right"><span class="time-total">{total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
                                 </table>);
                         commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
@@ -1694,7 +1694,9 @@ const Liberator = Module("liberator", {
                 if (args.bang)
                     liberator.open("about:");
                 else
-                    liberator.echo(template.genericOutput("Version Information", <>{config.name} {liberator.version} running on:<br/>{navigator.userAgent}</>));
+                    liberator.echo(template.tabular("Version Information", ["font-weight: bold; padding-left: 2ex"],
+                                                    [[config.name + ":",  liberator.version],
+                                                     [config.hostApplication + ":", navigator.userAgent]]));
             }, {
                 argCount: "0",
                 bang: true
