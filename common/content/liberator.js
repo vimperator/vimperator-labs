@@ -1740,6 +1740,7 @@ const Liberator = Module("liberator", {
         };
 
         completion.toolbar = function toolbar(context) {
+            let toolbox = document.getElementById("navigator-toolbox");
             context.title = ["Toolbar"];
             context.keys = { text: function (item) item.getAttribute("toolbarname"), description: function () "" };
             context.completions = util.evaluateXPath("./*[@toolbarname]", document, toolbox);
