@@ -1035,7 +1035,7 @@ const Commands = Module("commands", {
                     let cmds = this._exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
 
                     if (cmds.length > 0) {
-                        let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"], ["padding-right: 2em;"],
+                        let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"],
                             ([cmd.bang ? "!" : " ",
                               cmd.name,
                               cmd.argCount,

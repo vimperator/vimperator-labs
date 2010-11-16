@@ -26,6 +26,7 @@ Highlights.prototype.CSS = <><![CDATA[
     Number      color: blue;
     Object      color: maroon;
     String      color: green;
+    Mapping     color: magenta;
 
     Key         font-weight: bold;
 
@@ -86,7 +87,7 @@ Highlights.prototype.CSS = <><![CDATA[
     }
 
     Title       color: magenta; background: white; font-weight: bold;
-    URL         text-decoration: none; color: green; background: inherit;
+    URL         text-decoration: none; color: green;
     URL:hover   text-decoration: underline; cursor: pointer;
 
     FrameIndicator,,* {
@@ -594,14 +595,14 @@ Module("styles", {
                 if (!css) {
                     let list = Array.concat([i for (i in styles.userNames)],
                                             [i for (i in styles.userSheets) if (!i[1].name)]);
-                    let str = template.tabular(["", "Name", "Filter", "CSS"],
-                                               ["min-width: 1em; text-align: center; color: red; font-weight: bold;"],
+                    let str = template.tabular([{ header: "", style: "min-width: 1em; text-align: center; font-weight: bold;", highlight: "Disabled" }, "Name", "Filter", "CSS"],
                         ([sheet.enabled ? "" : "\u00d7",
                           key,
                           sheet.sites.join(","),
                           sheet.css]
                          for ([i, [key, sheet]] in Iterator(list))
-                         if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
+                             if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
+
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
                 else {
@@ -755,13 +756,13 @@ Module("highlight", {
 
                 if (!css && !clear) {
                     // List matching keys
-                    let str = template.tabular(["Key", "Sample",             "CSS"],
-                                               ["",    "text-align: center", ""],
+                    let str = template.tabular(["Key", { header: "Sample", style: "text-align: center" }, "CSS"],
                         ([h.class,
                           <span style={h.value + style}>XXX</span>,
                           template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) <span style="font-weight: bold;">{str}</span>)]
                             for (h in highlight)
-                            if (!key || h.class.indexOf(key) > -1)));
+                                if (!key || h.class.indexOf(key) > -1)));
+
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     return;
                 }

@@ -1090,8 +1090,11 @@ const Liberator = Module("liberator", {
 
     // show a usage index either in the MOW or as a full help page
     showHelpIndex: function (tag, items, inMow) {
-        if (inMow)
-            liberator.echo(template.usage(items), commandline.FORCE_MULTILINE);
+        if (inMow) {
+            let usage = template.tabular([{ header: "Usage", highlight: "Mapping", colspan: 2 }],
+                [ [item.name || item.names[0], item.description] for (item in items)]);
+            liberator.echo(usage, commandline.FORCE_MULTILINE);
+        }
         else
             liberator.help(tag);
     }
@@ -1441,7 +1444,7 @@ const Liberator = Module("liberator", {
 
                 if (extensions.length > 0) {
                     let list = template.tabular(
-                        ["Name", "Version", "Status", "Description"], [],
+                        ["Name", "Version", "Status", "Description"],
                         ([template.icon(e, e.name),
                           e.version,
                           e.enabled ? <span highlight="Enabled">enabled</span>
@@ -1694,7 +1697,7 @@ const Liberator = Module("liberator", {
                 if (args.bang)
                     liberator.open("about:");
                 else
-                    liberator.echo(template.tabular("Version Information", ["font-weight: bold; padding-left: 2ex"],
+                    liberator.echo(template.tabular([{ header: "Version Information", style: "font-weight: bold; padding-left: 2ex", colspan: 2 }],
                                                     [[config.name + ":",  liberator.version],
                                                      [config.hostApplication + ":", navigator.userAgent]]));
             }, {

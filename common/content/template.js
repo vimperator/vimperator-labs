@@ -211,26 +211,6 @@ const Template = Module("template", {
         });
     },
 
-    jumps: function jumps(index, elems) {
-        // <e4x>
-        return this.genericOutput("",
-            <table>
-                <tr style="text-align: left;" highlight="Title">
-                    <th colspan="2">jump</th><th>title</th><th>URI</th>
-                </tr>
-                {
-                    this.map(Iterator(elems), function ([idx, val])
-                    <tr>
-                        <td class="indicator">{idx == index ? ">" : ""}</td>
-                        <td>{Math.abs(idx - index)}</td>
-                        <td style="width: 250px; max-width: 500px; overflow: hidden;">{val.title}</td>
-                        <td><a href={val.URI.spec} highlight="URL jump-list">{val.URI.spec}</a></td>
-                    </tr>)
-                }
-            </table>);
-        // </e4x>
-    },
-
     options: function options(title, opts) {
         // <e4x>
         return this.genericOutput("",
@@ -273,50 +253,58 @@ const Template = Module("template", {
         return XML();
     },
 
-    // This is a generic function which can display
-    // tabular data in a nice way.
-    // @param {string|array} headings
-    tabular: function tabular(headings, style, iter) {
-        function createHeadings(headings) {
-            if (typeof(headings) == "string")
-                return <th colspan={(iter && iter[0].length) || 1}>{headings}</th>;
-            else
-                return template.map(headings, function (h) <th>{h}</th>);
+    // This is a generic function which can display tabular data in a nice way.
+    // @param {string|array(string|object)} columns: Can either be:
+    //        a) A string which is the only column header, streching the whole width
+    //        b) An array of strings: Each string is the header of a column
+    //        c) An array of objects: An object has optional properties "header", "style"
+    //           and "highlight" which define the columns appearance
+    // @param {object} rows: The rows as an array or arrays (or other iterable objects)
+    tabular: function tabular(columns, rows) {
+        function createHeadings() {
+            if (typeof(columns) == "string")
+                return <th colspan={(rows && rows[0].length) || 1}>{columns}</th>;
+
+            let colspan = 1;
+            return template.map(columns, function (h) {
+                if (colspan > 1) {
+                    colspan--;
+                    return <></>;
+                }
+
+                if (typeof(h) == "string")
+                    return <th>{h}</th>;
+
+                let header = h.header || "";
+                colspan = h.colspan || 1;
+                return <th colspan={colspan}>{header}</th>;
+            });
+        }
+
+        function createRow(row) {
+            return template.map(Iterator(row), function ([i, d]) {
+                let style = ((columns && columns[i] && columns[i].style) || "") + (i == (row.length - 1) ? "; width: 100%" : ""); // the last column should take the available space -> width: 100%
+                let highlight = (columns && columns[i] && columns[i].highlight) || "";
+                return <td style={style} highlight={highlight}>{template.maybeXML(d)}</td>;
+            });
         }
 
         // <e4x>
-        return this.genericOutput("",
-            <table style="width: 100%">
-                <tr highlight="CompTitle" align="left">
-                {
-                    createHeadings(headings)
-                }
-                </tr>
-                {
-                    this.map(iter, function (row)
-                    <tr highlight="CompItem">
+        return  <table style="width: 100%">
+                    <tr highlight="CompTitle" align="left">
                     {
-                        template.map(Iterator(row), function ([i, d])
-                        <td style={(style[i] || "") + (i == (row.length - 1) ? "; width: 100%" : "")}>{template.maybeXML(d)}</td>)
+                        createHeadings()
                     }
-                    </tr>)
-                }
-            </table>);
-        // </e4x>
-    },
-
-    usage: function usage(iter) {
-        // <e4x>
-        return this.genericOutput("Usage",
-            <table>
-            {
-                this.map(iter, function (item)
-                <tr>
-                    <td highlight="Title" style="padding-right: 20px">{item.name || item.names[0]}</td>
-                    <td>{item.description}</td>
-                </tr>)
-            }
-            </table>);
+                    </tr>
+                    {
+                        this.map(rows, function (row)
+                        <tr highlight="CompItem">
+                        {
+                            createRow(row)
+                        }
+                        </tr>)
+                    }
+                </table>;
         // </e4x>
     }
 });

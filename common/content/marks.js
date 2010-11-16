@@ -174,13 +174,16 @@ const Marks = Module("marks", {
         }
 
         let list = template.tabular(
-            ["Mark",   "Line",              "Column",            "File"],
-            ["",       "text-align: right", "text-align: right", "color: green;"],
-            ([mark[0],
-              Math.round(mark[1].position.x * 100) + "%",
-              Math.round(mark[1].position.y * 100) + "%",
-              mark[1].location]
-             for ([, mark] in Iterator(marks))));
+                [ { header: "Mark",   style: "padding-left: 2ex" },
+                  { header: "Line",   style: "text-align: right" },
+                  { header: "Column", style: "text-align: right" },
+                  { header: "File",   highlight: "URL" }],
+                ([mark[0],
+                  Math.round(mark[1].position.x * 100) + "%",
+                  Math.round(mark[1].position.y * 100) + "%",
+                  mark[1].location]
+                 for ([, mark] in Iterator(marks)))); 
+
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     },
 
