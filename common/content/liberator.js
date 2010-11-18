@@ -1147,18 +1147,28 @@ const Liberator = Module("liberator", {
             },
             tab: {
                 opts: {
-                    n: ["Tab number", highlight.selector("TabNumber")],
-                    N: ["Tab number over icon", highlight.selector("TabIconNumber")]
+                    n: ["Tab number", highlight.selector("TabNumber")]
                 },
                 setter: function (opts) {
                     if (!liberator.has("tabs"))
                         return;
-                    const self = this;
-                    let classes = [v[1] for ([k, v] in Iterator(this.opts)) if (opts.indexOf(k) < 0)];
-                    let css = classes.length ? classes.join(",") + "{ display: none; }" : "";
-                    styles.addSheet(true, "taboptions", "chrome://*", css);
-                    tabs.tabsBound = Array.some(opts, function (k) k in self.opts);
-                    statusline.updateTabCount();
+
+                    // TODO: Change this stuff for muttator
+                    // TODO: Maybe move this stuff to tabs.js
+                    if (opts.indexOf("n") >= 0)
+                        styles.addSheet(true, "tabnumbers", "chrome://*",
+                            // we need to change the visible of the "new tab" buttons because the "inline" "new tab" button in the toolbar
+                            // gets moved just after the last app tab with tab numbers on
+                            "#TabsToolbar { counter-reset:tabnumber; } #TabsToolbar tab::after { counter-increment:tabnumber; content:counter(tabnumber); font:bold 0.84em monospace; cursor: pointer; } #TabsToolbar tab:not([pinned])::after { display:block; padding-bottom:0.4em; } .tabs-newtab-button { display: none !important; } #new-tab-button { visibility: visible !important; }"
+                        );
+                    else
+                        styles.removeSheet(true, "tabnumbers");
+
+
+                    // As of 2010-11-18 we need this hack, otherwise app tabs
+                    // seem wrongly positioned after showing tab numbers
+                    if (config.name == "Vimperator")
+                        config.tabbrowser.tabContainer._positionPinnedTabs();
                 }
             }
         };

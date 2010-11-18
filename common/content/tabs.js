@@ -64,22 +64,6 @@ const Tabs = Module("tabs", {
     },
 
     /**
-     * @property {boolean} Whether the tab numbering XBL binding has been
-     *     applied.
-     */
-    get tabsBound() Boolean(styles.get(true, "tab-binding")),
-    set tabsBound(val) {
-        let fragment = liberator.has("MacUnix") ? "tab-mac" : "tab";
-        if (!val)
-            styles.removeSheet(true, "tab-binding");
-        else if (!this.tabsBound)
-            styles.addSheet(true, "tab-binding", "chrome://browser/content/browser.xul",
-                ".tabbrowser-tab { -moz-binding: url(chrome://liberator/content/bindings.xml#" + fragment + ") !important; }" +
-                // FIXME: better solution for themes?
-                ".tabbrowser-tab[busy] > .tab-icon > .tab-icon-image { list-style-image: url('chrome://global/skin/icons/loading_16.png') !important; }");
-    },
-
-    /**
      * @property {number} The number of tabs in the current window.
      */
     get count() config.tabbrowser.mTabs.length,

@@ -550,7 +550,6 @@
             <dt>T</dt>      <dd>Toolbar</dd>
             <dt>B</dt>      <dd>Bookmark bar</dd>
             <dt>n</dt>      <dd>Tab number</dd>
-            <dt>N</dt>      <dd>Tab number over image</dd>
             <dt>b</dt>      <dd>Bottom scrollbar</dd>
             <dt>r</dt>      <dd>Right scrollbar</dd>
             <dt>l</dt>      <dd>Left scrollbar (<em>l</em> and <em>r</em> are mutually exclusive)</dd>

@@ -13,6 +13,9 @@
       and 'autocomplete' is the new option for the removed 'wildoptions=auto'
     * IMPORTANT: We automatically list completions as you type now. If you have a slow computer,
       you might want to :set noautocomplete
+    * IMPORTANT: We removed guioptions=N support, but in compensation we made guioptions=n
+      work much more reliable in Firefox4 - especially in combination with other tab related
+      addons like TabMixPlus
     * Many small fixes for Firefox4 changes
     * Lots of restyled content and changed colors
     * gu works now better for urls with anchors and GET arguments (like url.com/file?query=foo#anchor)
