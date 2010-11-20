@@ -536,16 +536,17 @@ const CompletionContext = Class("CompletionContext", {
 
         let ignoreCase = this.ignoreCase;
         let filterArr = filter.split(" ");
+        let self = this;
         let res = filterArr.filter(function(word) {
             if (!word)
                 return false;
 
             if (ignoreCase) {
-                word =word.toLowerCase();
-                str = str.toLowerCase();
+                word = word.toLowerCase();
+                str  = str.toLowerCase();
             }
-            if (this.anchored)
-               return str.substr(0, word.length) == word;
+            if (self.anchored)
+               return str.substr(0, word.length) == word; // TODO: Why not just use indexOf() == 0 ?
             else
                return str.indexOf(word) > -1;
          });

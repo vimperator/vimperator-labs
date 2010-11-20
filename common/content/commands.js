@@ -897,13 +897,14 @@ const Commands = Module("commands", {
                 return;
             }
 
-            // dynamically get completions as specified with the command's completer function
+            // highlight non-existent commands
             let command = commands.get(cmd);
             if (!command) {
                 context.highlight(0, cmd.length, "SPELLCHECK");
                 return;
             }
 
+            // dynamically get completions as specified with the command's completer function
             [prefix] = context.filter.match(/^(?:\w*[\s!]|!)\s*/);
             let cmdContext = context.fork(cmd, prefix.length);
             let argContext = context.fork("args", prefix.length);
