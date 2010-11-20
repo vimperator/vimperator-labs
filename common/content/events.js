@@ -1038,8 +1038,9 @@ const Events = Module("events", {
                         if (!(modes.extended & modes.INPUT_MULTILINE))
                             commandline.onEvent(event); // reroute event in command line mode
                     }
-                    else if (!modes.mainMode.input)
-                        liberator.beep();
+                    // beep on unrecognized keys
+                    /*else if (!modes.mainMode.input)
+                         liberator.beep();*/
                 }
             }
 

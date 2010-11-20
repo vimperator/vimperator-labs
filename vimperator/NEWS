@@ -16,6 +16,8 @@
     * IMPORTANT: We removed guioptions=N support, but in compensation we made guioptions=n
       work much more reliable in Firefox4 - especially in combination with other tab related
       addons like TabMixPlus
+    * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just
+      use Firefox mappings if the user wants them
     * Many small fixes for Firefox4 changes
     * Lots of restyled content and changed colors
     * gu works now better for urls with anchors and GET arguments (like url.com/file?query=foo#anchor)
