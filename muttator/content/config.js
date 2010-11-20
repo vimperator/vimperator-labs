@@ -127,9 +127,6 @@ const Config = Module("config", ConfigBase, {
         }
     },
 
-    // they are sorted by relevance, not alphabetically
-    helpFiles: ["intro.html", "version.html"],
-
     modes: [
         ["MESSAGE", { char: "m" }],
         ["COMPOSE"]

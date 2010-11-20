@@ -35,7 +35,6 @@
 <include href="various" tag="various.html"/>
 <include href="plugins" tag="plugins.html"/>
 <include href="index" tag="index.html"/>
-<include href="version" tag="version.html"/>
 
 </document>
 <!-- vim:se sts=4 sw=4 et: -->

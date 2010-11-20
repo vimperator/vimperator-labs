@@ -204,6 +204,9 @@ or <ex>:help :set</ex>.
     <li>A comprehensive help system, explaining all commands, mappings and options</li>
 </ul>
 
+<h2 tag="changelog version">ChangeLog</h2>
+We keep a list of changes between versions <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/NEWS">here</link>.
+
 <h2 tag="contact bugs patches">Contact</h2>
 <p>
     Please report any bugs/feature requests using the project's <link topic="http://code.google.com/p/vimperator-labs/issues/list">bug tracker</link>.
