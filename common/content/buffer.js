@@ -785,10 +785,10 @@ const Buffer = Module("buffer", {
         let frames = [];
 
         // find all frames - depth-first search
-        (function (frame) {
+        (function findFrames(frame) {
             if (frame.document.body instanceof HTMLBodyElement)
                 frames.push(frame);
-            Array.forEach(frame.frames, arguments.callee);
+            Array.forEach(frame.frames, findFrames);
         })(window.content);
 
         if (frames.length == 0) // currently top is always included
