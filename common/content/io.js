@@ -937,12 +937,9 @@ lookup:
         commands.add(["so[urce]"],
             "Read Ex commands from a file",
             function (args) {
-                if (args.length > 1)
-                    liberator.echoerr("E172: Only one file name allowed");
-                else
-                    io.source(args[0], args.bang);
+                io.source(args.literalArg, args.bang);
             }, {
-                argCount: "+", // FIXME: should be "1" but kludged for proper error message
+                literal: 0,
                 bang: true,
                 completer: function (context) completion.file(context, true)
             });
