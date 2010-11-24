@@ -962,7 +962,7 @@ const Options = Module("options", {
                             value = false;
                             break;
                         default:
-                            if (/^\d+$/.test(value))
+                            if (/^[+-]?\d+$/.test(value))
                                 value = parseInt(value, 10);
                         }
                         options.setPref(name, value);
