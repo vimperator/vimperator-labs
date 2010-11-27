@@ -1259,10 +1259,14 @@ const CommandLine = Module("commandline", {
             this.preview();
         },
 
+        // FIXME: having reset() and _reset() really sucks!
         _reset: function _reset() {
             this.prefix = this.context.value.substring(0, this.start);
             this.value  = this.context.value.substring(this.start, this.caret);
             this.suffix = this.context.value.substring(this.caret);
+
+            if (this.selected >= this.items.length)
+                this.selected = null;
 
             this.itemList.reset();
             this.itemList.selectItem(this.selected);
@@ -1775,11 +1779,6 @@ const ItemList = Class("ItemList", {
 
     // select index, refill list if necessary
     selectItem: function selectItem(index) {
-        //if (this._container.collapsed) // FIXME
-        //    return;
-
-        //let now = Date.now();
-
         if (this._div == null)
             this._init();
 
@@ -1810,15 +1809,8 @@ const ItemList = Class("ItemList", {
         if (sel > -1)
             this._getCompletion(sel).removeAttribute("selected");
         this._fill(newOffset);
-        if (index >= 0) {
+        if (index >= 0)
             this._getCompletion(index).setAttribute("selected", "true");
-            //this._getCompletion(index).scrollIntoView(false);
-        }
-
-        //if (index == 0)
-        //    this.start = now;
-        //if (index == Math.min(len - 1, 100))
-        //    liberator.dump({ time: Date.now() - this.start });
     },
 
     onEvent: function onEvent(event) false

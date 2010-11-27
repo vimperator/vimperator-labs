@@ -228,7 +228,6 @@ const Config = Module("config", ConfigBase, {
             });
     },
     completion: function () {
-        var searchRunning = false; // only until Firefox fixes https://bugzilla.mozilla.org/show_bug.cgi?id=510589
         completion.location = function location(context) {
             if (!services.get("autoCompleteSearch"))
                 return;
@@ -239,8 +238,9 @@ const Config = Module("config", ConfigBase, {
             context.incomplete = true;
             context.hasItems = context.completions.length > 0; // XXX
             context.filterFunc = null;
-            context.cancel = function () { if (searchRunning) { services.get("autoCompleteSearch").stopSearch(); searchRunning = false; } };
+            context.cancel = function () { services.get("autoCompleteSearch").stopSearch(); context.completions = []; };
             context.compare = CompletionContext.Sort.unsorted;
+            services.get("autoCompleteSearch").stopSearch(); // just to make sure we cancel old running completions
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
                 context.completions = [
@@ -248,14 +248,10 @@ const Config = Module("config", ConfigBase, {
                         for (i in util.range(0, result.matchCount))
                 ];
             });
-            if (searchRunning)
-                services.get("autoCompleteSearch").stopSearch();
-            searchRunning = true;
             services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result) {
                     timer.tell(result);
                     if (result.searchResult <= result.RESULT_SUCCESS) {
-                        searchRunning = false;
                         timer.flush();
                     }
                 }
