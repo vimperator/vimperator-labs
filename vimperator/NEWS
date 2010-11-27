@@ -1,10 +1,10 @@
 2010-xx-xx:
     * version 3.0
     * IMPORTANT: The default UI now shows the toolbar by default. This was done since we got rid
-      off the statusbar and the toolbar (preferably with small icons) shows exactly the same information
+      off the statusbar, and the toolbar (preferably with small icons) shows exactly the same information
       and even some more (rss feeds, better security information, ...)
-    * IMPORTANT: The statusbar and command line have been merged in a single row as also Firefox
-      4 hides the statusbar by default now
+    * IMPORTANT: The statusbar and command line have been merged in a single
+      row as also Firefox 4 hides the statusbar by default now
     * IMPORTANT: Removed 'laststatus' option but add a 'status' option in contrast
       to decide which elements are shown in the new style status bar
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old
@@ -18,6 +18,9 @@
       addons like TabMixPlus
     * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just
       use Firefox mappings if the user wants them
+    * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
+    * Fixed :open sometimes selecting the wrong entry when autocompletions were turned on
+      and the user quickly pressed Tab.
     * Many small fixes for Firefox4 changes
     * Lots of restyled content and changed colors
     * gu works now better for urls with anchors and GET arguments (like url.com/file?query=foo#anchor)

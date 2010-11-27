@@ -320,7 +320,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:qmarks</ex></dt> <dd>Show all QuickMarks</dd>
     <dt><ex>:quit</ex></dt> <dd>Quit current tab</dd>
     <dt><ex>:quitall</ex></dt> <dd>Quit &liberator.appname;</dd>
-    <dt><ex>:redraw</ex></dt> <dd>Redraw the screen</dd>
     <dt><ex>:reload</ex></dt> <dd>Reload the current web page</dd>
     <dt><ex>:reloadall</ex></dt> <dd>Reload all tab pages</dd>
     <dt><ex>:restart</ex></dt> <dd>Force the browser to restart</dd>

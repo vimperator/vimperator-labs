@@ -223,10 +223,6 @@ const Browser = Module("browser", {
                 liberator.assert(!/(about|mailto):/.test(uri.protocol)); // exclude these special protocols for now
                 liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
             });
-
-        mappings.add([modes.NORMAL], ["<C-l>"],
-            "Redraw the screen",
-            function () { commands.get("redraw").execute("", false); });
     },
 
     commands: function () {
@@ -252,16 +248,6 @@ const Browser = Module("browser", {
                 literal: 0,
                 privateData: true
             });
-
-        commands.add(["redr[aw]"],
-            "Redraw the screen",
-            function () {
-                let wu = window.QueryInterface(Ci.nsIInterfaceRequestor)
-                               .getInterface(Ci.nsIDOMWindowUtils);
-                wu.redraw();
-                modes.show();
-            },
-            { argCount: "0" });
     }
 });
 

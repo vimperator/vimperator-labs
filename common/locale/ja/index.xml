@@ -320,7 +320,6 @@
     <dt><ex>:qmarks</ex></dt> <dd>すべてのクイックマークを表示します</dd>
     <dt><ex>:quit</ex></dt> <dd>現在のタブを閉じます</dd>
     <dt><ex>:quitall</ex></dt> <dd>すべてのタブを閉じ &liberator.appname; を終了します</dd>
-    <dt><ex>:redraw</ex></dt> <dd>画面を再描画します</dd>
     <dt><ex>:reload</ex></dt> <dd>現在のページを再読み込みします</dd>
     <dt><ex>:reloadall</ex></dt> <dd>すべてのタブのページを再読み込みします</dd>
     <dt><ex>:restart</ex></dt> <dd>強制的に再起動します</dd>

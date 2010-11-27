@@ -17,15 +17,6 @@
 
 
 <item>
-    <tags><![CDATA[<C-l> CTRL-L :redr :redraw]]></tags>
-    <spec>:redr<oa>aw</oa></spec>
-    <description>
-        <p>画面を再描画します。スクリプトや関数を実行中に画面を更新する際に便利です。</p>
-    </description>
-</item>
-
-
-<item>
     <tags>:norm :normal</tags>
     <spec>:norm<oa>al</oa><oa>!</oa> <a>commands</a></spec>
     <description>

@@ -23,15 +23,6 @@
 
 
 <item>
-    <tags><![CDATA[<C-l> CTRL-L :redr :redraw]]></tags>
-    <spec>:redr<oa>aw</oa></spec>
-    <description>
-        <p>Redraws the screen. Useful to update the screen halfway executing a script or function.</p>
-    </description>
-</item>
-
-
-<item>
     <tags>:norm :normal</tags>
     <spec>:norm<oa>al</oa><oa>!</oa> <a>commands</a></spec>
     <description>
