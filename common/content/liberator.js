@@ -78,6 +78,9 @@ const Liberator = Module("liberator", {
                 function () AddonManager.getAddonsByTypes(["extension"], function (e) _extensions = e);
             AddonManager.addAddonListener(this);
         }
+
+        if (this.has("tabview"))
+            TabView._initFrame();
     },
 
     destroy: function () {

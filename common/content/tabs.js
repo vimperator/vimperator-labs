@@ -362,6 +362,129 @@ const Tabs = Module("tabs", {
     },
 
     /**
+     * @property {Array} array of Tab Groups
+     */
+    get groups() TabView._window.GroupItems.groupItems,
+
+    /**
+     * get the tab's index containing the specified <b>buffer</b>.
+     *
+     * @param {string} buffer A string which matches the URL or title of a
+     *     buffer, if it is null, the last used string is used again.
+     * @param {boolean} allowNonUnique Whether to select the first of
+     *     multiple matches.
+     * @param {number} count If there are multiple matches select the
+     *     count'th match.
+     * @param {boolean} reverse Whether to search the buffer list in
+     *     reverse order.
+     * @return {number} tab's index
+     *
+     */
+    getIndexFromString: function (buffer, allowNonUnique, count, reverse) {
+        if (buffer == "")
+            return;
+
+        if (buffer != null) {
+            this._lastBufferSwitchArgs = buffer;
+            this._lastBufferSwitchSpecial = allowNonUnique;
+        }
+        else {
+            buffer = this._lastBufferSwitchArgs;
+            if (allowNonUnique === undefined || allowNonUnique == null) // XXX
+                allowNonUnique = this._lastBufferSwitchSpecial;
+        }
+
+        if (buffer == "#") {
+            if (this.alternate != null && this.getTab() != this.alternate)
+                return this.index(this.alternate);
+            return null;
+        }
+
+        let matches;
+        if (liberator.has("tabview")) {
+            matches = buffer.match(/^(\d+)(?:\.(\d+))?:?/);
+            if (matches) {
+                let [, groupNum, tabNum] = matches;
+                groupNum = parseInt(groupNum, 10);
+                if (tabNum === undefined) {
+                    tabNum = groupNum;
+                    return this.index(gBrowser.visibleTabs[tabNum - 1]);
+                }
+                let group = this.groups[groupNum - 1];
+                liberator.assert(group, "No group");
+                tabNum = parseInt(tabNum, 10);
+                let tabItem = group.getChild(tabNum - 1);
+                return this.index(tabItem.tab);
+            }
+            matches = buffer.match(/^(.+?)\.(\d+):?/);
+            if (matches) {
+                let [, groupName, tabNum] = matches;
+                tabNum = parseInt(tabNum, 10);
+                for (let [, group] in Iterator(this.groups)) {
+                    if (group.getTitle().toLowerCase() == groupName.toLowerCase()) {
+                        let tabItem = group.getChild(tabNum - 1);
+                        liberator.assert(tabItem, groupName + "'s group has no such numbered tab");
+                        return this.index(tabItem.tab);
+                    }
+                }
+                throw Error("No matching buffer for " + groupName.quote() + " group");
+            }
+        } else {
+            matches = buffer.match(/^(\d+):?/);
+            if (matches) {
+                return parseInt(matches[1], 10) - 1;
+            }
+        }
+
+        if (!count || count < 1)
+            count = 1;
+        matches = [];
+        let lowerBuffer = buffer.toLowerCase();
+        let first = tabs.index() + (reverse ? 0 : 1);
+        let nbrowsers = config.tabbrowser.browsers.length;
+        for (let [i, ] in tabs.browsers) {
+            let index = (i + first) % nbrowsers;
+            let browser = config.tabbrowser.browsers[index];
+            let url, title;
+            if ("__SS_restoreState" in browser) {
+                // For not restored session
+                let entry = browser.__SS_data.entries[0];
+                url = entry.url;
+                title = entry.title;
+            }
+            else {
+                url = browser.contentDocument.location.href;
+                title = browser.contentDocument.title.toLowerCase();
+            }
+            if (url == buffer) {
+                return index;
+            }
+
+            if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
+                matches.push(index);
+        }
+        if (matches.length == 0) {
+            liberator.echoerr("E94: No matching buffer for " + buffer);
+            return -1;
+        }
+        else if (matches.length > 1 && !allowNonUniqe) {
+            liberator.echoerr("E93: More than one match for " + buffer);
+            return -1;
+        }
+        else {
+            if (reverse) {
+                index = matches.length - count;
+                while (index < 0)
+                    index += matches.length;
+            }
+            else
+                index = (count - 1) % matches.length;
+
+            return matches[index];
+        }
+    },
+
+    /**
      * Selects the tab containing the specified <b>buffer</b>.
      *
      * @param {string} buffer A string which matches the URL or title of a
@@ -376,67 +499,9 @@ const Tabs = Module("tabs", {
      */
     // FIXME: help!
     switchTo: function (buffer, allowNonUnique, count, reverse) {
-        if (buffer == "")
-            return;
-
-        if (buffer != null) {
-            // store this command, so it can be repeated with "B"
-            this._lastBufferSwitchArgs = buffer;
-            this._lastBufferSwitchSpecial = allowNonUnique;
-        }
-        else {
-            buffer = this._lastBufferSwitchArgs;
-            if (allowNonUnique === undefined || allowNonUnique == null) // XXX
-                allowNonUnique = this._lastBufferSwitchSpecial;
-        }
-
-        if (buffer == "#") {
-            tabs.selectAlternateTab();
-            return;
-        }
-
-        if (!count || count < 1)
-            count = 1;
-        if (typeof reverse != "boolean")
-            reverse = false;
-
-        let matches = buffer.match(/^(\d+):?/);
-        if (matches) {
-            tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
-            return;
-        }
-
-        matches = [];
-        let lowerBuffer = buffer.toLowerCase();
-        let first = tabs.index() + (reverse ? 0 : 1);
-        let nbrowsers = config.tabbrowser.browsers.length;
-        for (let [i, ] in tabs.browsers) {
-            let index = (i + first) % nbrowsers;
-            let url = config.tabbrowser.getBrowserAtIndex(index).contentDocument.location.href;
-            let title = config.tabbrowser.getBrowserAtIndex(index).contentDocument.title.toLowerCase();
-            if (url == buffer) {
-                tabs.select(index, false);
-                return;
-            }
-
-            if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
-                matches.push(index);
-        }
-        if (matches.length == 0)
-            liberator.echoerr("E94: No matching buffer for " + buffer);
-        else if (matches.length > 1 && !allowNonUnique)
-            liberator.echoerr("E93: More than one match for " + buffer);
-        else {
-            if (reverse) {
-                index = matches.length - count;
-                while (index < 0)
-                    index += matches.length;
-            }
-            else
-                index = (count - 1) % matches.length;
-
-            tabs.select(matches[index], false);
-        }
+        let index = this.getIndexFromString(buffer, allowNonUnique, count, reverse);
+        if (index >= 0)
+            this.select(index, false);
     },
 
     /**

@@ -1327,7 +1327,6 @@ const Buffer = Module("buffer", {
 
         completion.buffer = function buffer(context) {
             context.anchored = false;
-            context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
             context.compare = CompletionContext.Sort.number;
             let process = context.process[0];
@@ -1337,24 +1336,85 @@ const Buffer = Module("buffer", {
                         { process.call(this, item, text) }
                     </>];
 
-            context.completions = util.map(tabs.browsers, function ([i, browser]) {
-                let indicator = " ";
-                if (i == tabs.index())
-                   indicator = "%"
-                else if (i == tabs.index(tabs.alternate))
-                   indicator = "#";
+            if (liberator.has("tabview")) {
+                let currentTab = tabs.getTab();
+                function getIndicator (tab) {
+                    if (tab == currentTab)
+                        return "%";
+                    else if (tab == tabs.alternate)
+                        return "#";
 
-                let tab = tabs.getTab(i);
-                let url = browser.contentDocument.location.href;
-                i = i + 1;
+                    return " ";
+                }
+                function getURLFromTab (tab) {
+                    if ("__SS_restoreState" in tab.linkedBrowser)
+                        return tab.linkedBrowser.__SS_data.entries[0].url;
 
-                return {
-                    text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
-                    url:  template.highlightURL(url),
-                    indicator: indicator,
-                    icon: tab.image || DEFAULT_FAVICON
-                };
-            });
+                     return tab.linkedBrowser.contentDocument.location.href;
+                }
+                // XXX: need an indicator for AppTabs ? -- teramako
+                context.fork("currentBuffers", 0, this, function (context) {
+                    context.title = ["CurrentGroup", "Buffers"];
+                    context.generate = function ()
+                        config.tabbrowser.visibleTabs.map(function(tab, tabNum) {
+                            let indicator = getIndicator(tab);
+                            let url = getURLFromTab(tab);
+                            tabNum += 1;
+                            return {
+                                text: [tabNum + ": " + (tab.label || "(Untitled)"), tabNum + ": " + url],
+                                url:  template.highlightURL(url),
+                                indicator: indicator,
+                                icon: tab.image || DEFAULT_FAVICON
+                            };
+                        });
+                });
+                // XXX: is this correct that now does not count AppTabs ? -- teramako
+                TabView._window.GroupItems.groupItems.forEach(function (group, i) {
+                    let groupName = group.getTitle();
+                    context.fork(i, 0, this, function (context) {
+                        context.title = [group.getTitle() || "(Untitled)", "Buffers"];
+                        context.generate = function ()
+                            group.getChildren().map(function(tabItem, tabNum) {
+                                let indicator = getIndicator(tabItem.tab);
+                                let id = (i + 1) + "." + (tabNum + 1),
+                                    label = tabItem.tab.label || "(Untitled)",
+                                    url = getURLFromTab(tabItem.tab);
+                                let item = {
+                                    text: [id + ": " + label, id + ": " + url],
+                                    url:  template.highlightURL(url),
+                                    indicator: indicator,
+                                    icon: tabItem.tab.image || DEFAULT_FAVICON
+                                };
+                                if (groupName) {
+                                    id = groupName + "." + (tabNum + 1);
+                                    item.text.push(id + ": " + label);
+                                    item.text.push(id + ": " + url);
+                                }
+                                return item;
+                            });
+                    });
+                });
+            } else {
+                context.title = ["Buffer", "URL"];
+                context.completions = util.map(tabs.browsers, function ([i, browser]) {
+                    let indicator = " ";
+                    if (i == tabs.index())
+                       indicator = "%"
+                    else if (i == tabs.index(tabs.alternate))
+                       indicator = "#";
+
+                    let tab = tabs.getTab(i);
+                    let url = browser.contentDocument.location.href;
+                    i = i + 1;
+
+                    return {
+                        text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
+                        url:  template.highlightURL(url),
+                        indicator: indicator,
+                        icon: tab.image || DEFAULT_FAVICON
+                    };
+                });
+            }
         };
     },
     events: function () {
