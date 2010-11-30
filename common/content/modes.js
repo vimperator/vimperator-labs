@@ -114,6 +114,10 @@ const Modes = Module("modes", {
             if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
+            if (liberator.has("tabview") && TabView.isVisible()) {
+                TabView.hide();
+            }
+
             //statusline.updateUrl(); // TODO: Why?
             liberator.focusContent(true);
         }

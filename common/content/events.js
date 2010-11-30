@@ -130,6 +130,10 @@ const Events = Module("events", {
         this.addSessionListener(window, "DOMMenuBarActive", this.closure.onDOMMenuBarActive, true);
         this.addSessionListener(window, "DOMMenuBarInactive", this.closure.onDOMMenuBarInactive, true);
         this.addSessionListener(window, "resize", this.closure.onResize, true);
+        if (liberator.has("tabview")) {
+            this.addSessionListener(window, "tabviewshown", this.closure.onTabViewShown, false);
+            this.addSessionListener(window, "tabviewhidden", this.closure.onTabViewHidden, false);
+        }
 
     },
 
@@ -1075,6 +1079,14 @@ const Events = Module("events", {
         // gContextMenu is set to NULL, when a context menu is closed
         if (window.gContextMenu == null && !this._activeMenubar)
             modes.remove(modes.MENU);
+    },
+
+    onTabViewShown: function () {
+        liberator.mode = modes.PANORAMA;
+    },
+
+    onTabViewHidden: function () {
+        modes.reset();
     },
 
     onDOMMenuBarActive: function () {

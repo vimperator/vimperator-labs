@@ -52,6 +52,7 @@
     * Removed :help version as it wasn't maintained anymore, and added quite a lot of size
       to the XPI. Users interested in changes can read the Release Notes on the homepage.
     * Various other bug fixing and refinement
+    * New PANORAMA mode
 
 2010-04-07:
     * version 2.3.1
