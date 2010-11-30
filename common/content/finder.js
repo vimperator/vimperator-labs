@@ -309,7 +309,7 @@ const Finder = Module("finder", {
 
         this.clear();
 
-        if (!options["incsearch"] || !str || !this._found) {
+        if (!options["incsearch"] || !str || !this._found || this._searchPattern != pattern) {
             // prevent any current match from matching again
             if (!window.content.getSelection().isCollapsed)
                 window.content.getSelection().getRangeAt(0).collapse(this._backwards);
