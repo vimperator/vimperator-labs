@@ -618,7 +618,7 @@ Module("styles", {
                     else if (args.completeArg == 1) {
                         let sheet = styles.get(false, args["-name"]);
                         if (sheet)
-                            context.completions = [[sheet.css, "Current Value"]];
+                            context.completions = [[sheet.css.replace(/\n+/g, " "), "Current Value"]];
                     }
                 },
                 hereDoc: true,
