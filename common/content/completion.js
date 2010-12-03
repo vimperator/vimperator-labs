@@ -672,18 +672,15 @@ const Completion = Module("completion", {
         if (contextFilter)
             context.filters = [contextFilter];
         context.fork.apply(context, ["list", 0, completion, name].concat(Array.slice(arguments, 3)));
+        context = context.contexts["/list"];
         context.wait();
 
-        for (let [key, context] in Iterator(context.contexts)) {
-            if (key.indexOf("/list") == 0) {
-                let list = template.genericOutput("",
-                    <div highlight="Completions">
-                        { template.completionRow(context.title, "CompTitle") }
-                        { template.map(context.items, function (item) context.createRow(item), null, 100) }
-                    </div>);
-                commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
-            }
-        }
+        let list = template.genericOutput("",
+            <div highlight="Completions">
+                { template.completionRow(context.title, "CompTitle") }
+                { template.map(context.items, function (item) context.createRow(item), null, 100) }
+            </div>);
+        commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     },
 
     ////////////////////////////////////////////////////////////////////////////////

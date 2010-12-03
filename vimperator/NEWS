@@ -19,7 +19,6 @@
     * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just
       use Firefox mappings if the user wants them
     * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
-    * IMPORTANT: :buffer and it's completion take care of tab groups
     * Fixed :open sometimes selecting the wrong entry when autocompletions were turned on
       and the user quickly pressed Tab.
     * Many small fixes for Firefox4 changes
@@ -53,7 +52,6 @@
     * Removed :help version as it wasn't maintained anymore, and added quite a lot of size
       to the XPI. Users interested in changes can read the Release Notes on the homepage.
     * Various other bug fixing and refinement
-    * New PANORAMA mode
 
 2010-04-07:
     * version 2.3.1

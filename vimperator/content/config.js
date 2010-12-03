@@ -14,7 +14,7 @@ const Config = Module("config", ConfigBase, {
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabview"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows"],
     defaults: {
         complete: "slf",
         guioptions: "Trb",
@@ -99,10 +99,6 @@ const Config = Module("config", ConfigBase, {
             function () { window.openDialog("chrome://browser/content/search/engineManager.xul", "_blank", "chrome,dialog,modal,centerscreen"); }],
         ["selectionsource",  "View selection source",
             function () { buffer.viewSelectionSource(); }]
-    ],
-
-    modes: [
-       ["PANORAMA", { char: "p", input: true }],
     ],
 
     hasTabbrowser: true,
