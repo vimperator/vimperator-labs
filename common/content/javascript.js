@@ -603,8 +603,11 @@ const JavaScript = Module("javascript", {
             "Switch on/off jsdebugger",
             "boolean", false, {
                 setter: function (value) {
-                    if (value)
-                        services.get("debugger").on();
+                    if (value) {
+                        if (!services.get("debugger").isOn)
+                            //XXX: would be better waiting onDebuggerActivated.
+                            services.get("debugger").asyncOn(null);
+                    }
                     else
                         services.get("debugger").off();
                 },
