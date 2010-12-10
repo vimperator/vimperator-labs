@@ -605,6 +605,7 @@ const Liberator = Module("liberator", {
                         return elems[i];
                 }
             }
+            elems = elems.(function::nodeKind() == "element");
             return get(lang) || get(lang.split("-", 2).shift()) || get("") || get("en-US") || get("en") || elems[0] || elems;
         }
         let body = XML();
