@@ -1032,6 +1032,18 @@ lookup:
             context.compare = function (a, b)
                         b.isdir - a.isdir || String.localeCompare(a.text, b.text);
 
+            context.match = function (str) {
+                let filter = this.filter;
+                if (!filter)
+                    return true;
+
+                if (this.ignoreCase) {
+                    filter = filter.toLowerCase();
+                    str = str.toLowerCase();
+                }
+                return str.substr(0, filter.length) === filter;
+            };
+
             // context.background = true;
             context.key = dir;
             context.generate = function generate_file() {
