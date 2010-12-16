@@ -519,7 +519,7 @@ const Options = Module("options", {
      * @param {Object} extra An optional extra configuration hash (see
      *     {@link Map#extraInfo}).
      * @optional
-     * @returns {boolean} Whether the option was created.
+     * @returns {Option} Returns the instace of Option, if the option was created.
      */
     add: function (names, description, type, defaultValue, extraInfo) {
         if (!extraInfo)
@@ -541,7 +541,7 @@ const Options = Module("options", {
         this.__defineSetter__(option.name, function (value) { option.value = value; });
 
         this._optionHash[option.name] = option;
-        return true;
+        return option;
     },
 
     /**

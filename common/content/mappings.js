@@ -234,9 +234,12 @@ const Mappings = Module("mappings", {
      * @param {function} action The action invoked by each key sequence.
      * @param {Object} extra An optional extra configuration hash.
      * @optional
+     * @returns {Map}
      */
     add: function (modes, keys, description, action, extra) {
-        this._addMap(Map(modes, keys, description, action, extra));
+        let map = Map(modes, keys, description, action, extra);
+        this._addMap(map);
+        return map;
     },
 
     /**
@@ -250,6 +253,7 @@ const Mappings = Module("mappings", {
      * @param {Object} extra An optional extra configuration hash (see
      *     {@link Map#extraInfo}).
      * @optional
+     * @returns {Map}
      */
     addUserMap: function (modes, keys, description, action, extra) {
         keys = keys.map(this._expandLeader);
@@ -264,6 +268,8 @@ const Mappings = Module("mappings", {
         }
 
         this._addMap(map);
+
+        return map;
     },
 
     /**

@@ -315,7 +315,7 @@ const Commands = Module("commands", {
 
         this._exCommands.push(command);
 
-        return true;
+        return command;
     },
 
     /**
@@ -328,6 +328,7 @@ const Commands = Module("commands", {
      * @param {function} action The action invoked by this command.
      * @param {Object} extra An optional extra configuration hash.
      * @optional
+     * @returns {Command}
      */
     add: function (names, description, action, extra) {
         return this._addCommand(Command(names, description, action, extra), false);
@@ -344,6 +345,7 @@ const Commands = Module("commands", {
      * @param {Object} extra An optional extra configuration hash.
      * @param {boolean} replace Overwrite an existing command with the same
      *     canonical name.
+     * @returns {Command}
      */
     addUserCommand: function (names, description, action, extra, replace) {
         extra = extra || {};

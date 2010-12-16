@@ -99,6 +99,7 @@ const Abbreviations = Module("abbreviations", {
      * Adds a new abbreviation.
      *
      * @param {Abbreviation}
+     * @returns {Abbreviation}
      */
     add: function (abbr) {
         if (!(abbr instanceof Abbreviation))
@@ -109,6 +110,8 @@ const Abbreviations = Module("abbreviations", {
                 this.abbrevs[mode] = {};
             this.abbrevs[mode][abbr.lhs] = abbr;
         }
+
+        return abbr;
     },
 
     /**
