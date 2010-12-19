@@ -128,6 +128,7 @@ const Services = Module("services", {
         this.addClass("file:",      "@mozilla.org/network/protocol;1?name=file", Ci.nsIFileProtocolHandler);
         this.addClass("find",       "@mozilla.org/embedcomp/rangefind;1",        Ci.nsIFind);
         this.addClass("process",    "@mozilla.org/process/util;1",               Ci.nsIProcess);
+        this.addClass("timer",     "@mozilla.org/timer;1",                      Ci.nsITimer);
     },
 
     _create: function (classes, ifaces, meth) {

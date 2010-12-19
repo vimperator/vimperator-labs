@@ -290,7 +290,7 @@ const Editor = Module("editor", {
         liberator.assert(args.length >= 1, "No editor specified");
 
         args.push(path);
-        liberator.callFunctionInThread(null, io.run, io.expandPath(args.shift()), args, true);
+        io.run(io.expandPath(args.shift()), args, true);
     },
 
     // TODO: clean up with 2 functions for textboxes and currentEditor?
@@ -356,31 +356,44 @@ const Editor = Module("editor", {
                     throw Error("Input contains characters not valid in the current " +
                                 "file encoding");
 
-                this.editFileExternally(tmpfile.path);
+                let lastUpdate = Date.now();
+                function update (force) {
+                    if (force != true && tmpfile.lastModifiedTime <= lastUpdate)
+                        return;
+                    lastUpdate = Date.now();
 
-                let val = tmpfile.read();
-                if (textBox) {
-                    textBox.removeAttribute("readonly");
-                    textBox.value = val;
-                }
-                else if (nsEditor) {
-                    nsEditor.flags &= ~Ci.nsIPlaintextEditor.eEditorReadonlyMask;
-                    let wholeDocRange = nsEditor.document.createRange();
-                    let rootNode = nsEditor.rootElement.QueryInterface(Ci.nsIDOMNode);
-                    wholeDocRange.selectNodeContents(rootNode);
-                    nsEditor.selection.addRange(wholeDocRange);
-                    nsEditor.selection.deleteFromDocument();
-                    if (isHTML) {
-                        let doc = nsEditor.document;
-                        let htmlFragment = doc.implementation.createDocument(null, 'html', null);
-                        let range = doc.createRange();
-                        range.setStartAfter(doc.body);
-                        doc.body.appendChild(range.createContextualFragment(val));
-                    }
-                    else {
-                        nsEditor.insertText(val);
+                    let val = tmpfile.read();
+                    if (textBox)
+                        textBox.value = val;
+                    else if (nsEditor) {
+                        let wholeDocRange = nsEditor.document.createRange();
+                        let rootNode = nsEditor.rootElement.QueryInterface(Ci.nsIDOMNode);
+                        wholeDocRange.selectNodeContents(rootNode);
+                        nsEditor.selection.addRange(wholeDocRange);
+                        nsEditor.selection.deleteFromDocument();
+                        if (isHTML) {
+                            let doc = nsEditor.document;
+                            let htmlFragment = doc.implementation.createDocument(null, 'html', null);
+                            let range = doc.createRange();
+                            range.setStartAfter(doc.body);
+                            doc.body.appendChild(range.createContextualFragment(val));
+                        }
+                        else {
+                            nsEditor.insertText(val);
+                        }
                     }
                 }
+                let timer = services.create("timer");
+                timer.initWithCallback({ notify: update }, 100, timer.TYPE_REPEATING_SLACK);
+                try {
+                    this.editFileExternally(tmpfile.path);
+                }
+                finally {
+                    timer.cancel();
+                }
+
+                update(true);
+
             }, this);
             if (res == false)
                 throw Error("Couldn't create temporary file");
@@ -391,6 +404,12 @@ const Editor = Module("editor", {
             // exception.
             liberator.echoerr(e);
             tmpBg = "red";
+        }
+        finally {
+            if (textBox)
+                textBox.removeAttribute("readonly");
+            else if (nsEditor)
+                nsEditor.flags &= ~Ci.nsIPlaintextEditor.eEditorReadonlyMask;
         }
 
         // blink the textbox after returning

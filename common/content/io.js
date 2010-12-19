@@ -547,7 +547,16 @@ lookup:
         let process = services.create("process");
 
         process.init(file);
-        process.run(blocking, args.map(String), args.length);
+        process.run(false, args.map(String), args.length);
+        try {
+            if (blocking)
+                while (process.isRunning)
+                    liberator.threadYield(false, true);
+        }
+        catch (e) {
+            process.kill();
+            throw e;
+        }
 
         return process.exitValue;
     },
