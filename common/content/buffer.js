@@ -1514,7 +1514,7 @@ const Buffer = Module("buffer", {
                 if (count < 1 && buffer.lastInputField)
                     buffer.focusElement(buffer.lastInputField);
                 else {
-                    let xpath = ["input[not(@type) or @type='text' or @type='password' or @type='file']",
+                    let xpath = ["input[not(@type) or @type='text' or @type='password' or @type='file' or @type='datetime' or @type='datetime-local' or @type='date' or @type='month' or @type='time' or @type='week' or @type='number' or @type='range' or @type='email' or @type='url' or @type='search' or @type='tel' or @type='color']",
                                  "textarea[not(@disabled) and not(@readonly)]",
                                  "iframe"];
 
