@@ -1152,7 +1152,7 @@ const CommandLine = Module("commandline", {
             this.caret = this.prefix.length + completion.length;
         },
 
-        get caret() this.editor.selection.focusOffset,
+        get caret() commandline._commandWidget.selectionEnd,
         set caret(offset) {
             commandline._commandWidget.selectionStart = offset;
             commandline._commandWidget.selectionEnd = offset;
