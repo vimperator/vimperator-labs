@@ -1118,7 +1118,7 @@ const CommandLine = Module("commandline", {
      */
     Completions: Class("Completions", {
         init: function (input) {
-            this.context = CompletionContext(input.editor);
+            this.context = CompletionContext(input);
             this.context.onUpdate = this.closure._reset;
             this.editor = input.editor;
             this.selected = null;

@@ -16,7 +16,7 @@
  * the creation of sub-contexts with different headers and quoting
  * rules.
  *
- * @param {nsIEditor} editor The editor for which completion is
+ * @param {HTMLInputElement} input The editor for which completion is
  *     intended. May be a {CompletionContext} when forking a context,
  *     or a {string} when creating a new one.
  * @param {string} name The name of this context. Used when the
@@ -26,13 +26,13 @@
  * @constructor
  */
 const CompletionContext = Class("CompletionContext", {
-    init: function (editor, name, offset) {
+    init: function (input, name, offset) {
         if (!name)
             name = "";
 
         let self = this;
-        if (editor instanceof this.constructor) {
-            let parent = editor;
+        if (input instanceof this.constructor) {
+            let parent = input;
             name = parent.name + "/" + name;
             this.contexts = parent.contexts;
             if (name in this.contexts)
@@ -48,7 +48,7 @@ const CompletionContext = Class("CompletionContext", {
 
             ["filters", "keys", "title", "quote"].forEach(function (key)
                 self[key] = parent[key] && util.cloneObject(parent[key]));
-            ["anchored", "compare", "editor", "_filter", "filterFunc", "keys", "_process", "top"].forEach(function (key)
+            ["anchored", "compare", "editor", "inputField", "_filter", "filterFunc", "keys", "_process", "top"].forEach(function (key)
                 self[key] = parent[key]);
 
             self.__defineGetter__("value", function () this.top.value);
@@ -80,10 +80,12 @@ const CompletionContext = Class("CompletionContext", {
             });
         }
         else {
-            if (typeof editor == "string")
-                this._value = editor;
-            else
-                this.editor = editor;
+            if (typeof input == "string")
+                this._value = input;
+            else {
+                this.inputField = input;
+                this.editor = input.editor;
+            }
             this.compare = function (a, b) String.localeCompare(a.text, b.text);
 
             /**
@@ -583,7 +585,7 @@ const CompletionContext = Class("CompletionContext", {
 
         if (this.editor) {
             this.value = this.editor.selection.focusNode.textContent;
-            this._caret = this.editor.selection.focusOffset;
+            this._caret = this.inputField.selectionEnd;
         }
         else {
             this.value = this._value;
