@@ -163,6 +163,12 @@ statusbarpanel {
     font: inherit;
 }
 
+#liberator-commandline-prompt-text {
+    max-width: 0;
+    -moz-transition-property: max-width;
+    -moz-transition-duration: 0.5s;
+}
+
 #liberator-completions-content table,
 #liberator-multiline-output-content table {
     white-space: inherit;

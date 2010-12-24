@@ -227,8 +227,7 @@ const CommandLine = Module("commandline", {
     _setPrompt: function (val, highlightGroup) {
         this._promptWidget.value = val;
         this._promptWidget.collapsed = (val == "");
-        // we need this explicit width setting to show our slide in animation
-        // let computedWidth = document.defaultView.getComputedStyle(document.getElementById('liberator-commandline-prompt-text'), null).getPropertyValue('width');
+        this._promptWidget.style.maxWidth = "-moz-calc(1em * " + val.length + ")";
     },
 
     /**
@@ -467,6 +466,7 @@ const CommandLine = Module("commandline", {
      */
     hide: function hide() {
         this._commandlineWidget.style.opacity = "0";
+        this._setPrompt("");
         this._commandWidget.blur();
     },
 
@@ -574,6 +574,7 @@ const CommandLine = Module("commandline", {
         this._setPrompt(prompt, extra.promptHighlight || this.HL_QUESTION);
         this._setCommand(extra.default || "");
         // this._commandlineWidget.collapsed = false;
+        this.show();
         this._commandWidget.focus();
 
         this._completions = CommandLine.Completions(this._commandWidget.inputField);
