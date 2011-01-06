@@ -519,17 +519,16 @@ const Commands = Module("commands", {
             if (complete && !onlyArgumentsRemaining)
                 completeOpts = [[opt[0], opt[0][0]] for ([i, opt] in Iterator(options)) if (!(opt[0][0] in args))];
         }
-
-        function resetCompletions(completeStartPos) {
+        function resetCompletions() {
             completeOpts = null;
             args.completeArg = null;
             args.completeOpt = null;
             args.completeFilter = null;
-            args.completeStart = completeStartPos;
+            args.completeStart = i;
             args.quote = Commands.complQuote[""];
         }
         if (complete) {
-            resetCompletions(0);
+            resetCompletions();
             matchOpts("");
             args.completeArg = 0;
         }
@@ -549,12 +548,8 @@ const Commands = Module("commands", {
             if (i == str.length && !complete)
                 break;
 
-            if (complete) {
-                if (i == str.length)
-                    resetCompletions(i);
-                else
-                    resetCompletions(0);
-            }
+            if (complete)
+                resetCompletions();
 
             var sub = str.substr(i);
             if ((!onlyArgumentsRemaining) && /^--(\s|$)/.test(sub)) {
@@ -594,7 +589,7 @@ const Commands = Module("commands", {
 
                             if (!invalid) {
                                 if (complete && count > 0) {
-                                    args.completeStart = i + optname.length + 1;
+                                    args.completeStart += optname.length + 1;
                                     args.completeOpt = opt;
                                     args.completeFilter = arg;
                                     args.quote = Commands.complQuote[quote] || Commands.complQuote[""];
