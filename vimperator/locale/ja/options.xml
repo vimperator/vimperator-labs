@@ -7,7 +7,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 
-<item insertbefore=":set">
+<!--item insertbefore=":set">
     <tags>:seg :way</tags>
     <spec>:se[a]</spec>
     <description>
@@ -21,6 +21,6 @@
     <description>
         <p>デフォルト値が変更されているオプションをすべて表示します。</p>
     </description>
-</item>
+</item-->
 </overlay>
 <!-- vim:se sts=4 sw=4 et: -->
