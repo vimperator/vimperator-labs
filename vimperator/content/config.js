@@ -25,7 +25,8 @@ const Config = Module("config", ConfigBase, {
     guioptions: {
         m: ["Menubar",      ["toolbar-menubar"]],
         T: ["Toolbar",      ["nav-bar"]],
-        B: ["Bookmark bar", ["PersonalToolbar"]]
+        B: ["Bookmark bar", ["PersonalToolbar"]],
+        A: ["Add-on bar", ["addon-bar"]]
     },
 
     get visualbellWindow() getBrowser().mPanelContainer,

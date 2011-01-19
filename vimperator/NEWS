@@ -19,6 +19,7 @@
     * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just
       use Firefox mappings if the user wants them
     * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
+    * Added guioptions=A to allow toggling of the addon-bar. Thanks garbas
     * Fixed :open sometimes selecting the wrong entry when autocompletions were turned on
       and the user quickly pressed Tab.
     * Many small fixes for Firefox4 changes
