@@ -12,7 +12,7 @@ const Marks = Module("marks", {
 
     init: function init() {
         this._localMarks = storage.newMap("local-marks", { store: true, privateData: true });
-        this._urlMarks = storage.newMap("url-marks", { store: true, privateData: true });
+        this._urlMarks = storage.newMap("url-marks", { store: false, privateData: true });
 
         this._pendingJumps = [];
     },
