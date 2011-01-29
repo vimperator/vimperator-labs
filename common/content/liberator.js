@@ -1433,7 +1433,7 @@ const Liberator = Module("liberator", {
                 liberator.assert(extension && extension.options,
                     "E474: Invalid argument");
                 if (args.bang)
-                    window.openDialog(extension.options, "_blank", "chrome");
+                    window.openDialog(extension.options, "_blank", "chrome,toolbar");
                 else
                     liberator.open(extension.options, { from: "extoptions" });
             }, {
