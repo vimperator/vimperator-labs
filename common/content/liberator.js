@@ -71,11 +71,12 @@ const Liberator = Module("liberator", {
         config.features.push(Liberator.getPlatformFeature());
         
         if (AddonManager) {
-            this._extensions = [];
-            AddonManager.getAddonsByTypes(["extension"], function (e) _extensions = e);
+            let self = this;
+            self._extensions = [];
+            AddonManager.getAddonsByTypes(["extension"], function (e) self._extensions = e);
             this.onEnabled = this.onEnabling = this.onDisabled = this.onDisabling = this.onInstalled = 
                 this.onInstalling = this.onUninstalled = this.onUninstalling = 
-                function () AddonManager.getAddonsByTypes(["extension"], function (e) _extensions = e);
+                function () AddonManager.getAddonsByTypes(["extension"], function (e) self._extensions = e);
             AddonManager.addAddonListener(this);
         }
     },
@@ -102,7 +103,7 @@ const Liberator = Module("liberator", {
 
     // TODO: Do away with this getter when support for 1.9.x is dropped
     get extensions() {
-        return _extensions.map(function (e) ({
+        return this._extensions.map(function (e) ({
             id: e.id,
             name: e.name,
             description: e.description,
