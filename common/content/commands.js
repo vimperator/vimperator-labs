@@ -72,15 +72,16 @@ const Command = Class("Command", {
         count = (count === undefined) ? null : count;
         modifiers = modifiers || {};
 
-        let self = this;
+        let cmd = this;
         function exec(args) {
             // FIXME: Move to parseCommand?
-            args = self.parseArgs(args);
+            args = cmd.parseArgs(args, null, { count: count, bang: bang });
             if (!args)
                 return;
-            args.count = count;
-            args.bang = bang;
-            liberator.trapErrors(self.action, self, args, modifiers);
+            if (args.subCmd)
+                cmd = args.subCmd;
+
+            liberator.trapErrors(cmd.action, cmd, args, modifiers);
         }
 
         if (this.hereDoc) {
@@ -126,7 +127,7 @@ const Command = Class("Command", {
      * @returns {Args}
      * @see Commands#parseArgs
      */
-    parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.argCount, false, this.literal, complete, extra),
+    parseArgs: function (args, complete, extra) commands.parseArgs(args, this.options, this.subCommands, this.argCount, false, this.literal, complete, extra),
 
     /**
      * @property {string[]} All of this command's name specs. e.g., "com[mand]"
@@ -167,6 +168,10 @@ const Command = Class("Command", {
      * @see Commands@parseArguments
      */
     options: [],
+    /**
+     * @property {Array} The sub-commands this command takes.
+     */
+    subCommands: [],
     /**
      * @property {boolean} Whether this command may be called with a bang,
      *     e.g., :com!
@@ -464,6 +469,8 @@ const Commands = Module("commands", {
      *                [["-acceleration"], OPTION_FLOAT],
      *                [["-accessories"], OPTION_LIST, null, ["foo", "bar"], true],
      *                [["-other"], OPTION_ANY]];
+     * @param {Array} subCommands The sub-commands accepted. Thease are Command instance
+     *     see @link Command
      * @param {string} argCount The number of arguments accepted.
      *            "0": no arguments
      *            "1": exactly one argument
@@ -480,7 +487,7 @@ const Commands = Module("commands", {
      *     Args object.
      * @returns {Args}
      */
-    parseArgs: function (str, options, argCount, allowUnknownOptions, literal, complete, extra) {
+    parseArgs: function (str, options, subCommands, argCount, allowUnknownOptions, literal, complete, extra) {
         function getNextArg(str) {
             let [count, arg, quote] = Commands.parseArg(str);
             if (quote == "\\" && !complete)
@@ -493,21 +500,40 @@ const Commands = Module("commands", {
         if (!options)
             options = [];
 
+        if (!subCommands)
+            subCommands = [];
+
         if (!argCount)
             argCount = "*";
+
+        if (!extra)
+            extra = {};
 
         var args = [];       // parsed options
         args.__iterator__ = function () util.Array.iteritems(this);
         args.string = str;   // for access to the unparsed string
         args.literalArg = "";
 
+        var argPosition = [];        // argument's starting position
+
         // FIXME!
-        for (let [k, v] in Iterator(extra || []))
-            args[k] = v;
+        for (let [k, v] in Iterator(extra)) {
+            switch (k) {
+                case "count":
+                case "bang":
+                case "subCmd":
+                    args[k] = v;
+                    break;
+                case "opts":
+                    for (let [optKey, optValue] in Iterator(v))
+                        args[optKey] = optValue;
+                    break;
+            }
+        }
 
         var invalid = false;
         // FIXME: best way to specify these requirements?
-        var onlyArgumentsRemaining = allowUnknownOptions || options.length == 0 || false; // after a -- has been found
+        var onlyArgumentsRemaining = allowUnknownOptions || (options.length == 0 && subCommands.length == 0) || false; // after a -- has been found
         var arg = null;
         var count = 0; // the length of the argument
         var i = 0;
@@ -649,6 +675,7 @@ const Commands = Module("commands", {
                 args.literalArg = sub;
                 args.push(sub);
                 args.quote = null;
+                argPosition.push(i);
                 break;
             }
 
@@ -668,9 +695,32 @@ const Commands = Module("commands", {
                 liberator.echoerr("Invalid option: " + arg);
                 return null;
             }
+            else if (!onlyArgumentsRemaining) {
+                let [cmdCount, cmdName, cmdBang, cmdArg] = commands.parseCommand(sub);
+                if (cmdName) {
+                    for (let [, subCmd] in Iterator(subCommands)) {
+                        if (subCmd.hasName(cmdName)) {
+                            let subExtra = {
+                                count: cmdCount,
+                                bang: cmdBang,
+                                subCmd: subCmd,
+                                opts: extra.opts || {}
+                            };
+                            for (let [,opt] in Iterator(options)) {
+                                if (opt[0][0] in args)
+                                    subExtra.opts[opt[0][0]] = args[opt[0][0]];
+                            }
+                            // delegate parsing to the sub-command
+                            return subCmd.parseArgs(sub.substr(count), null, subExtra);
+                        }
+                    }
+                }
+            }
 
-            if (arg != null)
+            if (arg != null) {
                 args.push(arg);
+                argPosition.push(i);
+            }
             if (complete)
                 args.completeArg = args.length - 1;
 
@@ -680,6 +730,13 @@ const Commands = Module("commands", {
         }
 
         if (complete) {
+            if (subCommands.length && !args.completeOpt) {
+                complete.fork("subCmds", argPosition[0], completion, "ex", subCommands);
+                // don't any more if sub-command arguments are completing
+                if (complete.contexts[complete.name + "/subCmds/args"])
+                    return;
+            }
+
             if (args.completeOpt) {
                 let opt = args.completeOpt;
                 let context = complete.fork(opt[0][0], args.completeStart);
@@ -876,28 +933,34 @@ const Commands = Module("commands", {
     completion: function () {
         JavaScript.setCompleter(this.get, [function () ([c.name, c.description] for (c in commands))]);
 
-        completion.command = function command(context) {
-            context.title = ["Command"];
+        completion.command = function command(context, subCmds) {
             context.keys = { text: "longNames", description: "description" };
-            context.completions = [k for (k in commands)];
+            if (subCmds) {
+                context.title = ["Sub command"];
+                context.completions = subCmds;
+            } else {
+                context.title = ["Command"];
+                context.completions = [k for (k in commands)];
+            }
         };
 
         // provides completions for ex commands, including their arguments
-        completion.ex = function ex(context) {
+        completion.ex = function ex(context, subCmds) {
             // if there is no space between the command name and the cursor
             // then get completions of the command name
             let [count, cmd, bang, args] = commands.parseCommand(context.filter);
             let [, prefix, junk] = context.filter.match(/^(:*\d*)\w*(.?)/) || [];
             context.advance(prefix.length);
             if (!junk) {
-                context.fork("", 0, this, "command");
+                completion.command(context, subCmds);
                 return;
             }
 
             // highlight non-existent commands
-            let command = commands.get(cmd);
+            let command = Commands.prototype.get.call(subCmds ? {_exCommands: subCmds} : commands, cmd);
             if (!command) {
-                context.highlight(0, cmd.length, "SPELLCHECK");
+                if (!subCmds)
+                    context.highlight(0, cmd.length, "SPELLCHECK");
                 return;
             }
 

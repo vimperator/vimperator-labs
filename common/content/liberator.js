@@ -979,7 +979,7 @@ const Liberator = Module("liberator", {
             [["++cmd"], commands.OPTIONS_STRING, null, null, true],
             [["+c"], commands.OPTIONS_STRING, null, null, true]
         ];
-        return commands.parseArgs(cmdline, options, "*");
+        return commands.parseArgs(cmdline, options, [], "*");
     },
 
     sleep: function (delay) {
