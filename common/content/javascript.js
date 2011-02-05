@@ -35,34 +35,55 @@ const JavaScript = Module("javascript", {
     iter: function iter(obj, toplevel) {
         toplevel = !!toplevel;
         let seen = {};
-        let ret = {};
 
         try {
             let orig = obj;
-            let top = services.get("debugger").wrapValue(obj);
 
-            if (!toplevel)
-                obj = obj.__proto__;
+            function iterObj(obj, toplevel) {
+                function isXPCNativeWrapper(obj) {
+                    try {
+                        // Error: XrayToString called on an incompatible object
+                        window.content.toString.call(obj);
+                        return true;
+                    } catch (ex) {
+                        return false;
+                    }
+                }
 
-            for (; obj; obj = !toplevel && obj.__proto__) {
-                services.get("debugger").wrapValue(obj).getProperties(ret, {});
-                for (let prop in values(ret.value)) {
-                    let name = '|' + prop.name.stringValue;
+                if (isXPCNativeWrapper(obj)) {
+                    if (toplevel) {
+                        yield {get wrappedJSObject() 0};
+                    }
+                    // according to http://getfirebug.com/wiki/index.php/Using_win.wrappedJSObject
+                    // using a wrappedJSObject itself is safe, as potential functions are always
+                    // run in page context, not in chrome context.
+                    // However, as we really need to make sure, values coming
+                    // from content scope are never used in unsecured eval(),
+                    // we dissallow unwrapping objects for now, unless the user
+                    // uses an (undocumented) option 'unwrapjsobjects'
+                    else if (options["inspectcontentobjects"]) {
+                        obj = obj.wrappedJSObject;
+                    }
+                }
+                if (toplevel)
+                    yield obj;
+                else
+                    for (let o = obj.__proto__; o; o = o.__proto__)
+                        yield o;
+            }
+
+            for (let obj in iterObj(orig, toplevel)) {
+                for (let [, k] in Iterator(Object.getOwnPropertyNames(obj))) {
+                    let name = "|" + k;
                     if (name in seen)
                         continue;
                     seen[name] = 1;
-                    yield [prop.name.stringValue, top.getProperty(prop.name.stringValue).value.getWrappedValue()]
+                    yield [k, this.getKey(orig, k)];
                 }
             }
-            // The debugger doesn't list some properties. I can't guess why.
-            for (let k in orig)
-                if (k in orig && !('|' + k in seen) && obj.hasOwnProperty(k) == toplevel)
-                    yield [k, this.getKey(orig, k)]
         }
-        catch(e) {
-            for (let k in allkeys(obj))
-                if (obj.hasOwnProperty(k) == toplevel)
-                    yield [k, this.getKey(obj, k)];
+        catch (ex) {
+            //Cu.reportError(ex);
         }
     },
 
@@ -599,19 +620,8 @@ const JavaScript = Module("javascript", {
         completion.javascriptCompleter = JavaScript; // Backwards compatibility.
     },
     options: function () {
-        options.add(["jsdebugger", "jsd"],
-            "Switch on/off jsdebugger",
-            "boolean", false, {
-                setter: function (value) {
-                    if (value) {
-                        if (!services.get("debugger").isOn)
-                            //XXX: would be better waiting onDebuggerActivated.
-                            services.get("debugger").asyncOn(null);
-                    }
-                    else
-                        services.get("debugger").off();
-                },
-                getter: function () services.get("debugger").isOn
-            });
+        options.add(["inspectcontentobjects"],
+            "Allow completion of JavaScript objects coming from web content. POSSIBLY INSECURE!",
+            "boolean", false);
     }
 })

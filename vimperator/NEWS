@@ -19,7 +19,9 @@
     * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just
       use Firefox mappings if the user wants them
     * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
-    * IMPORTANT: Support for sub-commands.
+    * IMPORTANT: 'jsdebugger' option was removed, as JS completion should work much better
+      out of the box now.
+    * Support for sub commands.
       And subCommands argument is added 4th commands.parseArgs's arguments.
     * Added guioptions=A to allow toggling of the addon-bar. Thanks garbas
     * Fixed :open sometimes selecting the wrong entry when autocompletions were turned on

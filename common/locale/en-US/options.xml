@@ -747,6 +747,24 @@
     </description>
 </item>
 
+<!--deliberately not documented, as we should either ensure it's safe or not support it
+<item>
+    <tags>'noinspectcontentobjects'</tags>
+    <tags>'inspectcontentobjects'</tags>
+    <spec>'inspectcontentobjects'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Allow completion of JavaScript objects coming from web content.
+            E.g. <code><ex>:echo window.content.&lt;tab&gt;</ex></code>
+            will also show properties set from the web page. Without this
+            option, you would need to go through <str>window.content.wrappedJSObject</str>
+            to access those properties.
+        </p>
+        <warning>POSSIBLY INSECURE!</warning>
+    </description>
+</item-->
 
 <item>
     <tags>'status'</tags>
@@ -1322,19 +1340,5 @@
         </p>
     </description>
 </item>
-
-<item>
-    <tags>'jsd' 'jsdebugger'</tags>
-    <spec>'jsdebugger' 'jsd'</spec>
-    <type>boolean</type>
-    <default>off</default>
-    <description>
-        <p>
-            Use javascript debugger service at the completion list.
-            More list is shown up when it is on.
-        </p>
-    </description>
-</item>
-
 </document>
 <!-- vim:se sts=4 sw=4 et: -->
