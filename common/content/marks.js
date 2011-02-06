@@ -127,7 +127,7 @@ const Marks = Module("marks", {
                 }
                 let index = tabs.index(slice.tab);
                 if (index != -1) {
-                    tabs.select(index);
+                    tabs.select(index, false, true);
                     let win = slice.tab.linkedBrowser.contentWindow;
                     if (win.location.href != slice.location) {
                         this._pendingJumps.push(slice);

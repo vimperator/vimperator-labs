@@ -757,7 +757,7 @@ const CommandLine = Module("commandline", {
             case "<LeftMouse>":
                 if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list") {
                     event.preventDefault();
-                    tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1);
+                    tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1, false, true);
                 }
                 else
                     openLink(liberator.CURRENT_TAB);

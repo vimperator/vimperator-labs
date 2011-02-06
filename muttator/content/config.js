@@ -114,6 +114,7 @@ const Config = Module("config", ConfigBase, {
         __proto__: document.getElementById("tabmail"),
         get mTabContainer() this.tabContainer,
         get mTabs() this.tabContainer.childNodes,
+        get visibleTabs() Array.slice(this.mTabs),
         get mCurrentTab() this.tabContainer.selectedItem,
         get mStrip() this.tabStrip,
         get browsers() {

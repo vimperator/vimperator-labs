@@ -754,7 +754,7 @@ const Liberator = Module("liberator", {
             if (liberator.has("tabs")) {
                 let matches = urls.match(/^(\d+):/);
                 if (matches) {
-                    tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
+                    tabs.select(parseInt(matches[1], 10) - 1, false, true); // make it zero-based
                     return;
                 }
             }

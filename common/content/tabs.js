@@ -194,7 +194,8 @@ const Tabs = Module("tabs", {
      *     list.
      */
     move: function (tab, spec, wrap) {
-        let index = Tabs.indexFromSpec(spec, wrap);
+        let index = Tabs.indexFromSpec(spec, wrap, false);
+        index = tabs.getTab(index)._tPos;
         config.tabbrowser.moveTabTo(tab, index);
     },
 
@@ -293,9 +294,10 @@ const Tabs = Module("tabs", {
      * @param {boolean} wrap Whether an out of bounds <b>spec</b> causes
      *     the selection position to wrap around the start/end of the tab
      *     list.
+     * @param {boolean} allTabs
      */
-    select: function (spec, wrap) {
-        let index = Tabs.indexFromSpec(spec, wrap);
+    select: function (spec, wrap, allTabs) {
+        let index = Tabs.indexFromSpec(spec, wrap, allTabs);
         // FIXME:
         if (index == -1)
             liberator.beep();
@@ -362,6 +364,50 @@ const Tabs = Module("tabs", {
     },
 
     /**
+     * Returns tabs containing the specified <b>buffer</b>.
+     * @param {string} buffer
+     * @return {array} array of tabs
+     */
+    getTabsFromBuffer: function (buffer) {
+        if (!buffer || typeof buffer != "string")
+            return [];
+
+        if (buffer == "#")
+            return [tabs.alternate];
+
+        let matches = buffer.match(/^(\d+):?/);
+        if (matches)
+            return [tabs.getTab(parseInt(matches[1], 10) - 1)];
+
+        matches = [];
+        let lowerBuffer = buffer.toLowerCase();
+        let first = tabs.index() + (reverse ? 0 : 1);
+        let nbrowsers = config.tabbrowser.browsers.length;
+        for (let [i, ] in tabs.browsers) {
+            let index = (i + first) % nbrowsers;
+            let browser = config.tabbrowser.browsers[index];
+            let url, title;
+            if ("__SS_restoreState" in browser) {
+                let entry = browser.__SS_data.entries[browser.__SS_data.index - 1];
+                url = entry.url;
+                title = entry.title || url;
+            }
+            else {
+                url = browser.contentDocument.location.href;
+                title = browser.contentDocument.title;
+            }
+            title = title.toLowerCase();
+            if (url == buffer)
+                return [tabs.index(index)];
+
+            if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
+                matches.push(tabs.index(index));
+        }
+
+        return matches;
+    },
+
+    /**
      * Selects the tab containing the specified <b>buffer</b>.
      *
      * @param {string} buffer A string which matches the URL or title of a
@@ -390,52 +436,28 @@ const Tabs = Module("tabs", {
                 allowNonUnique = this._lastBufferSwitchSpecial;
         }
 
-        if (buffer == "#") {
-            tabs.selectAlternateTab();
-            return;
-        }
-
         if (!count || count < 1)
             count = 1;
         if (typeof reverse != "boolean")
             reverse = false;
 
-        let matches = buffer.match(/^(\d+):?/);
-        if (matches) {
-            tabs.select(parseInt(matches[1], 10) - 1, false); // make it zero-based
-            return;
-        }
-
-        matches = [];
-        let lowerBuffer = buffer.toLowerCase();
-        let first = tabs.index() + (reverse ? 0 : 1);
-        let nbrowsers = config.tabbrowser.browsers.length;
-        for (let [i, ] in tabs.browsers) {
-            let index = (i + first) % nbrowsers;
-            let url = config.tabbrowser.getBrowserAtIndex(index).contentDocument.location.href;
-            let title = config.tabbrowser.getBrowserAtIndex(index).contentDocument.title.toLowerCase();
-            if (url == buffer) {
-                tabs.select(index, false);
-                return;
-            }
-
-            if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
-                matches.push(index);
-        }
-        if (matches.length == 0)
+        let tabItems = tabs.getTabsFromBuffer(buffer);
+        if (tabItems.length == 0)
             liberator.echoerr("E94: No matching buffer for " + buffer);
-        else if (matches.length > 1 && !allowNonUnique)
+        else if (tabItems.length == 1)
+            config.tabbrowser.mTabContainer.selectedItem = tabItems[0];
+        else if (!allowNonUnique)
             liberator.echoerr("E93: More than one match for " + buffer);
         else {
             if (reverse) {
-                index = matches.length - count;
+                index = tabItems.length - count;
                 while (index < 0)
-                    index += matches.length;
+                    index += tabItems.length;
             }
             else
-                index = (count - 1) % matches.length;
+                index = (count - 1) % tabItems.length;
 
-            tabs.select(matches[index], false);
+            config.tabbrowser.mTabContainer.selectedItem = tabItems[index];
         }
     },
 
@@ -484,7 +506,7 @@ const Tabs = Module("tabs", {
         // should probably reopen the closed tab when a 'deleted'
         // alternate is selected
         liberator.assert(index >= 0, "E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-        tabs.select(index);
+        tabs.select(index, false, true);
     },
 
     // NOTE: when restarting a session FF selects the first tab and then the
@@ -517,11 +539,16 @@ const Tabs = Module("tabs", {
      * - "+1" for the next tab
      * - "-3" for the tab, which is 3 positions left of the current
      * - "$" for the last tab
+     * @param wrap
+     * @param allTabs
      */
-    indexFromSpec: function (spec, wrap) {
-        let position = config.tabbrowser.mTabContainer.selectedIndex;
-        let length   = config.tabbrowser.mTabs.length;
-        let last     = length - 1;
+    indexFromSpec: function (spec, wrap, allTabs) {
+        let tabs =     allTabs ? config.tabbrowser.mTabs : config.tabbrowser.visibleTabs;
+        let position = allTabs ?
+            config.tabbrowser.mTabContainer.selectedIndex :
+            tabs.indexOf(config.tabbrowser.mCurrentTab);
+        let length =   tabs.length;
+        let last =     length - 1;
 
         if (spec === undefined || spec === "")
             return position;
@@ -541,6 +568,9 @@ const Tabs = Module("tabs", {
             position = wrap ? position % length : last;
         else if (position < 0)
             position = wrap ? (position % length) + length : 0;
+
+        if (config.hostApplication === "Firefox")
+            return tabs[position]._tPos;
 
         return position;
     }
@@ -964,7 +994,7 @@ const Tabs = Module("tabs", {
                 "Open a prompt to switch buffers",
                 function (count) {
                     if (count != null)
-                        tabs.switchTo(String(count));
+                        tabs.select(count - 1);
                     else
                         commandline.open("", "buffer! ", modes.EX);
                 },

@@ -236,7 +236,7 @@ const AutoCommands = Module("autocommands", {
                         let current = tabs.index();
 
                         for (let i = 0; i < tabs.count; i++) {
-                            tabs.select(i);
+                            tabs.select(i, false, true);
                             // if no url arg is specified use the current buffer's URL
                             autocommands.trigger(event, { url: defaultURL });
                         }
