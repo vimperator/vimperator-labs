@@ -1325,37 +1325,124 @@ const Buffer = Module("buffer", {
             context.completions = [[s, styles[s].join(", ")] for (s in styles)];
         };
 
-        completion.buffer = function buffer(context) {
+        const UNTITLED_LABEL = "(Untitled)";
+        function getIndicator (tab) {
+            if (tab == config.tabbrowser.mCurrentTab)
+                return "%";
+            else if (tab == tabs.alternate)
+                return "#";
+            return " ";
+        }
+        function getURLFromTab (tab) {
+            if ("linkedBrowser" in tab)
+                return ("__SS_restoreState" in tab.linkedBrowser && "__SS_data" in tab.linkedBrowser) ?
+                    tab.linkedBrowser.__SS_data.entries.slice(-1)[0].url :
+                    tab.linkedBrowser.contentDocument.location.href;
+            else {
+                let i = config.tabbrowser.mTabContainer.getIndexOfItem(tab);
+                let info = config.tabbrowser.tabInfo[i];
+                return info.browser ?
+                    info.browser.contentDocument.location.href :
+                    info.mode.getBrowser(tab).contentDocument.location.href;
+            }
+        }
+
+        function createItem (prefix, label, url, indicator, icon)
+            ({ text: [prefix + label, prefix + url], url: template.highlightURL(url), indicator: indicator, icon: icon || DEFAULT_FAVICON })
+
+        function generateTabs (tabs) {
+            for (let i = 0, tab; tab = tabs[i]; i++) {
+                let indicator = getIndicator(tab) + (tab.pinned ? "@" : " "),
+                    label = tab.label || UNTITLED_LABEL,
+                    url = getURLFromTab(tab),
+                    index = ((tab._tPos || i) + 1) + ": ";
+                let item = createItem(index, label, url, indicator, tab.image);
+                if (!tab.pinned && tab._tabViewTabItem && tab._tabViewTabItem.parent) {
+                    let groupName = tab._tabViewTabItem.parent.getTitle();
+                    if (groupName) {
+                        let prefix = groupName + "." + (i + 1) + ": ";
+                        item.text.push(prefix + label, prefix + url);
+                    }
+                }
+                yield item;
+            }
+        }
+        function generateGroupList (group, groupName) {
+            let hasName = !!groupName;
+            for (let [i, tabItem] in Iterator(group.getChildren())) {
+                let index = (tabItem.tab._tPos + 1) + ": ",
+                    label = tabItem.tab.label || UNTITLED_LABEL,
+                    url = getURLFromTab(tabItem.tab);
+                let item = createItem(index, label, url, getIndicator(tabItem.tab), tabItem.tab.image);
+                if (hasName) {
+                    let gPrefix = groupName + "." + (i + 1) + ": ";
+                    item.text.push(gPrefix + label, gPrefix + url);
+                }
+                yield item;
+            }
+        }
+        function generateOrphanedList (tabItems) {
+            for (let [, tabItem] in Iterator(tabItems)) {
+                let index = (tabItem.tab._tPos + 1) + ": ",
+                    label = tabItem.tab.label || UNTITLED_LABEL,
+                    url = getURLFromTab(tabItem.tab);
+                yield createItem(index, label, url, getIndicator(tabItem.tab), tabItem.tab.image);
+            }
+        }
+        completion.buffer = function buffer(context, flags) {
             context.anchored = false;
-            context.title = ["Buffer", "URL"];
             context.keys = { text: "text", description: "url", icon: "icon" };
             context.compare = CompletionContext.Sort.number;
             let process = context.process[0];
             context.process = [function (item, text)
                     <>
-                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
+                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: right">{item.item.indicator}</span>
                         { process.call(this, item, text) }
                     </>];
 
-            context.completions = util.map(tabs.browsers, function ([i, browser]) {
-                let indicator = " ";
-                if (i == tabs.index())
-                   indicator = "%"
-                else if (i == tabs.index(tabs.alternate))
-                   indicator = "#";
+            let tabs;
+            if (!flags) {
+                flags = this.buffer.VISIBLE;
+                tabs = config.tabbrowser.mTabs;
+            }
 
-                let tab = tabs.getTab(i);
-                let url = browser.contentDocument.location.href;
-                i = i + 1;
+            if (flags & this.buffer.VISIBLE) {
+                context.title = ["Buffers"];
+                context.completions = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
+            }
 
-                return {
-                    text: [i + ": " + (tab.label || "(Untitled)"), i + ": " + url],
-                    url:  template.highlightURL(url),
-                    indicator: indicator,
-                    icon: tab.image || DEFAULT_FAVICON
-                };
-            });
+            if (!liberator.has("tabgroup"))
+                return;
+
+            let groups = tabGroup.tabView.GroupItems;
+            if (flags & this.buffer.GROUPS) {
+                let activeGroup = groups.getActiveGroupItem();
+                let activeGroupId = activeGroup === null ? null : activeGroup.id;
+                for (let [i, group] in Iterator(groups.groupItems)) {
+                    if (group.id != activeGroupId) {
+                        let groupName = group.getTitle();
+                        context.fork("GROUP_" + group.id, 0, this, function (context) {
+                            context.title = [groupName || UNTITLED_LABEL];
+                            context.completions = [item for (item in generateGroupList(group, groupName))];
+                        });
+                    }
+                }
+            }
+            if (flags & this.buffer.ORPHANS) {
+                let orphanedTabs = [tabItem for ([, tabItem] in Iterator(groups.getOrphanedTabs())) if (tabItem.tab.hidden)];
+                if (orphanedTabs.length == 0)
+                    return;
+
+                context.fork("__ORPHANED__", 0, this, function (context) {
+                    context.title = ["Orphaned"];
+                    context.completions = [item for (item in generateOrphanedList(orphanedTabs))];
+                });
+            }
         };
+        completion.buffer.ALL = 1 << 0 | 1 << 1 | 1 << 2;
+        completion.buffer.VISIBLE = 1 << 0;
+        completion.buffer.GROUPS  = 1 << 1;
+        completion.buffer.ORPHANS = 1 << 2;
     },
     events: function () {
         window.XULBrowserWindow = this.progressListener;

@@ -179,9 +179,10 @@ const Tabs = Module("tabs", {
      *
      * @param {string} filter A filter matching a substring of the tab's
      *     document title or URL.
+     * @param {boolean} showAll
      */
-    list: function (filter) {
-        completion.listCompleter("buffer", filter);
+    list: function (filter, showAll) {
+        completion.listCompleter("buffer", filter, null, completion.buffer[showAll ? "ALL" : "VISIBLE"]);
     },
 
     /**
@@ -212,9 +213,10 @@ const Tabs = Module("tabs", {
      */
     // FIXME: what is quitOnLastTab {1,2} all about then, eh? --djk
     remove: function (tab, count, focusLeftTab, quitOnLastTab) {
+        let vTabs = config.tabbrowser.visibleTabs;
         let removeOrBlankTab = {
                 Firefox: function (tab) {
-                    if (config.tabbrowser.mTabs.length > 1)
+                    if (vTabs.length > 1)
                         config.tabbrowser.removeTab(tab);
                     else {
                         if (buffer.URL != "about:blank" ||
@@ -258,23 +260,26 @@ const Tabs = Module("tabs", {
             return;
         }
 
-        let index = this.index(tab);
+        let index = vTabs.indexOf(tab);
+        liberator.assert(index >= 0, "No such the tab in the current tabs");
+
+        let start, end, selIndex;
         if (focusLeftTab) {
-            let lastRemovedTab = 0;
-            for (let i = index; i > index - count && i >= 0; i--) {
-                removeOrBlankTab(this.getTab(i));
-                lastRemovedTab = i > 0 ? i : 1;
-            }
-            config.tabbrowser.mTabContainer.selectedIndex = lastRemovedTab - 1;
+            start = Math.max(0, index - count + 1);
+            end = index;
+            selIndex = Math.max(0, start - 1);
         }
         else {
-            let i = index + count - 1;
-            if (i >= this.count)
-                i = this.count - 1;
-
-            for (; i >= index; i--)
-                removeOrBlankTab(this.getTab(i));
-            config.tabbrowser.mTabContainer.selectedIndex = index;
+            start = index;
+            end = Math.min(index + count, vTabs.length) - 1;
+            selIndex = end + 1;
+            if (selIndex >= vTabs.length)
+                selIndex = Math.max(0, start - 1);
+        }
+        config.tabbrowser.mTabContainer.selectedItem = vTabs[selIndex];
+        for (let i = end; i >= start; i--) {
+            removeOrBlankTab(vTabs[i]);
+            vTabs.splice(i, 1);
         }
     },
 
@@ -378,6 +383,19 @@ const Tabs = Module("tabs", {
         let matches = buffer.match(/^(\d+):?/);
         if (matches)
             return [tabs.getTab(parseInt(matches[1], 10) - 1)];
+        else if (liberator.has("tabgroup")) {
+            matches = buffer.match(/^(.+?)\.(\d+):?/);
+            if (matches) {
+                let [, groupName, tabNum] = matches;
+                tabNum = parseInt(tabNum, 10);
+                let group = tabGroup.getGroup(groupName);
+                if (group) {
+                    let tabItem = group.getChild(tabNum - 1);
+                    if (tabItem)
+                        return [tabItem.tab];
+                }
+            }
+        }
 
         matches = [];
         let lowerBuffer = buffer.toLowerCase();
@@ -759,14 +777,15 @@ const Tabs = Module("tabs", {
                     argCount: "?",
                     bang: true,
                     count: true,
-                    completer: function (context) completion.buffer(context),
+                    completer: function (context) completion.buffer(context, completion.buffer.ALL),
                     literal: 0
                 });
 
             commands.add(["buffers", "files", "ls", "tabs"],
                 "Show a list of all buffers",
-                function (args) { tabs.list(args.literalArg); }, {
+                function (args) { tabs.list(args.literalArg, args.bang); }, {
                     argCount: "?",
+                    bang: true,
                     literal: 0
                 });
 

@@ -14,7 +14,7 @@ const Config = Module("config", ConfigBase, {
     hostApplication: "Firefox",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup"],
     defaults: {
         complete: "slf",
         guioptions: "Trb",
@@ -113,7 +113,8 @@ const Config = Module("config", ConfigBase, {
         "history.js",
         "quickmarks.js",
         "sanitizer.js",
-        "tabs.js"
+        "tabs.js",
+        "tabgroup.js",
     ],
 
     get tempFile() {
