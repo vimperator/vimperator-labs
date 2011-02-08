@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<item insertbefore=":bn">
+    <tags>g@</tags>
+    <spec><oa>count</oa>g@</spec>
+    <description>
+        <p>
+            Go to the first app tab. Go to the next app tab when already an app tab is selected.
+            And cycles to the first app tab when the last app tab is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th app tab.
+        </p>
+    </description>
+</item>
+
+<item insertbefore=":bn">
+    <tags><![CDATA[<C-S-n> <C-S-PageDown>]]></tags>
+    <spec><oa>count</oa>&lt;C-S-n></spec>
+    <description>
+        <p>
+            Go to the next group. Cycles to the fist group when the last is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th next group.
+        </p>
+    </description>
+</item>
+
+<item insertbefore=":bn">
+    <tags><![CDATA[<C-S-p> <C-S-PageUp>]]></tags>
+    <spec><oa>count</oa>&lt;C-S-p></spec>
+    <description>
+        <p>
+            Go to the previous group. Cycles to the fist group when the first is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th previous group.
+        </p>
+    </description>
+</item>
+
+</overlay>
+<!-- vim:se sts=4 sw=4 et: -->

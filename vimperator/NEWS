@@ -21,6 +21,8 @@
     * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
     * IMPORTANT: 'jsdebugger' option was removed, as JS completion should work much better
       out of the box now.
+    * IMPORTANT: Add 'g@' mapping for switching to an app tab.
+    * IMPORTANT: Add '<C-S-n>' and '<C-S-p>' mappings for switching to the next / previous group.
     * Support for sub commands.
       And subCommands argument is added 4th commands.parseArgs's arguments.
     * Added guioptions=A to allow toggling of the addon-bar. Thanks garbas
