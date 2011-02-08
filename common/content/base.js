@@ -17,55 +17,14 @@ function array(obj) {
 }
 
 function allkeys(obj) {
-    let ret = {};
-    try {
-        for (; obj; obj = obj.__proto__) {
-            services.get("debugger").wrapValue(obj).getProperties(ret, {});
-            for (let prop in values(ret.value))
-                yield prop.name.stringValue;
-        }
-        return;
-    }
-    catch (e) {}
-
-    let __iterator__ = obj.__iterator__;
-    try {
-        if ("__iterator__" in obj) {
-            yield "__iterator__";
-            delete obj.__iterator__;
-        }
-        for (let k in obj)
-            yield k;
-    }
-    finally {
-        if (__iterator__)
-            obj.__iterator__ = __iterator__;
-    }
+    for(; obj; obj = obj.__proto__)
+        for (let [, prop] in Iterator(Object.getOwnPropertyNames(obj)))
+            yield prop;
 }
 
 function keys(obj) {
-    if (modules.services) {
-        try {
-            let ret = {};
-            services.get("debugger").wrapValue(obj).getProperties(ret, {});
-            for (let prop in values(ret.value))
-                yield prop.name.stringValue;
-            return;
-        }
-        catch (e) {}
-    }
-
-    if ("__iterator__" in obj) {
-        var iter = obj.__iterator__;
-        yield "__iterator__";
-        // This is dangerous, but necessary.
-        delete obj.__iterator__;
-    }
-    for (var k in obj)
-        if (obj.hasOwnProperty(k))
-            yield k;
-    if (iter !== undefined)
-        obj.__iterator__ = iter;
+    for (let [, prop] in Iterator(Object.getOwnPropertyNames(obj)))
+        yield prop;
 }
 
 function values(obj) {
