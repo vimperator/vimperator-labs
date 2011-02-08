@@ -40,15 +40,7 @@ const JavaScript = Module("javascript", {
             let orig = obj;
 
             function iterObj(obj, toplevel) {
-                function isXPCNativeWrapper(obj) {
-                    try {
-                        // Error: XrayToString called on an incompatible object
-                        window.content.toString.call(obj);
-                        return true;
-                    } catch (ex) {
-                        return false;
-                    }
-                }
+                function isXPCNativeWrapper(obj) isobject(obj) && XPCNativeWrapper.unwrap(obj) !== obj
 
                 if (isXPCNativeWrapper(obj)) {
                     if (toplevel) {
