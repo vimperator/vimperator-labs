@@ -11,7 +11,7 @@
 
     <xsl:output method="xml" indent="no"/>
 
-    <xsl:variable name="root" select="/liberator:document"/>
+    <xsl:variable name="root" select="/liberator:document | /liberator:overlay"/>
     <xsl:variable name="tags">
         <xsl:text> </xsl:text>
         <xsl:for-each select="$root//@tag|$root//liberator:tags/text()|$root//liberator:tag/text()">
