@@ -14,6 +14,8 @@
 const TabGroup = Module("tabGroup", {
     requires: ["config", "tabs"],
 
+    TV: window.TabView,
+
     get tabView () {
         const TV = window.TabView;
         if (!TV)
@@ -125,6 +127,92 @@ const TabGroup = Module("tabGroup", {
         }
         groupSwitch(index, wrap);
     },
+
+    /**
+     * @param {string} name Group Name
+     * @param {boolean} shouldSwitch switch to the created group if true
+     * @param {element} tab
+     * @return {GroupItem} created GroupItem instance
+     */
+    createGroup: function createGroup (name, shouldSwitch, tab) {
+        let pageBounds = tabGroup.tabView.Items.getPageBounds();
+        pageBounds.inset(20, 20);
+        let box = new tabGroup.tabView.Rect(pageBounds);
+        box.width = 125;
+        box.height = 110;
+        let group = new tabGroup.tabView.GroupItem([], { bounds: box, title: name });
+
+        if (tab && !tab.pinned)
+            tabGroup.TV.moveTabTo(tab, group.id);
+
+        if (shouldSwitch) {
+            let appTabs = tabGroup.appTabs,
+                child = group.getChild(0);
+            if (child) {
+                tabGroup.tabView.GroupItems.setActiveGroupItem(group);
+                tabGroup.tabView.UI.goToTab(child.tab);
+            }
+            else if (appTabs.length == 0)
+                group.newTab();
+            else {
+                tabGroup.tabView.GroupItems.setActiveGroupItem(group);
+                tabGroup.tabView.UI.goToTab(appTabs[appTabs.length - 1]);
+            }
+
+        }
+        return group;
+    },
+
+    /**
+     * @param {element} tab element
+     * @param {GroupItem||string} group See {@link tabGroup.getGroup}.
+     * @param {boolean} create Create a new group named {group}
+     *                  if {group} doesn't exist.
+     */
+    moveTab: function moveTabToGroup (tab, group, shouldSwitch) {
+        liberator.assert(tab && !tab.pinned, "Cannot move an AppTab");
+
+        let groupItem = (group instanceof tabGroup.tabView.GroupItem) ? group : tabGroup.getGroup(group);
+        liberator.assert(groupItem, "No such group: " + group);
+
+        if (groupItem) {
+            tabGroup.TV.moveTabTo(tab, groupItem.id);
+            if (shouldSwitch)
+                tabGroup.tabView.UI.goToTab(tab);
+        }
+    },
+
+    /**
+     * close all tabs in the {groupName}'s or current group
+     * @param {string} groupName
+     */
+    remove: function removeGroup (groupName) {
+        const GI = tabGroup.tabView.GroupItems;
+        let activeGroup = GI.getActiveGroupItem();
+        let group = groupName ? tabGroup.getGroup(groupName) : activeGroup;
+        liberator.assert(group, "No such group: " + groupName);
+
+        if (group === activeGroup) {
+            let gb = config.tabbrowser;
+            let vTabs = gb.visibleTabs;
+            if (vTabs.length < gb.tabs.length)
+                tabGroup.switchTo("+1", true);
+            else {
+                let appTabs = tabGroup.appTabs;
+                if (appTabs.length == 0)
+                    gb.loadOnTab("about:blank", { inBackground: false, relatedToCurrent: false });
+                else
+                    gb.mTabContainer.selectedIndex = appTabs.length - 1;
+
+                for (let i = vTabs.length - 1, tab; (tab = vTabs[i]) && !tab.pinned; i--)
+                    gb.removeTab(tab);
+
+                return;
+            }
+        }
+        group.closeAll();
+    }
+
 }, {
 }, {
     mappings: function () {
@@ -156,6 +244,137 @@ const TabGroup = Module("tabGroup", {
             "switch to previous group",
             function (count) { tabGroup.switchTo("-" + (count || 1), true); },
             { count: true });
+    },
+
+    commands: function () {
+        let panoramaSubCommands = [
+            /**
+             * Panorama SubCommand mkgroup
+             * make a group and switch to the group.
+             * take up the current tab to the group if bang(!) specified.
+             */
+            new Command(["mk[group]"], "Create a tab group",
+                function (args) { tabGroup.createGroup(args.literalArg, true, args.bang ? tabs.getTab() : null); },
+                { bang: true, literal: 0 }),
+            /**
+             * Panorama SubCommand switchgroup
+             * switch to the {group}.
+             * switch to {count}th next group if {count} specified.
+             */
+            new Command(["switchgroup", "sg"], "Switch to another group",
+                function (args) {
+                    if (args.count > 0)
+                        tabGroup.swtichTo("+" + args.count, true);
+                    else
+                        tabGroup.switchTo(args.literalArg);
+                }, {
+                    count: true,
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, true),
+                }),
+            /**
+             * Panorama SubCommand stash
+             * stash the current tab to the {group}
+             * create {group} and stash if bang(!) specified and {group} doesn't exists.
+             */
+            new Command(["stash"], "Stash the current tab to another group",
+                function (args) {
+                    let currentTab = tabs.getTab();
+                    if (currentTab.pinned) {
+                        liberator.echoerr("Cannot stash an AppTab");
+                        return;
+                    }
+                    let groupName = args.literalArg;
+                    let group = tabGroup.getGroup(groupName);
+                    if (!group) {
+                        if (args.bang)
+                            group = tabGroup.createGroup(groupName);
+                        else {
+                            liberator.echoerr("No such group: " + groupName.quote() + ". add \"!\" if want create");
+                            return;
+                        }
+                    }
+                    tabGroup.moveTab(currentTab, group);
+                }, {
+                    bang: true,
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, true),
+                }),
+            /**
+             * Panorama SubCommand rmgroup
+             * remove {group}.
+             * remve the current group if {group} is ommited.
+             */
+            new Command(["rm[group]"], "Close all tabs in the group",
+                function (args) { tabGroup.remove(args.literalArg); },
+                {
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, false),
+                }),
+            /**
+             * Panorama SubCommad pullTab
+             * pull the other group's tab
+             */
+            new Command(["pull[tab]"], "pull a tab from anoother group",
+                function (args) {
+                    let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
+                    if (!activeGroup) {
+                        liberator.echoerr("Cannot pull to the current.");
+                        return;
+                    }
+                    let buffer = args.literalArg;
+                    if (!buffer)
+                        return;
+
+                    let tabItems = tabs.getTabsFromBuffer(buffer);
+                    if (tabItems.length == 0) {
+                        liberator.echoerr("E94: No matching buffer for " + buffer);
+                        return;
+                    } else if (tabItems.length > 1) {
+                        liberator.echoerr("E93: More than one match for " + buffer);
+                        return;
+                    }
+                    tabGroup.moveTab(tabItems[0], activeGroup, args.bang);
+                }, {
+                    bang: true,
+                    literal: 0,
+                    completer: function (context) completion.buffer(context),
+                }),
+        ];
+        commands.add(["panorama", "tabgroup"],
+            "Manage tab group",
+            function (args) {
+                let list = template.genericOutput("Panorama Help",
+                    <dl>{ template.map(panoramaSubCommands, function(cmd)
+                        <><dt hightlight="title">{cmd.names.join(", ")}</dt><dd>{cmd.description}</dd></>) }</dl>);
+                commandline.echo(list, commandline.HL_NORMAL);
+            }, {
+                subCommands: panoramaSubCommands
+            });
+    },
+
+    completion: function () {
+        completion.tabgroup = function TabGroupCompleter (context, excludeActiveGroup) {
+            const GI = tabGroup.tabView.GroupItems;
+            let groupItems = GI.groupItems;
+            if (excludeActiveGroup) {
+                let activeGroup = GI.getActiveGroupItem();
+                if (activeGroup)
+                    groupItems = groupItems.filter(function(group) group.id != activeGroup.id);
+            }
+            context.title = ["TabGroup"];
+            context.completions = groupItems.map(function(group) {
+                let title = group.getTitle();
+                let desc = [
+                    "Title:", title || "(Untitled)",
+                    "TabNum:", group.getChildren().length,
+                ].join(" ");
+                if (!title)
+                    title = group.id;
+
+                return [title, desc];
+            });
+        };
     },
 });
 

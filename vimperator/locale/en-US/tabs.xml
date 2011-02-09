@@ -41,5 +41,92 @@
     </description>
 </item>
 
+<div insertafter=":tabd">
+
+<h2 tag="tabgroup">Tab group management</h2>
+
+<item>
+    <tags>:panorama :tabgroup</tags>
+    <spec>:panorama <oa>sub-command</oa></spec>
+    <spec>:tabgroup <oa>sub-command</oa></spec>
+    <description>
+        <p>
+            Manage tab group.
+            Show simple help if not specified <oa>sub-command</oa>.
+        </p>
+
+        <h3 tag="tabgroup-subcommands">Sub commands</h3>
+
+        <item>
+            <tags>panorama-mkgroup panoamra-mk</tags>
+            <spec>mk<oa>group</oa><oa>!</oa> <oa>groupName</oa></spec>
+            <description>
+                <p>
+                    Create a tab group named <oa>groupName</oa> if specified,
+                    and switch to the group.
+                </p>
+                <p>
+                    The selected tab is moved to the group if specified <oa>!</oa>.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>panorama-swichgroup panorama-sg</tags>
+            <spec><oa>count</oa>switchgroup <a>groupName</a></spec>
+            <spec><oa>count</oa>sg <a>groupName</a></spec>
+            <description>
+                <p>
+                    Switch to a group named <a>groupName</a>.
+                </p>
+                <p>
+                    Switch to <oa>count</oa>th next group if <oa>count</oa> is specified.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>panorama-stash</tags>
+            <spec>stash<oa>!</oa> <a>groupName</a></spec>
+            <description>
+                <p>
+                    Stash the current tab to a group named <a>groupName</a>.
+                </p>
+                <p>
+                    Create a new group and stash
+                    when <a>groupName</a> doesn't exists and <oa>!</oa> is specified.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>panorama-rmgroup panorama-rm</tags>
+            <spec>rm<oa>group</oa> <oa>groupName</oa></spec>
+            <description>
+                <p>
+                    Close all tabs in the group.
+                    When <oa>groupName</oa> is ommited, close all the current group.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>panorama-pulltab panorama-pull</tags>
+            <spec>pull<oa>tab</oa><oa>!</oa> <a>url|index</a></spec>
+            <description>
+                <p>
+                    Pull the tab from another group.
+                    The argument <a>url|index</a> is same as <ex>:buffer</ex>'s argument.
+                </p>
+                <p>
+                    pull and switch to the tab if <oa>!</oa> is specified.
+                </p>
+            </description>
+        </item>
+    </description>
+</item>
+
+</div>
+
 </overlay>
 <!-- vim:se sts=4 sw=4 et: -->
