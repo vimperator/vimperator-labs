@@ -960,7 +960,7 @@ const Commands = Module("commands", {
             let command = Commands.prototype.get.call(subCmds ? {_exCommands: subCmds} : commands, cmd);
             if (!command) {
                 if (!subCmds)
-                    context.highlight(0, cmd.length, "SPELLCHECK");
+                    context.highlight(0, cmd ? cmd.length : context.filter.length, "SPELLCHECK");
                 return;
             }
 
