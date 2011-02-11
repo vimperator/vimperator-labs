@@ -1507,8 +1507,9 @@ const CommandLine = Module("commandline", {
         mappings.add([modes.NORMAL],
             ["g<"], "Redisplay the last command output",
             function () {
-                liberator.assert(this._lastMowOutput);
-                this._echoMultiline(this._lastMowOutput, commandline.HL_NORMAL);
+                let lastMowOutput = commandline._lastMowOutput;
+                liberator.assert(lastMowOutput);
+                commandline._echoMultiline(lastMowOutput, commandline.HL_NORMAL);
             });
     },
     options: function () {
