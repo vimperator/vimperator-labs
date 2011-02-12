@@ -249,68 +249,20 @@ const TabGroup = Module("tabGroup", {
     commands: function () {
         let panoramaSubCommands = [
             /**
-             * Panorama SubCommand mkgroup
+             * Panorama SubCommand add
              * make a group and switch to the group.
              * take up the current tab to the group if bang(!) specified.
              */
-            new Command(["mk[group]"], "Create a tab group",
+            new Command(["add"], "Create a new tab group",
                 function (args) { tabGroup.createGroup(args.literalArg, true, args.bang ? tabs.getTab() : null); },
                 { bang: true, literal: 0 }),
             /**
-             * Panorama SubCommand switchgroup
-             * switch to the {group}.
-             * switch to {count}th next group if {count} specified.
+             * Panorama SubCommand list
+             * list current tab groups
              */
-            new Command(["switchgroup", "sg"], "Switch to another group",
-                function (args) {
-                    if (args.count > 0)
-                        tabGroup.swtichTo("+" + args.count, true);
-                    else
-                        tabGroup.switchTo(args.literalArg);
-                }, {
-                    count: true,
-                    literal: 0,
-                    completer: function (context) completion.tabgroup(context, true),
-                }),
-            /**
-             * Panorama SubCommand stash
-             * stash the current tab to the {group}
-             * create {group} and stash if bang(!) specified and {group} doesn't exists.
-             */
-            new Command(["stash"], "Stash the current tab to another group",
-                function (args) {
-                    let currentTab = tabs.getTab();
-                    if (currentTab.pinned) {
-                        liberator.echoerr("Cannot stash an AppTab");
-                        return;
-                    }
-                    let groupName = args.literalArg;
-                    let group = tabGroup.getGroup(groupName);
-                    if (!group) {
-                        if (args.bang)
-                            group = tabGroup.createGroup(groupName);
-                        else {
-                            liberator.echoerr("No such group: " + groupName.quote() + ". Add \"!\" if you want to create it.");
-                            return;
-                        }
-                    }
-                    tabGroup.moveTab(currentTab, group);
-                }, {
-                    bang: true,
-                    literal: 0,
-                    completer: function (context) completion.tabgroup(context, true),
-                }),
-            /**
-             * Panorama SubCommand rmgroup
-             * remove {group}.
-             * remve the current group if {group} is ommited.
-             */
-            new Command(["rm[group]"], "Close all tabs in the group",
-                function (args) { tabGroup.remove(args.literalArg); },
-                {
-                    literal: 0,
-                    completer: function (context) completion.tabgroup(context, false),
-                }),
+            new Command(["list", "ls"], "List current tab groups",
+                function (args) { completion.listCompleter("tabgroup"); },
+                { bang: false, argCount: 0 }),
             /**
              * Panorama SubCommad pullTab
              * pull the other group's tab
@@ -340,14 +292,67 @@ const TabGroup = Module("tabGroup", {
                     literal: 0,
                     completer: function (context) completion.buffer(context),
                 }),
+            /**
+             * Panorama SubCommand pushTab
+             * stash the current tab to the {group}
+             * create {group} and stash if bang(!) specified and {group} doesn't exists.
+             */
+            new Command(["push[tab]", "stash"], "Move the current tab to another group",
+                function (args) {
+                    let currentTab = tabs.getTab();
+                    if (currentTab.pinned) {
+                        liberator.echoerr("Cannot move an AppTab");
+                        return;
+                    }
+                    let groupName = args.literalArg;
+                    let group = tabGroup.getGroup(groupName);
+                    if (!group) {
+                        if (args.bang)
+                            group = tabGroup.createGroup(groupName);
+                        else {
+                            liberator.echoerr("No such group: " + groupName.quote() + ". Add \"!\" if you want to create it.");
+                            return;
+                        }
+                    }
+                    tabGroup.moveTab(currentTab, group);
+                }, {
+                    bang: true,
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, true),
+                }),
+            /**
+             * Panorama SubCommand remove
+             * remove {group}.
+             * remove the current group if {group} is ommited.
+             */
+            new Command(["remove", "rm"], "Close the tab group (including all tabs!)",
+                function (args) { tabGroup.remove(args.literalArg); },
+                {
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, false),
+                }),
+            /**
+             * Panorama SubCommand switch
+             * switch to the {group}.
+             * switch to {count}th next group if {count} specified.
+             */
+            new Command(["switch"], "Switch to another group",
+                function (args) {
+                    if (args.count > 0)
+                        tabGroup.switchTo("+" + args.count, true);
+                    else
+                        tabGroup.switchTo(args.literalArg);
+                }, {
+                    count: true,
+                    literal: 0,
+                    completer: function (context) completion.tabgroup(context, true),
+                }),
         ];
-        commands.add(["panorama", "tabgroups"],
+        commands.add(["tabgroups", "panorama"],
             "Manage tab groups",
             function (args) {
-                let list = template.genericOutput("Panorama Help",
-                    <dl>{ template.map(panoramaSubCommands, function(cmd)
-                        <><dt hightlight="title">{cmd.names.join(", ")}</dt><dd>{cmd.description}</dd></>) }</dl>);
-                commandline.echo(list, commandline.HL_NORMAL);
+                // Without argument, list current groups
+                completion.listCompleter("tabgroup");
             }, {
                 subCommands: panoramaSubCommands
             });
@@ -362,15 +367,10 @@ const TabGroup = Module("tabGroup", {
                 if (activeGroup)
                     groupItems = groupItems.filter(function(group) group.id != activeGroup.id);
             }
-            context.title = ["TabGroup"];
+            context.title = ["Tab Group"];
             context.completions = groupItems.map(function(group) {
-                let title = group.getTitle();
-                let desc = [
-                    "Title:", title || "(Untitled)",
-                    "TabNum:", group.getChildren().length,
-                ].join(" ");
-                if (!title)
-                    title = group.id;
+                let title = group.id + ": " + (group.getTitle() || "(Untitled)");
+                let desc = "Tabs: " + group.getChildren().length;
 
                 return [title, desc];
             });
