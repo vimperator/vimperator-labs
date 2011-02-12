@@ -301,7 +301,7 @@ const CommandLine = Module("commandline", {
             elements[elements.length - 1].scrollIntoView(true);
         }
         else
-            win.scrollTo(0, doc.height);
+            win.scrollTo(0, doc.body.clientHeight);
 
         win.focus();
 
@@ -979,7 +979,7 @@ const CommandLine = Module("commandline", {
         if (!this._outputContainer.collapsed)
             availableHeight += parseFloat(this._outputContainer.height);
         doc.body.style.minWidth = this._commandlineWidget.scrollWidth + "px";
-        this._outputContainer.height = Math.min(doc.height, availableHeight) + "px";
+        this._outputContainer.height = Math.min(doc.body.clientHeight, availableHeight) + "px";
         doc.body.style.minWidth = "";
         this._outputContainer.collapsed = false;
     },
@@ -1507,8 +1507,9 @@ const CommandLine = Module("commandline", {
         mappings.add([modes.NORMAL],
             ["g<"], "Redisplay the last command output",
             function () {
-                liberator.assert(this._lastMowOutput);
-                this._echoMultiline(this._lastMowOutput, commandline.HL_NORMAL);
+                let lastMowOutput = commandline._lastMowOutput;
+                liberator.assert(lastMowOutput);
+                commandline._echoMultiline(lastMowOutput, commandline.HL_NORMAL);
             });
     },
     options: function () {
