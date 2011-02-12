@@ -1396,7 +1396,7 @@ const Buffer = Module("buffer", {
             let process = context.process[0];
             context.process = [function (item, text)
                     <>
-                        <span highlight="Indicator" style="display: inline-block; width: 1.5em; text-align: center">{item.item.indicator}</span>
+                        <span highlight="Indicator" style="display: inline-block; width: 2ex; padding-right: 0.5ex; text-align: right">{item.item.indicator}</span>
                         { process.call(this, item, text) }
                     </>];
 
