@@ -65,7 +65,7 @@ const TabGroup = Module("tabGroup", {
     },
 
     /**
-     * switch to a group or a orphaned tab
+     * switch to a group or an orphaned tab
      * @param {String|Number} spec
      * @param {Boolean} wrap
      */
@@ -217,7 +217,7 @@ const TabGroup = Module("tabGroup", {
 }, {
     mappings: function () {
         mappings.add([modes.NORMAL], ["g@"],
-            "Go to AppTab",
+            "Go to an AppTab",
             function (count) {
                 let appTabs = tabGroup.appTabs;
                 let i = 0;
@@ -236,12 +236,12 @@ const TabGroup = Module("tabGroup", {
             { count: true });
 
         mappings.add([modes.NORMAL], ["<C-S-n>", "<C-S-PageDown>"],
-            "switch to next group",
+            "Switch to next tab group",
             function (count) { tabGroup.switchTo("+" + (count || 1), true); },
             { count: true });
 
         mappings.add([modes.NORMAL], ["<C-S-p>", "<C-S-PageUp>"],
-            "switch to previous group",
+            "Switch to previous tab group",
             function (count) { tabGroup.switchTo("-" + (count || 1), true); },
             { count: true });
     },
@@ -290,7 +290,7 @@ const TabGroup = Module("tabGroup", {
                         if (args.bang)
                             group = tabGroup.createGroup(groupName);
                         else {
-                            liberator.echoerr("No such group: " + groupName.quote() + ". add \"!\" if want create");
+                            liberator.echoerr("No such group: " + groupName.quote() + ". Add \"!\" if you want to create it.");
                             return;
                         }
                     }
@@ -315,11 +315,11 @@ const TabGroup = Module("tabGroup", {
              * Panorama SubCommad pullTab
              * pull the other group's tab
              */
-            new Command(["pull[tab]"], "pull a tab from anoother group",
+            new Command(["pull[tab]"], "Pull a tab from another group",
                 function (args) {
                     let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
                     if (!activeGroup) {
-                        liberator.echoerr("Cannot pull to the current.");
+                        liberator.echoerr("Cannot pull to the current group.");
                         return;
                     }
                     let buffer = args.literalArg;
@@ -341,8 +341,8 @@ const TabGroup = Module("tabGroup", {
                     completer: function (context) completion.buffer(context),
                 }),
         ];
-        commands.add(["panorama", "tabgroup"],
-            "Manage tab group",
+        commands.add(["panorama", "tabgroups"],
+            "Manage tab groups",
             function (args) {
                 let list = template.genericOutput("Panorama Help",
                     <dl>{ template.map(panoramaSubCommands, function(cmd)
