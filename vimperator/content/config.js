@@ -12,32 +12,9 @@ const Config = Module("config", ConfigBase, {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup"],
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup"],
-    defaults: {
-        complete: "slf",
-        guioptions: "smallicons",
-        titlestring: "Vimperator"
-    },
-
-    guioptions: {
-        scrollbars: ["Show scrollbars in the content when needed",
-            function(visible) {} ],
-        smallicons: ["Use small icons ", function() {} ],
-        tabsontop:  ["Show tabs above the main navigation bar", function() {} ]
-    },
-
-    toolbars: {
-        addons:     [["addon-bar"],       "Add-on bar. By default, only visible if you have addons installed."],
-        bookmarks:  [["PersonalToolbar"], "Bookmarks Toolbar"],
-        menu:       [["toolbar-menubar"], "Menu Bar"],
-        navigation: [["nav-bar"],         "Main toolbar with back/forward buttons location box"],
-        tabs:       [["TabsToolbar"],     "Tab bar (WARNING: Currently keeps reappearing)"]
-    },
-
-    get visualbellWindow() getBrowser().mPanelContainer,
-    styleableChrome: ["chrome://browser/content/browser.xul"],
 
     autocommands: [["BookmarkAdd",        "Triggered after a page is bookmarked"],
                    ["ColorScheme",        "Triggered after a color scheme has been loaded"],
@@ -53,6 +30,11 @@ const Config = Module("config", ConfigBase, {
                    ["VimperatorEnter",    "Triggered after Firefox starts"],
                    ["VimperatorLeavePre", "Triggered before exiting Firefox, just before destroying each module"],
                    ["VimperatorLeave",    "Triggered before exiting Firefox"]],
+
+    defaults: {
+        complete: "slf",
+        titlestring: "Vimperator"
+    },
 
     dialogs: [
         ["about",            "About Firefox",
@@ -114,6 +96,8 @@ const Config = Module("config", ConfigBase, {
 
     ignoreKeys: {},
 
+    get mainToolbar() document.getElementById("nav-bar"),
+
     scripts: [
         "browser.js",
         "bookmarks.js",
@@ -124,6 +108,8 @@ const Config = Module("config", ConfigBase, {
         "tabgroup.js",
     ],
 
+    styleableChrome: ["chrome://browser/content/browser.xul"],
+
     get tempFile() {
         let prefix = this.name.toLowerCase();
 
@@ -133,7 +119,17 @@ const Config = Module("config", ConfigBase, {
         catch (e) {}
 
         return prefix + ".tmp";
-    }
+    },
+
+    toolbars: {
+        addons:     [["addon-bar"],       "Add-on bar. By default, only visible if you have addons installed."],
+        bookmarks:  [["PersonalToolbar"], "Bookmarks Toolbar"],
+        menu:       [["toolbar-menubar"], "Menu Bar"],
+        navigation: [["nav-bar"],         "Main toolbar with back/forward buttons location box"],
+        tabs:       [["TabsToolbar"],     "Tab bar (WARNING: Currently keeps reappearing)"]
+    },
+
+    get visualbellWindow() getBrowser().mPanelContainer
 }, {
 }, {
     commands: function () {

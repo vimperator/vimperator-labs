@@ -1137,11 +1137,7 @@ const Tabs = Module("tabs", {
                             );
                         else
                             styles.removeSheet(true, "tabnumbers");
-
-                        // As of 2010-11-18 we need this hack, otherwise app tabs
-                        // seem wrongly positioned after showing tab numbers
-                        /*if (config.name == "Vimperator")
-                         config.tabbrowser.tabContainer._positionPinnedTabs();*/
+                        return value;
                     }
                 });
         }

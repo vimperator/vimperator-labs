@@ -52,7 +52,7 @@ const Browser = Module("browser", {
                 completer: function (context) completion.charset(context)
             });
 
-        // only available in FF 3.5
+        // only available in FF 3.5+
         if (services.get("privateBrowsing")) {
             options.add(["private", "pornmode"],
                 "Set the 'private browsing' option",

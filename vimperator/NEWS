@@ -6,9 +6,8 @@
       This was done since Firefox 4 has indeed a very minimal GUI and the Firefox
       navigation toolbar (with small icons) uses hardly more space than our old status line, but
       provides so much more (easy bookmarking, better security information, ...)
-    * IMPORTANT: 'guioptions' has changed heavily in format! Also hiding toolbars
-      can be done with the new 'toolbars' option instead. Also removed 'showtabline',
-      you can hide the tabbar with :set gui=notabs now (currently broken though).
+    * IMPORTANT: 'guioptions' and 'showtabline' have been removed in favor of
+      'toolbars', 'scrollbars' and 'tabnumbers' options!
     * IMPORTANT: Removed 'laststatus' option but add a 'status' option in contrast
       to decide which elements are shown in the new style status bar
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old
@@ -26,6 +25,7 @@
     * IMPORTANT: 'jsdebugger' option was removed, as JS completion should work much better
       out of the box now.
     * Full Panorama support: :tabgroups can be used to deal with tab groups.
+    * Add 'smallicons' option (default=true) to set small toolbar icons
     * Add 'g@' mapping for switching to an app tab.
     * Add '<C-S-n>' and '<C-S-p>' mappings for switching to the next / previous tab group.
     * Support for sub commands.

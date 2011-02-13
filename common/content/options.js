@@ -131,7 +131,7 @@ const Option = Class("Option", {
             value = this.globalValue;
 
         if (this.getter)
-            return liberator.trapErrors(this.getter, this, value);
+            value = liberator.trapErrors(this.getter, this, value);
 
         return value;
     },

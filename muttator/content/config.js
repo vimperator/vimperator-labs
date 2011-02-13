@@ -13,27 +13,22 @@ const Config = Module("config", ConfigBase, {
 
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Muttator",
-    hostApplication: "Thunderbird", // TODO: can this be found out otherwise? gBrandBundle.getString("brandShortName");
-                                    // Yes, but it will be localized unlike all other strings. So, it's best left until we i18n liberator. --djk
+    hostApplication: "Thunderbird",
 
     get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
     get features() this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
-        guioptions: "smallicons",
         titlestring: "Muttator"
     },
 
-    guioptions: {
-        folderlistheader: ["Show the small header above the folder list", function() { return ["folderPaneHeader"]; }],
-        smallicons: ["Use small icons ", function() {} ]
-    },
 
     toolbars: {
-        folderlist: [["folderPaneBox", "folderpane_splitter"], "Folder list"],
-        mail:       [["mail-bar3"],                            "Main toolbar for getting mail and composing new ones."],
-        menu:       [["mail-toolbar-menubar2"],                "Menu Bar"]/*,
+        composition: [["composeToolbar2"],                                   "Composition toolbar"],
+        folderlist:  [["folderPaneBox", "folderpane_splitter"],              "Folder list"],
+        mail:        [["mail-bar3"],                                         "Main toolbar for getting mail and composing new ones."],
+        menu:        [["mail-toolbar-menubar2", "compose-toolbar-menubar2"], "Menu Bar"]/*,
         // TODO: stupid element doesn't have an id!
         tabs:       [[function(visible) document.getElementById("tabmail").tabStrip.collapsed = !visible],       "Tab bar"]*/
     },
@@ -44,6 +39,7 @@ const Config = Module("config", ConfigBase, {
     get mailModes() [modes.NORMAL],
     // focusContent() focuses this widget
     get mainWidget() this.isComposeWindow ? document.getElementById("content-frame") : GetThreadTree(),
+    get mainToolbar() document.getElementById(this.isComposeWindow ? "compose-toolbar-menubar2" : "mail-bar3"),
     get visualbellWindow() document.getElementById(this.mainWindowId),
     styleableChrome: ["chrome://messenger/content/messenger.xul",
                       "chrome://messenger/content/messengercompose/messengercompose.xul"],
@@ -55,6 +51,7 @@ const Config = Module("config", ConfigBase, {
                    ["MuttatorEnter",    "Triggered after Thunderbird starts"],
                    ["MuttatorLeave",    "Triggered before exiting Thunderbird"],
                    ["MuttatorLeavePre", "Triggered before exiting Thunderbird"]],
+
     dialogs: [
         ["about",            "About Thunderbird",
             function () { window.openAboutDialog(); }],

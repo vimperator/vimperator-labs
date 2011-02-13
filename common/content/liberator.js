@@ -383,6 +383,7 @@ const Liberator = Module("liberator", {
         let matches = string.match(/^&(\w+)/);
         if (matches) {
             let opt = this.options.get(matches[1]);
+            // liberator.dump("evalExpression: " + matches[1]);
 
             liberator.assert(opt, "E113: Unknown option: " + matches[1]);
 
@@ -1088,7 +1089,7 @@ const Liberator = Module("liberator", {
     }
 }, {
 
-    // Only general options are added here, which are valid for all Liberator extensions
+    // Only general options are added here, which are valid for all liberator extensions
     options: function () {
         options.add(["errorbells", "eb"],
             "Ring the bell when an error message is displayed",
@@ -1098,52 +1099,11 @@ const Liberator = Module("liberator", {
             "Allow reading of an RC file in the current directory",
             "boolean", false);
 
-        const groups = {
-            scroll: {
-                opts: {
-                    r: ["Right Scrollbar", "vertical"],
-                    l: ["Left Scrollbar", "vertical"],
-                    b: ["Bottom Scrollbar", "horizontal"]
-                },
-                setter: function (opts) {
-                    let dir = ["horizontal", "vertical"].filter(
-                        function (dir) !Array.some(opts,
-                            function (o) this.opts[o] && this.opts[o][1] == dir, this),
-                        this);
-                    let class_ = dir.map(function (dir) "html|html > xul|scrollbar[orient=" + dir + "]");
-
-                    if (class_.length)
-                        styles.addSheet(true, "scrollbar", "*", class_.join(", ") + " { visibility: collapse !important; }", true);
-                    else
-                        styles.removeSheet(true, "scrollbar");
-                    options.safeSetPref("layout.scrollbar.side", opts.indexOf("l") >= 0 ? 3 : 2,
-                        "See 'guioptions' scrollbar flags.");
-                },
-                validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
-            },
-            tab: {
-            }
-        };
-
         options.add(["fullscreen", "fs"],
             "Show the current window fullscreen",
             "boolean", false, {
                 setter: function (value) window.fullScreen = value,
                 getter: function () window.fullScreen
-            });
-
-        options.add(["guioptions", "go"],
-            "Show or hide certain GUI elements and change other parts of the interface",
-            "stringlist", config.defaults.guioptions || "", {
-                setter: function (values) {
-                }/*,
-                completer: function (context) {
-                    let opts = [v.opts for ([k, v] in Iterator(groups))];
-                    opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
-                    return util.Array.flatten(opts);
-                },
-                validator: function (val) Option.validateCompleter.call(this, val) &&
-                        [v for ([k, v] in Iterator(groups))].every(function (g) !g.validator || g.validator(val))*/
             });
 
         options.add(["helpfile", "hf"],
@@ -1153,6 +1113,42 @@ const Liberator = Module("liberator", {
         options.add(["loadplugins", "lpl"],
             "Load plugin scripts when starting up",
             "boolean", true);
+
+        // TODO: Is this vimperator only? Otherwise fix for Muttator
+        options.add(["scrollbars", "sb"],
+            "Show scrollbars in the content window when needed",
+            "boolean", true, {
+                setter: function (value) {
+                    if (value)
+                        styles.removeSheet(true, "scrollbars");
+                    else // Use [orient="horizontal"] if you only want to change the horizontal scrollbars
+                        styles.addSheet(true, "scrollbars", "*", "html|html > xul|scrollbar { visibility: collapse !important; }", true);
+
+                    return value;
+                }
+            });
+
+        options.add(["smallicons", "si"],
+            "Show small or normal size icons in the main toolbar",
+            "boolean", true, {
+                setter: function (value) {
+                    try {
+                        let mainToolbar = config.mainToolbar;
+                        mainToolbar.setAttribute("iconsize", value ? "small" : "large");
+                    } catch (e) { alert(e); }
+                    return value;
+                }/*,
+                getter: function () {
+                    try {
+                        liberator.dump("GETTING: ");
+                        let mainToolbar = config.mainToolbar;
+                        return mainToolbar.getAttribute("iconsize") == "small";
+                    } catch (e) {
+                        return false;
+                    }
+                }*/
+            });
+
 
         options.add(["titlestring"],
             "Change the title of the window",
