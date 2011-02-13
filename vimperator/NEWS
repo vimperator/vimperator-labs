@@ -17,7 +17,7 @@
       and 'autocomplete' is the new option for the removed 'wildoptions=auto'
     * IMPORTANT: We automatically list completions as you type now. If you have a slow computer,
       you might want to :set noautocomplete
-    * IMPORTANT: We removed guioptions=N support, but in compensation we made guioptions=n
+    * IMPORTANT: Tab numbers can now be set with :set [no]tabnumbers. Also made them
       work much more reliable in Firefox4 - especially in combination with other tab related
       addons like TabMixPlus
     * IMPORTANT: We do not beep on unrecognized mappings anymore, to make it easier to just

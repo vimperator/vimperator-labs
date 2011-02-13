@@ -1183,6 +1183,22 @@
 
 
 <item>
+    <tags>'notn' 'notabnumbers'</tags>
+    <tags>'tn' 'tabnumbers'</tags>
+    <spec>'tabnumbers' 'tn'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Tab numbers appear as small numbers in the right corner of tabs.
+            They can be used to quickly get the position of a tab, which can
+            be used by other commands like 12<k>gt</k> to to to tab number 12.
+        </p>
+    </description>
+</item>
+
+
+<item>
     <tags>'titlestring'</tags>
     <spec>'titlestring'</spec>
     <type>string</type>

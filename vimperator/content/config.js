@@ -22,7 +22,8 @@ const Config = Module("config", ConfigBase, {
     },
 
     guioptions: {
-        scrollbars: ["Show scrollbars in the content when needed", function() {} ],
+        scrollbars: ["Show scrollbars in the content when needed",
+            function(visible) {} ],
         smallicons: ["Use small icons ", function() {} ],
         tabsontop:  ["Show tabs above the main navigation bar", function() {} ]
     },

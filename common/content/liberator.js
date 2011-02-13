@@ -1122,30 +1122,6 @@ const Liberator = Module("liberator", {
                 validator: function (opts) (opts.indexOf("l") < 0 || opts.indexOf("r") < 0)
             },
             tab: {
-                opts: {
-                    n: ["Tab number", highlight.selector("TabNumber")]
-                },
-                setter: function (opts) {
-                    if (!liberator.has("tabs"))
-                        return;
-
-                    // TODO: Change this stuff for muttator
-                    // TODO: Maybe move this stuff to tabs.js
-                    if (opts.indexOf("n") >= 0)
-                        styles.addSheet(true, "tabnumbers", "chrome://*",
-                            // we need to change the visible of the "new tab" buttons because the "inline" "new tab" button in the toolbar
-                            // gets moved just after the last app tab with tab numbers on
-                            "#TabsToolbar { counter-reset:tabnumber; } #TabsToolbar tab::after { counter-increment:tabnumber; content:counter(tabnumber); font:bold 0.84em monospace; cursor: default; } #TabsToolbar tab:not([pinned])::after { display:block; padding-bottom:0.4em; } .tabs-newtab-button { display: none !important; } #new-tab-button { visibility: visible !important; }"
-                        );
-                    else
-                        styles.removeSheet(true, "tabnumbers");
-
-
-                    // As of 2010-11-18 we need this hack, otherwise app tabs
-                    // seem wrongly positioned after showing tab numbers
-                    if (config.name == "Vimperator")
-                        config.tabbrowser.tabContainer._positionPinnedTabs();
-                }
             }
         };
 

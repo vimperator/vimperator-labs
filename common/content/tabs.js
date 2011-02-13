@@ -1122,6 +1122,28 @@ const Tabs = Module("tabs", {
                         ["resized", "Open resized popups in a new window"]
                     ]
                 });
+
+            options.add(["tabnumbers", "tn"],
+                "Show small numbers at each tab to allow quicker selection",
+                "boolean", false,
+                {
+                    setter: function (value) {
+                        // TODO: Change this stuff for muttator
+                        if (value)
+                            styles.addSheet(true, "tabnumbers", "chrome://*",
+                                // we need to change the visible of the "new tab" buttons because the "inline" "new tab" button in the toolbar
+                                // gets moved just after the last app tab with tab numbers on
+                                "#TabsToolbar { counter-reset:tabnumber; } #TabsToolbar tab::after { counter-increment:tabnumber; content:counter(tabnumber); font:bold 0.84em monospace; cursor: default; } #TabsToolbar tab:not([pinned])::after { display:block; padding-bottom:0.4em; } .tabs-newtab-button { display: none !important; } #new-tab-button { visibility: visible !important; }"
+                            );
+                        else
+                            styles.removeSheet(true, "tabnumbers");
+
+                        // As of 2010-11-18 we need this hack, otherwise app tabs
+                        // seem wrongly positioned after showing tab numbers
+                        /*if (config.name == "Vimperator")
+                         config.tabbrowser.tabContainer._positionPinnedTabs();*/
+                    }
+                });
         }
     }
 });
