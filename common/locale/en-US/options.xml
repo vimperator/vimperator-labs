@@ -538,24 +538,20 @@
 <item>
     <tags>'go' 'guioptions'</tags>
     <spec>'guioptions' 'go'</spec>
-    <type>charlist</type>
-    <default>Tbr</default>
+    <type>stringlist</type>
+    <default>smallicons</default>
     <description>
-        <p>Show or hide certain GUI elements like the menu or toolbar.</p>
+        <p>Show or hide certain GUI elements or modify their appearance.</p>
 
-        <p>Supported characters:</p>
+        <p>Supported options:</p>
 
         <dl>
-            <dt>m</dt>      <dd>Menubar</dd>
-            <dt>T</dt>      <dd>Toolbar</dd>
-            <dt>B</dt>      <dd>Bookmark bar</dd>
-            <dt>n</dt>      <dd>Tab number</dd>
-            <dt>b</dt>      <dd>Bottom scrollbar</dd>
-            <dt>r</dt>      <dd>Right scrollbar</dd>
-            <dt>l</dt>      <dd>Left scrollbar (<em>l</em> and <em>r</em> are mutually exclusive)</dd>
+            <dt>scrollbars</dt>      <dd></dd>
+            <dt>smallicons</dt>      <dd></dd>
+            <dt>tabsontop</dt>       <dd></dd>
         </dl>
 
-        <p>You can also hide the tab bar with <ex>:set showtabline=0</ex>.</p>
+        <p>For larger scale GUI modifications, look into the <o>'gui'</o> option.</p>
 
         <note>Scrollbar changes require a page reload to take effect.</note>
     </description>
@@ -1150,25 +1146,6 @@
 
 
 <item>
-    <tags>'stal' 'showtabline'</tags>
-    <spec>'showtabline' 'stal'</spec>
-    <type>number</type>
-    <default>2</default>
-    <description>
-        <p>Control when to show the tab bar of opened web pages.</p>
-
-        <p>Possible values:</p>
-
-        <dl>
-            <dt>0</dt>      <dd>Never show tab bar</dd>
-            <dt>1</dt>      <dd>Show tab bar only if more than one tab is open</dd>
-            <dt>2</dt>      <dd>Always show tab bar</dd>
-        </dl>
-    </description>
-</item>
-
-
-<item>
     <tags>'noscs' 'nosmartcase'</tags>
     <tags>'scs' 'smartcase'</tags>
     <spec>'smartcase' 'scs'</spec>
@@ -1218,6 +1195,55 @@
             that, you can restore it with:
         </p>
         <code><ex>:set titlestring=<str>Mozilla &liberator.host;</str></ex></code>
+    </description>
+</item>
+
+
+<item>
+    <tags>'gui' 'toolbars'</tags>
+    <spec>'toolbars' 'gui'</spec>
+    <type>stringlist</type>
+    <default></default>
+    <description>
+        <p>Show or hide &liberator.host;'s GUI elements like the menu bar, toolbars or the tab bar.</p>
+        <note>Since everything in Firefox is basically a toolbar, the <o>toolbars</o> and <o>gui</o>
+            aliases are equivalent and can be used interchangeably. <ex>:set gui=none,tabs</ex>
+            might read better for some, whereas <ex>:set toolbars=nonavigation</ex> might be better
+            in other cases.
+        </note>
+
+        <p>This option is designed to allow full UI customization with Firefox's capabilities,
+            as well as with Vimperator's. Therefore the default value <ex>:set gui=</ex> just
+            means that we don't touch any GUI elements by default. If you want a truely minimal
+            GUI, you can - however - just use <ex>:set gui=none</ex> in your .vimperatorrc file.</p>
+
+        <p>Individual elements can be shown with <ex>:set toolbars=&lt;toolbar&gt;</ex> and hidden with
+            <ex>:set toolbars=no&lt;toolbar&gt;</ex>. If you want to toggle the display of an element,
+            just use <ex>:set toolbars=inv&lt;toolbar&gt;</ex>, which also provides a good basis for
+            adding some mappings to quickly toggle certain elements.
+        </p>
+
+        <p>Supported elements:</p>
+
+        <dl>
+            <dt>menu</dt>       <dd>Menu Bar</dd>
+            <dt>tabs</dt>       <dd>Tab Bar <warning>Due to a bug, currently gets shown again by Firefox</warning></dd>
+            <dt>navigation</dt> <dd>Main toolbar which contains buttons for navigating back/forward as well as the location box.</dd>
+            <dt>bookmarks</dt>  <dd>Bookmark bar</dd>
+            <dt>addons</dt>     <dd>Optional add-on bar at the bottom. By default, only shown if there are addons using it.</dd>
+        </dl>
+
+        <p>In order to quickly change the whole GUI, &liberator.appname; provides two more meta elements:</p>
+        <dl>
+            <dt>all</dt>        <dd>Show as much GUI as possible</dd>
+            <dt>none</dt>       <dd>Hide all GUI</dd>
+        </dl>
+
+        Since the elements are processed sequentially, you can combine these items
+        to change the whole GUI really quickly. E.g. to just show the tab bar, but
+        no other GUI elements, use <ex>:set gui=none,tabs</ex>.
+
+
     </description>
 </item>
 

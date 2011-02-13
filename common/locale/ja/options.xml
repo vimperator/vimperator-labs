@@ -1097,25 +1097,6 @@
 
 
 <item>
-    <tags>'stal' 'showtabline'</tags>
-    <spec>'showtabline' 'stal'</spec>
-    <type>number</type>
-    <default>2</default>
-    <description>
-        <p>開かれているウェブページのタブバーを表示するタイミングを設定します。</p>
-
-        <p>以下の値が使用できます:</p>
-
-        <dl>
-            <dt>0</dt>      <dd>常に表示しません</dd>
-            <dt>1</dt>      <dd>複数のタブがあるときのみ表示します</dd>
-            <dt>2</dt>      <dd>常に表示します</dd>
-        </dl>
-    </description>
-</item>
-
-
-<item>
     <tags>'noscs' 'nosmartcase'</tags>
     <tags>'scs' 'smartcase'</tags>
     <spec>'smartcase' 'scs'</spec>

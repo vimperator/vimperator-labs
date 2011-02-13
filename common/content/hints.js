@@ -1222,7 +1222,7 @@ const Hints = Module("hints", {
 
         options.add(["hintchars", "hc"],
             "What characters to use for labeling hints",
-            "string", "0123456789",
+            "string", "0123456789", // TODO: Change to charlist
             {
                 setter: function (value) {
                     if (modes.extended & modes.HINTS)

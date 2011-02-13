@@ -1,10 +1,14 @@
 2010-xx-xx:
     * version 3.0
-    * IMPORTANT: The default UI now shows the toolbar by default. This was done since we got rid
-      off the statusbar, and the toolbar (preferably with small icons) shows exactly the same information
-      and even some more (rss feeds, better security information, ...)
     * IMPORTANT: The statusbar and command line have been merged in a single
       row as also Firefox 4 hides the statusbar by default now
+    * IMPORTANT: By default, we don't change Firefox's default UI anymore!
+      This was done since Firefox 4 has indeed a very minimal GUI and the Firefox
+      navigation toolbar (with small icons) uses hardly more space than our old status line, but
+      provides so much more (easy bookmarking, better security information, ...)
+    * IMPORTANT: 'guioptions' has changed heavily in format! Also hiding toolbars
+      can be done with the new 'toolbars' option instead. Also removed 'showtabline',
+      you can hide the tabbar with :set gui=notabs now (currently broken though).
     * IMPORTANT: Removed 'laststatus' option but add a 'status' option in contrast
       to decide which elements are shown in the new style status bar
     * IMPORTANT: Support for configurable hint characters; This basically brings back the old

@@ -21,16 +21,21 @@ const Config = Module("config", ConfigBase, {
     /*** optional options, there are checked for existence and a fallback provided  ***/
     get features() this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
     defaults: {
-        guioptions: "frb",
-        showtabline: 1,
+        guioptions: "smallicons",
         titlestring: "Muttator"
     },
 
     guioptions: {
-        m: ["MenuBar",            ["mail-toolbar-menubar2"]],
-        T: ["Toolbar" ,           ["mail-bar2"]],
-        f: ["Folder list",        ["folderPaneBox", "folderpane_splitter"]],
-        F: ["Folder list header", ["folderPaneHeader"]]
+        folderlistheader: ["Show the small header above the folder list", function() { return ["folderPaneHeader"]; }],
+        smallicons: ["Use small icons ", function() {} ]
+    },
+
+    toolbars: {
+        folderlist: [["folderPaneBox", "folderpane_splitter"], "Folder list"],
+        mail:       [["mail-bar3"],                            "Main toolbar for getting mail and composing new ones."],
+        menu:       [["mail-toolbar-menubar2"],                "Menu Bar"]/*,
+        // TODO: stupid element doesn't have an id!
+        tabs:       [[function(visible) document.getElementById("tabmail").tabStrip.collapsed = !visible],       "Tab bar"]*/
     },
 
     //get isComposeWindow() window.wintype == "msgcompose",

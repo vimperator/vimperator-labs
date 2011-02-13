@@ -21,7 +21,7 @@ const ConfigBase = Class(ModuleBase, {
      *     property names must be the options' canonical names, and the values
      *     must be strings as entered via :set.
      */
-    defaults: { guioptions: "rb" },
+    defaults: { guioptions: "", toolbars: "" },
 
     /**
      * @property {[["string", "string", "function"]]} An array of
@@ -94,6 +94,12 @@ const ConfigBase = Class(ModuleBase, {
      *    initialization.
      */
     scripts: [],
+
+    /**
+     * @property {Object} A list of toolbars which can be shown/hidden
+     *    with :set toolbars
+     */
+    toolbars: {},
 
     /**
      * @property {string} The leaf name of any temp files created by

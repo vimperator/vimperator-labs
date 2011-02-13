@@ -17,16 +17,22 @@ const Config = Module("config", ConfigBase, {
     features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup"],
     defaults: {
         complete: "slf",
-        guioptions: "Trb",
-        showtabline: 2,
+        guioptions: "smallicons",
         titlestring: "Vimperator"
     },
 
     guioptions: {
-        m: ["Menubar",      ["toolbar-menubar"]],
-        T: ["Toolbar",      ["nav-bar"]],
-        B: ["Bookmark bar", ["PersonalToolbar"]],
-        A: ["Add-on bar", ["addon-bar"]]
+        scrollbars: ["Show scrollbars in the content when needed", function() {} ],
+        smallicons: ["Use small icons ", function() {} ],
+        tabsontop:  ["Show tabs above the main navigation bar", function() {} ]
+    },
+
+    toolbars: {
+        addons:     [["addon-bar"],       "Add-on bar. By default, only visible if you have addons installed."],
+        bookmarks:  [["PersonalToolbar"], "Bookmarks Toolbar"],
+        menu:       [["toolbar-menubar"], "Menu Bar"],
+        navigation: [["nav-bar"],         "Main toolbar with back/forward buttons location box"],
+        tabs:       [["TabsToolbar"],     "Tab bar (WARNING: Currently keeps reappearing)"]
     },
 
     get visualbellWindow() getBrowser().mPanelContainer,

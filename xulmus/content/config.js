@@ -28,7 +28,6 @@ const Config = Module("config", ConfigBase, {
     features: ["bookmarks", "hints", "marks", "history", "quickmarks", "session", "tabs", "player"],
     defaults: {
         guioptions: "mprb",
-        showtabline: 2,
         titlestring: "Xulmus"
     },
 

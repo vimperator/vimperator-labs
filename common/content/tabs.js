@@ -1063,38 +1063,6 @@ const Tabs = Module("tabs", {
         }
     },
     options: function () {
-        options.add(["showtabline", "stal"],
-            "Control when to show the tab bar of opened web pages",
-            "number", config.defaults["showtabline"],
-            {
-                setter: function (value) {
-                    // FIXME: we manipulate mTabContainer underneath mStrip so we
-                    // don't have to fight against the host app's attempts to keep
-                    // it open - hack! Adding a filter watch to mStrip is probably
-                    // the cleanest solution.
-                    let tabStrip = config.tabbrowser.mTabContainer;
-
-                    if (value == 0)
-                        tabStrip.collapsed = true;
-                    else {
-                        // FIXME: Why are we preferring our own created preference
-                        // here? --djk
-                        let pref = "browser.tabStrip.autoHide";
-                        if (options.getPref(pref) == null) // Try for FF 3.0 & 3.1
-                            pref = "browser.tabs.autoHide";
-                        options.safeSetPref(pref, value == 1);
-                        tabStrip.collapsed = false;
-                    }
-
-                    return value;
-                },
-                completer: function (context) [
-                    ["0", "Never show tab bar"],
-                    ["1", "Show tab bar only if more than one tab is open"],
-                    ["2", "Always show tab bar"]
-                ]
-            });
-
         if (config.hasTabbrowser) {
             options.add(["activate", "act"],
                 "Define when tabs are automatically activated",

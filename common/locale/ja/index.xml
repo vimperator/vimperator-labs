@@ -427,7 +427,6 @@
     <dt><o>shellcmdflag</o></dt> <dd><ex>:!</ex> や <ex>:run</ex> コマンドを実行する際に使用するシェルに渡されるオプションを設定します</dd>
     <dt><o>showmode</o></dt> <dd>コマンドラインに現在のモードを表示するかどうかを設定します</dd>
     <dt><o>showstatuslinks</o></dt> <dd>マウスカーソルの下のリンク先を表示する方法を設定します</dd>
-    <dt><o>showtabline</o></dt> <dd>ウェブページを開いた際にタブバーを表示するかどうかを設定します</dd>
     <dt><o>smartcase</o></dt> <dd>検索パターンが大文字を含む場合 <o>ignorecase</o> オプションを無効にするかどうかを設定します</dd>
     <dt><o>suggestengines</o></dt> <dd>サジェスト機能で使用するサーチエンジンの一覧を設定します</dd>
     <dt><o>titlestring</o></dt> <dd>ウィンドウのタイトルを設定します</dd>

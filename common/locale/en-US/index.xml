@@ -428,7 +428,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>shellcmdflag</o></dt> <dd>Flag passed to shell when executing <ex>:!</ex> and <ex>:run</ex> commands</dd>
     <dt><o>showmode</o></dt> <dd>Show the current mode in the command line</dd>
     <dt><o>showstatuslinks</o></dt> <dd>Show the destination of the link under the cursor in the status bar</dd>
-    <dt><o>showtabline</o></dt> <dd>Control when to show the tab bar of opened web pages</dd>
     <dt><o>smartcase</o></dt> <dd>Override the <o>ignorecase</o> option if the pattern contains uppercase characters</dd>
     <dt><o>statusfields</o></dt> <dd>Show certain elements in the status bar</dd>
     <dt><o>suggestengines</o></dt> <dd>Engine Alias which has a feature of suggest</dd>

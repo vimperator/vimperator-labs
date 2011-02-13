@@ -7,7 +7,7 @@
     xmlns="http://vimperator.org/namespaces/liberator"
     xmlns:html="http://www.w3.org/1999/xhtml">
 
-<item replace="'go'">
+<!--item replace="'go'">
  <tags>'go' 'guioptions'</tags>
  <spec>'guioptions' 'go'</spec>
  <type>charlist</type>
@@ -32,7 +32,7 @@
 
  <note>Scrollbar changes require a page reload to take effect.</note>
  </description>
-</item>
+</item-->
 
 <!--item insertbefore=":set">
     <tags>:seg :way</tags>

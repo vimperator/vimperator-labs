@@ -55,7 +55,7 @@ syn region xulmusSet matchgroup=xulmusCommand start="\%(^\s*:\=\)\@<=\<\%(setl\%
 syn keyword xulmusOption activate act autocomplete ac cdpath cd complete cpt defsearch ds editor encoding enc eventignore ei extendedhinttags eht
     \ fileencoding fenc followhints fh guioptions go helpfile hf hintinputs hin hintmatching hm hinttags ht hinttimeout hto
     \ history hi maxitems messages msgs newtab nextpattern pageinfo pa popups pps previouspattern repeat runtimepath
-    \ rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli showtabline stal status suggestengines titlestring urlseparator
+    \ rtp scroll scr shell sh shellcmdflag shcf showstatuslinks ssli status suggestengines titlestring urlseparator
     \ verbose vbs wildmode wim wordseparators wsp
     \ contained nextgroup=xulmusSetMod
 

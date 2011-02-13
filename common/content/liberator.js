@@ -1047,20 +1047,6 @@ const Liberator = Module("liberator", {
     }
 
 }, {
-    // initially hide all GUI elements, they are later restored unless the user
-    // has :set go= or something similar in his config
-    hideGUI: function () {
-        let guioptions = config.guioptions;
-        for (let option in guioptions) {
-            guioptions[option].forEach(function (elem) {
-                try {
-                    document.getElementById(elem).collapsed = true;
-                }
-                catch (e) {}
-            });
-        }
-    },
-
     // return the platform normalized to Vim values
     getPlatformFeature: function () {
         let platform = navigator.platform;
@@ -1086,7 +1072,7 @@ const Liberator = Module("liberator", {
         }
 
         let items = [];
-        addChildren(document.getElementById(config.guioptions["m"][1]), "");
+        addChildren(document.getElementById(config.toolbars["menu"][0][0]), "");
         return items;
     },
 
@@ -1113,18 +1099,6 @@ const Liberator = Module("liberator", {
             "boolean", false);
 
         const groups = {
-            config: {
-                opts: config.guioptions,
-                setter: function (opts) {
-                    for (let [opt, [, ids]] in Iterator(this.opts)) {
-                        ids.map(function (id) document.getElementById(id))
-                           .forEach(function (elem) {
-                            if (elem)
-                                elem.collapsed = (opts.indexOf(opt) == -1);
-                        });
-                    }
-                }
-            },
             scroll: {
                 opts: {
                     r: ["Right Scrollbar", "vertical"],
@@ -1183,20 +1157,17 @@ const Liberator = Module("liberator", {
             });
 
         options.add(["guioptions", "go"],
-            "Show or hide certain GUI elements like the menu or toolbar",
-            "charlist", config.defaults.guioptions || "", {
-                setter: function (value) {
-                    for (let [, group] in Iterator(groups))
-                        group.setter(value);
-                    return value;
-                },
+            "Show or hide certain GUI elements and change other parts of the interface",
+            "stringlist", config.defaults.guioptions || "", {
+                setter: function (values) {
+                }/*,
                 completer: function (context) {
                     let opts = [v.opts for ([k, v] in Iterator(groups))];
                     opts = opts.map(function (opt) [[k, v[0]] for ([k, v] in Iterator(opt))]);
                     return util.Array.flatten(opts);
                 },
                 validator: function (val) Option.validateCompleter.call(this, val) &&
-                        [v for ([k, v] in Iterator(groups))].every(function (g) !g.validator || g.validator(val))
+                        [v for ([k, v] in Iterator(groups))].every(function (g) !g.validator || g.validator(val))*/
             });
 
         options.add(["helpfile", "hf"],
@@ -1236,6 +1207,95 @@ const Liberator = Module("liberator", {
                     win.setAttribute("titlemodifier", value);
 
                     return value;
+                }
+            });
+
+        options.add(["toolbars", "gui"],
+            "Show or hide toolbars",
+            "stringlist", config.defaults.toolbars || "", {
+                setter: function (values) {
+                    let toolbars = config.toolbars || {};
+                    // a set of actions with the the name of the element as the object's keys
+                    // and the collapsed state for the values
+                    // Used in order to avoid multiple collapse/uncollapse actions
+                    // for values like :set gui=none,tabs
+                    let actions = {};
+                    for (let [, action] in Iterator(this.parseValues(values))) {
+                        if (action == "all" || action == "none") {
+                            for (let [name, toolbar] in Iterator(toolbars)) {
+                                let ids = toolbar[0] || [];
+                                ids.forEach(function (id) actions[id] = action == "none");
+                            }
+                        } else {
+                            let toolbarName = action.replace(/^(no|inv)/, "");
+                            let toolbar = toolbars[toolbarName];
+                            if (toolbar) {
+                                let ids = toolbar[0] || [];
+                                ids.forEach(function (id) {
+                                    let elem = document.getElementById(id);
+                                    if (!elem)
+                                        return;
+
+                                    let collapsed = typeof(actions[id]) == "boolean" ? actions[id] : elem.collapsed;
+                                    if (action.indexOf("no") == 0)
+                                        collapsed = true;
+                                    else if (action.indexOf("inv") == 0)
+                                        collapsed = !collapsed;
+                                    else
+                                        collapsed = false;
+                                    
+                                    actions[id] = collapsed; // add the action, or change an existing action
+                                });
+                            }
+                        }
+                    }
+
+                    // finally we can just execute the actions
+                    for (let [id, collapsed] in Iterator(actions)) {
+                        // liberator.dump("id: " + id + " collapsed: " + collapsed);
+                        let elem = document.getElementById(id);
+                        if (!elem)
+                            continue;
+
+                        elem.collapsed = collapsed;
+
+                        // Firefox4 added this helper function, which does more than
+                        // just collapsing elements (like showing or hiding the menu button when the menu is hidden/shown)
+                        if (window.setToolbarVisibility)
+                            window.setToolbarVisibility(elem, !collapsed);
+                    }
+
+                    return values;
+                },
+                getter: function() {
+                    let toolbars = config.toolbars || {};
+                    let values = [];
+                    for (let [name, toolbar] in Iterator(toolbars)) {
+                        let elem = document.getElementById(toolbar[0]);
+                        if (elem)
+                            values.push(elem.collapsed ? "no" + name : name);
+                    }
+                    return this.joinValues(values);
+                },
+                completer: function (context) {
+                    let toolbars = config.toolbars || {};
+                    let completions = [["all",  "Show all toolbars"],
+                                       ["none", "Hide all toolbars"]];
+
+                    for (let [name, toolbar] in Iterator(toolbars)) {
+                        let elem = document.getElementById(toolbar[0][0]);
+                        if (elem)
+                            completions.push([elem.collapsed ? name : "no" + name, (elem.collapsed ? "Show " : "Hide ") + toolbar[1]]);
+                    }
+                    context.completions = completions;
+                    context.compare = CompletionContext.Sort.unsorted;
+                    return completions;
+                },
+                validator: function (value) {
+                    let toolbars = config.toolbars || {};
+                    // "ne" is a simple hack, since in the next line val.replace() makes "ne" out from "none"
+                    let values = ["all", "ne"].concat([toolbar for each([toolbar, ] in Iterator(toolbars))]);
+                    return value.every(function(val) values.indexOf(val.replace(/^(no|inv)/, "")) >= 0);
                 }
             });
 
@@ -1797,9 +1857,6 @@ const Liberator = Module("liberator", {
 
         // always start in normal mode
         modes.reset();
-
-        // TODO: we should have some class where all this guioptions stuff fits well
-        Liberator.hideGUI();
 
         if (liberator.commandLineOptions.preCommands)
             liberator.commandLineOptions.preCommands.forEach(function (cmd) {

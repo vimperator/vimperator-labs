@@ -49,7 +49,7 @@ syn region muttatorSet matchgroup=muttatorCommand start="\%(^\s*:\=\)\@<=\<\%(se
 syn keyword muttatorOption archivefolder autocomplete ac cdpath cd complete cpt editor eventignore ei extendedhinttags eht fileencoding fenc
     \ followhints fh guioptions go helpfile hf hintinputs hin hintmatching hm hinttags ht hinttimeout hto history hi
     \ layout maxitems messages msgs nextpattern pageinfo pa previouspattern runtimepath rtp scroll scr shell sh shellcmdflag shcf
-    \ showstatuslinks ssli showtabline stal status smtpserver smtp suggestengines titlestring urlseparator verbose vbs
+    \ showstatuslinks ssli status smtpserver smtp suggestengines titlestring urlseparator verbose vbs
     \ wildmode wim wop wordseparators wsp
     \ contained nextgroup=muttatorSetMod
 
