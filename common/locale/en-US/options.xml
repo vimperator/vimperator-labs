@@ -536,29 +536,6 @@
 
 
 <item>
-    <tags>'go' 'guioptions'</tags>
-    <spec>'guioptions' 'go'</spec>
-    <type>stringlist</type>
-    <default>smallicons</default>
-    <description>
-        <p>Show or hide certain GUI elements or modify their appearance.</p>
-
-        <p>Supported options:</p>
-
-        <dl>
-            <dt>scrollbars</dt>      <dd></dd>
-            <dt>smallicons</dt>      <dd></dd>
-            <dt>tabsontop</dt>       <dd></dd>
-        </dl>
-
-        <p>For larger scale GUI modifications, look into the <o>'gui'</o> option.</p>
-
-        <note>Scrollbar changes require a page reload to take effect.</note>
-    </description>
-</item>
-
-
-<item>
     <tags>'hf' 'helpfile'</tags>
     <spec>'helpfile' 'hf'</spec>
     <type>string</type>
@@ -1082,6 +1059,33 @@
             <o>scroll</o> and also used for the current command. The value can
             be reset to half the window height with <ex>:set scroll=0</ex>.
         </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosb' 'noscrollbars'</tags>
+    <tags>'sb' 'scrollbars'</tags>
+    <spec>'scrollbars' 'sb'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Show or hide the scrollbars in the main content window. If the
+        document has a frameset, then only the outermost scrollbars are affected.</p>
+
+        <note>This option requires a page reload to take effect.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosi' 'nosmallicons'</tags>
+    <tags>'si' 'smallicons'</tags>
+    <spec>'smallicons' 'si'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Defines the icon size in the main toolbar.</p>
     </description>
 </item>
 
