@@ -82,11 +82,6 @@ const StatusLine = Module("statusline", {
                 return;
             }
 
-            // update the ordinal which is used for numbered tabs
-            if (options.get("guioptions").has("n", "N"))
-                for (let [i, tab] in util.Array.iteritems(config.browser.mTabs))
-                    tab.setAttribute("ordinal", i + 1);
-
             this.updateField("tabcount", "[" + (tabs.index() + 1) + "/" + tabs.count + "]");
         }
     },
