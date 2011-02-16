@@ -1229,12 +1229,14 @@ const Liberator = Module("liberator", {
                         if (!elem)
                             continue;
 
-                        elem.collapsed = collapsed;
-
                         // Firefox4 added this helper function, which does more than
                         // just collapsing elements (like showing or hiding the menu button when the menu is hidden/shown)
                         if (window.setToolbarVisibility)
                             window.setToolbarVisibility(elem, !collapsed);
+                        else if (elem.getAttribute("type") == "menubar")
+                            elem.setAttribute("autohide", collapsed);
+                        else
+                            elem.collapsed = collapsed;
                     }
 
                     return values;
@@ -1244,8 +1246,10 @@ const Liberator = Module("liberator", {
                     let values = [];
                     for (let [name, toolbar] in Iterator(toolbars)) {
                         let elem = document.getElementById(toolbar[0]);
-                        if (elem)
-                            values.push(elem.collapsed ? "no" + name : name);
+                        if (elem) {
+                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
+                            values.push(elem.getAttribute(hidingAttribute) == "true" ? "no" + name : name);
+                        }
                     }
                     return this.joinValues(values);
                 },
@@ -1256,8 +1260,11 @@ const Liberator = Module("liberator", {
 
                     for (let [name, toolbar] in Iterator(toolbars)) {
                         let elem = document.getElementById(toolbar[0][0]);
-                        if (elem)
-                            completions.push([elem.collapsed ? name : "no" + name, (elem.collapsed ? "Show " : "Hide ") + toolbar[1]]);
+                        if (elem) {
+                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
+                            completions.push([elem.getAttribute(hidingAttribute) == "true" ? name : "no" + name,
+                                              (elem.getAttribute(hidingAttribute) == "true" ? "Show " : "Hide ") + toolbar[1]]);
+                        }
                     }
                     context.completions = completions;
                     context.compare = CompletionContext.Sort.unsorted;
