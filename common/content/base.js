@@ -233,12 +233,16 @@ function update(target) {
                 var v = src[k];
                 target[k] = v;
                 if (target.__proto__ && callable(v)) {
-                    v.superapply = function (self, args) {
-                        return target.__proto__[k].apply(self, args);
-                    };
-                    v.supercall = function (self) {
-                        return v.superapply(self, Array.slice(arguments, 1));
-                    };
+                    if (callable(target.__proto__[k])) {
+                        v.superapply = function superapply(self, args) {
+                            return target.__proto__[k].apply(self, args);
+                        };
+                        v.supercall = function supercall(self) {
+                            return v.superapply(self, Array.slice(arguments, 1));
+                        };
+                    }
+                    else
+                        v.superapply = v.supercall = function dummy() {};
                 }
             }
             if (get)
