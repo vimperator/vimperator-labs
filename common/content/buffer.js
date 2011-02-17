@@ -212,8 +212,8 @@ const Buffer = Module("buffer", {
     /**
      * @property {Object} The document loading progress listener.
      */
-    progressListener: update(Object.create(window.XULBrowserWindow || {}), {
-        QueryInterface: XPCOMUtils.generateQI([Ci.nsISupportsWeakReference, Ci.nsIWebProgressListener]),
+    progressListener: {
+        QueryInterface: XPCOMUtils.generateQI([Ci.nsISupportsWeakReference, Ci.nsIWebProgressListener, Ci.nsIMsgStatusFeedback, Ci.nsIActivityMgrListener, Ci.nsIActivityListener]),
 
         // XXX: function may later be needed to detect a canceled synchronous openURL()
         onStateChange: function onStateChange(webProgress, request, flags, status) {
@@ -283,7 +283,7 @@ const Buffer = Module("buffer", {
                     modes.show();
                 }
         },
-    }),
+    },
 
     /**
      * @property {Array} The alternative style sheets for the current
@@ -1445,7 +1445,19 @@ const Buffer = Module("buffer", {
         completion.buffer.ORPHANS = 1 << 2;
     },
     events: function () {
-        window.XULBrowserWindow = this.progressListener;
+        let browserWindow;
+        if  (config.hostApplication == "Thunderbird") {
+            browserWindow = "MsgStatusFeedback";
+            let activityManager = Cc["@mozilla.org/activity-manager;1"].getService(Ci.nsIActivityManager);
+            activityManager.removeListener(window.MsgStatusFeedback);
+            this.progressListener = update(Object.create(window.MsgStatusFeedback), this.progressListener);
+            statusFeedback.setWrappedStatusFeedback(this.progressListener);
+            activityManager.addListener(this.progressListener);
+        } else {
+            browserWindow = "XULBrowserWindow";
+            this.progressListener = update(Object.create(window.XULBrowserWindow), this.progressListener);
+        }
+        window[browserWindow] = this.progressListener;
         window.QueryInterface(Ci.nsIInterfaceRequestor)
               .getInterface(Ci.nsIWebNavigation)
               .QueryInterface(Ci.nsIDocShellTreeItem)
