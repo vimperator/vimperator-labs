@@ -467,7 +467,7 @@ const Tabs = Module("tabs", {
         else if (!allowNonUnique)
             liberator.echoerr("E93: More than one match for " + buffer);
         else {
-            let length = tabItems.lnegth;
+            let length = tabItems.length;
             if (reverse) {
                 index = length - count;
                 while (index < 0)
