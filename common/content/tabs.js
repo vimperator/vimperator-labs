@@ -399,7 +399,7 @@ const Tabs = Module("tabs", {
 
         matches = [];
         let lowerBuffer = buffer.toLowerCase();
-        let first = tabs.index() + (reverse ? 0 : 1);
+        let first = tabs.index();
         let nbrowsers = config.tabbrowser.browsers.length;
         for (let [i, ] in tabs.browsers) {
             let index = (i + first) % nbrowsers;
@@ -416,10 +416,10 @@ const Tabs = Module("tabs", {
             }
             title = title.toLowerCase();
             if (url == buffer)
-                return [tabs.index(index)];
+                return [tabs.getTab(index)];
 
             if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
-                matches.push(tabs.index(index));
+                matches.push(tabs.getTab(index));
         }
 
         return matches;
@@ -467,13 +467,14 @@ const Tabs = Module("tabs", {
         else if (!allowNonUnique)
             liberator.echoerr("E93: More than one match for " + buffer);
         else {
+            let length = tabItems.lnegth;
             if (reverse) {
-                index = tabItems.length - count;
+                index = length - count;
                 while (index < 0)
-                    index += tabItems.length;
+                    index += length;
             }
             else
-                index = (count - 1) % tabItems.length;
+                index = count % length;
 
             config.tabbrowser.mTabContainer.selectedItem = tabItems[index];
         }
