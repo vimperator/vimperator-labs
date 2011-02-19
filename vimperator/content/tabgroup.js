@@ -83,8 +83,9 @@ const TabGroup = Module("tabGroup", {
             relative = true;
         }
         else if (spec != "") {
-            if (/^\d+$/.test(spec))
-                spec = parseInt(spec, 10);
+            let matches = spec.match(/^(\d+):?/);
+            if (matches)
+                spec = parseInt(matches[1], 10);
             let targetGroup = tabGroup.getGroup(spec);
             if (targetGroup)
                 index = groupsAndOrphans.indexOf(targetGroup);
