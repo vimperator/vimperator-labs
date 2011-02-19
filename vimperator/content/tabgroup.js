@@ -51,9 +51,23 @@ const TabGroup = Module("tabGroup", {
         if (!count)
             count = 1;
 
-        let test = typeof name == "number" ?
-            function (g) g.id == name :
-            function (g) g.id == name || g.getTitle() == name;
+        let test;
+        if (typeof name == "number")
+            test = function (g) g.id == name;
+        else {
+            name = name.toLowerCase();
+            let id;
+            let matches = name.match(/^(\d+)(?::(?:\s+(.*))?)?$/);
+            if (matches)
+                [, id, name] = matches;
+
+            if (id) {
+                id = parseInt(id, 10);
+                test = function (g) g.id == id;
+            }
+            else
+                test = function (g) g.getTitle().toLowerCase() == name;
+        }
         for (let [, group] in Iterator(this.tabView.GroupItems.groupItems)) {
             if (test(group)) {
                 i++;
@@ -83,9 +97,6 @@ const TabGroup = Module("tabGroup", {
             relative = true;
         }
         else if (spec != "") {
-            let matches = spec.match(/^(\d+):?/);
-            if (matches)
-                spec = parseInt(matches[1], 10);
             let targetGroup = tabGroup.getGroup(spec);
             if (targetGroup)
                 index = groupsAndOrphans.indexOf(targetGroup);
