@@ -1135,7 +1135,7 @@ const Liberator = Module("liberator", {
                     try {
                         let mainToolbar = config.mainToolbar;
                         mainToolbar.setAttribute("iconsize", value ? "small" : "large");
-                    } catch (e) { alert(e); }
+                    } catch (e) { }
                     return value;
                 }/*,
                 getter: function () {

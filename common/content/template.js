@@ -65,7 +65,7 @@ const Template = Module("template", {
 
     bookmarkDescription: function (item, text, filter)
     <>
-        <a href={item.item.url} highlight="URL">({template.highlightFilter(text, filter)})</a>&#160;
+        <a href={item.item.url} highlight="URL">{template.highlightFilter(text || "", filter)}</a>&#160;
         {
             !(item.extra && item.extra.length) ? "" :
             <span class="extra-info">
