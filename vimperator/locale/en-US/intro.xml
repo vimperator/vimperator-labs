@@ -29,6 +29,14 @@ functionality is available as commands, typing <ex>:back</ex> will go back
 within the current page history, just like hitting the back button in the
 toolbar.
 </p>
+
+<p>
+    However, Vimperator does not try to be a 100% Vim clone, it rather brings Vim's
+    ideas to the 21st century. This means making use of new graphical capabilities
+    but also of faster computers. Furthermore, great care is taken into making
+    it's command line interface more consistent and easier to use, while still
+    being a powerful extension for advanced users.
+</p>
         
 <p>
 But Vimperator is more than just a simple command interface to Firefox — it is a
@@ -36,17 +44,6 @@ complete development environment as well. If you are a web developer, you can
 enjoy an interactive JavaScript shell — even with completion support. Or if you
 want to extend Vimperator, you can easily do that by just dropping a JavaScript
 file in its plugin directory.
-</p>
-
-<warning tag="warning">
-    To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar are hidden.
-</warning>
-
-<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.
-    If you don't like &liberator.appname; at all, you can uninstall it by typing
-    <ex>:extdelete &liberator.appname;</ex> or <ex>:extdisable &liberator.appname;</ex> to disable it.
-    If you like it but just can't remember the shortcuts, then press
-    <key name="F1"/> or <ex>:help</ex> to get this help window back.
 </p>
 
 <tags>author donation sponsor</tags>
@@ -183,12 +180,10 @@ or <ex>:help :set</ex>.
 
 <ul>
     <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)</li>
-    <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …)</li>
-    <li>Tab completion available for all commands with support for "longest" matching when set in 'wildmode'</li>
-    <li>Hit-a-hint like navigation of links (start with <k>f</k> to follow a link)</li>
-    <li>Advanced completion of bookmark and history URLs (searching also in title, not only URL)</li>
-    <li>Vim-like statusline with a Wget-like progress bar</li>
-    <li>Minimal GUI (easily hide useless menubar and toolbar with <ex>:set guioptions=</ex>)</li>
+    <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …) with a proper command line</li>
+    <li>Tab completion available for all commands, showing suggestions while you type</li>
+    <li>Hint mode (start with <k>f</k> to follow a link)</li>
+    <li>Easily customizable GUI (easily hide all GUI elements with <ex>:set gui=none</ex>)</li>
     <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.vimperatorrc</em> file with syntax highlighting if you install vimperator.vim</li>
     <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
     <li>Count supported for many commands (<em>3</em><k name="C-o"/> will go back 3 pages)</li>
