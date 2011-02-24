@@ -11,6 +11,7 @@
       [m]yu[m] to copy URL of feed (only for RSS)
     * IMPORTANT: Support for sub-commands.
       And subCommands argument is added 4th commands.parseArgs's arguments.
+    * Fix moving of more than one message with :moveto
     * add l1,l2,...,l5 to directly tag a message with the 1st, 2nd, ... tag
     * Fix ctrl-shift-n/p going to next/prev unread folder (thanks temerako)
     * fix all l* (label read/starred/etc.) mappings for new Thunderbirds

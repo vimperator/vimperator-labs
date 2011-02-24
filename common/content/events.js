@@ -765,8 +765,15 @@ const Events = Module("events", {
             let selection = Buffer.focusedWindow.getSelection();
             try { // a simple if (selection) does not seem to work
                 selection.collapseToStart();
+            } catch (e) {}
+
+            // select only one message in Muttator
+            if (liberator.has("mail") && !config.isComposeWindow) {
+                let i = gDBView.selection.currentIndex;
+                if (i == -1 && gDBView.rowCount >= 0)
+                    i = 0;
+                gDBView.selection.select(i);
             }
-            catch (e) {}
 
             modes.reset();
             break;

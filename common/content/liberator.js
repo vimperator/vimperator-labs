@@ -463,13 +463,8 @@ const Liberator = Module("liberator", {
         let elem = config.mainWidget || window.content;
         // TODO: make more generic
         try {
-            if (this.has("mail") && !config.isComposeWindow) {
-                let i = gDBView.selection.currentIndex;
-                if (i == -1 && gDBView.rowCount >= 0)
-                    i = 0;
-                gDBView.selection.select(i);
-            }
-            else if (this.has("tabs")) {
+            if (this.has("tabs")) {
+                // select top most frame in a frameset
                 let frame = tabs.localStore.focusedFrame;
                 if (frame && frame.top == window.content)
                     elem = frame;
