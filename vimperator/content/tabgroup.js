@@ -127,7 +127,7 @@ const TabGroup = Module("tabGroup", {
             // for empty group
             else if (group && apps.length != 0) {
               GI.setActiveGroupItem(group);
-              tabView.UI.goToTab(tabs.getTab(0));
+              tabGroup.tabView.UI.goToTab(tabs.getTab(0));
             }
             else if (relative)
               groupSwitch(index + offset, true);
