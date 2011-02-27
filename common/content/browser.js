@@ -147,7 +147,7 @@ const Browser = Module("browser", {
             "Open homepage in a new tab",
             function () {
                 let homepages = gHomeButton.getHomePage();
-                homepages = homepages.replace(/\|/g, options["urlseperator"] || ", "); // we use a different url seperator than Firefox
+                homepages = homepages.replace(/\|/g, options["urlseparator"] || ", "); // we use a different url seperator than Firefox
                 liberator.open(homepages, { from: "homepage", where: liberator.NEW_TAB });
             });
 
