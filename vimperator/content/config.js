@@ -126,7 +126,7 @@ const Config = Module("config", ConfigBase, {
         bookmarks:  [["PersonalToolbar"], "Bookmarks Toolbar"],
         menu:       [["toolbar-menubar"], "Menu Bar"],
         navigation: [["nav-bar"],         "Main toolbar with back/forward buttons location box"],
-        tabs:       [["TabsToolbar"],     "Tab bar (WARNING: Currently keeps reappearing)"]
+        tabs:       [["TabsToolbar"],     "Tab bar"]
     },
 
     get visualbellWindow() getBrowser().mPanelContainer
