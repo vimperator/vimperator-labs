@@ -49,7 +49,7 @@ Highlights.prototype.CSS = <><![CDATA[
     CmdLine               background: white; color: black; -moz-transition: all 0.25s;
     CmdLine>*             font-family: monospace;
 
-    ContentSeparator      border-top: 1px dotted gray; display: -mox-box;
+    ContentSeparator      border-top: 1px dotted gray; display: -moz-box;
 
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: 1ex;
