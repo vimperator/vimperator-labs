@@ -31,6 +31,19 @@ const Tabs = Module("tabs", {
         if (config.hasTabbrowser)
              config.tabbrowser.mTabContainer.collapsed = true; // FIXME: see 'stal' comment
         */
+
+        // prevent the tab-bar from redisplaying when 'toolbars' option has 'notabs'
+        // @see http://code.google.com/p/vimperator-labs/issues/detail?id=520
+        if (config.tabbrowser.mTabContainer.updateVisibility) {
+            config.tabbrowser.mTabContainer.updateVisibility = function updateVisibility () {
+                if (options.get("toolbars").has("notabs"))
+                    this.visible = false;
+                else if (this.childNodes.length - this.tabbrowser._removingTabs.length == 1 && window.toolbar.visible)
+                    this.visible = !window.Services.prefs.getBoolPref("browser.tabs.autoHide");
+                else
+                    this.visible = true;
+            };
+        }
     },
 
     _updateTabCount: function () {
