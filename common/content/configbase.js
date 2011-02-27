@@ -21,7 +21,7 @@ const ConfigBase = Class(ModuleBase, {
      *     property names must be the options' canonical names, and the values
      *     must be strings as entered via :set.
      */
-    defaults: { guioptions: "", toolbars: "" },
+    defaults: { toolbars: "" },
 
     /**
      * @property {[["string", "string", "function"]]} An array of

@@ -246,32 +246,6 @@
 
 <h2 tag="toolbar">ツールバー</h2>
 
-<item>
-    <tags>:tbs :tbshow :toolbars :toolbarshow</tags>
-    <spec>:toolbarshow <a>name</a></spec>
-    <description>
-        <p>名前付きツールバーを表示します。</p>
-    </description>
-</item>
-
-
-<item>
-    <tags>:tbh :tbhide :toolbarh  :toolbarhide</tags>
-    <spec>:toolbarhide <a>name</a></spec>
-    <description>
-        <p>名前付きツールバーを非表示にします。</p>
-    </description>
-</item>
-
-
-<item>
-    <tags>:tbt :tbtoggle :toolbart :toolbartoggle</tags>
-    <spec>:toolbartoggle <a>name</a></spec>
-    <description>
-        <p>名前付きツールバーの表示/非表示を切り替えます。</p>
-    </description>
-</item>
-
 
 </document>
 

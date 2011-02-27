@@ -1600,39 +1600,6 @@ const Liberator = Module("liberator", {
             function () { liberator.restart(); },
             { argCount: "0" });
 
-        var toolbox = document.getElementById("navigator-toolbox");
-        if (toolbox) {
-            function findToolbar(name) util.evaluateXPath(
-                "./*[@toolbarname=" + util.escapeString(name, "'") + "]",
-                document, toolbox).snapshotItem(0);
-
-            let tbcmd = function (names, desc, action, filter) {
-                commands.add(names, desc,
-                    function (args) {
-                        let toolbar = findToolbar(args[0]);
-                        liberator.assert(toolbar, "E474: Invalid argument");
-                        action(toolbar);
-                    }, {
-                        argcount: "1",
-                        completer: function (context) {
-                            completion.toolbar(context)
-                            if (filter)
-                                context.filters.push(filter);
-                        },
-                        literal: 0
-                    });
-            };
-
-            tbcmd(["toolbars[how]", "tbs[how]"], "Show the named toolbar",
-                function (toolbar) toolbar.collapsed = false,
-                function (item) item.item.collapsed);
-            tbcmd(["toolbarh[ide]", "tbh[ide]"], "Hide the named toolbar",
-                function (toolbar) toolbar.collapsed = true,
-                function (item) !item.item.collapsed);
-            tbcmd(["toolbart[oggle]", "tbt[oggle]"], "Toggle the named toolbar",
-                function (toolbar) toolbar.collapsed = !toolbar.collapsed);
-        }
-
         commands.add(["time"],
             "Profile a piece of code or run a command multiple times",
             function (args) {

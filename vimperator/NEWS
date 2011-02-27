@@ -24,6 +24,8 @@
     * IMPORTANT: Removed :redraw and Ctrl-l as it just doesn't make sense to have that feature
     * IMPORTANT: 'jsdebugger' option was removed, as JS completion should work much better
       out of the box now.
+    * IMPORTANT: Remove :toolbaropen, :toolbarclose and :toolbartoggle, as toolbars are now
+      managed with the 'toolbars' option
     * Full Panorama support: :tabgroups can be used to deal with tab groups.
     * Add 'smallicons' option (default=true) to set small toolbar icons
     * Add 'g@' mapping for switching to an app tab.

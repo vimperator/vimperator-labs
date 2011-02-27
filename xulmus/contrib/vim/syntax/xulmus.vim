@@ -33,8 +33,8 @@ syn keyword xulmusCommand ab[breviate] ab[clear] addo[ns] bN[ext] b[uffer] ba[ck
     \ pu[nmap] pw[d] q[uit] qa[ll] qma[rk] qmarks queue quita[ll] re[draw] re[load] reloada[ll] res[tart] run runt[ime] sav[eas]
     \ sb[ar] sb[open] sbcl[ose] scrip[tnames] se[t] see[k] setg[lobal] setl[ocal] sideb[ar] sil[ent] sort[view] so[urce] st[op]
     \ stopa[ll] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabde[tach] tabdu[plicate] tabfir[st] tabl[ast] tabm[ove]
-    \ tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide]
-    \ toolbars[how] toolbart[oggle] tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource]
+    \ tabn[ext] tabnew tabo[nly] tabopen tabp[revious] tabr[ewind] tabs time tn[ext]
+    \ tp[revious] u[ndo] una[bbreviate] undoa[ll] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource]
     \ viu[sage] vm[ap] vmap[clear] vno[remap] vol[ume] vu[nmap] w[rite] wc[lose] winc[lose] wq wqa[ll] xa[ll] zo[om]
     \ contained
 

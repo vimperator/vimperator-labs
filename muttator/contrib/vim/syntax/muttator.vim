@@ -30,7 +30,7 @@ syn keyword muttatorCommand ab[breviate] ab[clear] addo[ns] addr[essbook] bN[ext
     \ mno[remap] move[to] mu[nmap] nm[ap] nmapc[lear] nno[remap] no[remap] norm[al] nu[nmap] optionu[sage] pa[geinfo] pagest[yle]
     \ pas pl[ay] pref[erences] prefs pw[d] q[uit] re[load] res[tart] run runt[ime] sav[eas] scrip[tnames] se[t] setg[lobal]
     \ setl[ocal] sil[ent] so[urce] st[op] sty[le] tN[ext] t[open] tab tabN[ext] tabc[lose] tabd[o] tabfir[st] tabl[ast] tabn[ext]
-    \ tabp[revious] tabr[ewind] tbh[ide] tbs[how] tbt[oggle] time tn[ext] toolbarh[ide] toolbars[how] toolbart[oggle] tp[revious]
+    \ tabp[revious] tabr[ewind] time tn[ext] tp[revious]
     \ una[bbreviate] unl[et] unm[ap] verb[ose] ve[rsion] vie[wsource] viu[sage] vm[ap] vmapc[lear] vno[remap] vu[nmap] w[rite] zo[om]
     \ contained
 

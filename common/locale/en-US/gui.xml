@@ -100,6 +100,7 @@
 </item>
 
 
+<!-- TODO: Does this really fit into gui.xml? -->
 <h2 tag="extensions add-ons">Add-ons</h2>
 
 <item>
@@ -207,31 +208,10 @@
 
 <h2 tag="toolbar">Toolbars</h2>
 
-<item>
-    <tags>:tbs :tbshow :toolbars :toolbarshow</tags>
-    <spec>:toolbarshow <a>name</a></spec>
-    <description>
-        <p>Shows the named toolbar.</p>
-    </description>
-</item>
-
-
-<item>
-    <tags>:tbh :tbhide :toolbarh  :toolbarhide</tags>
-    <spec>:toolbarhide <a>name</a></spec>
-    <description>
-        <p>Hides the named toolbar.</p>
-    </description>
-</item>
-
-
-<item>
-    <tags>:tbt :tbtoggle :toolbart :toolbartoggle</tags>
-    <spec>:toolbartoggle <a>name</a></spec>
-    <description>
-        <p>Toggles the named toolbar.</p>
-    </description>
-</item>
+<p>
+    Vimperator allows quickly changing visible toolbars.
+    See the <o>toolbars</o> option for details.
+</p>
 
 
 </document>

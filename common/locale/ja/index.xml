@@ -353,9 +353,6 @@
     <dt><ex>:tabprevious</ex></dt> <dd>ひとつもしくは <oa>count</oa> 個左のタブを選択します</dd>
     <dt><ex>:tabrewind</ex></dt> <dd>最初のタブを選択します</dd>
     <dt><ex>:time</ex></dt> <dd>JavaScript コードやコマンドを複数回実行して速度を計測します</dd>
-    <dt><ex>:toolbarhide</ex></dt> <dd>名前付きツールバーを非表示にします</dd>
-    <dt><ex>:toolbarshow</ex></dt> <dd>名前付きツールバーを表示します</dd>
-    <dt><ex>:toolbartoggle</ex></dt> <dd>名前付きツールバーの表示/非表示を切り替えます</dd>
     <dt><ex>:unabbreviate</ex></dt> <dd>略語を消去します</dd>
     <dt><ex>:undo</ex></dt> <dd>閉じたタブを復元します</dd>
     <dt><ex>:undoall</ex></dt> <dd>閉じたタブをすべて復元します</dd>

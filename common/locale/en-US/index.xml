@@ -353,9 +353,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><ex>:tabprevious</ex></dt> <dd>Switch to the previous tab or go <oa>count</oa> tabs back</dd>
     <dt><ex>:tabrewind</ex></dt> <dd>Switch to the first tab</dd>
     <dt><ex>:time</ex></dt> <dd>Profile a piece of code or run a command multiple times</dd>
-    <dt><ex>:toolbarhide</ex></dt> <dd>Hide the named toolbar</dd>
-    <dt><ex>:toolbarshow</ex></dt> <dd>Show the named toolbar</dd>
-    <dt><ex>:toolbartoggle</ex></dt> <dd>Toggle the named toolbar</dd>
     <dt><ex>:unabbreviate</ex></dt> <dd>Remove an abbreviation</dd>
     <dt><ex>:undo</ex></dt> <dd>Undo closing of a tab</dd>
     <dt><ex>:undoall</ex></dt> <dd>Undo closing of all closed tabs</dd>
@@ -396,7 +393,6 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>focuscontent</o></dt> <dd>Try to stay in Normal mode after loading a web page</dd>
     <dt><o>followhints</o></dt> <dd>Change the behaviour of <k name="Return"/> in Hints mode</dd>
     <dt><o>fullscreen</o></dt> <dd>Show the current window fullscreen</dd>
-    <dt><o>guioptions</o></dt> <dd>Show or hide certain GUI elements like the menu or toolbar</dd>
     <dt><o>helpfile</o></dt> <dd>Name of the main help file</dd>
     <dt><o>hintchars</o></dt> <dd>Characters used for hinting</dd>
     <dt><o>hintinputs</o></dt> <dd>How text input fields are hinted</dd>
@@ -432,6 +428,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><o>statusfields</o></dt> <dd>Show certain elements in the status bar</dd>
     <dt><o>suggestengines</o></dt> <dd>Engine Alias which has a feature of suggest</dd>
     <dt><o>titlestring</o></dt> <dd>Change the title of the window</dd>
+    <dt><o>toolbars</o></dt> <dd>Show or hide certain GUI elements like the menu or toolbar</dd>
     <dt><o>urlseparator</o></dt> <dd>Set the separator regex used to separate multiple URL args</dd>
     <dt><o>usermode</o></dt> <dd>Show current website with a minimal style sheet to make it easily accessible</dd>
     <dt><o>verbose</o></dt> <dd>Define which info messages are displayed</dd>
