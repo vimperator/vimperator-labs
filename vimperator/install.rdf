@@ -5,7 +5,7 @@
         <em:id>vimperator@mozdev.org</em:id>
         <em:name>Vimperator</em:name>
         <em:version>###VERSION###</em:version>
-        <em:description>Make Firefox behave like Vim</em:description>
+        <em:description>Vimperator adds an efficient, Vim-inspired user interface on top of Firefox</em:description>
         <em:creator>Martin Stubenschrott</em:creator>
         <em:homepageURL>http://vimperator.org</em:homepageURL>
         <em:iconURL>chrome://vimperator/skin/icon.png</em:iconURL>

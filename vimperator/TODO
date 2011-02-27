@@ -1,10 +1,12 @@
 Priority list:
 1-9 as in Vim (9 = required for next release, 5 = would be nice, 1 = probably not)
 
+This is just a quick list of general ideas, which shouldn't be forgotten.
+Many other ideas are listed in the wiki and probably these things should
+be transfered there as well, for now it just quicker to add/change
+things in this list.
+
 BUGS:
-- Class#closure seems to be throwing [Exception... "Could not convert
-  JavaScript argument"  nsresult: "0x80570009 (NS_ERROR_XPC_BAD_CONVERT_JS)"]
-  in as yet underdetermined circumstances.
 - add window resize support to hints
 - searching backwards incrementally does not work i.e. with 'incsearch' set
 - insert abbreviations broken on <space>
@@ -12,19 +14,6 @@ BUGS:
 - ;s saves the page rather than the image
 - RC file is sourced once per window
 - :undo seems to be effected by the tabstrip state
-
-(recent CVS regressions):
-- visual caret mode is broken, requires a manual page focus first anyway or
-  else it chucks, I haven't investigated --djk
-- messages is still broken in several ways - needs testing.
-  => :ls | :echomsg "Foobar" doesn't add "Foobar" to the already open MOW.
-  (NOTE: an intentional design decision by MS - Boo!)
-  => it often overwrites the open command line while editing etc.
-- <tags> and <keyword> autocmd 'keywords' are not available when adding a
-  bookmark - they're being set after the observer triggers the autocmd event.
-- :messages is _very_ slow for message history of several thousand lines ->
-  Unresponsive Script: util.js:79 (sometimes xmlToDom() and elsewhere)
-- The MOW shouldn't close when executing hints and ;F isn't working.
 
 (the new XML help system bugs):
 - markup/links breakage:
@@ -46,61 +35,26 @@ FEATURES:
 8 Incremental searches should retreat to their starting position on <Backspace>
 8 Replace config.name tests in liberator with more specific feature
   tests or overridable APIs where at all feasible.
-8 change the extension ID to vimperator@vimperator.org rather than
+8 MAYBE change the extension ID to vimperator@vimperator.org rather than
   vimperator@mozdev.org
-8 finish :help TODOs
-8 fix local options
-8 adaptive timeout for auto-completions, :set completions can be updated more often than
-  :open foo
 8 use the storage module for autocommands
-8 support 'activate' in buffer.followLink?
-  Leave this to the bookmarks.tabs.loadInBackground. Hint activation
-  should be nearly equivalent to the corresponding mouse motion, and that
-  mouse movement would be governed by the FF pref. However, :tabopen is
-  something Vimp specific, and so it needs a specific setting (i.e.,
-  activate). OTOH, I think it would be better if ";t" *always* opens a
-  new foreground tab and ";b" *always* opensa  new background tab. So "F"
-  should be the only hint mode that changes based on loadInBackground.
-  --Ted
-8 add support for filename special characters such as %
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
-8 :addsearch wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s  to allow saving of
-  quick searches in the RC file.
-  Why not just add a bookmark? --Kris
-  This would require performance tests, how fast it is to add 20 keywords that way, as we need
-  to search all existing bookmarks to see if the keyword is already defined, and then just update
-  that bookmark. --mst
-
-  Wah? I don't see how that's especially relevant, since they only
-     need to be added once, but, if you insist:
-	:100time bookmarks.getKeywords().some(function(k) k.keyword == "wikipedia")
-	  Code execution summary
-	  Executed:	100	times
-	  Average time:	2.48	msec
-	  Total time:	0.25	sec
-     --Kris
-
-8 allow for multiple ex commands separated with | (see #24)
+8 :bmark -keyword wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s 
+  should overwrite existing keywords. This allows saving of quick searches in the RC file.
 8 <C-o>/<C-i> should work as in vim (i.e., save page positions as well as
   locations in the history list).
-7 use ctrl-n/p in insert mode for word completion
-7 implement QuickFix window based on ItemList
-7 wherever possible: get rid of dialogs and ask console-like dialog questions
-  or write error prompts directly on the webpage or with :echo()
 7 [d could go to the last domain in the history stack. So if I browse from
   google to another page and click 10 links there, [d would take me back to the google page
   opera's fast forward does something like this
 7 make an option to disable session saving by default when you close Firefox
 7 The output of the pageinfo-command should contain the security-information of ssl-encrypted sites
 7 Add :every command
-6 add [count] support to :b* and :tab* commands where missing
 6 check/correct spellings in insert mode with some mappings
 6 jump to the next heading with ]h, next image ]i, previous textbox [t and so on
 6 :grep support (needs location list)
 6 pipe selected text/link/website to an external command
 6 Use ctrl-w+j/k/w to switch between sidebar, content, preview window
-6 Command :tags for getting a list of used tags
 6 ;?<hint> should show more information
 5 when looking at a zoomed out image (because it's large), zi should zoom in
   maybe with this? : http://mxr.mozilla.org/seamonkey/source/content/html/document/public/nsIImageDocument.idl
@@ -108,8 +62,5 @@ FEATURES:
   (http://gadelkareem.com/2007/01/28/using-google-ajax-api-as-an-array/)
   maybe impossible, needs a per-site key from google
 4 } { should jump to the next paragraph of the page
-1 Add information to liberator/HACKING file about testing and optimization
-1 Document remote branches in liberator/HACKING
-1 Reformat liberator/HACKING so that git diff can find sections and report changes @ somewhere
-- many other ideas are listed in the wiki
+4 use ctrl-n/p in insert mode for word completion
 
