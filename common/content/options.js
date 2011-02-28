@@ -17,12 +17,12 @@
  * @param {string} defaultValue The default value for this option.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         scope     - see {@link Option#scope}
- *         setter    - see {@link Option#setter}
- *         getter    - see {@link Option#getter}
- *         completer - see {@link Option#completer}
- *         valdator  - see {@link Option#validator}
- *         checkHas  - see {@link Option#checkHas}
+ *         scope         - see {@link Option#scope}
+ *         setter        - see {@link Option#setter}
+ *         getter        - see {@link Option#getter}
+ *         completer     - see {@link Option#completer}
+ *         validator     - see {@link Option#validator}
+ *         checkHas      - see {@link Option#checkHas}
  * @optional
  * @private
  */
@@ -123,15 +123,15 @@ const Option = Class("Option", {
         else
             scope = this.scope;
 
-        let value;
+        // Options with a custom getter are always responsible for returning a meaningful value
+        if (this.getter)
+            return liberator.trapErrors(this.getter, this, value);
 
+        let value;
         if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             value = tabs.options[this.name];
         if ((scope & Option.SCOPE_GLOBAL) && (value == undefined))
             value = this.globalValue;
-
-        if (this.getter)
-            value = liberator.trapErrors(this.getter, this, value);
 
         return value;
     },

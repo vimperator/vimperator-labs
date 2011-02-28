@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 by Martin Stubenschrott <stubenschrott@vimperator.org>
+// Copyright (c) 2006-2011 by Martin Stubenschrott <stubenschrott@vimperator.org>
 // Copyright (c) 2007-2009 by Doug Kearns <dougkearns@gmail.com>
 // Copyright (c) 2008-2009 by Kris Maglione <maglione.k at Gmail>
 //
@@ -22,28 +22,6 @@ const Tabs = Module("tabs", {
         // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
         this._lastBufferSwitchArgs = "";
         this._lastBufferSwitchSpecial = true;
-
-        // hide tabs initially to prevent flickering when 'stal' would hide them
-        // on startup
-        /* The code needs fixing since it destroys AppTabs sizes after a restart
-         * Maybe we should just get completely rid of it, as 'stal' is broken
-         * currently anyway
-        if (config.hasTabbrowser)
-             config.tabbrowser.mTabContainer.collapsed = true; // FIXME: see 'stal' comment
-        */
-
-        // prevent the tab-bar from redisplaying when 'toolbars' option has 'notabs'
-        // @see http://code.google.com/p/vimperator-labs/issues/detail?id=520
-        if (config.tabbrowser.mTabContainer.updateVisibility) {
-            config.tabbrowser.mTabContainer.updateVisibility = function updateVisibility () {
-                if (options.get("toolbars").has("notabs"))
-                    this.visible = false;
-                else if (this.childNodes.length - this.tabbrowser._removingTabs.length == 1 && window.toolbar.visible)
-                    this.visible = !window.Services.prefs.getBoolPref("browser.tabs.autoHide");
-                else
-                    this.visible = true;
-            };
-        }
     },
 
     _updateTabCount: function () {

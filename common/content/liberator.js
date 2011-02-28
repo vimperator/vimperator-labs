@@ -1132,16 +1132,15 @@ const Liberator = Module("liberator", {
                         mainToolbar.setAttribute("iconsize", value ? "small" : "large");
                     } catch (e) { }
                     return value;
-                }/*,
+                },
                 getter: function () {
                     try {
-                        liberator.dump("GETTING: ");
                         let mainToolbar = config.mainToolbar;
                         return mainToolbar.getAttribute("iconsize") == "small";
                     } catch (e) {
                         return false;
                     }
-                }*/
+                }
             });
 
 
@@ -1155,8 +1154,6 @@ const Liberator = Module("liberator", {
                         document.title = document.title.replace(RegExp("(.*)" + util.escapeRegex(old)), "$1" + current);
                     }
 
-                    // TODO: remove this FF3.5 test when we no longer support 3.0
-                    //     : make this a config feature
                     if (services.get("privateBrowsing")) {
                         let oldValue = win.getAttribute("titlemodifier_normal");
                         let suffix = win.getAttribute("titlemodifier_privatebrowsing").substr(oldValue.length);
@@ -1232,6 +1229,12 @@ const Liberator = Module("liberator", {
                             elem.setAttribute("autohide", collapsed);
                         else
                             elem.collapsed = collapsed;
+
+                        // HACK: prevent the tab-bar from redisplaying when 'toolbars' option has 'notabs'
+                        // @see http://code.google.com/p/vimperator-labs/issues/detail?id=520
+                        if (id == "TabsToolbar" && config.tabbrowser.mTabContainer.updateVisibility)
+                            config.tabbrowser.mTabContainer.updateVisibility = function () { };
+
                     }
 
                     return values;
@@ -1846,12 +1849,10 @@ const Liberator = Module("liberator", {
             // after sourcing the initialization files, this function will set
             // all gui options to their default values, if they have not been
             // set before by any RC file
+            // TODO: Let options specify themselves whether they need to be set at startup!
             for (let option in options) {
-                // 'encoding' option should not be set at this timing.
-                // Probably a wrong value is set into the option,
-                // if current page's encoging is not UTF-8.
-                if (option.name != "encoding" && option.setter)
-                    option.value = option.value;
+                if (!option.hasChanged && ["popups", "smallicons", "titlestring", "toolbars"].indexOf(option.name) >= 0)
+                    option.value = option.defaultValue; // call setter
             }
 
             if (liberator.commandLineOptions.postCommands)
