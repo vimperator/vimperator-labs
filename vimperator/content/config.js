@@ -77,7 +77,7 @@ const Config = Module("config", ConfigBase, {
         ["preferences",      "Show Firefox preferences dialog",
             function () { window.openPreferences(); }],
         ["printpreview",     "Preview the page before printing",
-            function () { PrintUtils.printPreview(onEnterPrintPreview, onExitPrintPreview); }],
+            function () { PrintUtils.printPreview(PrintPreviewListener); }],
         ["printsetup",       "Setup the page size and orientation before printing",
             function () { PrintUtils.showPageSetup(); }],
         ["print",            "Show print dialog",

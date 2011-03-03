@@ -510,10 +510,10 @@ const JavaScript = Module("javascript", {
                 // Split up the arguments
                 let prev = this._get(-2).offset;
                 let args = [];
-                for (let [, idx] in Iterator(this._get(-2).comma)) {
+                for (let [i, idx] in Iterator(this._get(-2).comma)) {
                     let arg = this._str.substring(prev + 1, idx);
                     prev = idx;
-                    util.memoize(args, this._i, function () self.eval(arg));
+                    util.memoize(args, i, function () self.eval(arg));
                 }
                 let key = this._getKey();
                 args.push(key + string);
