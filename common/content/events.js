@@ -286,34 +286,36 @@ const Events = Module("events", {
             commandline.quiet = quiet;
 
         try {
-            liberator.threadYield(1, true);
+            feed: {
+                liberator.threadYield(1, true);
+                for (let [, evt_obj] in Iterator(events.fromString(keys))) {
+                    let elem = liberator.focus || window.content;
+                    let evt = events.create(doc, "keypress", evt_obj);
 
-            for (let [, evt_obj] in Iterator(events.fromString(keys))) {
-                let elem = liberator.focus || window.content;
-                let evt = events.create(doc, "keypress", evt_obj);
+                    if (typeof noremap == "object")
+                        for (let [k, v] in Iterator(noremap))
+                            evt[k] = v;
+                    else
+                        evt.noremap = !!noremap;
+                    evt.isMacro = true;
+                    // A special hack for liberator-specific key names.
+                    if (evt_obj.liberatorString || evt_obj.liberatorShift) {
+                        evt.liberatorString = evt_obj.liberatorString; // for key-less keypress events e.g. <Nop>
+                        evt.liberatorShift = evt_obj.liberatorShift; // for untypable shift keys e.g. <S-1>
+                        events.onKeyPress(evt);
+                    }
 
-                if (typeof noremap == "object")
-                    for (let [k, v] in Iterator(noremap))
-                        evt[k] = v;
-                else
-                    evt.noremap = !!noremap;
-                evt.isMacro = true;
-                // A special hack for liberator-specific key names.
-                if (evt_obj.liberatorString || evt_obj.liberatorShift) {
-                    evt.liberatorString = evt_obj.liberatorString; // for key-less keypress events e.g. <Nop>
-                    evt.liberatorShift = evt_obj.liberatorShift; // for untypable shift keys e.g. <S-1>
-                    events.onKeyPress(evt);
+                    else
+                        elem.dispatchEvent(evt);
+
+                    if (!this.feedingKeys)
+                        break feed;
+
+                    // Stop feeding keys if page loading failed.
+                    if (modes.isReplaying && !this.waitForPageLoad())
+                        break feed;
                 }
-
-                else
-                    elem.dispatchEvent(evt);
-
-                if (!this.feedingKeys)
-                    break;
-
-                // Stop feeding keys if page loading failed.
-                if (modes.isReplaying && !this.waitForPageLoad())
-                    break;
+                return true;
             }
         }
         finally {
@@ -840,6 +842,12 @@ const Events = Module("events", {
             event.stopPropagation();
         }
 
+        function updateCount(value) {
+            events._input.count = parseInt(value, 10);
+            if (isNaN(events._input.count))
+                events._input.count = null;
+        }
+
         let key = events.toString(event);
         if (!key)
              return;
@@ -996,9 +1004,7 @@ const Events = Module("events", {
             // (allows you to do :map z yy, when zz is a longer mapping than z)
             else if (map && !event.skipmap && candidates.length == 0) {
                 this._input.pendingMap = null;
-                this._input.count = parseInt(countStr, 10);
-                if (isNaN(this._input.count))
-                    this._input.count = null;
+                updateCount(countStr);
                 this._input.buffer = "";
                 if (map.arg) {
                     this._input.buffer = inputStr;
@@ -1022,7 +1028,8 @@ const Events = Module("events", {
                         stop = false;
                 }
             }
-            else if (mappings.getCandidates(liberator.mode, candidateCommand, url).length > 0 && !event.skipmap) {
+            else if (candidates.length > 0 && !event.skipmap) {
+                updateCount(countStr);
                 this._input.pendingMap = map;
                 this._input.buffer += key;
             }
