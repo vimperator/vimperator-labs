@@ -34,7 +34,7 @@ toolbar.
     However, Vimperator does not try to be a 100% Vim clone, it rather brings Vim's
     ideas to the 21st century. This means making use of new graphical capabilities
     but also of faster computers. Furthermore, great care is taken into making
-    it's command line interface more consistent and easier to use, while still
+    its command line interface more consistent and easier to use, while still
     being a powerful extension for advanced users.
 </p>
         
@@ -183,6 +183,8 @@ or <ex>:help :set</ex>.
     <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …) with a proper command line</li>
     <li>Tab completion available for all commands, showing suggestions while you type</li>
     <li>Hint mode (start with <k>f</k> to follow a link)</li>
+    <li>Extensions! Yes, you can extend Vimperator's functionality with <link href="http://ticket.vimperator.org/Vimperator/plugin/">scripts</link> just like you can extend Firefox with extensions</li>
+    <li>Explore JavaScript objects with <ex>:echo window</ex> and even context-sensitive tab completion</li>
     <li>Easily customizable GUI (easily hide all GUI elements with <ex>:set gui=none</ex>)</li>
     <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.vimperatorrc</em> file with syntax highlighting if you install vimperator.vim</li>
     <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
