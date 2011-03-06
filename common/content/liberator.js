@@ -1200,11 +1200,17 @@ const Liberator = Module("liberator", {
                                     if (!elem)
                                         return;
 
-                                    let collapsed = typeof(actions[id]) == "boolean" ? actions[id] : elem.collapsed;
+                                    let collapsed = false;
                                     if (action.indexOf("no") == 0)
                                         collapsed = true;
-                                    else if (action.indexOf("inv") == 0)
-                                        collapsed = !collapsed;
+                                    else if (action.indexOf("inv") == 0) {
+                                        if (typeof(actions[id]) == "boolean")
+                                            collapsed = !actions[id];
+                                        else {
+                                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
+                                            collapsed = !(elem.getAttribute(hidingAttribute) == "true");
+                                        }
+                                    }
                                     else
                                         collapsed = false;
                                     
@@ -1237,7 +1243,7 @@ const Liberator = Module("liberator", {
 
                     }
 
-                    return values;
+                    return ""; // we need this value, otherwise "inv" options won't work. Maybe we should just make this a local option
                 },
                 getter: function() {
                     let toolbars = config.toolbars || {};
