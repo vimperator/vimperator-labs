@@ -1,4 +1,4 @@
-2010-xx-xx:
+2010-03-06:
     * version 3.0
     * IMPORTANT: The statusbar and command line have been merged in a single
       row as also Firefox 4 hides the statusbar by default now
@@ -31,12 +31,11 @@
     * Add 'g@' mapping for switching to an app tab.
     * Add '<C-S-n>' and '<C-S-p>' mappings for switching to the next / previous tab group.
     * Support for sub commands.
-      And subCommands argument is added 4th commands.parseArgs's arguments.
-    * Added guioptions=A to allow toggling of the addon-bar. Thanks garbas
+    * Added :set toolbars=addons to allow toggling of the addon-bar. Thanks garbas
     * Fixed :open sometimes selecting the wrong entry when autocompletions were turned on
       and the user quickly pressed Tab.
     * Many small fixes for Firefox4 changes
-    * Lots of restyled content and changed colors
+    * Lots of restyled content and changed colors (like InfoMsg and ModeMsg)
     * gu works now better for urls with anchors and GET arguments (like url.com/file?query=foo#anchor)
     * :bmarks and :history commands support multiple space separated filter entries and
       match them on both URL and title. Multi filter highlighting for results in
@@ -44,7 +43,6 @@
     * remove "URL (additional)" entries from the search results. Only list urls which
       match either the url or description
     * :bmarks -k[eyword] to search bookmarks by a keyword
-    * Some colors have changed their default values (like InfoMsg and ModeMsg)
     * Pressing Escape now clears any previous command output. Scrolling the web page, however, does NOT
       not clear it anymore (as it used to do)
     * History, bookmarks and :open output limit the width of the URL column to 50% so you can
