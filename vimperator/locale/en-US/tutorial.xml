@@ -18,28 +18,6 @@
     features.
 </html:p>
 
-<p>
-    If you've started using &liberator.appname; from scratch (i.e., without any
-    customization), you should be looking at this help page in a relatively
-    bare-looking window. The menubar, navigation bar, and bookmark bars are hidden.
-    In case you missed the notice in the <t>intro</t>, you can
-    regain these by issuing the command
-</p>
-
-<code><ex>:set go+=mTB<key name="CR"/></ex></code>
-
-<p>
-    where <k name="CR"/> represents pressing the <key name="Enter"/> or <key name="Return"/> key.
-    If you're a veteran Vim user, this may look familiar. It should.
-</p>
-
-<p>
-    However, in this author's opinion, the best way to get familiar with
-    &liberator.appname; is to leave these disabled for now. (The above action can be
-    reversed with <ex>:set go=<key name="CR"/></ex>) You can look at the entry for <o>guioptions</o> in
-    <t>options</t> for more information on this.
-</p>
-
 <h2 tag="modal">&liberator.appname;'s modal interface</h2>
 
 <p>
