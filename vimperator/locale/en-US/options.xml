@@ -49,5 +49,16 @@
         <p>Show all options that differ from their default value.</p>
     </description>
 </item-->
+
+<item insertafter="'enc'">
+    <tags>'pin' 'pintab'</tags>
+    <spec>'pintab' 'pin'</spec>
+    <type>boolean</type>
+    <default>false</default>
+    <description>
+        <p>Set the current tab to pin or unpin as App Tab.</p>
+    </description>
+</item>
+
 </overlay>
 <!-- vim:se sts=4 sw=4 et: -->

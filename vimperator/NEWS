@@ -1,4 +1,8 @@
-2010-03-06:
+2011-xx-xx:
+    * version 3.1
+    * Add 'apptab' option for pin/unpin the current tab.
+
+2011-03-06:
     * version 3.0
     * IMPORTANT: The statusbar and command line have been merged in a single
       row as also Firefox 4 hides the statusbar by default now

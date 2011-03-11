@@ -388,6 +388,22 @@ const TabGroup = Module("tabGroup", {
             });
         };
     },
+
+    options: function () {
+        options.add(["apptab", "app"],
+            "Pin the current tab as App Tab",
+            "boolean", false,
+            {
+                scope: Option.SCOPE_LOCAL,
+                setter: function (value) {
+                    config.tabbrowser[value ? "pinTab" : "unpinTab"](tabs.getTab());
+                    return value;
+                },
+                getter: function () {
+                    return tabs.getTab().pinned;
+                }
+            });
+    },
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:
