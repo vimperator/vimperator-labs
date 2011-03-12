@@ -104,5 +104,5 @@ xpi:
 	# Zip the whole directory and remove dist folder
 	cd $(XPI_PATH) && zip -9r ../$(XPI_NAME).xpi *
 	rm -rf $(XPI_PATH)
-	@echo "SUCCESS: $@"
+	@echo "SUCCESS: $(XPI_PATH).xpi"
 
