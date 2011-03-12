@@ -3,7 +3,7 @@
 TOP           = $(shell pwd)
 OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
-BASE          = $(TOP)/../common
+COMMON_DIR    = $(TOP)/../common
 GOOGLE_PROJ   = vimperator-labs
 GOOGLE	      = https://$(GOOGLE_PROJ).googlecode.com/files
 
@@ -15,31 +15,18 @@ else
 endif
 DOC_FILES     = $(foreach dir,$(LOCALEDIR),$(wildcard $(dir)/*.xml))
 
-export VERSION BUILD_DATE
-MAKE_JAR      = sh $(BASE)/make_jar.sh
+# TODO: only add these file types?
+# JAR_TEXTS     = js css dtd xml xul html xhtml xsl
+# JAR_BINS      = png
+# XPI_TEXTS     = js jsm
 
-# TODO: specify source files manually?
-JAR_BASES     = $(TOP) $(BASE)
-JAR_DIRS      = content skin $(LOCALEDIR)
-JAR_TEXTS     = js css dtd xml xul html xhtml xsl
-JAR_BINS      = png
+XPI_FILES     = install.rdf TODO AUTHORS NEWS chrome.manifest ../License.txt
+XPI_DIRS      = $(COMMON_DIR)/components components
+CHROME_DIRS   = content skin modules $(LOCALEDIR)
 
-JAR           = chrome/$(NAME).jar
-
-XPI_BASES     = $(JAR_BASES) $(TOP)/..
-XPI_FILES     = install.rdf TODO AUTHORS Donors NEWS License.txt
-XPI_DIRS      = modules components chrome
-XPI_TEXTS     = js jsm
-XPI_BINS      = jar
-
-XPI_NAME      = $(NAME)_$(VERSION)
+XPI_NAME      = $(NAME)-$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
 XPI           = $(XPI_PATH).xpi
-
-RDF           = ../downloads/update.rdf
-RDF_IN        = $(RDF).in
-
-BUILD_DIR     = build.$(VERSION).$(OS)
 
 AWK  = awk
 CURL = curl
@@ -49,7 +36,7 @@ B64ENCODE = base64
 
 #### rules
 
-TARGETS = all help info jar xpi install clean distclean $(JAR)
+TARGETS = all help info xpi clean
 $(TARGETS:%=\%.%):
 	echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
@@ -62,12 +49,9 @@ help:
 	@echo
 	@echo "  make help      - display this help"
 	@echo "  make info      - show some info about the system"
-	@echo "  make jar       - build a JAR ($(JAR))"
 	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
-	@echo "  make release   - updates update.rdf (this is not for you)"
-	@echo "  make release   - uploads to Google Code (this is not for you)"
+	@echo "  make dist      - uploads to Google Code (this is not for you)"
 	@echo "  make clean     - clean up"
-	@echo "  make distclean - clean up more"
 	@echo
 	@echo "running some commands with V=1 will show more build details"
 
@@ -76,11 +60,6 @@ info:
 	@echo "release file        $(XPI)"
 	@echo "doc files           $(DOC_FILES)"
 	@echo "xpi files           $(XPI_FILES)"
-
-xpi: $(XPI)
-jar: $(JAR)
-
-release: $(XPI) $(RDF)
 
 # This is not for you!
 dist: $(XPI)
@@ -102,34 +81,28 @@ dist: $(XPI)
 		-H "Authorization: Basic $$(echo -n "$(GOOGLE_USER):$(GOOGLE_PASS)" | $(B64ENCODE))" \
 		-i "$(GOOGLE)" | sed -n '/^Location/{p;q;}'
 
-$(RDF): $(RDF_IN) Makefile
-	@echo "Preparing release..."
-	$(SED) -e "s,###VERSION###,$(VERSION),g" \
-	           -e "s,###DATE###,$(BUILD_DATE),g" \
-	           < $< > $@
-	@echo "SUCCESS: $@"
-
 clean:
 	@echo "General $(NAME) cleanup..."
-	rm -f $(JAR) $(XPI)
+	rm -f $(XPI)
 
-distclean:
-	@echo "More $(NAME) cleanup..."
-	rm -rf $(BUILD_DIR)
-
-#### xpi
-
-$(XPI): $(JAR)
+xpi:
 	@echo "Building XPI..."
-	mkdir -p $(XPI_PATH)
-	$(AWK) -v 'name=$(NAME)' -v 'locale=$(LOCALE)' -f $(BASE)/process_manifest.awk $(TOP)/chrome.manifest >$(XPI_PATH)/chrome.manifest
-	$(MAKE_JAR) "$(XPI)" "$(XPI_BASES)" "$(XPI_DIRS)" "$(XPI_TEXTS)" "$(XPI_BINS)" "$(XPI_FILES)"
-	@echo "SUCCESS: $@"
-
-#### jar
-
-$(JAR):
-	@echo "Building JAR..."
-	$(MAKE_JAR) "$(JAR)" "$(JAR_BASES)" "$(JAR_DIRS)" "$(JAR_TEXTS)" "$(JAR_BINS)" "$(JAR_FILES)"
+	# Create folder structure
+	mkdir -p $(XPI_PATH)/common
+	# Copy top level files
+	cp -L $(XPI_FILES) -t $(XPI_PATH) || true
+	@echo "Update chrome.manifest for paths used inside the XPI..."
+	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
+	# Copy components and modules directories
+	cp -Lr $(XPI_DIRS) -t $(XPI_PATH) || true
+	# Copy all chrome files, from both commmon/ and vimperator/ folders
+	cd $(COMMON_DIR) && cp -Lr --parents $(CHROME_DIRS) -t $(XPI_PATH)/common || true
+	cp -Lr --parents $(CHROME_DIRS) -t $(XPI_PATH) || true
+	# TODO: Replace ###VERSION### tags
+	@echo "Replacing ###VERSION### and ###DATE### tags"
+	find $(XPI_PATH) -type f -exec sed -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
+	# Zip the whole directory and remove dist folder
+	cd $(XPI_PATH) && zip -9r ../$(XPI_NAME).xpi *
+	rm -rf $(XPI_PATH)
 	@echo "SUCCESS: $@"
 

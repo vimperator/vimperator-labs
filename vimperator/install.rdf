@@ -5,16 +5,13 @@
         <em:id>vimperator@mozdev.org</em:id>
         <em:name>Vimperator</em:name>
         <em:version>###VERSION###</em:version>
+        <em:type>2</em:type> <!-- extension -->
+        <em:unpack>false</em:unpack>
         <em:description>Vimperator adds an efficient, Vim-inspired user interface on top of Firefox</em:description>
         <em:creator>Martin Stubenschrott</em:creator>
         <em:homepageURL>http://vimperator.org</em:homepageURL>
         <em:iconURL>chrome://vimperator/skin/icon.png</em:iconURL>
         <em:optionsURL>chrome://liberator/content/preferences.xul</em:optionsURL>
-        <em:file>
-            <Description about="urn:mozilla:extension:file:vimperator.jar">
-                <em:package>content/liberator/</em:package>
-            </Description>
-        </em:file>
         <em:targetApplication>
             <Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>

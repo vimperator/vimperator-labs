@@ -7,6 +7,8 @@
         <em:type>2</em:type>
         <em:name>Xulmus</em:name>
         <em:version>###VERSION###</em:version>
+        <em:type>2</em:type> <!-- extension -->
+        <em:unpack>false</em:unpack>
         <em:description>Makes Songbird behave like Vim and CMus.</em:description>
         <em:creator>Prathyush Thota</em:creator>
         <em:homepageURL>http://vimperator.org</em:homepageURL>

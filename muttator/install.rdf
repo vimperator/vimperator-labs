@@ -5,6 +5,8 @@
         <em:id>muttator@mozdev.org</em:id>
         <em:name>Muttator</em:name>
         <em:version>###VERSION###</em:version>
+        <em:type>2</em:type> <!-- extension -->
+        <em:unpack>false</em:unpack>
         <em:description>Make Thunderbird behave like Vim</em:description>
         <em:creator>Martin Stubenschrott</em:creator>
         <em:homepageURL>http://vimperator.org/</em:homepageURL>
