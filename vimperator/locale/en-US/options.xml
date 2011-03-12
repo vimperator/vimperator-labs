@@ -51,12 +51,14 @@
 </item-->
 
 <item insertafter="'enc'">
-    <tags>'pin' 'pintab'</tags>
-    <spec>'pintab' 'pin'</spec>
+    <tags>'app' 'apptab'</tags>
+    <spec>'apptab' 'app'</spec>
     <type>boolean</type>
     <default>false</default>
     <description>
-        <p>Set the current tab to pin or unpin as App Tab.</p>
+        <p>Transform the current tab into an app tab. Firefox always displays
+            app tabs at the left of all tabs and minimizes it to its favicon.
+        </p>
     </description>
 </item>
 
