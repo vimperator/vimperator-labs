@@ -28,7 +28,7 @@ const Tabs = Module("tabs", {
         // but this really is such a huge usability issue, that I am doing
         // this by default now for a better Vimperator experience
         // TODO: Make this vimperator-only?
-        styles.addSheet(true, "mintabwidth", "chrome://*", ".tabbrowser-tab[fadein]:not([pinned]) { min-width: 16px !important; }" /* .scrollbutton-up, .scrollbutton-down { display:none; }"*/);
+        styles.addSheet(true, "mintabwidth", "chrome://*", ".tabbrowser-tab[fadein]:not([pinned]) { min-width: 16px !important; } .scrollbutton-up, .scrollbutton-down { display:none; }");
     },
 
     _updateTabCount: function () {
@@ -634,7 +634,7 @@ const Tabs = Module("tabs", {
                     }
 
                     if (removed > 0)
-                        liberator.echomsg(removed + " fewer tab(s)", 9);
+                        liberator.echomsg(removed + " fewer tab(s)");
                     else
                         liberator.echoerr("E94: No matching tab for " + arg);
                 }
