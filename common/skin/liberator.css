@@ -132,6 +132,10 @@ statusbarpanel {
 #liberator-message {
     margin: 0px;
 }
+.liberator-hiding {
+    opacity: 0;
+    -moz-transition: opacity 0.5s;
+}
 
 #sidebar {
     max-width: 90% !important;

@@ -132,6 +132,7 @@ const CommandLine = Module("commandline", {
         this._commandWidget = document.getElementById("liberator-commandline-command");
 
         this._messageBox = document.getElementById("liberator-message");
+        this._messageBox.addEventListener("transitionend", this.close.bind(this), false);
 
         this._commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
         //this._messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
@@ -158,9 +159,19 @@ const CommandLine = Module("commandline", {
 
         this._input = {};
 
+        this._commandlineDisplayTimeoutID = null;
+
         this.registerCallback("submit", modes.EX, function (command) {
+            if (self._commandlineDisplayTimeoutID) {
+                window.clearTimeout(self._commandlineDisplayTimeoutID);
+                self._commandlineDisplayTimeoutID = null;
+            }
+
             commands.repeat = command;
             liberator.trapErrors(function () liberator.execute(command));
+            if (commandline._commandlineWidget.style.opacity == "1" && options["messagetimeout"] != -1)
+                this.close();
+                //self._commandlineDisplayTimeoutID = self.setTimeout(function() { this.close(); }, 0);
         });
         this.registerCallback("complete", modes.EX, function (context) {
             context.fork("ex", 0, completion, "ex");
@@ -250,9 +261,20 @@ const CommandLine = Module("commandline", {
      * @param {boolean} forceSingle If provided, don't let over-long
      *     messages move to the MOW.
      */
-    _echoLine: function (str, highlightGroup, forceSingle) {
+    _echoLine: let (timeID = null) function (str, highlightGroup, forceSingle) {
+        if (timeID) {
+            window.clearTimeout(timeID);
+            timeID = null;
+        }
+        if (this._messageBox.classList.contains("liberator-hiding"))
+            this._messageBox.classList.remove("liberator-hiding");
+
         this._setHighlightGroup(highlightGroup);
         this._messageBox.value = str;
+        if (str && options["messagetimeout"] != -1 &&
+            [this.HL_INFOMSG, this.HL_WARNINGMSG].indexOf(highlightGroup) != -1)
+            timeID = this.setTimeout(function(){ this._messageBox.classList.add("liberator-hiding"); },
+                options["messagetimeout"]);
 
         liberator.triggerObserver("echoLine", str, highlightGroup, forceSingle);
 
@@ -404,6 +426,11 @@ const CommandLine = Module("commandline", {
      * @param {number} extendedMode
      */
     open: function open(prompt, cmd, extendedMode) {
+        if (this._commandlineDisplayTimeoutID) {
+            window.clearTimeout(this._commandlineDisplayTimeoutID);
+            this._commandlineDisplayTimeoutID = null;
+        }
+
         // save the current prompts, we need it later if the command widget
         // receives focus without calling the this.open() method
         this._currentPrompt = prompt || "";
@@ -647,7 +674,7 @@ const CommandLine = Module("commandline", {
             //   FIXME: <Esc> should trigger "cancel" event
             if (events.isAcceptKey(key)) {
                 let mode = this._currentExtendedMode; // save it here, as modes.pop() resets it
-                this._keepCommand = !userContext.hidden_option_no_command_afterimage;
+                this._keepCommand = true;
                 this._currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                 modes.pop(!this._silent);
                 commandline.triggerCallback("submit", mode, command);
@@ -1513,6 +1540,17 @@ const CommandLine = Module("commandline", {
             });
     },
     options: function () {
+        options.add(["autocomplete", "ac"],
+            "Automatically list completions while typing",
+            "boolean", true);
+
+        options.add(["complete", "cpt"],
+            "Items which are completed at the :open prompts",
+            "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
+            {
+                completer: function (context) array(values(completion.urlCompleters))
+            });
+
         options.add(["history", "hi"],
             "Number of Ex commands and search patterns to store in the command-line this._history",
             "number", 500,
@@ -1527,6 +1565,17 @@ const CommandLine = Module("commandline", {
             "Number of messages to store in the message this._history",
             "number", 100,
             { validator: function (value) value >= 0 });
+
+        options.add(["messagetimeout", "mto"],
+            "Automatically hide messages after a timeout (in ms)",
+            "number", 5000,
+            {
+                completer: function (context) [
+                    ["-1",  "Keep forever"],
+                    ["0",   "Close immediately"],
+                ],
+                validator: function (value) value >= -1
+            });
 
         options.add(["more"],
             "Pause the message list window when more than one screen of listings is displayed",
@@ -1548,13 +1597,6 @@ const CommandLine = Module("commandline", {
                  }
              });
 
-        options.add(["complete", "cpt"],
-            "Items which are completed at the :open prompts",
-            "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
-            {
-                completer: function (context) array(values(completion.urlCompleters))
-            });
-
         options.add(["wildmode", "wim"],
             "Define how command line completion works",
             "stringlist", "list:full",
@@ -1573,10 +1615,6 @@ const CommandLine = Module("commandline", {
                     return first == val || second == val;
                 }
             });
-
-        options.add(["autocomplete", "ac"],
-            "Automatically list completions while typing",
-            "boolean", true);
     },
     styles: function () {
         let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;

@@ -815,6 +815,22 @@
 
 
 <item>
+    <tags>'mto' 'messagetimeout'</tags>
+    <spec>'messagetimeout' 'mto'</spec>
+    <type>number</type>
+    <default>5000</default>
+    <description>
+        <p>
+            Timeout before hiding informational messages in milliseconds. If
+            you have ever missed a message, you can always just type
+            <ex>:messages</ex> to view the last messages.
+            You can also disable this timeout completely by setting it to -1.
+        </p>
+    </description>
+</item>
+
+
+<item>
     <tags>'nomore' 'more'</tags>
     <spec>'more'</spec>
     <type>boolean</type>
