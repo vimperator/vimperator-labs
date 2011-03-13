@@ -22,6 +22,13 @@ const Tabs = Module("tabs", {
         // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
         this._lastBufferSwitchArgs = "";
         this._lastBufferSwitchSpecial = true;
+
+        // Firefox adds scrolling to the tab bar very quickly
+        // Normally, we don't override Firefox behavior, unless it is necessary
+        // but this really is such a huge usability issue, that I am doing
+        // this by default now for a better Vimperator experience
+        // TODO: Make this vimperator-only?
+        styles.addSheet(true, "mintabwidth", "chrome://*", ".tabbrowser-tab[fadein]:not([pinned]) { min-width: 16px !important; }" /* .scrollbutton-up, .scrollbutton-down { display:none; }"*/);
     },
 
     _updateTabCount: function () {

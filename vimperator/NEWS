@@ -1,5 +1,8 @@
 2011-xx-xx:
     * version 3.1
+    * Vimperator works around Firefox's tab scrolling now. So the minimum
+      tab width is now just 16px anymore, and you are much more unlikely to
+      see scrollbars in the tab bar.
     * No longer show the command after executing an ex command. Just
       fade out quickly now and make room for the status items.
     * Add 'apptab' option for pin/unpin the current tab.
