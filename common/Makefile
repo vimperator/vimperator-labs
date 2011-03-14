@@ -100,7 +100,7 @@ xpi:
 	cp -Lr --parents $(CHROME_DIRS) -t $(XPI_PATH) || true
 	# TODO: Replace ###VERSION### tags
 	@echo "Replacing ###VERSION### and ###DATE### tags"
-	find $(XPI_PATH) -type f -exec sed -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
+	find $(XPI_PATH) -type f ! -name "*.png" -exec sed -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
 	# Zip the whole directory and remove dist folder
 	cd $(XPI_PATH) && zip -9r ../$(XPI_NAME).xpi *
 	rm -rf $(XPI_PATH)
