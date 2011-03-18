@@ -260,7 +260,16 @@ const Tabs = Module("tabs", {
         }
 
         let index = vTabs.indexOf(tab);
-        liberator.assert(index >= 0, "No such the tab in the current tabs");
+        // should close even if the tab is not visible such as ":tabclose arg"
+        if (index < 0) {
+            // XXX: should consider the count variable ?
+            if (tab.pinned && !force)
+                liberator.echoerr("Cannot close an app tab [" + tab.label + "]. Use :tabclose!");
+            else
+                removeOrBlankTab(tab);
+
+            return;
+        }
 
         let start, end, selIndex = 0;
         if (focusLeftTab) {
@@ -283,7 +292,10 @@ const Tabs = Module("tabs", {
         if ((focusLeftTab && 0 < start - 1) || selIndex >= vTabs.length)
             selIndex = start - 1;
 
-        config.tabbrowser.mTabContainer.selectedItem = vTabs[selIndex];
+        let currentIndex = vTabs.indexOf(tabs.getTab());
+        if (start <= currentIndex && currentIndex <= end)
+            config.tabbrowser.mTabContainer.selectedItem = vTabs[selIndex];
+
         for (let i = end; i >= start; i--) {
             removeOrBlankTab(vTabs[i]);
             vTabs.splice(i, 1);
