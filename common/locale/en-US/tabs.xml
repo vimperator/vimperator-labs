@@ -313,11 +313,11 @@ See <t>opening</t> for other ways to open new tabs.
         <p>
             When used with <oa>arg</oa>, remove all tabs which contain <oa>arg</oa> in the
             hostname. <oa>!</oa> forces this command to also search for <oa>arg</oa> in the full
-            URL and also the title of the tab. Use with care.
+            URL and also the title of the tab, and closes even if the tab is an App tab.
+            Use with care.
         </p>
     </description>
 </item>
-
 
 <item>
     <tags>D</tags>

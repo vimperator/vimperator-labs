@@ -7,6 +7,7 @@
       fade out quickly now and make room for the status items.
     * Add 'apptab' option for pin/unpin the current tab.
     * Add 'messagetimeout' option to automatically hide messages after a timeout
+    * :tabclose! behavior is changed, not focus left tab but close even if the tab is an app tab.
     * Bug fixes
 
 2011-03-06:

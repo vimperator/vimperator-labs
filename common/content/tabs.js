@@ -208,9 +208,10 @@ const Tabs = Module("tabs", {
      *     deleted is the only tab in the tab list:
      *         1 - quit without saving session
      *         2 - quit and save session
+     * @param {boolean} force Close even if the tab is an app tab.
      */
     // FIXME: what is quitOnLastTab {1,2} all about then, eh? --djk
-    remove: function (tab, count, focusLeftTab, quitOnLastTab) {
+    remove: function (tab, count, focusLeftTab, quitOnLastTab, force) {
         let vTabs = config.tabbrowser.visibleTabs;
         let removeOrBlankTab = {
                 Firefox: function (tab) {
@@ -261,19 +262,27 @@ const Tabs = Module("tabs", {
         let index = vTabs.indexOf(tab);
         liberator.assert(index >= 0, "No such the tab in the current tabs");
 
-        let start, end, selIndex;
+        let start, end, selIndex = 0;
         if (focusLeftTab) {
             start = Math.max(0, index - count + 1);
             end = index;
-            selIndex = Math.max(0, start - 1);
         }
         else {
             start = index;
             end = Math.min(index + count, vTabs.length) - 1;
             selIndex = end + 1;
-            if (selIndex >= vTabs.length)
-                selIndex = Math.max(0, start - 1);
         }
+        if (!force) {
+            for (; start <= end && vTabs[start].pinned; start++)
+                liberator.echoerr("Cannot close an app tab [" + vTabs[start].label + "]. Use :tabclose!");
+
+            if (start > end)
+                return;
+        }
+
+        if ((focusLeftTab && 0 < start - 1) || selIndex >= vTabs.length)
+            selIndex = start - 1;
+
         config.tabbrowser.mTabContainer.selectedItem = vTabs[selIndex];
         for (let i = end; i >= start; i--) {
             removeOrBlankTab(vTabs[i]);
@@ -605,7 +614,7 @@ const Tabs = Module("tabs", {
                     let matches = arg.match(/^(\d+):?/);
 
                     if (matches) {
-                        tabs.remove(tabs.getTab(parseInt(matches[1], 10) - 1));
+                        tabs.remove(tabs.getTab(parseInt(matches[1], 10) - 1), 1, false, 0, special);
                         removed = 1;
                     }
                     else {
@@ -627,7 +636,7 @@ const Tabs = Module("tabs", {
 
                             if (host.indexOf(str) >= 0 || uri == str ||
                                 (special && (title.indexOf(str) >= 0 || uri.indexOf(str) >= 0))) {
-                                tabs.remove(tabs.getTab(i));
+                                tabs.remove(tabs.getTab(i), 1, false, 0, special);
                                 removed++;
                             }
                         }
@@ -639,7 +648,7 @@ const Tabs = Module("tabs", {
                         liberator.echoerr("E94: No matching tab for " + arg);
                 }
                 else // just remove the current tab
-                    tabs.remove(tabs.getTab(), Math.max(count, 1), special, 0);
+                    tabs.remove(tabs.getTab(), Math.max(count, 1), false, 0, special);
             }, {
                 argCount: "?",
                 bang: true,
