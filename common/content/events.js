@@ -753,78 +753,73 @@ const Events = Module("events", {
      *  The global escape key handler. This is called in ALL modes.
      */
     onEscape: function () {
-        if (modes.passNextKey)
+        if (modes.passNextKey || modes.passAllKeys)
             return;
-
-        if (modes.passAllKeys) {
-            modes.passAllKeys = false;
-            return;
-        }
 
         switch (liberator.mode) {
-        case modes.NORMAL:
-            // clear any selection made
-            let selection = Buffer.focusedWindow.getSelection();
-            try { // a simple if (selection) does not seem to work
-                selection.collapseToStart();
-            } catch (e) {}
+            case modes.NORMAL:
+                // clear any selection made
+                let selection = Buffer.focusedWindow.getSelection();
+                try { // a simple if (selection) does not seem to work
+                    selection.collapseToStart();
+                } catch (e) {}
 
-            // select only one message in Muttator
-            if (liberator.has("mail") && !config.isComposeWindow) {
-                let i = gDBView.selection.currentIndex;
-                if (i == -1 && gDBView.rowCount >= 0)
-                    i = 0;
-                gDBView.selection.select(i);
-            }
+                // select only one message in Muttator
+                if (liberator.has("mail") && !config.isComposeWindow) {
+                    let i = gDBView.selection.currentIndex;
+                    if (i == -1 && gDBView.rowCount >= 0)
+                        i = 0;
+                    gDBView.selection.select(i);
+                }
 
-            modes.reset();
-            break;
-
-        case modes.VISUAL:
-            if (modes.extended & modes.TEXTAREA)
-                liberator.mode = modes.TEXTAREA;
-            else if (modes.extended & modes.CARET)
-                liberator.mode = modes.CARET;
-            break;
-
-        case modes.CARET:
-            // setting this option will trigger an observer which will
-            // take care of all other details like setting the NORMAL
-            // mode
-            options.setPref("accessibility.browsewithcaret", false);
-            break;
-
-        case modes.TEXTAREA:
-            // TODO: different behaviour for text areas and other input
-            // fields seems unnecessarily complicated. If the user
-            // likes Vi-mode then they probably like it for all input
-            // fields, if not they can enter it explicitly for only
-            // text areas.  The mode name TEXTAREA is confusing and
-            // would be better replaced with something indicating that
-            // it's a Vi editing mode. Extended modes really need to be
-            // displayed too. --djk
-            function isInputField() {
-                let elem = liberator.focus;
-                return ((elem instanceof HTMLInputElement && !/image/.test(elem.type))
-                      || elem instanceof HTMLIsIndexElement);
-            }
-
-            if (options["insertmode"] || isInputField())
-                liberator.mode = modes.INSERT;
-            else
                 modes.reset();
-            break;
+                break;
 
-        case modes.INSERT:
-            if ((modes.extended & modes.TEXTAREA))
-                liberator.mode = modes.TEXTAREA;
-            else
+            case modes.VISUAL:
+                if (modes.extended & modes.TEXTAREA)
+                    liberator.mode = modes.TEXTAREA;
+                else if (modes.extended & modes.CARET)
+                    liberator.mode = modes.CARET;
+                break;
+
+            case modes.CARET:
+                // setting this option will trigger an observer which will
+                // take care of all other details like setting the NORMAL
+                // mode
+                options.setPref("accessibility.browsewithcaret", false);
+                break;
+
+            case modes.TEXTAREA:
+                // TODO: different behaviour for text areas and other input
+                // fields seems unnecessarily complicated. If the user
+                // likes Vi-mode then they probably like it for all input
+                // fields, if not they can enter it explicitly for only
+                // text areas.  The mode name TEXTAREA is confusing and
+                // would be better replaced with something indicating that
+                // it's a Vi editing mode. Extended modes really need to be
+                // displayed too. --djk
+                function isInputField() {
+                    let elem = liberator.focus;
+                    return ((elem instanceof HTMLInputElement && !/image/.test(elem.type))
+                          || elem instanceof HTMLIsIndexElement);
+                }
+
+                if (options["insertmode"] || isInputField())
+                    liberator.mode = modes.INSERT;
+                else
+                    modes.reset();
+                break;
+
+            case modes.INSERT:
+                if ((modes.extended & modes.TEXTAREA))
+                    liberator.mode = modes.TEXTAREA;
+                else
+                    modes.reset();
+                break;
+
+            default: // HINTS, CUSTOM or COMMAND_LINE
                 modes.reset();
-            break;
-
-        default: // HINTS, CUSTOM or COMMAND_LINE
-            modes.reset();
-            break;
+                break;
         }
 
         // clear any command output, if we have any
@@ -895,19 +890,16 @@ const Events = Module("events", {
             // menus have their own command handlers
             if (modes.extended & modes.MENU)
                 stop = true;
-            // handle Escape-one-key mode (Ctrl-v)
-            else if (modes.passNextKey && !modes.passAllKeys) {
+            // handle Escape-one-key mode ('i')
+            else if (modes.passNextKey) {
                 modes.passNextKey = false;
                 stop = true;
             }
-            // handle Escape-all-keys mode (Ctrl-q)
+            // handle Escape-all-keys mode (Ctrl-Esc)
             else if (modes.passAllKeys) {
-                if (modes.passNextKey)
-                    modes.passNextKey = false; // and then let flow continue
-                else if (isEscapeKey(key) || key == "<C-v>")
-                    ; // let flow continue to handle these keys to cancel escape-all-keys mode
-                else
-                    stop = true;
+                if (key == "<C-Esc>") // FIXME: Don't hardcode!
+                    modes.passAllKeys = false;
+                stop = true;
             }
 
             if (stop) {
@@ -1074,7 +1066,7 @@ const Events = Module("events", {
 
     // this is need for sites like msn.com which focus the input field on keydown
     onKeyUpOrDown: function (event) {
-        if (modes.passNextKey ^ modes.passAllKeys || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.passAllKeys || Events.isInputElemFocused())
             return;
         event.stopPropagation();
     },
@@ -1169,11 +1161,11 @@ const Events = Module("events", {
             function () { document.commandDispatcher.rewindFocus(); });
 
         mappings.add(modes.all,
-            ["<C-z>"], "Temporarily ignore all " + config.name + " key bindings",
-            function () { modes.passAllKeys = true; });
+            ["<C-Esc>"], "Temporarily ignore all " + config.name + " key bindings",
+            function () { modes.passAllKeys = !modes.passAllKeys; });
 
-        mappings.add(modes.all,
-            ["<C-v>"], "Pass through next key",
+        mappings.add([modes.NORMAL],
+            ["i"], "Ignore next key and send it directly to the webpage",
             function () { modes.passNextKey = true; });
 
         mappings.add(modes.all,

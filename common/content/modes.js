@@ -51,10 +51,10 @@ const Modes = Module("modes", {
     },
 
     _getModeMessage: function () {
-        if (this._passNextKey && !this._passAllKeys)
-            return "-- PASS THROUGH (next) --";
-        else if (this._passAllKeys && !this._passNextKey)
-            return "-- PASS THROUGH --";
+        if (this._passNextKey)
+            return "-- IGNORE --";
+        else if (this._passAllKeys)
+            return "-- IGNORE ALL KEYS --"; // TODO: Shall we add a (Press <C-Esc> to exit mode) help text?
 
         // when recording a macro
         let macromode = "";

@@ -75,9 +75,9 @@ const Mail = Module("mail", {
     _moveOrCopy: function (copy, destinationFolder, operateOnThread) {
         let folders = mail.getFolders(destinationFolder);
         if (folders.length == 0)
-            return void liberator.echoerr("Exxx: No matching folder for " + destinationFolder);
+            return void liberator.echoerr("No matching folder for " + destinationFolder);
         else if (folders.length > 1)
-            return liberator.echoerr("Exxx: More than one match for " + destinationFolder);
+            return liberator.echoerr("More than one match for " + destinationFolder);
 
         let count = gDBView.selection.count;
         if (!count)
@@ -596,8 +596,8 @@ const Mail = Module("mail", {
                 literal: 0
             });
 
-        commands.add(["m[ail]"],
-            "Write a new message",
+        commands.add(["c[ompose]"],
+            "Compose a new message",
             function (args) {
                 let mailargs = {};
                 mailargs.to =          args.join(", ");
@@ -615,7 +615,7 @@ const Mail = Module("mail", {
 
                 // TODO: is there a better way to check for validity?
                 if (addresses.some(function (recipient) !(/\S@\S+\.\S/.test(recipient))))
-                    return void liberator.echoerr("Exxx: Invalid e-mail address");
+                    return void liberator.echoerr("Invalid e-mail address");
 
                 mail.composeNewMail(mailargs);
             },
@@ -669,11 +669,11 @@ const Mail = Module("mail", {
     mappings: function () {
         var myModes = config.mailModes;
 
-        mappings.add(myModes, ["<Return>", "i"],
+        mappings.add(myModes, ["<Return>", "m"],
             "Inspect (focus) message",
             function () { config.browser.contentWindow.focus(); });
 
-        mappings.add(myModes, ["I"],
+        mappings.add(myModes, ["M"],
             "Open the message in new tab",
             function () {
                 if (gDBView && gDBView.selection.count < 1)
@@ -752,16 +752,16 @@ const Mail = Module("mail", {
             { count: true });
 
         // SENDING MESSAGES
-        mappings.add(myModes, ["m"],
+        mappings.add(myModes, ["c"],
             "Compose a new message",
-            function () { commandline.open("", "mail -subject=", modes.EX); });
+            function () { commandline.open("", "compose -subject=", modes.EX); });
 
-        mappings.add(myModes, ["M"],
+        mappings.add(myModes, ["C"],
             "Compose a new message to the sender of selected mail",
             function () {
               try {
                   let to = mail._escapeRecipient(gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor);
-                  commandline.open("", "mail " + to + " -subject=", modes.EX);
+                  commandline.open("", "compose " + to + " -subject=", modes.EX);
               }
               catch (e) {
                   liberator.beep();
@@ -836,17 +836,17 @@ const Mail = Module("mail", {
         // GETTING MAIL
         mappings.add(myModes, ["gm"],
             "Get new messages",
-            function () { mail.getNewMessages(); });
+            function () { liberator.echomsg("Fetching mail..."); mail.getNewMessages(); });
 
         mappings.add(myModes, ["gM"],
             "Get new messages for current account only",
-            function () { mail.getNewMessages(true); });
+            function () { liberator.echomsg("Fetching mail for current account..."); mail.getNewMessages(true); });
 
-        // MOVING MAIL
-        mappings.add(myModes, ["c"],
-            "Change folders",
+        mappings.add(myModes, ["o"],
+            "Goto folder",
             function () { commandline.open("", "goto ", modes.EX); });
 
+        // MOVING MAIL
         mappings.add(myModes, ["s"],
             "Move selected messages",
             function () { commandline.open("", "moveto ", modes.EX); });

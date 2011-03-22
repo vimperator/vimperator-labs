@@ -9,6 +9,10 @@
       [m]yt[m] to copy "To:"
       [m]yr[m] to copy recipients, To: + Cc:
       [m]yu[m] to copy URL of feed (only for RSS)
+    * IMPORTANT: 'c' has been changed to 'o' for quickly changing folders
+    * IMPORTANT: 'i' has been changed to 'm' to go into MESSAGE mode
+    * IMPORTANT: Passthrough mode has been changed (just like in Vimperator)
+      to 'i' for a single key and Ctrl-Esc for all keys
     * IMPORTANT: Support for sub-commands.
       And subCommands argument is added 4th commands.parseArgs's arguments.
     * Fix moving of more than one message with :moveto
