@@ -86,12 +86,8 @@
     relies on the user being able to keep his fingers on the keyboard where they
     can do the most good. While there are some areas where the mouse is clearly
     superior at, such as GUI design or some games, &liberator.appname; acts on the
-    assumption that a web browser doesn't have to be one of those.
-</p>
-
-<p>
-    Here are some areas where the mouse is typically considered indisposable, and
-    how &liberator.appname; challenges this preconception.
+    assumption that a web browser doesn't have to be one of those. However,
+    the mouse is of course fully supported if you prefer moving this little rodent.
 </p>
 
 <h2 tag="keyboard-scrolling">Scrolling</h2>
@@ -320,7 +316,7 @@
 
 <p>
     Alternatively, you can do this the old-fashioned way: re-enable the menubar,
-    as above, with <ex>:set go+=m</ex>, and select <em>Add-ons</em> from the <em>Tools</em> menu.
+    as above, with <ex>:set toolbars=menu</ex>, and select <em>Add-ons</em> from the <em>Tools</em> menu.
 </p>
 
 
