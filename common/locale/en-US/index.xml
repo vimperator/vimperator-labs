@@ -35,9 +35,9 @@ This file contains a list of all available commands, mappings and options.
     <dt><k name="C-l"/></dt> <dd>Redraw the screen</dd>
     <dt><k name="C-o"/></dt> <dd>Go to an older position in the jump list</dd>
     <dt><k name="C-u"/></dt> <dd>Scroll window upwards in the buffer</dd>
-    <dt><k name="C-v"/></dt> <dd>Pass through next key</dd>
+    <dt><k name="i"/></dt> <dd>Pass through next key</dd>
     <dt><k name="C-x"/></dt> <dd>Decrement last number in URL</dd>
-    <dt><k name="C-z"/></dt> <dd>Temporarily ignore all &liberator.appname; key bindings</dd>
+    <dt><k name="C-Esc"/></dt> <dd>Temporarily ignore all &liberator.appname; key bindings</dd>
 </dl>
 
 
@@ -88,7 +88,7 @@ This file contains a list of all available commands, mappings and options.
     <dt><k>d</k></dt> <dd>Delete current buffer</dd>
     <dt><k>f</k></dt> <dd>Start QuickHint mode</dd>
     <dt><k>h</k></dt> <dd>Scroll document to the left</dd>
-    <dt><k>i</k></dt> <dd>Start Caret mode</dd>
+    <dt><k>c</k></dt> <dd>Start Caret mode</dd>
     <dt><k>j</k></dt> <dd>Scroll document down</dd>
     <dt><k>k</k></dt> <dd>Scroll document up</dd>
     <dt><k>l</k></dt> <dd>Scroll document to the right</dd>

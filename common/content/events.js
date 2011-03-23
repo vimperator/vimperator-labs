@@ -167,9 +167,8 @@ const Events = Module("events", {
      * @param {string} macro The name for the macro.
      */
     startRecording: function (macro) {
-            // TODO: ignore this like Vim?
-            liberator.assert(/[a-zA-Z0-9]/.test(macro),
-            "E354: Invalid register name: '" + macro + "'");
+        // TODO: ignore this like Vim?
+        liberator.assert(/[a-zA-Z0-9]/.test(macro), "Invalid register name: '" + macro + "'");
 
         modes.isRecording = true;
 
@@ -193,13 +192,13 @@ const Events = Module("events", {
     playMacro: function (macro) {
         let res = false;
         if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1) {
-            liberator.echoerr("E354: Invalid register name: '" + macro + "'");
+            liberator.echoerr("Invalid register name: '" + macro + "'");
             return false;
         }
 
         if (macro == "@") { // use lastMacro if it's set
             if (!this._lastMacro) {
-                liberator.echoerr("E748: No previously used register");
+                liberator.echoerr("No previously used register");
                 return false;
             }
         }
@@ -225,9 +224,9 @@ const Events = Module("events", {
         else {
             if (this._lastMacro.length == 1)
                 // TODO: ignore this like Vim?
-                liberator.echoerr("Exxx: Register '" + this._lastMacro + "' not set");
+                liberator.echoerr("Register '" + this._lastMacro + "' not set");
             else
-                liberator.echoerr("Exxx: Named macro '" + this._lastMacro + "' not set");
+                liberator.echoerr("Named macro '" + this._lastMacro + "' not set");
         }
         return res;
     },
@@ -897,7 +896,7 @@ const Events = Module("events", {
             }
             // handle Escape-all-keys mode (Ctrl-Esc)
             else if (modes.passAllKeys) {
-                if (key == "<C-Esc>") // FIXME: Don't hardcode!
+                if (key == "<C-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
                     modes.passAllKeys = false;
                 stop = true;
             }
@@ -1161,7 +1160,7 @@ const Events = Module("events", {
             function () { document.commandDispatcher.rewindFocus(); });
 
         mappings.add(modes.all,
-            ["<C-Esc>"], "Temporarily ignore all " + config.name + " key bindings",
+            ["<C-Esc>", "<Insert>"], "Temporarily ignore all " + config.name + " key bindings",
             function () { modes.passAllKeys = !modes.passAllKeys; });
 
         mappings.add([modes.NORMAL],

@@ -17,8 +17,9 @@ to &liberator.host;, or to the web page, and have it retain its original meaning
 have 2 possibilities:
 
 <item>
-    <tags><![CDATA[ignore-all-keys <C-Esc>]]></tags>
+    <tags><![CDATA[ignore-all-keys <C-Esc> <Insert>]]></tags>
     <spec>&lt;C-Esc></spec>
+    <spec>&lt;Insert></spec>
     <description>
         <p>
             Disable all &liberator.appname; keys including <k name="Esc"/> and

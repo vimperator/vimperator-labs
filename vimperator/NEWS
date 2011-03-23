@@ -1,9 +1,10 @@
 2011-xx-xx:
     * version 3.1
     * IMPORTANT: PASSTHROUGH mode has been reworked. Press 'i' to ignore a single
-      key, and Ctrl-Esc to toggle vimperator completely.
+      key, and "Ctrl-Esc" or "Insert" to toggle vimperator completely.
     * IMPORTANT: Ctrl-c/x/v/z do their expected thing now. We managed that by just
       reshuffling some commands.
+    * IMPORTANT: CARET mode is now activated with 'c' instead of 'i'
     * Vimperator works around Firefox's tab scrolling now. So the minimum
       tab width is now just 16px anymore, and you are much more unlikely to
       see scrollbars in the tab bar.
@@ -11,7 +12,8 @@
       fade out quickly now and make room for the status items.
     * Add 'apptab' option for pin/unpin the current tab.
     * Add 'messagetimeout' option to automatically hide messages after a timeout
-    * :tabclose! behavior is changed, not focus left tab but close even if the tab is an app tab.
+    * :tabclose! behavior is changed: Instead of focusing left tab, force closing
+      of a tab - even if it is an AppTab.
     * Bug fixes
 
 2011-03-06:

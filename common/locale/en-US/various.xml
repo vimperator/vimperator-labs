@@ -213,8 +213,8 @@ is…
 
 
 <item>
-    <tags><![CDATA[<Insert> i]]></tags>
-    <spec>i</spec>
+    <tags>c caret-mode</tags>
+    <spec>c</spec>
     <description>
         <p>
             Start caret mode. This mode resembles the Vim's Normal mode where you see a

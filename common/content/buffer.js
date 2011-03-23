@@ -1490,7 +1490,7 @@ const Buffer = Module("buffer", {
             },
             { count: true });
 
-        mappings.add(myModes, ["c", "<Insert>"],
+        mappings.add(myModes, ["c"],
             "Start caret mode",
             function () {
                 if (Editor.windowIsEditable()) {
