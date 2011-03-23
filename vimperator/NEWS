@@ -2,6 +2,8 @@
     * version 3.1
     * IMPORTANT: PASSTHROUGH mode has been reworked. Press 'i' to ignore a single
       key, and Ctrl-Esc to toggle vimperator completely.
+    * IMPORTANT: Ctrl-c/x/v/z do their expected thing now. We managed that by just
+      reshuffling some commands.
     * Vimperator works around Firefox's tab scrolling now. So the minimum
       tab width is now just 16px anymore, and you are much more unlikely to
       see scrollbars in the tab bar.

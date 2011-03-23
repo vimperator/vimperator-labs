@@ -1509,7 +1509,20 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["<C-c>"],
             "Stop loading the current web page",
-            function () { tabs.stop(config.browser.mCurrentTab); });
+            function () {
+                let controller = window.document.commandDispatcher.getControllerForCommand("cmd_copy");
+                if (controller && controller.isCommandEnabled("cmd_copy")) {
+                    controller.doCommand("cmd_copy");
+                    // clear any selection made
+                    let selection = Buffer.focusedWindow.getSelection();
+                    try { // a simple if (selection) does not seem to work
+                        selection.collapseToStart();
+                    } catch (e) {}
+                } else {
+                    // stop loading page
+                    tabs.stop(config.browser.mCurrentTab);
+                }
+            });
 
         // scrolling
         mappings.add(myModes, ["j", "<Down>", "<C-e>"],

@@ -401,7 +401,10 @@ have 2 possibilities:
     <tags><![CDATA[<C-c>]]></tags>
     <spec>&lt;C-c></spec>
     <description>
-        <p>Stop loading the current web page.</p>
+        <p>Stop loading the current web page. This only works if there is no selection, otherwise the
+           selected text is copied to the clipboard. Usually this duality isn't a problem, as while
+           a page is loading, there is seldom a text to copy.
+        </p>
     </description>
 </item>
 

@@ -1510,7 +1510,13 @@ const CommandLine = Module("commandline", {
         // TODO: move "<Esc>", "<C-[>" here from mappings
         mappings.add(myModes,
             ["<C-c>"], "Focus content",
-            function () { events.onEscape(); });
+            function () {
+                let controller = window.document.commandDispatcher.getControllerForCommand("cmd_copy");
+                if (controller && controller.isCommandEnabled("cmd_copy"))
+                    controller.doCommand("cmd_copy");
+                else
+                    events.onEscape();
+            });
 
         // Any "non-keyword" character triggers abbreviation expansion
         // TODO: Add "<CR>" and "<Tab>" to this list
