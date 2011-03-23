@@ -670,8 +670,9 @@ const Mail = Module("mail", {
         var myModes = config.mailModes;
 
         mappings.add(myModes, ["<Return>", "m"],
-            "Inspect (focus) message",
-            function () { config.browser.contentWindow.focus(); });
+            "Start message mode",
+            //function () { config.browser.contentWindow.focus(); });
+            function () { modes.main = modes.MESSAGE; });
 
         mappings.add(myModes, ["M"],
             "Open the message in new tab",

@@ -102,7 +102,7 @@ const Config = Module("config", ConfigBase, {
 
     get hasTabbrowser() !this.isComposeWindow,
 
-    focusChange: function (win) {
+    /*focusChange: function (win) {
         // we switch to -- MESSAGE -- mode for Muttator, when the main HTML widget gets focus
         if (win && (win.document instanceof HTMLDocument || win.document instanceof XMLDocument) ||
             liberator.focus instanceof HTMLAnchorElement) {
@@ -111,7 +111,7 @@ const Config = Module("config", ConfigBase, {
             else if (liberator.mode != modes.MESSAGE)
                 liberator.mode = modes.MESSAGE;
         }
-    },
+    },*/
     get browser() this.isComposeWindow ? null : window.getBrowser(), // XXX: Does the composer really don't have a browser object?
     tabbrowser: {
         __proto__: document.getElementById("tabmail"),

@@ -15,6 +15,8 @@
       to 'i' for a single key and Ctrl-Esc for all keys
     * IMPORTANT: Support for sub-commands.
       And subCommands argument is added 4th commands.parseArgs's arguments.
+    * We no longer enter MESSAGE mode automatically after focus changes,
+      use 'm' (and Esc) to enter/exit this mode.
     * Fix moving of more than one message with :moveto
     * add l1,l2,...,l5 to directly tag a message with the 1st, 2nd, ... tag
     * Fix ctrl-shift-n/p going to next/prev unread folder (thanks temerako)
