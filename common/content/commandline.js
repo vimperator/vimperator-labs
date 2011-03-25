@@ -169,7 +169,8 @@ const CommandLine = Module("commandline", {
 
             commands.repeat = command;
             liberator.trapErrors(function () liberator.execute(command));
-            if (commandline._commandlineWidget.style.opacity == "1" && options["messagetimeout"] != -1)
+            if (!(modes.main == modes.COMMAND_LINE && modes.extended == modes.PROMPT) &&
+                commandline._commandlineWidget.style.opacity == "1" && options["messagetimeout"] != -1)
                 this.close();
                 //self._commandlineDisplayTimeoutID = self.setTimeout(function() { this.close(); }, 0);
         });
