@@ -1154,7 +1154,7 @@ const Buffer = Module("buffer", {
 
                 // FIXME: arg handling is a bit of a mess, check for filename
                 liberator.assert(!arg || arg[0] == ">" && !liberator.has("Win32"),
-                    "E488: Trailing characters");
+                    "Trailing characters");
 
                 options.withContext(function () {
                     if (arg) {
@@ -1201,7 +1201,7 @@ const Buffer = Module("buffer", {
                 let titles = buffer.alternateStyleSheets.map(function (stylesheet) stylesheet.title);
 
                 liberator.assert(!arg || titles.indexOf(arg) >= 0,
-                    "E475: Invalid argument: " + arg);
+                    "Invalid argument: " + arg);
 
                 if (options["usermode"])
                     options["usermode"] = false;
@@ -1295,7 +1295,7 @@ const Buffer = Module("buffer", {
                     level = util.Math.constrain(level, Buffer.ZOOM_MIN, Buffer.ZOOM_MAX);
                 }
                 else
-                    liberator.assert(false, "E488: Trailing characters");
+                    liberator.assert(false, "Trailing characters");
 
                 if (args.bang)
                     buffer.fullZoom = level;

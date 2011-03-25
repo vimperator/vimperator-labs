@@ -188,7 +188,7 @@ const Config = Module("config", ConfigBase, {
                     }
                 }
 
-                liberator.echoerr("No sidebar " + arg + " found");
+                liberator.echoerr("No such sidebar: " + arg);
             },
             {
                 argCount: "1",

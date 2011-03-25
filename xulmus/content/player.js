@@ -259,7 +259,7 @@ const Player = Module("player", {
             this.focusTrack(searchView.getItemByIndex(this._lastSearchIndex));
         }
         else
-            liberator.echoerr("E486 Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
+            liberator.echoerr("Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
     },
 
     /**
@@ -479,7 +479,7 @@ const Player = Module("player", {
                         }
                     }
 
-                    liberator.echoerr("E475: Invalid argument: " + arg);
+                    liberator.echoerr("Invalid argument: " + arg);
                 }
                 else {
                     // load main library if there are no args
@@ -520,7 +520,7 @@ const Player = Module("player", {
 
                 // intentionally supports 999:99:99
                 if (!/^[+-]?(\d+[smh]?|(\d+:\d\d:|\d+:)?\d{2})$/.test(arg))
-                    return void liberator.echoerr("E475: Invalid argument: " + arg);
+                    return void liberator.echoerr("Invalid argument: " + arg);
 
                 function ms(t, m) Math.abs(parseInt(t, 10) * { s: 1000, m: 60000, h: 3600000 }[m])
 
@@ -549,7 +549,7 @@ const Player = Module("player", {
             function (args) {
                 // FIXME: is this a SB restriction? --djk
                 if (!SBGetBrowser().currentMediaPage)
-                    return void liberator.echoerr("Exxx: Can only set the media view from the media tab"); // XXX
+                    return void liberator.echoerr("Can only set the media view from the media tab"); // XXX
 
                 let arg = args[0];
 
@@ -564,7 +564,7 @@ const Player = Module("player", {
                         }
                     }
 
-                    liberator.echoerr("E475: Invalid argument: " + arg);
+                    liberator.echoerr("Invalid argument: " + arg);
                 }
             },
             {
@@ -624,7 +624,7 @@ const Player = Module("player", {
                 let arg = args[0];
 
                 if (!/^[+-]?\d+$/.test(arg))
-                    return void liberator.echoerr("E488: Trailing characters");
+                    return void liberator.echoerr("Trailing characters");
 
                 let level = parseInt(arg, 10) / 100;
 

@@ -92,7 +92,7 @@ const Sanitizer = Module("sanitizer", {
                 sanitizer.ignoreTimespan = !sanitizer.range;
 
                 if (args.bang) {
-                    liberator.assert(args.length == 0, "E488: Trailing characters");
+                    liberator.assert(args.length == 0, "Trailing characters");
 
                     liberator.log("Sanitizing all items in 'sanitizeitems'...");
 
@@ -104,7 +104,7 @@ const Sanitizer = Module("sanitizer", {
                     }
                 }
                 else {
-                    liberator.assert(args.length > 0, "E471: Argument required");
+                    liberator.assert(args.length > 0, "Argument required");
 
                     for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
                         liberator.log("Sanitizing " + item + " items...");

@@ -75,9 +75,9 @@ const Mail = Module("mail", {
     _moveOrCopy: function (copy, destinationFolder, operateOnThread) {
         let folders = mail.getFolders(destinationFolder);
         if (folders.length == 0)
-            return void liberator.echoerr("No matching folder for " + destinationFolder);
+            return void liberator.echoerr("No matching folder for: " + destinationFolder);
         else if (folders.length > 1)
-            return liberator.echoerr("More than one match for " + destinationFolder);
+            return liberator.echoerr("More than one match for: " + destinationFolder);
 
         let count = gDBView.selection.count;
         if (!count)
@@ -85,7 +85,7 @@ const Mail = Module("mail", {
 
         (copy ? MsgCopyMessage : MsgMoveMessage)(folders[0]);
         setTimeout(function () {
-            liberator.echomsg(count + " message(s) " + (copy ? "copied" : "moved") + " to " + folders[0].prettyName, 1);
+            liberator.echomsg((copy ? "Copied " : "Moved ") + count + " message(s) " + " to: " + folders[0].prettyName, 1);
         }, 100);
     },
 
@@ -173,7 +173,7 @@ const Mail = Module("mail", {
                     let url = args.attachments.pop();
                     let file = io.getFile(url);
                     if (!file.exists())
-                        return void liberator.echoerr("Exxx: Could not attach file `" + url + "'", commandline.FORCE_SINGLELINE);
+                        return void liberator.echoerr("Could not attach file: " + url, commandline.FORCE_SINGLELINE);
 
                     attachment = Cc["@mozilla.org/messengercompose/attachment;1"].createInstance(Ci.nsIMsgAttachment);
                     attachment.url = "file://" + file.path;
@@ -585,7 +585,7 @@ const Mail = Module("mail", {
                              mail.getFolders(arg, true, true)[count] :
                              mail.getFoldersWithFlag(Ci.nsMsgFolderFlags.Inbox)[count];
                 if (!folder)
-                    liberator.echoerr("Exxx: Folder \"" + arg + "\" does not exist");
+                    liberator.echoerr("No such folder: " + arg);
                 else
                     liberator.open(folder, {from: "goto"});
             },

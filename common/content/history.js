@@ -101,7 +101,7 @@ const History = Module("history", {
             return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
 
         if (filter.length > 0)
-            liberator.echoerr("E283: No history matching \"" + filter + "\"");
+            liberator.echoerr("No matching history items for: " + filter);
         else
             liberator.echoerr("No history set");
         return null;
@@ -125,7 +125,7 @@ const History = Module("history", {
                         for (let [i, ent] in Iterator(sh.slice(0, sh.index).reverse()))
                             if (ent.URI.spec == url)
                                 return void window.getWebNavigation().gotoIndex(i);
-                        liberator.echoerr("Exxx: URL not found in history");
+                        liberator.echoerr("URL not found in history: " + url);
                     }
                     else
                         history.stepTo(-Math.max(args.count, 1));
@@ -164,7 +164,7 @@ const History = Module("history", {
                         for (let [i, ent] in Iterator(sh.slice(sh.index + 1)))
                             if (ent.URI.spec == url)
                                 return void window.getWebNavigation().gotoIndex(i);
-                        liberator.echoerr("Exxx: URL not found in history");
+                        liberator.echoerr("URL not found in history: " + url);
                     }
                     else
                         history.stepTo(Math.max(args.count, 1));
@@ -193,7 +193,7 @@ const History = Module("history", {
                 if (args["-remove"]) {
                     let items = completion.runCompleter("history", args.join(" "), args["-max"] || 1000);
                     if (items.length == 0)
-                        liberator.echoerr("No matching history items for " + args.join(" "));
+                        liberator.echoerr("No matching history items for: " + args.join(" "));
                     else {
                         var browserHistory = Components.classes["@mozilla.org/browser/nav-history-service;1"]
                                             .getService(Components.interfaces.nsIBrowserHistory);

@@ -155,7 +155,7 @@ const Marks = Module("marks", {
         }
 
         if (!ok)
-            liberator.echoerr("E20: Mark not set");
+            liberator.echoerr("Mark not set: " + mark);
     },
 
     /**
@@ -170,7 +170,7 @@ const Marks = Module("marks", {
 
         if (filter.length > 0) {
             marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
-            liberator.assert(marks.length > 0, "E283: No marks matching " + filter.quote());
+            liberator.assert(marks.length > 0, "No matching marks for: " + filter.quote());
         }
 
         let list = template.tabular(
@@ -269,22 +269,21 @@ const Marks = Module("marks", {
                 let special = args.bang;
                 args = args.string;
 
-                // assert(special ^ args)
-                liberator.assert( special ||  args, "E471: Argument required");
-                liberator.assert(!special || !args, "E474: Invalid argument");
+                liberator.assert( special ||  args, "Argument required");
+                liberator.assert(!special || !args, "Invalid argument");
 
                 let matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/);
                 // NOTE: this currently differs from Vim's behavior which
                 // deletes any valid marks in the arg list, up to the first
                 // invalid arg, as well as giving the error message.
-                liberator.assert(!matches, "E475: Invalid argument: " + matches[0]);
+                liberator.assert(!matches, "Invalid argument: " + matches[0]);
 
                 // check for illegal ranges - only allow a-z A-Z 0-9
                 if ((matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))) {
                     for (let match in values(matches))
                         liberator.assert(/[a-z]-[a-z]|[A-Z]-[A-Z]|[0-9]-[0-9]/.test(match) &&
                                          match[0] <= match[2],
-                            "E475: Invalid argument: " + args.match(match + ".*")[0]);
+                            "Invalid argument: " + args.match(match + ".*")[0]);
                 }
 
                 marks.remove(args, special);
@@ -298,9 +297,9 @@ const Marks = Module("marks", {
             "Mark current location within the web page",
             function (args) {
                 let mark = args[0];
-                liberator.assert(mark.length <= 1, "E488: Trailing characters");
+                liberator.assert(mark.length <= 1, "Trailing characters");
                 liberator.assert(/[a-zA-Z]/.test(mark),
-                    "E191: Argument must be a letter or forward/backward quote");
+                    "Mark must be a letter or forward/backward quote");
 
                 marks.add(mark);
             },
@@ -313,7 +312,7 @@ const Marks = Module("marks", {
 
                 // ignore invalid mark characters unless there are no valid mark chars
                 liberator.assert(!args || /[a-zA-Z]/.test(args),
-                    "E283: No marks matching " + args.quote());
+                    "No matching marks for: " + args.quote());
 
                 let filter = args.replace(/[^a-zA-Z]/g, "");
                 marks.list(filter);

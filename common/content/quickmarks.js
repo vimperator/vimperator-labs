@@ -64,7 +64,7 @@ const QuickMarks = Module("quickmarks", {
         if (url)
             liberator.open(url, where);
         else
-            liberator.echoerr("E20: QuickMark not set");
+            liberator.echoerr("QuickMark not set: " + qmark);
     },
 
     /**
@@ -86,7 +86,7 @@ const QuickMarks = Module("quickmarks", {
 
         if (filter.length > 0) {
             marks = marks.filter(function (qmark) filter.indexOf(qmark) >= 0);
-            liberator.assert(marks.length >= 0, "E283: No QuickMarks matching \"" + filter + "\"");
+            liberator.assert(marks.length >= 0, "No matching QuickMarks for: " + filter);
         }
 
         let items = [[mark, this._qmarks.get(mark)] for ([k, mark] in Iterator(marks))];
@@ -100,8 +100,8 @@ const QuickMarks = Module("quickmarks", {
             function (args) {
                 // TODO: finish arg parsing - we really need a proper way to do this. :)
                 // assert(args.bang ^ args.string)
-                liberator.assert( args.bang ||  args.string, "E471: Argument required");
-                liberator.assert(!args.bang || !args.string, "E474: Invalid argument");
+                liberator.assert( args.bang ||  args.string, "Argument required");
+                liberator.assert(!args.bang || !args.string, "Invalid argument");
 
                 if (args.bang)
                     quickmarks.removeAll();
@@ -121,7 +121,7 @@ const QuickMarks = Module("quickmarks", {
             function (args) {
                 let matches = args.string.match(/^([a-zA-Z0-9])(?:\s+(.+))?$/);
                 if (!matches)
-                    liberator.echoerr("E488: Trailing characters");
+                    liberator.echoerr("Trailing characters");
                 else if (!matches[2])
                     quickmarks.add(matches[1], buffer.URL);
                 else
@@ -135,7 +135,7 @@ const QuickMarks = Module("quickmarks", {
                 args = args.string;
 
                 // ignore invalid qmark characters unless there are no valid qmark chars
-                liberator.assert(!args || /[a-zA-Z0-9]/.test(args), "E283: No QuickMarks matching \"" + args + "\"");
+                liberator.assert(!args || /[a-zA-Z0-9]/.test(args), "No matching QuickMarks for: " + args);
 
                 let filter = args.replace(/[^a-zA-Z0-9]/g, "");
                 quickmarks.list(filter);

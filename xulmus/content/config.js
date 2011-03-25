@@ -232,7 +232,7 @@ const Config = Module("config", ConfigBase, {
                 if (arg in Config.displayPanes)
                     Config.closeDisplayPane(Config.displayPanes[arg]);
                 else
-                    liberator.echoerr("E475: Invalid argument: " + arg);
+                    liberator.echoerr("Invalid argument: " + arg);
 
             },
             {
@@ -251,7 +251,7 @@ const Config = Module("config", ConfigBase, {
                     Config.openDisplayPane(Config.displayPanes[arg]);
                     // TODO: focus when we have better key handling of these extended modes
                 else
-                    liberator.echoerr("E475: Invalid argument: " + arg);
+                    liberator.echoerr("Invalid argument: " + arg);
             },
             {
                 argCount: "1",

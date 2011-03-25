@@ -275,7 +275,6 @@ const Liberator = Module("liberator", {
         commandline.echo(str, commandline.HL_NORMAL, flags);
     },
 
-    // TODO: Vim replaces unprintable characters in echoerr/echomsg
     /**
      * Outputs an error message to the command line.
      *
@@ -385,7 +384,7 @@ const Liberator = Module("liberator", {
             let opt = this.options.get(matches[1]);
             // liberator.dump("evalExpression: " + matches[1]);
 
-            liberator.assert(opt, "E113: Unknown option: " + matches[1]);
+            liberator.assert(opt, "Unknown option: " + matches[1]);
 
             let type = opt.type;
             let value = opt.getter();
@@ -406,7 +405,7 @@ const Liberator = Module("liberator", {
         let reference = this.variableReference(string);
 
         if (!reference[0])
-            this.echoerr("E121: Undefined variable: " + string);
+            this.echoerr("Undefined variable: " + string);
         else
             return reference[0][reference[1]];
         return null;
@@ -433,15 +432,15 @@ const Liberator = Module("liberator", {
         let command = commands.get(cmd);
 
         if (command === null) {
-            err = "E492: Not a " + config.name.toLowerCase() + " command: " + str;
+            err = "Not a " + config.name.toLowerCase() + " command: " + str;
             liberator.focusContent();
         }
         else if (command.action === null)
-            err = "E666: Internal error: command.action === null"; // TODO: need to perform this test? -- djk
+            err = "Internal error: command.action === null"; // TODO: need to perform this test? -- djk
         else if (count != null && !command.count)
-            err = "E481: No range allowed";
+            err = "No range allowed";
         else if (special && !command.bang)
-            err = "E477: No ! allowed";
+            err = "No ! allowed";
 
         liberator.assert(!err, err);
         if (!silent)
@@ -646,7 +645,7 @@ const Liberator = Module("liberator", {
         }
 
         let page = this.findHelp(topic, unchunked);
-        liberator.assert(page != null, "E149: Sorry, no help for " + topic);
+        liberator.assert(page != null, "Sorry, no help for: " + topic);
 
         liberator.open("liberator://help/" + page, { from: "help" });
         if (!options["activate"] || options.get("activate").has("all", "help"))
@@ -662,7 +661,7 @@ const Liberator = Module("liberator", {
 
     loadPlugins: function () {
         function sourceDirectory(dir) {
-            liberator.assert(dir.isReadable(), "E484: Can't open file " + dir.path);
+            liberator.assert(dir.isReadable(), "Cannot read directory: " + dir.path);
 
             liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
             dir.readDirectory(true).forEach(function (file) {
@@ -1345,7 +1344,7 @@ const Liberator = Module("liberator", {
                         }
                     }
 
-                    liberator.echoerr("E475: Invalid argument: " + arg);
+                    liberator.echoerr("Invalid argument: " + arg);
                 }
                 catch (e) {
                     liberator.echoerr("Error opening " + arg.quote() + ": " + e);
@@ -1366,7 +1365,7 @@ const Liberator = Module("liberator", {
                 let items = Liberator.getMenuItems();
 
                 liberator.assert(items.some(function (i) i.fullMenuPath == arg),
-                    "E334: Menu not found: " + arg);
+                    "Menu not found: " + arg);
 
                 for (let [, item] in Iterator(items)) {
                     if (item.fullMenuPath == arg)
@@ -1404,9 +1403,9 @@ const Liberator = Module("liberator", {
                     AddonManager.getInstallForFile(file, function (a) a.install());
                 else {
                     if (file.exists() && file.isDirectory())
-                        liberator.echomsg("Cannot install a directory: \"" + file.path + "\"", 0);
+                        liberator.echomsg("Cannot install a directory: " + file.path, 0);
 
-                    liberator.echoerr("E484: Can't open file " + file.path);
+                    liberator.echoerr("Cannot open file: " + file.path);
                 }
             }, {
                 argCount: "1",
@@ -1450,13 +1449,13 @@ const Liberator = Module("liberator", {
                     if (args.bang)
                         liberator.extensions.forEach(function (e) { action(e); });
                     else {
-                        liberator.assert(name, "E471: Argument required"); // XXX
+                        liberator.assert(name, "Argument required");
 
                         let extension = liberator.getExtension(name);
                         if (extension)
                             action(extension);
                         else
-                            liberator.echoerr("E474: Invalid argument");
+                            liberator.echoerr("Invalid argument");
                     }
                 }, {
                     argCount: "?", // FIXME: should be "1"
@@ -1474,8 +1473,8 @@ const Liberator = Module("liberator", {
             "Open an extension's preference dialog",
             function (args) {
                 let extension = liberator.getExtension(args[0]);
-                liberator.assert(extension && extension.options,
-                    "E474: Invalid argument");
+                liberator.assert(extension && extension.options, "Invalid argument");
+
                 if (args.bang)
                     window.openDialog(extension.options, "_blank", "chrome,toolbar");
                 else
@@ -1511,7 +1510,7 @@ const Liberator = Module("liberator", {
                 }
                 else {
                     if (filter)
-                        liberator.echoerr("No extension matching \"" + filter + "\"");
+                        liberator.echoerr("No matching extensions for: " + filter);
                     else
                         liberator.echoerr("No extensions installed");
                 }
@@ -1539,7 +1538,7 @@ const Liberator = Module("liberator", {
             commands.add([command.name],
                 command.description,
                 function (args) {
-                    liberator.assert(!args.bang, "E478: Don't panic!");
+                    liberator.assert(!args.bang, "Don't panic!");
 
                     liberator.help(args.literalArg, unchunked);
                 }, {

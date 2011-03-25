@@ -24,7 +24,7 @@
     <dt>stringlist</dt>    <dd>a comma-separated list of strings</dd>
 </dl>
 
-<h2 tag="set-option E764">Setting options</h2>
+<h2 tag="set-option">Setting options</h2>
 
 <item>
     <tags>:set :se</tags>
@@ -42,7 +42,6 @@
 </item>
 
 <item>
-    <tags>E518 E519</tags>
     <spec>:se[t] <a>option</a>?</spec>
     <description>
         <p>Show value of <a>option</a>.</p>
@@ -106,7 +105,7 @@
 </item>
 
 <item>
-    <tags>:set-args E487 E521</tags>
+    <tags>:set-args</tags>
     <spec>:se[t] <a>option</a>=<a>value</a> […]</spec>
     <description>
         <p>

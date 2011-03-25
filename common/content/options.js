@@ -233,7 +233,7 @@ const Option = Class("Option", {
         case "number":
             // TODO: support floats? Validators need updating.
             if (!/^[+-]?(?:0x[0-9a-f]+|0[0-7]+|0|[1-9]\d*)$/i.test(values))
-                return "E521: Number required after := " + this.name + "=" + values;
+                return "Number required after := " + this.name + "=" + values;
 
             let value = parseInt(values/* deduce radix */);
 
@@ -299,13 +299,13 @@ const Option = Class("Option", {
             break;
 
         default:
-            return "E685: Internal error: option type `" + this.type + "' not supported";
+            return "Internal error: option type `" + this.type + "' not supported";
         }
 
         if (newValue == null)
             return "Operator " + operator + " not supported for option type " + this.type;
         if (!this.isValidValue(newValue))
-            return "E474: Invalid argument: " + values;
+            return "Invalid argument: " + values;
         this.setValues(newValue, scope);
         return null;
     },
@@ -791,7 +791,7 @@ const Options = Module("options", {
         if (services.get("pref").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
             this.setPref(name, !this.getPref(name));
         else
-            liberator.echoerr("E488: Trailing characters: " + name + "!");
+            liberator.echoerr("Trailing characters: " + name + "!");
     },
 
     /**
@@ -850,23 +850,23 @@ const Options = Module("options", {
                 services.get("pref").setComplexValue(name, Ci.nsISupportsString, supportString);
             }
             else if (type == Ci.nsIPrefBranch.PREF_INT)
-                liberator.echoerr("E521: Number required after =: " + name + "=" + value);
+                liberator.echoerr("Number required after =: " + name + "=" + value);
             else
-                liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         case "number":
             if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_INT)
                 services.get("pref").setIntPref(name, value);
             else
-                liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         case "boolean":
             if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_BOOL)
                 services.get("pref").setBoolPref(name, value);
             else if (type == Ci.nsIPrefBranch.PREF_INT)
-                liberator.echoerr("E521: Number required after =: " + name + "=" + value);
+                liberator.echoerr("Number required after =: " + name + "=" + value);
             else
-                liberator.echoerr("E474: Invalid argument: " + name + "=" + value);
+                liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         default:
             liberator.echoerr("Unknown preference type: " + typeof value + " (" + name + "=" + value + ")");
@@ -977,7 +977,7 @@ const Options = Module("options", {
 
                 let option = opt.option;
                 liberator.assert(option != null || opt.all,
-                    "E518: Unknown option: " + opt.name);
+                    "Unknown option: " + opt.name);
 
                 // reset a variable to its default value
                 if (opt.reset) {
@@ -1014,7 +1014,7 @@ const Options = Module("options", {
                     option.setFrom = modifiers.setFrom || null;
 
                     if (opt.option.type == "boolean") {
-                        liberator.assert(!opt.valueGiven, "E474: Invalid argument: " + arg);
+                        liberator.assert(!opt.valueGiven, "Invalid argument: " + arg);
                         opt.values = !opt.unsetBoolean;
                     }
                     let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
@@ -1112,11 +1112,10 @@ const Options = Module("options", {
                     let [, type, name, stuff, expr] = matches;
                     if (!type) {
                         let reference = liberator.variableReference(name);
-                        liberator.assert(reference[0] || !stuff,
-                            "E121: Undefined variable: " + name);
+                        liberator.assert(reference[0] || !stuff, "Undefined variable: " + name);
 
                         expr = liberator.evalExpression(expr);
-                        liberator.assert(expr !== undefined, "E15: Invalid expression: " + expr);
+                        liberator.assert(expr !== undefined, "Invalid expression: " + expr);
 
                         if (!reference[0]) {
                             if (reference[2] == "g")
@@ -1141,7 +1140,7 @@ const Options = Module("options", {
                 // 1 - name
                 else if ((matches = args.match(/^\s*([\w:]+)\s*$/))) {
                     let reference = liberator.variableReference(matches[1]);
-                    liberator.assert(reference[0], "E121: Undefined variable: " + matches[1]);
+                    liberator.assert(reference[0], "Undefined variable: " + matches[1]);
 
                     let value = reference[0][reference[1]];
                     let prefix = typeof value == "number"   ? "#" :
@@ -1213,7 +1212,7 @@ const Options = Module("options", {
                     let reference = liberator.variableReference(name);
                     if (!reference[0]) {
                         if (!args.bang)
-                            liberator.echoerr("E108: No such variable: " + name);
+                            liberator.echoerr("No such variable: " + name);
                         return;
                     }
 

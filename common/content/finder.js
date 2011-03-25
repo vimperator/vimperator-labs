@@ -238,7 +238,7 @@ const Finder = Module("finder", {
         this._found = fastFind.find(this._searchString, this._linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
 
         if (!this._found)
-            this.setTimeout(function () liberator.echoerr("E486: Pattern not found: " + this._searchPattern, commandline.FORCE_SINGLELINE), 0);
+            this.setTimeout(function () liberator.echoerr("Pattern not found: " + this._searchPattern, commandline.FORCE_SINGLELINE), 0);
     },
 
     /**
@@ -259,12 +259,12 @@ const Finder = Module("finder", {
         let result = config.browser.fastFind.findAgain(up, this._linksOnly);
 
         if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND)
-            liberator.echoerr("E486: Pattern not found: " + this._lastSearchPattern, commandline.FORCE_SINGLELINE);
+            liberator.echoerr("Pattern not found: " + this._lastSearchPattern, commandline.FORCE_SINGLELINE);
         else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
             setTimeout(function () {
-                let msg = up ? "search hit TOP, continuing at BOTTOM" : "search hit BOTTOM, continuing at TOP";
+                let msg = up ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
                 commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
             }, 0);
         }
@@ -303,7 +303,7 @@ const Finder = Module("finder", {
         if (str)
             var pattern = str;
         else {
-            liberator.assert(this._lastSearchPattern, "E35: No previous search pattern");
+            liberator.assert(this._lastSearchPattern, "No previous search pattern");
             pattern = this._lastSearchPattern;
         }
 

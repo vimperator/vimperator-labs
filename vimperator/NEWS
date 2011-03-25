@@ -5,6 +5,8 @@
     * IMPORTANT: Ctrl-c/x/v/z do their expected thing now. We managed that by just
       reshuffling some commands.
     * IMPORTANT: CARET mode is now activated with 'c' instead of 'i'
+    * Error messages have more consistent wording now, also got rid of Exxx error
+      codes, as we never supported those in the help files anyway.
     * Vimperator works around Firefox's tab scrolling now. So the minimum
       tab width is now just 16px anymore, and you are much more unlikely to
       see scrollbars in the tab bar.

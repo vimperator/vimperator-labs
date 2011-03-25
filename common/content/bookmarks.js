@@ -433,11 +433,11 @@ const Bookmarks = Module("bookmarks", {
             return liberator.open(items.map(function (i) i.url), liberator.NEW_TAB);
 
         if (filter.length > 0 && tags.length > 0)
-            liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
+            liberator.echoerr("No bookmarks matching tags: \"" + tags + "\" and string: \"" + filter + "\"");
         else if (filter.length > 0)
-            liberator.echoerr("E283: No bookmarks matching string: \"" + filter + "\"");
+            liberator.echoerr("No bookmarks matching string: \"" + filter + "\"");
         else if (tags.length > 0)
-            liberator.echoerr("E283: No bookmarks matching tags: \"" + tags + "\"");
+            liberator.echoerr("No bookmarks matching tags: \"" + tags + "\"");
         else
             liberator.echoerr("No bookmarks set");
         return null;
@@ -499,7 +499,7 @@ const Bookmarks = Module("bookmarks", {
                     liberator.echomsg("Added bookmark: " + url + extra, 1, commandline.FORCE_SINGLELINE);
                 }
                 else
-                    liberator.echoerr("Exxx: Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
+                    liberator.echoerr("Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
             }, {
                 argCount: "?",
                 bang: true,

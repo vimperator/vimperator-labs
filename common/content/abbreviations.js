@@ -232,7 +232,7 @@ const Abbreviations = Module("abbreviations", {
                 function (args) {
                     let matches = splitArg(args.literalArg);
 
-                    liberator.assert(matches, "E474: Invalid argument");
+                    liberator.assert(matches, "Invalid argument: " + args.literalArg);
 
                     let [, lhs, rhs] = matches;
                     if (rhs) {
@@ -271,9 +271,9 @@ const Abbreviations = Module("abbreviations", {
                 function (args) {
                     let lhs = args.literalArg;
                     if (!lhs)
-                        return liberator.echoerr("E474: Invalid argument");
+                        return liberator.echoerr("Invalid argument");
                     if (!abbreviations.remove(modes, lhs))
-                        return liberator.echoerr("E24: No such abbreviation");
+                        return liberator.echoerr("No such abbreviation: " + lhs);
                 }, {
                     argCount: "1",
                     completer: function (context, args) completion.abbreviation(context, args, modes),

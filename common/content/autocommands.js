@@ -157,7 +157,7 @@ const AutoCommands = Module("autocommands", {
                     RegExp(regex);
                 }
                 catch (e) {
-                    liberator.assert(false, "E475: Invalid argument: " + regex);
+                    liberator.assert(false, "Invalid argument: " + regex);
                 }
 
                 if (event) {
@@ -167,7 +167,7 @@ const AutoCommands = Module("autocommands", {
 
                     events = event.split(",");
                     liberator.assert(events.every(function (event) validEvents.indexOf(event) >= 0),
-                        "E216: No such group or event: " + event);
+                        "No such group or event: " + event);
                 }
 
                 if (cmd) { // add new command, possibly removing all others with the same event/pattern
@@ -226,9 +226,9 @@ const AutoCommands = Module("autocommands", {
 
                     // TODO: add command validators
                     liberator.assert(event != "*",
-                        "E217: Can't execute autocommands for ALL events");
+                        "Cannot execute autocommands for ALL events");
                     liberator.assert(validEvents.indexOf(event) >= 0,
-                        "E216: No such group or event: " + args);
+                        "No such group or event: " + args);
                     liberator.assert(autocommands.get(event).some(function (c) c.pattern.test(defaultURL)),
                         "No matching autocommands");
 

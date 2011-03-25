@@ -480,11 +480,11 @@ const Tabs = Module("tabs", {
 
         let tabItems = tabs.getTabsFromBuffer(buffer);
         if (tabItems.length == 0)
-            liberator.echoerr("E94: No matching buffer for " + buffer);
+            liberator.echoerr("No matching buffer for: " + buffer);
         else if (tabItems.length == 1)
             config.tabbrowser.mTabContainer.selectedItem = tabItems[0];
         else if (!allowNonUnique)
-            liberator.echoerr("E93: More than one match for " + buffer);
+            liberator.echoerr("More than one match for: " + buffer);
         else {
             let length = tabItems.length;
             if (reverse) {
@@ -533,8 +533,7 @@ const Tabs = Module("tabs", {
      * Selects the alternate tab.
      */
     selectAlternateTab: function () {
-        liberator.assert(tabs.alternate != null && tabs.getTab() != tabs.alternate,
-            "E23: No alternate page");
+        liberator.assert(tabs.alternate != null && tabs.getTab() != tabs.alternate, "No alternate page");
 
         // NOTE: this currently relies on v.tabs.index() returning the
         // currently selected tab index when passed null
@@ -543,7 +542,7 @@ const Tabs = Module("tabs", {
         // TODO: since a tab close is more like a bdelete for us we
         // should probably reopen the closed tab when a 'deleted'
         // alternate is selected
-        liberator.assert(index >= 0, "E86: Buffer does not exist");  // TODO: This should read "Buffer N does not exist"
+        liberator.assert(index >= 0, "Alternate buffer does not exist");  // TODO: This should read "Buffer N does not exist"
         tabs.select(index, false, true);
     },
 
@@ -654,10 +653,12 @@ const Tabs = Module("tabs", {
                         }
                     }
 
-                    if (removed > 0)
-                        liberator.echomsg(removed + " fewer tab(s)");
+                    if (removed == 1)
+                        liberator.echomsg("Removed tab: " + arg);
+                    else if (removed > 1)
+                        liberator.echomsg("Removed " + removed + " tabs");
                     else
-                        liberator.echoerr("E94: No matching tab for " + arg);
+                        liberator.echoerr("No matching tab for: " + arg);
                 }
                 else // just remove the current tab
                     tabs.remove(tabs.getTab(), Math.max(count, 1), false, 0, special);
@@ -728,7 +729,7 @@ const Tabs = Module("tabs", {
                     if (/^\d+$/.test(arg))
                         tabs.select("-" + arg, true);
                     else
-                        liberator.echoerr("E488: Trailing characters");
+                        liberator.echoerr("Trailing characters");
                 }
                 else if (count > 0)
                     tabs.select("-" + count, true);
@@ -751,7 +752,7 @@ const Tabs = Module("tabs", {
 
                     // count is ignored if an arg is specified, as per Vim
                     if (arg) {
-                        liberator.assert(/^\d+$/.test(arg), "E488: Trailing characters");
+                        liberator.assert(/^\d+$/.test(arg), "Trailing characters");
                         index = arg - 1;
                     }
                     else
@@ -783,10 +784,8 @@ const Tabs = Module("tabs", {
                     let count   = args.count;
                     let arg     = args.literalArg;
 
-                    // if a numeric arg is specified any count is ignored; if a
-                    // count and non-numeric arg are both specified then E488
                     if (arg && count > 0) {
-                        liberator.assert(/^\d+$/.test(arg), "E488: Trailing characters");
+                        liberator.assert(/^\d+$/.test(arg), "Trailing characters");
                         tabs.switchTo(arg, special);
                     }
                     else if (count > 0)
@@ -835,8 +834,7 @@ const Tabs = Module("tabs", {
                     let arg = args[0];
 
                     // FIXME: tabmove! N should probably produce an error
-                    liberator.assert(!arg || /^([+-]?\d+)$/.test(arg),
-                        "E488: Trailing characters");
+                    liberator.assert(!arg || /^([+-]?\d+)$/.test(arg), "Trailing characters");
 
                     // if not specified, move to after the last tab
                     tabs.move(config.tabbrowser.mCurrentTab, arg || "$", args.bang);
@@ -903,13 +901,13 @@ const Tabs = Module("tabs", {
                 "Attach the current tab to another window",
                 function (args) {
                     liberator.assert(args.length <= 2 && !args.some(function (i) !/^\d+$/.test(i)),
-                        "E488: Trailing characters");
+                        "Trailing characters");
 
                     let [winIndex, tabIndex] = args.map(parseInt);
                     let win = liberator.windows[winIndex - 1];
 
                     liberator.assert(win, "Window " + winIndex + " does not exist");
-                    liberator.assert(win != window, "Can't reattach to the same window");
+                    liberator.assert(win != window, "Cannot reattach to the same window");
 
                     let browser = win.getBrowser();
                     let dummy = browser.addTab("about:blank");
@@ -954,7 +952,7 @@ const Tabs = Module("tabs", {
                                 return;
                             }
 
-                        liberator.echoerr("Exxx: No matching closed tab");
+                        liberator.echoerr("No matching closed tab: " + args);
                     }
                 }, {
                     argCount: "?",

@@ -192,13 +192,13 @@ const Events = Module("events", {
     playMacro: function (macro) {
         let res = false;
         if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1) {
-            liberator.echoerr("Invalid register name: '" + macro + "'");
+            liberator.echoerr("Invalid macro name: " + macro);
             return false;
         }
 
         if (macro == "@") { // use lastMacro if it's set
             if (!this._lastMacro) {
-                liberator.echoerr("No previously used register");
+                liberator.echoerr("No previously used macro");
                 return false;
             }
         }
@@ -222,11 +222,7 @@ const Events = Module("events", {
             modes.isReplaying = false;
         }
         else {
-            if (this._lastMacro.length == 1)
-                // TODO: ignore this like Vim?
-                liberator.echoerr("Register '" + this._lastMacro + "' not set");
-            else
-                liberator.echoerr("Named macro '" + this._lastMacro + "' not set");
+            liberator.echoerr("Macro not set: " + this._lastMacro);
         }
         return res;
     },
@@ -1113,14 +1109,14 @@ const Events = Module("events", {
         commands.add(["delmac[ros]"],
             "Delete macros",
             function (args) {
-                liberator.assert(!args.bang || !args.string, "E474: Invalid argument");
+                liberator.assert(!args.bang || !args.string, "Invalid argument");
 
                 if (args.bang)
                     events.deleteMacros();
                 else if (args.string)
                     events.deleteMacros(args.string);
                 else
-                    liberator.echoerr("E471: Argument required");
+                    liberator.echoerr("Argument required");
             }, {
                 bang: true,
                 completer: function (context) completion.macro(context)

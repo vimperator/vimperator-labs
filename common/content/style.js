@@ -718,7 +718,7 @@ Module("highlight", {
                     highlight.clear();
                 else
                     liberator.assert(io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
-                        "E185: Cannot find color scheme " + scheme);
+                        "No such color scheme: " + scheme);
                 autocommands.trigger("ColorScheme", { name: scheme });
             },
             {
@@ -743,7 +743,7 @@ Module("highlight", {
                     args.shift();
 
                 let [key, css] = args;
-                liberator.assert(!(clear && css), "E488: Trailing characters");
+                liberator.assert(!(clear && css), "Trailing characters");
 
                 if (!css && !clear) {
                     // List matching keys

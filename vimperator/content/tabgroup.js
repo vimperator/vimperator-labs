@@ -101,7 +101,7 @@ const TabGroup = Module("tabGroup", {
             if (targetGroup)
                 index = groupsAndOrphans.indexOf(targetGroup);
             else {
-                liberator.echoerr("No such group: " + spec);
+                liberator.echoerr("No such tab group: " + spec);
                 return;
             }
         } else
@@ -133,7 +133,7 @@ const TabGroup = Module("tabGroup", {
               groupSwitch(index + offset, true);
             else
             {
-              liberator.echoerr("Cannot switch to " + spec);
+              liberator.echoerr("Cannot switch to tab group: " + spec);
               return;
             }
         }
@@ -283,7 +283,7 @@ const TabGroup = Module("tabGroup", {
                 function (args) {
                     let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
                     if (!activeGroup) {
-                        liberator.echoerr("Cannot pull to the current group.");
+                        liberator.echoerr("Cannot pull tab to the current group");
                         return;
                     }
                     let buffer = args.literalArg;
@@ -292,10 +292,10 @@ const TabGroup = Module("tabGroup", {
 
                     let tabItems = tabs.getTabsFromBuffer(buffer);
                     if (tabItems.length == 0) {
-                        liberator.echoerr("E94: No matching buffer for " + buffer);
+                        liberator.echoerr("No matching buffer for: " + buffer);
                         return;
                     } else if (tabItems.length > 1) {
-                        liberator.echoerr("E93: More than one match for " + buffer);
+                        liberator.echoerr("More than one match for: " + buffer);
                         return;
                     }
                     tabGroup.moveTab(tabItems[0], activeGroup, args.bang);
@@ -313,7 +313,7 @@ const TabGroup = Module("tabGroup", {
                 function (args) {
                     let currentTab = tabs.getTab();
                     if (currentTab.pinned) {
-                        liberator.echoerr("Cannot move an AppTab");
+                        liberator.echoerr("Cannot move an App Tab");
                         return;
                     }
                     let groupName = args.literalArg;

@@ -424,7 +424,7 @@ const IO = Module("io", {
             let dir = File(newDir);
 
             if (!dir.exists() || !dir.isDirectory()) {
-                liberator.echoerr("E344: Can't find directory \"" + dir.path + "\" in path");
+                liberator.echoerr("Directory does not exist: " + dir.path);
                 return null;
             }
 
@@ -618,17 +618,17 @@ lookup:
             if (!file.exists() || !file.isReadable() || file.isDirectory()) {
                 if (!silent) {
                     if (file.exists() && file.isDirectory())
-                        liberator.echomsg("Cannot source a directory: \"" + filename + "\"", 0);
+                        liberator.echomsg("Cannot source a directory: " + filename, 0);
                     else
-                        liberator.echomsg("could not source: \"" + filename + "\"", 1);
+                        liberator.echomsg("Could not source: " + filename, 1);
 
-                    liberator.echoerr("E484: Can't open file " + filename);
+                    liberator.echoerr("Cannot open file: " + filename);
                 }
 
                 return;
             }
 
-            liberator.echomsg("sourcing \"" + filename + "\"", 2);
+            liberator.echomsg("Sourcing \"" + filename + "\"", 2);
 
             let str = file.read();
             let uri = services.get("io").newFileURI(file);
@@ -681,9 +681,9 @@ lookup:
                         if (!command) {
                             let lineNumber = i + 1;
 
-                            liberator.echoerr("Error detected while processing " + file.path, commandline.FORCE_MULTILINE);
+                            liberator.echoerr("Error detected while processing: " + file.path, commandline.FORCE_MULTILINE);
                             commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR, commandline.APPEND_TO_MESSAGES);
-                            liberator.echoerr("E492: Not an editor command: " + line);
+                            liberator.echoerr("Not an editor command: " + line);
                         }
                         else {
                             if (command.name == "finish")
@@ -715,7 +715,7 @@ lookup:
             if (this._scriptNames.indexOf(file.path) == -1)
                 this._scriptNames.push(file.path);
 
-            liberator.echomsg("finished sourcing \"" + filename + "\"", 2);
+            liberator.echomsg("Finished sourcing \"" + filename + "\"", 2);
 
             liberator.log("Sourced: " + filename, 3);
         }
@@ -834,7 +834,7 @@ lookup:
                 if (!arg) {
                     arg = "~";
                 } else if (arg == "-") {
-                    liberator.assert(io._oldcwd, "E186: No previous directory");
+                    liberator.assert(io._oldcwd, "No previous directory");
                     arg = io._oldcwd.path;
                 }
 
@@ -861,8 +861,8 @@ lookup:
                     }
 
                     if (!found) {
-                        liberator.echoerr("E344: Can't find directory " + arg.quote() + " in cdpath\n"
-                                        + "E472: Command failed");
+                        liberator.echoerr("Can't find directory " + arg.quote() + " in cdpath\n"
+                                        + "Command failed");
                     }
                 }
             }, {
@@ -874,7 +874,7 @@ lookup:
         // NOTE: this command is only used in :source
         commands.add(["fini[sh]"],
             "Stop sourcing a script file",
-            function () { liberator.echoerr("E168: :finish used outside of a sourced file"); },
+            function () { liberator.echoerr(":finish used outside of a sourced file"); },
             { argCount: "0" });
 
         commands.add(["pw[d]"],
@@ -886,13 +886,13 @@ lookup:
         commands.add([config.name.toLowerCase().replace(/(.)(.*)/, "mk$1[$2rc]")],
             "Write current key mappings and changed options to the config file",
             function (args) {
-                liberator.assert(args.length <= 1, "E172: Only one file name allowed");
+                liberator.assert(args.length <= 1, "Only one file name allowed");
 
                 let filename = args[0] || io.getRCFile(null, true).path;
                 let file = File(filename);
 
                 liberator.assert(!file.exists() || args.bang,
-                    "E189: \"" + filename + "\" exists (add ! to override)");
+                    "File exists: " + filename + ". Add ! to override.");
 
                 // TODO: Use a set/specifiable list here:
                 let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
@@ -915,8 +915,8 @@ lookup:
                     file.write(lines.join("\n"));
                 }
                 catch (e) {
-                    liberator.echoerr("E190: Cannot open \"" + filename + "\" for writing");
-                    liberator.log("Could not write to " + file.path + ": " + e.message); // XXX
+                    liberator.echoerr("Cannot open file: " + filename);
+                    liberator.log("Could not write to " + file.path + ": " + e.message);
                 }
             }, {
                 argCount: "*", // FIXME: should be "?" but kludged for proper error message
@@ -963,8 +963,7 @@ lookup:
                     arg = "!" + arg;
 
                 // replaceable bang and no previous command?
-                liberator.assert(!/((^|[^\\])(\\\\)*)!/.test(arg) || io._lastRunCommand,
-                    "E34: No previous command");
+                liberator.assert(!/((^|[^\\])(\\\\)*)!/.test(arg) || io._lastRunCommand, "No previous command");
 
                 // NOTE: Vim doesn't replace ! preceded by 2 or more backslashes and documents it - desirable?
                 // pass through a raw bang when escaped or substitute the last command

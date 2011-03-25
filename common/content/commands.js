@@ -493,7 +493,7 @@ const Commands = Module("commands", {
             if (quote == "\\" && !complete)
                 return [,,,"Trailing \\"];
             if (quote && !complete)
-                return [,,,"E114: Missing quote: " + quote];
+                return [,,,"Missing quote: " + quote];
             return [count, arg, quote];
         }
 
@@ -609,7 +609,7 @@ const Commands = Module("commands", {
 
                             let context = null;
                             if (!complete && quote) {
-                                liberator.echoerr("Invalid argument for option " + optname);
+                                liberator.echoerr("Invalid argument for option: " + optname);
                                 return null;
                             }
 
@@ -765,13 +765,13 @@ const Commands = Module("commands", {
         if (args.length == 0 && /^[1+]$/.test(argCount) ||
                 literal != null && /[1+]/.test(argCount) && !/\S/.test(args.literalArg || "")) {
             if (!complete) {
-                liberator.echoerr("E471: Argument required");
+                liberator.echoerr("Argument required");
                 return null;
             }
         }
         else if (args.length == 1 && (argCount == "0") ||
                  args.length > 1  && /^[01?]$/.test(argCount)) {
-            echoerr("E488: Trailing characters");
+            echoerr("Trailing characters");
             return null;
         }
 
@@ -925,7 +925,7 @@ const Commands = Module("commands", {
                         liberator.execute(commands.repeat);
                 }
                 else
-                    liberator.echoerr("E30: No previous command line");
+                    liberator.echoerr("No previous command line");
             },
             { count: true });
     },
@@ -1035,7 +1035,7 @@ const Commands = Module("commands", {
             function (args) {
                 let cmd = args[0];
 
-                liberator.assert(!/\W/.test(cmd || ''), "E182: Invalid command name");
+                liberator.assert(!/\W/.test(cmd || ''), "Invalid command name: " + cmd);
 
                 if (args.literalArg) {
                     let nargsOpt       = args["-nargs"] || "0";
@@ -1058,7 +1058,7 @@ const Commands = Module("commands", {
                                 }
                                 catch (e) {
                                     liberator.echo(":" + this.name + " ...");
-                                    liberator.echoerr("E117: Unknown function: " + completeOpt);
+                                    liberator.echoerr("Unknown function: " + completeOpt);
                                     liberator.log(e);
                                     return undefined;
                                 }
@@ -1080,7 +1080,7 @@ const Commands = Module("commands", {
                                     }, args.bang);
 
                     if (!added)
-                        liberator.echoerr("E174: Command already exists: add ! to replace it");
+                        liberator.echoerr("Command '" + cmd + "' already exists: Add ! to replace it");
                 }
                 else {
                     function completerToString(completer) {
@@ -1129,7 +1129,6 @@ const Commands = Module("commands", {
                     [["-bang"], commands.OPTION_NOARG],
                     [["-count"], commands.OPTION_NOARG],
                     [["-description"], commands.OPTION_STRING],
-                    // TODO: "E180: invalid complete value: " + arg
                     [["-complete"], commands.OPTION_STRING,
                          function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
                          function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
@@ -1167,7 +1166,7 @@ const Commands = Module("commands", {
                 if (commands.get(name))
                     commands.removeUserCommand(name);
                 else
-                    liberator.echoerr("E184: No such user-defined command: " + name);
+                    liberator.echoerr("No such user-defined command: " + name);
             }, {
                 argCount: "1",
                 completer: function (context) completion.userCommand(context)

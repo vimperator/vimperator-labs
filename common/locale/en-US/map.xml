@@ -451,7 +451,7 @@
             command is defined.
         </p>
 
-        <p tag="E175 E176 :command-nargs">
+        <p tag=":command-nargs">
             Argument handling
         </p>
 
@@ -470,7 +470,7 @@
             <dt>-nargs=+</dt><dd>One or more arguments are allowed</dd>
         </dl>
 
-        <p tag="E180 E181 :command-complete">
+        <p tag=":command-complete">
             Argument completion
         </p>
 
@@ -508,7 +508,7 @@
             <dt>custom,<a>func</a></dt><dd>custom completion, provided by <a>func</a></dd>
         </dl>
 
-        <p tag="E467 E468 :command-completion-custom">
+        <p tag=":command-completion-custom">
             Custom completion
         </p>
 
@@ -528,7 +528,7 @@
 
         <!-- TODO: add examples -->
 
-        <p tag="E177 E178 :command-count">
+        <p tag=":command-count">
             Count handling
         </p>
 

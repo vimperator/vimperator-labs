@@ -548,7 +548,7 @@ const Mappings = Module("mappings", {
                         }
                     }
                     if (!found)
-                        liberator.echoerr("E31: No such mapping");
+                        liberator.echoerr("No such mapping: " + lhs);
                 },
                 {
                     argCount: "1",

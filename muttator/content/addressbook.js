@@ -63,9 +63,9 @@ const Addressbook = Module("addressbook", {
 
         if (addresses.length < 1) {
             if (!filter)
-                liberator.echoerr("Exxx: No contacts", commandline.FORCE_SINGLELINE);
+                liberator.echoerr("No contacts", commandline.FORCE_SINGLELINE);
             else
-                liberator.echoerr("Exxx: No contacts matching string '" + filter + "'", commandline.FORCE_SINGLELINE);
+                liberator.echoerr("No matching contacts for: " + filter, commandline.FORCE_SINGLELINE);
             return false;
         }
 
@@ -102,7 +102,7 @@ const Addressbook = Module("addressbook", {
                 if (addressbook.add(mailAddr, firstName, lastName, displayName))
                     liberator.echomsg("Added address: " + displayName + " <" + mailAddr + ">", 1, commandline.FORCE_SINGLELINE);
                 else
-                    liberator.echoerr("Exxx: Could not add contact `" + mailAddr + "'", commandline.FORCE_SINGLELINE);
+                    liberator.echoerr("Could not add contact: " + mailAddr, commandline.FORCE_SINGLELINE);
 
             },
             {
