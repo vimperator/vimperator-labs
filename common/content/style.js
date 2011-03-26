@@ -411,7 +411,7 @@ function Styles(name, store) {
         if (name && name in names)
             this.removeSheet(system, name);
 
-        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), String(css), null, system, agent);
+        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), String(css), system, agent);
 
         try {
             sheet.enabled = true;
