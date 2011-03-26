@@ -1013,9 +1013,22 @@ const Options = Module("options", {
                 else {
                     option.setFrom = modifiers.setFrom || null;
 
-                    if (opt.option.type == "boolean") {
-                        liberator.assert(!opt.valueGiven, "Invalid argument: " + arg);
-                        opt.values = !opt.unsetBoolean;
+                    if (option.type == "boolean") {
+                        if (opt.unsetBoolean) {
+                            opt.values = false;
+                        } else {
+                            switch (opt.value) {
+                            case "":
+                            case "true":
+                                opt.values = true;
+                                break;
+                            case "false":
+                                opt.values = false;
+                                break;
+                            default:
+                                return liberator.echoerr("Invalid argument: " + arg);
+                            }
+                        }
                     }
                     let res = opt.option.op(opt.operator || "=", opt.values, opt.scope, opt.invert);
                     if (res)
@@ -1069,10 +1082,16 @@ const Options = Module("options", {
             if (!opt.value) {
                 context.fork("default", 0, this, function (context) {
                     context.title = ["Extra Completions"];
-                    context.completions = [
-                            [option.value, "Current value"],
-                            [option.defaultValue, "Default value"]
-                    ].filter(function (f) f[0] != "");
+                    let completions = [
+                        [option.value, "Current value"],
+                        [option.defaultValue, "Default value"]
+                    ];
+                    if (option.type == "boolean") {
+                        completions.push([!option.value, "Inverted current value"]);
+                        context.completions = completions;
+                    } else {
+                        context.completions = completions.filter(function (f) f[0] != "");
+                    }
                 });
             }
 
