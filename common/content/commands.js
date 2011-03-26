@@ -469,7 +469,7 @@ const Commands = Module("commands", {
      *                [["-acceleration"], OPTION_FLOAT],
      *                [["-accessories"], OPTION_LIST, null, ["foo", "bar"], true],
      *                [["-other"], OPTION_ANY]];
-     * @param {Array} subCommands The sub-commands accepted. Thease are Command instance
+     * @param {Array} subCommands The sub-commands accepted. These are Command instance
      *     see @link Command
      * @param {string} argCount The number of arguments accepted.
      *            "0": no arguments

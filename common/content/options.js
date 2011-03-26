@@ -337,7 +337,7 @@ const Option = Class("Option", {
     scope: 1, // Option.SCOPE_GLOBAL // XXX set to BOTH by default someday? - kstep
 
     /**
-     * @property {string} This option's description, as shown in :optionusage.
+     * @property {string} This option's description, as shown in :usage.
      */
     description: "",
 

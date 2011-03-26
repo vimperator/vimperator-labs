@@ -53,7 +53,7 @@ const Map = Class("Map", {
     names: null,
     /** @property {function (number)} The function called to execute this mapping. */
     action: null,
-    /** @property {string} This mapping's description, as shown in :viusage. */
+    /** @property {string} This mapping's description, as shown in :usage. */
     description: "",
 
     /** @property {boolean} Whether this mapping accepts an argument. */

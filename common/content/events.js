@@ -562,7 +562,6 @@ const Events = Module("events", {
                 modifier += "S-";
             if (event.type == "dblclick")
                 modifier += "2-";
-            // TODO: triple and quadruple click
 
             switch (event.button) {
             case 0:
