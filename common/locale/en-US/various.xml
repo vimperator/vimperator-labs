@@ -153,36 +153,22 @@
 
 
 <item>
-    <tags>:exu :exusage</tags>
-    <spec>:exu<oa>sage</oa><oa>!</oa></spec>
+    <tags>:us :usage index cheat-sheet</tags>
+    <spec>:us<oa>sage</oa> <oa>subject</oa></spec>
     <description>
         <p>
-            Show help on Ex commands. If <oa>!</oa> is given then the help is listed in the
-            command output window.
+            Show a quick overview of all &liberator.appname; mappings, commands and options.
+            The optional <oa>subject</oa> can be used to only show specific usage information.
         </p>
-    </description>
-</item>
 
+        <p>Available items:
 
-<item>
-    <tags>:optionu :optionusage</tags>
-    <spec>:optionu<oa>sage</oa><oa>!</oa></spec>
-    <description>
-        <p>
-            Show help on options. If <oa>!</oa> is given then the help is listed in the command
-            output window.
-        </p>
-    </description>
-</item>
+        <dl>
+            <dt>mappings</dt>     <dd>All key bindings</dd>
+            <dt>commands</dt>     <dd>All commands</dd>
+            <dt>options</dt>      <dd>All options</dd>
+        </dl>
 
-
-<item>
-    <tags>:viu :viusage</tags>
-    <spec>:viu<oa>sage</oa><oa>!</oa></spec>
-    <description>
-        <p>
-            Show help on Normal mode commands. If <oa>!</oa> is given then the help is listed in
-            the command output window.
         </p>
     </description>
 </item>

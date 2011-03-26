@@ -44,16 +44,20 @@
 
 <p>You can (almost) always use <ex>:viusage!</ex>, <ex>:exusage!</ex> and <ex>:optionusage!</ex> for a quick reference 
 about available mappings, commands and options. When in Message mode
-(activated by <k>i</k>), most mappings from Vimperator are also available.</p>
+(activated by <k>m</k>), most mappings from Vimperator are also available.</p>
 
 <p>
     When &liberator.appname; starts, it is in <em>Normal mode</em> by default with the focus staying at the message list. This is probably where
     you will spend the majority of your time. Here you can trigger actions like replying a message (press <k>r</k>), deleting (<k>d</k>), changing folder (<k>c</k>), etc. If the focus is "somewhere", you should (almost...) always be able to switch to correct focus and Normal mode by pressing <k>Esc</k>.
 </p>
 
-<p>The <em>Message mode</em> is started by "inspecting" a message (press <k>i</k> or click inside the message body). There you can use <k>h</k>, <k>j</k>, <k>k</k>, <k>l</k> etc. to navigate the message body. You can also press <k>f</k> to start hinting mode (which works similar to Vimperator). Pressing <k>Esc</k> brings you back to Normal mode.</p> 
+<p>The <em>Message mode</em> is started by pressing <k>m</k>.
+    There you can use <k>h</k>, <k>j</k>, <k>k</k>, <k>l</k> etc. to navigate the message body.
+    You can also press <k>f</k> to start hinting mode (which works similar to Vimperator).
+    Pressing <k>Esc</k> brings you back to Normal mode.
+</p> 
 
-<p>When opening up the compose window (i.e. for writing a new message, triggered by <k>m</k> or <ex>:mail</ex>), you should end up in <em>Insert mode</em> (if not, please click in the subject line and in the body again as workaround for now...) where you can edit your mail with the usual &liberator.host; key bindings.</p>
+<p>When opening up the compose window (i.e. for writing a new message, triggered by <k>c</k> or <ex>:compose</ex>), you should end up in <em>Insert mode</em> (if not, please click in the subject line and in the body again as workaround for now...) where you can edit your mail with the usual &liberator.host; key bindings.</p>
 
 <p>Pressing <k>Esc</k> in Insert mode brings you into <em>Compose mode</em>. This allows commands to be performed with the current message like <k>y</k> to send the message or <k>t</k> to focus the "To:" field.</p>
 

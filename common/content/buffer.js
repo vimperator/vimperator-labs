@@ -79,7 +79,7 @@ const Buffer = Module("buffer", {
                 yield nFeed + " feed" + (nFeed > 1 ? "s" : "");
         });
 
-        this.addPageInfoSection("g", "General Info", function (verbose) {
+        this.addPageInfoSection("g", "Document", function (verbose) {
             let doc = window.content.document;
 
             // get file size
@@ -889,7 +889,7 @@ const Buffer = Module("buffer", {
             let opt = buffer.pageInfo[option];
             return opt ? template.table(opt[1], opt[0](true)) : undefined;
         }, <br/>);
-        liberator.echo(list, commandline.FORCE_MULTILINE);
+        liberator.echo(template.genericOutput("Page Information", list), commandline.FORCE_MULTILINE);
     },
 
     /**

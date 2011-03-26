@@ -1071,16 +1071,6 @@ const Liberator = Module("liberator", {
         return items;
     },
 
-    // show a usage index either in the MOW or as a full help page
-    showHelpIndex: function (tag, items, inMow) {
-        if (inMow) {
-            let usage = template.tabular([{ header: "Usage", highlight: "Mapping", colspan: 2 }],
-                [ [item.name || item.names[0], item.description] for (item in items)]);
-            liberator.echo(usage, commandline.FORCE_MULTILINE);
-        }
-        else
-            liberator.help(tag);
-    }
 }, {
 
     // Only general options are added here, which are valid for all liberator extensions
@@ -1517,13 +1507,6 @@ const Liberator = Module("liberator", {
             },
             { argCount: "?" });
 
-        commands.add(["exu[sage]"],
-            "List all Ex commands with a short description",
-            function (args) { Liberator.showHelpIndex("ex-cmd-index", commands, args.bang); }, {
-                argCount: "0",
-                bang: true
-            });
-
         [
             {
                 name: "h[elp]",
@@ -1581,13 +1564,6 @@ const Liberator = Module("liberator", {
             function (args) { events.feedkeys(args.string, args.bang); },
             {
                 argCount: "+",
-                bang: true
-            });
-
-        commands.add(["optionu[sage]"],
-            "List all options with a short description",
-            function (args) { Liberator.showHelpIndex("option-index", options, args.bang); }, {
-                argCount: "0",
                 bang: true
             });
 
@@ -1726,11 +1702,33 @@ const Liberator = Module("liberator", {
                 bang: true
             });
 
-        commands.add(["viu[sage]"],
-            "List all mappings with a short description",
-            function (args) { Liberator.showHelpIndex("normal-index", mappings, args.bang); }, {
-                argCount: "0",
-                bang: true
+        commands.add(["us[age]"],
+            "List all commands, mappings and options with a short description",
+            function (args) {
+                let usage = {
+                    mappings: function() template.table("Mappings", [[item.name || item.names[0], item.description] for (item in mappings)].sort()),
+                    commands: function() template.table("Commands", [[item.name || item.names[0], item.description] for (item in commands)]),
+                    options:  function() template.table("Options",  [[item.name || item.names[0], item.description] for (item in options)])
+                }
+
+                if (args[0] && !usage[args[0]])
+                    return void liberator.echoerr("No usage information for: " + args[0]);
+
+                if (args[0])
+                    var usage = template.genericOutput(config.name + " Usage", usage[args[0]]());
+                else
+                    var usage = template.genericOutput(config.name + " Usage", usage["mappings"]() + <br/> + usage["commands"]() + <br/> + usage["options"]());
+                liberator.echo(usage, commandline.FORCE_MULTILINE);
+            }, {
+                argCount: "?",
+                bang: false,
+                completer: function (context) {
+                    context.title = ["Usage Item"];
+                    context.compare = CompletionContext.Sort.unsorted;
+                    context.completions = [["mappings", "All key bindings"],
+                                           ["commands", "All ex-commands"],
+                                           ["options",  "All options"]];
+                }
             });
 
     },

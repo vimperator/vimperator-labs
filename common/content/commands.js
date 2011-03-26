@@ -145,7 +145,7 @@ const Command = Class("Command", {
     /** @property {string[]} All of this command's long and short names. */
     names: null,
 
-    /** @property {string} This command's description, as shown in :exusage */
+    /** @property {string} This command's description, as shown in :usage */
     description: "",
     /**
      * @property {function (Args)} The function called to execute this command.

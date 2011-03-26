@@ -165,10 +165,6 @@ file in its plugin directory.
         <link topic="plugins">Plugins</link>:
         Documentation for any plugins you may have installed.
     </li>
-    <li>
-        <link topic="index">Index</link>:
-        An index of all commands and options.
-    </li>
 </ol>
 
 <p>
