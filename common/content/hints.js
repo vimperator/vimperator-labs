@@ -1241,7 +1241,7 @@ const Hints = Module("hints", {
                     list.sort();
                     let ret = list.some(function (n) prev == (prev=n));
 
-                    return !ret;
+                    return !ret & arg.length > 1;
                 }
             });
 
