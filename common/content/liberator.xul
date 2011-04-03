@@ -67,13 +67,28 @@
         </vbox>
 
         <hbox id="liberator-bottombar">
-            <stack orient="horizontal" align="stretch" class="liberator-container" flex="1">
-                <hbox id="liberator-statusline" hidden="false" collapsed="false" class="liberator-container">
+            <stack id="liberator-bottombar-deck" orient="horizontal" align="stretch" class="liberator-container" flex="1" liberator:highlight="Normal">
+                <toolbar id="liberator-statusline" hidden="false" collapsed="false" class="liberator-container"
+                    toolbarname       = "Liberator Statusline Toolbar"
+                    toolboxid         = "navigator-toolbox"
+                    mode              = "icons"
+                    iconsize          = "small"
+                    defaulticonsize   = "small"
+                    lockiconsize      = "small"
+                    customizable      = "true"
+                    fullscreentoolbar = "true"
+                    context           = "toolbar-context-menu"
+                    defaultset        = "liberator-message-toolbar,liberator-status-toolbar"
+                >
                     <!-- the flex values are like they are to make sure the liberator-message always gets
                          maximum size up to the screen size, but still do not enlarge the whole window for very, very long strings-->
-                    <label class="plain" collapsed="false" id="liberator-message" flex="1" crop="end" liberator:highlight="Normal"/>
-                    <label class="plain" id="liberator-status" flex="10000000" crop="center" style="text-align: end;" liberator:highlight="StatusLine"/>
-                </hbox>
+                    <toolbaritem id="liberator-message-toolbar" flex="1">
+                        <label class="plain" collapsed="false" id="liberator-message" flex="1" crop="end" liberator:highlight="Normal"/>
+                    </toolbaritem>
+                    <toolbaritem id="liberator-status-toolbar" flex="10000000" >
+                        <label flex="1" class="plain" id="liberator-status" crop="center" style="text-align: end;" liberator:highlight="StatusLine"/>
+                    </toolbaritem>
+                </toolbar>
                 <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CmdLine">
                     <label class="plain" id="liberator-commandline-prompt-text" liberator:highlight="PromptText" flex="0" crop="end" value="" collapsed="false"/>
                     <label class="plain" id="liberator-commandline-prompt" liberator:highlight="Prompt" flex="0" crop="none" value="" collapsed="false"/>

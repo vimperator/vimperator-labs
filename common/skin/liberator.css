@@ -1,11 +1,5 @@
 @namespace liberator url("http://vimperator.org/namespaces/liberator");
 
-/* Applied to all content */
-[liberator|activeframe] {
-    /* disabled for now, since it throws SecurityErrors to the console */
-    /* -moz-binding: url(chrome://liberator/content/bindings.xml#frame); */
-}
-
 [liberator|highlight~=HintImage],
 [liberator|highlight~=Hint] {
     z-index: 5000;
@@ -76,53 +70,47 @@
 
 #liberator-completions {
     -moz-user-focus: ignore;
-    overflow: -moz-scrollbars-none !important; /* does not seem to work fully */
+    overflow: -moz-scrollbars-none !important;
     border-width: 0px !important;
-    /*-moz-appearance: none !important; /* prevent an ugly 3D border */
-}
-
-/* fixes the min-height: 22px from firefox */
-/*#status-bar,
-statusbarpanel {
-    -moz-appearance: none !important;
-	min-height: 18px !important;
-    border: none !important;
-    font-weight: bold;
-    font-family: monospace;
-}*/
-
-#liberator-statusline {
-    font-family: monospace;
-    margin: 0px;
-/*    padding: 2px;*/
 }
 
 /* all elements in the statusline and commandline need some padding to look good */
+#liberator-statusline {
+    font-family: monospace;
+    margin: 0px;
+    -moz-appearance: none;
+    border: none !important;
+    min-height: 16px !important;
+}
+#liberator-statusline:not([customizing="true"]) :-moz-any(toolbarbutton) {
+    border: none !important;
+    padding: 0 0px !important;
+    background: transparent !important;
+    height: 18px !important;
+}
 #liberator-statusline > *,
 #liberator-commandline > * {
-    padding: 2px;
+    padding: 0px 2px;
     font-family: monospace;
 }
 
-#liberator-commandline {
-    /*padding: 2px;*/
+#liberator-commandline.hidden {
+    opacity: 0;
+    pointer-events: none; /* so we can click through when the command line is hidden */
 }
-/*#liberator-statusline > label {
-    padding: 0px 0px 0px 8px;
-}
-#liberator-statusline > label:first-child {
-    padding: 0px;
-}*/
 
-/* no longer at the window's bottom right corner */
-/*.statusbar-resizerpanel {
-    display: none;
-}*/
+#liberator-statusline,
+#liberator-message-toolbar {
+    -moz-box-align: center;
+}
+#liberator-statusline[customizing="true"] :-moz-any(#liberator-message-toolbar, #liberator-status-toolbar) {
+    border: 1px dotted gray;
+    min-width: 1em;
+}
 
 #liberator-commandline-prompt {
     background-color: inherit;
     margin: 0px;
-    padding: 0px;
 }
 #liberator-commandline-command {
     background-color: inherit;
@@ -170,7 +158,7 @@ statusbarpanel {
 #liberator-commandline-prompt-text {
     max-width: 0;
     -moz-transition-property: max-width;
-    -moz-transition-duration: 0.5s;
+    -moz-transition-duration: 0.25s;
 }
 
 #liberator-completions-content table,

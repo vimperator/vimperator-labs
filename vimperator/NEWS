@@ -8,6 +8,10 @@
     * IMPORTANT: :viusage, :exusage and :optionusage (and the manually created
       index of all commands in the helpfile) have been replaced by a single
       :usage command.
+    * Vimperator's command line is now a fully supported toolbar. This means you
+      can just right click it, select "Customize", and drag'n drop any
+      items in the command line like the combined back/forward button and
+      get rid of the default address bar. Thanks caisui for the patch!
     * Error messages have more consistent wording now, also got rid of Exxx error
       codes, as we never supported those in the help files anyway.
     * Vimperator works around Firefox's tab scrolling now. So the minimum

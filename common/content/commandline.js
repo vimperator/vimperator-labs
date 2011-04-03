@@ -170,7 +170,7 @@ const CommandLine = Module("commandline", {
             commands.repeat = command;
             liberator.trapErrors(function () liberator.execute(command));
             if (!(modes.main == modes.COMMAND_LINE && modes.extended == modes.PROMPT) &&
-                commandline._commandlineWidget.style.opacity == "1" && options["messagetimeout"] != -1)
+                !commandline._commandlineWidget.classList.contains("hidden") && options["messagetimeout"] != -1)
                 this.close();
                 //self._commandlineDisplayTimeoutID = self.setTimeout(function() { this.close(); }, 0);
         });
@@ -493,7 +493,7 @@ const CommandLine = Module("commandline", {
      * are under it.
      */
     hide: function hide() {
-        this._commandlineWidget.style.opacity = "0";
+        this._commandlineWidget.classList.add("hidden");
         this._setPrompt("");
         this._commandWidget.blur();
     },
@@ -502,7 +502,7 @@ const CommandLine = Module("commandline", {
      * Make the command line visible, hiding the status messages below
      */
     show: function () {
-        this._commandlineWidget.style.opacity = "1";
+        this._commandlineWidget.classList.remove("hidden");
         this._commandWidget.focus();
     },
 
