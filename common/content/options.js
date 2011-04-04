@@ -1065,9 +1065,6 @@ const Options = Module("options", {
             else if (prefix == "no")
                 return null;
 
-            if (prefix)
-                context.advance(prefix.length);
-
             let option = opt.option;
             context.advance(context.filter.indexOf("=") + 1);
 
@@ -1079,21 +1076,19 @@ const Options = Module("options", {
             if (opt.get || opt.reset || !option || prefix)
                 return null;
 
-            if (!opt.value) {
-                context.fork("default", 0, this, function (context) {
-                    context.title = ["Extra Completions"];
-                    let completions = [
-                        [option.value, "Current value"],
-                        [option.defaultValue, "Default value"]
-                    ];
-                    if (option.type == "boolean") {
-                        completions.push([!option.value, "Inverted current value"]);
-                        context.completions = completions;
-                    } else {
-                        context.completions = completions.filter(function (f) f[0] != "");
-                    }
-                });
-            }
+            context.fork("default", 0, this, function (context) {
+                context.title = ["Extra Completions"];
+                let completions = [
+                    [option.value, "Current value"],
+                    [option.defaultValue, "Default value"]
+                ];
+                if (option.type == "boolean") {
+                    completions.push([!option.value, "Inverted current value"]);
+                    context.completions = completions;
+                } else {
+                    context.completions = completions.filter(function (f) f[0] != "");
+                }
+            });
 
             return context.fork("values", 0, completion, "optionValue", opt.name, opt.operator);
         }
@@ -1268,8 +1263,7 @@ const Options = Module("options", {
             let len = context.filter.length;
             switch (opt.type) {
             case "boolean":
-                if (!completer)
-                    completer = function () [["true", ""], ["false", ""]];
+                completer = function () [["true", ""], ["false", ""]];
                 break;
             case "stringlist":
                 let target = newValues.pop();
