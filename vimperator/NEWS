@@ -1,7 +1,7 @@
 2011-xx-xx:
     * version 3.1
     * IMPORTANT: PASSTHROUGH mode has been reworked. Press 'i' to ignore a single
-      key, and "Ctrl-Esc" or "Insert" to toggle vimperator completely.
+      key, and "Shift-Esc" or "Insert" to toggle vimperator completely.
     * IMPORTANT: Ctrl-c/x/v/z do their expected thing now. We managed that by just
       reshuffling some commands.
     * IMPORTANT: CARET mode is now activated with 'c' instead of 'i'

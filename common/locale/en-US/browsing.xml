@@ -17,8 +17,8 @@ to &liberator.host;, or to the web page, and have it retain its original meaning
 have 2 possibilities:
 
 <item>
-    <tags><![CDATA[ignore-all-keys <C-Esc> <Insert>]]></tags>
-    <spec>&lt;C-Esc></spec>
+    <tags><![CDATA[ignore-all-keys <S-Esc> <Insert>]]></tags>
+    <spec>&lt;S-Esc></spec>
     <spec>&lt;Insert></spec>
     <description>
         <p>
@@ -27,7 +27,7 @@ have 2 possibilities:
             JavaScript controlled forms (e.g., the RichEdit form fields of
             Gmail) don't work anymore or you want to work with web apps like
             Google Reader which have a lot of useful shortcuts themselves. To
-            exit this mode, press <k name="C-Esc"/> again.
+            exit this mode, press <k name="S-Esc"/> again.
         </p>
     </description>
 </item>

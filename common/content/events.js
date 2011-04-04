@@ -889,9 +889,9 @@ const Events = Module("events", {
                 modes.passNextKey = false;
                 stop = true;
             }
-            // handle Escape-all-keys mode (Ctrl-Esc)
+            // handle Escape-all-keys mode (Shift-Esc)
             else if (modes.passAllKeys) {
-                if (key == "<C-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
+                if (key == "<S-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
                     modes.passAllKeys = false;
                 stop = true;
             }
@@ -1155,7 +1155,7 @@ const Events = Module("events", {
             function () { document.commandDispatcher.rewindFocus(); });
 
         mappings.add(modes.all,
-            ["<C-Esc>", "<Insert>"], "Temporarily ignore all " + config.name + " key bindings",
+            ["<S-Esc>", "<Insert>"], "Temporarily ignore all " + config.name + " key bindings",
             function () { modes.passAllKeys = !modes.passAllKeys; });
 
         mappings.add([modes.NORMAL],
