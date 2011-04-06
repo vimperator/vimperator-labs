@@ -1039,7 +1039,7 @@ const Tabs = Module("tabs", {
 
             mappings.add([modes.NORMAL], ["B"],
                 "Show buffer list",
-                function () { tabs.list(false); });
+                function () { tabs.list(false); commandline.show("buffers"); });
 
             mappings.add([modes.NORMAL], ["d"],
                 "Delete current buffer",

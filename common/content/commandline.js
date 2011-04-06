@@ -135,7 +135,6 @@ const CommandLine = Module("commandline", {
         this._messageBox.addEventListener("transitionend", this.close.bind(this), false);
 
         this._commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
-        //this._messageBox.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
 
         // the widget used for multiline output
         this._multilineOutputWidget = document.getElementById("liberator-multiline-output");
@@ -169,10 +168,8 @@ const CommandLine = Module("commandline", {
 
             commands.repeat = command;
             liberator.trapErrors(function () liberator.execute(command));
-            if (!(modes.main == modes.COMMAND_LINE && modes.extended == modes.PROMPT) &&
-                !commandline._commandlineWidget.classList.contains("hidden") && options["messagetimeout"] != -1)
+            if (!(modes.main == modes.COMMAND_LINE) && !commandline._commandlineWidget.classList.contains("hidden"))
                 this.close();
-                //self._commandlineDisplayTimeoutID = self.setTimeout(function() { this.close(); }, 0);
         });
         this.registerCallback("complete", modes.EX, function (context) {
             context.fork("ex", 0, completion, "ex");
@@ -279,8 +276,8 @@ const CommandLine = Module("commandline", {
 
         liberator.triggerObserver("echoLine", str, highlightGroup, forceSingle);
 
-        if (!this._commandShown())
-            commandline.hide();
+        //if (!this._commandShown())
+            ;//commandline.hide();
 
         /*let field = this._messageBox.inputField;
         if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
@@ -311,14 +308,14 @@ const CommandLine = Module("commandline", {
 
         // FIXME: need to make sure an open MOW is closed when commands
         //        that don't generate output are executed
-        if (this._outputContainer.collapsed)
-            doc.body.innerHTML = "";
+        //if (this._outputContainer.collapsed)
+        doc.body.innerHTML = "";
 
         doc.body.appendChild(output);
 
         commandline.updateOutputHeight(true);
 
-        if (options["more"] && win.scrollMaxY > 0) {
+        if (win.scrollMaxY > 0) {
             // start the last executed command's output at the top of the screen
             let elements = doc.getElementsByClassName("ex-command-output");
             elements[elements.length - 1].scrollIntoView(true);
@@ -330,7 +327,6 @@ const CommandLine = Module("commandline", {
 
         this._startHints = false;
         modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
-        commandline.updateMorePrompt();
     },
 
     /**
@@ -478,12 +474,11 @@ const CommandLine = Module("commandline", {
 
         if (!this._keepCommand || this._silent || this._quiet) {
             this._outputContainer.collapsed = true;
-            commandline.updateMorePrompt();
             this.hide();
         }
         if (!this._outputContainer.collapsed) {
+            // the last command had some output, keep the MOW open
             modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
-            commandline.updateMorePrompt();
         }
         this._keepCommand = false;
     },
@@ -500,8 +495,15 @@ const CommandLine = Module("commandline", {
 
     /**
      * Make the command line visible, hiding the status messages below
+     *
+     * @param {string} text: Optionally set the command line's text to this string
      */
-    show: function () {
+    show: function (text, prompt) {
+        if (typeof(text) === "string")
+            this._setCommand(text);
+        if (typeof(prompt) === "string")
+            this._setPrompt(prompt);
+
         this._commandlineWidget.classList.remove("hidden");
         this._commandWidget.focus();
     },
@@ -529,6 +531,7 @@ const CommandLine = Module("commandline", {
      *          the MOW.
      */
     echo: function echo(str, highlightGroup, flags) {
+        // liberator.dump("echoing: " + str);
         // liberator.echo uses different order of flags as it omits the highlight group, change commandline.echo argument order? --mst
         if (this._silent)
             return;
@@ -619,10 +622,10 @@ const CommandLine = Module("commandline", {
     // FIXME: Buggy, especially when pasting. Shouldn't use a RegExp.
     inputMultiline: function inputMultiline(untilRegexp, callbackFunc) {
         // Kludge.
-        let cmd = !this._commandWidget.collapsed && this.command;
+        //let cmd = !this._commandWidget.collapsed && this.command;
         modes.push(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
-        if (cmd != false)
-            this._echoLine(cmd, this.HL_NORMAL);
+        //if (cmd != false)
+            //this._echoLine(cmd, this.HL_NORMAL);
 
         // save the arguments, they are needed in the event handler onEvent
         this._multilineRegexp = untilRegexp;
@@ -758,19 +761,10 @@ const CommandLine = Module("commandline", {
      *
      * @param {Event} event
      */
-    // FIXME: if 'more' is set and the MOW is not scrollable we should still
-    // allow a down motion after an up rather than closing
     onMultilineOutputEvent: function onMultilineOutputEvent(event) {
         let win = this._multilineOutputWidget.contentWindow;
-
-        let showMoreHelpPrompt = false;
-        let showMorePrompt = false;
-        let closeWindow = false;
-        let passEvent = false;
-
         let key = events.toString(event);
 
-        // TODO: Wouldn't multiple handlers be cleaner? --djk
         if (event.type == "click" && event.target instanceof HTMLAnchorElement) {
             function openLink(where) {
                 event.preventDefault();
@@ -782,27 +776,27 @@ const CommandLine = Module("commandline", {
             }
 
             switch (key) {
-            case "<LeftMouse>":
-                if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list") {
-                    event.preventDefault();
-                    tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1, false, true);
-                }
-                else
-                    openLink(liberator.CURRENT_TAB);
-                break;
-            case "<MiddleMouse>":
-            case "<C-LeftMouse>":
-            case "<C-M-LeftMouse>":
-                openLink(liberator.NEW_BACKGROUND_TAB);
-                break;
-            case "<S-MiddleMouse>":
-            case "<C-S-LeftMouse>":
-            case "<C-M-S-LeftMouse>":
-                openLink(liberator.NEW_TAB);
-                break;
-            case "<S-LeftMouse>":
-                openLink(liberator.NEW_WINDOW);
-                break;
+                case "<LeftMouse>":
+                    if (event.originalTarget.getAttributeNS(NS.uri, "highlight") == "URL buffer-list") {
+                        event.preventDefault();
+                        tabs.select(parseInt(event.originalTarget.parentNode.parentNode.firstChild.textContent, 10) - 1, false, true);
+                    }
+                    else
+                        openLink(liberator.CURRENT_TAB);
+                    break;
+                case "<MiddleMouse>":
+                case "<C-LeftMouse>":
+                case "<C-M-LeftMouse>":
+                    openLink(liberator.NEW_BACKGROUND_TAB);
+                    break;
+                case "<S-MiddleMouse>":
+                case "<C-S-LeftMouse>":
+                case "<C-M-S-LeftMouse>":
+                    openLink(liberator.NEW_TAB);
+                    break;
+                case "<S-LeftMouse>":
+                    openLink(liberator.NEW_WINDOW);
+                    break;
             }
 
             return;
@@ -815,180 +809,106 @@ const CommandLine = Module("commandline", {
             return;
         }
 
-        function isScrollable() !win.scrollMaxY == 0;
+        function isScrollable() { if (win.scrollMaxY == 0) liberator.beep(); return !win.scrollMaxY == 0; }
         function atEnd() win.scrollY / win.scrollMaxY >= 1;
 
+        let showHelp = false;
         switch (key) {
-        case "<Esc>":
-            closeWindow = true;
-            break; // handled globally in events.js:onEscape()
+            // close the window
+            case "<Esc>":
+            case "q":
+                modes.pop();
+                return; // handled globally in events.js:onEscape()
 
-        case ":":
-            commandline.open("", "", modes.EX);
-            return;
+            // reopen command line
+            case ":":
+                commandline.open("", "", modes.EX);
+                break;
 
-        // down a line
-        case "j":
-        case "<Down>":
-            if (options["more"] && isScrollable())
-                win.scrollByLines(1);
-            else
-                passEvent = true;
-            break;
+            // extended hint modes
+            case ";":
+                statusline.updateInputBuffer(";");
+                this._startHints = true;
+                break;
 
-        case "<C-j>":
-        case "<C-m>":
-        case "<Return>":
-            if (options["more"] && isScrollable() && !atEnd())
-                win.scrollByLines(1);
-            else
-                closeWindow = true; // don't propagate the event for accept keys
-            break;
+            // down a line
+            case "j":
+            case "<Down>":
+            case "<C-j>":
+            case "<C-m>":
+            case "<Return>":
+                if (isScrollable())
+                    win.scrollByLines(1);
+                break;
 
-        // up a line
-        case "k":
-        case "<Up>":
-        case "<BS>":
-            if (options["more"] && isScrollable())
-                win.scrollByLines(-1);
-            else if (options["more"] && !isScrollable())
-                showMorePrompt = true;
-            else
-                passEvent = true;
-            break;
+            // up a line
+            case "k":
+            case "<Up>":
+            case "<BS>":
+                if (isScrollable())
+                    win.scrollByLines(-1);
+                break;
 
-        // half page down
-        case "d":
-            if (options["more"] && isScrollable())
-                win.scrollBy(0, win.innerHeight / 2);
-            else
-                passEvent = true;
-            break;
+            // half page down
+            case "d":
+                if (isScrollable())
+                    win.scrollBy(0, win.innerHeight / 2);
+                break;
 
-        // TODO: <LeftMouse> on the prompt line should scroll one page
-        // page down
-        case "f":
-            if (options["more"] && isScrollable())
-                win.scrollByPages(1);
-            else
-                passEvent = true;
-            break;
+            // half page up
+            case "u":
+                if (isScrollable())
+                    win.scrollBy(0, -(win.innerHeight / 2));
+                break;
 
-        case "<Space>":
-        case "<PageDown>":
-            if (options["more"] && isScrollable() && !atEnd())
-                win.scrollByPages(1);
-            else
-                passEvent = true;
-            break;
+            // page down
+            case "f":
+            case "<C-f>":
+            case "<Space>":
+            case "<PageDown>":
+                if (isScrollable())
+                    win.scrollByPages(1);
+                break;
 
-        // half page up
-        case "u":
-            // if (more and scrollable)
-            if (options["more"] && isScrollable())
-                win.scrollBy(0, -(win.innerHeight / 2));
-            else
-                passEvent = true;
-            break;
+            // page up
+            case "b":
+            case "<C-f>":
+            case "<PageUp>":
+                if (isScrollable())
+                    win.scrollByPages(-1);
+                break;
 
-        // page up
-        case "b":
-            if (options["more"] && isScrollable())
-                win.scrollByPages(-1);
-            else if (options["more"] && !isScrollable())
-                showMorePrompt = true;
-            else
-                passEvent = true;
-            break;
+            // top of page
+            case "g":
+            case "<Home>":
+                if (isScrollable())
+                    win.scrollTo(0, 0);
+                break;
 
-        case "<PageUp>":
-            if (options["more"] && isScrollable())
-                win.scrollByPages(-1);
-            else
-                passEvent = true;
-            break;
+            // bottom of page
+            case "G":
+            case "<End>":
+                if (isScrollable())
+                    win.scrollTo(0, win.scrollMaxY);
+                break;
 
-        // top of page
-        case "g":
-            if (options["more"] && isScrollable())
-                win.scrollTo(0, 0);
-            else if (options["more"] && !isScrollable())
-                showMorePrompt = true;
-            else
-                passEvent = true;
-            break;
-
-        // bottom of page
-        case "G":
-            if (options["more"] && isScrollable() && !atEnd())
-                win.scrollTo(0, win.scrollMaxY);
-            else
-                passEvent = true;
-            break;
-
-        // copy text to clipboard
-        case "<C-y>":
-            util.copyToClipboard(win.getSelection());
-            break;
-
-        // close the window
-        case "q":
-            closeWindow = true;
-            break;
-
-        case ";":
-            statusline.updateInputBuffer(";");
-            this._startHints = true;
-            break;
-
-        // unmapped key
-        default:
-            if (!options["more"] || !isScrollable() || atEnd() || events.isCancelKey(key))
-                passEvent = true;
-            else
-                showMoreHelpPrompt = true;
+            // unmapped key -> show Help
+            default:
+                showHelp = true;
         }
 
-        if (passEvent || closeWindow) {
-            modes.pop();
-
-            if (passEvent)
-                events.onKeyPress(event);
+        if (showHelp) {
+            this.hide(); // hide the command line
+            this._echoLine("SPACE/d/j: screen/page/line down | b/u/k: screen/page/line up | HOME/g: top | END/G: bottom | ;f: follow hint | ESC/q: quit", this.HL_MOREMSG, true);
+        } else {
+            this.show();
         }
-        else
-            commandline.updateMorePrompt(showMorePrompt, showMoreHelpPrompt);
     },
 
     getSpaceNeeded: function getSpaceNeeded() {
         let rect = this._commandlineWidget.getBoundingClientRect();
         let offset = rect.bottom - window.innerHeight;
         return Math.max(0, offset);
-    },
-
-    /**
-     * Update or remove the multiline output widget's "MORE" prompt.
-     *
-     * @param {boolean} force If true, "-- More --" is shown even if we're
-     *     at the end of the output.
-     * @param {boolean} showHelp When true, show the valid key sequences
-     *     and what they do.
-     */
-    updateMorePrompt: function updateMorePrompt(force, showHelp) {
-        if (this._outputContainer.collapsed) {
-            this._echoLine("", this.HL_NORMAL);
-            return;
-        }
-
-        let win = this._multilineOutputWidget.contentWindow;
-        function isScrollable() !win.scrollMaxY == 0;
-        function atEnd() win.scrollY / win.scrollMaxY >= 1;
-
-        if (showHelp)
-            this._echoLine("-- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit", this.HL_MOREMSG, true);
-        else if (force || (options["more"] && isScrollable() && !atEnd()))
-            this._echoLine("-- More --", this.HL_MOREMSG, true);
-        else
-            this._echoLine("Press ENTER or type command to continue", this.HL_QUESTION, true);
     },
 
     /**
@@ -1583,10 +1503,6 @@ const CommandLine = Module("commandline", {
                 ],
                 validator: function (value) value >= -1
             });
-
-        options.add(["more"],
-            "Pause the message list window when more than one screen of listings is displayed",
-            "boolean", true);
 
         options.add(["showmode", "smd"],
             "Show the current mode in the command line",

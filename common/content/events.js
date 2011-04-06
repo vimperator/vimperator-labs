@@ -750,6 +750,12 @@ const Events = Module("events", {
         if (modes.passNextKey || modes.passAllKeys)
             return;
 
+        // always clear the commandline. Even if we are in
+        // NORMAL mode, we might have a commandline visible,
+        // e.g. after pressing 'n' to show the last search
+        // again.
+        commandline.hide();
+
         switch (liberator.mode) {
             case modes.NORMAL:
                 // clear any selection made

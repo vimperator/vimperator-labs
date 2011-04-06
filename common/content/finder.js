@@ -258,18 +258,21 @@ const Finder = Module("finder", {
         let up = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
         let result = config.browser.fastFind.findAgain(up, this._linksOnly);
 
-        if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND)
+        if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
             liberator.echoerr("Pattern not found: " + this._lastSearchPattern, commandline.FORCE_SINGLELINE);
+            commandline.hide();
+        }
         else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
             // hack needed, because wrapping causes a "scroll" event which clears
             // our command line
             setTimeout(function () {
                 let msg = up ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
                 commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
+                commandline.hide();
             }, 0);
         }
         else {
-            commandline.echo((up ? "?" : "/") + this._lastSearchPattern, null, commandline.FORCE_SINGLELINE);
+            commandline.show(this._lastSearchPattern, up ? "Find backwards" : "Find");
 
             if (options["hlsearch"])
                 this.highlight(this._lastSearchString);

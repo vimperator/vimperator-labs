@@ -54,7 +54,7 @@ const Modes = Module("modes", {
         if (this._passNextKey)
             return "-- IGNORE --";
         else if (this._passAllKeys)
-            return "-- IGNORE ALL KEYS --"; // TODO: Shall we add a (Press <C-Esc> to exit mode) help text?
+            return "-- IGNORE ALL KEYS --"; // TODO: Shall we add a (Press <S-Esc> to exit mode) help text?
 
         // when recording a macro
         let macromode = "";
@@ -80,33 +80,33 @@ const Modes = Module("modes", {
     _handleModeChange: function (oldMode, newMode, oldExtended) {
 
         switch (oldMode) {
-        case modes.TEXTAREA:
-        case modes.INSERT:
-            editor.unselectText();
-            break;
-
-        case modes.VISUAL:
-            if (newMode == modes.CARET) {
-                try { // clear any selection made; a simple if (selection) does not work
-                    let selection = Buffer.focusedWindow.getSelection();
-                    selection.collapseToStart();
-                }
-                catch (e) {}
-            }
-            else
+            case modes.TEXTAREA:
+            case modes.INSERT:
                 editor.unselectText();
-            break;
+                break;
 
-        case modes.CUSTOM:
-            plugins.stop();
-            break;
+            case modes.VISUAL:
+                if (newMode == modes.CARET) {
+                    try { // clear any selection made; a simple if (selection) does not work
+                        let selection = Buffer.focusedWindow.getSelection();
+                        selection.collapseToStart();
+                    }
+                    catch (e) {}
+                }
+                else
+                    editor.unselectText();
+                break;
 
-        case modes.COMMAND_LINE:
-            // clean up for HINT mode
-            if (oldExtended & modes.HINTS)
-                hints.hide();
-            commandline.close();
-            break;
+            case modes.CUSTOM:
+                plugins.stop();
+                break;
+
+            case modes.COMMAND_LINE:
+                // clean up for HINT mode
+                if (oldExtended & modes.HINTS)
+                    hints.hide();
+                commandline.close();
+                break;
         }
 
         if (newMode == modes.NORMAL) {

@@ -830,17 +830,6 @@
 
 
 <item>
-    <tags>'nomore' 'more'</tags>
-    <spec>'more'</spec>
-    <type>boolean</type>
-    <default>on</default>
-    <description>
-        <p>Pause the message list window when more than one screen of listings is displayed.</p>
-    </description>
-</item>
-
-
-<item>
     <tags>'nextpattern'</tags>
     <spec>'nextpattern'</spec>
     <type>stringlist</type>

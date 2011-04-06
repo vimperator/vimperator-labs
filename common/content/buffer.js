@@ -1739,7 +1739,7 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["g<C-g>"],
             "Print file information",
-            function () { buffer.showPageInfo(true); });
+            function () { buffer.showPageInfo(true); commandline.show("pageinfo"); });
     },
     options: function () {
         options.add(["nextpattern"], // \u00BB is » (>> in a single char)
