@@ -40,6 +40,8 @@ const Command = Class("Command", {
     init: function (specs, description, action, extraInfo) {
         specs = Array.concat(specs); // XXX
         let parsedSpecs = Command.parseSpecs(specs);
+        if (!parsedSpecs.every(function (specs) specs.every(Command.validateName)))
+            throw Error("Invalid command name");
 
         this.specs = specs;
         this.shortNames = array(parsedSpecs).map(function (n) n[1]).compact();
@@ -232,6 +234,16 @@ const Command = Class("Command", {
             let [, head, tail] = spec.match(/([^[]+)(?:\[(.*)])?/);
             return tail ? [head + tail, head] : [head];
         });
+    },
+
+    /**
+     * Validate command name
+     *
+     * @param {string} command name
+     * @returns {boolean}
+     */
+    validateName: function (name) {
+        return /^[a-zA-Z][a-zA-Z\d]*$/.test(name);
     }
 });
 
@@ -798,7 +810,7 @@ const Commands = Module("commands", {
         str.replace(/\s*".*$/, "");
 
         // 0 - count, 1 - cmd, 2 - special, 3 - args
-        let matches = str.match(/^[:\s]*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?))?$/);
+        let matches = str.match(/^[:\s]*(\d+|%)?([a-zA-Z][a-zA-Z\d]*|!)(!)?(?:\s*(.*?))?$/);
         //var matches = str.match(/^:*(\d+|%)?([a-zA-Z]+|!)(!)?(?:\s*(.*?)\s*)?$/);
         if (!matches)
             return [null, null, null, null];
@@ -1035,7 +1047,7 @@ const Commands = Module("commands", {
             function (args) {
                 let cmd = args[0];
 
-                liberator.assert(!/\W/.test(cmd || ''), "Invalid command name: " + cmd);
+                liberator.assert(Command.validateName(cmd), "Invalid command name: " + cmd);
 
                 if (args.literalArg) {
                     let nargsOpt       = args["-nargs"] || "0";
