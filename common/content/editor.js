@@ -63,7 +63,7 @@ const Editor = Module("editor", {
     },
 
     pasteClipboard: function () {
-        if (liberator.has("Win32")) {
+        if (liberator.has("Windows")) {
             this.executeCommand("cmd_paste");
             return;
         }

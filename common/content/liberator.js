@@ -68,7 +68,10 @@ const Liberator = Module("liberator", {
         /** @property {string} The name of the current user profile. */
         this.profileName = services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
 
-        config.features.push(Liberator.getPlatformFeature());
+        let platform = Liberator.getPlatformFeature()
+        config.features.push(platform);
+        if (/^Win(32|64)$/.test(platform))
+            config.features.push('Windows');
         
         if (AddonManager) {
             let self = this;
@@ -1045,7 +1048,10 @@ const Liberator = Module("liberator", {
     // return the platform normalized to Vim values
     getPlatformFeature: function () {
         let platform = navigator.platform;
-        return /^Mac/.test(platform) ? "MacUnix" : platform == "Win32" ? "Win32" : "Unix";
+        return /^Mac/.test(platform) ? "MacUnix" :
+               platform == "Win32"   ? "Win32" :
+               platform == "Win64"   ? "Win64" :
+               "Unix";
     },
 
     // TODO: move this

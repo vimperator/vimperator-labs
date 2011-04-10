@@ -1041,7 +1041,7 @@
     <tags>'shell' 'sh'</tags>
     <spec>'shell' 'sh'</spec>
     <type>string</type>
-    <default>_$SHELL_ or "sh", Win32: "cmd.exe"</default>
+    <default>_$SHELL_ or "sh", Windows: "cmd.exe"</default>
     <description>
         <p><ex>:!</ex> や <ex>:run</ex> コマンドを実行する際に使われるシェルです。</p>
     </description>
@@ -1052,7 +1052,7 @@
     <tags>'shellcmdflag' 'shcf'</tags>
     <spec>'shellcmdflag' 'shcf'</spec>
     <type>string</type>
-    <default type='plain'><str>-c</str>, Win32: <str>/c</str></default>
+    <default type='plain'><str>-c</str>, Windows: <str>/c</str></default>
     <description>
         <p><ex>:!</ex> や <ex>:run</ex> コマンドの実行時にシェルに渡されるフラグです。</p>
 

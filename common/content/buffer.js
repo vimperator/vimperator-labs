@@ -1153,7 +1153,7 @@ const Buffer = Module("buffer", {
                 let arg = args[0];
 
                 // FIXME: arg handling is a bit of a mess, check for filename
-                liberator.assert(!arg || arg[0] == ">" && !liberator.has("Win32"),
+                liberator.assert(!arg || arg[0] == ">" && !liberator.has("Windows"),
                     "Trailing characters");
 
                 options.withContext(function () {
