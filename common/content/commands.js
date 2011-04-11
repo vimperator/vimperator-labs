@@ -243,7 +243,7 @@ const Command = Class("Command", {
      * @returns {boolean}
      */
     validateName: function (name) {
-        return /^[a-zA-Z][a-zA-Z\d]*$/.test(name);
+        return /^(!|[a-zA-Z][a-zA-Z\d]*)$/.test(name);
     }
 });
 
