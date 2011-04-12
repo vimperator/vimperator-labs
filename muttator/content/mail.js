@@ -1167,6 +1167,31 @@ const Mail = Module("mail", {
                 validator: Option.validateCompleter
             });
 
+        options.add(["remotecontent", "rc"],
+            "Allow display remote content",
+            "boolean", false,
+            {
+                scope: Option.SCOPE_LOCAL,
+                getter: function () {
+                    if (config.browser.id == "messagepane") {
+                        let msg = gMessageDisplay.displayedMessage;
+                        if (msg)
+                            return msg.getUint32Property("remoteContentPolicy") == kAllowRemoteContent ? true : false;
+                    }
+                },
+                setter: function (value) {
+                    var policy = value ? kAllowRemoteContent : kBlockRemoteContent;
+                    if (config.browser.id == "messagepane") {
+                        let msg = gMessageDisplay.displayedMessage;
+                        if (msg && msg.getUint32Property("remoteContentPolicy") != policy) {
+                            msg.setUint32Property("remoteContentPolicy", policy);
+                            ReloadMessage();
+                        }
+                    }
+                    return value;
+                },
+            });
+
         /*options.add(["threads"],
             "Use threading to group messages",
             "boolean", true,
