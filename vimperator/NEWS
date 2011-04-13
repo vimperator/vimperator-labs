@@ -14,6 +14,9 @@
       has the advantage that you never have to guess if the next key like 'j' is
       sent to the output window or to the page in case you are at the end of the output.
       Therefore, also the 'more' option has been removed.
+    * Readded 'bookmark' and 'history' to the 'status' option to get the old
+      information about bookmark state and back/forward possibilities from Vimperator 2.x
+      Thanks lolilolicon.
     * Vimperator's command line is now a fully supported toolbar. This means you
       can just right click it, select "Customize", and drag'n drop any
       items in the command line like the combined back/forward button and

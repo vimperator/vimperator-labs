@@ -157,13 +157,16 @@ const Bookmarks = Module("bookmarks", {
                         if (self.isBookmark(itemId)) {
                             let bmark = loadBookmark(readBookmark(itemId));
                             storage.fireEvent(name, "add", bmark);
+                            statusline.updateBookmark();
                         }
                     }
                 },
                 onItemRemoved: function onItemRemoved(itemId, folder, index) {
                     // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
-                    if (deleteBookmark(itemId))
+                    if (deleteBookmark(itemId)) {
                         storage.fireEvent(name, "remove", itemId);
+                        statusline.updateBookmark();
+                    }
                 },
                 onItemChanged: function onItemChanged(itemId, property, isAnnotation, value) {
                     if (isAnnotation)

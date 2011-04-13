@@ -742,7 +742,7 @@
     <tags>'status'</tags>
     <spec>'status'</spec>
     <type>stringlist</type>
-    <default>input,location,tabcount,position</default>
+    <default>input,location,bookmark,history,tabcount,position</default>
     <description>
         <p>Determines which elements to show in the status bar.</p>
 
@@ -751,6 +751,8 @@
         <dl>
             <dt>input</dt>      <dd>A partial command like 'g' if you just start typing 'gg'</dd>
             <dt>location</dt>   <dd>The URL of the currently loaded page</dd>
+            <dt>bookmark</dt>   <dd>[&#x2764;]: indicates current page has been bookmarked</dd>
+            <dt>history</dt>    <dd>&lt;&gt;: go backward and forward in history indicators</dd>
             <dt>tabcount</dt>   <dd>[N/M]: N is the index of the currently selected tab and M is
                                     the total number of tabs in the current window.</dd>
             <dt>position</dt>   <dd>The vertical scroll position</dd>

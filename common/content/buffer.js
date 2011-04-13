@@ -256,6 +256,8 @@ const Buffer = Module("buffer", {
         onLocationChange: function onLocationChange() {
             onLocationChange.superapply(this, arguments);
             statusline.updateUrl();
+            statusline.updateBookmark();
+            statusline.updateHistory();
 
             autocommands.trigger("LocationChange", { url: buffer.URL });
 

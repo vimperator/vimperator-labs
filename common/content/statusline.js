@@ -52,6 +52,30 @@ const StatusLine = Module("statusline", {
         this.updateField("location", url);
     },
 
+    updateBookmark: function updateBookmark() {
+        if (typeof(buffer) == "undefined") // quick hack to make the muttator compose work, needs more thought
+            return;
+
+        let bookmark = "";
+        if ((modules.bookmarks) && (bookmarks.isBookmarked(buffer.URL)))
+            bookmark = "\u2764";
+
+        this.updateField("bookmark", bookmark);
+    },
+
+    updateHistory: function updateHistory() {
+        let history = "";
+        if (window.getWebNavigation) {
+            let sh = window.getWebNavigation().sessionHistory;
+            if (sh && sh.index > 0)
+                history += "<";
+            if (sh && sh.index < sh.count - 1)
+                history += ">";
+        }
+
+        this.updateField("history", history);
+     },
+
     /**
      * Set the contents of the status line's input buffer to the given
      * string. Used primarily when a key press requires further input
@@ -133,7 +157,7 @@ const StatusLine = Module("statusline", {
     options: function () {
         options.add(["status"],
             "Define which information to show in the status bar",
-            "stringlist", "input,location,tabcount,position",
+            "stringlist", "input,location,bookmark,history,tabcount,position",
             {
                 setter: function setter(value) {
                     statusline.update();
@@ -142,6 +166,8 @@ const StatusLine = Module("statusline", {
                 completer: function completer(context) [
                     ["input",    "Any partially entered key mapping"],
                     ["location", "The currently loaded URL"],
+                    ["history",  "The backward / forward history indicators"],
+                    ["bookmark", "The bookmark indicator (heart)"],
                     ["tabcount", "The number of currently selected tab and total number of tabs"],
                     ["position", "The vertical scroll position"]
                 ],
