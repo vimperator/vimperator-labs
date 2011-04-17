@@ -249,7 +249,7 @@ const File = Class("File", {
         // Kris reckons we shouldn't replicate this 'bug'. --djk
         // TODO: should we be doing this for all paths?
         function expand(path) path.replace(
-            !liberator.has("Win32") ? /\$(\w+)\b|\${(\w+)}/g
+            !liberator.has("Windows") ? /\$(\w+)\b|\${(\w+)}/g
                                  : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
             function (m, n1, n2, n3) services.get("environment").get(n1 || n2 || n3) || m
         );
@@ -262,7 +262,7 @@ const File = Class("File", {
             let home = services.get("environment").get("HOME");
 
             // Windows has its own idiosyncratic $HOME variables.
-            if (!home && liberator.has("Win32"))
+            if (!home && liberator.has("Windows"))
                 home = services.get("environment").get("USERPROFILE") ||
                        services.get("environment").get("HOMEDRIVE") + services.get("environment").get("HOMEPATH");
 
@@ -464,7 +464,7 @@ const IO = Module("io", {
         let rcFile1 = File.joinPaths(dir, "." + config.name.toLowerCase() + "rc");
         let rcFile2 = File.joinPaths(dir, "_" + config.name.toLowerCase() + "rc");
 
-        if (liberator.has("Win32"))
+        if (liberator.has("Windows"))
             [rcFile1, rcFile2] = [rcFile2, rcFile1];
 
         if (rcFile1.exists() && rcFile1.isFile())
@@ -508,9 +508,9 @@ const IO = Module("io", {
         if (File.isAbsolutePath(program))
             file = File(program, true);
         else {
-            let dirs = services.get("environment").get("PATH").split(liberator.has("Win32") ? ";" : ":");
+            let dirs = services.get("environment").get("PATH").split(liberator.has("Windows") ? ";" : ":");
             // Windows tries the CWD first TODO: desirable?
-            if (liberator.has("Win32"))
+            if (liberator.has("Windows"))
                 dirs = [io.getCurrentDirectory().path].concat(dirs);
 
 lookup:
@@ -522,7 +522,7 @@ lookup:
 
                     // TODO: couldn't we just palm this off to the start command?
                     // automatically try to add the executable path extensions on windows
-                    if (liberator.has("Win32")) {
+                    if (liberator.has("Windows")) {
                         let extensions = services.get("environment").get("PATHEXT").split(";");
                         for (let [, extension] in Iterator(extensions)) {
                             file = File.joinPaths(dir, program + extension);
@@ -750,7 +750,7 @@ lookup:
                 stdin.write(input);
 
             // TODO: implement 'shellredir'
-            if (liberator.has("Win32")) {
+            if (liberator.has("Windows")) {
                 if (options["shell"] == "cmd.exe") {
                     command = "cd /D " + this._cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
                 } else {
@@ -809,7 +809,7 @@ lookup:
         const rtpvar = config.name.toUpperCase() + "_RUNTIME";
         let rtp = services.get("environment").get(rtpvar);
         if (!rtp) {
-            rtp = "~/" + (liberator.has("Win32") ? "" : ".") + config.name.toLowerCase();
+            rtp = "~/" + (liberator.has("Windows") ? "" : ".") + config.name.toLowerCase();
             services.get("environment").set(rtpvar, rtp);
         }
         return rtp;
@@ -1011,7 +1011,7 @@ lookup:
         };
 
         completion.environment = function environment(context) {
-            let command = liberator.has("Win32") ? "set" : "env";
+            let command = liberator.has("Windows") ? "set" : "env";
             let lines = io.system(command).split("\n");
             lines.pop();
 
@@ -1065,7 +1065,7 @@ lookup:
         completion.shellCommand = function shellCommand(context) {
             context.title = ["Shell Command", "Path"];
             context.generate = function () {
-                let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Win32") ? ";" : ":"));
+                let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Windows") ? ";" : ":"));
                 let commands = [];
 
                 for (let [, dirName] in Iterator(dirNames)) {
@@ -1084,7 +1084,7 @@ lookup:
     },
     options: function () {
         var shell, shellcmdflag;
-        if (liberator.has("Win32")) {
+        if (liberator.has("Windows")) {
             shell = "cmd.exe";
             // TODO: setting 'shell' to "something containing sh" updates
             // 'shellcmdflag' appropriately at startup on Windows in Vim

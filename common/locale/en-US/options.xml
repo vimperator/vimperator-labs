@@ -1100,7 +1100,7 @@
     <tags>'shell' 'sh'</tags>
     <spec>'shell' 'sh'</spec>
     <type>string</type>
-    <default>_$SHELL_ or "sh", Win32: "cmd.exe"</default>
+    <default>_$SHELL_ or "sh", Windows: "cmd.exe"</default>
     <description>
         <p>Shell to use for executing <ex>:!</ex> and <ex>:run</ex> commands.</p>
     </description>
@@ -1111,7 +1111,7 @@
     <tags>'shellcmdflag' 'shcf'</tags>
     <spec>'shellcmdflag' 'shcf'</spec>
     <type>string</type>
-    <default type="plain"><str>-c</str>, Win32: <str>/c</str></default>
+    <default type="plain"><str>-c</str>, Windows: <str>/c</str></default>
     <description>
         <p>Flag passed to shell when executing <ex>:!</ex> and <ex>:run</ex> commands.</p>
 

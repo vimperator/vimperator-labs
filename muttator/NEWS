@@ -32,6 +32,7 @@
     * add *-javascript* flag to [c]:abbreviate[c], [c]:iabbrev[c] and [c]:cabbrev[c].
     * More small fixes
     * enable 'hinttags' and 'extenedhinttags' to setlocal
+    * Add 'remotecontent' option allows display remote content.
 
 2010-03-29
     * version 0.6
