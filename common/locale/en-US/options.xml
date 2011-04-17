@@ -1392,5 +1392,15 @@
         </p>
     </description>
 </item>
+
+<item>
+    <tags> 'ani' 'animations'</tags>
+    <spec> 'animations' 'ani'</spec>
+    <type>boolean</type>
+    <default>false</default>
+    <description>
+        <p>animation on/off.</p>
+    </description>
+</item>
 </document>
 <!-- vim:se sts=4 sw=4 et: -->

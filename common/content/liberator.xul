@@ -54,13 +54,13 @@
 
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,
              therefore we need to put them into a <vbox> for which that works just fine -->
-        <vbox class="liberator-container" hidden="false" collapsed="true">
+        <vbox class="liberator-container liberator-floatbox" hidden="false" collapsed="true">
             <iframe id="liberator-multiline-output" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
                 onclick="window.liberator &and; liberator.modules.commandline.onMultilineOutputEvent(event)"/>
         </vbox>
 
-        <vbox class="liberator-container" hidden="false" collapsed="true">
+        <vbox class="liberator-container liberator-floatbox" hidden="false" collapsed="true">
             <iframe id="liberator-completions" src="chrome://liberator/content/buffer.xhtml"
                 flex="1" hidden="false" collapsed="false"
                 onclick="window.liberator &and; liberator.modules.commandline.onMultilineOutputEvent(event)"/>

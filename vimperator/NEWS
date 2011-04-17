@@ -14,6 +14,9 @@
       has the advantage that you never have to guess if the next key like 'j' is
       sent to the output window or to the page in case you are at the end of the output.
       Therefore, also the 'more' option has been removed.
+    * Add 'animations' option to globablly decide if you want the animations
+      in our UI or not. NOTE: Not yet fully implemented for all animations.
+    * Slight changes in how the completion and command output list is graphically displayed
     * Readded 'bookmark' and 'history' to the 'status' option to get the old
       information about bookmark state and back/forward possibilities from Vimperator 2.x
       Thanks lolilolicon.

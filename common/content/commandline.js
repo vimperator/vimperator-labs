@@ -145,6 +145,9 @@ const CommandLine = Module("commandline", {
         // the widget used for multiline intput
         this._multilineInputWidget = document.getElementById("liberator-multiline-input");
 
+        // the widget used for bottombar
+        this._bottomBarWidget = document.getElementById("liberator-bottombar");
+
         // we need to save the mode which we were in before opening the command line
         // this is then used if we focus the command line again without the "official"
         // way of calling "open"
@@ -923,11 +926,14 @@ const CommandLine = Module("commandline", {
 
         let doc = this._multilineOutputWidget.contentDocument;
 
-        let availableHeight = config.outputHeight;
-        if (!this._outputContainer.collapsed)
-            availableHeight += parseFloat(this._outputContainer.height);
+        // xxx:
+        //let availableHeight = config.outputHeight;
+        //if (!this._outputContainer.collapsed)
+        //    availableHeight += parseFloat(this._outputContainer.height);
         doc.body.style.minWidth = this._commandlineWidget.scrollWidth + "px";
-        this._outputContainer.height = Math.min(doc.body.clientHeight, availableHeight) + "px";
+        this._outputContainer.style.bottom = this.bottombarPosition;
+        this._outputContainer.style.maxHeight =
+            (this._outputContainer.height = Math.min(doc.body.clientHeight, config.outputHeight)) + "px";
         doc.body.style.minWidth = "";
         this._outputContainer.collapsed = false;
     },
@@ -940,7 +946,10 @@ const CommandLine = Module("commandline", {
         }
         if (this._history)
             this._history.reset();
-    }
+    },
+
+    // related floatbox
+    get bottombarPosition() (document.documentElement.boxObject.height - this._bottomBarWidget.boxObject.y) + "px",
 }, {
     /**
      * A class for managing the history of an input field.
@@ -1538,6 +1547,21 @@ const CommandLine = Module("commandline", {
                     return first == val || second == val;
                 }
             });
+
+            let idList = ["liberator-multiline-output", "liberator-completions"];
+            function floatBox(id) document.getElementById(id).parentNode
+
+            let animation = "animation";
+            options.add(["animations", "ani"], "enabled animation", "boolean", false, {
+                setter: function (value) {
+                    let attr = value ? "add" : "remove";
+                    idList.forEach(function (id) {
+                        floatBox(id).classList[attr](animation);
+                    });
+                    return value;
+                },
+                getter: function () floatBox(idList[0]).classList.contains(animation),
+            });
     },
     styles: function () {
         let fontSize = util.computedStyle(document.getElementById(config.mainWindowId)).fontSize;
@@ -1587,6 +1611,7 @@ const ItemList = Class("ItemList", {
             this._div.style.minWidth = document.getElementById("liberator-commandline").scrollWidth + "px";
 
         this._minHeight = Math.max(this._minHeight, this._divNodes.completions.getBoundingClientRect().bottom);
+        this._container.style.maxHeight = this._minHeight + "px";
         this._container.height = this._minHeight;
 
         if (this._container.collapsed)
@@ -1717,8 +1742,15 @@ const ItemList = Class("ItemList", {
     },
 
     clear: function clear() { this.setItems(); this._doc.body.innerHTML = ""; },
-    hide: function hide() { this._container.collapsed = true; this._updateSeparatorVisibility(); },
-    show: function show() { this._container.collapsed = false; this._updateSeparatorVisibility(); },
+    hide: function hide() {
+        this._container.collapsed = true;
+        this._updateSeparatorVisibility();
+    },
+    show: function show() {
+        this._container.style.bottom = commandline.bottombarPosition;
+        this._container.collapsed = false;
+        this._updateSeparatorVisibility();
+    },
     visible: function visible() !this._container.collapsed,
 
     reset: function () {

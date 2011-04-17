@@ -68,6 +68,33 @@
     font-family: inherit;
 }
 
+.liberator-floatbox {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.liberator-container.animation[collapsed='true'] {
+    opacity: 0;
+    pointer-events: none;
+    max-height: 10px !important;
+    min-height: 10px;
+}
+
+.liberator-floatbox #liberator-completions,
+.liberator-floatbox #liberator-multiline-output {
+    background-color: transparent;
+}
+
+.liberator-floatbox > iframe {
+    height: 100%;
+    width: 100%;
+}
+
+.liberator-container.animation {
+    -moz-transition: all 0.2s;
+}
+
 #liberator-completions {
     -moz-user-focus: ignore;
     overflow: -moz-scrollbars-none !important;
