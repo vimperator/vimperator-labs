@@ -345,7 +345,7 @@ const Liberator = Module("liberator", {
     loadScript: function (uri, context) {
         XML.ignoreWhiteSpace = false;
         XML.prettyPrinting = false;
-        services.get("subscriptLoader").loadSubScript(uri, context);
+        services.get("subscriptLoader").loadSubScript(uri, context, "UTF-8");
     },
 
     eval: function (str, context) {
