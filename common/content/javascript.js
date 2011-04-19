@@ -518,7 +518,7 @@ const JavaScript = Module("javascript", {
                 let key = this._getKey();
                 args.push(key + string);
 
-                compl = function (context, obj) {
+                var compl = function (context, obj) {
                     let res = completer.call(self, context, func, obj, args);
                     if (res)
                         context.completions = res;

@@ -406,7 +406,7 @@ const CompletionContext = Class("CompletionContext", {
         let filter = fixCase(this.filter);
         if (this.anchored) {
             var compare = function compare(text, s) text.substr(0, s.length) == s;
-            substrings = util.map(util.range(filter.length, text.length + 1),
+            var substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
         else {
