@@ -272,15 +272,19 @@ const Buffer = Module("buffer", {
             setOverLink.superapply(this, arguments);
             let ssli = options["showstatuslinks"];
             if (link && ssli) {
-                if (ssli == 1)
+                if (ssli == 1) {
                     statusline.updateUrl("Link: " + link);
+                    statusline.updateBookmark(link);
+                }
                 else if (ssli == 2)
                     liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
             }
 
             if (link == "") {
-                if (ssli == 1)
+                if (ssli == 1) {
                     statusline.updateUrl();
+                    statusline.updateBookmark();
+                }
                 else if (ssli == 2)
                     modes.show();
                 }

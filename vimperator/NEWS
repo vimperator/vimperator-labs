@@ -1,3 +1,7 @@
+2011-xx-xx:
+    * The heart indiciator for bookmarked pages also shows the correct
+      state now when hovering over a link
+
 2011-04-21: "The Return Of Copy And Paste"
     * version 3.1
     * IMPORTANT: PASSTHROUGH mode has been reworked. Press 'i' to ignore a single

@@ -52,12 +52,16 @@ const StatusLine = Module("statusline", {
         this.updateField("location", url);
     },
 
-    updateBookmark: function updateBookmark() {
+    updateBookmark: function updateBookmark(url) {
         if (typeof(buffer) == "undefined") // quick hack to make the muttator compose work, needs more thought
             return;
 
+        // if no url is given as the argument, use the current page
+        if (url == null)
+            url = buffer.URL;
+
         let bookmark = "";
-        if ((modules.bookmarks) && (bookmarks.isBookmarked(buffer.URL)))
+        if ((modules.bookmarks) && (bookmarks.isBookmarked(url)))
             bookmark = "\u2764";
 
         this.updateField("bookmark", bookmark);
