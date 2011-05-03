@@ -274,6 +274,11 @@ var timers = {};
 var storage = {
     alwaysReload: {},
     newObject: function newObject(key, constructor, params) {
+        if (!params.reload && !params.store) {
+            let enumerator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator).getEnumerator("navigator:browser");
+            params.reload = enumerator.hasMoreElements() && enumerator.getNext() && !enumerator.hasMoreElements();
+        }
+
         if (!(key in keys) || params.reload || this.alwaysReload[key]) {
             if (key in this && !(params.reload || this.alwaysReload[key]))
                 throw Error();
