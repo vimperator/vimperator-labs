@@ -593,7 +593,7 @@ const Liberator = Module("liberator", {
         XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
         XML.prettyIndent = 4;
 
-        let lang = window.navigator.language;
+        let lang = options.getPref("general.useragent.locale", "en-US");
         function chooseByLang(elems) {
             if (!elems)
                 return null;
