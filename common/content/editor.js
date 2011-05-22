@@ -592,9 +592,18 @@ const Editor = Module("editor", {
         addMotionMap("y"); // yank
 
         // insert mode mappings
-        mappings.add(myModes,
+        mappings.add([modes.INSERT],
             ["<C-w>"], "Delete previous word",
             function () { editor.executeCommand("cmd_deleteWordBackward", 1); });
+
+        mappings.add([modes.COMMAND_LINE],
+            ["<C-w>"], "Delete previous word",
+            function () {
+                // XXX Error occurs on doCommand, when completion's preview is available.
+                if (commandline._completions)
+                    commandline._completions.previewClear();
+                editor.executeCommand("cmd_deleteWordBackward", 1);
+            });
 
         mappings.add(myModes,
             ["<C-u>"], "Delete until beginning of current line",
