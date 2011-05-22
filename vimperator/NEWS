@@ -1,5 +1,10 @@
 2011-xx-xx:
     * version 3.1.1
+    * Remove CSS hack to get rid of tab scrolling when you have many tabs because some
+      users complained about this change. If you want to allow your tabs to shrink
+      as much as possible, but this into your .vimperatorrc file:
+      :js styles.addSheet(false, "mintabwidth", "chrome://*", ".tabbrowser-tab[fadein]:not([pinned]) { min-width: 16px !important; } .scrollbutton-up, .scrollbutton-down { display:none; }");
+      This could make a nice vimperator plugin with a :set mintabwith=... option.
     * Compatibility fixes for Firefox 5.x and 6.x. Also bumped maxVersion accordingly
     * The heart indiciator for bookmarked pages also shows the correct
       state now when hovering over a link
