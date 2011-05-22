@@ -723,7 +723,13 @@ Module("highlight", {
             },
             {
                 argCount: "1",
-                completer: function (context) completion.colorScheme(context)
+                completer: function (context) {
+                    context.title = ["Extra Completions"];
+                    context.completions = [
+                        ["default", "Clear all highlights"]
+                    ];
+                    context.fork("colorScheme", 0, completion, "colorScheme");
+                }
             });
 
         commands.add(["hi[ghlight]"],
