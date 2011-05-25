@@ -377,7 +377,7 @@ function Styles(name, store) {
         }
     });
 
-    let cssUri = function (css) "chrome-data:text/css," + window.encodeURI(css);
+    let cssUri = function (css) "chrome-data:text/css," + window.encodeURIComponent(css);
 
     let userSheets = [];
     let systemSheets = [];
