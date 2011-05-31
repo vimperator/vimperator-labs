@@ -85,7 +85,6 @@ const CommandLine = Module("commandline", {
 
         this._silent = false;
         this._quiet = false;
-        this._keepCommand = false;
         this._lastEcho = null;
 
         /////////////////////////////////////////////////////////////////////////////}}}
@@ -171,8 +170,8 @@ const CommandLine = Module("commandline", {
 
             commands.repeat = command;
             liberator.trapErrors(function () liberator.execute(command));
-            if (!(modes.main == modes.COMMAND_LINE) && !commandline._commandlineWidget.classList.contains("hidden"))
-                this.close();
+            //if (!(modes.main == modes.COMMAND_LINE) && !commandline._commandlineWidget.classList.contains("hidden"))
+            //    this.close();
         });
         this.registerCallback("complete", modes.EX, function (context) {
             context.fork("ex", 0, completion, "ex");
@@ -386,8 +385,9 @@ const CommandLine = Module("commandline", {
     },
 
     triggerCallback: function (type, mode, data) {
-        if (this._callbacks[type] && this._callbacks[type][mode])
-            this._callbacks[type][mode].call(this, data);
+        if (type && mode && this._callbacks[type] && this._callbacks[type][mode])
+            //this._callbacks[type][mode].call(this, data);
+            this._callbacks[type][mode](data);
     },
 
     runSilently: function (func, self) {
@@ -415,6 +415,8 @@ const CommandLine = Module("commandline", {
 
     get message() this._messageBox.value,
 
+    get messages() this._messageHistory,
+
     /**
      * Open the command line. The main mode is set to
      * COMMAND_LINE, the extended mode to <b>extendedMode</b>.
@@ -436,7 +438,6 @@ const CommandLine = Module("commandline", {
         this._currentPrompt = prompt || "";
         this._currentCommand = cmd || "";
         this._currentExtendedMode = extendedMode || null;
-        this._keepCommand = false;
 
         this._setPrompt(this._currentPrompt);
         this._setCommand(this._currentCommand);
@@ -463,27 +464,29 @@ const CommandLine = Module("commandline", {
         this._currentExtendedMode = null;
         commandline.triggerCallback("cancel", mode);
 
-        if (this._history)
+        if (this._history) {
             this._history.save();
+            this._history = null;
+        }
 
+        // The completion things must be always reset
         this.resetCompletions(); // cancels any asynchronous completion still going on, must be before we set completions = null
-        this._completions = null;
-        this._history = null;
-
-        liberator.focusContent(false);
-
-        this._multilineInputWidget.collapsed = true;
         this._completionList.hide();
+        this._completions = null;
 
-        if (!this._keepCommand || this._silent || this._quiet) {
+        // don't have input and output widget open at the same time
+        if (modes.extended & modes.INPUT_MULTILINE)
+            this._outputContainer.collapsed = true;
+        else if (modes.extended & modes.OUTPUT_MULTILINE) {
+            this._multilineInputWidget.collapsed = true;
+            liberator.focusContent();
+        } else {
+            liberator.focusContent();
+            this._multilineInputWidget.collapsed = true;
             this._outputContainer.collapsed = true;
             this.hide();
+            modes.pop(true);
         }
-        if (!this._outputContainer.collapsed) {
-            // the last command had some output, keep the MOW open
-            modes.set(modes.COMMAND_LINE, modes.OUTPUT_MULTILINE);
-        }
-        this._keepCommand = false;
     },
 
     /**
@@ -492,8 +495,11 @@ const CommandLine = Module("commandline", {
      */
     hide: function hide() {
         this._commandlineWidget.classList.add("hidden");
-        this._setPrompt("");
         this._commandWidget.blur();
+
+        // needed for the sliding animation of the prompt text to be shown correctly
+        // on subsequent calls
+        this.setTimeout(function() { this._setPrompt(""); }, 0);
     },
 
     /**
@@ -534,8 +540,8 @@ const CommandLine = Module("commandline", {
      *          the MOW.
      */
     echo: function echo(str, highlightGroup, flags) {
-        // liberator.dump("echoing: " + str);
-        // liberator.echo uses different order of flags as it omits the highlight group, change commandline.echo argument order? --mst
+        // liberator.echo uses different order of flags as it omits the highlight group,
+        // change commandline.echo argument order? --mst
         if (this._silent)
             return;
 
@@ -680,11 +686,9 @@ const CommandLine = Module("commandline", {
             // user pressing <Esc> is handled in the global onEscape
             //   FIXME: <Esc> should trigger "cancel" event
             if (events.isAcceptKey(key)) {
-                let mode = this._currentExtendedMode; // save it here, as modes.pop() resets it
-                this._keepCommand = true;
+                commandline.triggerCallback("submit", this._currentExtendedMode, command);
                 this._currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
-                modes.pop(!this._silent);
-                commandline.triggerCallback("submit", mode, command);
+                this.close();
             }
             // user pressed <Up> or <Down> arrow to cycle this._history completion
             else if (/^<(Up|Down|S-Up|S-Down|PageUp|PageDown)>$/.test(key)) {
@@ -1405,13 +1409,15 @@ const CommandLine = Module("commandline", {
         commands.add(["mes[sages]"],
             "Display previously given messages",
             function () {
+                if (commandline._messageHistory.length == 0)
+                    liberator.echomsg("No previous messages");
                 // TODO: are all messages single line? Some display an aggregation
                 //       of single line messages at least. E.g. :source
-                if (commandline._messageHistory.length == 1) {
+                /*if (commandline._messageHistory.length == 1) {
                     let message = commandline._messageHistory.messages[0];
                     commandline.echo(message.str, message.highlight, commandline.FORCE_SINGLELINE);
-                }
-                else if (commandline._messageHistory.length > 1) {
+                }*/
+                else { //if (commandline._messageHistory.length > 1) {
                     XML.ignoreWhitespace = false;
                     let list = template.map(commandline._messageHistory.messages, function (message)
                         <div highlight={message.highlight + " Message"}>{message.str}</div>);
@@ -1421,7 +1427,7 @@ const CommandLine = Module("commandline", {
             { argCount: "0" });
 
         commands.add(["messc[lear]"],
-            "Clear the message this._history",
+            "Clear the :messages list",
             function () { commandline._messageHistory.clear(); },
             { argCount: "0" });
 
@@ -1586,7 +1592,7 @@ const ItemList = Class("ItemList", {
         var iframe = document.getElementById(id);
         if (!iframe) {
             liberator.log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
-            return; // XXX
+            return;
         }
 
         this._doc = iframe.contentDocument;

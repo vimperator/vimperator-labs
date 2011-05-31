@@ -88,7 +88,7 @@ const Liberator = Module("liberator", {
         autocommands.trigger(config.name + "LeavePre", {});
         storage.saveAll();
         liberator.triggerObserver("shutdown", null);
-        liberator.dump("All liberator modules destroyed\n");
+        liberator.log("All liberator modules destroyed\n");
         autocommands.trigger(config.name + "Leave", {});
     },
 
@@ -260,12 +260,12 @@ const Liberator = Module("liberator", {
      * @param {string} msg The trace message.
      * @param {number} frames The number of frames to print.
      */
-    dumpStack: function (msg, frames) {
+    /*dumpStack: function (msg, frames) {
         let stack = Error().stack.replace(/(?:.*\n){2}/, "");
         if (frames != null)
             [stack] = stack.match(RegExp("(?:.*\n){0," + frames + "}"));
         liberator.dump((msg || "Stack") + "\n" + stack);
-    },
+    },*/
 
     /**
      * Outputs a plain message to the command line.
@@ -281,56 +281,58 @@ const Liberator = Module("liberator", {
     /**
      * Outputs an error message to the command line.
      *
-     * @param {string} str The message to output.
-     * @param {number} flags These control the multiline message behaviour.
+     * @param {string|Error} str The message to output.
+     * @param {number} flags These control the multiline message behavior.
      *     See {@link CommandLine#echo}.
      */
     echoerr: function (str, flags) {
-        flags |= commandline.APPEND_TO_MESSAGES;
+        try {
+            flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE | commandline.FORCE_SINGLELINE;
 
-        if (typeof str == "object" && "echoerr" in str)
-            str = str.echoerr;
-        else if (str instanceof Error)
-            str = str.fileName + ":" + str.lineNumber + ": " + str;
+            if (typeof str == "object" && "echoerr" in str)
+                str = str.echoerr;
 
-        if (options["errorbells"])
-            liberator.beep();
+            if (options["errorbells"])
+                liberator.beep();
 
-        commandline.echo(str, commandline.HL_ERRORMSG, flags);
+            commandline.echo(str, commandline.HL_ERRORMSG, flags);
+
+            // For errors, also print the stack trace to our :messages list
+            if (str instanceof Error) {
+                let stackTrace = <></>;
+                let stackItems = new Error().stack.split('\n');
+                // ignore the first element intenationally!
+                for (let i = 1; i < stackItems.length; i++) {
+                    let stackItem = stackItems[i];
+                    let atIndex = stackItem.lastIndexOf("@");
+                    if (atIndex < 0)
+                        continue;
+                    let stackLocation = stackItem.substring(atIndex + 1);
+                    let stackArguments = stackItem.substring(0, atIndex);
+                    if (stackArguments)
+                        stackArguments = " - " + stackArguments;
+                        
+                    stackTrace += <><span style="font-weight: normal">&#xa0;&#xa0;at </span>{stackLocation}<span style="font-weight: normal">{stackArguments}</span><br/></>;
+                }
+                commandline.messages.add({str: stackTrace, highlight: commandline.HL_ERRORMSG});
+            }
+        } catch (e) {
+            // if for some reason, echoerr fails, log this information at least to
+            // the console!
+            liberator.dump(str);
+        }
     },
 
-    // TODO: add proper level constants
     /**
      * Outputs an information message to the command line.
      *
      * @param {string} str The message to output.
-     * @param {number} verbosity The messages log level (0 - 15). Only
-     *     messages with verbosity less than or equal to the value of the
-     *     'verbosity' option will be output.
-     * @param {number} flags These control the multiline message behaviour.
+     * @param {number} flags These control the multiline message behavior.
      *     See {@link CommandLine#echo}.
      */
-    echomsg: function (str, verbosity, flags) {
-        // TODO: is there a reason for this? --djk
-        // yes, it doesn't show the MOW on startup if you have e.g. some qmarks in your vimperatorrc.
-        // Feel free to add another flag like DONT_OPEN_MULTILINE if really needed --mst
-        //
-        // But it's _supposed_ to show the MOW on startup when there are
-        // messages, surely?  As far as I'm concerned it essentially works
-        // exactly as it should with the DISALLOW_MULTILINE flag removed.
-        // Sending N messages to the command line in a row and having them
-        // overwrite each other is completely broken. I also think many of
-        // those messages like "Added quick mark" are plain silly but if
-        // you don't like them you can set verbose=0, or use :silent when
-        // someone adds it. I reckon another flag and 'class' of messages
-        // is just going to unnecessarily complicate things. --djk
-        flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE;
-
-        if (verbosity == null)
-            verbosity = 0; // verbosity level is exclusionary
-
-        if (options["verbose"] >= verbosity)
-            commandline.echo(str, commandline.HL_INFOMSG, flags);
+    echomsg: function (str, flags) {
+        flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE | commandline.FORCE_SINGLELINE;
+        commandline.echo(str, commandline.HL_INFOMSG, flags);
     },
 
     /**
@@ -385,7 +387,6 @@ const Liberator = Module("liberator", {
         let matches = string.match(/^&(\w+)/);
         if (matches) {
             let opt = this.options.get(matches[1]);
-            // liberator.dump("evalExpression: " + matches[1]);
 
             liberator.assert(opt, "Unknown option: " + matches[1]);
 
@@ -666,7 +667,7 @@ const Liberator = Module("liberator", {
         function sourceDirectory(dir) {
             liberator.assert(dir.isReadable(), "Cannot read directory: " + dir.path);
 
-            liberator.log("Sourcing plugin directory: " + dir.path + "...", 3);
+            liberator.log("Sourcing plugin directory: " + dir.path + "...");
             dir.readDirectory(true).forEach(function (file) {
                 if (file.isFile() && /\.(js|vimp)$/i.test(file.path) && !(file.path in liberator.pluginFiles)) {
                     try {
@@ -674,7 +675,7 @@ const Liberator = Module("liberator", {
                         liberator.pluginFiles[file.path] = true;
                     }
                     catch (e) {
-                        liberator.reportError(e);
+                        liberator.echoerr(e);
                     }
                 }
                 else if (file.isDirectory())
@@ -685,41 +686,25 @@ const Liberator = Module("liberator", {
         let dirs = io.getRuntimeDirectories("plugin");
 
         if (dirs.length == 0) {
-            liberator.log("No user plugin directory found", 3);
+            liberator.log("No user plugin directory found");
             return;
         }
 
-        liberator.echomsg('Searching for "plugin/**/*.{js,vimp}" in "'
-                            + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"', 2);
+        liberator.log('Searching for "plugin/**/*.{js,vimp}" in "'
+                            + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"');
 
         dirs.forEach(function (dir) {
-            liberator.echomsg("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
+            liberator.log("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
             sourceDirectory(dir);
         });
     },
 
-    // TODO: add proper level constants
     /**
-     * Logs a message to the JavaScript error console. Each message has an
-     * associated log level. Only messages with a log level less than or
-     * equal to <b>level</b> will be printed. If <b>msg</b> is an object,
-     * it is pretty printed.
+     * Logs a message to the JavaScript error console.
      *
      * @param {string|Object} msg The message to print.
-     * @param {number} level The logging level 0 - 15.
      */
-    log: function (msg, level) {
-        let verbose = 0;
-        if (level == undefined)
-            level = 1;
-
-        // options does not exist at the very beginning
-        if (modules.options)
-            verbose = options.getPref("extensions.liberator.loglevel", 0);
-
-        if (level > verbose)
-            return;
-
+    log: function (msg) {
         if (typeof msg == "object")
             msg = util.objectToString(msg, false);
 
@@ -900,7 +885,7 @@ const Liberator = Module("liberator", {
                     liberator.beep();
             }
             else
-                liberator.reportError(e);
+                liberator.echoerr(e);
             return undefined;
         }
     },
@@ -911,7 +896,7 @@ const Liberator = Module("liberator", {
      *
      * @param {Object} error The error object.
      */
-    reportError: function (error) {
+    /*reportError: function (error) {
         if (Cu.reportError)
             Cu.reportError(error);
 
@@ -934,7 +919,7 @@ const Liberator = Module("liberator", {
             liberator.dump("");
         }
         catch (e) { window.dump(e); }
-    },
+    },*/
 
     /**
      * Restart the host application.
@@ -1217,7 +1202,6 @@ const Liberator = Module("liberator", {
 
                     // finally we can just execute the actions
                     for (let [id, collapsed] in Iterator(actions)) {
-                        // liberator.dump("id: " + id + " collapsed: " + collapsed);
                         let elem = document.getElementById(id);
                         if (!elem)
                             continue;
@@ -1399,7 +1383,7 @@ const Liberator = Module("liberator", {
                     AddonManager.getInstallForFile(file, function (a) a.install());
                 else {
                     if (file.exists() && file.isDirectory())
-                        liberator.echomsg("Cannot install a directory: " + file.path, 0);
+                        liberator.echoerr("Cannot install a directory: " + file.path);
 
                     liberator.echoerr("Cannot open file: " + file.path);
                 }
@@ -1783,7 +1767,7 @@ const Liberator = Module("liberator", {
     load: function () {
         liberator.triggerObserver("load");
 
-        liberator.log("All modules loaded", 3);
+        liberator.log("All modules loaded");
 
         services.add("commandLineHandler", "@mozilla.org/commandlinehandler/general-startup;1?type=" + config.name.toLowerCase());
 
@@ -1794,10 +1778,9 @@ const Liberator = Module("liberator", {
             liberator.commandLineOptions.noPlugins = "++noplugin" in args;
             liberator.commandLineOptions.postCommands = args["+c"];
             liberator.commandLineOptions.preCommands = args["++cmd"];
-            liberator.dump("Processing command-line option: " + commandline);
+            liberator.log("Command-line options: " + util.objectToString(liberator.commandLineOptions));
         }
 
-        liberator.log("Command-line options: " + util.objectToString(liberator.commandLineOptions), 3);
 
         // first time intro message
         const firstTime = "extensions." + config.name.toLowerCase() + ".firsttime";
@@ -1837,7 +1820,7 @@ const Liberator = Module("liberator", {
                         services.get("environment").set("MY_" + extensionName + "RC", rcFile.path);
                     }
                     else
-                        liberator.log("No user RC file found", 3);
+                        liberator.log("No user RC file found");
                 }
 
                 if (options["exrc"] && !liberator.commandLineOptions.rcFile) {
@@ -1874,7 +1857,7 @@ const Liberator = Module("liberator", {
         }, 0);
 
         statusline.update();
-        liberator.log(config.name + " fully initialized", 0);
+        liberator.log(config.name + " fully initialized");
     }
 });
 

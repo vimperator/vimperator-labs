@@ -78,7 +78,6 @@ const Modes = Module("modes", {
     // by calling modes.reset() and adding the stuff which is needed
     // for its cleanup here
     _handleModeChange: function (oldMode, newMode, oldExtended) {
-
         switch (oldMode) {
             case modes.TEXTAREA:
             case modes.INSERT:
@@ -114,8 +113,10 @@ const Modes = Module("modes", {
             if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
-            //statusline.updateUrl(); // TODO: Why?
-            liberator.focusContent(true);
+            if (oldMode == modes.COMMAND_LINE)
+                liberator.focusContent(false); // when coming from the commandline, we might want to keep the focus (after a Search, e.g.)
+            else
+                liberator.focusContent(true); // unfocus textareas etc.
         }
     },
 
@@ -189,7 +190,7 @@ const Modes = Module("modes", {
                 this._handleModeChange(oldMain, mainMode, oldExtended);
         }
         liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended], stack);
-        //liberator.dump("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended);
+        // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended);
 
         if (!silent)
             this.show();

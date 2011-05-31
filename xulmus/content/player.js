@@ -45,34 +45,27 @@ const Player = Module("player", {
         onMediacoreEvent: function (event) {
             switch (event.type) {
                 case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
-                    liberator.log("Before track changed: " + event.data);
                     autocommands.trigger("TrackChangePre", { track: event.data });
                     break;
                 case Ci.sbIMediacoreEvent.TRACK_CHANGE:
                     autocommands.trigger("TrackChange", { track: event.data });
                     break;
                 case Ci.sbIMediacoreEvent.BEFORE_VIEW_CHANGE:
-                    liberator.log("Before view changed: " + event.data);
                     autocommands.trigger("ViewChangePre", { view: event.data });
                     break;
                 case Ci.sbIMediacoreEvent.VIEW_CHANGE:
-                    liberator.log("View changed: " + event.data);
                     autocommands.trigger("ViewChange", { view: event.data });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_START:
-                    liberator.log("Track started: " + gMM.sequencer.currentItem);
                     autocommands.trigger("StreamStart", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_PAUSE:
-                    liberator.log("Track paused: " + gMM.sequencer.currentItem);
                     autocommands.trigger("StreamPause", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_END:
-                    liberator.log("Track ended: " + gMM.sequencer.currentItem);
                     autocommands.trigger("StreamEnd", { track: gMM.sequencer.currentItem });
                     break;
                 case Ci.sbIMediacoreEvent.STREAM_STOP:
-                    liberator.log("Track stopped: " + gMM.sequencer.currentItem);
                     autocommands.trigger("StreamStop", { track: gMM.sequencer.currentItem });
                     break;
             }

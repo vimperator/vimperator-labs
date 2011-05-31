@@ -31,10 +31,9 @@ const AutoCommands = Module("autocommands", {
      * @param {string} cmd The Ex command to run.
      */
     add: function (events, regex, cmd) {
-        if (typeof events == "string") {
+        if (typeof events == "string")
             events = events.split(",");
-            liberator.log("DEPRECATED: the events list arg to autocommands.add() should be an array of event names");
-        }
+
         events.forEach(function (event) {
             this._store.push(AutoCommand(event, RegExp(regex), cmd));
         }, this);
@@ -114,18 +113,16 @@ const AutoCommands = Module("autocommands", {
 
         let autoCmds = this._store.filter(function (autoCmd) autoCmd.event == event);
 
-        liberator.echomsg("Executing " + event + " Auto commands for \"*\"", 8);
-
         let lastPattern = null;
         let url = args.url || "";
 
         for (let [, autoCmd] in Iterator(autoCmds)) {
             if (autoCmd.pattern.test(url)) {
                 if (!lastPattern || lastPattern.source != autoCmd.pattern.source)
-                    liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"", 8);
+                    liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"");
 
                 lastPattern = autoCmd.pattern;
-                liberator.echomsg("autocommand " + autoCmd.command, 9);
+                // liberator.echomsg("autocommand " + autoCmd.command, 9);
 
                 if (typeof autoCmd.command == "function") {
                     try {

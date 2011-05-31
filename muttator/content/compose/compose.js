@@ -15,7 +15,6 @@ const Compose = Module("compose", {
             // this is (also) fired once the new compose window loaded the message for the first time
             NotifyDocumentStateChanged: function (nowDirty) {
                 // only edit with external editor if this window was not cached!
-                liberator.log("NotifyDocumentStateChanged", 0);
                 if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
                     window.messageWasEditedExternally = true;
                     editor.editFieldExternally();

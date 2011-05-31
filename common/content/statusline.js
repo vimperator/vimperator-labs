@@ -22,7 +22,6 @@ const StatusLine = Module("statusline", {
             });
 
         this._statuslineWidget.value = text;
-        // liberator.dump("updating text to: " + text);
     },
 
     /**
@@ -151,7 +150,6 @@ const StatusLine = Module("statusline", {
      * @param value
      */
     updateField: function updateField(fieldname, value) {
-        // liberator.dump("updating field " + fieldname + " to value " + value);
         this._statusfields[fieldname] = value;
         this.update();
     }

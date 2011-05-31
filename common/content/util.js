@@ -76,7 +76,7 @@ const Util = Module("util", {
         clipboardHelper.copyString(str);
 
         if (verbose)
-            liberator.echo("Yanked " + str, commandline.FORCE_SINGLELINE);
+            liberator.echomsg("Copied text to clipboard: " + str);
     },
 
     /**
@@ -429,7 +429,7 @@ const Util = Module("util", {
             return xmlhttp;
         }
         catch (e) {
-            liberator.log("Error opening " + url + ": " + e, 1);
+            liberator.log("Error opening " + url + ": " + e);
             return null;
         }
     },

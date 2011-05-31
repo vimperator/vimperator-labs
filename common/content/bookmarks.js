@@ -152,7 +152,6 @@ const Bookmarks = Module("bookmarks", {
                 onItemVisited:      function onItemVisited() {},
                 onItemMoved:        function onItemMoved() {},
                 onItemAdded: function onItemAdded(itemId, folder, index) {
-                    // liberator.dump("onItemAdded(" + itemId + ", " + folder + ", " + index + ")\n");
                     if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK) {
                         if (self.isBookmark(itemId)) {
                             let bmark = loadBookmark(readBookmark(itemId));
@@ -162,7 +161,6 @@ const Bookmarks = Module("bookmarks", {
                     }
                 },
                 onItemRemoved: function onItemRemoved(itemId, folder, index) {
-                    // liberator.dump("onItemRemoved(" + itemId + ", " + folder + ", " + index + ")\n");
                     if (deleteBookmark(itemId)) {
                         storage.fireEvent(name, "remove", itemId);
                         statusline.updateBookmark();
@@ -171,7 +169,7 @@ const Bookmarks = Module("bookmarks", {
                 onItemChanged: function onItemChanged(itemId, property, isAnnotation, value) {
                     if (isAnnotation)
                         return;
-                    // liberator.dump("onItemChanged(" + itemId + ", " + property + ", " + value + ")\n");
+
                     let bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
                     if (bookmark) {
                         if (property == "tags")
@@ -241,7 +239,7 @@ const Bookmarks = Module("bookmarks", {
             }
         }
         catch (e) {
-            liberator.log(e, 0);
+            liberator.echoerr(e);
             return false;
         }
 
@@ -254,14 +252,14 @@ const Bookmarks = Module("bookmarks", {
 
         let count = this.remove(url);
         if (count > 0)
-            commandline.echo("Removed bookmark: " + url, commandline.HL_NORMAL, commandline.FORCE_SINGLELINE);
+            liberator.echomsg("Removed bookmark: " + url);
         else {
             let title = buffer.title || url;
             let extra = "";
             if (title != url)
                 extra = " (" + title + ")";
             this.add(true, title, url);
-            commandline.echo("Added bookmark: " + url + extra, commandline.HL_NORMAL, commandline.FORCE_SINGLELINE);
+            liberator.echomsg("Added bookmark: " + url);
         }
     },
 
@@ -279,13 +277,12 @@ const Bookmarks = Module("bookmarks", {
     remove: function remove(url) {
         try {
             let uri = util.newURI(url);
-            let bmarks = services.get("bookmarks").getBookmarkIdsForURI(uri, {})
-                                         .filter(this._cache.isRegularBookmark);
+            let bmarks = services.get("bookmarks").getBookmarkIdsForURI(uri, {}).filter(this._cache.isRegularBookmark);
             bmarks.forEach(services.get("bookmarks").removeItem);
             return bmarks.length;
         }
         catch (e) {
-            liberator.log(e, 0);
+            liberator.echoerr(e);
             return 0;
         }
     },
@@ -499,10 +496,10 @@ const Bookmarks = Module("bookmarks", {
 
                 if (bookmarks.add(false, title, url, keyword, tags, args.bang)) {
                     let extra = (title == url) ? "" : " (" + title + ")";
-                    liberator.echomsg("Added bookmark: " + url + extra, 1, commandline.FORCE_SINGLELINE);
+                    liberator.echomsg("Added bookmark: " + url + extra);
                 }
                 else
-                    liberator.echoerr("Could not add bookmark `" + title + "'", commandline.FORCE_SINGLELINE);
+                    liberator.echoerr("Could not add bookmark: " + title);
             }, {
                 argCount: "?",
                 bang: true,
@@ -545,7 +542,7 @@ const Bookmarks = Module("bookmarks", {
                         function (resp) {
                             if (resp && resp.match(/^y(es)?$/i)) {
                                 bookmarks._cache.bookmarks.forEach(function (bmark) { services.get("bookmarks").removeItem(bmark.id); });
-                                liberator.echomsg("All bookmarks deleted", 1, commandline.FORCE_SINGLELINE);
+                                liberator.echomsg("All bookmarks deleted");
                             }
                         });
                 }
@@ -553,7 +550,7 @@ const Bookmarks = Module("bookmarks", {
                     let url = args.string || buffer.URL;
                     let deletedCount = bookmarks.remove(url);
 
-                    liberator.echomsg(deletedCount + " bookmark(s) with url " + url.quote() + " deleted", 1, commandline.FORCE_SINGLELINE);
+                    liberator.echomsg("Deleted " + deletedCount + " bookmark(s) with url: " + url.quote());
                 }
 
             },

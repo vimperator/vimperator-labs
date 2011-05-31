@@ -85,7 +85,7 @@ const Mail = Module("mail", {
 
         (copy ? MsgCopyMessage : MsgMoveMessage)(folders[0]);
         setTimeout(function () {
-            liberator.echomsg((copy ? "Copied " : "Moved ") + count + " message(s) " + " to: " + folders[0].prettyName, 1);
+            liberator.echomsg((copy ? "Copied " : "Moved ") + count + " message(s) " + " to: " + folders[0].prettyName);
         }, 100);
     },
 
@@ -173,7 +173,7 @@ const Mail = Module("mail", {
                     let url = args.attachments.pop();
                     let file = io.getFile(url);
                     if (!file.exists())
-                        return void liberator.echoerr("Could not attach file: " + url, commandline.FORCE_SINGLELINE);
+                        return void liberator.echoerr("Could not attach file: " + url);
 
                     attachment = Cc["@mozilla.org/messengercompose/attachment;1"].createInstance(Ci.nsIMsgAttachment);
                     attachment.url = "file://" + file.path;
@@ -406,8 +406,6 @@ const Mail = Module("mail", {
                 }
                 catch (e) {
                     msgs = folder.getMessages(msgWindow); // for older thunderbirds
-                    liberator.dump("WARNING: " + folder.prettyName + " failed to getMessages, trying old API");
-                    //continue;
                 }
 
                 while (msgs.hasMoreElements()) {

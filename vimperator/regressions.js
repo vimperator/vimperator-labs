@@ -169,7 +169,7 @@ commands.addUserCommand(["regr[essions]"],
                 for (let [, cmd] in Iterator(test.cmds)) {
                     if (skipTests.indexOf(cmd) != -1) {
                         skippedTests++;
-                        liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription, 0);
+                        liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription);
                         continue outer;
                     }
                 };

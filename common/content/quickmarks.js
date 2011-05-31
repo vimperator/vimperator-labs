@@ -25,7 +25,7 @@ const QuickMarks = Module("quickmarks", {
      */
     add: function add(qmark, location) {
         this._qmarks.set(qmark, location);
-        liberator.echomsg("Added Quick Mark '" + qmark + "': " + location, 1);
+        liberator.echomsg("Added QuickMark '" + qmark + "': " + location);
     },
 
     /**

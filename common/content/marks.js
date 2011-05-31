@@ -44,7 +44,7 @@ const Marks = Module("marks", {
      * only be recalled from a buffer with a matching URL.
      *
      * @param {string} mark The mark name.
-     * @param {boolean} silent Whether to output error messages.
+     * @param {boolean} silent Whether to output informative messages.
      */
     // TODO: add support for frameset pages
     add: function (mark, silent) {
@@ -66,7 +66,7 @@ const Marks = Module("marks", {
         if (Marks.isURLMark(mark)) {
             this._urlMarks.set(mark, { location: win.location.href, position: position, tab: tabs.getTab() });
             if (!silent)
-                liberator.log("Adding URL mark: " + Marks.markToString(mark, this._urlMarks.get(mark)), 5);
+                liberator.echomsg("Added URL mark: " + Marks.markToString(mark, this._urlMarks.get(mark)));
         }
         else if (Marks.isLocalMark(mark)) {
             // remove any previous mark of the same name for this location
@@ -76,7 +76,7 @@ const Marks = Module("marks", {
             let vals = { location: win.location.href, position: position };
             this._localMarks.get(mark).push(vals);
             if (!silent)
-                liberator.log("Adding local mark: " + Marks.markToString(mark, vals), 5);
+                liberator.echomsg("Added local mark: " + Marks.markToString(mark, vals));
         }
     },
 
@@ -134,7 +134,6 @@ const Marks = Module("marks", {
                         win.location.href = slice.location;
                         return;
                     }
-                    liberator.log("Jumping to URL mark: " + Marks.markToString(mark, slice), 5);
                     buffer.scrollToPercent(slice.position.x * 100, slice.position.y * 100);
                     ok = true;
                 }
@@ -146,7 +145,6 @@ const Marks = Module("marks", {
 
             for (let [, lmark] in Iterator(slice)) {
                 if (win.location.href == lmark.location) {
-                    liberator.log("Jumping to local mark: " + Marks.markToString(mark, lmark), 5);
                     buffer.scrollToPercent(lmark.position.x * 100, lmark.position.y * 100);
                     ok = true;
                     break;
@@ -204,10 +202,11 @@ const Marks = Module("marks", {
             let win = window.content;
             for (let [i, ] in Iterator(localmark)) {
                 if (localmark[i].location == win.location.href) {
-                    liberator.log("Deleting local mark: " + Marks.markToString(mark, localmark[i]), 5);
                     localmark.splice(i, 1);
-                    if (localmark.length == 0)
+                    if (localmark.length == 0) {
                         this._localMarks.remove(mark);
+                        liberator.echomsg("Deleted local mark: " + Marks.markToString(mark, localmark[i]));
+                    }
                     break;
                 }
             }
@@ -217,8 +216,8 @@ const Marks = Module("marks", {
     _removeURLMark: function _removeURLMark(mark) {
         let urlmark = this._urlMarks.get(mark);
         if (urlmark) {
-            liberator.log("Deleting URL mark: " + Marks.markToString(mark, urlmark), 5);
             this._urlMarks.remove(mark);
+            liberator.echomsg("Deleted URL mark: " + Marks.markToString(mark, urlmark));
         }
     },
 

@@ -46,7 +46,7 @@ const Browser = Module("browser", {
                         PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
                         getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                     }
-                    catch (e) { liberator.reportError(e); }
+                    catch (e) { liberator.echoerr(e); }
                     return null;
                 },
                 completer: function (context) completion.charset(context)

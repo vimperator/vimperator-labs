@@ -220,7 +220,13 @@ const Finder = Module("finder", {
      */
     openPrompt: function (mode) {
         this._backwards = mode == modes.SEARCH_BACKWARD;
-        commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
+        //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
+        commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
+            onChange: function() { if (options["incsearch"]) finder.find(commandline.command) }
+        
+        });
+        //modes.extended = mode;
+
         // TODO: focus the top of the currently visible screen
     },
 
@@ -235,10 +241,8 @@ const Finder = Module("finder", {
 
         this._processUserPattern(str);
         fastFind.caseSensitive = this._caseSensitive;
-        this._found = fastFind.find(this._searchString, this._linksOnly) != Ci.nsITypeAheadFind.FIND_NOTFOUND;
-
-        if (!this._found)
-            this.setTimeout(function () liberator.echoerr("Pattern not found: " + this._searchPattern, commandline.FORCE_SINGLELINE), 0);
+        let result = fastFind.find(this._searchString, this._linksOnly);
+        this._displayFindResult(result);
     },
 
     /**
@@ -255,29 +259,26 @@ const Finder = Module("finder", {
         if (config.browser.fastFind.searchString != this._lastSearchString)
             this.find(this._lastSearchString);
 
-        let up = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
-        let result = config.browser.fastFind.findAgain(up, this._linksOnly);
+        let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
+        let result = config.browser.fastFind.findAgain(backwards, this._linksOnly);
+        this._displayFindResult(result);
 
+    },
+
+    _displayFindResult: function(result, backwards) {
         if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-            liberator.echoerr("Pattern not found: " + this._lastSearchPattern, commandline.FORCE_SINGLELINE);
-            commandline.hide();
+            liberator.echoerr("Pattern not found: " + this._searchString, commandline.FORCE_SINGLELINE);
         }
         else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
-            // hack needed, because wrapping causes a "scroll" event which clears
-            // our command line
-            setTimeout(function () {
-                let msg = up ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
-                commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
-                commandline.hide();
-            }, 0);
+            // FIXME: Always prints BOTTOM -> TOP
+            let msg = backwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
+            commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
         }
         else {
-            commandline.show(this._lastSearchPattern, up ? "Find backwards" : "Find");
-
-            if (options["hlsearch"])
-                this.highlight(this._lastSearchString);
+            liberator.echomsg("Found pattern: " + this._searchString);
         }
     },
+
 
     /**
      * Called when the user types a key in the search dialog. Triggers a
@@ -285,10 +286,10 @@ const Finder = Module("finder", {
      *
      * @param {string} str The search string.
      */
-    onKeyPress: function (str) {
+    /*onKeyPress: function (str) {
         if (options["incsearch"])
             this.find(str);
-    },
+        },*/
 
     /**
      * Called when the <Enter> key is pressed to trigger a search.
@@ -312,18 +313,23 @@ const Finder = Module("finder", {
 
         this.clear();
 
-        if (!options["incsearch"] || !str || !this._found || this._searchPattern != pattern) {
+        if (!options["incsearch"] /*|| !str || !this._found */|| this._searchPattern != pattern) {
             // prevent any current match from matching again
             if (!window.content.getSelection().isCollapsed)
                 window.content.getSelection().getRangeAt(0).collapse(this._backwards);
 
             this.find(pattern);
         }
+
         // focus links after searching, so the user can just hit <Enter> another time to follow the link
+        // This has to be done async, because the mode reset after onSubmit would
+        // clear the focus 
         let elem = config.browser.fastFind.foundLink;
-        if (elem)
-            elem.focus();
-            // fm.moveFocus(elem.ownerDocument.defaultView, null, Ci.nsIFocusManager.MOVEFOCUS_CARET, Ci.nsIFocusManager.FLAG_NOSCROLL);*/
+        this.setTimeout(function() {
+            if (elem)
+                elem.focus();
+                // fm.moveFocus(elem.ownerDocument.defaultView, null, Ci.nsIFocusManager.MOVEFOCUS_CARET, Ci.nsIFocusManager.FLAG_NOSCROLL);*/
+        }, 0);
 
         this._lastSearchBackwards = this._backwards;
         this._lastSearchPattern = pattern;
@@ -336,16 +342,6 @@ const Finder = Module("finder", {
 
         if (options["hlsearch"])
             this.highlight(this._searchString);
-
-        modes.reset();
-    },
-
-    /**
-     * Called when the search is canceled. For example, if someone presses
-     * <Esc> while typing a search.
-     */
-    onCancel: function () {
-        // TODO: code to reposition the document to the place before search started
     },
 
     /**
@@ -381,18 +377,8 @@ const Finder = Module("finder", {
     }
 }, {
 }, {
-    commandline: function () {
-        // Event handlers for search - closure is needed
-        commandline.registerCallback("change", modes.SEARCH_FORWARD, this.closure.onKeyPress);
-        commandline.registerCallback("submit", modes.SEARCH_FORWARD, this.closure.onSubmit);
-        commandline.registerCallback("cancel", modes.SEARCH_FORWARD, this.closure.onCancel);
-        // TODO: allow advanced myModes in register/triggerCallback
-        commandline.registerCallback("change", modes.SEARCH_BACKWARD, this.closure.onKeyPress);
-        commandline.registerCallback("submit", modes.SEARCH_BACKWARD, this.closure.onSubmit);
-        commandline.registerCallback("cancel", modes.SEARCH_BACKWARD, this.closure.onCancel);
-
-    },
     commands: function () {
+        // TODO: Remove in favor of :set nohlsearch?
         commands.add(["noh[lsearch]"],
             "Remove the search highlighting",
             function () { finder.clear(); },

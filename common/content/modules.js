@@ -80,7 +80,7 @@ window.addEventListener("load", function () {
             if (module.name in modules)
                 return;
             if (module.name in seen)
-                throw Error("Module dependency loop.");
+                throw Error("Module dependency loop");
             set.add(seen, module.name);
 
             for (let dep in values(module.requires))
@@ -100,7 +100,7 @@ window.addEventListener("load", function () {
                 }
                 catch (e) {
                     if (modules.liberator)
-                        liberator.reportError(e);
+                        liberator.echoerr(e);
                 }
             }
             for (let mod in keys(module.INIT)) {

@@ -1,5 +1,14 @@
 2011-xx-xx:
-    * version 3.1.1
+    * version 3.2
+    * Make search more reliable
+    * Reworked mode handling a bit. While in the end this will be much
+      cleaner, it might have some regressions. Please report!
+    * Better logging: :messages is now the main location for any informative
+      but also error messages (apart from a few very early loading errors,
+      which are still dump'ed to the console since the :messages mechanism
+      might not be broken in this case).
+      Also show StackTraces on internal errors to faciliate debugging
+    * More consistent messages after (un)successful commands
     * Remove CSS hack to get rid of tab scrolling when you have many tabs because some
       users complained about this change. If you want to allow your tabs to shrink
       as much as possible, but this into your .vimperatorrc file:
@@ -8,6 +17,7 @@
     * Compatibility fixes for Firefox 5.x and 6.x. Also bumped maxVersion accordingly
     * The heart indiciator for bookmarked pages also shows the correct
       state now when hovering over a link
+    * Many small bug fixes
 
 2011-04-21: "The Return Of Copy And Paste"
     * version 3.1

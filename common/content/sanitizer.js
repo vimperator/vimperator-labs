@@ -54,7 +54,7 @@ const Sanitizer = Module("sanitizer", {
             item.range = range;
 
             if ("clear" in item && item.canClear && prefSet(itemName)) {
-                liberator.log("Sanitizing " + itemName + " items...");
+                liberator.echomsg("Sanitizing " + itemName + " items...");
                 // Some of these clear() may raise exceptions (see bug #265028)
                 // to sanitize as much as possible, we catch and store them,
                 // rather than fail fast.
@@ -67,7 +67,7 @@ const Sanitizer = Module("sanitizer", {
                     if (!errors)
                         errors = {};
                     errors[itemName] = e;
-                    dump("Error sanitizing " + itemName + ": " + e + "\n");
+                    liberator.echoerr("Error sanitizing " + itemName + ": " + e);
                 }
             }
         }
@@ -94,7 +94,7 @@ const Sanitizer = Module("sanitizer", {
                 if (args.bang) {
                     liberator.assert(args.length == 0, "Trailing characters");
 
-                    liberator.log("Sanitizing all items in 'sanitizeitems'...");
+                    liberator.echomsg("Sanitizing all items in 'sanitizeitems'...");
 
                     let errors = sanitizer.sanitize();
 
@@ -107,7 +107,7 @@ const Sanitizer = Module("sanitizer", {
                     liberator.assert(args.length > 0, "Argument required");
 
                     for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
-                        liberator.log("Sanitizing " + item + " items...");
+                        liberator.echomsg("Sanitizing " + item + " items...");
 
                         if (sanitizer.canClearItem(item)) {
                             try {

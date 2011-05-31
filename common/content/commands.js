@@ -325,7 +325,7 @@ const Commands = Module("commands", {
             if (command.user && replace)
                 commands.removeUserCommand(command.name);
             else {
-                liberator.log("Warning: :" + command.name + " already exists, NOT replacing existing command.", 1);
+                liberator.echomsg("Command '" + command.name + "' already exists, NOT replacing existing command. Use ! to override.");
                 return false;
             }
         }
@@ -1000,7 +1000,7 @@ const Commands = Module("commands", {
                         }
                     }
                     catch (e) {
-                        liberator.reportError(e);
+                        liberator.echoerr(e);
                     }
                 }
             }
@@ -1069,9 +1069,7 @@ const Commands = Module("commands", {
                                         throw new TypeError("User-defined custom completer " + completeOpt.quote() + " is not a function");
                                 }
                                 catch (e) {
-                                    liberator.echo(":" + this.name + " ...");
                                     liberator.echoerr("Unknown function: " + completeOpt);
-                                    liberator.log(e);
                                     return undefined;
                                 }
                                 return completer.apply(this, Array.slice(arguments));

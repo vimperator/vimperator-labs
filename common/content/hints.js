@@ -58,7 +58,7 @@ const Hints = Module("hints", {
             c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
             i: Mode("Show media object",                    function (elem) liberator.open(elem.src),                              images),
             I: Mode("Show media object in a new tab",       function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images),
-            x: Mode("Show hint's title or alt text",        function (elem) liberator.echo(elem.title ? "title: "+elem.title : "alt: "+elem.alt), function() "//*[@title or @alt]")
+            x: Mode("Show hint's title or alt text",        function (elem) liberator.echo(elem.title ? "title: " + elem.title : "alt: " + elem.alt), function() "//*[@title or @alt]")
         };
 
         /**
@@ -1139,7 +1139,7 @@ const Hints = Module("hints", {
         // gH, except that gF is already taken). --tpp
         //
         // Likewise, it might be nice to have a liberator.NEW_FOREGROUND_TAB
-        // and then make liberator.NEW_TAB always do what a Cntrl+Click
+        // and then make liberator.NEW_TAB always do what a Ctrl+Click
         // does. --tpp
         mappings.add(myModes, ["F"],
             "Start QuickHint mode, but open link in a new tab",

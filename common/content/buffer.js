@@ -202,8 +202,8 @@ const Buffer = Module("buffer", {
                     }, 0);
                 }
             }
-            else // background tab
-                liberator.echomsg("Background tab loaded: " + doc.title || doc.location.href, 3);
+            // else // background tab
+            //     liberator.echomsg("Background tab loaded: " + doc.title || doc.location.href);
 
             this._triggerLoadAutocmd("PageLoad", doc);
         }
@@ -606,7 +606,7 @@ const Buffer = Module("buffer", {
         case liberator.CURRENT_TAB:
             break;
         default:
-            liberator.log("Invalid where argument for followLink()", 0);
+            liberator.log("Invalid where argument for followLink()");
         }
 
         elem.focus();

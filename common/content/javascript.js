@@ -75,7 +75,7 @@ const JavaScript = Module("javascript", {
             }
         }
         catch (ex) {
-            //Cu.reportError(ex);
+            // TODO: report error?
         }
     },
 
@@ -429,7 +429,7 @@ const JavaScript = Module("javascript", {
         }
         catch (e) {
             if (e.message != "Invalid JS")
-                liberator.reportError(e);
+                liberator.echoerr(e);
             this._lastIdx = 0;
             return null;
         }

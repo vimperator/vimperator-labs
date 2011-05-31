@@ -44,7 +44,7 @@ const Abbreviation = Class("Abbreviation", {
         let result = "";
         for ([, mode] in Iterator(_modes))
             result += modes.getMode(mode).char;
-        if (/^(ic|ci)$/(result))
+        if (/^(ic|ci)$/.test(result))
             result = "!";
         return result;
     }

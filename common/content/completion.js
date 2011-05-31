@@ -211,7 +211,7 @@ const CompletionContext = Class("CompletionContext", {
             return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring };
         }
         catch (e) {
-            liberator.reportError(e);
+            liberator.echoerr(e);
             return { start: 0, items: [], longestAllSubstring: "" };
         }
     },

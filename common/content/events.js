@@ -80,8 +80,7 @@ const Events = Module("events", {
 
                 if (dirs.length > 0) {
                     for (let [, dir] in Iterator(dirs)) {
-                        liberator.echomsg('Searching for "macros/*" in ' + dir.path.quote(), 2);
-                        liberator.log("Sourcing macros directory: " + dir.path + "...", 3);
+                        liberator.log("Sourcing macros directory: " + dir.path);
 
                         for (let file in dir.iterDirectory()) {
                             if (file.exists() && !file.isDirectory() && file.isReadable() &&
@@ -89,17 +88,17 @@ const Events = Module("events", {
                                 let name = file.leafName.replace(/\.vimp$/i, "");
                                 this._macros.set(name, file.read().split("\n")[0]);
 
-                                liberator.log("Macro " + name + " added: " + this._macros.get(name), 5);
+                                liberator.echomsg("Macro " + name + " added: " + this._macros.get(name));
                             }
                         }
                     }
                 }
                 else
-                    liberator.log("No user macros directory found", 3);
+                    liberator.log("No user macros directory found");
             }
             catch (e) {
                 // thrown if directory does not exist
-                liberator.log("Error sourcing macros directory: " + e, 9);
+                liberator.log("Error sourcing macros directory: " + e);
             }
         }, 100);
 
@@ -113,7 +112,7 @@ const Events = Module("events", {
                         liberator.echoerr("Interrupted");
                     else
                         liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
-                    liberator.reportError(e);
+                    liberator.echoerr(e);
                 }
             };
         }
@@ -134,7 +133,7 @@ const Events = Module("events", {
     },
 
     destroy: function () {
-        liberator.dump("Removing all event listeners");
+        liberator.log("Removing all event listeners");
         for (let args in values(this.sessionListeners))
             args[0].removeEventListener.apply(args[0], args.slice(1));
     },
@@ -607,7 +606,6 @@ const Events = Module("events", {
      * @returns {boolean}
      */
     waitForPageLoad: function () {
-        //liberator.dump("start waiting in loaded state: " + buffer.loaded);
         liberator.threadYield(true); // clear queue
 
         if (buffer.loaded == 1)
@@ -619,8 +617,6 @@ const Events = Module("events", {
         let now;
         while (now = Date.now(), now < end) {
             liberator.threadYield();
-            //if ((now - start) % 1000 < 10)
-            //    liberator.dump("waited: " + (now - start) + " ms");
 
             if (!events.feedingKeys)
                 return false;
@@ -630,15 +626,13 @@ const Events = Module("events", {
                 break;
             }
             else
-                liberator.echo("Waiting for page to load...", commandline.DISALLOW_MULTILINE);
+                liberator.echomsg("Waiting for page to load...");
         }
         modes.show();
 
-        // TODO: allow macros to be continued when page does not fully load with an option
         let ret = (buffer.loaded == 1);
         if (!ret)
             liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
-        //liberator.dump("done waiting: " + ret);
 
         // sometimes the input widget had focus when replaying a macro
         // maybe this call should be moved somewhere else?
@@ -764,6 +758,10 @@ const Events = Module("events", {
                     selection.collapseToStart();
                 } catch (e) {}
 
+                // also clear any focus rectangle
+                if (liberator.focus)
+                    liberator.focus.blur();
+
                 // select only one message in Muttator
                 if (liberator.has("mail") && !config.isComposeWindow) {
                     let i = gDBView.selection.currentIndex;
@@ -772,7 +770,7 @@ const Events = Module("events", {
                     gDBView.selection.select(i);
                 }
 
-                modes.reset();
+                //modes.reset(); // TODO: Needed?
                 break;
 
             case modes.VISUAL:
@@ -852,7 +850,6 @@ const Events = Module("events", {
         if (modes.isRecording) {
             if (key == "q" && liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA) { // TODO: should not be hardcoded
                 modes.isRecording = false;
-                liberator.log("Recorded " + this._currentMacro + ": " + this._macros.get(this._currentMacro), 9);
                 liberator.echomsg("Recorded macro '" + this._currentMacro + "'");
                 killEvent();
                 return;
@@ -1055,7 +1052,7 @@ const Events = Module("events", {
         }
         catch (e) {
             if (e !== undefined)
-                liberator.reportError(e);
+                liberator.echoerr(e);
         }
         finally {
             let motionMap = (this._input.pendingMotionMap && this._input.pendingMotionMap.names[0]) || "";

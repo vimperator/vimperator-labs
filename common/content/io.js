@@ -168,7 +168,7 @@ const File = Class("File", {
             ocstream.writeString(buf);
         }
         catch (e) {
-            liberator.dump(e);
+            // liberator.log(e);
             if (e.result == Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA) {
                 ocstream = getStream("?".charCodeAt(0));
                 ocstream.writeString(buf);
@@ -338,7 +338,7 @@ const IO = Module("io", {
                     let file  = download.targetFile.path;
                     let size  = download.size;
 
-                    liberator.echomsg("Download of " + title + " to " + file + " finished", 1);
+                    liberator.echomsg("Download of " + title + " to " + file + " finished");
                     autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
                 }
             },
@@ -575,14 +575,12 @@ lookup:
         let dirs = File.getPathsFromPathList(options["runtimepath"]);
         let found = false;
 
-        liberator.echomsg("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"", 2);
+        liberator.log("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"");
 
         outer:
         for (let [, dir] in Iterator(dirs)) {
             for (let [, path] in Iterator(paths)) {
                 let file = File.joinPaths(dir, path);
-
-                liberator.echomsg("Searching for \"" + file.path + "\"", 3);
 
                 if (file.exists() && file.isFile() && file.isReadable()) {
                     io.source(file.path, false);
@@ -595,7 +593,7 @@ lookup:
         }
 
         if (!found)
-            liberator.echomsg("not found in 'runtimepath': \"" + paths.join(" ") + "\"", 1);
+            liberator.log("not found in 'runtimepath': \"" + paths.join(" ") + "\"");
 
         return found;
     },
@@ -618,9 +616,9 @@ lookup:
             if (!file.exists() || !file.isReadable() || file.isDirectory()) {
                 if (!silent) {
                     if (file.exists() && file.isDirectory())
-                        liberator.echomsg("Cannot source a directory: " + filename, 0);
+                        liberator.echomsg("Cannot source a directory: " + filename);
                     else
-                        liberator.echomsg("Could not source: " + filename, 1);
+                        liberator.echomsg("Could not source: " + filename);
 
                     liberator.echoerr("Cannot open file: " + filename);
                 }
@@ -628,7 +626,7 @@ lookup:
                 return;
             }
 
-            liberator.echomsg("Sourcing \"" + filename + "\"", 2);
+            // liberator.echomsg("Sourcing \"" + filename + "\" ...");
 
             let str = file.read();
             let uri = services.get("io").newFileURI(file);
@@ -715,15 +713,10 @@ lookup:
             if (this._scriptNames.indexOf(file.path) == -1)
                 this._scriptNames.push(file.path);
 
-            liberator.echomsg("Finished sourcing \"" + filename + "\"", 2);
-
-            liberator.log("Sourced: " + filename, 3);
+            liberator.log("Sourced: " + filename);
         }
         catch (e) {
-            liberator.reportError(e);
-            let message = "Sourcing file: " + (e.echoerr || file.path + ": " + e);
-            if (!silent)
-                liberator.echoerr(message);
+            liberator.echoerr("Sourcing file failed: " + e);
         }
         finally {
             this.sourcing = wasSourcing;
@@ -741,7 +734,7 @@ lookup:
      * @returns {string}
      */
     system: function (command, input) {
-        liberator.echomsg("Calling shell to execute: " + command, 4);
+        liberator.echomsg("Executing: " + command);
 
         function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
 
@@ -860,10 +853,8 @@ lookup:
                         }
                     }
 
-                    if (!found) {
-                        liberator.echoerr("Can't find directory " + arg.quote() + " in cdpath\n"
-                                        + "Command failed");
-                    }
+                    if (!found)
+                        liberator.echoerr("Can't find directory " + arg.quote() + " in cdpath\n" + "Command failed");
                 }
             }, {
                 argCount: "?",
@@ -915,8 +906,7 @@ lookup:
                     file.write(lines.join("\n"));
                 }
                 catch (e) {
-                    liberator.echoerr("Cannot open file: " + filename);
-                    liberator.log("Could not write to " + file.path + ": " + e.message);
+                    liberator.echoerr("Could not write to " + file.path + ": " + e.message);
                 }
             }, {
                 argCount: "*", // FIXME: should be "?" but kludged for proper error message
