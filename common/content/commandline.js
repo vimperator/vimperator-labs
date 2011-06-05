@@ -462,7 +462,7 @@ const CommandLine = Module("commandline", {
     close: function close() {
         let mode = this._currentExtendedMode;
         this._currentExtendedMode = null;
-        commandline.triggerCallback("cancel", mode);
+        commandline.triggerCallback("cancel", mode); // FIXME
 
         if (this._history) {
             this._history.save();
@@ -474,6 +474,7 @@ const CommandLine = Module("commandline", {
         this._completionList.hide();
         this._completions = null;
 
+        // liberator.log('closing with : ' + modes.main + "/" + modes.extended);
         // don't have input and output widget open at the same time
         if (modes.extended & modes.INPUT_MULTILINE)
             this._outputContainer.collapsed = true;
@@ -485,7 +486,8 @@ const CommandLine = Module("commandline", {
             this._multilineInputWidget.collapsed = true;
             this._outputContainer.collapsed = true;
             this.hide();
-            modes.pop(true);
+            //modes.pop(true);
+            modes.reset();
         }
     },
 
@@ -494,6 +496,7 @@ const CommandLine = Module("commandline", {
      * are under it.
      */
     hide: function hide() {
+        // liberator.log('hiding commandline');
         this._commandlineWidget.classList.add("hidden");
         this._commandWidget.blur();
 
@@ -608,7 +611,7 @@ const CommandLine = Module("commandline", {
             cancel: extra.onCancel
         };
 
-        modes.push(modes.COMMAND_LINE, modes.PROMPT);
+        modes.set(modes.COMMAND_LINE, modes.PROMPT);
         this._currentExtendedMode = modes.PROMPT;
 
         this._setPrompt(prompt, extra.promptHighlight || this.HL_QUESTION);
@@ -630,11 +633,8 @@ const CommandLine = Module("commandline", {
      */
     // FIXME: Buggy, especially when pasting. Shouldn't use a RegExp.
     inputMultiline: function inputMultiline(untilRegexp, callbackFunc) {
-        // Kludge.
-        //let cmd = !this._commandWidget.collapsed && this.command;
-        modes.push(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
-        //if (cmd != false)
-            //this._echoLine(cmd, this.HL_NORMAL);
+        modes.set(modes.COMMAND_LINE, modes.INPUT_MULTILINE);
+        //this._currentExtendedMode = modes.PROMPT; // like in input: ?
 
         // save the arguments, they are needed in the event handler onEvent
         this._multilineRegexp = untilRegexp;
@@ -714,7 +714,8 @@ const CommandLine = Module("commandline", {
                 // and blur the command line if there is no text left
                 if (command.length == 0) {
                     commandline.triggerCallback("cancel", this._currentExtendedMode);
-                    modes.pop();
+                    //modes.pop();
+                    modes.reset();
                 }
             }
             else { // any other key
@@ -742,13 +743,13 @@ const CommandLine = Module("commandline", {
                 let text = this._multilineInputWidget.value.substr(0, this._multilineInputWidget.selectionStart);
                 if (text.match(this._multilineRegexp)) {
                     text = text.replace(this._multilineRegexp, "");
-                    modes.pop();
+                    modes.reset();
                     this._multilineInputWidget.collapsed = true;
                     this._multilineCallback.call(this, text);
                 }
             }
             else if (events.isCancelKey(key)) {
-                modes.pop();
+                modes.reset();
                 this._multilineInputWidget.collapsed = true;
             }
         }
@@ -824,7 +825,7 @@ const CommandLine = Module("commandline", {
             // close the window
             case "<Esc>":
             case "q":
-                modes.pop();
+                modes.reset();
                 return; // handled globally in events.js:onEscape()
 
             // reopen command line
@@ -1510,7 +1511,7 @@ const CommandLine = Module("commandline", {
 
         options.add(["messagetimeout", "mto"],
             "Automatically hide messages after a timeout (in ms)",
-            "number", 5000,
+            "number", 10000,
             {
                 completer: function (context) [
                     ["-1",  "Keep forever"],
@@ -1591,7 +1592,7 @@ const ItemList = Class("ItemList", {
 
         var iframe = document.getElementById(id);
         if (!iframe) {
-            liberator.log("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
+            liberator.error("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
             return;
         }
 

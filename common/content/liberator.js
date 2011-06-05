@@ -88,7 +88,7 @@ const Liberator = Module("liberator", {
         autocommands.trigger(config.name + "LeavePre", {});
         storage.saveAll();
         liberator.triggerObserver("shutdown", null);
-        liberator.log("All liberator modules destroyed\n");
+        liberator.log("All liberator modules destroyed");
         autocommands.trigger(config.name + "Leave", {});
     },
 

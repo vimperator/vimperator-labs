@@ -80,7 +80,7 @@ const Events = Module("events", {
 
                 if (dirs.length > 0) {
                     for (let [, dir] in Iterator(dirs)) {
-                        liberator.log("Sourcing macros directory: " + dir.path);
+                         liberator.log("Sourcing macros directory: " + dir.path);
 
                         for (let file in dir.iterDirectory()) {
                             if (file.exists() && !file.isDirectory() && file.isReadable() &&
@@ -748,7 +748,7 @@ const Events = Module("events", {
         // NORMAL mode, we might have a commandline visible,
         // e.g. after pressing 'n' to show the last search
         // again.
-        commandline.hide();
+        // commandline.hide();
 
         switch (liberator.mode) {
             case modes.NORMAL:
@@ -882,18 +882,15 @@ const Events = Module("events", {
 
         try {
             let stop = false;
-
             let win = document.commandDispatcher.focusedWindow;
-            // menus have their own command handlers
-            if (modes.extended & modes.MENU)
+
+            // special mode handling
+            if (modes.isMenuShown) { // menus have their own command handlers
                 stop = true;
-            // handle Escape-one-key mode ('i')
-            else if (modes.passNextKey) {
+            } else if (modes.passNextKey) { // handle Escape-one-key mode ('i')
                 modes.passNextKey = false;
                 stop = true;
-            }
-            // handle Escape-all-keys mode (Shift-Esc)
-            else if (modes.passAllKeys) {
+            } else if (modes.passAllKeys) { // handle Escape-all-keys mode (Shift-Esc)
                 if (key == "<S-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
                     modes.passAllKeys = false;
                 stop = true;
@@ -1071,23 +1068,23 @@ const Events = Module("events", {
     onPopupShown: function (event) {
         if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
             return;
-        modes.add(modes.MENU);
+        modes.isMenuShown = true;
     },
 
     onPopupHidden: function () {
         // gContextMenu is set to NULL, when a context menu is closed
         if (window.gContextMenu == null && !this._activeMenubar)
-            modes.remove(modes.MENU);
+            modes.isMenuShown = false;
     },
 
     onDOMMenuBarActive: function () {
         this._activeMenubar = true;
-        modes.add(modes.MENU);
+        modes.isMenuShown = true;
     },
 
     onDOMMenuBarInactive: function () {
         this._activeMenubar = false;
-        modes.remove(modes.MENU);
+        modes.isMenuShown = false;
     },
 
     onResize: function (event) {

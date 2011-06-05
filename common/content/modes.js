@@ -28,7 +28,7 @@ const Modes = Module("modes", {
         // main modes, only one should ever be active
         this.addMode("NORMAL",   { char: "n", display: -1 });
         this.addMode("INSERT",   { char: "i", input: true });
-        this.addMode("VISUAL",   { char: "v", display: function () "VISUAL" + (this._extended & modes.LINE ? " LINE" : "") });
+        this.addMode("VISUAL",   { char: "v", display: function () "VISUAL" + (editor.getVisualMode() ? " " + editor.getVisualMode() : "") });
         this.addMode("COMMAND_LINE", { char: "c", input: true, display: -1 });
         this.addMode("CARET"); // text cursor is visible
         this.addMode("TEXTAREA", { char: "i" });
@@ -43,7 +43,6 @@ const Modes = Module("modes", {
         this.addMode("SEARCH_BACKWARD", true);
         this.addMode("SEARCH_VIEW_FORWARD", true);
         this.addMode("SEARCH_VIEW_BACKWARD", true);
-        this.addMode("MENU", true); // a popupmenu is active
         this.addMode("LINE", true); // linewise visual mode
         this.addMode("PROMPT", true);
 
@@ -54,23 +53,18 @@ const Modes = Module("modes", {
         if (this._passNextKey)
             return "-- IGNORE --";
         else if (this._passAllKeys)
-            return "-- IGNORE ALL KEYS --"; // TODO: Shall we add a (Press <S-Esc> to exit mode) help text?
+            return "-- IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit) --";
 
-        // when recording a macro
-        let macromode = "";
+        // when recording or replaying a macro
         if (modes.isRecording)
-            macromode = "recording";
+            return "-- RECORDING --";
         else if (modes.isReplaying)
-            macromode = "replaying";
-
-        let ext = "";
-        if (this._extended & modes.MENU) // TODO: desirable?
-            ext += " (menu)";
-        ext += " --" + macromode;
+            return "-- REPLAYING --";
 
         if (this._main in this._modeMap && typeof this._modeMap[this._main].display === "function")
-            return "-- " + this._modeMap[this._main].display() + ext;
-        return macromode;
+            return "-- " + this._modeMap[this._main].display() + " --";
+
+        return ""; // default mode message
     },
 
     // NOTE: Pay attention that you don't run into endless loops
@@ -189,24 +183,11 @@ const Modes = Module("modes", {
             if (this._main != oldMain)
                 this._handleModeChange(oldMain, mainMode, oldExtended);
         }
-        liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended], stack);
-        // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended);
+        liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended]);
+        // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended + "(" + this._getModeMessage() + ")");
 
         if (!silent)
             this.show();
-    },
-
-    push: function (mainMode, extendedMode, silent) {
-        this._modeStack.push([this._main, this._extended]);
-        this.set(mainMode, extendedMode, silent, { push: this._modeStack[this._modeStack.length - 1] });
-    },
-
-    pop: function (silent) {
-        let a = this._modeStack.pop();
-        if (a)
-            this.set(a[0], a[1], silent, { pop: a });
-        else
-            this.reset(silent);
     },
 
     // TODO: Deprecate this in favor of addMode? --Kris
@@ -233,6 +214,8 @@ const Modes = Module("modes", {
             this.show();
         }
     },
+
+    isMenuShown: false, // when a popup menu is active
 
     get passNextKey() this._passNextKey,
     set passNextKey(value) { this._passNextKey = value; this.show(); },

@@ -1,5 +1,6 @@
-2011-xx-xx:
+2011-06-03:
     * version 3.2
+    * Compatibility fixes for Firefox 5.x and 6.x. Also bumped maxVersion accordingly
     * Make search more reliable
     * Reworked mode handling a bit. While in the end this will be much
       cleaner, it might have some regressions. Please report!
@@ -14,7 +15,6 @@
       as much as possible, but this into your .vimperatorrc file:
       :js styles.addSheet(false, "mintabwidth", "chrome://*", ".tabbrowser-tab[fadein]:not([pinned]) { min-width: 16px !important; } .scrollbutton-up, .scrollbutton-down { display:none; }");
       This could make a nice vimperator plugin with a :set mintabwith=... option.
-    * Compatibility fixes for Firefox 5.x and 6.x. Also bumped maxVersion accordingly
     * The heart indiciator for bookmarked pages also shows the correct
       state now when hovering over a link
     * Many small bug fixes

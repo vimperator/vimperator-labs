@@ -606,7 +606,7 @@ const Buffer = Module("buffer", {
         case liberator.CURRENT_TAB:
             break;
         default:
-            liberator.log("Invalid where argument for followLink()");
+            liberator.error("Invalid where argument for followLink(): " + where);
         }
 
         elem.focus();

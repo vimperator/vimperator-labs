@@ -19,7 +19,7 @@ const Abbreviation = Class("Abbreviation", {
     },
 
     modesEqual: function (modes) {
-        return (modes.lengh === this.modes.lengh) &&
+        return (modes.length === this.modes.length) &&
                (this.modes.every(function (m1) modes.some(function (m2) m1 === m2)));
     },
 

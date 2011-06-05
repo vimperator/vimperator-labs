@@ -429,7 +429,7 @@ const Util = Module("util", {
             return xmlhttp;
         }
         catch (e) {
-            liberator.log("Error opening " + url + ": " + e);
+            // liberator.log("Error opening " + url + ": " + e);
             return null;
         }
     },

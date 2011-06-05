@@ -15,9 +15,9 @@ const Editor = Module("editor", {
 
     init: function () {
         // store our last search with f, F, t or T
-        //
         this._lastFindChar = null;
         this._lastFindCharFunc = null;
+        this._visualMode = "";
     },
 
     line: function () {
@@ -455,6 +455,16 @@ const Editor = Module("editor", {
 
         return true;
     },
+
+    getVisualMode: function() {
+        return this._visualMode;
+    }, 
+
+    setVisualMode: function(value) {
+        this._visualMode = value;
+        modes.show();
+    }
+
 }, {
     getEditor: function () {
         let e = liberator.focus;
@@ -556,12 +566,12 @@ const Editor = Module("editor", {
         }
         function selectPreviousLine() {
             editor.executeCommand("cmd_selectLinePrevious");
-            if ((modes.extended & modes.LINE) && !editor.selectedText())
+            if (editor.getVisualMode() == "LINE" && !editor.selectedText())
                 editor.executeCommand("cmd_selectLinePrevious");
         }
         function selectNextLine() {
             editor.executeCommand("cmd_selectLineNext");
-            if ((modes.extended & modes.LINE) && !editor.selectedText())
+            if (editor.getVisualMode() == "LINE" && !editor.selectedText())
                 editor.executeCommand("cmd_selectLineNext");
         }
 
@@ -719,7 +729,10 @@ const Editor = Module("editor", {
         // visual mode
         mappings.add([modes.CARET, modes.TEXTAREA],
             ["v"], "Start visual mode",
-            function (count) { modes.set(modes.VISUAL, liberator.mode); });
+            function (count) {
+                modes.set(modes.VISUAL, liberator.mode);
+                editor.setVisualMode("");
+            });
 
         mappings.add([modes.VISUAL],
             ["v"], "End visual mode",
@@ -728,7 +741,9 @@ const Editor = Module("editor", {
         mappings.add([modes.TEXTAREA],
             ["V"], "Start visual line mode",
             function (count) {
-                modes.set(modes.VISUAL, modes.TEXTAREA | modes.LINE);
+                //modes.set(modes.VISUAL, modes.TEXTAREA | modes.LINE);
+                modes.set(modes.VISUAL, liberator.mode);
+                editor.setVisualMode("LINE");
                 editor.executeCommand("cmd_beginLine", 1);
                 editor.executeCommand("cmd_selectLineNext", 1);
             });

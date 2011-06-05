@@ -1156,7 +1156,7 @@ const Hints = Module("hints", {
                             context.compare = function () 0;
                             context.completions = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
                         },
-                        onChange: function () { modes.pop(); },
+                        onChange: function () { modes.reset(); },
                         onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
                     });
             }, { count: true });

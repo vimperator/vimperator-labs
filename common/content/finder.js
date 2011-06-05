@@ -313,6 +313,7 @@ const Finder = Module("finder", {
 
         this.clear();
 
+        // liberator.log('inc: ' + options["incsearch"] + ' sea:' + this._searchPattern + ' pat:' + pattern);
         if (!options["incsearch"] /*|| !str || !this._found */|| this._searchPattern != pattern) {
             // prevent any current match from matching again
             if (!window.content.getSelection().isCollapsed)
