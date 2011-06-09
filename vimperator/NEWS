@@ -7,7 +7,7 @@
     * Better logging: :messages is now the main location for any informative
       but also error messages (apart from a few very early loading errors,
       which are still dump'ed to the console since the :messages mechanism
-      might not be broken in this case).
+      might be broken/unavailable in this case).
       Also show StackTraces on internal errors to faciliate debugging
     * More consistent messages after (un)successful commands
     * Remove CSS hack to get rid of tab scrolling when you have many tabs because some

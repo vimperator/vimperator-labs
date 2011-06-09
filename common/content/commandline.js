@@ -1592,7 +1592,7 @@ const ItemList = Class("ItemList", {
 
         var iframe = document.getElementById(id);
         if (!iframe) {
-            liberator.error("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
+            liberator.echoerr("No iframe with id: " + id + " found, strange things may happen!"); // "The truth is out there..." -- djk
             return;
         }
 
