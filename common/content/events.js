@@ -748,7 +748,7 @@ const Events = Module("events", {
         // NORMAL mode, we might have a commandline visible,
         // e.g. after pressing 'n' to show the last search
         // again.
-        // commandline.hide();
+        commandline.clear();
 
         switch (liberator.mode) {
             case modes.NORMAL:

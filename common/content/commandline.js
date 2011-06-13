@@ -123,6 +123,8 @@ const CommandLine = Module("commandline", {
         this._startHints = false; // whether we're waiting to start hints mode
         this._lastSubstring = "";
 
+        // the label for showing the mode message
+        this._modeWidget = document.getElementById("liberator-mode");
         // the containing box for the this._promptWidget and this._commandWidget
         this._commandlineWidget = document.getElementById("liberator-commandline");
         // the text part of the prompt for the current command, for example "Find" or "Follow hint". Can be blank
@@ -416,6 +418,26 @@ const CommandLine = Module("commandline", {
     get message() this._messageBox.value,
 
     get messages() this._messageHistory,
+
+    /**
+     * Removes any previous output from the command line
+     */
+    clear: function() {
+        this._commandWidget.value = "";
+        this._echoLine(""); // this also resets a possible background color from echoerr()
+    },
+
+    /**
+     * Show a mode message like "INSERT" in the command line
+     */
+    setModeMessage: function(message, style) {
+        // we shouldn't need this check, but the XUL caching may not see this
+        // widget until the cache is rebuilt! So at least we don't break modes completely
+        if (this._modeWidget) {
+            this._modeWidget.collapsed = !message;
+            this._modeWidget.value = message;
+        }
+    },
 
     /**
      * Open the command line. The main mode is set to

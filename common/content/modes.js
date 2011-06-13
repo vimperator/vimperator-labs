@@ -51,18 +51,18 @@ const Modes = Module("modes", {
 
     _getModeMessage: function () {
         if (this._passNextKey)
-            return "-- IGNORE --";
+            return "IGNORE";
         else if (this._passAllKeys)
-            return "-- IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit) --";
+            return "IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit)";
 
         // when recording or replaying a macro
         if (modes.isRecording)
-            return "-- RECORDING --";
+            return "RECORDING";
         else if (modes.isReplaying)
-            return "-- REPLAYING --";
+            return "REPLAYING";
 
         if (this._main in this._modeMap && typeof this._modeMap[this._main].display === "function")
-            return "-- " + this._modeMap[this._main].display() + " --";
+            return this._modeMap[this._main].display();
 
         return ""; // default mode message
     },
@@ -154,11 +154,8 @@ const Modes = Module("modes", {
 
     // show the current mode string in the command line
     show: function () {
-        let msg = "";
         if (options["showmode"])
-            msg = this._getModeMessage();
-
-        commandline.echo(msg, "ModeMsg", commandline.FORCE_SINGLELINE);
+            commandline.setModeMessage(this._getModeMessage());
     },
 
     // add/remove always work on the this._extended mode only
@@ -180,14 +177,16 @@ const Modes = Module("modes", {
             if (!extendedMode)
                 this._extended = modes.NONE;
 
-            if (this._main != oldMain)
+            if (this._main != oldMain) {
                 this._handleModeChange(oldMain, mainMode, oldExtended);
-        }
-        liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended]);
-        // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended + "(" + this._getModeMessage() + ")");
+                liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended]);
+                // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended + "(" + this._getModeMessage() + ")");
 
-        if (!silent)
-            this.show();
+                if (!silent)
+                    this.show();
+            }
+        }
+
     },
 
     // TODO: Deprecate this in favor of addMode? --Kris

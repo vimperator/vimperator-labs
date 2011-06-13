@@ -1,3 +1,9 @@
+2011-xx-xx:
+    * version 3.3
+    * Reworked mode message handling. The mode message can be shown simultaneoulsy
+      with other messages now. Also changed the visual display of a mode.
+    * Single line message output with :echo are shown again
+
 2011-06-03:
     * version 3.2
     * Compatibility fixes for Firefox 5.x and 6.x. Also bumped maxVersion accordingly
