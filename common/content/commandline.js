@@ -133,7 +133,7 @@ const CommandLine = Module("commandline", {
         this._commandWidget = document.getElementById("liberator-commandline-command");
 
         this._messageBox = document.getElementById("liberator-message");
-        this._messageBox.addEventListener("transitionend", this.close.bind(this), false);
+        // this._messageBox.addEventListener("transitionend", this.close.bind(this), false);
 
         this._commandWidget.inputField.QueryInterface(Ci.nsIDOMNSEditableElement);
 

@@ -255,19 +255,6 @@ const Liberator = Module("liberator", {
     },
 
     /**
-     * Dumps a stack trace to the console.
-     *
-     * @param {string} msg The trace message.
-     * @param {number} frames The number of frames to print.
-     */
-    /*dumpStack: function (msg, frames) {
-        let stack = Error().stack.replace(/(?:.*\n){2}/, "");
-        if (frames != null)
-            [stack] = stack.match(RegExp("(?:.*\n){0," + frames + "}"));
-        liberator.dump((msg || "Stack") + "\n" + stack);
-    },*/
-
-    /**
      * Outputs a plain message to the command line.
      *
      * @param {string} str The message to output.
