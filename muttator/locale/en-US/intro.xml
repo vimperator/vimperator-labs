@@ -22,36 +22,67 @@ mutt.
 &liberator.host;, which makes it look and behave like the <link topic="http://www.vim.org">Vim</link>
 text editor. It has similar key bindings, and you could call it a modal mail
 client, as key bindings differ according to which mode you are in.
+For example, it has a special Message mode, where key bindings behave differently
+from the normal mode.
+Also most functionality is available as commands,
+typing <ex>:back</ex> will go back within the current page history, just like
+hitting the back button in the toolbar.
 
-<warning tag="warning">
-To provide the most authentic Vim experience, the &liberator.host; menubar and toolbar were hidden.
-</warning>
+<p>
+    However, &liberator.appname; does not try to be a 100% Vim clone, it rather brings Vim's
+    ideas to the 21st century. This means making use of new graphical capabilities
+    but also of faster computers. Furthermore, great care is taken into making
+    its command line interface more consistent and easier to use, while still
+    being a powerful extension for advanced users.
+</p>
+        
+<p>
+    But &liberator.appname; is more than just a simple command interface to Firefox — it is a
+    complete development environment as well. If you are a web developer, you can
+    enjoy an interactive JavaScript shell — even with completion support. Or if you
+    want to extend &liberator.appname;, you can easily do that by just dropping a JavaScript
+    file in its plugin directory.
+</p>
 
-<p>If you really need them, type: <ex>:set guioptions+=mT</ex> to get them back.</p>
-<p>If you don't like &liberator.appname; at all, you can uninstall it by typing
-<ex>:addons</ex> and remove/disable it.</p>
-<p>If you like it, but can't remember the shortcuts, press <k>F1</k> or
-<ex>:help</ex> to get this help window back.</p>
-
-<tags>author donation</tags>
-<p>&liberator.appname; was written by <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link>.
-If you appreciate my work on &liberator.appname; and want to encourage me working on it
-more, you can either send me greetings, patches or make a donation:</p>
+<tags>author donation sponsor</tags>
+<strut/>
+<p>
+    &liberator.appname; was initially written by
+    <link topic="mailto:stubenschrott@vimperator.org">Martin
+    Stubenschrott</link> but has found many other
+    <link topic="http://vimperator-labs.googlecode.com/hg/muttator/AUTHORS/">invaluable contributors</link>
+    who helped out fixing bugs and adding new features.
+    
+    If you appreciate the work on &liberator.appname; and want to
+    encourage us working on it more, you can send us greetings, patches, or
+    donations:
+</p>
 
 <pan><handle/></pan>
 
-<p>NOTE: If this link does not work, go to the <link topic="http://vimperator.org/muttator">&liberator.appname; homepage</link> and
-click the donation button there, because &liberator.host; seems to have a problem
-when this link is inside an e-mail (which this help screen actually is).</p>
-
-<p>Of course as a believer in free open source software, only make a donation
-if you really like &liberator.appname; and the money doesn't hurt -- otherwise just use
-it, recommend it and like it :)</p>
+<p>
+    If you prefer getting some nice products for your money, you can also support
+    us by buying some cool
+    <link topic="http://www.zazzle.com/maxauthority*">merchandise</link> like
+    t-shirts or mugs. Of course, as we believe in free, open source software, only
+    support us financially if you really like &liberator.appname; and the money doesn't hurt
+    — otherwise just use it, recommend it, and like it :)
+</p>
 
 <h2 tag="overview">Help topics</h2>
 
-<p>&liberator.appname; is in an early development stage. There's not too much documentation available yet. However, the <link topic="tutorial">Tutorial</link> should provide some basic information to help you get up and running for now.</p> 
-<p>Please also note that navigation in this help screen is quite limited yet - <em>using the links within the help system will likely not work</em> as expected, so you have to manually navigate using the <ex>:help subject</ex> command. So to go on with the tutorial now, please type:</p>
+<p>
+    &liberator.appname; is in an early development stage. There's not too much
+    documentation available yet. However, the <link
+        topic="tutorial">Tutorial</link> should provide some basic information
+    to help you get up and running for now.
+</p> 
+
+<p> Please also note that navigation in this help screen is quite limited yet -
+    <em>using the links within the help system will not always work</em> as
+    expected, so you have to manually navigate using the <ex>:help subject</ex>
+    command. So to go on with the tutorial now, please type:
+</p>
 
 <code><ex>:help tutorial<key name="CR"/></ex></code>
 
@@ -153,31 +184,27 @@ it, recommend it and like it :)</p>
 <h2 tag="features">Features</h2>
 
 <ul>
-    <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>,
-        <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)
-    </li>
-    <li>Ex-commands (<ex>:quit</ex>, <ex>:goto Inbox</ex>, ...)</li>
-    <li>
-        Tab completion available for all commands with support for "longest"
-        matching when set in 'wildmode'
-    </li>
-    <li>Hit-a-hint like navigation of links (start with <k>f</k> to follow a link)</li>
-    <li>
-        Minimal GUI (easily hide useless menubar and toolbar with <ex>:set
-            guioptions=f</ex>)
-    </li>
-    <li>
-        Ability to <ex>:source</ex> JavaScript files, and to use a
-        [a]~/.muttatorrc[a] file with syntax highlighting if you install
-        http://code.google.com/p/vimperator-labs/issues/detail?id=51[muttator.vim]
-    </li>
-    <li>Count supported for many commands (<em>3</em><key name="C-o"/> will go back 3 messages)</li>
+    <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)</li>
+    <li>Ex commands (<ex>:quit</ex>, <ex>:goto Inbox</ex>, …) with a proper command line</li>
+    <li>Tab completion available for all commands, showing suggestions while you type</li>
+    <li>Hint mode (start with <k>f</k> to follow a link)</li>
+    <li>Extensions! Yes, you can extend Muttator's functionality with <link href="http://ticket.vimperator.org/Muttator/plugin/">scripts</link> just like you can extend Firefox with extensions</li>
+    <li>Explore JavaScript objects with <ex>:echo window</ex> and even context-sensitive tab completion</li>
+    <li>Easily customizable GUI (easily hide all GUI elements with <ex>:set gui=none</ex>)</li>
+    <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.muttatorrc</em> file</li>
+    <li>Count supported for many commands (<em>3</em><k name="gi"/> will go to the 3rd inbox)</li>
     <li>Beep on errors</li>
-    <li><ex>:map</ex> support (and feedkeys() for script writers)</li>
+    <li><ex>:map</ex> and <ex>:command</ex> support (and feedkeys() for script writers)</li>
     <li><ex>:time</ex> support for profiling</li>
-    <li>Many other vimperator features are available when in <tt>-- MESSAGE --</tt> mode</li>
-    <li>A comprehensive help file, explaining all commands, mappings and options. </li>
+    <li>Move the text cursor and select text with Vim keys and a Visual mode</li>
+    <li>External editor support</li>
+    <li>Macros to replay key strokes</li>
+    <li>AutoCommands to execute actions on certain events</li>
+    <li>A partial help system, explaining some commands, mappings and options</li>
 </ul>
+
+<h2 tag="changelog version">ChangeLog</h2>
+We keep a list of changes between versions <link topic="http://vimperator-labs.googlecode.com/hg/muttator/NEWS">here</link>.
 
 <h2 tag="contact bugs patches">Contact</h2>
 <p>

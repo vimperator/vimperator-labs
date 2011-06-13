@@ -31,7 +31,7 @@ toolbar.
 </p>
 
 <p>
-    However, Vimperator does not try to be a 100% Vim clone, it rather brings Vim's
+    However, &liberator.appname; does not try to be a 100% Vim clone, it rather brings Vim's
     ideas to the 21st century. This means making use of new graphical capabilities
     but also of faster computers. Furthermore, great care is taken into making
     its command line interface more consistent and easier to use, while still
@@ -39,11 +39,11 @@ toolbar.
 </p>
         
 <p>
-But Vimperator is more than just a simple command interface to Firefox — it is a
-complete development environment as well. If you are a web developer, you can
-enjoy an interactive JavaScript shell — even with completion support. Or if you
-want to extend Vimperator, you can easily do that by just dropping a JavaScript
-file in its plugin directory.
+    But &liberator.appname; is more than just a simple command interface to Firefox — it is a
+    complete development environment as well. If you are a web developer, you can
+    enjoy an interactive JavaScript shell — even with completion support. Or if you
+    want to extend &liberator.appname;, you can easily do that by just dropping a JavaScript
+    file in its plugin directory.
 </p>
 
 <tags>author donation sponsor</tags>
@@ -54,8 +54,6 @@ file in its plugin directory.
     Stubenschrott</link> but has found many other
     <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/AUTHORS/">invaluable contributors</link>
     who helped out fixing bugs and adding new features.
-    We also owe Vim and Conkeror a great debt for their inspiration,
-    and the latter especially for early cross pollination.
     
     If you appreciate the work on &liberator.appname; and want to
     encourage us working on it more, you can send us greetings, patches, or
