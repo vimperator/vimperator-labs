@@ -1,20 +1,18 @@
-2010-xx-xx
+2010-06-13
     * version 1.0
     * IMPORTANT: With the redesign of Vimperator for version 3.0 lots of things have
       changed also for Muttator. Please read Vimperator's release notes as well this time.
-    * IMPORTANT: It is possible to yank more fields now, but it destroies previous key bindings.
+    * IMPORTANT: It is possible to yank more fields now, but it destroys previous key bindings.
       [m]yf[m] or [m]yy[m] to copy "From:"
       [m]ys[m] to copy Subject
       [m]y#[m] to copy Message ID
       [m]yt[m] to copy "To:"
       [m]yr[m] to copy recipients, To: + Cc:
       [m]yu[m] to copy URL of feed (only for RSS)
-    * IMPORTANT: 'c' has been changed to 'o' for quickly changing folders
+    * IMPORTANT: 'c' has been changed to 'o' for quickly opening folders
     * IMPORTANT: 'i' has been changed to 'm' to go into MESSAGE mode
     * IMPORTANT: Passthrough mode has been changed (just like in Vimperator)
-      to 'i' for a single key and Ctrl-Esc for all keys
-    * IMPORTANT: Support for sub-commands.
-      And subCommands argument is added 4th commands.parseArgs's arguments.
+      to 'i' for a single key and Shift-Esc for all keys
     * We no longer enter MESSAGE mode automatically after focus changes,
       use 'm' (and Esc) to enter/exit this mode.
     * Fix moving of more than one message with :moveto
