@@ -1103,7 +1103,7 @@ const Commands = Module("commands", {
                     // TODO: using an array comprehension here generates flakey results across repeated calls
                     //     : perhaps we shouldn't allow options in a list call but just ignore them for now
                     //     : No, array comprehensions are fine, generator statements aren't. --Kris
-                    let cmds = this._exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
+                    let cmds = commands._exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
 
                     if (cmds.length > 0) {
                         let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"],
