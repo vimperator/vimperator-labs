@@ -598,7 +598,7 @@ const Tabs = Module("tabs", {
         if (position > last)
             position = wrap ? position % length : last;
         else if (position < 0)
-            position = wrap ? (position % length) + length : 0;
+            position = wrap ? ((position % length) + length) % length : 0;
 
         if (config.hostApplication === "Firefox")
             return tabs[position]._tPos;
