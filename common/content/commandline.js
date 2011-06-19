@@ -524,7 +524,7 @@ const CommandLine = Module("commandline", {
 
         // needed for the sliding animation of the prompt text to be shown correctly
         // on subsequent calls
-        this.setTimeout(function() { this._setPrompt(""); }, 0);
+        this._setPrompt("");
     },
 
     /**
@@ -708,8 +708,9 @@ const CommandLine = Module("commandline", {
             // user pressing <Esc> is handled in the global onEscape
             //   FIXME: <Esc> should trigger "cancel" event
             if (events.isAcceptKey(key)) {
+                //let currentExtendedMode = this._currentExtendedMode;
+                //this._currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                 commandline.triggerCallback("submit", this._currentExtendedMode, command);
-                this._currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                 this.close();
             }
             // user pressed <Up> or <Down> arrow to cycle this._history completion
