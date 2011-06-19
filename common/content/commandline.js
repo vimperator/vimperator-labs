@@ -565,6 +565,9 @@ const CommandLine = Module("commandline", {
      *          the MOW.
      */
     echo: function echo(str, highlightGroup, flags) {
+        if ((flags & this.FORCE_SINGLELINE) && (flags & this.FORCE_MULTILINE))
+            return liberator.echoerr("Conflicted flags argument for echo(): FORCE_SINGLELINE | FORCE_MULTILINE");
+
         // liberator.echo uses different order of flags as it omits the highlight group,
         // change commandline.echo argument order? --mst
         if (this._silent)
