@@ -24,6 +24,7 @@
     <dt>openfile</dt>        <dd>ファイルを開くダイアログ ( ファイル -> ファイルを開く )</dd>
     <dt>pageinfo</dt>        <dd>ページの情報ダイアログ ( ツール -> ページの情報 )</dd>
     <dt>pagesource</dt>      <dd>ページのソース ( 表示 -> ページのソース )</dd>
+    <dt>passwords</dt>       <dd>保存されているパスワード ( ツール -> オプション -> セキュリテイ )</dd>
     <dt>places</dt>          <dd>履歴とブックマークの管理 ( 履歴とブックマークの管理 )</dd>
     <dt>preferences</dt>     <dd>&liberator.host; の設定ダイアログ ( ツール -> オプション )</dd>
     <dt>printpreview</dt>    <dd>印刷プレビュー ( ファイル -> 印刷プレビュー )</dd>

@@ -18,29 +18,26 @@
 <h1 tag="intro">前書き</h1>
 <p>
 <link topic="http://vimperator.org">&liberator.appname;</link> は、
-テキストエディタ Vim に強くインスピレーションを受け、
-より高速かつ効率的に、の精神で作られた <link topic="http://www.mozilla.com/firefox/">Firefox</link> 用の拡張です。
-Vim と似たキーバインドを持ち、 モードによって異なるキーバインドを持つモーダルなウェブブラウザと言えます。
-たとえば、キーボードのみによってリンク先に移動することが可能な、ヒントモードを持っています。
-また、殆どの機能はコマンドとして提供され、<ex>:back</ex> とタイプすることで、ツールバー戻るボタンを押したときと同じように、現在のページの履歴から前のページへ戻ることができたりします。
+    テキストエディタ Vim に強くインスピレーションを受け、
+    より高速かつ効率的に、の精神で作られた <link topic="http://www.mozilla.com/firefox/">Firefox</link> 用の拡張です。
+    Vim と似たキーバインドを持ち、 モードによって異なるキーバインドを持つモーダルなウェブブラウザと言えます。
+    たとえば、キーボードのみによってリンク先に移動することが可能な、ヒントモードを持っています。
+    また、殆どの機能はコマンドとして提供され、<ex>:back</ex> とタイプすることで、ツールバー戻るボタンを押したときと同じように、現在のページの履歴から前のページへ戻ることができたりします。
 </p>
 
 <p>
-しかし、Vimperator は単なる Firefox のコマンドインターフェイスではなく、完全な開発環境でもあります。
-あなたが Web 開発者であれば、補完機能をもったインタラクティブな JavaScript Shell を満喫できるでしょう。
-また、Vimperator を拡張したいと望めば、プラグインディレクトリに JavaScript ファイルを放り込むだけで、それが可能です。
+    しかし、&liberator.appname; は Vim の 100% クローンを目指してはいません。
+    むしろ、Vim のアイデアを 21 世紀のものへと昇華させたものです。
+    これは、新しいグラフィカルな機能だけでなく高速なコンピュータを使うことを意味します。
+    その上、上級講座のパワフルなアドオンでありながら、より矛盾なく容易にコマンドラインインターフェイスを使用できるように細心の注意が払われています。
 </p>
-
-<warning tag="warning">
-    できるだけ Vim と同じにするため、 &liberator.host; のメニューバーとツールバーは表示されなくなります。
-</warning>
-
-<p>それらが必要になった場合、 <ex>:set guioptions+=mT</ex> と入力してください。これで表示されます。</p>
+        
 <p>
-    もし仮に &liberator.appname; がイヤになった場合は、
-    <ex>:extdelete &liberator.appname;</ex> としてアンインストールするか
-    <ex>:extdisable &liberator.appname;</ex> として無効化することができます。
+    しかし、Vimperator は単なる Firefox のコマンドインターフェイスではなく、完全な開発環境でもあります。
+    あなたが Web 開発者であれば、補完機能をもったインタラクティブな JavaScript Shell を満喫できるでしょう。
+    また、Vimperator を拡張したいと望めば、プラグインディレクトリに JavaScript ファイルを放り込むだけで、それが可能です。
 </p>
+
 <p>
     気に入ったけどショートカットを覚えられないといった場合は <k name="F1"/> を押すか <ex>:help</ex> と入力することでもう一度このヘルプを表示することができます。
 </p>
@@ -52,7 +49,6 @@ Vim と似たキーバインドを持ち、 モードによって異なるキー
     により開発が始まり、今では多くの<link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">貢献者</link>
     によって開発されています。
     &liberator.appname; をいいな、開発を応援したいなと思ってくれた方はぜひはげましのおたよりやパッチ、寄付を送ってください。
-    (既に <link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Donors">これらの方々</link> から寄付を寄せて頂いています。)
 </p>
 
 <pan><handle/></pan>
@@ -156,10 +152,6 @@ Vim と似たキーバインドを持ち、 モードによって異なるキー
         <link topic="plugins">プラグイン</link>:
         インストールしているプラグインのドキュメント
     </li>
-    <li>
-        <link topic="index">索引</link>:
-        すべてのコマンドやオプションの索引。
-    </li>
 </ol>
 
 <p>
@@ -170,12 +162,11 @@ Vim と似たキーバインドを持ち、 モードによって異なるキー
 
 <ul>
     <li>Vim のようなキーバインド (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, などなど)</li>
-    <li>Ex コマンドが利用可能 (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …</li>
-    <li>'wildmode' に 'longest' を設定すると補完されるようになるすべてのコマンドで、 Tab キーによる補完を利用可能。</li>
-    <li>links のナビゲーションに相当する Hit-a-hint 機能 ( <k>f</k> でリンクを辿ることができる )</li>
-    <li>ブックマークや履歴に存在する URL を補完する高度な機能 ( URL だけでなくタイトルも検索 )</li>
-    <li>Vim のようなステータスラインと wget のようなプログレスバー</li>
-    <li>最低限の GUI (<ex>:set guioptions=</ex> でいらないメニューバーやツールバーを簡単に非表示にできる)</li>
+    <li>特有のコマンドラインによって、Ex コマンドが利用可能 (<ex>:quit</ex>, <ex>:open www.foo.com</ex></li>
+    <li>すべてのコマンドの入力で Tab キーによる補完を利用可能</li>
+    <li>Hit-a-hint に似たリンク操作 ( <k>f</k> でリンクを辿ることができる )</li>
+    <li>拡張機能！ Firefox をアドオンで拡張するように、プラグインにより拡張が可能です</li>
+    <li><ex>:echo windows</ex> のようにして JavaScript オブジェクトの調査ができ、その際にはコンテキストを考慮した補完も可能です</li>
     <li>JavaScript ファイルを <ex>:source</ex> でき、vimperator.vim をインストールしていれば、<em>~/.vimperatorrc</em> ファイルをハイライト表示が可能</li>
     <li>&liberator.host; のブックマークキーワードやサーチエンジンによる簡単で素早い検索機能 ( <ex>:open ほげ</ex> は「ほげ」を google で検索、 <ex>:open amazon ガンダム</ex> は「ガンダム」を Amazon で検索 )</li>
     <li>たくさんのコマンドで数値の指定が可能 ( <em>3</em><k name="C-o"/> は 3 ページ分もどる )</li>
@@ -190,6 +181,9 @@ Vim と似たキーバインドを持ち、 モードによって異なるキー
     <li>何らかのイベントで動作が実行されるオートコマンド機能</li>
     <li>すべてのコマンド、キーマッピングやオプションを説明している総合的なヘルプ</li>
 </ul>
+
+<h2 tag="changelog version">ChangeLog</h2>
+バージョン間の変更は <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/NEWS"> ここ </link> にあります。
 
 <h2 tag="contact bugs patches">連絡先</h2>
 
