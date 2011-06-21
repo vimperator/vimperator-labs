@@ -29,7 +29,7 @@ const systemPrincipal = channel.owner;
 channel.cancel(NS_BINDING_ABORTED);
 delete channel;
 
-function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + escape(data);
+function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + encodeURIComponent(data);
 function makeChannel(url, orig) {
     if (typeof url == "function")
         url = dataURL.apply(null, url());
