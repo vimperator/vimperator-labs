@@ -328,7 +328,7 @@ const Bookmarks = Module("bookmarks", {
         function process(resp) {
             let results = [];
             try {
-                results = services.get("json").decode(resp.responseText)[1];
+                results = JSON.parse(resp.responseText)[1];
                 results = [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
             }
             catch (e) {}

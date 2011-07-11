@@ -69,11 +69,6 @@ const Services = Module("services", {
                 class_: "@mozilla.org/network/io-service;1",
                 iface:  Ci.nsIIOService
             },
-            "json": {
-                class_: "@mozilla.org/dom/json;1",
-                iface:  Ci.nsIJSON,
-                meth:   "createInstance"
-            },
             "livemark": {
                 class_: "@mozilla.org/browser/livemark-service;2",
                 iface:  Ci.nsILivemarkService

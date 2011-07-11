@@ -117,9 +117,7 @@ function writeFile(file, data) {
 }
 
 var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-var prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
-                            .getBranch("extensions.liberator.datastore.");
-var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+var prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.liberator.datastore.");
 
 function getCharPref(name) {
     try {
@@ -141,7 +139,7 @@ function loadPref(name, store, type) {
         if (!pref && storage.infoPath)
             var file = readFile(getFile(name));
         if (pref || file)
-            var result = json.decode(pref || file);
+            var result = JSON.parse(pref || file);
         if (pref) {
             prefService.clearUserPref(name);
             savePref({ name: name, store: true, serial: pref });
@@ -182,7 +180,7 @@ function ObjectStore(name, store, load, options) {
     };
 
     this.init.apply(this, arguments);
-    this.__defineGetter__("serial", function () json.encode(object));
+    this.__defineGetter__("serial", function () JSON.stringify(object));
 
     this.set = function set(key, val) {
         var defined = key in object;
@@ -220,7 +218,7 @@ function ArrayStore(name, store, load, options) {
     };
 
     this.init.apply(this, arguments);
-    this.__defineGetter__("serial", function () json.encode(array));
+    this.__defineGetter__("serial", function () JSON.stringify(array));
     this.__defineGetter__("length", function () array.length);
 
     this.set = function set(index, value) {

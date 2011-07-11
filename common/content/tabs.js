@@ -100,7 +100,7 @@ const Tabs = Module("tabs", {
      * @property {Object[]} The array of closed tabs for the current
      *     session.
      */
-    get closedTabs() services.get("json").decode(services.get("sessionStore").getClosedTabData(window)),
+    get closedTabs() JSON.parse(services.get("sessionStore").getClosedTabData(window)),
 
     /**
      * Returns the index of <b>tab</b> or the index of the currently
