@@ -85,7 +85,7 @@
                 "<ex>:source <a>file</a></ex>").
             </li>
             <li tag="$MY_&liberator.idname;RC">
-                <em>~/&liberator.name;rc</em> — Windows only. If this file exists, its contents
+                <em>~/_&liberator.name;rc</em> — Windows only. If this file exists, its contents
                 are executed and <em>$MY_&liberator.idname;RC</em> set to its path.
             </li>
             <li>
