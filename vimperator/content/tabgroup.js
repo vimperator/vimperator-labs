@@ -86,20 +86,20 @@ const TabGroup = Module("tabGroup", {
     switchTo: function (spec, wrap) {
         const GI = tabGroup.tabView.GroupItems;
         let current = GI.getActiveGroupItem() || GI.getActiveOrphanTab();
-        let groupsAndOrphans = GI.groupItems.concat(GI.getOrphanedTabs());
+        let groups = GI.groupItems;
         let offset = 1, relative = false, index;
         if (typeof spec === "number")
             index = parseInt(spec, 10);
         else if (/^[+-]\d+$/.test(spec)) {
             let buf = parseInt(spec, 10);
-            index = groupsAndOrphans.indexOf(current) + buf;
+            index = groups.indexOf(current) + buf;
             offset = buf >= 0 ? 1 : -1;
             relative = true;
         }
         else if (spec != "") {
             let targetGroup = tabGroup.getGroup(spec);
             if (targetGroup)
-                index = groupsAndOrphans.indexOf(targetGroup);
+                index = groups.indexOf(targetGroup);
             else {
                 liberator.echoerr("No such tab group: " + spec);
                 return;
@@ -107,7 +107,7 @@ const TabGroup = Module("tabGroup", {
         } else
             return;
 
-        let length = groupsAndOrphans.length;
+        let length = groups.length;
         let apps = tabGroup.appTabs;
 
         function groupSwitch (index, wrap) {
@@ -116,7 +116,7 @@ const TabGroup = Module("tabGroup", {
             else if (index < 0)
                 index = wrap ? index % length + length : 0;
 
-            let target = groupsAndOrphans[index], group = null;
+            let target = groups[index], group = null;
             if (target instanceof tabGroup.tabView.GroupItem) {
                 group = target;
                 target = target.getActiveTab() || target.getChild(0);

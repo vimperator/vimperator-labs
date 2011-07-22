@@ -1386,14 +1386,6 @@ const Buffer = Module("buffer", {
                 yield item;
             }
         }
-        function generateOrphanedList (tabItems) {
-            for (let [, tabItem] in Iterator(tabItems)) {
-                let index = (tabItem.tab._tPos + 1) + ": ",
-                    label = tabItem.tab.label || UNTITLED_LABEL,
-                    url = getURLFromTab(tabItem.tab);
-                yield createItem(index, label, url, getIndicator(tabItem.tab), tabItem.tab.image);
-            }
-        }
         completion.buffer = function buffer(context, flags) {
             context.anchored = false;
             context.keys = { text: "text", description: "url", icon: "icon" };
@@ -1433,21 +1425,10 @@ const Buffer = Module("buffer", {
                     }
                 }
             }
-            if (flags & this.buffer.ORPHANS) {
-                let orphanedTabs = [tabItem for ([, tabItem] in Iterator(groups.getOrphanedTabs())) if (tabItem.tab.hidden)];
-                if (orphanedTabs.length == 0)
-                    return;
-
-                context.fork("__ORPHANED__", 0, this, function (context) {
-                    context.title = ["Orphaned"];
-                    context.completions = [item for (item in generateOrphanedList(orphanedTabs))];
-                });
-            }
         };
         completion.buffer.ALL = 1 << 0 | 1 << 1 | 1 << 2;
         completion.buffer.VISIBLE = 1 << 0;
         completion.buffer.GROUPS  = 1 << 1;
-        completion.buffer.ORPHANS = 1 << 2;
     },
     events: function () {
         let browserWindow;
