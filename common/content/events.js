@@ -798,8 +798,7 @@ const Events = Module("events", {
                 // displayed too. --djk
                 function isInputField() {
                     let elem = liberator.focus;
-                    return ((elem instanceof HTMLInputElement && !/image/.test(elem.type))
-                          || elem instanceof HTMLIsIndexElement);
+                    return (elem instanceof HTMLInputElement && !/image/.test(elem.type));
                 }
 
                 if (options["insertmode"] || isInputField())
@@ -1099,7 +1098,6 @@ const Events = Module("events", {
         let elem = liberator.focus;
         return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
                  elem instanceof HTMLTextAreaElement ||
-                 elem instanceof HTMLIsIndexElement ||
                  elem instanceof HTMLObjectElement ||
                  elem instanceof HTMLEmbedElement);
     }
