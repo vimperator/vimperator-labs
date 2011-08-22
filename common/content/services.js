@@ -62,8 +62,8 @@ const Services = Module("services", {
                 iface:  Ci.nsIFaviconService
             },
             "history": {
-                class_: "@mozilla.org/browser/global-history;2",
-                iface:  [Ci.nsIGlobalHistory3, Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
+                class_: "@mozilla.org/browser/nav-history-service;1",
+                iface:  [Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
             },
             "io": {
                 class_: "@mozilla.org/network/io-service;1",
