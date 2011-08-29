@@ -347,6 +347,8 @@ const IO = Module("io", {
             onSecurityChange: function () {}
         };
 
+        services.add("UUID",  "@mozilla.org/uuid-generator;1", Ci.nsIUUIDGenerator);
+
         services.get("downloadManager").addListener(this.downloadListener);
     },
 
@@ -634,7 +636,9 @@ lookup:
             // handle pure JavaScript files specially
             if (/\.js$/.test(filename)) {
                 try {
-                    liberator.loadScript(uri.spec, Script(file));
+                    // Workaround for SubscriptLoader caching.
+                    let suffix = '?' + encodeURIComponent(services.get("UUID").generateUUID().toString());
+                    liberator.loadScript(uri.spec + suffix, Script(file));
                     if (liberator.initialized)
                         liberator.initHelp();
                 }
