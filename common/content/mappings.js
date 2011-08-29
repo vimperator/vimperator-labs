@@ -405,7 +405,7 @@ const Mappings = Module("mappings", {
                     option += <>, </>;
                 option += <span highlight="Keyword">noremap</span>;
             }
-            displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option]);
+            displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option, map.matchingUrls]);
         }
 
         if (displayMaps.length == 0) {
@@ -413,7 +413,7 @@ const Mappings = Module("mappings", {
             return;
         }
 
-        let list = template.tabular([{ header: "Mapping", highlight: "Mapping" }, "Expression", { header: "Modes", highlight: "ModeMsg" }, "Options"], displayMaps);
+        let list = template.tabular([{ header: "Mapping", highlight: "Mapping" }, "Expression", { header: "Modes", highlight: "ModeMsg" }, "Options", "URLs"], displayMaps);
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     }
 }, {
