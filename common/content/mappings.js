@@ -445,7 +445,7 @@ const Mappings = Module("mappings", {
                         function (count) { events.feedkeys((count || "") + this.rhs, this.noremap, this.silent); },
                         {
                             count: true,
-                            rhs: events.canonicalKeys(rhs),
+                            rhs: events.canonicalKeys(mappings._expandLeader(rhs)),
                             noremap: !!noremap,
                             silent: "<silent>" in args,
                             matchingUrls: urls
