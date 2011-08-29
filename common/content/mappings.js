@@ -193,7 +193,7 @@ const Mappings = Module("mappings", {
         }
     },
 
-    _expandLeader: function (keyString) keyString.replace(/<Leader>/i, mappings.getMapLeader()),
+    _expandLeader: function (keyString) keyString.replace(/<Leader>/gi, mappings.getMapLeader()),
 
     // Return all mappings present in all @modes
     _mappingsIterator: function (modes, stack) {
