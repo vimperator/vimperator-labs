@@ -271,8 +271,9 @@ const Liberator = Module("liberator", {
      * @param {string|Error} str The message to output.
      * @param {number} flags These control the multiline message behavior.
      *     See {@link CommandLine#echo}.
+     * @param {string} prefix The prefix of error message.
      */
-    echoerr: function (str, flags) {
+    echoerr: function (str, flags, prefix) {
         try {
             flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE | commandline.FORCE_SINGLELINE;
 
@@ -282,7 +283,7 @@ const Liberator = Module("liberator", {
             if (options["errorbells"])
                 liberator.beep();
 
-            commandline.echo(str, commandline.HL_ERRORMSG, flags);
+            commandline.echo((prefix || "") + str, commandline.HL_ERRORMSG, flags);
 
             // For errors, also print the stack trace to our :messages list
             if (str instanceof Error) {
@@ -298,7 +299,7 @@ const Liberator = Module("liberator", {
                     let stackArguments = stackItem.substring(0, atIndex);
                     if (stackArguments)
                         stackArguments = " - " + stackArguments;
-                        
+
                     stackTrace += <><span style="font-weight: normal">&#xa0;&#xa0;at </span>{stackLocation}<span style="font-weight: normal">{stackArguments}</span><br/></>;
                 }
                 commandline.messages.add({str: stackTrace, highlight: commandline.HL_ERRORMSG});

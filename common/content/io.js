@@ -720,7 +720,7 @@ lookup:
             liberator.log("Sourced: " + filename);
         }
         catch (e) {
-            liberator.echoerr("Sourcing file failed: " + e);
+            liberator.echoerr(e, null, "Sourcing file failed: ");
         }
         finally {
             this.sourcing = wasSourcing;
