@@ -1072,7 +1072,7 @@ const Events = Module("events", {
 
     onPopupHidden: function () {
         // gContextMenu is set to NULL, when a context menu is closed
-        if (window.gContextMenu == null && !this._activeMenubar)
+        if ((window.gContextMenu == null || !window.gContextMenu.shouldDisplay) && !this._activeMenubar)
             modes.isMenuShown = false;
     },
 
