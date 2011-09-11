@@ -783,7 +783,7 @@ Module("highlight", {
                     else if (args.completeArg == 1) {
                         let hl = highlight.get(args[0]);
                         if (hl)
-                            context.completions = [[hl.value, "Current Value"], [hl.default || "", "Default Value"]];
+                            context.completions = [[hl.value.replace(/\n+/g, " "), "Current Value"], [hl.default || "", "Default Value"]];
                     }
                 },
                 hereDoc: true,
