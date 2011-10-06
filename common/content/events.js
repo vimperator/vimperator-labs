@@ -283,7 +283,7 @@ const Events = Module("events", {
             feed: {
                 liberator.threadYield(1, true);
                 for (let [, evt_obj] in Iterator(events.fromString(keys))) {
-                    let elem = liberator.focus || window.content;
+                    let elem = liberator.focus || config.browser.contentWindow;
                     let evt = events.create(doc, "keypress", evt_obj);
 
                     if (typeof noremap == "object")

@@ -24,7 +24,7 @@ const Buffer = Module("buffer", {
         this.pageInfo = {};
 
         this.addPageInfoSection("f", "Feeds", function (verbose) {
-            let doc = window.content.document;
+            let doc = config.browser.contentDocument;
 
             const feedTypes = {
                 "application/rss+xml": "RSS",
@@ -80,7 +80,7 @@ const Buffer = Module("buffer", {
         });
 
         this.addPageInfoSection("g", "Document", function (verbose) {
-            let doc = window.content.document;
+            let doc = config.browser.contentDocument;
 
             // get file size
             const ACCESS_READ = Ci.nsICache.ACCESS_READ;
@@ -136,7 +136,7 @@ const Buffer = Module("buffer", {
 
         this.addPageInfoSection("m", "Meta Tags", function (verbose) {
             // get meta tag data, sort and put into pageMeta[]
-            let metaNodes = window.content.document.getElementsByTagName("meta");
+            let metaNodes = config.browser.contentDocument.getElementsByTagName("meta");
 
             return Array.map(metaNodes, function (node) [(node.name || node.httpEquiv), template.highlightURL(node.content)])
                         .sort(function (a, b) util.compareIgnoreCase(a[0], b[0]));
@@ -296,7 +296,7 @@ const Buffer = Module("buffer", {
      *     buffer. Only returns style sheets for the 'screen' media type.
      */
     get alternateStyleSheets() {
-        let stylesheets = window.getAllStyleSheets(window.content);
+        let stylesheets = window.getAllStyleSheets(config.browser.contentWindow);
 
         return stylesheets.filter(
             function (stylesheet) /^(screen|all|)$/i.test(stylesheet.media.mediaText) && !/^\s*$/.test(stylesheet.title)
@@ -312,7 +312,7 @@ const Buffer = Module("buffer", {
             if (frame.document.body instanceof HTMLBodyElement)
                 frames.push(frame);
                 Array.forEach(frame.frames, rec);
-        })(win || window.content);
+        })(win || config.browser.contentWindow);
 
         return frames;
     },
@@ -331,12 +331,13 @@ const Buffer = Module("buffer", {
      *         2 - Load failed.
      */
     get loaded() {
-        if (window.content.document.pageIsFullyLoaded !== undefined)
-            return window.content.document.pageIsFullyLoaded;
+        let doc = config.browser.contentDocument;
+        if (doc.pageIsFullyLoaded !== undefined)
+            return doc.pageIsFullyLoaded;
         return 0; // in doubt return "loading"
     },
     set loaded(value) {
-        window.content.document.pageIsFullyLoaded = value;
+        config.browser.contentDocument.pageIsFullyLoaded = value;
     },
 
     /**
@@ -344,6 +345,7 @@ const Buffer = Module("buffer", {
      *     tab.
      */
     get localStore() {
+        let content = config.browser.contentWindow;
         if (!content.liberatorStore)
             content.liberatorStore = {};
         return content.liberatorStore;
@@ -355,8 +357,8 @@ const Buffer = Module("buffer", {
      * @property {Node} The last focused input field in the buffer. Used
      *     by the "gi" key binding.
      */
-    get lastInputField() window.content.document.lastInputField || null,
-    set lastInputField(value) { window.content.document.lastInputField = value; },
+    get lastInputField() config.browser.contentDocument.lastInputField || null,
+    set lastInputField(value) { config.browser.contentDocument.lastInputField = value; },
 
     /**
      * @property {string} The current top-level document's URL.
@@ -375,7 +377,7 @@ const Buffer = Module("buffer", {
     /**
      * @property {number} The buffer's height in pixels.
      */
-    get pageHeight() window.content.innerHeight,
+    get pageHeight() window.content ? window.content.innerHeight : config.browser.contentWindow.innerHeight,
 
     /**
      * @property {number} The current browser's text zoom level, as a
@@ -395,7 +397,7 @@ const Buffer = Module("buffer", {
     /**
      * @property {string} The current document's title.
      */
-    get title() window.content.document.title,
+    get title() config.browser.contentTitle,
 
     /**
      * @property {number} The buffer's horizontal scroll percentile.
@@ -481,7 +483,6 @@ const Buffer = Module("buffer", {
      * @param {Node} elem The element to focus.
      */
     focusElement: function (elem) {
-        let doc = window.content.document;
         if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
             Buffer.focusedWindow = elem.contentWindow;
         else if (elem instanceof HTMLInputElement && elem.type == "file") {
@@ -493,6 +494,7 @@ const Buffer = Module("buffer", {
 
             // for imagemap
             if (elem instanceof HTMLAreaElement) {
+                let doc = config.browser.contentDocument;
                 try {
                     let [x, y] = elem.getAttribute("coords").split(",").map(parseFloat);
 
@@ -552,7 +554,7 @@ const Buffer = Module("buffer", {
             return false;
         }
 
-        let ret = followFrame(window.content);
+        let ret = followFrame(config.browser.contentWindow);
         if (!ret) {
             // only loop through frames (ordered by size) if the main content didn't match
             let frames = buffer.getAllFrames().slice(1)
@@ -758,7 +760,7 @@ const Buffer = Module("buffer", {
      */
     scrollTo: function (x, y) {
         marks.add("'", true);
-        content.scrollTo(x, y);
+        config.browser.contentWindow.scrollTo(x, y);
     },
 
     /**
@@ -784,7 +786,8 @@ const Buffer = Module("buffer", {
      * @param {boolean} forward The direction of motion.
      */
     shiftFrameFocus: function (count, forward) {
-        if (!(window.content.document instanceof HTMLDocument))
+        let content = config.browser.contentWindow;
+        if (!(content.document instanceof HTMLDocument))
             return;
 
         count = Math.max(count, 1);
@@ -795,7 +798,7 @@ const Buffer = Module("buffer", {
             if (frame.document.body instanceof HTMLBodyElement)
                 frames.push(frame);
             Array.forEach(frame.frames, findFrames);
-        })(window.content);
+        })(content);
 
         if (frames.length == 0) // currently top is always included
             return;
@@ -875,6 +878,7 @@ const Buffer = Module("buffer", {
     showPageInfo: function (verbose, sections) {
         // Ctrl-g single line output
         if (!verbose) {
+            let content = config.browser.contentWindow;
             let file = content.document.location.pathname.split("/").pop() || "[No Name]";
             let title = content.document.title || "[No Title]";
 
@@ -906,7 +910,7 @@ const Buffer = Module("buffer", {
         // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
         let focusedWindow = document.commandDispatcher.focusedWindow;
         if (focusedWindow == window)
-            focusedWindow = content;
+            focusedWindow = config.browser.contentWindow;
 
         let docCharset = null;
         if (focusedWindow)
@@ -991,7 +995,7 @@ const Buffer = Module("buffer", {
     },
 
     getFocusedWindow: function (win) {
-        win = win || content.window;
+        win = win || config.browser.contentWindow;
         let elem = win.document.activeElement;
         let doc;
         while (doc = elem.contentDocument) {
@@ -1033,7 +1037,7 @@ const Buffer = Module("buffer", {
         if (win && (win.scrollMaxX > 0 || win.scrollMaxY > 0))
             return win;
 
-        win = window.content;
+        win = config.browser.contentWindow;
         if (win.scrollMaxX > 0 || win.scrollMaxY > 0)
             return win;
 
@@ -1212,7 +1216,7 @@ const Buffer = Module("buffer", {
                 if (options["usermode"])
                     options["usermode"] = false;
 
-                window.stylesheetSwitchAll(window.content, arg);
+                window.stylesheetSwitchAll(config.browser.contentWindow, arg);
             },
             {
                 argCount: "?",
@@ -1232,7 +1236,7 @@ const Buffer = Module("buffer", {
         commands.add(["sav[eas]", "w[rite]"],
             "Save current document to disk",
             function (args) {
-                let doc = window.content.document;
+                let doc = config.browser.contentDocument;
                 let chosenData = null;
                 let filename = args[0];
 
@@ -1250,7 +1254,7 @@ const Buffer = Module("buffer", {
                 options.setPref("browser.download.lastDir", io.getCurrentDirectory().path);
 
                 try {
-                    var contentDisposition = window.content
+                    var contentDisposition = config.browser.contentWindow
                                                    .QueryInterface(Ci.nsIInterfaceRequestor)
                                                    .getInterface(Ci.nsIDOMWindowUtils)
                                                    .getDocumentMetadata("content-disposition");
