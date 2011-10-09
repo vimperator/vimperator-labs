@@ -21,11 +21,9 @@ const Addressbook = Module("addressbook", {
             return "";
     },
 
-    getDirectoryFromURI: function (uri) services.get("rdf").GetResource(uri).QueryInterface(Ci.nsIAbDirectory),
-
     add: function (address, firstName, lastName, displayName) {
         const personalAddressbookURI = "moz-abmdbdirectory://abook.mab";
-        let directory = this.getDirectoryFromURI(personalAddressbookURI);
+        let directory = services.get("abManager").getDirectory(personalAddressbookURI);
         let card = Cc["@mozilla.org/addressbook/cardproperty;1"].createInstance(Ci.nsIAbCard);
 
         if (!address || !directory || !card)
@@ -79,9 +77,7 @@ const Addressbook = Module("addressbook", {
             mail.composeNewMail(args);
         }
         else {
-            let list = template.tabular(["Name", "Address"], [],
-                [[util.clip(address[0], 50), address[1]] for ([, address] in Iterator(addresses))]
-            );
+            let list = template.tabular(["Name", "Address"], [[util.clip(address[0], 50), address[1]] for ([, address] in Iterator(addresses))]);
             commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
         }
         return true;
