@@ -199,7 +199,7 @@ const History = Module("history", {
                                             .getService(Components.interfaces.nsIBrowserHistory);
                         var urls = [];
                         items.map(function (i) { urls.push(makeURI(i.url)) });
-                        browserHistory.removePages(urls, urls.length, false);
+                        browserHistory.removePages(urls, urls.length);
                         if (urls.length == 1)
                             liberator.echo("Removed history item " + urls[0].spec);
                         else
