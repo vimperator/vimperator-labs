@@ -33,8 +33,9 @@ AWK  = awk
 CURL = curl
 B64ENCODE = base64
 # Mac OS X's sed and cp is not run because BSD's syntax
-SED  = sed
-CP   = cp
+# use make -e SED=gsed CP=gcp ...
+SED  ?= sed
+CP   ?= cp
 
 .SILENT:
 
