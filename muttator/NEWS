@@ -1,6 +1,8 @@
-2011-10-xx:
+2011-11-13:
     * version 1.1
+    * Compatible with newer Thunderbirds
     * Fixed :contact and :contacts commands to work with newer Thunderbirds
+    * Inherited newly designed Mode display from Vimperator
 
 2011-06-13
     * version 1.0

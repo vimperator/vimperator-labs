@@ -1,6 +1,6 @@
-2011-xx-xx:
+2011-11-13:
     * version 3.3
-    * Firefox 9 compatibility fixes
+    * Firefox 8 and 9 compatibility fixes
     * Reworked mode message handling. The mode message can be shown simultaneoulsy
       with other messages now. Also changed the visual display of a mode.
     * Single line message output with :echo are shown again
