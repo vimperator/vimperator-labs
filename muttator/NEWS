@@ -3,6 +3,7 @@
     * Compatible with newer Thunderbirds
     * Fixed :contact and :contacts commands to work with newer Thunderbirds
     * Inherited newly designed Mode display from Vimperator
+    * Fix ":compose -attachment"
 
 2011-06-13
     * version 1.0

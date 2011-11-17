@@ -171,7 +171,7 @@ const Mail = Module("mail", {
             if (args.attachments) {
                 while (args.attachments.length > 0) {
                     let url = args.attachments.pop();
-                    let file = io.getFile(url);
+                    let file = io.File(url);
                     if (!file.exists())
                         return void liberator.echoerr("Could not attach file: " + url);
 
