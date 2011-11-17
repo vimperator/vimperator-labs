@@ -4,6 +4,7 @@
     * Fixed :contact and :contacts commands to work with newer Thunderbirds
     * Inherited newly designed Mode display from Vimperator
     * Fix ":compose -attachment"
+    * add completer to ":compose -attachment" option
 
 2011-06-13
     * version 1.0

@@ -594,6 +594,15 @@ const Mail = Module("mail", {
                 literal: 0
             });
 
+        function attachmentsCompletion (context) {
+            let i = context.filter.lastIndexOf(",");
+            if (i !== -1)
+                context.advance(i + 1);
+
+            completion.file(context);
+            return context.items;
+        }
+
         commands.add(["c[ompose]"],
             "Compose a new message",
             function (args) {
@@ -619,7 +628,7 @@ const Mail = Module("mail", {
             },
             {
                 options: [[["-subject", "-s"],    commands.OPTION_STRING],
-                          [["-attachment", "-a"], commands.OPTION_LIST],
+                          [["-attachment", "-a"], commands.OPTION_LIST, null, attachmentsCompletion],
                           [["-bcc", "-b"],        commands.OPTION_STRING],
                           [["-cc", "-c"],         commands.OPTION_STRING],
                           [["-text", "-t"],       commands.OPTION_STRING]]
