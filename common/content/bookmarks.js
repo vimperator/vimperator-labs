@@ -672,7 +672,6 @@ const Bookmarks = Module("bookmarks", {
 
             let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
-            let completions = [];
             engineList.forEach(function (name) {
                 let engine = services.get("browserSearch").getEngineByAlias(name);
                 if (!engine)
@@ -685,6 +684,7 @@ const Bookmarks = Module("bookmarks", {
                 ctxt.title = [engine.description + " Suggestions"];
                 ctxt.compare = CompletionContext.Sort.unsorted;
                 ctxt.incomplete = true;
+                ctxt.match = function (str) str.toLowerCase().indexOf(this.filter.toLowerCase()) === 0;
                 bookmarks.getSuggestions(name, ctxt.filter, function (compl) {
                     ctxt.incomplete = false;
                     ctxt.completions = compl;
