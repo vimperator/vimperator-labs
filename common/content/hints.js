@@ -1164,7 +1164,7 @@ const Hints = Module("hints", {
     options: function () {
         const DEFAULT_HINTTAGS =
             util.makeXPath(["input[not(@type='hidden')]", "a", "area", "iframe", "textarea", "button", "select"])
-                + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']"
+                + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link'or @role='button' or @role='checkbox' or @role='combobox' or @role='listbox' or @role='listitem' or @role='menuitem' or @role='menuitemcheckbox' or @role='menuitemradio' or @role='option' or @role='radio' or @role='scrollbar' or @role='slider' or @role='spinbutton' or @role='tab' or @role='textbox' or @role='treeitem' or @tabindex]"
                 + (config.name == "Muttator" ?
                     " | //xhtml:div[@class='wrappedsender']/xhtml:div[contains(@class,'link')]" :
                     "");
