@@ -21,7 +21,8 @@ const Hints = Module("hints", {
         this._extendedhintCount = null;  // for the count argument of Mode#action (extended hint only)
 
         this._pageHints = [];
-        this._validHints = []; // store the indices of the "hints" array with valid elements
+        this._validHints = [];           // store the indices of the "hints" array with valid elements
+        this._tabNavigation = {};        // for navigating between valid hints when TAB key is pressed
 
         this._activeTimeout = null;  // needed for hinttimeout > 0
         this._canUpdate = false;
@@ -88,6 +89,7 @@ const Hints = Module("hints", {
         this._prevInput = "";
         this._pageHints = [];
         this._validHints = [];
+        this._tabNavigation = {};
         this._canUpdate = false;
         this._docs = [];
         hints.escNumbers = false;
@@ -411,6 +413,10 @@ const Hints = Module("hints", {
         let validHint = this._hintMatcher(this._hintString.toLowerCase());
         let activeHint = this._hintNumber || 1;
         this._validHints = [];
+        this._tabNavigation = {};
+        let firstHint = null;
+        let lastHint = null;
+        let prevHint = null;
         let activeHintChars = this._num2chars(activeHint);
 
         for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
@@ -464,9 +470,21 @@ const Hints = Module("hints", {
                 else
                     this._setClass(hint.elem, activeHint == hintnum);
                 this._validHints.push(hint.elem);
+
+                // Set up tab navigation for valid hints
+                firstHint = (firstHint ) ? firstHint : hintnum ;
+                lastHint = hintnum;
+                prevHint = (prevHint) ? prevHint : hintnum;
+                this._tabNavigation[hintnum] = {prev: prevHint, next:prevHint};
+                this._tabNavigation[prevHint].next = hintnum;
+                prevHint = hintnum;
+
                 hintnum++;
             }
         }
+
+        this._tabNavigation[firstHint].prev = lastHint;
+        this._tabNavigation[lastHint].next = firstHint;
 
         if (config.browser.markupDocumentViewer.authorStyleDisabled) {
             let css = [];
@@ -899,14 +917,11 @@ const Hints = Module("hints", {
                 this._hintNumber = 1;
 
             let oldId = this._hintNumber;
-            if (key == "<Tab>") {
-                if (++this._hintNumber > this._validHints.length)
-                    this._hintNumber = 1;
-            }
-            else {
-                if (--this._hintNumber < 1)
-                    this._hintNumber = this._validHints.length;
-            }
+            if (key == "<Tab>")
+                this._hintNumber = this._tabNavigation[this._hintNumber].next;
+            else
+                this._hintNumber = this._tabNavigation[this._hintNumber].prev;
+
             this._showActiveHint(this._hintNumber, oldId);
             this._updateStatusline();
             return;
