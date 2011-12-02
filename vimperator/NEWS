@@ -1,6 +1,7 @@
 201x-xx-xx:
     * version 3.4
     * hinttags fixes for gmail and other apps
+    * Pressing Tab works correctly in hint mode when the list of hints has been filtered
 
 2011-11-13:
     * version 3.3
