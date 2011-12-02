@@ -606,11 +606,7 @@
     <tags>'ht' 'hinttags'</tags>
     <spec>'hinttags' 'ht'</spec>
     <type>string</type>
-    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
-//a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
-//textarea | //xhtml:textarea | //button | //xhtml:button | //select |
-//xhtml:select |
-//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']</default>
+    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] | //a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe | //textarea | //xhtml:textarea | //button | //xhtml:button | //select | //xhtml:select | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link'or @role='button' or @role='checkbox' or @role='combobox' or @role='listbox' or @role='listitem' or @role='menuitem' or @role='menuitemcheckbox' or @role='menuitemradio' or @role='option' or @role='radio' or @role='scrollbar' or @role='slider' or @role='spinbutton' or @role='tab' or @role='textbox' or @role='treeitem' or @tabindex]</default>
     <description>
         <p>XPath string of hintable elements activated by <k>f</k> and <k>F</k></p>
     </description>
