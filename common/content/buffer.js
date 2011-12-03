@@ -1060,7 +1060,7 @@ const Buffer = Module("buffer", {
                 let borderSize = parseInt(style[border1]) + parseInt(style[border2]);
                 let realSize = elem[size];
                 // Stupid Gecko eccentricities. May fail for quirks mode documents.
-                if (elem[size] + borderSize == elem[max] || elem[size] == 0) // Stupid, fallible heuristic.
+                if (elem[size] + borderSize >= elem[max] || elem[size] == 0) // Stupid, fallible heuristic.
                     continue;
                 if (style[overflow] == "hidden")
                     realSize += borderSize;

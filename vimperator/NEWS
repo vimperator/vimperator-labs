@@ -1,5 +1,6 @@
 201x-xx-xx:
     * version 3.4
+    * Scrolling some divs failed previously when using "j". Should work now. Thanks dom.lobue
     * hinttags fixes for gmail and other apps
     * Pressing Tab works correctly in hint mode when the list of hints has been filtered
 
