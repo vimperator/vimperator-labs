@@ -645,6 +645,7 @@ const CommandLine = Module("commandline", {
         this.show();
         this._commandWidget.focus();
 
+        this._history = CommandLine.History(this._commandWidget.inputField, (modes.extended == modes.EX) ? "command" : "search");
         this._completions = CommandLine.Completions(this._commandWidget.inputField);
     },
 

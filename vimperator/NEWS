@@ -3,6 +3,7 @@
     * Scrolling some divs failed previously when using "j". Should work now. Thanks dom.lobue
     * hinttags fixes for gmail and other apps
     * Pressing Tab works correctly in hint mode when the list of hints has been filtered
+    * Search history is accessible again
 
 2011-11-13:
     * version 3.3
