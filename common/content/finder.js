@@ -242,7 +242,7 @@ const Finder = Module("finder", {
         this._processUserPattern(str);
         fastFind.caseSensitive = this._caseSensitive;
         let result = fastFind.find(this._searchString, this._linksOnly);
-        this._displayFindResult(result);
+        this._displayFindResult(result, this._backwards);
     },
 
     /**
@@ -261,7 +261,7 @@ const Finder = Module("finder", {
 
         let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
         let result = config.browser.fastFind.findAgain(backwards, this._linksOnly);
-        this._displayFindResult(result);
+        this._displayFindResult(result, backwards);
 
     },
 
@@ -270,7 +270,6 @@ const Finder = Module("finder", {
             liberator.echoerr("Pattern not found: " + this._searchString, commandline.FORCE_SINGLELINE);
         }
         else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
-            // FIXME: Always prints BOTTOM -> TOP
             let msg = backwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
             commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
         }
