@@ -5,6 +5,7 @@
     * Pressing Tab works correctly in hint mode when the list of hints has been filtered
     * Search history is accessible again
     * Display correct status messages when a text search reaches either end of the buffer
+    * Url links in :jump list are clickable again
 
 2011-11-13:
     * version 3.3

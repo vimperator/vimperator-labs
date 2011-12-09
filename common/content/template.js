@@ -285,7 +285,10 @@ const Template = Module("template", {
             return template.map(Iterator(row), function ([i, d]) {
                 let style = ((columns && columns[i] && columns[i].style) || "") + (i == (row.length - 1) ? "; width: 100%" : ""); // the last column should take the available space -> width: 100%
                 let highlight = (columns && columns[i] && columns[i].highlight) || "";
-                return <td style={style} highlight={highlight}>{template.maybeXML(d)}</td>;
+                if (columns[i].highlight == "URL jump-list")
+                    return <td style={style} highlight={highlight}><a href={d}>{d}</a></td>;
+                else
+                    return <td style={style} highlight={highlight}>{template.maybeXML(d)}</td> ;
             });
         }
 
