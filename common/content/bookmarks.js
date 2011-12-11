@@ -448,7 +448,6 @@ const Bookmarks = Module("bookmarks", {
         commands.add(["ju[mps]"],
             "Show jumplist",
             function () {
-                // TODO: Make url clicking work again. Old code: <td><a href={val.URI.spec} highlight="URL jump-list">{val.URI.spec}</a></td>
                 let sh = history.session;
                 let jumps = [[idx == sh.index ? ">" : "", Math.abs(idx - sh.index), val.title, val.URI.spec] for ([idx, val] in Iterator(sh))];
                 let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 }, { header: "", style: "text-align: right", highlight: "Number" },
