@@ -11,9 +11,6 @@
 //   - add support for :set sanitizeitems=all like 'eventignore'?
 //   - integrate with the Clear Private Data dialog?
 
-// FIXME:
-//   - finish 1.9.0+ support if we're going to support sanitizing in Xulmus
-
 const Sanitizer = Module("sanitizer", {
     requires: ["liberator"],
 

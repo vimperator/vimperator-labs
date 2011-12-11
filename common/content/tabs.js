@@ -1108,7 +1108,6 @@ const Tabs = Module("tabs", {
                     ]
                 });
 
-            // TODO: Is this really applicable to Xulmus?
             options.add(["popups", "pps"],
                 "Where to show requested popup windows",
                 "stringlist", "tab",

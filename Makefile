@@ -1,4 +1,4 @@
-DIRS = muttator vimperator xulmus
+DIRS = muttator vimperator
 TARGETS = clean doc help info xpi
 .SILENT:
 
