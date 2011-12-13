@@ -333,7 +333,7 @@ const Liberator = Module("liberator", {
      *     should be loaded.
      */
     loadScript: function (uri, context) {
-        XML.ignoreWhiteSpace = false;
+        XML.ignoreWhitespace = false;
         XML.prettyPrinting = false;
         services.get("subscriptLoader").loadSubScript(uri, context, "UTF-8");
     },
@@ -577,9 +577,9 @@ const Liberator = Module("liberator", {
         });
 
         // Process plugin help entries.
-        XML.ignoreWhiteSpace = false;
+        XML.ignoreWhitespace = false;
         XML.prettyPrinting = false;
-        XML.prettyPrinting = true; // Should be false, but ignoreWhiteSpace=false doesn't work correctly. This is the lesser evil.
+        XML.prettyPrinting = true; // Should be false, but ignoreWhitespace=false doesn't work correctly. This is the lesser evil.
         XML.prettyIndent = 4;
 
         let lang = options.getPref("general.useragent.locale", "en-US");

@@ -1711,7 +1711,7 @@ const ItemList = Class("ItemList", {
      * @param {number} offset Start at this index and show options["maxitems"].
      */
     _fill: function (offset) {
-        XML.ignoreWhiteSpace = false;
+        XML.ignoreWhitespace = false;
         let diff = offset - this._startIndex;
         if (this._items == null || offset == null || diff == 0 || offset < 0)
             return false;
