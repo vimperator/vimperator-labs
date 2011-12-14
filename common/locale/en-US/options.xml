@@ -1288,7 +1288,7 @@
     <tags>'urlseparator'</tags>
     <spec>'urlseparator'</spec>
     <type>string</type>
-    <default>,\s</default>
+    <default>,\\s</default>
     <description>
         <p>
             Set the separator regex used to separate multiple URL args. Multiple
@@ -1298,6 +1298,11 @@
             E.g., <ex>:open linus torvalds</ex> should perform a single search
             for the key words <str>linus</str> and <str>torvalds</str>. If this
             is set to the empty string then these arguments will never be split.
+
+        </p>
+        <p>
+            If regex special character is used as url separator, it has to be escaped.
+            For instance, <str>|</str> should be escaped as <str>\\|</str>.
         </p>
     </description>
 </item>

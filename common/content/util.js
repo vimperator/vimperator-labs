@@ -261,8 +261,11 @@ const Util = Module("util", {
         while (cont) {
             cont = false;
             str = str.replace(resep, function (match, before) {
-                results.push(before);
-                cont = true;
+                cont = false;
+                if (before) {
+                    results.push(before);
+                    cont = true;
+                }
                 return "";
             });
         }
