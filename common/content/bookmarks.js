@@ -449,8 +449,13 @@ const Bookmarks = Module("bookmarks", {
             "Show jumplist",
             function () {
                 let sh = history.session;
-                let jumps = [[idx == sh.index ? ">" : "", Math.abs(idx - sh.index), val.title, val.URI.spec] for ([idx, val] in Iterator(sh))];
-                let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 }, { header: "", style: "text-align: right", highlight: "Number" },
+                let jumps = [[idx == sh.index ? ">" : "",
+                              Math.abs(idx - sh.index),
+                              val.title,
+                              let(url=val.URI.spec) <a highlight="URL" href={url}>{url}</a>]
+                              for ([idx, val] in Iterator(sh))];
+                let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 },
+                    { header: "", style: "text-align: right", highlight: "Number" },
                     { header: "Title", style: "width: 250px; max-width: 500px; overflow: hidden" },
                     { header: "URL", highlight: "URL jump-list" }],
                     jumps);
