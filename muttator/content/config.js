@@ -28,9 +28,8 @@ const Config = Module("config", ConfigBase, {
         composition: [["composeToolbar2"],                                   "Composition toolbar"],
         folderlist:  [["folderPaneBox", "folderpane_splitter"],              "Folder list"],
         mail:        [["mail-bar3"],                                         "Main toolbar for getting mail and composing new ones."],
-        menu:        [["mail-toolbar-menubar2", "compose-toolbar-menubar2"], "Menu Bar"],/*,
-        // TODO: stupid element doesn't have an id!
-        tabs:       [[function(visible) document.getElementById("tabmail").tabStrip.collapsed = !visible],       "Tab bar"]*/
+        menu:        [["mail-toolbar-menubar2", "compose-toolbar-menubar2"], "Menu Bar"],
+        tabs:        [["tabs-toolbar"],                                      "Tab bar"],
         status:      [["status-bar"],                                        "Status Bar"]
     },
 
