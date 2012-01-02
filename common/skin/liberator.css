@@ -101,6 +101,10 @@
     border-width: 0px !important;
 }
 
+#liberator-bottombar:-moz-lwtheme {
+    text-shadow: none;
+}
+
 /* all elements in the statusline and commandline need some padding to look good */
 #liberator-statusline {
     font-family: monospace;
