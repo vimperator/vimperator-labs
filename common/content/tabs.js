@@ -227,18 +227,6 @@ const Tabs = Module("tabs", {
                     else
                         liberator.beep();
                 },
-                Songbird: function (tab) {
-                    if (config.tabbrowser.mTabs.length > 1)
-                        config.tabbrowser.removeTab(tab);
-                    else {
-                        if (buffer.URL != "about:blank" || window.getWebNavigation().sessionHistory.count > 0) {
-                            liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
-                            config.tabbrowser.removeTab(tab);
-                        }
-                        else
-                            liberator.beep();
-                    }
-                }
             }[config.hostApplication] || function () {};
 
         if (typeof count != "number" || count < 1)
