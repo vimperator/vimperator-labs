@@ -7,6 +7,7 @@
     * Display correct status messages when a text search reaches either end of the buffer
     * Url links in :jump list are clickable again
     * Gracefully handle unescaped regex characters in 'urlseparator' option
+    * :sanitize now respects timespan values
 
 2011-11-13:
     * version 3.3

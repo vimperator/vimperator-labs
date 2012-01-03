@@ -40,15 +40,8 @@ const Sanitizer = Module("sanitizer", {
             }
         }
 
-        // Cache the range of times to clear
-        if (this.ignoreTimespan)
-            var range = null;  // If we ignore timespan, clear everything
-        else
-            range = this.range || Sanitizer.getClearRange();
-
         for (let itemName in this.items) {
             let item = this.items[itemName];
-            item.range = range;
 
             if ("clear" in item && item.canClear && prefSet(itemName)) {
                 liberator.echomsg("Sanitizing " + itemName + " items...");
@@ -83,10 +76,10 @@ const Sanitizer = Module("sanitizer", {
             function (args) {
                 liberator.assert(!options['private'], "Cannot sanitize items in private mode");
 
-                let timespan = args["-timespan"] || options["sanitizetimespan"];
+                let timespan = args["-timespan"] == undefined ? options["sanitizetimespan"] : args["-timespan"];
 
                 sanitizer.range = Sanitizer.getClearRange(timespan);
-                sanitizer.ignoreTimespan = !sanitizer.range;
+
 
                 if (args.bang) {
                     liberator.assert(args.length == 0, "Trailing characters");
@@ -102,13 +95,18 @@ const Sanitizer = Module("sanitizer", {
                 }
                 else {
                     liberator.assert(args.length > 0, "Argument required");
+                    for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
+                        if (!options.get("sanitizeitems").isValidValue(item)) {
+                            liberator.echoerr("Invalid data item: " + item);
+                            return;
+                        }
+                    }
+
+                    liberator.echomsg("Sanitizing " + args + " items...");
 
                     for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
-                        liberator.echomsg("Sanitizing " + item + " items...");
-
                         if (sanitizer.canClearItem(item)) {
                             try {
-                                sanitizer.items[item].range = sanitizer.range;
                                 sanitizer.clearItem(item);
                             }
                             catch (e) {
@@ -188,6 +186,7 @@ const Sanitizer = Module("sanitizer", {
                 let func = item.clear;
                 item.clear = function () {
                     autocommands.trigger("Sanitize", { name: arg });
+                    item.range = sanitizer.range;
                     func.call(item);
                 };
             }
