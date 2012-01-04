@@ -301,13 +301,13 @@ See <t>opening</t> for other ways to open new tabs.
 <h2 tag="closing-tabs">Closing tabs</h2>
 
 <item>
-    <tags>d :tabc :tabclose :bun :bunload :bw :bwipeout :bd :bdelete</tags>
-    <spec>:<oa>count</oa>bd<oa>elete</oa><oa>!</oa> <oa>arg</oa></spec>
-    <spec><oa>count</oa>d</spec>
+    <tags>:tabc :tabclose :bun :bunload :bw :bwipeout :bd :bdelete</tags>
+    <spec>:<oa>count</oa>bd<oa>elete</oa><oa>!</oa> <oa>-s<oa>elect</oa> <o>lastactive|left|right</o></oa> <oa>arg</oa></spec>
+
     <description>
         <p>
-            Delete current buffer (=tab). If <oa>count</oa> is specified then <oa>count</oa> tabs are
-            removed. Afterwards, the tab to the right of the deleted tab(s) is selected.
+            Delete current tab. If <oa>count</oa> is specified then <oa>count</oa> tabs are
+            removed. By default, the tab to the right of the deleted tab(s) is selected.
         </p>
 
         <p>
@@ -315,6 +315,27 @@ See <t>opening</t> for other ways to open new tabs.
             hostname. <oa>!</oa> forces this command to also search for <oa>arg</oa> in the full
             URL and also the title of the tab, and closes even if the tab is an App tab.
             Use with care.
+        </p>
+        <p>
+            The <oa>-select</oa> option specifies which tab is selected after closing the current one:
+            Possible values are:
+            <ul>
+                <li>left</li>
+                <li>right</li>
+                <li>lastactive</li>
+            </ul>
+
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>d</tags>
+    <spec><oa>count</oa>d</spec>
+    <description>
+        <p>
+            Delete current buffer tab. If <oa>count</oa> is specified then <oa>count</oa> tabs are
+            removed. Afterwards, the tab to the right of the deleted tab(s) is selected.
         </p>
     </description>
 </item>

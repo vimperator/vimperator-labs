@@ -197,7 +197,10 @@ const Tabs = Module("tabs", {
      *
      * @param {Object} tab The tab to remove.
      * @param {number} count How many tabs to remove.
-     * @param {boolean} focusLeftTab Focus the tab to the left of the removed tab.
+     * @param {number} orientation Focus orientation
+     *         1  - Focus the tab to the right of the remove tab.
+     *         0  - Focus the altanate tab of the remove tab. if alternate tab is none, same as 1
+     *         -1 - Focus the tab to the left of the remove tab.
      * @param {number} quitOnLastTab Whether to quit if the tab being
      *     deleted is the only tab in the tab list:
      *         1 - quit without saving session
@@ -205,7 +208,7 @@ const Tabs = Module("tabs", {
      * @param {boolean} force Close even if the tab is an app tab.
      */
     // FIXME: what is quitOnLastTab {1,2} all about then, eh? --djk
-    remove: function (tab, count, focusLeftTab, quitOnLastTab, force) {
+    remove: function (tab, count, orientation, quitOnLastTab, force) {
         let vTabs = config.tabbrowser.visibleTabs;
         let removeOrBlankTab = {
                 Firefox: function (tab) {
@@ -240,6 +243,8 @@ const Tabs = Module("tabs", {
 
             return;
         }
+        if (!orientation)
+            orientation = 0;
 
         let index = vTabs.indexOf(tab);
         // should close even if the tab is not visible such as ":tabclose arg"
@@ -254,7 +259,7 @@ const Tabs = Module("tabs", {
         }
 
         let start, end, selIndex = 0;
-        if (focusLeftTab) {
+        if (orientation < 0) {
             start = Math.max(0, index - count + 1);
             end = index;
         }
@@ -271,12 +276,22 @@ const Tabs = Module("tabs", {
                 return;
         }
 
-        if ((focusLeftTab && 0 < start - 1) || selIndex >= vTabs.length)
+        if ((orientation < 0 && 0 < start - 1) || selIndex >= vTabs.length)
             selIndex = start - 1;
 
         let currentIndex = vTabs.indexOf(tabs.getTab());
-        if (start <= currentIndex && currentIndex <= end)
-            config.tabbrowser.mTabContainer.selectedItem = vTabs[selIndex];
+        if (start <= currentIndex && currentIndex <= end) {
+            let selTab = vTabs[selIndex];
+            if (orientation == 0 &&
+                config.tabbrowser.mTabContainer.contains(this.alternate) &&
+                !this.alternate.hidden) // XXX: should be in the visible tabs ?
+            {
+                let lastTabIndex = vTabs.indexOf(this.alternate);
+                if (lastTabIndex < start || end < lastTabIndex)
+                    selTab = this.alternate;
+            }
+            config.tabbrowser.mTabContainer.selectedItem = selTab;
+        }
 
         for (let i = end; i >= start; i--) {
             removeOrBlankTab(vTabs[i]);
@@ -602,12 +617,19 @@ const Tabs = Module("tabs", {
                 let count   = args.count;
                 let arg     = args.literalArg;
 
+                let orientation = 1;
+                if (args["-select"] === "lastactive") {
+                    orientation = 0;
+                } else if (args["-select"] === "left") {
+                    orientation = -1;
+                }
+
                 if (arg) {
                     let removed = 0;
                     let matches = arg.match(/^(\d+):?/);
 
                     if (matches) {
-                        tabs.remove(tabs.getTab(parseInt(matches[1], 10) - 1), 1, false, 0, special);
+                        tabs.remove(tabs.getTab(parseInt(matches[1], 10) - 1), 1, orientation, 0, special);
                         removed = 1;
                     }
                     else {
@@ -629,7 +651,7 @@ const Tabs = Module("tabs", {
 
                             if (host.indexOf(str) >= 0 || uri == str ||
                                 (special && (title.indexOf(str) >= 0 || uri.indexOf(str) >= 0))) {
-                                tabs.remove(tabs.getTab(i), 1, false, 0, special);
+                                tabs.remove(tabs.getTab(i), 1, orientation, 0, special);
                                 removed++;
                             }
                         }
@@ -643,11 +665,17 @@ const Tabs = Module("tabs", {
                         liberator.echoerr("No matching tab for: " + arg);
                 }
                 else // just remove the current tab
-                    tabs.remove(tabs.getTab(), Math.max(count, 1), false, 0, special);
+                    tabs.remove(tabs.getTab(), Math.max(count, 1), orientation, 0, special);
             }, {
                 argCount: "?",
                 bang: true,
                 count: true,
+                options: [
+                    [["-select", "-s"], commands.OPTION_STRING, null,
+                        [["lastactive", "Select last active tab"],
+                         ["left", "Select the tab to the left"],
+                         ["right", "Select the tab to the right"]]],
+                ],
                 completer: function (context) completion.buffer(context),
                 literal: 0
             });
@@ -1024,13 +1052,13 @@ const Tabs = Module("tabs", {
                 function () { tabs.list(false); commandline.show("buffers"); });
 
             mappings.add([modes.NORMAL], ["d"],
-                "Delete current buffer",
-                function (count) { tabs.remove(tabs.getTab(), count, false, 0); },
+                "Delete current tab and select the tab to the right",
+                function (count) { tabs.remove(tabs.getTab(), count, 1, 0); },
                 { count: true });
 
             mappings.add([modes.NORMAL], ["D"],
-                "Delete current buffer, focus tab to the left",
-                function (count) { tabs.remove(tabs.getTab(), count, true, 0); },
+                "Delete current buffer and select the tab to the left",
+                function (count) { tabs.remove(tabs.getTab(), count, -1, 0); },
                 { count: true });
 
             mappings.add([modes.NORMAL], ["gb"],
