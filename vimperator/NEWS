@@ -9,6 +9,7 @@
     * Gracefully handle unescaped regex characters in 'urlseparator' option
     * :sanitize now respects timespan values
     * add '-select' option to :tabclose command for specifiying which tab is selected after closing the current one
+    * Deleting local marks with :delmarks[!] command is working now
 
 2011-11-13:
     * version 3.3

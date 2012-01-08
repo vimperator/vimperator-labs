@@ -81,27 +81,25 @@ const Marks = Module("marks", {
     },
 
     /**
-     * Remove all marks matching <b>filter</b>. If <b>special</b> is
-     * given, removes all local marks.
+     * Remove the specified local marks. The <b>filter</b> is a list of
+     * local marks. Ranges are supported. Eg. "ab c d e-k".
      *
-     * @param {string} filter A string containing one character for each
-     *     mark to be removed.
-     * @param {boolean} special Whether to delete all local marks.
+     * @param {string} filter A string containing local marks to be removed.
      */
-    // FIXME: Shouldn't special be replaced with a null filter?
-    remove: function (filter, special) {
-        if (special) {
+    remove: function (filter) {
+        if (!filter) {
             // :delmarks! only deletes a-z marks
             for (let [mark, ] in this._localMarks)
                 this._removeLocalMark(mark);
         }
         else {
+            let pattern = RegExp("[" + filter.replace(/\s+/g, "") + "]");
             for (let [mark, ] in this._urlMarks) {
-                if (filter.indexOf(mark) >= 0)
+                if (pattern.test(mark))
                     this._removeURLMark(mark);
             }
             for (let [mark, ] in this._localMarks) {
-                if (filter.indexOf(mark) >= 0)
+                if (pattern.test(mark))
                     this._removeLocalMark(mark);
             }
         }
@@ -203,10 +201,8 @@ const Marks = Module("marks", {
             for (let [i, ] in Iterator(localmark)) {
                 if (localmark[i].location == win.location.href) {
                     localmark.splice(i, 1);
-                    if (localmark.length == 0) {
+                    if (localmark.length == 0)
                         this._localMarks.remove(mark);
-                        liberator.echomsg("Deleted local mark: " + Marks.markToString(mark, localmark[i]));
-                    }
                     break;
                 }
             }
@@ -215,10 +211,8 @@ const Marks = Module("marks", {
 
     _removeURLMark: function _removeURLMark(mark) {
         let urlmark = this._urlMarks.get(mark);
-        if (urlmark) {
+        if (urlmark)
             this._urlMarks.remove(mark);
-            liberator.echomsg("Deleted URL mark: " + Marks.markToString(mark, urlmark));
-        }
     },
 
     _localMarkIter: function _localMarkIter() {
@@ -265,27 +259,30 @@ const Marks = Module("marks", {
         commands.add(["delm[arks]"],
             "Delete the specified marks",
             function (args) {
-                let special = args.bang;
-                args = args.string;
+                liberator.assert( args.bang ||  args.string, "Argument required");
+                liberator.assert(!args.bang || !args.string, "Invalid argument");
 
-                liberator.assert( special ||  args, "Argument required");
-                liberator.assert(!special || !args, "Invalid argument");
+                if (args.bang) {
+                    marks.remove();
+                } else {
+                    args = args.string;
+                    let matches = args.match(/((^|[^a-zA-Z])-|-($|[^a-zA-Z])|[^a-zA-Z -]).*/);
+                    // NOTE: this currently differs from Vim's behavior which
+                    // deletes any valid marks in the arg list, up to the first
+                    // invalid arg, as well as giving the error message.
+                    let msg = matches ? "Invalid argument:" + matches[0] : "";
+                    liberator.assert(!matches, msg);
 
-                let matches = args.match(/(?:(?:^|[^a-zA-Z0-9])-|-(?:$|[^a-zA-Z0-9])|[^a-zA-Z0-9 -]).*/);
-                // NOTE: this currently differs from Vim's behavior which
-                // deletes any valid marks in the arg list, up to the first
-                // invalid arg, as well as giving the error message.
-                liberator.assert(!matches, "Invalid argument: " + matches[0]);
-
-                // check for illegal ranges - only allow a-z A-Z 0-9
-                if ((matches = args.match(/[a-zA-Z0-9]-[a-zA-Z0-9]/g))) {
-                    for (let match in values(matches))
-                        liberator.assert(/[a-z]-[a-z]|[A-Z]-[A-Z]|[0-9]-[0-9]/.test(match) &&
-                                         match[0] <= match[2],
-                            "Invalid argument: " + args.match(match + ".*")[0]);
+                    // check for illegal ranges - only allow a-z A-Z
+                    if (matches = args.match(/[a-zA-Z]-[a-zA-Z]/g)) {
+                        for (let match in values(matches)) {
+                            liberator.assert(/[a-z]-[a-z]|[A-Z]-[A-Z]/.test(match) &&
+                                    match[0] <= match[2],
+                                    "Invalid argument: " + args.match(match + ".*")[0]);
+                        }
+                    }
+                    marks.remove(args);
                 }
-
-                marks.remove(args, special);
             },
             {
                 bang: true,
