@@ -44,10 +44,10 @@ const Command = Class("Command", {
             throw Error("Invalid command name");
 
         this.specs = specs;
-        this.shortNames = array(parsedSpecs).map(function (n) n[1]).compact();
+        this.shortNames = parsedSpecs.reduce(function(r,c){c[1]&&r.push(c[1]);return r;}, []);
         this.longNames = parsedSpecs.map(function (n) n[0]);
         this.name = this.longNames[0];
-        this.names = array(parsedSpecs).flatten();
+        this.names = parsedSpecs.reduce(function(r,c) r.concat(c), []);
         this.description = description;
         this.action = action;
 
