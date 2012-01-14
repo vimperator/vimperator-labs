@@ -1456,7 +1456,7 @@ const Buffer = Module("buffer", {
               .XULBrowserWindow = this.progressListener;
 
         try {
-            config.browser.addProgressListener(this.progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
+            config.browser.addProgressListener(this.progressListener);
         }
         catch (e) {} // Why? --djk
 
