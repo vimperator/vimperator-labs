@@ -334,7 +334,7 @@ function Class() {
     Constructor.__proto__ = superclass;
     Constructor.name = name || superclass.name;
 
-    if (!("init" in superclass.prototype)) {
+    if (!("init" in superclass.prototype) && !("init" in args[0])) {
         var superc = superclass;
         superclass = function Shim() {};
         extend(superclass, superc, {
