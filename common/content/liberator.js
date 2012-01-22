@@ -55,8 +55,6 @@ const Liberator = Module("liberator", {
 
     init: function () {
         window.liberator = this;
-        window.liberator = this;
-        modules.liberator = this;
         this.observers = {};
         this.modules = modules;
 

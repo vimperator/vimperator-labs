@@ -332,7 +332,6 @@ function Class() {
     var Constructor = eval("(function " + (name || superclass.name).replace(/\W/g, "_") +
             String.substr(constructor, 20) + ")");
     Constructor.__proto__ = superclass;
-    Constructor.name = name || superclass.name;
 
     if (!("init" in superclass.prototype) && !("init" in args[0])) {
         var superc = superclass;
