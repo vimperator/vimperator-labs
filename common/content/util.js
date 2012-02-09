@@ -470,13 +470,11 @@ const Util = Module("util", {
             null
         );
 
+        result.__iterator__ = asIterator
+                            ? function () { let elem; while ((elem = this.iterateNext())) yield elem; }
+                            : function () { for (let i = 0; i < this.snapshotLength; i++) yield this.snapshotItem(i); };
 
-        return {
-            __proto__: result,
-            __iterator__: asIterator
-                ? function () { let elem; while ((elem = this.iterateNext())) yield elem; }
-                : function () { for (let i = 0; i < this.snapshotLength; i++) yield this.snapshotItem(i); }
-        };
+        return result;
     },
 
     /**
