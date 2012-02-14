@@ -21,7 +21,7 @@ DOC_FILES     = $(foreach dir,$(LOCALEDIR),$(wildcard $(dir)/*.xml))
 # XPI_TEXTS     = js jsm
 
 XPI_FILES     = install.rdf TODO AUTHORS NEWS chrome.manifest ../License.txt
-XPI_DIRS      = $(COMMON_DIR)/components components
+XPI_DIRS      = components $(COMMON_DIR)/components
 CHROME_DIRS   = content skin $(LOCALEDIR)
 COMMON_CHROME_DIRS   = content skin modules $(LOCALEDIR)
 
