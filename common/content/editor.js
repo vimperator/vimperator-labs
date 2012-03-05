@@ -294,7 +294,7 @@ const Editor = Module("editor", {
     },
 
     // TODO: clean up with 2 functions for textboxes and currentEditor?
-    editFieldExternally: function (forceEditing) {
+    editFieldExternally: function (forceEditing,field) {
         if (!options["editor"])
             return;
 
@@ -310,14 +310,18 @@ const Editor = Module("editor", {
             nsEditor instanceof Ci.nsIHTMLEditor;
         }
         else {
-            textBox = liberator.focus;
+	    if (field !== undefined) {
+		    textBox = field; // if I reply 'yes', textBox.value == 'yes', so get the real value
+	    } else {
+		    textBox = liberator.focus;
+	    }
         }
 
         if (!forceEditing && textBox && textBox.type == "password") {
             commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
                 function (resp) {
                     if (resp && resp.match(/^y(es)?$/i))
-                        editor.editFieldExternally(true);
+                        editor.editFieldExternally(true,textBox);
                 });
                 return;
         }
