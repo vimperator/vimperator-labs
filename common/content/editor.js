@@ -294,7 +294,7 @@ const Editor = Module("editor", {
     },
 
     // TODO: clean up with 2 functions for textboxes and currentEditor?
-    editFieldExternally: function (forceEditing,field) {
+    editFieldExternally: function (forceEditing, field) {
         if (!options["editor"])
             return;
 
@@ -321,7 +321,7 @@ const Editor = Module("editor", {
             commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
                 function (resp) {
                     if (resp && resp.match(/^y(es)?$/i))
-                        editor.editFieldExternally(true,textBox);
+                        editor.editFieldExternally(true, textBox);
                 });
                 return;
         }
