@@ -17,7 +17,7 @@ const Tabs = Module("tabs", {
     requires: ["config"],
 
     init: function () {
-        this._alternates = [config.tabbrowser.mCurrentTab, null];
+        this.updateSelectionHistory([config.tabbrowser.mCurrentTab, null]);
 
         // used for the "gb" and "gB" mappings to remember the last :buffer[!] command
         this._lastBufferSwitchArgs = "";
@@ -43,7 +43,10 @@ const Tabs = Module("tabs", {
      * @property {Object} The previously accessed tab or null if no tab
      *     other than the current one has been accessed.
      */
-    get alternate() this._alternates[1],
+    get alternate() {
+        var tab = this._alternates[1] ? this._alternates[1].get() : null;
+        return (tab && tab.parentNode) ? tab : null;
+    },
 
     /**
      * @property {Iterator(Object)} A genenerator that returns all browsers
@@ -555,7 +558,16 @@ const Tabs = Module("tabs", {
      * @see tabs#alternate
      */
     updateSelectionHistory: function (tabs) {
-        this._alternates = tabs || [this.getTab(), this._alternates[0]];
+        var tab1, tab2;
+        if (tabs && tabs.length > 1) {
+            tab1 = tabs[0] ? Cu.getWeakReference(tabs[0]) : null,
+            tab2 = tabs[1] ? Cu.getWeakReference(tabs[1]) : null;
+        }
+        else {
+            tab1 = Cu.getWeakReference(this.getTab()),
+            tab2 = this._alternates[0];
+        }
+        this._alternates = [tab1, tab2];
     }
 }, {
     copyTab: function (to, from) {
