@@ -1152,7 +1152,7 @@ const Buffer = Module("buffer", {
         commands.add(["frameo[nly]"],
             "Show only the current frame's page",
             function (args) {
-                liberator.open(tabs.localStore.focusedFrame.document.documentURI);
+                liberator.open(buffer.localStore.focusedFrame.document.documentURI);
             },
             { argCount: "0" });
 

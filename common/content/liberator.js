@@ -454,7 +454,7 @@ const Liberator = Module("liberator", {
         try {
             if (this.has("tabs")) {
                 // select top most frame in a frameset
-                let frame = tabs.localStore.focusedFrame;
+                let frame = buffer.localStore.focusedFrame;
                 if (frame && frame.top == window.content)
                     elem = frame;
             }

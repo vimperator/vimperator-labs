@@ -654,8 +654,8 @@ const Events = Module("events", {
         let win  = window.document.commandDispatcher.focusedWindow;
         let elem = window.document.commandDispatcher.focusedElement;
 
-        if (win && win.top == content && liberator.has("tabs"))
-            tabs.localStore.focusedFrame = win;
+        if (win && win.top == content)
+            buffer.localStore.focusedFrame = win;
 
         try {
             if (elem && elem.readOnly)
