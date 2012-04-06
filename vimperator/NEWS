@@ -1,5 +1,6 @@
-201x-xx-xx:
+2012-04-02: It's not an April's fool
     * version 3.4
+    * Fixed a mem leak when closing tabs
     * Scrolling some divs failed previously when using "j". Should work now. Thanks dom.lobue
     * hinttags fixes for gmail and other apps
     * Pressing Tab works correctly in hint mode when the list of hints has been filtered
@@ -10,6 +11,7 @@
     * :sanitize now respects timespan values
     * add '-select' option to :tabclose command for specifiying which tab is selected after closing the current one
     * Deleting local marks with :delmarks[!] command is working now
+    * Editing password fields with the external editor works again (thanks Gianni)
 
 2011-11-13:
     * version 3.3
