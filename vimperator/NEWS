@@ -1,3 +1,7 @@
+201x-xx-xx:
+    * version 3.5
+    * Make hlsearch the default search highlighting option
+
 2012-04-02: It's not an April's fool
     * version 3.4
     * Fixed a mem leak when closing tabs
