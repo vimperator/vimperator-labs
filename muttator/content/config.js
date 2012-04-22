@@ -111,7 +111,7 @@ const Config = Module("config", ConfigBase, {
                 liberator.mode = modes.MESSAGE;
         }
     },*/
-    get browser() this.isComposeWindow ? null : window.getBrowser(), // XXX: Does the composer really don't have a browser object?
+    get browser() this.isComposeWindow ? window.GetCurrentEditorElement() : window.getBrowser(),
     tabbrowser: {
         __proto__: document.getElementById("tabmail"),
         get mTabContainer() this.tabContainer,
