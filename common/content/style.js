@@ -205,13 +205,6 @@ Highlights.prototype.CSS = <><![CDATA[
     HelpWarning                                 color: red; font-weight: bold;
 
     Logo
-
-    Search,,* {
-        font-size: inherit;
-        padding: 0;
-        color: black;
-        background-color: yellow;
-    }
     ]]></>.toString();
 
 /**

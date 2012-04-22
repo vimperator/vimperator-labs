@@ -34,137 +34,6 @@ const Finder = Module("finder", {
         this._lastSearchBackwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
         this._caseSensitive = false;       // search string is case sensitive
         this._linksOnly = false;           // search is limited to link text only
-
-        /* Stolen from toolkit.jar in Firefox, for the time being. The private
-         * methods were unstable, and changed. The new version is not remotely
-         * compatible with what we do.
-         *   The following only applies to this object, and may not be
-         * necessary, or accurate, but, just in case:
-         *   The Original Code is mozilla.org viewsource frontend.
-         *
-         *   The Initial Developer of the Original Code is
-         *   Netscape Communications Corporation.
-         *   Portions created by the Initial Developer are Copyright (c) 2003
-         *   by the Initial Developer. All Rights Reserved.
-         *
-         *   Contributor(s):
-         *       Blake Ross <blake@cs.stanford.edu> (Original Author)
-         *       Masayuki Nakano <masayuki@d-toybox.com>
-         *       Ben Basson <contact@cusser.net>
-         *       Jason Barnabe <jason_barnabe@fastmail.fm>
-         *       Asaf Romano <mano@mozilla.com>
-         *       Ehsan Akhgari <ehsan.akhgari@gmail.com>
-         *       Graeme McCutcheon <graememcc_firefox@graeme-online.co.uk>
-         */
-        this._highlighter = {
-
-            doc: null,
-
-            spans: [],
-
-            search: function (aWord, matchCase) {
-                var finder = services.create("find");
-                if (matchCase !== undefined)
-                    self._caseSensitive = matchCase;
-
-                var range;
-                while ((range = finder.Find(aWord, this.searchRange, this.startPt, this.endPt)))
-                    yield range;
-            },
-
-            highlightDoc: function highlightDoc(win, aWord) {
-                this.doc = content.document; // XXX
-                Array.forEach(win.frames, function (frame) this.highlightDoc(frame, aWord), this);
-
-                var doc = win.document;
-                if (!doc || !(doc instanceof HTMLDocument))
-                    return;
-
-                if (!aWord) {
-                    let elems = this._highlighter.spans;
-                    for (let i = elems.length; --i >= 0;) {
-                        let elem = elems[i];
-                        let docfrag = doc.createDocumentFragment();
-                        let next = elem.nextSibling;
-                        let parent = elem.parentNode;
-
-                        let child;
-                        while ((child = elem.firstChild))
-                            docfrag.appendChild(child);
-
-                        parent.removeChild(elem);
-                        parent.insertBefore(docfrag, next);
-                        parent.normalize();
-                    }
-                    return;
-                }
-
-                var baseNode = <span highlight="Search"/>;
-                baseNode = util.xmlToDom(baseNode, window.content.document);
-
-                var body = doc.body;
-                var count = body.childNodes.length;
-                this.searchRange = doc.createRange();
-                this.startPt = doc.createRange();
-                this.endPt = doc.createRange();
-
-                this.searchRange.setStart(body, 0);
-                this.searchRange.setEnd(body, count);
-
-                this.startPt.setStart(body, 0);
-                this.startPt.setEnd(body, 0);
-                this.endPt.setStart(body, count);
-                this.endPt.setEnd(body, count);
-
-                liberator.interrupted = false;
-                let n = 0;
-                for (let retRange in this.search(aWord, this._caseSensitive)) {
-                    // Highlight
-                    var nodeSurround = baseNode.cloneNode(true);
-                    var node = this.highlight(retRange, nodeSurround);
-                    this.startPt = node.ownerDocument.createRange();
-                    this.startPt.setStart(node, node.childNodes.length);
-                    this.startPt.setEnd(node, node.childNodes.length);
-                    if (n++ % 20 == 0)
-                        liberator.threadYield(true);
-                    if (liberator.interrupted)
-                        break;
-                }
-            },
-
-            highlight: function highlight(aRange, aNode) {
-                var startContainer = aRange.startContainer;
-                var startOffset = aRange.startOffset;
-                var endOffset = aRange.endOffset;
-                var docfrag = aRange.extractContents();
-                var before = startContainer.splitText(startOffset);
-                var parent = before.parentNode;
-                aNode.appendChild(docfrag);
-                parent.insertBefore(aNode, before);
-                this.spans.push(aNode);
-                return aNode;
-            },
-
-            /**
-             * Clears all search highlighting.
-             */
-            clear: function () {
-                this.spans.forEach(function (span) {
-                    if (span.parentNode) {
-                        let el = span.firstChild;
-                        while (el) {
-                            span.removeChild(el);
-                            span.parentNode.insertBefore(el, span);
-                            el = span.firstChild;
-                        }
-                        span.parentNode.removeChild(span);
-                    }
-                });
-                this.spans = [];
-            },
-
-            isHighlighted: function (doc) this.doc == doc && this.spans.length > 0
-        };
     },
 
     // set searchString, searchPattern, caseSensitive, linksOnly
@@ -354,26 +223,20 @@ const Finder = Module("finder", {
         if (config.name == "Muttator")
             return;
 
-        if (this._highlighter.isHighlighted(content.document))
-            return;
-
-        if (!str)
-            str = this._lastSearchString;
-
-        this._highlighter.highlightDoc(window.content, str);
-
-        // recreate selection since highlightDoc collapses the selection
-        if (window.content.getSelection().isCollapsed)
-            config.browser.fastFind.findAgain(this._backwards, this._linksOnly);
-
-        // TODO: remove highlighting from non-link matches (HTML - A/AREA with href attribute; XML - Xlink [type="simple"])
+        var findToolbar = document.getElementById("FindToolbar");
+        if (findToolbar) {
+            findToolbar._highlightDoc(false);
+            findToolbar._highlightDoc(true, str);
+        }
     },
 
     /**
      * Clears all search highlighting.
      */
     clear: function () {
-        this._highlighter.clear();
+        var findToolbar = document.getElementById("FindToolbar");
+        if (findToolbar)
+            findToolbar._highlightDoc(false);
     }
 }, {
 }, {
