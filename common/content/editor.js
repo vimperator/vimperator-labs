@@ -377,13 +377,19 @@ const Editor = Module("editor", {
                         nsEditor.selection.deleteFromDocument();
                         if (isHTML) {
                             let doc = nsEditor.document;
-                            let htmlFragment = doc.implementation.createDocument(null, 'html', null);
                             let range = doc.createRange();
                             range.setStartAfter(doc.body);
                             doc.body.appendChild(range.createContextualFragment(val));
                         }
                         else {
                             nsEditor.insertText(val);
+                        }
+
+                        let lastChild = rootNode.lastChild;
+                        while (lastChild.localName === "br" &&
+                                (lastChild.hasAttribute("_moz_editor_bogus_node") || lastChild.hasAttribute("type"))) {
+                            nsEditor.rootElement.removeChild(lastChild)
+                            lastChild = rootNode.lastChild;
                         }
                     }
                 }
