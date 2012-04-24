@@ -5,6 +5,7 @@
     * Inherited newly designed Mode display from Vimperator
     * Fix ":compose -attachment"
     * add completer to ":compose -attachment" option
+    * Fixed: editing message with external editor
 
 2011-06-13
     * version 1.0
