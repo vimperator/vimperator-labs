@@ -631,8 +631,7 @@ const Editor = Module("editor", {
                 // broken in FF3, deletes the whole line:
                 // editor.executeCommand("cmd_deleteToBeginningOfLine", 1);
                 editor.executeCommand("cmd_selectBeginLine", 1);
-                if (Editor.getController().isCommandEnabled("cmd_delete"))
-                    editor.executeCommand("cmd_delete", 1);
+                editor.executeCommand("cmd_delete", 1);
             });
 
         mappings.add(myModes,
