@@ -94,7 +94,7 @@ const Editor = Module("editor", {
 
     // count is optional, defaults to 1
     executeCommand: function (cmd, count) {
-        let controller = Editor.getController();
+        let controller = Editor.getController(cmd);
         if (!controller || !controller.supportsCommand(cmd) || !controller.isCommandEnabled(cmd)) {
             liberator.beep();
             return false;
@@ -486,12 +486,12 @@ const Editor = Module("editor", {
         return e;
     },
 
-    getController: function () {
+    getController: function (cmd) {
         let ed = Editor.getEditor();
         if (!ed || !ed.controllers)
             return null;
 
-        return ed.controllers.getControllerForCommand("cmd_beginLine");
+        return ed.controllers.getControllerForCommand(cmd || "cmd_beginLine");
     },
 
     windowIsEditable: function (win) {
