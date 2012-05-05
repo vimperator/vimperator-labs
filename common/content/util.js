@@ -804,7 +804,7 @@ const Util = Module("util", {
         }
         switch (node.nodeKind()) {
         case "text":
-            return doc.createTextNode(node);
+            return doc.createTextNode(String(node));
         case "element":
             let domnode = doc.createElementNS(node.namespace(), node.localName());
             for each (let attr in node.@*)
