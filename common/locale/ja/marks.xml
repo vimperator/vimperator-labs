@@ -27,7 +27,7 @@
 
 <item>
     <tags>a :bma :bmark</tags>
-    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>url</oa></spec>
+    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>-folder=folderPath</oa> <oa>url</oa></spec>
     <spec>a</spec>
     <description>
         <p>ブックマークを追加します。</p>
@@ -38,6 +38,7 @@
             <li>-title="変更したタイトル" ( 簡易指定: -t )</li>
             <li>-tags=コンマで,区切られた,タグの,リストです ( 簡易指定: -T )</li>
             <li>-keyword=キーワード ( 簡易指定: -k )</li>
+            <li>-folder=フォルダパス ( 簡易指定: -f )</li>
         </ul>
 
         <p>
@@ -49,6 +50,7 @@
             新しいブックマークを作る際に <oa>-title</oa> が与えられていないと、ウェブページのタイトルか URL が使用されます。
             <oa>url</oa> は省略可能なので <ex>:bmark</ex> を実行すると現在のウェブページをそのページのタイトルで、
             タグなしでブックマークできます。
+            <oa>-folder=folderPath</oa> を省略した場合、ルートフォルダにブックマークされます。
         </p>
     </description>
 </item>
