@@ -2,6 +2,7 @@
     * version 3.5
     * Make hlsearch the default search highlighting option
       and use Firefox's native method
+    * add -folder option to :bmark command.
 
 2012-04-02: It's not an April's fool
     * version 3.4

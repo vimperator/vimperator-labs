@@ -27,7 +27,7 @@
 
 <item>
     <tags>a :bma :bmark</tags>
-    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>url</oa></spec>
+    <spec>:bma[rk][!] <oa>-title=title</oa> <oa>-keyword=kw</oa> <oa>-tags=tag1,tag2</oa> <oa>-folder=folderPath</oa> <oa>url</oa></spec>
     <spec>a</spec>
     <description>
         <p>Add a bookmark.</p>
@@ -38,6 +38,7 @@
             <li>-title="custom title" (short option: -t)</li>
             <li>-tags=comma,separated,tag,list (short option: -T)</li>
             <li>-keyword=keyword (short option: -k)</li>
+            <li>-folder=folderPath (short option: -f)</li>
         </ul>
 
         <p>
@@ -50,6 +51,7 @@
             page's title or URL is used. You can omit the optional <oa>url</oa> argument, so
             just do <ex>:bmark</ex> to bookmark the currently loaded web page with a default
             title and without any tags.
+            And the bookmark root folder is used when <oa>-folder=folderPath</oa> is omitted.
         </p>
     </description>
 </item>

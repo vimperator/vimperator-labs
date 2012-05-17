@@ -211,7 +211,8 @@ const Bookmarks = Module("bookmarks", {
     },
 
     // if starOnly = true it is saved in the unfiledBookmarksFolder, otherwise in the bookmarksMenuFolder
-    add: function add(starOnly, title, url, keyword, tags, force) {
+    add: function add(starOnly, title, url, keyword, tags, folder, force) {
+        var bs = services.get("bookmarks");
         try {
             let uri = util.createURI(url);
             if (!force) {
@@ -219,20 +220,37 @@ const Bookmarks = Module("bookmarks", {
                     if (bmark[0] == uri.spec) {
                         var id = bmark[5];
                         if (title)
-                            services.get("bookmarks").setItemTitle(id, title);
+                            bs.setItemTitle(id, title);
                         break;
                     }
                 }
             }
+            let folderId = bs[starOnly ? "unfiledBookmarksFolder" : "bookmarksMenuFolder"];
+            if (folder) {
+                let folders = folder.split("/");
+                if (!folders[folders.length - 1])
+                    folders.pop();
+
+                let rootFolderId = folderId;
+                if (folders[0] === "TOOLBAR") {
+                    rootFolderId = bs.toolbarFolder;
+                    folders.shift();
+                }
+                let node = Bookmarks.getBookmarkFolder(folders, rootFolderId);
+                if (node)
+                    folderId = node.itemId;
+                else {
+                    liberator.echoerr("Bookmark folder is not found: `" + folder + "'");
+                    return false;
+                }
+            }
             if (id == undefined)
-                id = services.get("bookmarks").insertBookmark(
-                         services.get("bookmarks")[starOnly ? "unfiledBookmarksFolder" : "bookmarksMenuFolder"],
-                         uri, -1, title || url);
+                id = bs.insertBookmark(folderId, uri, -1, title || url);
             if (!id)
                 return false;
 
             if (keyword)
-                services.get("bookmarks").setKeywordForBookmark(id, keyword);
+                bs.setKeywordForBookmark(id, keyword);
             if (tags) {
                 PlacesUtils.tagging.untagURI(uri, null);
                 PlacesUtils.tagging.tagURI(uri, tags);
@@ -443,6 +461,49 @@ const Bookmarks = Module("bookmarks", {
         return null;
     }
 }, {
+    getBookmarkFolder: function (folders, rootFolderId) {
+        var q = PlacesUtils.history.getNewQuery(),
+            o = PlacesUtils.history.getNewQueryOptions();
+        if (rootFolderId == PlacesUtils.tagsFolderId)
+            o.resultType = o.RESULTS_AS_TAG_QUERY;
+        else {
+            q.setFolders([rootFolderId], 1);
+            o.expandQueries = false;
+        }
+        var res = PlacesUtils.history.executeQuery(q, o);
+        var node = res.root;
+        for (let [, folder] in Iterator(folders)) {
+            node = getFolderFromNode(node, folder);
+            if (!node)
+                break;
+        }
+        return node;
+
+        function getFolderFromNode (node, title) {
+            for (let child in Bookmarks.iterateFolderChildren(node)) {
+                if (child.title == title && child instanceof Ci.nsINavHistoryContainerResultNode) {
+                    node.containerOpen = false;
+                    return child;
+                }
+            }
+            return null;
+        }
+    },
+    iterateFolderChildren: function (node, onlyFolder) {
+        if (!node.containerOpen)
+            node.containerOpen = true;
+
+        for (let i = 0, len = node.childCount; i < len; i++) {
+            let child = node.getChild(i);
+            if (PlacesUtils.nodeIsContainer(child))
+                child.QueryInterface(Ci.nsINavHistoryContainerResultNode);
+
+            if (onlyFolder && !PlacesUtils.nodeIsFolder(child))
+                continue;
+
+            yield child;
+        }
+    },
 }, {
     commands: function () {
         commands.add(["ju[mps]"],
@@ -497,8 +558,9 @@ const Bookmarks = Module("bookmarks", {
                 let title = args["-title"] || (args.length == 0 ? buffer.title : null);
                 let keyword = args["-keyword"] || null;
                 let tags =    args["-tags"] || [];
+                let folder =  args["-folder"] || "";
 
-                if (bookmarks.add(false, title, url, keyword, tags, args.bang)) {
+                if (bookmarks.add(false, title, url, keyword, tags, folder, args.bang)) {
                     let extra = (title == url) ? "" : " (" + title + ")";
                     liberator.echomsg("Added bookmark: " + url + extra);
                 }
@@ -516,7 +578,10 @@ const Bookmarks = Module("bookmarks", {
                 },
                 options: [[["-title", "-t"],    commands.OPTION_STRING, null, title],
                           [["-tags", "-T"],     commands.OPTION_LIST, null, tags],
-                          [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)]]
+                          [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)],
+                          [["-folder", "-f"],   commands.OPTION_STRING, null, function (context, args) {
+                              return completion.bookmarkFolder(context, args, PlacesUtils.bookmarksMenuFolderId, true);
+                          }]],
             });
 
         commands.add(["bmarks"],
@@ -694,6 +759,40 @@ const Bookmarks = Module("bookmarks", {
                     ctxt.completions = compl;
                 });
             });
+        };
+
+        completion.bookmarkFolder = function bookmarkFolder (context, args, rootFolderId, onlyFolder) {
+            let filter = context.filter,
+                folders = filter.split("/"),
+                item = folders.pop();
+
+            if (!rootFolderId)
+            rootFolderId = PlacesUtils.bookmarksMenuFolderId;
+
+            let folderPath = folders.length ? folders.join("/") + "/" : "";
+            if (folders[0] === "TOOLBAR") {
+                rootFolderId = PlacesUtils.toolbarFolderId;
+                folders.shift();
+            }
+            let folder = Bookmarks.getBookmarkFolder(folders, rootFolderId);
+
+            context.title = ["Bookmarks", folders.join("/") + "/"];
+            context._match = function (filter, str) str.toLowerCase().indexOf(filter.toLowerCase()) === 0;
+            let results = [];
+
+            if (folders.length === 0) {
+                results.push(["TOOLBAR", "Bookmarks Toolbar"]);
+            }
+            if (folder) {
+                for (let child in Bookmarks.iterateFolderChildren(folder, onlyFolder)) {
+                    if (PlacesUtils.nodeIsSeparator(child))
+                        continue;
+
+                    results.push([folderPath + PlacesUIUtils.getBestTitle(child), child.uri]);
+                }
+                folder.containerOpen = false;
+            }
+            return context.completions = results;
         };
 
         completion.addUrlCompleter("S", "Suggest engines", completion.searchEngineSuggest);
