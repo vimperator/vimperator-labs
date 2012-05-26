@@ -16,6 +16,7 @@ const Modes = Module("modes", {
 
         this._passNextKey = false;
         this._passAllKeys = false;
+        this._passKeysExceptions = null; // Which keys are still allowed in ignore mode. ONLY set when an :ignorekeys LocationChange triggered it
         this._isRecording = false;
         this._isReplaying = false; // playing a macro
 
@@ -50,10 +51,14 @@ const Modes = Module("modes", {
     },
 
     _getModeMessage: function () {
-        if (this._passNextKey)
+        if (this._passNextKey) {
             return "IGNORE";
-        else if (this._passAllKeys)
-            return "IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit)";
+        } else if (this._passAllKeys) {
+            if (!this._passKeysExceptions || this._passKeysExceptions.length == 0)
+                return "IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit)";
+            else
+                return "IGNORE MOST KEYS (All except " + this._passKeysExceptions + ")";
+        }
 
         // when recording or replaying a macro
         if (modes.isRecording)
@@ -198,6 +203,29 @@ const Modes = Module("modes", {
         plugins.stop = stopfunc;
     },
 
+    passAllKeysExceptSome: function passAllKeysExceptSome(exceptions) {
+        this._passAllKeys = true;
+        this._passKeysExceptions = exceptions || [];
+        this.show();
+    },
+
+    isKeyIgnored: function isKeyIgnored(key) {
+        if (modes.passNextKey)
+            return true;
+        
+        if (modes.passAllKeys) { // handle Escape-all-keys mode (Shift-Esc)
+            // Respect "unignored" keys
+            if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0)
+                return true;
+            else
+                return false;
+            // TODO: "unignore" option
+            // TODO: config.ignoreKeys support or remove config.ignoreKeys
+        }
+
+        return false;
+    },
+
     // keeps recording state
     reset: function (silent) {
         this._modeStack = [];
@@ -220,7 +248,11 @@ const Modes = Module("modes", {
     set passNextKey(value) { this._passNextKey = value; this.show(); },
 
     get passAllKeys() this._passAllKeys,
-    set passAllKeys(value) { this._passAllKeys = value; this.show(); },
+    set passAllKeys(value) {
+        this._passAllKeys = value;
+        this._passKeysExceptions = null;
+        this.show();
+    },
 
     get isRecording()  this._isRecording,
     set isRecording(value) { this._isRecording = value; this.show(); },

@@ -11,10 +11,12 @@
 <h1 tag="surfing browsing">Browsing</h1>
 <toc start="2"/>
 
+<h2 tag="ignoring">Temporarily disable &liberator.appname;</h2>
+
 &liberator.appname; overrides nearly all &liberator.host; keys in order to make browsing more
 pleasant for Vim users. On the rare occasions when you want to pass a keystroke
 to &liberator.host;, or to the web page, and have it retain its original meaning you
-have 2 possibilities:
+have the following possibilities:
 
 <item>
     <tags><![CDATA[ignore-all-keys <S-Esc> <Insert>]]></tags>
@@ -22,19 +24,21 @@ have 2 possibilities:
     <spec>&lt;Insert></spec>
     <description>
         <p>
-            Disable all &liberator.appname; keys including <k name="Esc"/> and
-            pass them to the next event handler. This is especially useful if
-            JavaScript controlled forms (e.g., the RichEdit form fields of
-            Gmail) don't work anymore or you want to work with web apps like
-            Google Reader which have a lot of useful shortcuts themselves. To
-            exit this mode, press <k name="S-Esc"/> again.
+            Disable all &liberator.appname; keys and pass them to the next event
+            handler.  This mode is especially useful if JavaScript controlled
+            forms (e.g., the RichEdit form fields of Gmail) don't work anymore
+            or you want to work with web apps like Google Reader which have a
+            lot of useful shortcuts themselves. To exit this mode, press <k
+                name="S-Esc"/> again. <k name="Esc"/> is a special case as
+            it is sent to the web page, but still handles unfocusing of input
+            fields.
         </p>
     </description>
 </item>
 
 
 <item>
-    <tags><![CDATA[ignore-key i]]></tags>
+    <tags>ignore-key i</tags>
     <spec>i</spec>
     <description>
         <p>

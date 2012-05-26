@@ -22,7 +22,7 @@
                     continue;
                 if (Components.utils.reportError)
                     Components.utils.reportError(e);
-                dump("liberator: Loading script " + script + ": " + e + "\n");
+                dump("liberator: Error loading script " + script + ": " + e + "\n");
                 dump(e.stack + "\n");
             }
         }

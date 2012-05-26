@@ -1,5 +1,7 @@
-201x-xx-xx:
+2012-xx-xx:
     * version 3.5
+    * Add :ignorekeys meta command to handle web pages which want to handle key input themselves
+      rather than Vimperator taking over all the keys (useful for apps like gmail)
     * Make hlsearch the default search highlighting option
       and use Firefox's native method
     * add -folder option to :bmark command.

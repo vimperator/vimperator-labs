@@ -741,7 +741,7 @@ const Events = Module("events", {
      *  The global escape key handler. This is called in ALL modes.
      */
     onEscape: function () {
-        if (modes.passNextKey || modes.passAllKeys)
+        if (modes.passNextKey) // We allow <Esc> in passAllKeys
             return;
 
         // always clear the commandline. Even if we are in
@@ -892,7 +892,13 @@ const Events = Module("events", {
             } else if (modes.passAllKeys) { // handle Escape-all-keys mode (Shift-Esc)
                 if (key == "<S-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
                     modes.passAllKeys = false;
-                stop = true;
+
+                // If we manage to get into command line mode while IGNOREKEYS, let the command line handle keys
+                if (liberator.mode == modes.COMMAND_LINE)
+                    stop = false
+                // Respect "unignored" keys
+                else if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0)
+                    stop = true;
             }
 
             if (stop) {

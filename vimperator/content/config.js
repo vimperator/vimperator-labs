@@ -102,6 +102,7 @@ const Config = Module("config", ConfigBase, {
         "browser.js",
         "bookmarks.js",
         "history.js",
+        "ignorekeys.js",
         "quickmarks.js",
         "sanitizer.js",
         "tabs.js",

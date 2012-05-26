@@ -258,6 +258,18 @@ const Buffer = Module("buffer", {
             statusline.updateBookmark();
             statusline.updateHistory();
 
+            // This is a bit scary but we trigger ignore mode when the new URL is in the list
+            // of pages with ignored keys and then exit it on a new page but ONLY, if:
+            // a) The new page hasn't ignore as well and
+            // b) We initiated ignore mode, and not the user manually with <Insert>
+            if (modules.ignoreKeys != undefined) {
+                let ignoredKeyExceptions = ignoreKeys.hasIgnoredKeys(buffer.URL);
+                if (ignoredKeyExceptions !== null)
+                    modes.passAllKeysExceptSome(ignoredKeyExceptions);
+                else if (modes._passKeysExceptions !== null)
+                    modes.passAllKeys = false;
+            }
+
             autocommands.trigger("LocationChange", { url: buffer.URL });
 
             // if this is not delayed we get the position of the old buffer
