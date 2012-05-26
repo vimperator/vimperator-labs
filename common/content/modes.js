@@ -212,7 +212,7 @@ const Modes = Module("modes", {
     isKeyIgnored: function isKeyIgnored(key) {
         if (modes.passNextKey)
             return true;
-        
+
         if (modes.passAllKeys) { // handle Escape-all-keys mode (Shift-Esc)
             // Respect "unignored" keys
             if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0)
