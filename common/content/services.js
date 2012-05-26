@@ -46,10 +46,6 @@ const Services = Module("services", {
                 class_: "@mozilla.org/browser/nav-history-service;1",
                 iface:  [Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
             },
-            "livemark": {
-                class_: "@mozilla.org/browser/livemark-service;2",
-                iface:  Ci.nsILivemarkService
-            },
             "privateBrowsing": {
                 class_: "@mozilla.org/privatebrowsing;1",
                 iface:  Ci.nsIPrivateBrowsingService

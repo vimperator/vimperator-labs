@@ -95,15 +95,22 @@ const Bookmarks = Module("bookmarks", {
 
             this.isBookmark = function (id) rootFolders.indexOf(self.findRoot(id)) >= 0;
 
-            this.isRegularBookmark = function findRoot(id) {
-                do {
-                    var root = id;
-                    if (services.get("livemark") && services.get("livemark").isLivemark(id))
-                        return false;
-                    id = bookmarksService.getFolderIdForItem(id);
-                } while (id != bookmarksService.placesRoot && id != root);
-                return rootFolders.indexOf(root) >= 0;
-            };
+            // nsILivemarkService will be deprecated since Gecho version 13
+            // and a livemark item doesn't have id, so the id (gotten by bookmarkService.getBookmarkIdsForURI)
+            // is not livemark item always.
+            // TODO: remove this code when minVersion >= 13
+            this.isRegularBookmark = ("mozIAsyncLivemarks" in Ci) ?
+                function() true :
+                function findRoot(id) {
+                    var livemarkService = PlacesUtils.livemarks;
+                    do {
+                        var root = id;
+                        if (livemarkService.isLivemark(id))
+                            return false;
+                        id = bookmarksService.getFolderIdForItem(id);
+                    } while (id != bookmarksService.placesRoot && id != root);
+                    return rootFolders.indexOf(root) >= 0;
+                };
 
             // since we don't use a threaded bookmark loading (by set preload)
             // anymore, is this loading synchronization still needed? --mst
