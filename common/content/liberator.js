@@ -64,7 +64,7 @@ const Liberator = Module("liberator", {
         // current profile. These will differ if the current process was run
         // without explicitly selecting a profile.
         /** @property {string} The name of the current user profile. */
-        this.profileName = services.get("directory").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
+        this.profileName = services.get("dirsvc").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
 
         let platform = Liberator.getPlatformFeature()
         config.features.push(platform);
@@ -333,7 +333,7 @@ const Liberator = Module("liberator", {
     loadScript: function (uri, context) {
         XML.ignoreWhitespace = false;
         XML.prettyPrinting = false;
-        services.get("subscriptLoader").loadSubScript(uri, context, "UTF-8");
+        services.get("scriptloader").loadSubScript(uri, context, "UTF-8");
     },
 
     eval: function (str, context) {
@@ -446,7 +446,7 @@ const Liberator = Module("liberator", {
      *     element.
      */
     focusContent: function (clearFocusedElement) {
-        if (window != services.get("windowWatcher").activeWindow)
+        if (window != services.get("ww").activeWindow)
             return;
 
         let elem = config.mainWidget || window.content;
@@ -796,7 +796,7 @@ const Liberator = Module("liberator", {
 
                 case liberator.NEW_WINDOW:
                     window.open();
-                    let win = services.get("windowMediator").getMostRecentWindow("navigator:browser");
+                    let win = services.get("wm").getMostRecentWindow("navigator:browser");
                     win.loadURI(url, null, postdata);
                     browser = win.getBrowser();
                     break;
@@ -835,7 +835,7 @@ const Liberator = Module("liberator", {
             options.setPref("browser.startup.page", 1); // start with default homepage session
 
         if (force)
-            services.get("appStartup").quit(Ci.nsIAppStartup.eForceQuit);
+            services.get("startup").quit(Ci.nsIAppStartup.eForceQuit);
         else
             window.goQuitApplication();
     },
@@ -913,23 +913,23 @@ const Liberator = Module("liberator", {
     restart: function () {
         // notify all windows that an application quit has been requested.
         var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"].createInstance(Ci.nsISupportsPRBool);
-        services.get("observer").notifyObservers(cancelQuit, "quit-application-requested", null);
+        services.get("obs").notifyObservers(cancelQuit, "quit-application-requested", null);
 
         // something aborted the quit process.
         if (cancelQuit.data)
             return;
 
         // notify all windows that an application quit has been granted.
-        services.get("observer").notifyObservers(null, "quit-application-granted", null);
+        services.get("obs").notifyObservers(null, "quit-application-granted", null);
 
         // enumerate all windows and call shutdown handlers
-        let windows = services.get("windowMediator").getEnumerator(null);
+        let windows = services.get("wm").getEnumerator(null);
         while (windows.hasMoreElements()) {
             let win = windows.getNext();
             if (("tryToClose" in win) && !win.tryToClose())
                 return;
         }
-        services.get("appStartup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
+        services.get("startup").quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
     },
 
     /**
@@ -1008,7 +1008,7 @@ const Liberator = Module("liberator", {
      */
     get windows() {
         let windows = [];
-        let enumerator = services.get("windowMediator").getEnumerator("navigator:browser");
+        let enumerator = services.get("wm").getEnumerator("navigator:browser");
         while (enumerator.hasMoreElements())
             windows.push(enumerator.getNext());
 

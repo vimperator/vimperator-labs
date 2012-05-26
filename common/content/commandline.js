@@ -29,8 +29,8 @@ const CommandLine = Module("commandline", {
                 CLEAR: "browser:purge-session-history",
                 QUIT:  "quit-application",
                 init: function () {
-                    services.get("observer").addObserver(this, this.CLEAR, false);
-                    services.get("observer").addObserver(this, this.QUIT, false);
+                    services.get("obs").addObserver(this, this.CLEAR, false);
+                    services.get("obs").addObserver(this, this.QUIT, false);
                 },
                 observe: function (subject, topic, data) {
                     switch (topic) {
@@ -40,8 +40,8 @@ const CommandLine = Module("commandline", {
                         });
                         break;
                     case this.QUIT:
-                        services.get("observer").removeObserver(this, this.CLEAR);
-                        services.get("observer").removeObserver(this, this.QUIT);
+                        services.get("obs").removeObserver(this, this.CLEAR);
+                        services.get("obs").removeObserver(this, this.QUIT);
                         break;
                     }
                 }
@@ -1556,7 +1556,7 @@ const CommandLine = Module("commandline", {
              "stringlist", "google",
              {
                  completer: function completer(value) {
-                     let engines = services.get("browserSearch").getEngines({})
+                     let engines = services.get("search").getEngines({})
                                            .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
 
                      return engines.map(function (engine) [engine.alias, engine.description]);

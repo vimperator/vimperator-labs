@@ -26,7 +26,7 @@ const Sanitizer = Module("sanitizer", {
     // Largely ripped from from browser/base/content/sanitize.js so we can override
     // the pref strategy without stepping on the global prefs namespace.
     sanitize: function () {
-        const prefService = services.get("pref");
+        const prefService = services.get("prefs");
         let branch = prefService.getBranch(this.prefDomain);
         let branch2 = prefService.getBranch(this.prefDomain2);
         let errors = null;

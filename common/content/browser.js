@@ -65,8 +65,8 @@ const Browser = Module("browser", {
             storage.newObject("private-mode", function () {
                 ({
                     init: function () {
-                        services.get("observer").addObserver(this, "private-browsing", false);
-                        services.get("observer").addObserver(this, "quit-application", false);
+                        services.get("obs").addObserver(this, "private-browsing", false);
+                        services.get("obs").addObserver(this, "quit-application", false);
                         this.private = services.get("privateBrowsing").privateBrowsingEnabled;
                     },
                     observe: function (subject, topic, data) {
@@ -78,8 +78,8 @@ const Browser = Module("browser", {
                             storage.fireEvent("private-mode", "change", storage.privateMode);
                         }
                         else if (topic == "quit-application") {
-                            services.get("observer").removeObserver(this, "quit-application");
-                            services.get("observer").removeObserver(this, "private-browsing");
+                            services.get("obs").removeObserver(this, "quit-application");
+                            services.get("obs").removeObserver(this, "private-browsing");
                         }
                     }
                 }).init();

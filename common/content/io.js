@@ -323,7 +323,7 @@ const IO = Module("io", {
     requires: ["config", "services"],
 
     init: function () {
-        this._processDir = services.get("directory").get("CurWorkD", Ci.nsIFile);
+        this._processDir = services.get("dirsvc").get("CurWorkD", Ci.nsIFile);
         this._cwd = this._processDir;
         this._oldcwd = null;
 
@@ -485,7 +485,7 @@ const IO = Module("io", {
      * @returns {File}
      */
     createTempFile: function () {
-        let file = services.get("directory").get("TmpD", Ci.nsIFile);
+        let file = services.get("dirsvc").get("TmpD", Ci.nsIFile);
 
         file.append(config.tempFile);
         file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0600);
@@ -817,7 +817,7 @@ lookup:
      */
     get PATH_SEP() {
         delete this.PATH_SEP;
-        let f = services.get("directory").get("CurProcD", Ci.nsIFile);
+        let f = services.get("dirsvc").get("CurProcD", Ci.nsIFile);
         f.append("foo");
         return this.PATH_SEP = f.path.substr(f.parent.path.length, 1);
     }

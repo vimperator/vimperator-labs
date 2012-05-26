@@ -485,7 +485,7 @@ const Options = Module("options", {
     prefObserver: {
         register: function () {
             // better way to monitor all changes?
-            this._branch = services.get("pref").getBranch("").QueryInterface(Ci.nsIPrefBranch2);
+            this._branch = services.get("prefs").getBranch("").QueryInterface(Ci.nsIPrefBranch2);
             this._branch.addObserver("", this, false);
         },
 
@@ -550,7 +550,7 @@ const Options = Module("options", {
      * @param {string} branch The branch in which to search preferences.
      *     @default ""
      */
-    allPrefs: function (branch) services.get("pref").getChildList(branch || "", { value: 0 }),
+    allPrefs: function (branch) services.get("prefs").getChildList(branch || "", { value: 0 }),
 
     /**
      * Returns the option with <b>name</b> in the specified <b>scope</b>.
@@ -636,7 +636,7 @@ const Options = Module("options", {
         prefArray.sort();
         function prefs() {
             for (let [, pref] in Iterator(prefArray)) {
-                let userValue = services.get("pref").prefHasUserValue(pref);
+                let userValue = services.get("prefs").prefHasUserValue(pref);
                 if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
                     continue;
 
@@ -775,7 +775,7 @@ const Options = Module("options", {
      */
     resetPref: function (name) {
         try {
-            services.get("pref").clearUserPref(name);
+            services.get("prefs").clearUserPref(name);
         }
         catch (e) {
             // ignore - thrown if not a user set value
@@ -788,7 +788,7 @@ const Options = Module("options", {
      * @param {string} name The preference name.
      */
     invertPref: function (name) {
-        if (services.get("pref").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
+        if (services.get("prefs").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
             this.setPref(name, !this.getPref(name));
         else
             liberator.echoerr("Trailing characters: " + name + "!");
@@ -841,13 +841,13 @@ const Options = Module("options", {
                 this._prefContexts[this._prefContexts.length - 1][name] = val;
         }
 
-        let type = services.get("pref").getPrefType(name);
+        let type = services.get("prefs").getPrefType(name);
         switch (typeof value) {
         case "string":
             if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING) {
                 let supportString = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
                 supportString.data = value;
-                services.get("pref").setComplexValue(name, Ci.nsISupportsString, supportString);
+                services.get("prefs").setComplexValue(name, Ci.nsISupportsString, supportString);
             }
             else if (type == Ci.nsIPrefBranch.PREF_INT)
                 liberator.echoerr("Number required after =: " + name + "=" + value);
@@ -856,13 +856,13 @@ const Options = Module("options", {
             break;
         case "number":
             if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_INT)
-                services.get("pref").setIntPref(name, value);
+                services.get("prefs").setIntPref(name, value);
             else
                 liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         case "boolean":
             if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_BOOL)
-                services.get("pref").setBoolPref(name, value);
+                services.get("prefs").setBoolPref(name, value);
             else if (type == Ci.nsIPrefBranch.PREF_INT)
                 liberator.echoerr("Number required after =: " + name + "=" + value);
             else
@@ -878,14 +878,14 @@ const Options = Module("options", {
         if (forcedDefault != null)  // this argument sets defaults for non-user settable options (like extensions.history.comp_history)
             defaultValue = forcedDefault;
 
-        let branch = defaultBranch ? services.get("pref").getDefaultBranch("") : services.get("pref");
-        let type = services.get("pref").getPrefType(name);
+        let branch = defaultBranch ? services.get("prefs").getDefaultBranch("") : services.get("prefs");
+        let type = services.get("prefs").getPrefType(name);
         try {
             switch (type) {
             case Ci.nsIPrefBranch.PREF_STRING:
                 let value = branch.getComplexValue(name, Ci.nsISupportsString).data;
                 // try in case it's a localized string (will throw an exception if not)
-                if (!services.get("pref").prefIsLocked(name) && !services.get("pref").prefHasUserValue(name) &&
+                if (!services.get("prefs").prefIsLocked(name) && !services.get("prefs").prefHasUserValue(name) &&
                     RegExp("chrome://.+/locale/.+\\.properties").test(value))
                         value = branch.getComplexValue(name, Ci.nsIPrefLocalizedString).data;
                 return value;

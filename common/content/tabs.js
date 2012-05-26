@@ -525,7 +525,7 @@ const Tabs = Module("tabs", {
         if (!tab)
             tab = config.tabbrowser.mTabContainer.selectedItem;
 
-        services.get("windowWatcher")
+        services.get("ww")
                 .openWindow(window, window.getBrowserURL(), null, "chrome,dialog=no,all", tab);
     },
 

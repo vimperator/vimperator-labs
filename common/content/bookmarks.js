@@ -309,7 +309,7 @@ const Bookmarks = Module("bookmarks", {
     // also ensures that each search engine has a Liberator-friendly alias
     getSearchEngines: function getSearchEngines() {
         let searchEngines = [];
-        for (let [, engine] in Iterator(services.get("browserSearch").getVisibleEngines({}))) {
+        for (let [, engine] in Iterator(services.get("search").getVisibleEngines({}))) {
             let alias = engine.alias;
             if (!alias || !/^[a-z0-9_-]+$/.test(alias))
                 alias = engine.name.replace(/^\W*([a-zA-Z_-]+).*/, "$1").toLowerCase();
@@ -337,7 +337,7 @@ const Bookmarks = Module("bookmarks", {
     getSuggestions: function getSuggestions(engineName, query, callback) {
         const responseType = "application/x-suggestions+json";
 
-        let engine = services.get("browserSearch").getEngineByAlias(engineName);
+        let engine = services.get("search").getEngineByAlias(engineName);
         if (engine && engine.supportsResponseType(responseType))
             var queryURI = engine.getSubmission(query, responseType).uri.spec;
         if (!queryURI)
@@ -389,7 +389,7 @@ const Bookmarks = Module("bookmarks", {
                 param = url.substr(offset + 1);
             }
 
-            var engine = services.get("browserSearch").getEngineByAlias(keyword);
+            var engine = services.get("search").getEngineByAlias(keyword);
             if (engine) {
                 var submission = engine.getSubmission(param, null);
                 return [submission.uri.spec, submission.postData];
@@ -746,7 +746,7 @@ const Bookmarks = Module("bookmarks", {
             let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
 
             engineList.forEach(function (name) {
-                let engine = services.get("browserSearch").getEngineByAlias(name);
+                let engine = services.get("search").getEngineByAlias(name);
                 if (!engine)
                     return;
                 let [, word] = /^\s*(\S+)/.exec(context.filter) || [];

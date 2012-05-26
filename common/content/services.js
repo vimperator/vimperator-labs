@@ -13,11 +13,8 @@
 const Services = Module("services", {
     init: function () {
         this.classes = {};
+        this.jsm = window.Services;
         this.services = {
-            "appStartup": {
-                class_: "@mozilla.org/toolkit/app-startup;1",
-                iface:  Ci.nsIAppStartup
-            },
             "autoCompleteSearch": {
                 class_: "@mozilla.org/autocomplete/search;1?name=history",
                 iface:  Ci.nsIAutoCompleteSearch
@@ -26,28 +23,12 @@ const Services = Module("services", {
                 class_: "@mozilla.org/browser/nav-bookmarks-service;1",
                 iface:  Ci.nsINavBookmarksService
             },
-            "browserSearch": {
-                class_: "@mozilla.org/browser/search-service;1",
-                iface:  Ci.nsIBrowserSearchService
-            },
-            "cache": {
-                class_: "@mozilla.org/network/cache-service;1",
-                iface:  Ci.nsICacheService
-            },
-            "console": {
-                class_: "@mozilla.org/consoleservice;1",
-                iface:  Ci.nsIConsoleService
-            },
             "liberator:": {
                 class_: "@mozilla.org/network/protocol;1?name=liberator"
             },
             "debugger": {
                 class_: "@mozilla.org/js/jsd/debugger-service;1",
                 iface:  Ci.jsdIDebuggerService
-            },
-            "directory": {
-                class_: "@mozilla.org/file/directory_service;1",
-                iface:  Ci.nsIProperties
             },
             "downloadManager": {
                 class_: "@mozilla.org/download-manager;1",
@@ -65,21 +46,9 @@ const Services = Module("services", {
                 class_: "@mozilla.org/browser/nav-history-service;1",
                 iface:  [Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
             },
-            "io": {
-                class_: "@mozilla.org/network/io-service;1",
-                iface:  Ci.nsIIOService
-            },
             "livemark": {
                 class_: "@mozilla.org/browser/livemark-service;2",
                 iface:  Ci.nsILivemarkService
-            },
-            "observer": {
-                class_: "@mozilla.org/observer-service;1",
-                iface:  Ci.nsIObserverService
-            },
-            "pref": {
-                class_: "@mozilla.org/preferences-service;1",
-                iface:  [Ci.nsIPrefService, Ci.nsIPrefBranch, Ci.nsIPrefBranch2]
             },
             "privateBrowsing": {
                 class_: "@mozilla.org/privatebrowsing;1",
@@ -97,26 +66,10 @@ const Services = Module("services", {
                 class_: "@mozilla.org/browser/sessionstore;1",
                 iface:  Ci.nsISessionStore
             },
-            "subscriptLoader": {
-                class_: "@mozilla.org/moz/jssubscript-loader;1",
-                iface:  Ci.mozIJSSubScriptLoader
-            },
             "threadManager": {
                 class_: "@mozilla.org/thread-manager;1",
                 iface:  Ci.nsIThreadManager
             },
-            "windowMediator": {
-                class_: "@mozilla.org/appshell/window-mediator;1",
-                iface:  Ci.nsIWindowMediator
-            },
-            "windowWatcher": {
-                class_: "@mozilla.org/embedcomp/window-watcher;1",
-                iface:  Ci.nsIWindowWatcher
-            },
-            "xulAppInfo": {
-                class_: "@mozilla.org/xre/app-info;1",
-                iface:  Ci.nsIXULAppInfo
-            }
         };
 
         this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);
@@ -175,6 +128,9 @@ const Services = Module("services", {
      * @param {string} name The service's cache key.
      */
     get: function (name) {
+        if (this.jsm.hasOwnProperty(name))
+            return this.jsm[name];
+
         if (!this.services[name]["reference"]) {
             var currentService = this.services[name];
 
@@ -193,7 +149,9 @@ const Services = Module("services", {
 }, {
 }, {
     completion: function () {
-        JavaScript.setCompleter(this.get, [function () services.services]);
+        JavaScript.setCompleter(this.get, [
+            function () Object.keys(services.jsm).concat(Object.keys(services.services)).map(function(key) [key, ""])
+        ]);
         JavaScript.setCompleter(this.create, [function () [[c, ""] for (c in services.classes)]]);
 
     }
