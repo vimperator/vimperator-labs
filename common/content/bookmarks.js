@@ -489,7 +489,7 @@ const Bookmarks = Module("bookmarks", {
             return null;
         }
     },
-    iterateFolderChildren: function (node, onlyFolder) {
+    iterateFolderChildren: function (node, onlyFolder, onlyWritable) {
         if (!node.containerOpen)
             node.containerOpen = true;
 
@@ -498,7 +498,11 @@ const Bookmarks = Module("bookmarks", {
             if (PlacesUtils.nodeIsContainer(child))
                 child.QueryInterface(Ci.nsINavHistoryContainerResultNode);
 
-            if (onlyFolder && !PlacesUtils.nodeIsFolder(child))
+            if (PlacesUtils.nodeIsFolder(child)) {
+                if (onlyWritable && child.childrenReadOnly)
+                    continue;
+            }
+            else if (onlyFolder)
                 continue;
 
             yield child;
@@ -580,7 +584,7 @@ const Bookmarks = Module("bookmarks", {
                           [["-tags", "-T"],     commands.OPTION_LIST, null, tags],
                           [["-keyword", "-k"],  commands.OPTION_STRING, function (arg) /\w/.test(arg)],
                           [["-folder", "-f"],   commands.OPTION_STRING, null, function (context, args) {
-                              return completion.bookmarkFolder(context, args, PlacesUtils.bookmarksMenuFolderId, true);
+                              return completion.bookmarkFolder(context, args, PlacesUtils.bookmarksMenuFolderId, true, true);
                           }]],
             });
 
@@ -761,7 +765,7 @@ const Bookmarks = Module("bookmarks", {
             });
         };
 
-        completion.bookmarkFolder = function bookmarkFolder (context, args, rootFolderId, onlyFolder) {
+        completion.bookmarkFolder = function bookmarkFolder (context, args, rootFolderId, onlyFolder, onlyWritable) {
             let filter = context.filter,
                 folders = filter.split("/"),
                 item = folders.pop();
@@ -784,7 +788,7 @@ const Bookmarks = Module("bookmarks", {
                 results.push(["TOOLBAR", "Bookmarks Toolbar"]);
             }
             if (folder) {
-                for (let child in Bookmarks.iterateFolderChildren(folder, onlyFolder)) {
+                for (let child in Bookmarks.iterateFolderChildren(folder, onlyFolder, onlyWritable)) {
                     if (PlacesUtils.nodeIsSeparator(child))
                         continue;
 
