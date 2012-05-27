@@ -127,6 +127,9 @@ const Services = Module("services", {
         if (this.jsm.hasOwnProperty(name))
             return this.jsm[name];
 
+        if (!this.services.hasOwnProperty(name))
+            throw Error("Could not get service: " + name);
+
         if (!this.services[name]["reference"]) {
             var currentService = this.services[name];
 
