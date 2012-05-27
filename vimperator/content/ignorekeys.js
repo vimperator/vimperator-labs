@@ -85,7 +85,7 @@ const IgnoreKeys = Module("ignoreKeys", {
                 completion.listCompleter("ignorekeys");
             }, {
                 subCommands: [
-                    new Command(["add"], "Add a page",
+                    new Command(["add"], "Add an URL filter to the list of ignored keys",
                         function (args) { ignoreKeys.add(args[0], args["-except"] || []); },
                         {
                             argCount: "1",
@@ -128,7 +128,7 @@ const IgnoreKeys = Module("ignoreKeys", {
                             literal: 0
                         }),
 
-                    new Command(["remove", "rm"], "Close the tab group (including all tabs!)",
+                    new Command(["remove", "rm"], "Remove an URL filter from the list of ignored keys",
                         function (args) { ignoreKeys.remove(args.literalArg || ""); },
                         {
                             argCount: 1,
