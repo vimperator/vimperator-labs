@@ -895,7 +895,10 @@ const Events = Module("events", {
 
                 // If we manage to get into command line mode while IGNOREKEYS, let the command line handle keys
                 if (liberator.mode == modes.COMMAND_LINE)
-                    stop = false
+                    stop = false;
+                // If we are in the middle of a mapping, we never send the next key to the host app
+                else if (this._input.buffer) 
+                    stop = false;
                 // Respect "unignored" keys
                 else if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0)
                     stop = true;
