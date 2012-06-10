@@ -372,12 +372,12 @@ const Liberator = Module("liberator", {
 
         let matches = string.match(/^&(\w+)/);
         if (matches) {
-            let opt = this.options.get(matches[1]);
+            let opt = options.get(matches[1]);
 
             liberator.assert(opt, "Unknown option: " + matches[1]);
 
             let type = opt.type;
-            let value = opt.getter();
+            let value = opt.get();
 
             if (type != "boolean" && type != "number")
                 value = value.toString();
