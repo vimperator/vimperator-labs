@@ -368,24 +368,11 @@ const Liberator = Module("liberator", {
     //       I agree, the name is confusing, and so is the
     //           description --Kris
     evalExpression: function (string) {
-        string = string.toString().replace(/^\s*/, "").replace(/\s*$/, "");
+        string = string.toString().trim();
 
-        let matches = string.match(/^&(\w+)/);
-        if (matches) {
-            let opt = options.get(matches[1]);
-
-            liberator.assert(opt, "Unknown option: " + matches[1]);
-
-            let type = opt.type;
-            let value = opt.get();
-
-            if (type != "boolean" && type != "number")
-                value = value.toString();
-
-            return value;
-        }
+        let matches = null;
         // String
-        else if ((matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))) {
+        if ((matches = string.match(/^(['"])([^\1]*?[^\\]?)\1/))) {
             return matches[2].toString();
         }
         // Number
