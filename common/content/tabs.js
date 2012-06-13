@@ -219,7 +219,7 @@ const Tabs = Module("tabs", {
                         config.tabbrowser.removeTab(tab);
                     else {
                         let url = buffer.URL;
-                        if (url != "about:blank" || url = "about:newtab" ||
+                        if (url != "about:blank" || url != "about:newtab" ||
                             window.getWebNavigation().sessionHistory.count > 0) {
                             liberator.open("", liberator.NEW_BACKGROUND_TAB);
                             config.tabbrowser.removeTab(tab);

@@ -759,7 +759,12 @@ const Liberator = Module("liberator", {
         let browser = config.browser;
         function open(urls, where) {
             try {
-                let [url, postdata] = Array.concat(urls);
+                let url = "", postdata;
+                if (typeof urls === "string")
+                    url = urls;
+                else
+                    [url, postdata] = Array.concat(urls);
+
                 if (!url)
                     url = window.BROWSER_NEW_TAB_URL || "about:blank";
 
