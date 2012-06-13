@@ -744,6 +744,11 @@ const Util = Module("util", {
             urls = [str];
 
         return urls.map(function (url) {
+            url = url.trim();
+
+            if (!url)
+                return "";
+
             if (url.substr(0, 5) != "file:") {
                 try {
                     // Try to find a matching file.
@@ -753,9 +758,6 @@ const Util = Module("util", {
                 }
                 catch (e) {}
             }
-
-            // strip each 'URL' - makes things simpler later on
-            url = url.replace(/^\s+|\s+$/, "");
 
             // Look for a valid protocol
             let proto = url.match(/^([-\w]+):/);
@@ -782,7 +784,7 @@ const Util = Module("util", {
 
             // Hmm. No defsearch? Let the host app deal with it, then.
             return url;
-        });
+        }).filter(function(url, i) i === 0 || url);
     },
 
     /**
