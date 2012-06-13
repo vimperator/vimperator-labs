@@ -212,7 +212,7 @@ const TabGroup = Module("tabGroup", {
             else {
                 let appTabs = tabGroup.appTabs;
                 if (appTabs.length == 0)
-                    gb.loadOnTab("about:blank", { inBackground: false, relatedToCurrent: false });
+                    gb.loadOnTab(window.BROWSER_NEW_TAB_URL || "about:blank", { inBackground: false, relatedToCurrent: false });
                 else
                     gb.mTabContainer.selectedIndex = appTabs.length - 1;
 

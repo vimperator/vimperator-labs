@@ -242,7 +242,7 @@ const Browser = Module("browser", {
                 if (args)
                     liberator.open(args);
                 else
-                    liberator.open("about:blank");
+                    liberator.open("");
             }, {
                 completer: function (context) completion.url(context),
                 literal: 0,

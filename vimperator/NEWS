@@ -6,6 +6,7 @@
     * Make hlsearch the default search highlighting option
       and use Firefox's native method
     * add -folder option to :bmark command.
+    * :open and :tabopen without arguments open about:newtab (see :set! browser.newtab.url)
 
 2012-04-02: It's not an April's fool
     * version 3.4

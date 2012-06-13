@@ -226,7 +226,7 @@ const Config = Module("config", ConfigBase, {
                 if (args)
                     liberator.open(args, liberator.NEW_WINDOW);
                 else
-                    liberator.open("about:blank", liberator.NEW_WINDOW);
+                    liberator.open("", liberator.NEW_WINDOW);
             },
             {
                 completer: function (context) completion.url(context),

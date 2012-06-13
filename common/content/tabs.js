@@ -218,9 +218,10 @@ const Tabs = Module("tabs", {
                     if (vTabs.length > 1)
                         config.tabbrowser.removeTab(tab);
                     else {
-                        if (buffer.URL != "about:blank" ||
+                        let url = buffer.URL;
+                        if (url != "about:blank" || url = "about:newtab" ||
                             window.getWebNavigation().sessionHistory.count > 0) {
-                            liberator.open("about:blank", liberator.NEW_BACKGROUND_TAB);
+                            liberator.open("", liberator.NEW_BACKGROUND_TAB);
                             config.tabbrowser.removeTab(tab);
                         }
                         else
@@ -882,7 +883,7 @@ const Tabs = Module("tabs", {
                     if (args)
                         liberator.open(args, { where: where });
                     else
-                        liberator.open("about:blank", { where: where });
+                        liberator.open("", { where: where });
                 }, {
                     bang: true,
                     completer: function (context) completion.url(context),

@@ -759,8 +759,9 @@ const Liberator = Module("liberator", {
         let browser = config.browser;
         function open(urls, where) {
             try {
-                let url = Array.concat(urls)[0];
-                let postdata = Array.concat(urls)[1];
+                let [url, postdata] = Array.concat(urls);
+                if (!url)
+                    url = window.BROWSER_NEW_TAB_URL || "about:blank";
 
                 // decide where to load the first url
                 switch (where) {
