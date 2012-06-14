@@ -291,7 +291,7 @@ const Hints = Module("hints", {
 
         let res = util.evaluateXPath(this._hintMode.tags(), doc, null, true);
 
-        let fragment = util.xmlToDom(<div highlight="hints"/>, doc);
+        let fragment = util.xmlToDom(<div highlight="hints" style="position:fixed;top:0;left:0px;"/>, doc);
         let start = this._pageHints.length;
         let elem;
 
@@ -308,8 +308,8 @@ const Hints = Module("hints", {
 
             hint.span = baseNodeAbsolute.cloneNode(true);
 
-            let leftPos = Math.max((rect.left + offsetX), offsetX + screen.left);
-            let topPos =  Math.max((rect.top + offsetY), offsetY + screen.top);
+            let leftPos = Math.max(rect.left, screen.left);
+            let topPos =  Math.max(rect.top, screen.top);
 
             if (elem instanceof HTMLAreaElement)
                 [leftPos, topPos] = that._getAreaOffset(elem, leftPos, topPos);
@@ -351,7 +351,9 @@ const Hints = Module("hints", {
                 makeHint(elem);
         }
 
-        let body = doc.body || util.evaluateXPath(["body"], doc).snapshotItem(0);
+        let body = (doc instanceof XULDocument) ?
+                   doc.documentElement :
+                   doc.body || util.evaluateXPath(["body"], doc).snapshotItem(0);
         if (body) {
             body.appendChild(fragment);
             this._docs.push({ doc: doc, start: start, end: this._pageHints.length - 1 });
