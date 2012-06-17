@@ -18,7 +18,12 @@ const Config = Module("config", ConfigBase, {
     get mainWindowId() this.isComposeWindow ? "msgcomposeWindow" : "messengerWindow",
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
-    get features() this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
+    get features() {
+        Object.defineProperty(this, "features", {
+            value: this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
+        });
+        return this.features;
+    },
     defaults: {
         titlestring: "Muttator"
     },
