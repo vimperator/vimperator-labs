@@ -1026,7 +1026,7 @@ lookup:
             context.keys = {
                 text: !full ? "leafName" : function (f) dir + f.leafName,
                 description: function (f) f.isDirectory() ? "Directory" : "File",
-                isdir: function (f) f.isDirectory(),
+                isdir: function (f) f.exists() && f.isDirectory(),
                 icon: function (f) f.isDirectory() ? "resource://gre/res/html/folder.png"
                                                              : "moz-icon://" + f.leafName
             };
