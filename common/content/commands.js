@@ -702,8 +702,8 @@ const Commands = Module("commands", {
             else if (count == -1) {
                 liberator.echoerr("Error parsing arguments: " + arg);
                 return null;
-            }
-            else if (!onlyArgumentsRemaining && /^-/.test(arg)) {
+            }    // if /^\s*-/ is NOT TRUE, "-" be quoted.
+            else if (!onlyArgumentsRemaining && /^-/.test(arg) && /^\s*-/.test(sub)) {
                 liberator.echoerr("Invalid option: " + arg);
                 return null;
             }

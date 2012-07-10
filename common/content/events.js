@@ -40,7 +40,7 @@ const Events = Module("events", {
             return: ["Return", "CR", "Enter"],
             right_shift: [">"],
             space: ["Space", " "],
-            subtract: ["Minus", "Subtract", "-"]
+            subtract: ["Minus", "Subtract"]
         };
 
         this._code_key = {};
