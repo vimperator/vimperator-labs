@@ -537,7 +537,7 @@ const Mappings = Module("mappings", {
             commands.add([ch + "unm[ap]"],
                 "Remove a mapping" + modeDescription,
                 function (args) {
-                    let lhs = args[0];
+                    let lhs = events.canonicalKeys(args[0]);
                     let urls = args["-urls"] && RegExp(args["-urls"]);
 
                     let found = false;
