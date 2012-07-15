@@ -926,7 +926,12 @@ const CommandLine = Module("commandline", {
                 if (isScrollable())
                     win.scrollTo(0, win.scrollMaxY);
                 break;
-
+            case "Y":
+                let (sel = win.getSelection().toString()) {
+                    if (sel)
+                        util.copyToClipboard(sel, false);
+                }
+                break;
             // unmapped key -> show Help
             default:
                 showHelp = true;
@@ -934,7 +939,10 @@ const CommandLine = Module("commandline", {
 
         if (showHelp) {
             this.hide(); // hide the command line
-            this._echoLine("SPACE/d/j: screen/page/line down | b/u/k: screen/page/line up | HOME/g: top | END/G: bottom | ;f: follow hint | ESC/q: quit", this.HL_MOREMSG, true);
+            this._echoLine("SPACE/d/j: screen/page/line down | b/u/k: screen/page/line up | " +
+                           "HOME/g: top | END/G: bottom | " +
+                           "Y: yank | ;f: follow hint | ESC/q: quit",
+                           this.HL_MOREMSG, true);
         } else {
             this.show();
         }

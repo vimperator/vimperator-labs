@@ -9,6 +9,7 @@
     * :open and :tabopen without arguments open about:newtab (see :set! browser.newtab.url)
     * Fix unmappable key "-". (Use \- or '-' or "-")
     * support command-count from map
+    * support yank the selection on MOW by 'Y'
 
 2012-04-02: It's not an April's fool
     * version 3.4
