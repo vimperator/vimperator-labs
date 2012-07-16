@@ -887,6 +887,33 @@ const Hints = Module("hints", {
     },
 
     /**
+     * start an extended hint mode
+     *
+     * @param {string} filter The filter to use.
+     * @param {Object} win The window in which we are showing hints.
+     */
+    startExtendedHint: function (filter, win) {
+        commandline.input(";",
+            function onSubmit (str) {
+                if (str in hints._hintModes)
+                    setTimeout(function(){ hints.show(str, filter, win); }, 0);
+            }, {
+                promptHighlight: "Normal",
+                completer: function (context) {
+                    context.compare = function () 0;
+                    context.completions = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
+                },
+                onChange: function (str) {
+                    if (str in hints._hintModes) {
+                        hints.show(str, filter, win);
+                        if (commandline._completionList.visible())
+                            commandline._completionList.hide();
+                    }
+                },
+            });
+    },
+
+    /**
      * Cancel all hinting.
      */
     hide: function () {
@@ -1167,16 +1194,7 @@ const Hints = Module("hints", {
             "Start an extended hint mode",
             function (count) {
                 hints._extendedhintCount = count;
-                commandline.input(";", null,
-                    {
-                        promptHighlight: "Normal",
-                        completer: function (context) {
-                            context.compare = function () 0;
-                            context.completions = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
-                        },
-                        onChange: function () { modes.reset(); },
-                        onCancel: function (arg) { arg && setTimeout(function () hints.show(arg), 0); }
-                    });
+                hints.startExtendedHint();
             }, { count: true });
     },
     options: function () {
