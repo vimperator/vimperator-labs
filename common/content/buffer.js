@@ -1367,8 +1367,14 @@ const Buffer = Module("buffer", {
             }
         }
 
-        function createItem (prefix, label, url, indicator, icon)
-            ({ text: [prefix + label, prefix + url], url: template.highlightURL(url), indicator: indicator, icon: icon || DEFAULT_FAVICON })
+        function createItem (prefix, label, url, indicator, icon) {
+            return {
+                text: [prefix + label, prefix + url],
+                url: template.highlightURL(url, true, "buffer-list"),
+                indicator: indicator,
+                icon: icon || DEFAULT_FAVICON
+            };
+        }
 
         function generateTabs (tabs) {
             for (let i = 0, tab; tab = tabs[i]; i++) {

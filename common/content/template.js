@@ -178,9 +178,10 @@ const Template = Module("template", {
         return s + <>{str.substr(start)}</>;
     },
 
-    highlightURL: function highlightURL(str, force) {
+    highlightURL: function highlightURL(str, force, highlight) {
+        highlight = "URL" + (highlight ? " " + highlight : "");
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return <a highlight="URL" href={str}>{str}</a>;
+            return <a highlight={highlight} href={str}>{str}</a>;
         else
             return str;
     },
