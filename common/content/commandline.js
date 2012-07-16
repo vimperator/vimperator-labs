@@ -692,9 +692,8 @@ const CommandLine = Module("commandline", {
             }, 0);
         }
         else if (event.type == "focus") {
-            if (!this._commandShown() && event.target == this._commandWidget.inputField) {
-                event.target.blur();
-                liberator.beep();
+            if (!this._commandShown() && event.originalTarget == this._commandWidget.inputField) {
+                event.originalTarget.blur();
             }
         }
         else if (event.type == "input") {
@@ -844,9 +843,7 @@ const CommandLine = Module("commandline", {
             return;
         }
 
-        function isScrollable() { if (win.scrollMaxY == 0) liberator.beep(); return !win.scrollMaxY == 0; }
-        function atEnd() win.scrollY / win.scrollMaxY >= 1;
-
+        let isScrollable = win.scrollMaxY !== 0;
         let showHelp = false;
         switch (key) {
             // close the window
@@ -872,7 +869,7 @@ const CommandLine = Module("commandline", {
             case "<C-j>":
             case "<C-m>":
             case "<Return>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollByLines(1);
                 break;
 
@@ -880,19 +877,19 @@ const CommandLine = Module("commandline", {
             case "k":
             case "<Up>":
             case "<BS>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollByLines(-1);
                 break;
 
             // half page down
             case "d":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollBy(0, win.innerHeight / 2);
                 break;
 
             // half page up
             case "u":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollBy(0, -(win.innerHeight / 2));
                 break;
 
@@ -901,7 +898,7 @@ const CommandLine = Module("commandline", {
             case "<C-f>":
             case "<Space>":
             case "<PageDown>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollByPages(1);
                 break;
 
@@ -909,21 +906,21 @@ const CommandLine = Module("commandline", {
             case "b":
             case "<C-f>":
             case "<PageUp>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollByPages(-1);
                 break;
 
             // top of page
             case "g":
             case "<Home>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollTo(0, 0);
                 break;
 
             // bottom of page
             case "G":
             case "<End>":
-                if (isScrollable())
+                if (isScrollable)
                     win.scrollTo(0, win.scrollMaxY);
                 break;
             case "Y":
