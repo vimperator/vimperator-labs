@@ -120,6 +120,7 @@ const CommandLine = Module("commandline", {
         this._completions = null;
         this._history = null;
 
+        this._startHints = false; // whether we're waiting to start hints mode
         this._lastSubstring = "";
 
         // the label for showing the mode message
@@ -496,9 +497,12 @@ const CommandLine = Module("commandline", {
 
         // liberator.log('closing with : ' + modes.main + "/" + modes.extended);
 
-        // do nothing because RPOMPT is still available
-        if (modes.extended & modes.PROMPT)
+        // hint prompt is available
+        if (this._startHints && modes.extended & modes.PROMPT) {
+            this._startHints = false;
             return;
+        }
+        this._startHints = false;
 
         // don't have input and output widget open at the same time
         if (modes.extended & modes.INPUT_MULTILINE)
@@ -857,6 +861,7 @@ const CommandLine = Module("commandline", {
 
             // extended hint modes
             case ";":
+                this._startHints = true;
                 hints.startExtendedHint("", win)
                 return;
 
