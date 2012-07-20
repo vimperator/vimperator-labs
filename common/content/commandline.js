@@ -514,7 +514,8 @@ const CommandLine = Module("commandline", {
             liberator.focusContent();
             this._multilineInputWidget.collapsed = true;
             this._outputContainer.collapsed = true;
-            this._messageBox.value = "";
+            if (this._messageBox.getAttributeNS(NS.uri, "highlight") === this.HL_MOREMSG)
+                this._messageBox.value = "";
             this.hide();
             //modes.pop(true);
             modes.reset();
