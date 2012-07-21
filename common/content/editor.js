@@ -662,7 +662,7 @@ const Editor = Module("editor", {
             ["<C-End>"], "Move cursor to end of text field",
             function () { editor.executeCommand("cmd_moveBottom", 1); });*/
 
-        mappings.add(modes.INSERT,
+        mappings.add(myModes,
             ["<S-Insert>"], "Insert clipboard/selection",
             function () { editor.pasteClipboard(); });
 

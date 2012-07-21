@@ -10,7 +10,6 @@
     * Fix unmappable key "-". (Use \- or '-' or "-")
     * support command-count from map
     * support yank the selection on MOW by 'Y'
-    * Fix pasting text with Shift-Insert into command line
 
 2012-04-02: It's not an April's fool
     * version 3.4
