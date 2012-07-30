@@ -223,10 +223,10 @@ const Finder = Module("finder", {
         if (config.name == "Muttator")
             return;
 
-        var findToolbar = document.getElementById("FindToolbar");
-        if (findToolbar) {
-            findToolbar._highlightDoc(false);
-            findToolbar._highlightDoc(true, str);
+        if (window.gFindBar) {
+            window.gFindBar._setCaseSensitivity(this._caseSensitive);
+            window.gFindBar._highlightDoc(false);
+            window.gFindBar._highlightDoc(true, str);
         }
     },
 
@@ -234,9 +234,12 @@ const Finder = Module("finder", {
      * Clears all search highlighting.
      */
     clear: function () {
-        var findToolbar = document.getElementById("FindToolbar");
-        if (findToolbar)
-            findToolbar._highlightDoc(false);
+        // FIXME: Thunderbird incompatible
+        if (config.name == "Muttator")
+            return;
+
+        if (window.gFindBar)
+            window.gFindBar._highlightDoc(false);
     }
 }, {
 }, {
