@@ -1,6 +1,6 @@
-2012-xx-xx:
+2012-08-04:
     * version 3.5
-    * Firefox 13 compatibility fixes
+    * Firefox 13-15 compatibility fixes
     * Add :ignorekeys meta command to handle web pages which want to handle key input themselves
       rather than Vimperator taking over all the keys (useful for apps like gmail)
     * Make hlsearch the default search highlighting option
@@ -10,6 +10,7 @@
     * Fix unmappable key "-". (Use \- or '-' or "-")
     * support command-count from map
     * support yank the selection on MOW by 'Y'
+    * Many small other fixes
 
 2012-04-02: It's not an April's fool
     * version 3.4
