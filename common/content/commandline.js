@@ -161,6 +161,7 @@ const CommandLine = Module("commandline", {
         this._multilineCallback = null;
 
         this._input = {};
+        this._keepOpenForInput = false;
 
         this._commandlineDisplayTimeoutID = null;
 
@@ -206,6 +207,7 @@ const CommandLine = Module("commandline", {
         }
 
         function closePrompt(value) {
+            self._keepOpenForInput = false;
             let callback = self._input.submit;
             self._input = {};
             if (callback)
@@ -481,6 +483,7 @@ const CommandLine = Module("commandline", {
      * called directly after a successful command, otherwise it will.
      */
     close: function close() {
+        this._keepOpenForInput = false;
         let mode = this._currentExtendedMode;
         this._currentExtendedMode = null;
         commandline.triggerCallback("cancel", mode); // FIXME
@@ -644,6 +647,7 @@ const CommandLine = Module("commandline", {
             complete: extra.completer,
             cancel: extra.onCancel
         };
+        this._keepOpenForInput = true;
 
         modes.set(modes.COMMAND_LINE, modes.PROMPT);
         this._currentExtendedMode = modes.PROMPT;
@@ -723,7 +727,8 @@ const CommandLine = Module("commandline", {
                 //let currentExtendedMode = this._currentExtendedMode;
                 //this._currentExtendedMode = null; // Don't let modes.pop trigger "cancel"
                 commandline.triggerCallback("submit", this._currentExtendedMode, command);
-                this.close();
+                if (!this._keepOpenForInput)
+                    this.close();
             }
             // user pressed <Up> or <Down> arrow to cycle this._history completion
             else if (/^<(Up|Down|S-Up|S-Down|PageUp|PageDown)>$/.test(key)) {
