@@ -1,7 +1,7 @@
 2012-xx-xx:
     * version 3.6
     * Show confirmation prompt again when opening more than 20 URLs or issuing
-      'debmarks!' or 'set! all&' commands
+      'delbmarks!' or 'set! all&' commands
 
 2012-08-04:
     * version 3.5
