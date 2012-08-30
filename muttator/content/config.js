@@ -61,7 +61,7 @@ const Config = Module("config", ConfigBase, {
         ["about",            "About Thunderbird",
             function () { window.openAboutDialog(); }],
         ["addons",           "Manage Add-ons",
-            function () { window.openAddonsMgr(); }],
+            function () { window.toOpenWindowByType("Addons:Manager", "about:addons", "chrome,centerscreen,resizable,dialog=no,width=700,height=600"); }],
         ["addressbook",      "Address book",
             function () { window.toAddressBook(); }],
         ["accounts",      "Account Manager",

@@ -1316,10 +1316,7 @@ const Liberator = Module("liberator", {
     commands: function () {
         commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
-            function () {
-                liberator.open("chrome://mozapps/content/extensions/extensions.xul",
-                    { from: "addons" });
-            },
+            function () { liberator.open("about:addons", { from: "addons" }); },
             { argCount: "0" });
 
         commands.add(["beep"],

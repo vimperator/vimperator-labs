@@ -43,7 +43,7 @@ const Config = Module("config", ConfigBase, {
         ["addbookmark",      "Add bookmark for the current page",
             function () { PlacesCommandHook.bookmarkCurrentPage(true, PlacesUtils.bookmarksRootId); }],
         ["addons",           "Manage Add-ons",
-            function () { window.BrowserOpenAddonsMgr(); }],
+            function () { window.toOpenWindowByType("Addons:Manager", "about:addons", "chrome,centerscreen,resizable,dialog=no,width=700,height=600"); }],
         ["bookmarks",        "List your bookmarks",
             function () { window.openDialog("chrome://browser/content/bookmarks/bookmarksPanel.xul", "Bookmarks", "dialog,centerscreen,width=600,height=600"); }],
         ["checkupdates",     "Check for updates", // show the About dialog which includes the Check For Updates button
