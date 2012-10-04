@@ -143,7 +143,7 @@ const Template = Module("template", {
                 start += lcfilter.length;
             }
         }
-        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
+
         return this.highlightSubstrings(str, matchArr, highlight || template.filter);
     },
 
@@ -153,8 +153,35 @@ const Template = Module("template", {
         while ((res = re.exec(str)) && res[0].length)
             matchArr.push({pos:res.index, len:res[0].length});
 
-        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
         return this.highlightSubstrings(str, matchArr, highlight || template.filter);
+    },
+
+    removeOverlapMatch: function removeOverlapMatch(matchArr)
+    {
+        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
+        let resArr = [];
+        for (let [i, item] in Iterator(matchArr)) {
+            let overlap = false;
+            let startpos = item.pos;
+            let endpos = startpos + item.len - 1;
+            if (i > 0) {
+                for (let [j, elem] in Iterator(resArr)) {
+                    let start = elem.pos;
+                    let end = start + elem.len - 1;
+                    if ((startpos <= start && endpos >= start) || (startpos >= start && startpos <= end)) {
+                        overlap = true;
+                        let a = Math.min(start, startpos);
+                        let b = Math.max(end, endpos);
+                        resArr[j] = {pos:a, len:b - a + 1};
+                        break;
+                    }
+                }
+            }
+            if (!overlap)
+                resArr.push(item)
+        }
+
+        return resArr;
     },
 
     highlightSubstrings: function highlightSubstrings(str, iter, highlight) {
@@ -167,7 +194,7 @@ const Template = Module("template", {
         let s = <></>;
         let start = 0;
         let n = 0;
-        for (let [, item] in Iterator(iter)) {
+        for (let [, item] in Iterator(this.removeOverlapMatch(iter))) {
             if (n++ > 50) // Prevent infinite loops.
                 return s + <>{str.substr(start)}</>;
             XML.ignoreWhitespace = false;
