@@ -156,29 +156,20 @@ const Template = Module("template", {
         return this.highlightSubstrings(str, matchArr, highlight || template.filter);
     },
 
-    removeOverlapMatch: function removeOverlapMatch(matchArr)
-    {
-        matchArr.sort(function(a,b) a.pos - b.pos); // Ascending start positions
+    removeOverlapMatch: function removeOverlapMatch(matchArr) {
+        matchArr.sort(function(a,b) a.pos - b.pos || b.len - a.len); // Ascending start positions
         let resArr = [];
-        for (let [i, item] in Iterator(matchArr)) {
-            let overlap = false;
-            let startpos = item.pos;
-            let endpos = startpos + item.len - 1;
-            if (i > 0) {
-                for (let [j, elem] in Iterator(resArr)) {
-                    let start = elem.pos;
-                    let end = start + elem.len - 1;
-                    if ((startpos <= start && endpos >= start) || (startpos >= start && startpos <= end)) {
-                        overlap = true;
-                        let a = Math.min(start, startpos);
-                        let b = Math.max(end, endpos);
-                        resArr[j] = {pos:a, len:b - a + 1};
-                        break;
-                    }
-                }
+        let offset = -1;
+        let last, prev;
+        for (let [, item] in Iterator(matchArr)) {
+            last = item.pos + item.len;
+            if (item.pos > offset) {
+                prev = resArr[resArr.length] = item;
+                offset = last;
+            } else if (last > offset) {
+                prev.len += (last - offset);
+                offset = last;
             }
-            if (!overlap)
-                resArr.push(item)
         }
 
         return resArr;
