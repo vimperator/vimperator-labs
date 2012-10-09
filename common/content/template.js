@@ -111,6 +111,8 @@ const Template = Module("template", {
             case "undefined":
                 return xml`<span highlight="Null">${arg}</span>`;
             case "object":
+                if (arg instanceof TemplateSupportsXML)
+                    return arg;
                 // for java packages value.toString() would crash so badly
                 // that we cannot even try/catch it
                 if (/^\[JavaPackage.*\]$/.test(arg))
