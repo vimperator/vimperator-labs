@@ -170,7 +170,7 @@ cooked: ["' + cooked.join('", "') + '"]' +
                         if (args.length === 1) {
                             res += '"' + args[0].replace(reRawEscape, fnRawEscape) + '"';
                         } else {
-                            res += '("' + args[0] + '"';
+                            res += '("' + args[0].replace(reRawEscape, fnRawEscape) + '"';
                             for (i = 0, j = substitude.length; i < j; i++) {
                                 res += ' + (' + substitude[i] + ') + "' + args[i + 1].replace(reRawEscape, fnRawEscape) + '"';
                             }
