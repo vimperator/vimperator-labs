@@ -287,11 +287,11 @@ const Hints = Module("hints", {
         let doc = win.document;
         let [offsetX, offsetY] = this._getContainerOffsets(doc);
 
-        let baseNodeAbsolute = util.xmlToDom(<span highlight="Hint"/>, doc);
+        let baseNodeAbsolute = util.xmlToDom(xml`<span highlight="Hint"/>`, doc);
 
         let res = util.evaluateXPath(this._hintMode.tags(), doc, null, true);
 
-        let fragment = util.xmlToDom(<div highlight="hints" style="position:fixed;top:0;left:0px;"/>, doc);
+        let fragment = util.xmlToDom(xml`<div highlight="hints" style="position:fixed;top:0;left:0px;"/>`, doc);
         let pageHints = this._pageHints;
         let start = this._pageHints.length;
         let elem;
@@ -457,7 +457,7 @@ const Hints = Module("hints", {
                         if (!rect)
                             continue;
 
-                        hint.imgSpan = util.xmlToDom(<span highlight="Hint" liberator:class="HintImage" xmlns:liberator={NS}/>, doc);
+                        hint.imgSpan = util.xmlToDom(xml`<span highlight="Hint" liberator:class="HintImage" xmlns:liberator=${NS}/>`, doc);
                         hint.imgSpan.style.left = (rect.left + offsetX) + "px";
                         hint.imgSpan.style.top = (rect.top + offsetY) + "px";
                         hint.imgSpan.style.width = (rect.right - rect.left) + "px";

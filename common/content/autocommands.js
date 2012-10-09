@@ -81,20 +81,19 @@ const AutoCommands = Module("autocommands", {
         });
 
         let list = template.genericOutput("Auto Commands",
-            <table>
-                {
-                    template.map(cmds, function ([event, items])
-                    <tr highlight="Title">
-                        <td colspan="2">{event}</td>
-                    </tr>
-                    +
-                        template.map(items, function (item)
-                        <tr>
-                            <td>&#160;{item.pattern.source}</td>
-                            <td>{item.command}</td>
-                        </tr>))
+            xml`<table>
+                ${
+                    template.map2(xml, cmds, function ([event, items])
+                    xml`<tr highlight="Title">
+                        <td colspan="2">${event}</td>
+                    </tr>${
+                        template.map2(xml, items, function (item)
+                        xml`<tr>
+                            <td>&#160;${item.pattern.source}</td>
+                            <td>${item.command}</td>
+                        </tr>`)}`)
                 }
-            </table>);
+            </table>`);
 
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     },

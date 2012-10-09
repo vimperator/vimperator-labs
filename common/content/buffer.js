@@ -70,7 +70,7 @@ const Buffer = Module("buffer", {
                     nFeed++;
                     let type = feedTypes[feed.type] || "RSS";
                     if (verbose)
-                        yield [feed.title, template.highlightURL(feed.href, true) + <span class="extra-info">&#xa0;({type})</span>];
+                        yield [feed.title, xml`${template.highlightURL(feed.href, true)}<span class="extra-info">&#xa0;(${type})</span>`];
                 }
             }
 
@@ -858,7 +858,7 @@ const Buffer = Module("buffer", {
 
         // add the frame indicator
         let doc = frames[next].document;
-        let indicator = util.xmlToDom(<div highlight="FrameIndicator"/>, doc);
+        let indicator = util.xmlToDom(xml`<div highlight="FrameIndicator"/>`, doc);
         doc.body.appendChild(indicator);
 
         setTimeout(function () { doc.body.removeChild(indicator); }, 500);
@@ -876,7 +876,7 @@ const Buffer = Module("buffer", {
      * @param {Node} elem The element to query.
      */
     showElementInfo: function (elem) {
-        liberator.echo(<>Element:<br/>{util.objectToString(elem, true)}</>, commandline.FORCE_MULTILINE);
+        liberator.echo(xml`Element:<br/>${util.objectToString(elem, true)}`, commandline.FORCE_MULTILINE);
     },
 
     /**
@@ -893,23 +893,23 @@ const Buffer = Module("buffer", {
             let file = content.document.location.pathname.split("/").pop() || "[No Name]";
             let title = content.document.title || "[No Title]";
 
-            let info = template.map("gf",
-                function (opt) template.map(buffer.pageInfo[opt][0](), util.identity, ", "),
+            let info = template.map2(xml, "gf",
+                function (opt) template.map2(xml, buffer.pageInfo[opt][0](), util.identity, ", "),
                 ", ");
 
             if (bookmarks.isBookmarked(this.URL))
-                info += ", bookmarked";
+                xml["+="](info, ", bookmarked");
 
-            let pageInfoText = <>{file.quote()} [{info}] {title}</>;
+            let pageInfoText = xml`${file.quote()} [${info}] ${title}`;
             liberator.echo(pageInfoText, commandline.FORCE_SINGLELINE);
             return;
         }
 
         let option = sections || options["pageinfo"];
-        let list = template.map(option, function (option) {
+        let list = template.map2(xml, option, function (option) {
             let opt = buffer.pageInfo[option];
-            return opt ? template.table(opt[1], opt[0](true)) : undefined;
-        }, <br/>);
+            return opt ? template.table2(xml, opt[1], opt[0](true)) : undefined;
+        }, xml`<br/>`);
         liberator.echo(template.genericOutput("Page Information", list), commandline.FORCE_MULTILINE);
     },
 
@@ -1413,10 +1413,10 @@ const Buffer = Module("buffer", {
             context.compare = CompletionContext.Sort.number;
             let process = context.process[0];
             context.process = [function (item, text)
-                    <>
-                        <span highlight="Indicator" style="display: inline-block; width: 2ex; padding-right: 0.5ex; text-align: right">{item.item.indicator}</span>
-                        { process.call(this, item, text) }
-                    </>];
+                    xml`
+                        <span highlight="Indicator" style="display: inline-block; width: 2ex; padding-right: 0.5ex; text-align: right">${item.item.indicator}</span>
+                        ${ process.call(this, item, text) }
+                    `];
 
             let tabs;
             if (!flags) {

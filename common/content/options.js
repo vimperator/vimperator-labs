@@ -595,7 +595,7 @@ const Options = Module("options", {
                     name:      opt.name,
                     default:   opt.defaultValue,
                     pre:       "\u00a0\u00a0", // Unicode nonbreaking space.
-                    value:     <></>
+                    value:     xml``
                 };
 
                 if (onlyNonDefault && option.isDefault)
@@ -609,7 +609,7 @@ const Options = Module("options", {
                     option.default = (option.default ? "" : "no") + opt.name;
                 }
                 else
-                    option.value = <>={template.highlight(opt.value)}</>;
+                    option.value = xml`=${template.highlight(opt.value)}`;
                 yield option;
             }
         };
@@ -645,7 +645,7 @@ const Options = Module("options", {
                 let option = {
                     isDefault: !userValue,
                     default:   options._loadPreference(pref, null, true),
-                    value:     <>={template.highlight(value, true, 100)}</>,
+                    value:     xml`${template.highlight(value, true, 100)}`,
                     name:      pref,
                     pre:       "\u00a0\u00a0" // Unicode nonbreaking space.
                 };
@@ -1004,7 +1004,7 @@ const Options = Module("options", {
                             msg += "\n        Last set from " + option.setFrom.path;
 
                         // FIXME: Message highlight group wrapping messes up the indent up for multi-arg verbose :set queries
-                        liberator.echo(<span highlight="CmdOutput">{msg}</span>);
+                        liberator.echo(xml`<span highlight="CmdOutput">${msg}</span>`);
                     }
                 }
                 // write access
@@ -1099,21 +1099,23 @@ const Options = Module("options", {
                 args = args.string;
 
                 if (!args) {
+                    var hasRow = false;
                     let str =
-                        <table>
-                        {
-                            template.map(liberator.globalVariables, function ([i, value]) {
+                        xml`<table>
+                        ${
+                            template.map2(xml, liberator.globalVariables, function ([i, value]) {
                                 let prefix = typeof value == "number"   ? "#" :
                                              typeof value == "function" ? "*" :
                                                                           " ";
-                                return <tr>
-                                            <td style="width: 200px;">{i}</td>
-                                            <td>{prefix}{value}</td>
-                                       </tr>;
+                                if (!hasRow) hasRow = true;
+                                return xml`<tr>
+                                            <td style="width: 200px;">${i}</td>
+                                            <td>${prefix}${value}</td>
+                                       </tr>`;
                             })
                         }
-                        </table>;
-                    if (str.*.length())
+                        </table>`;
+                    if (hasRow)
                         liberator.echo(str, commandline.FORCE_MULTILINE);
                     else
                         liberator.echomsg("No variables found");

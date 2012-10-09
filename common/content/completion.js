@@ -679,10 +679,10 @@ const Completion = Module("completion", {
         for (let [key, context] in Iterator(context.contexts)) {
             if (key.indexOf("/list") == 0) {
                 let list = template.genericOutput("",
-                    <div highlight="Completions">
-                        { template.completionRow(context.title, "CompTitle") }
-                        { template.map(context.items, function (item) context.createRow(item), null, 100) }
-                    </div>);
+                    xml`<div highlight="Completions">
+                        ${ template.completionRow(context.title, "CompTitle") }
+                        ${ template.map2(xml, context.items, function (item) context.createRow(item), null, 100) }
+                    </div>`);
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             }
         }
