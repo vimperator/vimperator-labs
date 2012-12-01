@@ -1354,11 +1354,15 @@ const Buffer = Module("buffer", {
             return " ";
         }
         function getURLFromTab (tab) {
-            if ("linkedBrowser" in tab)
-                return ("__SS_restoreState" in tab.linkedBrowser && "__SS_data" in tab.linkedBrowser) ?
-                    tab.linkedBrowser.__SS_data.entries.slice(-1)[0].url :
-                    tab.linkedBrowser.contentDocument.location.href;
-            else {
+            if ("linkedBrowser" in tab) {
+                if ("__SS_restoreState" in tab.linkedBrowser && "__SS_data" in tab.linkedBrowser) {
+                    if (tab.linkedBrowser.__SS_data.entries.length)
+                        return tab.linkedBrowser.__SS_data.entries.slice(-1)[0].url;
+                    else
+                        return tab.linkedBrowser.__SS_data.userTypedValue || 'about:blank';
+                } else
+                    return tab.linkedBrowser.contentDocument.location.href;
+            } else {
                 let i = config.tabbrowser.mTabContainer.getIndexOfItem(tab);
                 let info = config.tabbrowser.tabInfo[i];
                 return info.browser ?
