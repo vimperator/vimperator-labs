@@ -218,8 +218,19 @@ const JavaScript = Module("javascript", {
                 }
                 else if (this._c == this._last)
                     this._pop(this._c);
-            }
-            else {
+            } else if (this._last === "`") {
+                if (this._lastChar == "\\") { // Escape. Skip the next char, whatever it may be.
+                    this._c = "";
+                    this._i++;
+                }
+                else if (this._c == "`") {
+                    this._pop("`");
+                    this._pop("``");
+                } else if (this._c === "{" && this._lastChar === "$") {
+                    this._pop("`");
+                    this._push("{");
+                }
+            } else {
                 // A word character following a non-word character, or simply a non-word
                 // character. Start a new statement.
                 if (/[a-zA-Z_$]/.test(this._c) && !/[\w$]/.test(this._lastChar) || !/[\w\s$]/.test(this._c))
@@ -254,11 +265,19 @@ const JavaScript = Module("javascript", {
                 case ")": this._pop("("); break;
                 case "]": this._pop("["); break;
                 case "}": this._pop("{"); // Fallthrough
+                    if (this._last === "``") {
+                        this._push("`");
+                        break;
+                    }
                 case ";":
                     this._top.fullStatements.push(this._i);
                     break;
                 case ",":
                     this._top.comma.push(this._i);
+                    break;
+                case "`":
+                    this._push("``");
+                    this._push("`");
                     break;
                 }
 
@@ -452,7 +471,7 @@ const JavaScript = Module("javascript", {
 
         // In a string. Check if we're dereferencing an object.
         // Otherwise, do nothing.
-        if (this._last == "'" || this._last == '"') {
+        if (this._last == "'" || this._last == '"' || this._last == "`") {
             //
             // str = "foo[bar + 'baz"
             // obj = "foo"
@@ -615,5 +634,8 @@ const JavaScript = Module("javascript", {
         options.add(["inspectcontentobjects"],
             "Allow completion of JavaScript objects coming from web content. POSSIBLY INSECURE!",
             "boolean", false);
+        options.add(["expandtemplate"],
+            "Expand TemplateLiteral",
+            "boolean", !("XMLList" in window));
     }
 })

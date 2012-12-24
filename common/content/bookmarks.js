@@ -524,7 +524,7 @@ const Bookmarks = Module("bookmarks", {
                 let jumps = [[idx == sh.index ? ">" : "",
                               Math.abs(idx - sh.index),
                               val.title,
-                              let(url=val.URI.spec) <a highlight="URL" href={url}>{url}</a>]
+                              let(url=val.URI.spec) xml`<a highlight="URL" href=${url}>${url}</a>`]
                               for ([idx, val] in Iterator(sh))];
                 let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 },
                     { header: "", style: "text-align: right", highlight: "Number" },

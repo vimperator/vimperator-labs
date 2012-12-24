@@ -11,31 +11,36 @@ const Template = Module("template", {
     join: function join(c) function (a, b) a + c + b,
 
     map: function map(iter, func, sep, interruptable) {
+        return this.map2(xml, iter, func, sep, interruptable);
+    },
+    map2: function map(tag, iter, func, sep, interruptable) {
         if (iter.length) // FIXME: Kludge?
             iter = util.Array.itervalues(iter);
-        let ret = <></>;
+        let ret = tag``;
         let n = 0;
+        var op = tag["+="] || tag["+"] ||function (lhs, rhs) tag`${lhs}${rhs}`;
         for each (let i in Iterator(iter)) {
             let val = func(i);
-            if (val == undefined)
+            if (val == undefined || (tag.isEmpty && tag.isEmpty(val)))
                 continue;
             if (sep && n++)
-                ret += sep;
+                ret = op(ret, sep);
             if (interruptable && n % interruptable == 0)
                 liberator.threadYield(true, true);
-            ret += val;
+            ret = op(ret, val);
         }
         return ret;
     },
 
-    maybeXML: function maybeXML(xml) {
-        if (typeof xml == "xml")
-            return xml;
+    maybeXML: function maybeXML(val) {
+        if (typeof val == "xml" || val instanceof TemplateSupportsXML)
+            return val;
+
         try {
-            return new XMLList(xml);
+            return xml.raw`${val}`;
         }
         catch (e) {}
-        return <>{xml}</>;
+        return xml`${val}`;
     },
 
     completionRow: function completionRow(item, highlightGroup) {
@@ -51,38 +56,36 @@ const Template = Module("template", {
             var desc = this.process[1].call(this, item, item.description);
         }
 
-        // <e4x>
-        return <div highlight={highlightGroup || "CompItem"} style="white-space: nowrap">
+        return xml`<div highlight=${highlightGroup || "CompItem"} style="white-space: nowrap">
                    <!-- The non-breaking spaces prevent empty elements
                       - from pushing the baseline down and enlarging
                       - the row.
                       -->
-                   <li highlight="CompResult">{text}&#160;</li>
-                   <li highlight="CompDesc">{desc}&#160;</li>
-               </div>;
-        // </e4x>
+                   <li highlight="CompResult">${text}&#160;</li>
+                   <li highlight="CompDesc">${desc}&#160;</li>
+               </div>`;
     },
 
     bookmarkDescription: function (item, text, filter)
-    <>
-        <a href={item.item.url} highlight="URL">{template.highlightFilter(text || "", filter)}</a>&#160;
-        {
+    xml`
+        <a href=${item.item.url} highlight="URL">${template.highlightFilter(text || "", filter)}</a>&#160;
+        ${
             !(item.extra && item.extra.length) ? "" :
-            <span class="extra-info">
-                ({
-                    template.map(item.extra, function (e)
-                    <>{e[0]}: <span highlight={e[2]}>{e[1]}</span></>,
-                    <>&#xa0;</>/* Non-breaking space */)
+            xml`<span class="extra-info">
+                (${
+                    template.map2(xml, item.extra,
+                    function (e) xml`${e[0]}: <span highlight=${e[2]}>${e[1]}</span>`,
+                    xml.cdata`&#xa0;`/* Non-breaking space */)
                 })
-            </span>
+            </span>`
         }
-    </>,
+    `,
 
     icon: function (item, text) {
-        return <><span highlight="CompIcon">{item.icon ? <img src={item.icon}/> : <></>}</span><span class="td-strut"/>{text}</>
+        return xml`<span highlight="CompIcon">${item.icon ? xml`<img src=${item.icon}/>` : ""}</span><span class="td-strut"/>${text}`;
     },
 
-    filter: function (str) <span highlight="Filter">{str}</span>,
+    filter: function (str) xml`<span highlight="Filter">${str}</span>`,
 
     // if "processStrings" is true, any passed strings will be surrounded by " and
     // any line breaks are displayed as \n
@@ -92,37 +95,39 @@ const Template = Module("template", {
             let str = clip ? util.clip(String(arg), clip) : String(arg);
             switch (arg == null ? "undefined" : typeof arg) {
             case "number":
-                return <span highlight="Number">{str}</span>;
+                return xml`<span highlight="Number">${str}</span>`;
             case "string":
                 if (processStrings)
                     str = str.quote();
-                return <span highlight="String">{str}</span>;
+                return xml`<span highlight="String">${str}</span>`;
             case "boolean":
-                return <span highlight="Boolean">{str}</span>;
+                return xml`<span highlight="Boolean">${str}</span>`;
             case "function":
                 // Vim generally doesn't like /foo*/, because */ looks like a comment terminator.
                 // Using /foo*(:?)/ instead.
                 if (processStrings)
-                    return <span highlight="Function">{str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>;
-                return <>{arg}</>;
+                    return xml`<span highlight="Function">${str.replace(/\{(.|\n)*(?:)/g, "{ ... }")}</span>`;
+                return xml`${arg}`;
             case "undefined":
-                return <span highlight="Null">{arg}</span>;
+                return xml`<span highlight="Null">${arg}</span>`;
             case "object":
+                if (arg instanceof TemplateSupportsXML)
+                    return arg;
                 // for java packages value.toString() would crash so badly
                 // that we cannot even try/catch it
                 if (/^\[JavaPackage.*\]$/.test(arg))
-                    return <>[JavaPackage]</>;
+                    return xml`[JavaPackage]`;
                 if (processStrings && false)
-                    str = template.highlightFilter(str, "\n", function () <span highlight="NonText">^J</span>);
-                return <span highlight="Object">{str}</span>;
+                    str = template.highlightFilter(str, "\n", function () xml`<span highlight="NonText">^J</span>`);
+                return xml`<span highlight="Object">${str}</span>`;
             case "xml":
                 return arg;
             default:
-                return <><![CDATA[<unknown type>]]></>;
+                return `<unknown type>`;
             }
         }
         catch (e) {
-            return <><![CDATA[<unknown>]]></>;
+            return `<unknown>`;
         }
     },
 
@@ -176,47 +181,47 @@ const Template = Module("template", {
     },
 
     highlightSubstrings: function highlightSubstrings(str, iter, highlight) {
-        if (typeof str == "xml")
+        if (typeof str == "xml" || str instanceof TemplateSupportsXML)
             return str;
         if (str == "")
-            return <>{str}</>;
+            return xml`${str}`;
 
         str = String(str).replace(" ", "\u00a0");
-        let s = <></>;
+        let s = xml``;
+        var add = xml["+="];
         let start = 0;
         let n = 0;
         for (let [, item] in Iterator(this.removeOverlapMatch(iter))) {
             if (n++ > 50) // Prevent infinite loops.
-                return s + <>{str.substr(start)}</>;
-            XML.ignoreWhitespace = false;
-            s += <>{str.substring(start, item.pos)}</>;
-            s += highlight(str.substr(item.pos, item.len));
+                return add(s, xml`${str.substr(start)}`);
+            add(s, xml`${str.substring(start, item.pos)}`);
+            add(s, highlight(str.substr(item.pos, item.len)));
             start = item.pos + item.len;
         }
-        return s + <>{str.substr(start)}</>;
+        return add(s, xml`${str.substr(start)}`);
     },
 
     highlightURL: function highlightURL(str, force, highlight) {
         highlight = "URL" + (highlight ? " " + highlight : "");
         if (force || /^[a-zA-Z]+:\/\//.test(str))
-            return <a highlight={highlight} href={str}>{str}</a>;
+            return xml`<a highlight=${highlight} href=${str}>${str}</a>`;
         else
             return str;
     },
 
     // A generic output function which can have an (optional)
     // title and the output can be an XML which is just passed on
-    genericOutput: function generic(title, xml) {
+    genericOutput: function generic(title, value) {
         if (title)
-            return <><table style="width: 100%">
+            return xml`<table style="width: 100%">
                        <tr style="text-align: left;" highlight="CompTitle">
-                           <th>{title}</th>
+                           <th>${title}</th>
                        </tr>
                        </table>
-                       <div style="padding-left: 0.5ex; padding-right: 0.5ex">{xml}</div>
-                   </>;
+                       <div style="padding-left: 0.5ex; padding-right: 0.5ex">${value}</div>
+                   `;
         else
-            return <>{xml}</>;
+            return xml`${value}`;
     },
 
     // every item must have a .xml property which defines how to draw itself
@@ -231,45 +236,41 @@ const Template = Module("template", {
     },
 
     options: function options(title, opts) {
-        // <e4x>
         return this.genericOutput("",
-            <table style="width: 100%">
+            xml`<table style="width: 100%">
                 <tr highlight="CompTitle" align="left">
-                    <th>{title}</th>
+                    <th>${title}</th>
                 </tr>
-                {
-                    this.map(opts, function (opt)
+                ${
+                    this.map2(xml, opts, function (opt) xml`
                     <tr>
                         <td>
-                            <span style={opt.isDefault ? "" : "font-weight: bold"}>{opt.pre}{opt.name}</span><span>{opt.value}</span>
-                            {opt.isDefault || opt.default == null ? "" : <span class="extra-info"> (default: {opt.default})</span>}
+                            <span style=${opt.isDefault ? "" : "font-weight: bold"}>${opt.pre}${opt.name}</span><span>${opt.value}</span>
+                            ${opt.isDefault || opt.default == null ? "" : xml`<span class="extra-info"> (default: ${opt.default})</span>`}
                         </td>
-                    </tr>)
+                    </tr>`)
                 }
-            </table>);
-        // </e4x>
+            </table>`);
     },
 
     // only used by showPageInfo: look for some refactoring
     table: function table(title, data, indent) {
-        let table =
-        // <e4x>
-            <table>
-                <tr highlight="Title" align="left">
-                    <th colspan="2">{title}</th>
-                </tr>
-                {
-                    this.map(data, function (datum)
+        return this.table2(xml, title, data, indent);
+    },
+    table2: function table2(tag, title, data, indent) {
+        var body = this.map2(tag, data, function (datum) tag`
                     <tr>
-                       <td style={"font-weight: bold; min-width: 150px; padding-left: " + (indent || "2ex")}>{datum[0]}</td>
-                       <td>{template.maybeXML(datum[1])}</td>
-                    </tr>)
-                }
-            </table>;
-        // </e4x>
-        if (table.tr.length() > 1)
-            return table;
-        return XML();
+                       <td style=${"font-weight: bold; min-width: 150px; padding-left: " + (indent || "2ex")}>${datum[0]}</td>
+                       <td>${template.maybeXML(datum[1])}</td>
+                    </tr>`);
+        let table =
+            tag`<table>
+                <tr highlight="Title" align="left">
+                    <th colspan="2">${title}</th>
+                </tr>
+                ${body}
+            </table>`;
+        return body ? table : tag``;
     },
 
     // This is a generic function which can display tabular data in a nice way.
@@ -282,21 +283,21 @@ const Template = Module("template", {
     tabular: function tabular(columns, rows) {
         function createHeadings() {
             if (typeof(columns) == "string")
-                return <th colspan={(rows && rows[0].length) || 1}>{columns}</th>;
+                return xml`<th colspan=${(rows && rows[0].length) || 1}>${columns}</th>`;
 
             let colspan = 1;
             return template.map(columns, function (h) {
                 if (colspan > 1) {
                     colspan--;
-                    return <></>;
+                    return xml``;
                 }
 
                 if (typeof(h) == "string")
-                    return <th>{h}</th>;
+                    return xml`<th>${h}</th>`;
 
                 let header = h.header || "";
                 colspan = h.colspan || 1;
-                return <th colspan={colspan}>{header}</th>;
+                return xml`<th colspan=${colspan}>${header}</th>`;
             });
         }
 
@@ -304,27 +305,25 @@ const Template = Module("template", {
             return template.map(Iterator(row), function ([i, d]) {
                 let style = ((columns && columns[i] && columns[i].style) || "") + (i == (row.length - 1) ? "; width: 100%" : ""); // the last column should take the available space -> width: 100%
                 let highlight = (columns && columns[i] && columns[i].highlight) || "";
-                return <td style={style} highlight={highlight}>{template.maybeXML(d)}</td>;
+                return xml`<td style=${style} highlight=${highlight}>${template.maybeXML(d)}</td>`;
             });
         }
 
-        // <e4x>
-        return  <table style="width: 100%">
+        return  xml`<table style="width: 100%">
                     <tr highlight="CompTitle" align="left">
-                    {
+                    ${
                         createHeadings()
                     }
                     </tr>
-                    {
-                        this.map(rows, function (row)
-                        <tr highlight="CompItem">
-                        {
+                    ${
+                        this.map2(xml, rows, function (row)
+                        xml`<tr highlight="CompItem">
+                        ${
                             createRow(row)
                         }
-                        </tr>)
+                        </tr>`)
                     }
-                </table>;
-        // </e4x>
+                </table>`;
     }
 });
 

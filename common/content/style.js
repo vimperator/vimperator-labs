@@ -19,7 +19,7 @@
  *            | groupname css-selector
  */
 // <css>
-Highlights.prototype.CSS = <><![CDATA[
+Highlights.prototype.CSS = `
     Boolean     color: red;
     Function    color: navy;
     Null        color: blue;
@@ -205,7 +205,7 @@ Highlights.prototype.CSS = <><![CDATA[
     HelpWarning                                 color: red; font-weight: bold;
 
     Logo
-    ]]></>.toString();
+    `;
 
 /**
  * A class to manage highlighting rules. The parameters are the
@@ -664,7 +664,7 @@ Module("styles", {
                 options: [[["-index", "-i"], commands.OPTION_INT, null,
                             function (context) {
                                 context.compare = CompletionContext.Sort.number;
-                                return [[i, <>{sheet.sites.join(",")}: {sheet.css.replace("\n", "\\n")}</>]
+                                return [[i, `${sheet.sites.join(",")}: ${sheet.css.replace("\n", "\\n")}`]
                                         for ([i, sheet] in styles.userSheets)
                                         if (!cmd.filter || cmd.filter(sheet))];
                             }],
@@ -728,7 +728,7 @@ Module("highlight", {
         commands.add(["hi[ghlight]"],
             "Set the style of certain display elements",
             function (args) {
-                let style = <><![CDATA[
+                let style = `
                     ;
                     display: inline-block !important;
                     position: static !important;
@@ -736,7 +736,7 @@ Module("highlight", {
                     width: 3em !important; min-width: 3em !important; max-width: 3em !important;
                     height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                     overflow: hidden !important;
-                ]]></>;
+                `;
                 let clear = args[0] == "clear";
                 if (clear)
                     args.shift();
@@ -748,8 +748,8 @@ Module("highlight", {
                     // List matching keys
                     let str = template.tabular(["Key", { header: "Sample", style: "text-align: center" }, "CSS"],
                         ([h.class,
-                          <span style={h.value + style}>XXX</span>,
-                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) <span style="font-weight: bold;">{str}</span>)]
+                          xml`<span style=${h.value + style}>XXX</span>`,
+                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) xml`<span style="font-weight: bold;">${str}</span>`)]
                             for (h in highlight)
                                 if (!key || h.class.indexOf(key) > -1)));
 

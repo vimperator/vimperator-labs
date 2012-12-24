@@ -646,7 +646,7 @@ lookup:
                     let err = new Error();
                     for (let [k, v] in Iterator(e))
                         err[k] = v;
-                    err.echoerr = <>{file.path}:{e.lineNumber}: {e}</>;
+                    err.echoerr = xml`${file.path}:${e.lineNumber}: ${e}`;
                     throw err;
                 }
             }
@@ -970,7 +970,7 @@ lookup:
                 let output = io.system(arg);
 
                 commandline.command = "!" + arg;
-                commandline.echo(template.genericOutput("Command Output: " + arg, <span highlight="CmdOutput">{output}</span>));
+                commandline.echo(template.genericOutput("Command Output: " + arg, xml`a<span highlight="CmdOutput">${String(output)}</span>`));
 
                 autocommands.trigger("ShellCmdPost", {});
             }, {

@@ -397,13 +397,14 @@ const Mappings = Module("mappings", {
                         //modeSign += (modeSign ? "" : ",") + m.name;
                         modes += (modes ? ", " : "") + m.name;
             });
-            let option = <></>;
+            let option = xml``;
+            var add = function (lhs, rhs) xml`${lhs}${rhs}`;
             if (map.silent)
-                option += <span highlight="Keyword">silent</span>;
+                option = add(option, xml`<span highlight="Keyword">silent</span>`);
             if (map.noremap) {
                 if (map.silent)
-                    option += <>, </>;
-                option += <span highlight="Keyword">noremap</span>;
+                    option = add(option, `, `);
+                option = add(option, xml`<span highlight="Keyword">noremap</span>`);
             }
             displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option, map.matchingUrls]);
         }
