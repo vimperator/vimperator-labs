@@ -1,5 +1,6 @@
-2012-xx-xx:
+2012-12-24: A christmas present
     * version 3.6
+    * Replace E4X, as it's been removed from Firefox 18+
     * Show confirmation prompt again when opening more than 20 URLs or issuing
       'delbmarks!' or 'set! all&' commands
     * Fix search result highlighting for duplicate or overlapping search terms
