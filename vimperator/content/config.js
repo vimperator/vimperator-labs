@@ -63,7 +63,7 @@ const Config = Module("config", ConfigBase, {
         ["history",          "List your history",
             function () { window.openDialog("chrome://browser/content/history/history-panel.xul", "History", "dialog,centerscreen,width=600,height=600"); }],
         ["import",           "Import Preferences, Bookmarks, History, etc. from other browsers",
-            function () { window.BrowserImport(); }],
+            function () { var tmp = {}; Cu.import("resource://gre/modules/MigrationUtils.jsm", tmp); tmp.MigrationUtils.showMigrationWizard(window); } ],
         ["openfile",         "Open the file selector dialog",
             function () { window.BrowserOpenFileWindow(); }],
         ["pageinfo",         "Show information about the current page",
