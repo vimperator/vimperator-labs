@@ -203,12 +203,16 @@ const Config = Module("config", ConfigBase, {
         commands.add(["wind[ow]"],
             "Execute a command and tell it to output in a new window",
             function (args) {
-                liberator.forceNewWindow = true;
-                liberator.execute(args.string, null, true);
-                liberator.forceNewWindow = false;
+                var prop = args["--private"] ? "forceNewPrivateWindow" : "forceNewWindow";
+                liberator[prop] = true;
+                liberator.execute(args.literalArg, null, true);
+                liberator[prop] = false;
             },
             {
                 argCount: "+",
+                options: [
+                    [["--private", "-P"], commands.OPTION_NOARG],
+                ],
                 completer: function (context) completion.ex(context),
                 literal: 0
             });

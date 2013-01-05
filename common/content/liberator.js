@@ -127,6 +127,7 @@ const Liberator = Module("liberator", {
 
     forceNewTab: false,
     forceNewWindow: false,
+    forceNewPrivateWindow: false,
 
     /** @property {string} The Liberator version string. */
     version: "###VERSION### (created: ###DATE###)", // these VERSION and DATE tokens are replaced by the Makefile
@@ -751,6 +752,8 @@ const Liberator = Module("liberator", {
             where = liberator.NEW_TAB;
         else if (liberator.forceNewWindow)
             where = liberator.NEW_WINDOW;
+        else if (liberator.forceNewPrivateWindow)
+            where = liberator.NEW_PRIVATE_WINDOW;
 
         if ("from" in params && liberator.has("tabs")) {
             if (!('where' in params) && options["newtab"] && options.get("newtab").has("all", params.from))
