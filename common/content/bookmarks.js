@@ -679,7 +679,7 @@ const Bookmarks = Module("bookmarks", {
         browserSearch.init(function() {
             options.add(["defsearch", "ds"],
                 "Set the default search engine",
-                "string", browserSearch.defaultEngine.alias,
+                "string", browserSearch.defaultEngine.alias || "google",
                 {
                     completer: function completer(context) {
                         completion.search(context, true);

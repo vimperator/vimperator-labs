@@ -327,7 +327,7 @@
     <tags>'ds' 'defsearch'</tags>
     <spec>'defsearch' 'ds'</spec>
     <type>string</type>
-    <default>google</default>
+    <default>デフォルト検索エンジンのキーワード または "google"</default>
     <description>
         <p>
             デフォルトで使用するサーチエンジンを指定します。

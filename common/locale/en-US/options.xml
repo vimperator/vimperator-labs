@@ -356,7 +356,7 @@
     <tags>'ds' 'defsearch'</tags>
     <spec>'defsearch' 'ds'</spec>
     <type>string</type>
-    <default>google</default>
+    <default>Your default search engine keyword or "google"</default>
     <description>
         <p>
             Sets the default search engine. The default search engine name is
