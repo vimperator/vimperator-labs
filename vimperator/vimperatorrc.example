@@ -16,19 +16,6 @@ set wildmode=list:longest,full
 autocmd LocationChange .* :js modes.passAllKeys = /gmail\.com/.test(buffer.URL)
 
 
-" embedded JavaScript is possible:
-" move the RSS icon from the now-hidden location bar to the status bar instead
-javascript <<EOF
-(function(){
-    var feedPanel = document.createElement("statusbarpanel");
-    feedPanel.setAttribute("id", "feed-panel-clone");
-    feedPanel.appendChild(document.getElementById("feed-button"));
-    feedPanel.firstChild.setAttribute("style", "padding: 0; max-height: 16px;");
-    document.getElementById("status-bar")
-            .insertBefore(feedPanel, document.getElementById("security-button"));
-})();
-EOF
-
 " you can even add new functions which are then available to the :js command
 js <<EOF
     toggle_element = function (name) {
