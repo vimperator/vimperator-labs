@@ -675,15 +675,18 @@ const Bookmarks = Module("bookmarks", {
             function () { bookmarks.toggle(buffer.URL); });
     },
     options: function () {
-        options.add(["defsearch", "ds"],
-            "Set the default search engine",
-            "string", "google",
-            {
-                completer: function completer(context) {
-                    completion.search(context, true);
-                    context.completions = [["", "Don't perform searches by default"]].concat(context.completions);
-                }
-            });
+        var browserSearch = services.get("search");
+        browserSearch.init(function() {
+            options.add(["defsearch", "ds"],
+                "Set the default search engine",
+                "string", browserSearch.defaultEngine.alias,
+                {
+                    completer: function completer(context) {
+                        completion.search(context, true);
+                        context.completions = [["", "Don't perform searches by default"]].concat(context.completions);
+                    }
+                });
+        });
     },
     completion: function () {
         completion.bookmark = function bookmark(context, tags, extra) {
