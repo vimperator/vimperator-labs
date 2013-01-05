@@ -1148,15 +1148,20 @@ const Liberator = Module("liberator", {
                         document.title = document.title.replace(RegExp("(.*)" + util.escapeRegex(old)), "$1" + current);
                     }
 
-                    if (services.get("privateBrowsing")) {
+                    if (liberator.has("privatebrowsing")) {
+                        liberator.log("has feature: privateBrowsing");
                         let oldValue = win.getAttribute("titlemodifier_normal");
                         let suffix = win.getAttribute("titlemodifier_privatebrowsing").substr(oldValue.length);
 
                         win.setAttribute("titlemodifier_normal", value);
                         win.setAttribute("titlemodifier_privatebrowsing", value + suffix);
 
-                        if (services.get("privateBrowsing").privateBrowsingEnabled) {
+                        if (window.QueryInterface(Ci.nsIInterfaceRequestor)
+                                  .getInterface(Ci.nsIWebNavigation)
+                                  .QueryInterface(Ci.nsILoadContext)
+                                  .usePrivateBrowsing) {
                             updateTitle(oldValue + suffix, value + suffix);
+                            win.setAttribute("titlemodifier", value + suffix);
                             return value;
                         }
                     }
@@ -1857,7 +1862,7 @@ const Liberator = Module("liberator", {
             // set before by any RC file
             // TODO: Let options specify themselves whether they need to be set at startup!
             for (let option in options) {
-                if (!option.hasChanged && ["popups", "smallicons", "titlestring", "toolbars"].indexOf(option.name) >= 0)
+                if (!option.hasChanged && ["popups", "smallicons", "oitlestring", "toolbars"].indexOf(option.name) >= 0)
                     option.value = option.defaultValue; // call setter
             }
 

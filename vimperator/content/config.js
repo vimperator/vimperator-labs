@@ -12,7 +12,7 @@ const Config = Module("config", ConfigBase, {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup"],
+    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup", "privatebrowsing"],
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
 
@@ -24,6 +24,7 @@ const Config = Module("config", ConfigBase, {
                    ["LocationChange",     "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
+                   // TODO: remove when FF ESR's version is over 20
                    ["PrivateMode",        "Triggered when private mode is activated or deactivated"],
                    ["Sanitize",           "Triggered when a sanitizeable item is cleared"],
                    ["ShellCmdPost",       "Triggered after executing a shell command with :!cmd"],
