@@ -221,14 +221,18 @@ const Config = Module("config", ConfigBase, {
         commands.add(["wino[pen]", "wo[pen]"],
             "Open one or more URLs in a new window",
             function (args) {
-                args = args.string;
+                var where = args["--private"] ? liberator.NEW_PRIVATE_WINDOW : liberator.NEW_WINDOW;
+                args = args.literalArg;
 
                 if (args)
-                    liberator.open(args, liberator.NEW_WINDOW);
+                    liberator.open(args, where);
                 else
-                    liberator.open("", liberator.NEW_WINDOW);
+                    liberator.open("", where);
             },
             {
+                options: [
+                    [["--private", "-P"], commands.OPTION_NOARG],
+                ],
                 completer: function (context) completion.url(context),
                 literal: 0,
                 privateData: true

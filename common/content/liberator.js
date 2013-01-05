@@ -123,6 +123,7 @@ const Liberator = Module("liberator", {
     NEW_TAB: [],
     NEW_BACKGROUND_TAB: [],
     NEW_WINDOW: [],
+    NEW_PRIVATE_WINDOW: [],
 
     forceNewTab: false,
     forceNewWindow: false,
@@ -766,7 +767,13 @@ const Liberator = Module("liberator", {
             return;
 
         let browser = config.browser;
+        let urlTasks = [];
         function open(urls, where) {
+            if (!browser) {
+                urlTasks.push(urls);
+                return;
+            }
+
             try {
                 let url = "", postdata;
                 if (typeof urls === "string")
@@ -796,11 +803,27 @@ const Liberator = Module("liberator", {
                     });
                     break;
 
+                case liberator.NEW_PRIVATE_WINDOW:
                 case liberator.NEW_WINDOW:
-                    window.open();
-                    let win = services.get("wm").getMostRecentWindow("navigator:browser");
-                    win.loadURI(url, null, postdata);
-                    browser = win.getBrowser();
+                    let sa = Cc["@mozilla.org/supports-array;1"].createInstance(Ci.nsISupportsArray);
+                    let wuri = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+                    wuri.data = url;
+                    sa.AppendElement(wuri);
+                    sa.AppendElement(null); // charset
+                    sa.AppendElement(null); // referrerURI
+                    sa.AppendElement(postdata);
+                    sa.AppendElement(null); // allowThirdPartyFixup
+
+                    let features = "chrome,dialog=no,all" + (where === liberator.NEW_PRIVATE_WINDOW ? ",private" : "");
+                    let win = services.get("ww").openWindow(window, "chrome://browser/content/browser.xul", null, features, sa);
+                    browser = null;
+                    win.addEventListener("load", function onload(aEvent) {
+                        win.removeEventListener("load", onload, false);
+                        browser = win.getBrowser();
+                        for (let url of urlTasks)
+                            open(url, liberator.NEW_BACKGROUND_TAB);
+                        urlTasks = [];
+                    }, false);
                     break;
                 }
             }
