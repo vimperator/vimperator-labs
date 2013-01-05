@@ -1862,7 +1862,7 @@ const Liberator = Module("liberator", {
             // set before by any RC file
             // TODO: Let options specify themselves whether they need to be set at startup!
             for (let option in options) {
-                if (!option.hasChanged && ["popups", "smallicons", "oitlestring", "toolbars"].indexOf(option.name) >= 0)
+                if (!option.hasChanged && ["popups", "smallicons", "titlestring", "toolbars"].indexOf(option.name) >= 0)
                     option.value = option.defaultValue; // call setter
             }
 
