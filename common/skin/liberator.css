@@ -92,7 +92,7 @@
 }
 
 .liberator-container.animation {
-    -moz-transition: all 0.2s;
+    transition: all 0.2s;
 }
 
 #liberator-completions {
@@ -153,7 +153,7 @@
 }
 .liberator-hiding {
     opacity: 0;
-    -moz-transition: opacity 0.5s;
+    transition: opacity 0.5s;
 }
 
 #sidebar {
@@ -188,8 +188,8 @@
 
 #liberator-commandline-prompt-text {
     max-width: 0;
-    -moz-transition-property: max-width;
-    -moz-transition-duration: 0.25s;
+    transition-property: max-width;
+    transition-duration: 0.25s;
 }
 
 #liberator-completions-content table,

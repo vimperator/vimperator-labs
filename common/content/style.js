@@ -46,14 +46,14 @@ Highlights.prototype.CSS = `
     PromptText      color: white; background: purple;
 
     CmdOutput             white-space: pre;
-    CmdLine               background: white; color: black; -moz-transition: all 0.25s;
+    CmdLine               background: white; color: black; transition: all 0.25s;
     CmdLine>*             font-family: monospace;
 
     ContentSeparator      border-top: 1px dotted gray; display: -moz-box;
 
     CompGroup
     CompGroup:not(:first-of-type)  margin-top: 1ex;
-    CompTitle            font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #DBDBDB, #D9D9D9, #E7E7E7 100%);
+    CompTitle            font-weight: bold; background: linear-gradient(to top, #DBDBDB 19%, #D9D9D9, #E7E7E7 100%);
     CompTitle>*          color: #333; border-top: 1px solid gray; border-bottom: 1px solid #BBB; padding: 1px 0.5ex; text-shadow: 1px 1px 0px #E0E0E0;
     CompMsg              font-style: italic; margin-left: 16px;
     CompItem
