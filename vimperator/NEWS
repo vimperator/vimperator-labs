@@ -1,6 +1,6 @@
 xxxx-xx-xx:
     * version 3.7
-    * add --private option to :winopen and :window for Firefox 20+ PrivateBrowsing-per-window
+    * add -private option to :winopen and :window for Firefox 20+ PrivateBrowsing-per-window
 
 2012-12-24: A christmas present
     * version 3.6

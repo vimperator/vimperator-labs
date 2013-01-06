@@ -204,7 +204,7 @@ const Config = Module("config", ConfigBase, {
         commands.add(["wind[ow]"],
             "Execute a command and tell it to output in a new window",
             function (args) {
-                var prop = args["--private"] ? "forceNewPrivateWindow" : "forceNewWindow";
+                var prop = args["-private"] ? "forceNewPrivateWindow" : "forceNewWindow";
                 liberator[prop] = true;
                 liberator.execute(args.literalArg, null, true);
                 liberator[prop] = false;
@@ -212,7 +212,7 @@ const Config = Module("config", ConfigBase, {
             {
                 argCount: "+",
                 options: [
-                    [["--private", "-P"], commands.OPTION_NOARG],
+                    [["-private", "-p"], commands.OPTION_NOARG],
                 ],
                 completer: function (context) completion.ex(context),
                 literal: 0
@@ -226,7 +226,7 @@ const Config = Module("config", ConfigBase, {
         commands.add(["wino[pen]", "wo[pen]"],
             "Open one or more URLs in a new window",
             function (args) {
-                var where = args["--private"] ? liberator.NEW_PRIVATE_WINDOW : liberator.NEW_WINDOW;
+                var where = args["-private"] ? liberator.NEW_PRIVATE_WINDOW : liberator.NEW_WINDOW;
                 args = args.literalArg;
 
                 if (args)
@@ -236,7 +236,7 @@ const Config = Module("config", ConfigBase, {
             },
             {
                 options: [
-                    [["--private", "-P"], commands.OPTION_NOARG],
+                    [["-private", "-p"], commands.OPTION_NOARG],
                 ],
                 completer: function (context) completion.url(context),
                 literal: 0,
