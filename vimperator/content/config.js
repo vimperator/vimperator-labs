@@ -76,7 +76,11 @@ const Config = Module("config", ConfigBase, {
         ["places",           "Places Organizer: Manage your bookmarks and history",
             function () { PlacesCommandHook.showPlacesOrganizer(ORGANIZER_ROOT_BOOKMARKS); }],
         ["preferences",      "Show Firefox preferences dialog",
-            function () { window.openPreferences(); }],
+            function () {
+                var features = "chrome,titlebar,toolbar,centerscreen," +
+                               (options.getPref("browser.preferences.instantApply", false) ? "dialog=no" : "modal");
+                window.toOpenWindowByType("Browser:Preferences", "chrome://browser/content/preferences/preferences.xul", features);
+             }],
         ["printpreview",     "Preview the page before printing",
             function () { PrintUtils.printPreview(PrintPreviewListener); }],
         ["printsetup",       "Setup the page size and orientation before printing",
