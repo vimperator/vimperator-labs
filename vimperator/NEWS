@@ -1,6 +1,9 @@
-xxxx-xx-xx:
+2013-xx-xx:
     * version 3.7
+    * Fix :preferences and some :dialog commands for recent Firefoxs
+    * Make sure :dialog addons really opens a dialog instead of a tab
     * add -private option to :winopen and :window for Firefox 20+ PrivateBrowsing-per-window
+    * Pushed minVersion to Firefox 17
 
 2012-12-24: A christmas present
     * version 3.6
