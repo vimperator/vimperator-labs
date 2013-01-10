@@ -4,6 +4,7 @@
     * Make sure :dialog addons really opens a dialog instead of a tab
     * add -private option to :winopen and :window for Firefox 20+ PrivateBrowsing-per-window
     * Pushed minVersion to Firefox 17
+    * Clear command history after returning from private browsing
 
 2012-12-24: A christmas present
     * version 3.6

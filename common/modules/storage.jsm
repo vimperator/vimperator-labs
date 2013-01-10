@@ -293,7 +293,7 @@ var storage = {
     },
 
     newArray: function newArray(key, options) {
-        return this.newObject(key, ArrayStore, { type: Array, __proto__: options });
+        return this.newObject(key, ArrayStore, options);
     },
 
     addObserver: function addObserver(key, callback, ref) {
