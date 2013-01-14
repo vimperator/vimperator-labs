@@ -675,7 +675,7 @@ const Buffer = Module("buffer", {
             window.urlSecurityCheck(url, doc.nodePrincipal);
             // we always want to save that link relative to the current working directory
             options.setPref("browser.download.lastDir", io.getCurrentDirectory().path);
-            window.saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet));
+            window.saveURL(url, text, null, true, skipPrompt, makeURI(url, doc.characterSet), doc);
         }
         catch (e) {
             liberator.echoerr(e);
