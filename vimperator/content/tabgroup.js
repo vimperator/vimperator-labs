@@ -125,9 +125,13 @@ const TabGroup = Module("tabGroup", {
             if (target)
               gBrowser.mTabContainer.selectedItem = target.tab;
             // for empty group
-            else if (group && apps.length != 0) {
-              GI.setActiveGroupItem(group);
-              tabGroup.tabView.UI.goToTab(tabs.getTab(0));
+            else if (group) {
+                if (apps.length === 0)
+                    group.newTab();
+                else {
+                    GI.setActiveGroupItem(group);
+                    tabGroup.tabView.UI.goToTab(tabs.getTab(0));
+                }
             }
             else if (relative)
               groupSwitch(index + offset, true);
@@ -380,6 +384,7 @@ const TabGroup = Module("tabGroup", {
                     groupItems = groupItems.filter(function(group) group.id != activeGroup.id);
             }
             context.title = ["Tab Group"];
+            context.anchored = false;
             context.completions = groupItems.map(function(group) {
                 let title = group.id + ": " + (group.getTitle() || "(Untitled)");
                 let desc = "Tabs: " + group.getChildren().length;
