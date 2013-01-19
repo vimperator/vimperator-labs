@@ -232,7 +232,11 @@ const Hints = Module("hints", {
 
     // the containing block offsets with respect to the viewport
     _getContainerOffsets: function (doc) {
-        let body = doc.body || doc.documentElement;
+        try {
+            var body = doc.body || doc.documentElement;
+        } catch (e) {
+            return [null, null];
+        }
         // TODO: getComputedStyle returns null for Facebook channel_iframe doc - probable Gecko bug.
         let style = util.computedStyle(body);
 
@@ -285,7 +289,6 @@ const Hints = Module("hints", {
             screen = {top: 0, left: 0, bottom: win.innerHeight, right: win.innerWidth};
 
         let doc = win.document;
-        let [offsetX, offsetY] = this._getContainerOffsets(doc);
 
         let baseNodeAbsolute = util.xmlToDom(xml`<span highlight="Hint"/>`, doc);
 
@@ -422,8 +425,13 @@ const Hints = Module("hints", {
         let prevHint = null;
         let activeHintChars = this._num2chars(activeHint);
 
-        for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
+        for (let { doc, start, end } of this._docs) {
+            if (!(doc instanceof Node))
+                continue;
+
             let [offsetX, offsetY] = this._getContainerOffsets(doc);
+            if (offsetX === null && offsetY === null)
+                continue;
 
         inner:
             for (let i in (util.interruptibleRange(start, end + 1, 500))) {
@@ -515,7 +523,10 @@ const Hints = Module("hints", {
     _removeHints: function (timeout) {
         let firstElem = this._validHints[0] || null;
 
-        for (let [,{ doc: doc, start: start, end: end }] in Iterator(this._docs)) {
+        for (let { doc, start, end } of this._docs) {
+            if (!(doc instanceof Node))
+                continue;
+
             let result = util.evaluateXPath("//*[@liberator:highlight='hints']", doc, null, true);
             let hints = new Array();
             let elem;
