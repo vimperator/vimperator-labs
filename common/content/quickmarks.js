@@ -112,7 +112,7 @@ const QuickMarks = Module("quickmarks", {
                 bang: true,
                 completer: function (context) {
                     context.title = ["QuickMark", "URL"];
-                    context.completions = this._qmarks;
+                    context.completions = quickmarks._qmarks;
                 }
             });
 
