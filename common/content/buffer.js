@@ -1274,7 +1274,7 @@ const Buffer = Module("buffer", {
 
                 window.internalSave(doc.location.href, doc, null, contentDisposition,
                     doc.contentType, false, null, chosenData, doc.referrer ?
-                    window.makeURI(doc.referrer) : null, true);
+                    window.makeURI(doc.referrer) : null, doc, true);
             },
             {
                 argCount: "?",
