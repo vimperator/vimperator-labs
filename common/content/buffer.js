@@ -85,7 +85,7 @@ const Buffer = Module("buffer", {
             const ACCESS_READ = Ci.nsICache.ACCESS_READ;
             let cacheKey = doc.location.toString().replace(/#.*$/, "");
 
-            for (let proto in util.Array.itervalues(["HTTP", "FTP"])) {
+            for (let proto of ["HTTP", "FTP"]) {
                 try {
                     var cacheEntryDescriptor = services.get("cache").createSession(proto, 0, true)
                                                        .openCacheEntry(cacheKey, ACCESS_READ, false);
@@ -552,7 +552,7 @@ const Buffer = Module("buffer", {
             }
 
             let res = util.evaluateXPath(options.get("hinttags").value, frame.document);
-            for (let [, regex] in Iterator(regexes)) {
+            for (let regex of regexes) {
                 for (let i in util.range(res.snapshotLength, 0, -1)) {
                     let elem = res.snapshotItem(i);
                     if (regex.test(elem.textContent) || regex.test(elem.title) ||
@@ -952,7 +952,7 @@ const Buffer = Module("buffer", {
             editor.editFileExternally(url);
         else {
             const PREFIX = "view-source:";
-            if (url.indexOf(PREFIX) == 0)
+            if (url.startsWith(PREFIX))
                 url = url.substr(PREFIX.length);
             else
                 url = PREFIX + url;
@@ -998,7 +998,7 @@ const Buffer = Module("buffer", {
             html.blur();
 
             selection.removeAllRanges();
-            for (let [,r] in Iterator(ranges))
+            for (let r of ranges)
                 selection.addRange(r);
             events.onFocusChange({});
         } else
@@ -1440,7 +1440,7 @@ const Buffer = Module("buffer", {
             if (flags & this.buffer.GROUPS) {
                 let activeGroup = groups.getActiveGroupItem();
                 let activeGroupId = activeGroup === null ? null : activeGroup.id;
-                for (let [i, group] in Iterator(groups.groupItems)) {
+                for (let group of groups.groupItems) {
                     if (group.id != activeGroupId) {
                         let groupName = group.getTitle();
                         context.fork("GROUP_" + group.id, 0, this, function (context) {

@@ -115,7 +115,7 @@ const AutoCommands = Module("autocommands", {
         let lastPattern = null;
         let url = args.url || "";
 
-        for (let [, autoCmd] in Iterator(autoCmds)) {
+        for (let autoCmd of autoCmds) {
             if (autoCmd.pattern.test(url)) {
                 if (!lastPattern || lastPattern.source != autoCmd.pattern.source)
                     liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"");

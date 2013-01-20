@@ -95,7 +95,8 @@ const Sanitizer = Module("sanitizer", {
                 }
                 else {
                     liberator.assert(args.length > 0, "Argument required");
-                    for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
+                    let items = [item for (item of args.map(Sanitizer.argToPref))];
+                    for (let item of items) {
                         if (!options.get("sanitizeitems").isValidValue(item)) {
                             liberator.echoerr("Invalid data item: " + item);
                             return;
@@ -104,7 +105,7 @@ const Sanitizer = Module("sanitizer", {
 
                     liberator.echomsg("Sanitizing " + args + " items...");
 
-                    for (let [, item] in Iterator(args.map(Sanitizer.argToPref))) {
+                    for (let item of items) {
                         if (sanitizer.canClearItem(item)) {
                             try {
                                 sanitizer.clearItem(item);
@@ -197,10 +198,10 @@ const Sanitizer = Module("sanitizer", {
             "stringlist", "cache,commandline,cookies,formdata,history,marks,sessions",
             {
                 setter: function (values) {
-                    for (let [, pref] in Iterator(sanitizer.prefNames)) {
+                    for (let pref of sanitizer.prefNames) {
                         options.setPref(pref, false);
 
-                        for (let [, value] in Iterator(this.parseValues(values))) {
+                        for (let value of this.parseValues(values)) {
                             if (Sanitizer.prefToArg(pref) == value) {
                                 options.setPref(pref, true);
                                 break;

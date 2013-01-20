@@ -89,7 +89,7 @@ const QuickMarks = Module("quickmarks", {
             liberator.assert(marks.length >= 0, "No matching QuickMarks for: " + filter);
         }
 
-        let items = [[mark, this._qmarks.get(mark)] for ([k, mark] in Iterator(marks))];
+        let items = [[mark, this._qmarks.get(mark)] for (mark of marks)];
         template.genericTable(items, { title: ["QuickMark", "URL"] });
     }
 }, {

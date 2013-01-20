@@ -32,7 +32,7 @@ const TabGroup = Module("tabGroup", {
 
     get appTabs () {
         var apps = [];
-        for (let [, tab] in Iterator(config.tabbrowser.tabs)) {
+        for (let tab of config.tabbrowser.tabs) {
             if (tab.pinned)
                 apps.push(tab);
             else
@@ -68,7 +68,7 @@ const TabGroup = Module("tabGroup", {
             else
                 test = function (g) g.getTitle().toLowerCase() == name;
         }
-        for (let [, group] in Iterator(this.tabView.GroupItems.groupItems)) {
+        for (let group of this.tabView.GroupItems.groupItems) {
             if (test(group)) {
                 i++;
                 if (i == count)

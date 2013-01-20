@@ -456,7 +456,7 @@ const CompletionContext = Class("CompletionContext", {
     },
 
     cancelAll: function () {
-        for (let [, context] in Iterator(this.contextList)) {
+        for (let context of this.contextList) {
             if (context.cancel)
                 context.cancel();
         }
@@ -593,7 +593,7 @@ const CompletionContext = Class("CompletionContext", {
         }
         //for (let key in (k for ([k, v] in Iterator(self.contexts)) if (v.offset > this.caret)))
         //    delete this.contexts[key];
-        for each (let context in this.contexts) {
+        for (let [, context] in Iterator(this.contexts)) {
             context.hasItems = false;
             if (context != context.top)
                 context.incomplete = false;
@@ -677,7 +677,7 @@ const Completion = Module("completion", {
         context.wait();
 
         for (let [key, context] in Iterator(context.contexts)) {
-            if (key.indexOf("/list") == 0) {
+            if (key.startsWith("/list")) {
                 let list = template.genericOutput("",
                     xml`<div highlight="Completions">
                         ${ template.completionRow(context.title, "CompTitle") }

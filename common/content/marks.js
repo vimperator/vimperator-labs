@@ -141,7 +141,7 @@ const Marks = Module("marks", {
             let win = window.content;
             let slice = this._localMarks.get(mark) || [];
 
-            for (let [, lmark] in Iterator(slice)) {
+            for (let lmark of slice) {
                 if (win.location.href == lmark.location) {
                     buffer.scrollToPercent(lmark.position.x * 100, lmark.position.y * 100);
                     ok = true;
@@ -178,7 +178,7 @@ const Marks = Module("marks", {
                   Math.round(mark[1].position.x * 100) + "%",
                   Math.round(mark[1].position.y * 100) + "%",
                   mark[1].location]
-                 for ([, mark] in Iterator(marks)))); 
+                 for (mark of marks)));
 
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     },
@@ -198,8 +198,8 @@ const Marks = Module("marks", {
         let localmark = this._localMarks.get(mark);
         if (localmark) {
             let win = window.content;
-            for (let [i, ] in Iterator(localmark)) {
-                if (localmark[i].location == win.location.href) {
+            for (let [i, lmark] in Iterator(localmark)) {
+                if (lmark.location == win.location.href) {
                     localmark.splice(i, 1);
                     if (localmark.length == 0)
                         this._localMarks.remove(mark);
@@ -216,9 +216,7 @@ const Marks = Module("marks", {
     },
 
     _localMarkIter: function _localMarkIter() {
-        for (let [mark, value] in this._localMarks)
-            for (let [, val] in Iterator(value))
-                yield [mark, val];
+        return ([m,val] for ([m, value] in marks._localMarks) for (val of value));
     }
 
 }, {

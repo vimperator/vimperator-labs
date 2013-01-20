@@ -165,7 +165,7 @@ const Liberator = Module("liberator", {
     // TODO: "zoom": if the zoom value of the current buffer changed
     triggerObserver: function (type) {
         let args = Array.slice(arguments, 1);
-        for (let [, func] in Iterator(this.observers[type] || []))
+        for (let func of this.observers[type] || [])
             func.apply(null, args);
     },
 
@@ -500,7 +500,7 @@ const Liberator = Module("liberator", {
 
         function format(item) item.description + "#" + encodeURIComponent(item.text);
 
-        for (let [i, item] in Iterator(items)) {
+        for (let item of items) {
             if (item.text == topic)
                 return format(item);
             else if (!partialMatch && topic)
@@ -535,7 +535,7 @@ const Liberator = Module("liberator", {
         // Find help and overlay files with the given name.
         function findHelpFile(file) {
             let result = [];
-            for (let [, namespace] in Iterator(namespaces)) {
+            for (let namespace of namespaces) {
                 let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
                 let res = util.httpGet(url);
                 if (res) {
@@ -675,7 +675,7 @@ const Liberator = Module("liberator", {
         }
 
         liberator.log('Searching for "plugin/**/*.{js,vimp}" in "'
-                            + [dir.path.replace(/.plugin$/, "") for ([, dir] in Iterator(dirs))].join(",") + '"');
+                            + [dir.path.replace(/.plugin$/, "") for (dir of dirs)].join(",") + '"');
 
         dirs.forEach(function (dir) {
             liberator.log("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
@@ -833,7 +833,7 @@ const Liberator = Module("liberator", {
             catch (e) {}
         }
 
-        for (let [, url] in Iterator(urls)) {
+        for (let url of urls) {
             open(url, where);
             where = liberator.NEW_BACKGROUND_TAB;
         }
@@ -1056,7 +1056,7 @@ const Liberator = Module("liberator", {
     // TODO: move this
     getMenuItems: function () {
         function addChildren(node, parent) {
-            for (let [, item] in Iterator(node.childNodes)) {
+            for (let item of node.childNodes) {
                 if (item.childNodes.length == 0 && item.localName == "menuitem"
                     && !/rdf:http:/.test(item.getAttribute("label"))) { // FIXME
                     item.fullMenuPath = parent + item.getAttribute("label");
@@ -1183,38 +1183,37 @@ const Liberator = Module("liberator", {
                     // Used in order to avoid multiple collapse/uncollapse actions
                     // for values like :set gui=none,tabs
                     let actions = {};
-                    for (let [, action] in Iterator(this.parseValues(values))) {
-                        if (action == "all" || action == "none") {
+                    for (let action of this.parseValues(values)) {
+                        if (action === "all" || action === "none") {
                             for (let [name, toolbar] in Iterator(toolbars)) {
-                                let ids = toolbar[0] || [];
-                                ids.forEach(function (id) actions[id] = action == "none");
+                                for (let id of toolbar[0] || [])
+                                    actions[id] = action === "none";
                             }
                         } else {
                             let toolbarName = action.replace(/^(no|inv)/, "");
                             let toolbar = toolbars[toolbarName];
                             if (toolbar) {
-                                let ids = toolbar[0] || [];
-                                ids.forEach(function (id) {
+                                for (let id of toolbar[0] || []) {
                                     let elem = document.getElementById(id);
                                     if (!elem)
-                                        return;
+                                        continue;
 
                                     let collapsed = false;
-                                    if (action.indexOf("no") == 0)
+                                    if (action.startsWith("no"))
                                         collapsed = true;
-                                    else if (action.indexOf("inv") == 0) {
-                                        if (typeof(actions[id]) == "boolean")
+                                    else if (action.startsWith("inv")) {
+                                        if (typeof(actions[id]) === "boolean")
                                             collapsed = !actions[id];
                                         else {
-                                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
-                                            collapsed = !(elem.getAttribute(hidingAttribute) == "true");
+                                            let hidingAttribute = elem.getAttribute("type") === "menubar" ? "autohide" : "collapsed";
+                                            collapsed = !(elem.getAttribute(hidingAttribute) === "true");
                                         }
                                     }
                                     else
                                         collapsed = false;
                                     
                                     actions[id] = collapsed; // add the action, or change an existing action
-                                });
+                                }
                             }
                         }
                     }
@@ -1333,7 +1332,7 @@ const Liberator = Module("liberator", {
                     // TODO: why are these sorts of properties arrays? --djk
                     let dialogs = config.dialogs;
 
-                    for (let [, dialog] in Iterator(dialogs)) {
+                    for (let dialog of dialogs) {
                         if (util.compareIgnoreCase(arg, dialog[0]) == 0) {
                             dialog[2]();
                             return;

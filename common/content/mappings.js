@@ -167,7 +167,7 @@ const Mappings = Module("mappings", {
     _getMap: function (mode, cmd, patternOrUrl, stack) {
         let maps = stack[mode] || [];
 
-        for (let [, map] in Iterator(maps)) {
+        for (let map of maps) {
             if (map.hasName(cmd) && this._matchingUrlsTest(map, patternOrUrl))
                 return map;
         }
@@ -198,7 +198,7 @@ const Mappings = Module("mappings", {
     // Return all mappings present in all @modes
     _mappingsIterator: function (modes, stack) {
         modes = modes.slice();
-        return (map for ([i, map] in Iterator(stack[modes.shift()]))
+        return (map for (map of stack[modes.shift()])
             if (modes.every(function (mode) stack[mode].some(
                         function (m) map.equals(m)))))
     },
@@ -262,8 +262,8 @@ const Mappings = Module("mappings", {
         let map = Map(modes, keys, description || "User defined mapping", action, extra);
 
         // remove all old mappings to this key sequence
-        for (let [, name] in Iterator(map.names)) {
-            for (let [, mode] in Iterator(map.modes))
+        for (let name of map.names) {
+            for (let mode of map.modes)
                 this._removeMap(mode, name, map.matchingUrls);
         }
 
@@ -311,11 +311,11 @@ const Mappings = Module("mappings", {
         let mappings = this._user[mode].concat(this._main[mode]);
         let matches = [];
 
-        for (let [, map] in Iterator(mappings)) {
+        for (let map of mappings) {
             if (!this._matchingUrlsTest(map, patternOrUrl))
                 continue;
-            for (let [, name] in Iterator(map.names)) {
-                if (name.indexOf(prefix) == 0 && name.length > prefix.length) {
+            for (let name of map.names) {
+                if (name.startsWith(prefix) && name.length > prefix.length) {
                     // for < only return a candidate if it doesn't look like a <c-x> mapping
                     if (prefix != "<" || !/^<.+>/.test(name))
                         matches.push(map);
@@ -383,13 +383,13 @@ const Mappings = Module("mappings", {
     list: function (modes, filter, urlPattern) {
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
-            maps = [map for (map in maps) if (map.names[0] == filter)];
+            maps = [map for (map of maps) if (map.names[0] == filter)];
         if (urlPattern)
-            maps = [map for each (map in maps) if (this._matchingUrlsTest(map, urlPattern))];
+            maps = [map for (map of maps) if (this._matchingUrlsTest(map, urlPattern))];
 
         // build results
         let displayMaps = [];
-        for each (map in maps) {
+        for (map of maps) {
             let modes = "";
             map.modes.forEach(function (mode) {
                 for (let m in modules.modes.mainModes)
@@ -542,7 +542,7 @@ const Mappings = Module("mappings", {
                     let urls = args["-urls"] && RegExp(args["-urls"]);
 
                     let found = false;
-                    for (let [, mode] in Iterator(modes)) {
+                    for (let mode of modes) {
                         if (mappings.hasMap(mode, lhs, urls)) {
                             mappings.remove(mode, lhs, urls);
                             found = true;
@@ -574,11 +574,10 @@ const Mappings = Module("mappings", {
                 null,
                 function (context, obj, args) {
                     let mode = args[0];
-                    return util.Array.flatten(
-                    [
-                        [[name, map.description] for ([i, name] in Iterator(map.names))]
-                        for ([i, map] in Iterator(mappings._user[mode].concat(mappings._main[mode])))
-                    ]);
+                    return [
+                        [name, map.description]
+                            for (map of mappings._user[mode].concat(mappings._main[mode]))
+                                for (name of map.names)];
                 }
             ]);
 

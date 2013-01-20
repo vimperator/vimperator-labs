@@ -234,7 +234,7 @@ function Highlights(name, store) {
 
     function keys() [k for ([k, v] in Iterator(highlight))].sort();
 
-    this.__iterator__ = function () (highlight[v] for ([k, v] in Iterator(keys())));
+    this.__iterator__ = function () (highlight[v] for (v of keys()));
 
     this.get = function (k) highlight[k];
     this.set = function (key, newStyle, force, append) {
@@ -494,7 +494,7 @@ function Styles(name, store) {
         if (matches.length == 0)
             return null;
 
-        for (let [, sheet] in Iterator(matches.reverse())) {
+        for (let sheet of matches.reverse()) {
             sheet.enabled = false;
             if (name)
                 delete names[name];
@@ -560,7 +560,7 @@ Module("styles", {
                     catch (e) {}
                     context.fork("others", 0, this, function (context) {
                         context.title = ["Site"];
-                        context.completions = [[s, ""] for ([, s] in Iterator(styles.sites))];
+                        context.completions = [[s, ""] for (s of styles.sites)];
                     });
                 }
             });
@@ -584,7 +584,7 @@ Module("styles", {
                           key,
                           sheet.sites.join(","),
                           sheet.css]
-                         for ([i, [key, sheet]] in Iterator(list))
+                         for ([key, sheet] of list)
                              if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);

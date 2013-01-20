@@ -1224,7 +1224,7 @@ const CommandLine = Module("commandline", {
             }
 
             // Don't show 1-character substrings unless we've just hit backspace
-            if (substring.length < 2 && (!this._lastSubstring || this._lastSubstring.indexOf(substring) != 0))
+            if (substring.length < 2 && (!this._lastSubstring || !this._lastSubstring.startsWith(substring)))
                 return;
             this._lastSubstring = substring;
 
@@ -1328,7 +1328,7 @@ const CommandLine = Module("commandline", {
                 let n = 0;
                 try {
                     this.waiting = true;
-                    for (let [, context] in Iterator(list)) {
+                    for (let context of list) {
                         function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
                         while (context.incomplete && !done())
                             liberator.threadYield(false, true);

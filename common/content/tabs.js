@@ -1143,7 +1143,7 @@ const Tabs = Module("tabs", {
                 {
                     setter: function (value) {
                         let [open, restriction] = [1, 0];
-                        for (let [, opt] in Iterator(this.parseValues(value))) {
+                        for (let opt of this.parseValues(value)) {
                             if (opt == "tab")
                                 open = 3;
                             else if (opt == "window")

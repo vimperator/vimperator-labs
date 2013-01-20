@@ -24,7 +24,7 @@ const Script = Class("Script", {
         this.__proto__ = plugins;
 
         // This belongs elsewhere
-        for (let [, dir] in Iterator(io.getRuntimeDirectories("plugin"))) {
+        for (let dir of io.getRuntimeDirectories("plugin")) {
             if (dir.contains(file, false))
                 plugins[this.NAME] = this;
         }
@@ -516,7 +516,7 @@ const IO = Module("io", {
                 dirs = [io.getCurrentDirectory().path].concat(dirs);
 
 lookup:
-            for (let [, dir] in Iterator(dirs)) {
+            for (let dir of dirs) {
                 file = File.joinPaths(dir, program);
                 try {
                     if (file.exists())
@@ -526,7 +526,7 @@ lookup:
                     // automatically try to add the executable path extensions on windows
                     if (liberator.has("Windows")) {
                         let extensions = services.get("environment").get("PATHEXT").split(";");
-                        for (let [, extension] in Iterator(extensions)) {
+                        for (let extension of extensions) {
                             file = File.joinPaths(dir, program + extension);
                             if (file.exists())
                                 break lookup;
@@ -580,8 +580,8 @@ lookup:
         liberator.log("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"");
 
         outer:
-        for (let [, dir] in Iterator(dirs)) {
-            for (let [, path] in Iterator(paths)) {
+        for (let dir of dirs) {
+            for (let path of paths) {
                 let file = File.joinPaths(dir, path);
 
                 if (file.exists() && file.isFile() && file.isReadable()) {
@@ -846,7 +846,7 @@ lookup:
                     let dirs = File.getPathsFromPathList(options["cdpath"]);
                     let found = false;
 
-                    for (let [, dir] in Iterator(dirs)) {
+                    for (let dir of dirs) {
                         dir = File.joinPaths(dir, arg);
 
                         if (dir.exists() && dir.isDirectory() && dir.isReadable()) {
@@ -1062,7 +1062,7 @@ lookup:
                 let dirNames = services.get("environment").get("PATH").split(RegExp(liberator.has("Windows") ? ";" : ":"));
                 let commands = [];
 
-                for (let [, dirName] in Iterator(dirNames)) {
+                for (let dirName of dirNames) {
                     let dir = io.File(dirName);
                     if (dir.exists() && dir.isDirectory()) {
                         commands.push([[file.leafName, dir.path] for (file in dir.iterDirectory())

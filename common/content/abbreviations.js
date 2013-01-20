@@ -105,7 +105,7 @@ const Abbreviations = Module("abbreviations", {
         if (!(abbr instanceof Abbreviation))
             abbr = Abbreviation.apply(null, arguments);
 
-        for (let [, mode] in Iterator(abbr.modes)) {
+        for (let mode of abbr.modes) {
             if (!this.abbrevs[mode])
                 this.abbrevs[mode] = {};
             this.abbrevs[mode][abbr.lhs] = abbr;
@@ -130,15 +130,9 @@ const Abbreviations = Module("abbreviations", {
      */
     get merged() {
         let result = [];
-        let lhses = [];
-        let modes = [mode for (mode in this.abbrevs)];
+        let lhses = util.Array.uniq([lhs for ([, mabbrevs] in Iterator(this.abbrevs)) for (lhs of Object.keys(mabbrevs))].sort());
 
-        for (let [, mabbrevs] in Iterator(this.abbrevs))
-            lhses = lhses.concat([key for (key in mabbrevs)]);
-        lhses.sort();
-        lhses = util.Array.uniq(lhses);
-
-        for (let [, lhs] in Iterator(lhses)) {
+        for (let lhs of lhses) {
             let exists = {};
             for (let [, mabbrevs] in Iterator(this.abbrevs)) {
                 let abbr = mabbrevs[lhs];
@@ -159,7 +153,7 @@ const Abbreviations = Module("abbreviations", {
      * @param {string} lhs The LHS of the abbreviation.
      */
     list: function (modes, lhs) {
-        let list = this.merged.filter(function (abbr) (abbr.inModes(modes) && abbr.lhs.indexOf(lhs) == 0));
+        let list = this.merged.filter(function (abbr) (abbr.inModes(modes) && abbr.lhs.startsWith(lhs)));
 
         if (!list.length)
             liberator.echomsg("No abbreviations found");
@@ -183,7 +177,7 @@ const Abbreviations = Module("abbreviations", {
      */
     remove: function (modes, lhs) {
         let result = false;
-        for (let [, mode] in Iterator(modes)) {
+        for (let mode of modes) {
             if ((mode in this.abbrevs) && (lhs in this.abbrevs[mode])) {
                 result = true;
                 this.abbrevs[mode][lhs].removeMode(mode);
@@ -199,7 +193,7 @@ const Abbreviations = Module("abbreviations", {
      * @param {Array} list of mode.
      */
     removeAll: function (modes) {
-        for (let [, mode] in modes) {
+        for (let mode of modes) {
             if (!(mode in this.abbrevs))
                 return;
             for (let [, abbr] in this.abbrevs[mode])
@@ -214,7 +208,7 @@ const Abbreviations = Module("abbreviations", {
         completion.abbreviation = function abbreviation(context, args, modes) {
             if (args.completeArg == 0) {
                 let abbrevs = abbreviations.merged.filter(function (abbr) abbr.inModes(modes));
-                context.completions = [[abbr.lhs, abbr.rhs] for ([, abbr] in Iterator(abbrevs))];
+                context.completions = [[abbr.lhs, abbr.rhs] for (abbr of abbrevs)];
             }
         };
     },

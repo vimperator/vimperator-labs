@@ -65,7 +65,7 @@ const JavaScript = Module("javascript", {
             }
 
             for (let obj in iterObj(orig, toplevel)) {
-                for (let [, k] in Iterator(Object.getOwnPropertyNames(obj))) {
+                for (let k of Object.getOwnPropertyNames(obj)) {
                     let name = "|" + k;
                     if (name in seen)
                         continue;
@@ -316,7 +316,7 @@ const JavaScript = Module("javascript", {
         let prev = statement;
         let obj;
         let cacheKey;
-        for (let [, dot] in Iterator(this._get(frame).dots.concat(stop))) {
+        for (let dot of this._get(frame).dots.concat(stop)) {
             if (dot < statement)
                 continue;
             if (dot > stop || dot <= prev)
@@ -397,7 +397,7 @@ const JavaScript = Module("javascript", {
         }
         // TODO: Make this a generic completion helper function.
         let filter = key + (string || "");
-        for (let [, obj] in Iterator(objects)) {
+        for (let obj of objects) {
             this.context.fork(obj[1], this._top.offset, this, this._fill,
                 obj[0], obj[1], compl,
                 true, filter, last, key.length);
@@ -406,21 +406,21 @@ const JavaScript = Module("javascript", {
         if (orig)
             return;
 
-        for (let [, obj] in Iterator(objects)) {
+        for (let obj of objects) {
             let name = obj[1] + " (prototypes)";
             this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, function (a, b) compl(a, b, true),
                 true, filter, last, key.length);
         }
 
-        for (let [, obj] in Iterator(objects)) {
+        for (let obj of objects) {
             let name = obj[1] + " (substrings)";
             this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, compl,
                 false, filter, last, key.length);
         }
 
-        for (let [, obj] in Iterator(objects)) {
+        for (let obj of objects) {
             let name = obj[1] + " (prototype substrings)";
             this.context.fork(name, this._top.offset, this, this._fill,
                 obj[0], name, function (a, b) compl(a, b, true),
@@ -454,14 +454,14 @@ const JavaScript = Module("javascript", {
         }
 
         this.context.getCache("eval", Object);
-        this.context.getCache("evalContext", function () ({ __proto__: userContext }));
+        this.context.getCache("evalContext", function () Object.create(userContext));
 
         // Okay, have parse stack. Figure out what we're completing.
 
         // Find any complete statements that we can eval before we eval our object.
         // This allows for things like: let doc = window.content.document; let elem = doc.createElement...; elem.<Tab>
         let prev = 0;
-        for (let [, v] in Iterator(this._get(0).fullStatements)) {
+        for (let v of this._get(0).fullStatements) {
             let key = this._str.substring(prev, v + 1);
             if (this._checkFunction(prev, v, key))
                 return null;
@@ -529,10 +529,12 @@ const JavaScript = Module("javascript", {
                 // Split up the arguments
                 let prev = this._get(-2).offset;
                 let args = [];
-                for (let [i, idx] in Iterator(this._get(-2).comma)) {
+                let i = 0;
+                for (let idx of this._get(-2).comma) {
                     let arg = this._str.substring(prev + 1, idx);
                     prev = idx;
                     util.memoize(args, i, function () self.eval(arg));
+                    ++i;
                 }
                 let key = this._getKey();
                 args.push(key + string);
@@ -616,7 +618,7 @@ const JavaScript = Module("javascript", {
      */
     setCompleter: function (funcs, completers) {
         funcs = Array.concat(funcs);
-        for (let [, func] in Iterator(funcs)) {
+        for (let func of funcs) {
             func.liberatorCompleter = function (context, func, obj, args) {
                 let completer = completers[args.length - 1];
                 if (!completer)

@@ -55,9 +55,9 @@ const Bookmarks = Module("bookmarks", {
             this.__defineGetter__("bookmarks", function () this.load());
 
             this.__defineGetter__("keywords",
-                function () [Keyword(k.keyword, k.title, k.icon, k.url) for ([, k] in Iterator(self.bookmarks)) if (k.keyword)]);
+                function () [Keyword(k.keyword, k.title, k.icon, k.url) for (k of self.bookmarks) if (k.keyword)]);
 
-            this.__iterator__ = function () (val for ([, val] in Iterator(self.bookmarks)));
+            this.__iterator__ = function () (val for (val of self.bookmarks));
 
             function loadBookmark(node) {
                 if (node.uri == null) // How does this happen?
@@ -479,7 +479,7 @@ const Bookmarks = Module("bookmarks", {
         }
         var res = PlacesUtils.history.executeQuery(q, o);
         var node = res.root;
-        for (let [, folder] in Iterator(folders)) {
+        for (let folder of folders) {
             node = getFolderFromNode(node, folder);
             if (!node)
                 break;
@@ -544,9 +544,9 @@ const Bookmarks = Module("bookmarks", {
             args.completeFilter = have.pop();
 
             let prefix = filter.substr(0, filter.length - args.completeFilter.length);
-            let tags = util.Array.uniq(util.Array.flatten([b.tags for ([k, b] in Iterator(bookmarks._cache.bookmarks))]));
+            let tags = util.Array.uniq(util.Array.flatten([b.tags for (b of bookmarks._cache.bookmarks)]));
 
-            return [[prefix + tag, tag] for ([i, tag] in Iterator(tags)) if (have.indexOf(tag) < 0)];
+            return [[prefix + tag, tag] for (tag of tags) if (have.indexOf(tag) < 0)];
         }
 
         function title(context, args) {
@@ -558,8 +558,8 @@ const Bookmarks = Module("bookmarks", {
         }
 
         function keyword(context, args) {
-            let keywords = util.Array.uniq(util.Array.flatten([b.keyword for ([k, b] in Iterator(bookmarks._cache.keywords))]));
-            return [[kw, kw] for ([i, kw] in Iterator(keywords)) ];
+            let keywords = util.Array.uniq(util.Array.flatten([b.keyword for (b of bookmarks._cache.keywords)]));
+            return [[kw, kw] for (kw of keywords)];
         }
 
         commands.add(["bma[rk]"],
@@ -791,7 +791,7 @@ const Bookmarks = Module("bookmarks", {
             let folder = Bookmarks.getBookmarkFolder(folders, rootFolderId);
 
             context.title = ["Bookmarks", folders.join("/") + "/"];
-            context._match = function (filter, str) str.toLowerCase().indexOf(filter.toLowerCase()) === 0;
+            context._match = function (filter, str) str.toLowerCase().startsWith(filter.toLowerCase());
             let results = [];
 
             if (folders.length === 0) {

@@ -54,7 +54,7 @@ const Events = Module("events", {
                 if (k in this._keyTable)
                     names = this._keyTable[k];
                 this._code_key[v] = names[0];
-                for (let [, name] in Iterator(names))
+                for (let name of names)
                     this._key_code[name.toLowerCase()] = v;
             }
 
@@ -79,7 +79,7 @@ const Events = Module("events", {
                 let dirs = io.getRuntimeDirectories("macros");
 
                 if (dirs.length > 0) {
-                    for (let [, dir] in Iterator(dirs)) {
+                    for (let dir of dirs) {
                          liberator.log("Sourcing macros directory: " + dir.path);
 
                         for (let file in dir.iterDirectory()) {
@@ -282,7 +282,7 @@ const Events = Module("events", {
         try {
             feed: {
                 liberator.threadYield(1, true);
-                for (let [, evt_obj] in Iterator(events.fromString(keys))) {
+                for (let evt_obj of events.fromString(keys)) {
                     let elem = liberator.focus || config.browser.contentWindow;
                     let evt = events.create(doc, "keypress", evt_obj);
 
@@ -320,7 +320,7 @@ const Events = Module("events", {
             if (this.duringFeed.length) {
                 let duringFeed = this.duringFeed;
                 this.duringFeed = [];
-                for (let [, evt] in Iterator(duringFeed))
+                for (let evt of duringFeed)
                     evt.target.dispatchEvent(evt);
             }
         }
@@ -364,8 +364,7 @@ const Events = Module("events", {
         };
         var t = TYPES[type];
         var evt = doc.createEvent(t + "Events");
-        evt["init" + t + "Event"].apply(evt,
-                [v for ([k, v] in Iterator(util.extend(DEFAULTS[t], opts)))]);
+        evt["init" + t + "Event"].apply(evt, [v for (v of values(update(DEFAULTS[t], opts)))]);
         return evt;
     },
 

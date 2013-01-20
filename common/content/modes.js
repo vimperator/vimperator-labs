@@ -136,7 +136,7 @@ const Modes = Module("modes", {
             options = extended;
             extended = false;
         }
-        this._modeMap[name] = this._modeMap[this[name]] = util.extend({
+        this._modeMap[name] = this._modeMap[this[name]] = update({
             extended: extended,
             count: true,
             input: false,

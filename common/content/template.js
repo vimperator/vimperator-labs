@@ -137,7 +137,7 @@ const Template = Module("template", {
 
         let filterArr = filter.split(" ");
         let matchArr = [];
-        for (let [, item] in Iterator(filterArr)) {
+        for (let item of filterArr) {
             if (!item)
                 continue;
             let lcstr = String.toLowerCase(str);
@@ -166,7 +166,7 @@ const Template = Module("template", {
         let resArr = [];
         let offset = -1;
         let last, prev;
-        for (let [, item] in Iterator(matchArr)) {
+        for (let item of matchArr) {
             last = item.pos + item.len;
             if (item.pos > offset) {
                 prev = resArr[resArr.length] = item;
@@ -191,7 +191,7 @@ const Template = Module("template", {
         var add = xml["+="];
         let start = 0;
         let n = 0;
-        for (let [, item] in Iterator(this.removeOverlapMatch(iter))) {
+        for (let item of this.removeOverlapMatch(iter)) {
             if (n++ > 50) // Prevent infinite loops.
                 return add(s, xml`${str.substr(start)}`);
             add(s, xml`${str.substring(start, item.pos)}`);

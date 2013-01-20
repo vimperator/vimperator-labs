@@ -66,24 +66,24 @@ function Module(name, prototype, classProperties, moduleInit) {
 Module.list = [];
 Module.constructors = {};
 
-window.addEventListener("load", function () {
-    window.removeEventListener("load", arguments.callee, false);
+window.addEventListener("load", function onload() {
+    window.removeEventListener("load", onload, false);
 
     function dump(str) window.dump(String.replace(str, /\n?$/, "\n").replace(/^/m, Config.prototype.name.toLowerCase() + ": "));
     const start = Date.now();
     const deferredInit = { load: [] };
-    const seen = set();
+    const seen = new Set();
     const loaded = [];
 
     function load(module, prereq) {
         try {
             if (module.name in modules)
                 return;
-            if (module.name in seen)
+            if (seen.has(module.name))
                 throw Error("Module dependency loop");
-            set.add(seen, module.name);
+            seen.add(module.name);
 
-            for (let dep in values(module.requires))
+            for (let dep of module.requires)
                 load(Module.constructors[dep], module.name);
 
             dump("Load" + (isstring(prereq) ? " " + prereq + " dependency: " : ": ") + module.name);
@@ -92,7 +92,7 @@ window.addEventListener("load", function () {
 
             function init(mod, module)
                 function () module.INIT[mod].call(modules[module.name], modules[mod]);
-            for (let mod in values(loaded)) {
+            for (let mod of loaded) {
                 try {
                     if (mod in module.INIT)
                         init(mod, module)();
@@ -103,11 +103,11 @@ window.addEventListener("load", function () {
                         liberator.echoerr(e);
                 }
             }
-            for (let mod in keys(module.INIT)) {
+            for (let mod of Object.keys(module.INIT)) {
                 deferredInit[mod] = deferredInit[mod] || [];
                 deferredInit[mod].push(init(mod, module));
             }
-            for (let [, fn] in iter(deferredInit[module.name] || []))
+            for (let fn of deferredInit[module.name] || [])
                 fn();
         }
         catch (e) {
@@ -119,14 +119,14 @@ window.addEventListener("load", function () {
     Module.list.forEach(load);
     deferredInit["load"].forEach(call);
 
-    for (let module in values(Module.list))
+    for (let module of Module.list)
         delete module.INIT;
 
     dump("Loaded in " + (Date.now() - start) + "ms\n");
 }, false);
 
-window.addEventListener("unload", function () {
-    window.removeEventListener("unload", arguments.callee, false);
+window.addEventListener("unload", function onunload() {
+    window.removeEventListener("unload", onunload, false);
     for (let [, mod] in iter(modules))
         if (mod instanceof ModuleBase && "destroy" in mod)
             mod.destroy();

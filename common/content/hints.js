@@ -132,35 +132,37 @@ const Hints = Module("hints", {
 
         let type = elem.type;
 
-        if (elem instanceof HTMLInputElement && /(submit|button|this._reset)/.test(type))
+        if (elem instanceof HTMLInputElement && /(submit|button|reset)/.test(type))
             return [elem.value, false];
         else {
-            for (let [, option] in Iterator(options["hintinputs"].split(","))) {
-                if (option == "value") {
-                    if (elem instanceof HTMLSelectElement) {
-                        if (elem.selectedIndex >= 0)
-                            return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
-                    }
-                    else if (type == "image") {
-                        if (elem.alt)
-                            return [elem.alt.toLowerCase(), true];
-                    }
-                    else if (elem.value && type != "password") {
-                        // radio's and checkboxes often use internal ids as values - maybe make this an option too...
-                        if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
-                            return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")];
-                    }
+            for (let option of options["hintinputs"].split(",")) {
+                switch (option) {
+                    case "value":
+                        if (elem instanceof HTMLSelectElement) {
+                            if (elem.selectedIndex >= 0)
+                                return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
+                        }
+                        else if (type == "image") {
+                            if (elem.alt)
+                                return [elem.alt.toLowerCase(), true];
+                        }
+                        else if (elem.value && type != "password") {
+                            // radio's and checkboxes often use internal ids as values - maybe make this an option too...
+                            if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
+                                return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")];
+                        }
+                        break;
+                    case "label":
+                        if (elem.id) {
+                            // TODO: (possibly) do some guess work for label-like objects
+                            let label = util.evaluateXPath(["label[@for=" + elem.id.quote() + "]"], doc).snapshotItem(0);
+                            if (label)
+                                return [label.textContent.toLowerCase(), true];
+                        }
+                        break;
+                    case "name":
+                        return [elem.name.toLowerCase(), true];
                 }
-                else if (option == "label") {
-                    if (elem.id) {
-                        // TODO: (possibly) do some guess work for label-like objects
-                        let label = util.evaluateXPath(["label[@for=" + elem.id.quote() + "]"], doc).snapshotItem(0);
-                        if (label)
-                            return [label.textContent.toLowerCase(), true];
-                    }
-                }
-                else if (option == "name")
-                    return [elem.name.toLowerCase(), true];
             }
         }
 
@@ -500,7 +502,7 @@ const Hints = Module("hints", {
         if (config.browser.markupDocumentViewer.authorStyleDisabled) {
             let css = [];
             // FIXME: Broken for imgspans.
-            for (let [, { doc: doc }] in Iterator(this._docs)) {
+            for (let { doc } of this._docs) {
                 for (let elem in util.evaluateXPath(" {//*[@liberator:highlight and @number]", doc)) {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
                     css.push(highlight.selector(group) + "[number=" + elem.getAttribute("number").quote() + "] { " + elem.style.cssText + " }");
@@ -794,7 +796,7 @@ const Hints = Module("hints", {
              */
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping) {
                 let strIdx = 0;
-                for (let [, word] in Iterator(words)) {
+                for (let word of words) {
                     if (word.length == 0)
                         continue;
 

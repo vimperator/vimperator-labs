@@ -437,7 +437,7 @@ const Options = Module("options", {
         this._optionHash = {};
         this._prefContexts = [];
 
-        for (let [, pref] in Iterator(this.allPrefs(Options.OLD_SAVED))) {
+        for (let pref of this.allPrefs(Options.OLD_SAVED)) {
             let saved = Options.SAVED + pref.substr(Options.OLD_SAVED.length)
             if (!this.getPref(saved))
                 this.setPref(saved, this.getPref(pref));
@@ -478,7 +478,7 @@ const Options = Module("options", {
     /** @property {Iterator(Option)} @private */
     __iterator__: function () {
         let sorted = [o for ([i, o] in Iterator(this._optionHash))].sort(function (a, b) String.localeCompare(a.name, b.name));
-        return (v for ([k, v] in Iterator(sorted)));
+        return (v for (v of sorted));
     },
 
     /** @property {Object} Observes preference value changes. */
@@ -567,7 +567,7 @@ const Options = Module("options", {
         if (name in this._optionHash)
             return (this._optionHash[name].scope & scope) && this._optionHash[name];
 
-        for (let opt in Iterator(options)) {
+        for (let opt in options) {
             if (opt.hasName(name))
                 return (opt.scope & scope) && opt;
         }
@@ -589,7 +589,7 @@ const Options = Module("options", {
             scope = Option.SCOPE_BOTH;
 
         function opts(opt) {
-            for (let opt in Iterator(options)) {
+            for (let opt in options) {
                 let option = {
                     isDefault: opt.value == opt.defaultValue,
                     name:      opt.name,
@@ -635,7 +635,7 @@ const Options = Module("options", {
         let prefArray = options.allPrefs();
         prefArray.sort();
         function prefs() {
-            for (let [, pref] in Iterator(prefArray)) {
+            for (let pref of prefArray) {
                 let userValue = services.get("prefs").prefHasUserValue(pref);
                 if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
                     continue;

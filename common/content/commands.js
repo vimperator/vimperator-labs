@@ -105,12 +105,12 @@ const Command = Class("Command", {
      * @returns {boolean}
      */
     hasName: function (name) {
-        for (let [, spec] in Iterator(this.specs)) {
+        for (let spec of this.specs) {
             let fullName = spec.replace(/\[(\w+)]$/, "$1");
             let index = spec.indexOf("[");
             let min = index == -1 ? fullName.length : index;
 
-            if (fullName.indexOf(name) == 0 && name.length >= min)
+            if (fullName.startsWith(name) && name.length >= min)
                 return true;
         }
 
@@ -555,7 +555,7 @@ const Commands = Module("commands", {
         function matchOpts(arg) {
             // Push possible option matches into completions
             if (complete && !onlyArgumentsRemaining)
-                completeOpts = [[opt[0], opt[0][0]] for ([i, opt] in Iterator(options)) if (!(opt[0][0] in args))];
+                completeOpts = [[opt[0], opt[0][0]] for (opt of options) if (!(opt[0][0] in args))];
         }
         function resetCompletions() {
             completeOpts = null;
@@ -598,9 +598,9 @@ const Commands = Module("commands", {
 
             var optname = "";
             if (!onlyArgumentsRemaining) {
-                for (let [, opt] in Iterator(options)) {
-                    for (let [, optname] in Iterator(opt[0])) {
-                        if (sub.indexOf(optname) == 0) {
+                for (let opt of options) {
+                    for (let optname of opt[0]) {
+                        if (sub.startsWith(optname)) {
                             invalid = false;
                             arg = null;
                             quote = null;
@@ -710,7 +710,7 @@ const Commands = Module("commands", {
             else if (!onlyArgumentsRemaining) {
                 let [cmdCount, cmdName, cmdBang, cmdArg] = commands.parseCommand(sub);
                 if (cmdName) {
-                    for (let [, subCmd] in Iterator(subCommands)) {
+                    for (let subCmd of subCommands) {
                         if (subCmd.hasName(cmdName)) {
                             let subExtra = {
                                 count: cmdCount,
@@ -718,7 +718,7 @@ const Commands = Module("commands", {
                                 subCmd: subCmd,
                                 opts: extra.opts || {}
                             };
-                            for (let [,opt] in Iterator(options)) {
+                            for (let opt of options) {
                                 if (opt[0][0] in args)
                                     subExtra.opts[opt[0][0]] = args[opt[0][0]];
                             }
@@ -1010,7 +1010,7 @@ const Commands = Module("commands", {
             context.title = ["User Command", "Definition"];
             context.completions = [
                 [command.name, command.replacementText || "function () { ... }"]
-                for each (command in commands.getUserCommands())
+                for (command of commands.getUserCommands())
             ];
         };
     },
