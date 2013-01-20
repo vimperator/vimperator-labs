@@ -346,9 +346,6 @@ const IO = Module("io", {
             onProgressChange: function () {},
             onSecurityChange: function () {}
         };
-
-        services.add("UUID",  "@mozilla.org/uuid-generator;1", Ci.nsIUUIDGenerator);
-
         services.get("downloads").addListener(this.downloadListener);
     },
 

@@ -62,6 +62,10 @@ const Services = Module("services", {
                 class_: "@mozilla.org/thread-manager;1",
                 iface:  Ci.nsIThreadManager
             },
+            "UUID": {
+                class_: "@mozilla.org/uuid-generator;1",
+                iface:  Ci.nsIUUIDGenerator
+            },
         };
 
         this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);
