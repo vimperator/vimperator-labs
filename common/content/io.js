@@ -332,7 +332,7 @@ const IO = Module("io", {
 
         this.downloadListener = {
             onDownloadStateChange: function (state, download) {
-                if (download.state == services.get("downloadManager").DOWNLOAD_FINISHED) {
+                if (download.state == services.get("downloads").DOWNLOAD_FINISHED) {
                     let url   = download.source.spec;
                     let title = download.displayName;
                     let file  = download.targetFile.path;
@@ -349,11 +349,11 @@ const IO = Module("io", {
 
         services.add("UUID",  "@mozilla.org/uuid-generator;1", Ci.nsIUUIDGenerator);
 
-        services.get("downloadManager").addListener(this.downloadListener);
+        services.get("downloads").addListener(this.downloadListener);
     },
 
     destroy: function () {
-        services.get("downloadManager").removeListener(this.downloadListener);
+        services.get("downloads").removeListener(this.downloadListener);
         for (let [, plugin] in Iterator(plugins.contexts))
             if (plugin.onUnload)
                 plugin.onUnload();

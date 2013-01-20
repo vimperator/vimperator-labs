@@ -30,10 +30,6 @@ const Services = Module("services", {
                 class_: "@mozilla.org/js/jsd/debugger-service;1",
                 iface:  Ci.jsdIDebuggerService
             },
-            "downloadManager": {
-                class_: "@mozilla.org/download-manager;1",
-                iface:  Ci.nsIDownloadManager
-            },
             "environment": {
                 class_: "@mozilla.org/process/environment;1",
                 iface:  Ci.nsIEnvironment
