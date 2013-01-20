@@ -145,8 +145,9 @@ const Services = Module("services", {
      * @param {string} name The class's cache key.
      */
     create: function (name) this.classes[name]()
-}, {
-}, {
+},
+window.Services,
+{
     completion: function () {
         JavaScript.setCompleter(this.get, [
             function () Object.keys(services.jsm).concat(Object.keys(services.services)).map(function(key) [key, ""])
