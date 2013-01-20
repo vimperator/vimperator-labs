@@ -377,23 +377,25 @@ Class.prototype = {
  *
  * @returns {function} The constructor for the new Struct.
  */
-function Struct() {
-    let args = Array.slice(arguments);
+function Struct(...args) {
     const Struct = Class("Struct", StructBase, {
         length: args.length,
         members: args
     });
     args.forEach(function (name, i) {
-        Struct.prototype.__defineGetter__(name, function () this[i]);
-        Struct.prototype.__defineSetter__(name, function (val) { this[i] = val; });
+        Object.defineProperty(Struct.prototype, name, {
+            get: function () this[i],
+            set: function (val) { this[i] = val },
+            enumerable: true,
+        });
     });
     return Struct;
 }
 const StructBase = Class("StructBase", {
-    init: function () {
-        for (let i = 0; i < arguments.length; i++)
-            if (arguments[i] != undefined)
-                this[i] = arguments[i];
+    init: function (...args) {
+        for (var i = 0, len = args.length; i < len; ++i)
+            if (args[i] != null)
+                this[i] = args[i];
     },
 
     clone: function clone() this.constructor.apply(null, this.slice()),
@@ -401,7 +403,7 @@ const StructBase = Class("StructBase", {
     // Iterator over our named members
     __iterator__: function () {
         let self = this;
-        return ([k, self[k]] for (k in values(self.members)))
+        return ([k, self[i]] for ([i, k] in Iterator(self.members)))
     }
 }, {
     /**
@@ -415,11 +417,32 @@ const StructBase = Class("StructBase", {
      *     the default value.
      */
     defaultValue: function (key, val) {
-        let i = this.prototype.members.indexOf(key);
-        this.prototype.__defineGetter__(i, function () (this[i] = val.call(this), this[i])); // Kludge for FF 3.0
-        this.prototype.__defineSetter__(i, function (value) {
-            this.__defineGetter__(i, function () value);
-            this.__defineSetter__(i, function (val) { value = val; });
+        let proto = this.prototype;
+        let i = proto.members.indexOf(key);
+        if (i === -1)
+            return;
+
+        Object.defineProperty(this.prototype, i, {
+            get: function () {
+                if (this === proto)
+                    return;
+
+                var value = val.call(this);
+                Object.defineProperty(this, i, {
+                    value: value,
+                    writable: true
+                });
+                return value;
+            },
+            set: function (value) {
+                if (this === proto)
+                    return;
+
+                Object.defineProperty(this, i, {
+                    value: value,
+                    writable: true,
+                })
+            },
         });
     }
 });
