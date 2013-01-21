@@ -304,42 +304,27 @@ cooked: ["' + cooked.join('", "') + '"]' +
 
             if (state[TYPE] === ROUND1 && state[1] === "let") {
                 state = stack[--depth];
-            } else if (word === "if"
-                ||  word === "while"
-                ||  word === "for"
-                ||  word === "with"
-                ||  word === "catch"
-                ||  word === "function"
-                ||  word === "let"
-            ) {
-                offset = idToken.lastIndex;
-                if (word === "if" && state[TYPE] === ROUND1IN && state[1] === "catch") {
-                    state = [ROUND, offset, state];
-                } else {
-                    stack[depth++] = state;
-                    state = [ROUND1, word, offset];
-                }
-                isOp = false;
-            } else if (
-                    word === "delete"
-                ||  word === "new"
-                ||  word === "return"
-                ||  word === "throw"
-                ||  word === "yield"
-                ||  word === "in"
-                ||  word === "instanceof"
-                ||  word === "case"
-                ||  word === "typeof"
-                ||  word === "var"
-                ||  word === "const"
-                ||  word === "void"
-                ||  word === "else"
-            ) {
-                offset = idToken.lastIndex;
-                isOp = false;
             } else {
-                offset = idToken.lastIndex;
-                isOp = true;
+                switch (word) {
+                case "if": case "while": case "for": case "with": case "function": case "let":
+                    offset = idToken.lastIndex;
+                    if (word === "if" && state[TYPE] === ROUND1IN && state[1] === "catch") {
+                        state = [ROUND, offset, state];
+                    } else {
+                        stack[depth++] = state;
+                        state = [ROUND1, word, offset];
+                    }
+                    isOp = false;
+                    break;
+                case "delete": case "new":    case "return": case "yield": case "in":   case "instanceof":
+                case "case":   case "typeof": case "var":    case "const": case "void": case "else":
+                    offset = idToken.lastIndex;
+                    isOp = false;
+                    break;
+                default:
+                    offset = idToken.lastIndex;
+                    isOp = true;
+                }
             }
             break;
         }
