@@ -243,7 +243,6 @@ cooked: ["' + cooked.join('", "') + '"]' +
                 state = stack[--depth];
                 isOp = true;
                 break;
-            case ROUND1:
             case ROUND1IN:
                 state = stack[--depth];
                 isOp = false;
