@@ -5,6 +5,17 @@ gDebugOutput = false;
 var scope = {};
 Cu.import("resource://gre/modules/Services.jsm", scope);
 
+//
+// STATE
+// ALL
+//      0 TYPE
+// TEMPLATE
+//      1 HAS_HANDLER
+//      2 RESULT
+//      3 RAW
+//      4 SUBSTITUDE
+// ROUND1
+//      1 keyword
 function convert(str, debug) {
     //xxx: ignore debug action
     //var $$;
@@ -22,7 +33,7 @@ function convert(str, debug) {
     const reRawEscape = /\r\n?|\n|"|\\/g;
 
     //const TEMPLATE = {}, TEMPLATE_PORTION = {}, SQUARE = {}, ROUND = {}, CURLY = {}, ROUND1 = {}, ROOT = {};
-    const TEMPLATE = {s:"t"}, TEMPLATE_PORTION = {s: "tp"}, SQUARE = {s: "s["}, ROUND = {s:"s("}, CURLY = {s:"s{"}, ROUND1 = {s:"fn"}, ROOT = {s:"r"};
+    const TEMPLATE = {s:"t"}, TEMPLATE_PORTION = {s: "tp"}, SQUARE = {s: "s["}, ROUND = {s:"s("}, CURLY = {s:"s{"}, ROUND1 = {s:"fn"}, ROUND1IN = {s: "in("}, ROOT = {s:"r"};
     const TYPE = 0, HAS_HANDLER = 1, RESULT = 2, RAW = 3, SUBSTITUDE = 4;
     var c, c0, c1, m, q_str, i, j;
     var start = 0, offset = 0;
@@ -30,11 +41,8 @@ function convert(str, debug) {
     var whiteSpace = /^\s*/y;
     var op = "!\"#%&'()=-~^\\`@+;*:{[}]<>,?/";
     var idToken = new RegExp("^[^\\" + op.split("").join("\\") + "\\s]+", "y");
-    var funcToken = /^(?:\s+[^\(]*\s*)?\(/y;
-    var attrFn = /^\s*:/y;
     var expressionToken = /^\s*\(/y;
     var reOpt = /^[igmy]*/y;
-    var reEach = /^\s+each/y;
     var last = str.length;
     var stack = [];
     const BackSlash  = '\\';
@@ -208,14 +216,25 @@ cooked: ["' + cooked.join('", "') + '"]' +
         case ";":
             isOp = false;
             break;
-        case ":": case "+": case "-": case "*": case "=": case ",":
+        case ":":
+            if (state[TYPE] === ROUND1) {
+                state = stack[--depth];
+            }
+            isOp = false;
+            break;
+        case "+": case "-": case "*": case "=": case ",":
         case "!": case "|": case "&": case ">": case "%": case "~":
         case "^": case "<": case "?": case ";":
             isOp = false;
             break;
         case "(":
-            stack[depth++] = state;
-            state = [ROUND, offset];
+            var aType = state[TYPE];
+            if (aType === ROUND1) {
+                state[TYPE] = ROUND1IN;
+            } else {
+                stack[depth++] = state;
+                state = [ROUND, offset];
+            }
             isOp = false;
             break;
         case ")":
@@ -225,6 +244,7 @@ cooked: ["' + cooked.join('", "') + '"]' +
                 isOp = true;
                 break;
             case ROUND1:
+            case ROUND1IN:
                 state = stack[--depth];
                 isOp = false;
                 break;
@@ -283,51 +303,23 @@ cooked: ["' + cooked.join('", "') + '"]' +
             if(!m) break root_loop;
             word = m[0];
 
-            // xxx: support for each
-            if (word === "for") {
-                reEach.lastIndex = idToken.lastIndex;
-                m = reEach.exec(str);
-                if (m) idToken.lastIndex = reEach.lastIndex;
-            }
-
-            if (word === "function") {
-                funcToken.lastIndex = idToken.lastIndex;
-                m = funcToken.exec(str);
-                if (!m) {
-                    //xxx: e4x "::"
-                    if (str.substr(idToken.lastIndex, 2) === "::") {
-                        idToken.lastIndex += 2;
-                        m = idToken.exec(str);
-                        if (m) {
-                            offset = idToken.lastIndex;
-                            break;
-                        }
-                    } else {
-                        // var obj = { function: xxx}
-                        attrFn.lastIndex = idToken.lastIndex;
-                        m = attrFn.exec(str);
-                        if (m) {
-                            offset = attrFn.lastIndex;
-                            isOp = false;
-                            break;
-                        }
-                    }
-                    break root_loop;
-                }
-                offset = funcToken.lastIndex;
-                stack[depth++] = state;
-                state = [ROUND1];
-                isOp = false;
+            if (state[TYPE] === ROUND1 && state[1] === "let") {
+                state = stack[--depth];
             } else if (word === "if"
                 ||  word === "while"
                 ||  word === "for"
+                ||  word === "with"
+                ||  word === "catch"
+                ||  word === "function"
+                ||  word === "let"
             ) {
-                expressionToken.lastIndex = idToken.lastIndex;
-                m = expressionToken.exec(str);
-                if (!m) break root_loop;
-                offset = expressionToken.lastIndex;
-                stack[depth++] = state;
-                state = [ROUND1];
+                offset = idToken.lastIndex;
+                if (word === "if" && state[TYPE] === ROUND1IN && state[1] === "catch") {
+                    state = [ROUND, offset, state];
+                } else {
+                    stack[depth++] = state;
+                    state = [ROUND1, word, offset];
+                }
                 isOp = false;
             } else if (
                     word === "delete"
@@ -342,21 +334,9 @@ cooked: ["' + cooked.join('", "') + '"]' +
                 ||  word === "var"
                 ||  word === "const"
                 ||  word === "void"
+                ||  word === "else"
             ) {
                 offset = idToken.lastIndex;
-                isOp = false;
-            } else if (word === "let") {
-                expressionToken.lastIndex = idToken.lastIndex;
-                m = expressionToken.exec(str);
-                // let declaration
-                if (!m) {
-                    offset = idToken.lastIndex;
-                    isOp = false;
-                    break;
-                }
-                offset = expressionToken.lastIndex;
-                stack[depth++] = state;
-                state = [ROUND1];
                 isOp = false;
             } else {
                 offset = idToken.lastIndex;
