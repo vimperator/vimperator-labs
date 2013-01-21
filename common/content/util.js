@@ -773,20 +773,29 @@ const Util = Module("util", {
         }).filter(function(url, i) i === 0 || url);
     },
 
+    /**
+     * Converts an string, TemplateXML object or E4X literal to a DOM node.
+     *
+     * @param {String|TemplateXML|xml} node
+     * @param {Document} doc
+     * @param {Object} nodes If present, nodes with the "key" attribute are
+     *     stored here, keyed to the value thereof.
+     * @returns {Node|DocumentFragment}
+     */
     xmlToDom: function xmlToDom(node, doc, nodes) {
         if (typeof node === "xml")
-            return this._xmlToDom(node, doc, nodes);
+            return this.xmlToDomForE4X(node, doc, nodes);
 
-        var dom = this.xmlToDom2(node, doc, nodes);
+        var dom = this.xmlToDomForTemplate(node, doc, nodes);
 
         //xxx: change highlight's namespace
-        var e, attr, i, j, list = (dom.nodeType === 11 ? dom : dom.parentNode).querySelectorAll("[highlight]");
-        var str = "highlight";
-        for (i = 0, j = list.length; i < j; i++) {
-            e = list[i];
-            attr = e.getAttribute(str);
-            e.removeAttribute(str);
-            e.setAttributeNS(NS, str, attr);
+        const str = "highlight";
+        var attr,
+            list = (dom.nodeType === 11 ? dom : dom.parentNode).querySelectorAll("[highlight]");
+        for (let node of list) {
+            attr = node.getAttribute(str);
+            node.removeAttribute(str);
+            node.setAttributeNS(NS, str, attr);
         }
         return dom;
     },
@@ -795,11 +804,12 @@ const Util = Module("util", {
      *
      * @param {Node} node
      * @param {Document} doc
-     * @param {Object} nodes If present, nodes with the "key" attribute are
-     *     stored here, keyed to the value thereof.
+     * @param {Object} nodes
      * @returns {Node}
+     * @deprecated
+     * @see util.xmlToDom
      */
-    _xmlToDom: function xmlToDom(node, doc, nodes) {
+    xmlToDomForE4X: function xmlToDomForE4X(node, doc, nodes) {
         if (node.length() != 1) {
             let domnode = doc.createDocumentFragment();
             for each (let child in node)
@@ -822,25 +832,28 @@ const Util = Module("util", {
             return null;
         }
     },
-    xmlToDom2: function xmlToDom2(node, doc, nodes) {
-        var ps = new doc.defaultView.DOMParser;
+    /**
+     * Converts an string of TemplateXML object to a DOM node.
+     *
+     * @param {String|TemplateXML} node
+     * @param {Document} doc
+     * @param {Object} nodes
+     * @returns {Node|DocumentFragment}
+     * @see util.xmlToDom
+     */
+    xmlToDomForTemplate: function xmlToDomForTemplate(node, doc, nodes) {
+        var dom = doc.createDocumentFragment();
         var range = doc.createRange();
-        var res = ps.parseFromString(xml`<div xmlns:ns=${NS} xmlns:xul=${XUL} xmlns=${XHTML}>${node}</div>`.toString(), "text/xml");
-        var  root = res.documentElement;
-        if (root.namespaceURI === "http://www.mozilla.org/newlayout/xml/parsererror.xml"
-            && root.tagName === "parsererror") {
-                throw SyntaxError(root.firstChild.data);
-        }
-        range.selectNodeContents(res.documentElement);
-        var dom = range.extractContents();
+        var fragment = range.createContextualFragment(
+            xml`<div xmlns:ns=${NS} xmlns:xul=${XUL} xmlns=${XHTML}>${node}</div>`.toString());
+        for (let node of fragment.firstChild.childNodes)
+            dom.appendChild(node);
+
         range.detach();
 
         if (nodes) {
-            var i, j;
-            var list = dom.querySelectorAll("[key]");
-            for (i = 0, j = list.length; i < j; i++) {
-                nodes[list[i].getAttribute("key")] = list[i];
-            }
+            for (let elm of dom.querySelectorAll("[key]"))
+                nodes[elm.getAttribute("key")] = elm;
         }
         return dom.childNodes.length === 1 ? dom.childNodes[0] : dom;
     },
