@@ -226,6 +226,14 @@ const CommandLine = Module("commandline", {
     },
 
     /**
+     * reset messasaBox
+     */
+    _resetStatusline: function () {
+        this._messageBox.value = "";
+        this._setHighlightGroup("");
+    },
+
+    /**
      * Determines whether the command line should be visible.
      *
      * @returns {boolean}
@@ -469,6 +477,8 @@ const CommandLine = Module("commandline", {
         // open the completion list automatically if wanted
         if (cmd.length)
             commandline.triggerCallback("change", this._currentExtendedMode, cmd);
+
+        this._resetStatusline();
     },
 
     /**
