@@ -306,7 +306,7 @@ cooked: ["' + cooked.join('", "') + '"]' +
                 state = stack[--depth];
             } else {
                 switch (word) {
-                case "if": case "while": case "for": case "with": case "function": case "let":
+                case "if": case "while": case "for": case "with": case "catch": case "function": case "let":
                     offset = idToken.lastIndex;
                     if (word === "if" && state[TYPE] === ROUND1IN && state[1] === "catch") {
                         state = [ROUND, offset, state];
