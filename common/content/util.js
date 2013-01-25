@@ -958,22 +958,7 @@ const Util = Module("util", {
          * @param {boolean} unsorted
          * @returns {Array}
          */
-        uniq: function uniq(ary, unsorted) {
-            let ret = [];
-            if (unsorted) {
-                for (let [, item] in Iterator(ary))
-                    if (ret.indexOf(item) == -1)
-                        ret.push(item);
-            }
-            else {
-                for (let [, item] in Iterator(ary.sort())) {
-                    if (item != last || !ret.length)
-                        ret.push(item);
-                    var last = item;
-                }
-            }
-            return ret;
-        }
+        uniq: function uniq(ary, unsorted) [...new Set(unsorted ? ary : ary.sort())],
     })
 });
 
