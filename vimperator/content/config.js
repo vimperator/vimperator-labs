@@ -12,7 +12,7 @@ const Config = Module("config", ConfigBase, {
     /*** required options, no checks done if they really exist, so be careful ***/
     name: "Vimperator",
     hostApplication: "Firefox",
-    features: ["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup", "privatebrowsing"],
+    features: new Set(["bookmarks", "hints", "history", "marks", "quickmarks", "sanitizer", "session", "tabs", "tabs_undo", "windows", "tabgroup", "privatebrowsing"]),
 
     /*** optional options, there are checked for existence and a fallback provided  ***/
 

@@ -20,7 +20,7 @@ const Config = Module("config", ConfigBase, {
     /*** optional options, there are checked for existence and a fallback provided  ***/
     get features() {
         Object.defineProperty(this, "features", {
-            value: this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"],
+            value: new Set(this.isComposeWindow ? ["addressbook"] : ["hints", "mail", "marks", "addressbook", "tabs"]),
         });
         return this.features;
     },

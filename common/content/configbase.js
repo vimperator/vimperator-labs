@@ -40,7 +40,7 @@ const ConfigBase = Class(ModuleBase, {
      *    liberator.has(feature) to check for a feature's presence
      *    in this array.
      */
-    features: [],
+    features: new Set,
 
     guioptions: {},
 

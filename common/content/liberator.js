@@ -67,9 +67,9 @@ const Liberator = Module("liberator", {
         this.profileName = services.get("dirsvc").get("ProfD", Ci.nsIFile).leafName.replace(/^.+?\./, "");
 
         let platform = Liberator.getPlatformFeature()
-        config.features.push(platform);
+        config.features.add(platform);
         if (/^Win(32|64)$/.test(platform))
-            config.features.push('Windows');
+            config.features.add('Windows');
         
         if (AddonManager) {
             let self = this;
@@ -471,7 +471,7 @@ const Liberator = Module("liberator", {
      * @param {string} feature The feature name.
      * @returns {boolean}
      */
-    has: function (feature) config.features.indexOf(feature) >= 0,
+    has: function (feature) config.features.has(feature),
 
     /**
      * Returns whether the host application has the specified extension
