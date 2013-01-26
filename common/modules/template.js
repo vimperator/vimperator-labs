@@ -31,6 +31,7 @@ function convert(str, debug) {
         })[str];
     }
     const reRawEscape = /\r\n?|\n|"|\\/g;
+    const reEOL = /\r\n|[\r\n]/g;
 
     //const TEMPLATE = {}, TEMPLATE_PORTION = {}, SQUARE = {}, ROUND = {}, CURLY = {}, ROUND1 = {}, ROOT = {};
     const TEMPLATE = {s:"t"}, TEMPLATE_PORTION = {s: "tp"}, SQUARE = {s: "s["}, ROUND = {s:"s("}, CURLY = {s:"s{"}, ROUND1 = {s:"fn"}, ROUND1IN = {s: "in("}, ROOT = {s:"r"};
@@ -70,25 +71,15 @@ function convert(str, debug) {
         case "/":
             c0 = str[offset];
             if (c0 === "/") {
-                offset++;
-                while (c0 = str[offset++]) {
-                    if (c0 === NL)
-                        continue root_loop;
-                    else if (c0 === RET) {
-                        if (str[offset] === NL) offset++;
-                        continue root_loop;
-                    }
-                }
-                break root_loop;
+                reEOL.lastIndex = offset;
+                m = reEOL.exec(str);
+                if (!m) break root_loop;
+                offset = reEOL.lastIndex;
+                continue root_loop;
             } else if (c0 === "*") {
-                offset++;
-                while (c0 = str[offset++]) {
-                    if (c0 === "*" && str[offset] === "/") {
-                        offset++;
-                        continue root_loop;
-                    }
-                }
-                break root_loop;
+                offset = str.indexOf("*/", offset + 1) + 2;
+                if (offset === 1) break root_loop;
+                continue root_loop;
             // xxx: 
             } else if (c0 === "=") {
                 offset++;
@@ -306,6 +297,43 @@ cooked: ["' + cooked.join('", "') + '"]' +
                 state = stack[--depth];
             } else {
                 switch (word) {
+                case "get": case "set":
+                    offset = idToken.lastIndex;
+                    goto_getset: while (1) {
+                        whiteSpace.lastIndex = offset;
+                        m = whiteSpace.exec(str);
+                        if (!m) break root_loop;
+                        offset = whiteSpace.lastIndex;
+                        c = str[offset++];
+                        if (c === "/") {
+                            c = str[offset++];
+                            if (c === "*") {
+                                // skip comment
+                                offset = str.indexOf("*/", offset) + 2;
+                                if (offset === 1) break root_loop;
+                            } else if (c === "/") {
+                                // skip line
+                                reEOL.lastIndex = offset;
+                                m = reEOL.exec(str);
+                                if (!m) break root_loop;
+                                offset = reEOL.lastIndex;
+                            } else {
+                                // c is divide
+                                continue goto_switch;
+                            }
+                        } else {
+                            if (op.indexOf(c) >= 0) {
+                                // get/set is variable name
+                                isOp = true;
+                            } else {
+                                // c is getter/setter name
+                                isOp = true;
+                                stack[depth++] = state;
+                                state = [ROUND1, word, offset];
+                            }
+                            continue goto_switch;
+                        }
+                    } break;
                 case "if": case "while": case "for": case "with": case "catch": case "function": case "let":
                     offset = idToken.lastIndex;
                     if (word === "if" && state[TYPE] === ROUND1IN && state[1] === "catch") {
@@ -331,7 +359,8 @@ cooked: ["' + cooked.join('", "') + '"]' +
         break; } // goto_switch: while (1)
     }
     if (depth > 0) {
-        Cu.reportError([(str.substr(0, offset).match(/\r?\n/g)||[]).length + 1, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
+        reEOL.lastIndex = 0;
+        Cu.reportError([(str.substr(0, offset).match(reEOL)||[]).length + 1, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
         Cu.reportError(JSON.stringify(stack.slice(0, depth), null, 1));
         //throw SyntaxError("TemplateConvertError");
     }
