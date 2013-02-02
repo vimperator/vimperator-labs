@@ -196,7 +196,7 @@ cooked: ["' + cooked.join('", "') + '"]' +
                     }
                 }
             }
-            break;
+            break root_loop;
         case "'": case '"':
             //string literal
             for (c0 = str[offset++]; offset < last && c0 !== c; c0 = str[offset++]) {
@@ -360,9 +360,10 @@ cooked: ["' + cooked.join('", "') + '"]' +
     }
     if (depth > 0) {
         reEOL.lastIndex = 0;
-        Cu.reportError([(str.substr(0, offset).match(reEOL)||[]).length + 1, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
+        let lineNumber = (str.substr(0, offset).match(reEOL)||[]).length + 1;
+        Cu.reportError([lineNumber, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
         Cu.reportError(JSON.stringify(stack.slice(0, depth), null, 1));
-        //throw SyntaxError("TemplateConvertError");
+        throw SyntaxError("TemplateConvertError", "", lineNumber);
     }
     return res + str.substring(start);
 }
