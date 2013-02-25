@@ -967,7 +967,7 @@ lookup:
                 let output = io.system(arg);
 
                 commandline.command = "!" + arg;
-                commandline.echo(template.genericOutput("Command Output: " + arg, xml`a<span highlight="CmdOutput">${String(output)}</span>`));
+                commandline.echo(template.genericOutput("Command Output: " + arg, xml`<span highlight="CmdOutput">${String(output)}</span>`));
 
                 autocommands.trigger("ShellCmdPost", {});
             }, {
