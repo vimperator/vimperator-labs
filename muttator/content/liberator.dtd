@@ -11,4 +11,5 @@
 <!ENTITY liberator.statusBefore "">
 <!ENTITY liberator.statusAfter "statusTextBox">
 <!ENTITY liberator.idkeyset "mailKeys">
+<!ENTITY liberator.toolboxId "navigation-toolbox">
 

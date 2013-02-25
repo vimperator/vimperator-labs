@@ -11,4 +11,5 @@
 <!ENTITY liberator.statusBefore "statusbar-display">
 <!ENTITY liberator.statusAfter "">
 <!ENTITY liberator.idkeyset "mainKeyset">
+<!ENTITY liberator.toolboxId "navigator-toolbox">
 

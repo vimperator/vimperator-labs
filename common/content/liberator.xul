@@ -69,7 +69,7 @@
             <stack id="liberator-bottombar-deck" orient="horizontal" align="stretch" class="liberator-container" flex="1" liberator:highlight="Normal">
                 <toolbar id="liberator-statusline" hidden="false" collapsed="false" class="liberator-container"
                     toolbarname       = "Liberator Statusline Toolbar"
-                    toolboxid         = "navigator-toolbox"
+                    toolboxid         = "&liberator.toolboxId;"
                     mode              = "icons"
                     iconsize          = "small"
                     defaulticonsize   = "small"
