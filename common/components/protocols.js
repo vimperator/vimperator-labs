@@ -12,18 +12,18 @@
  * By Kris Maglione, ideas from Ed Anuff's nsChromeExtensionHandler.
  */
 
-const Ci = Components.interfaces, Cc = Components.classes;
-const Cu = Components.utils;
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyGetter(this, "convert", function () {
     var obj = new Object;
-    Components.utils.import("resource://liberator/template.js", obj);
+    Cu.import("resource://liberator/template.js", obj);
     return obj.convert;
 });
 
 const NS_BINDING_ABORTED = 0x804b0002;
-const nsIProtocolHandler = Components.interfaces.nsIProtocolHandler;
+const nsIProtocolHandler = Ci.nsIProtocolHandler;
 
 const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
@@ -60,7 +60,7 @@ XPCOMUtils.defineLazyGetter(this, "cache", function () {
     return dir;
 });
 XPCOMUtils.defineLazyGetter(this, "version", function () {
-    return Cc["@mozilla.org/fuel/application;1"].getService(Ci.extIApplication).version;
+    return Services.appinfo.version;
 });
 
 function ChromeData() {}
@@ -68,7 +68,7 @@ ChromeData.prototype = {
     contractID:       "@mozilla.org/network/protocol;1?name=chrome-data",
     classID:          Components.ID("{c1b67a07-18f7-4e13-b361-2edcc35a5a0d}"),
     classDescription: "Data URIs with chrome privileges",
-    QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
+    QueryInterface:   XPCOMUtils.generateQI([Ci.nsIProtocolHandler]),
     _xpcom_factory: {
         createInstance: function (outer, iid) {
             if (!ChromeData.instance)
@@ -87,9 +87,9 @@ ChromeData.prototype = {
          | nsIProtocolHandler.URI_IS_UI_RESOURCE,
 
     newURI: function (spec, charset, baseURI) {
-        var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-                            .createInstance(Components.interfaces.nsIStandardURL)
-                            .QueryInterface(Components.interfaces.nsIURI);
+        var uri = Cc["@mozilla.org/network/standard-url;1"]
+                    .createInstance(Ci.nsIStandardURL)
+                    .QueryInterface(Ci.nsIURI);
         uri.init(uri.URLTYPE_STANDARD, this.defaultPort, spec, charset, null);
         return uri;
     },
@@ -116,7 +116,7 @@ Liberator.prototype = {
     contractID:       "@mozilla.org/network/protocol;1?name=liberator",
     classID:          Components.ID("{9c8f2530-51c8-4d41-b356-319e0b155c44}"),
     classDescription: "Liberator utility protocol",
-    QueryInterface:   XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
+    QueryInterface:   XPCOMUtils.generateQI([Ci.nsIProtocolHandler]),
     _xpcom_factory: {
         createInstance: function (outer, iid) {
             if (!Liberator.instance)
@@ -143,9 +143,9 @@ Liberator.prototype = {
          | nsIProtocolHandler.URI_IS_LOCAL_RESOURCE,
 
     newURI: function (spec, charset, baseURI) {
-        var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-                            .createInstance(Components.interfaces.nsIStandardURL)
-                            .QueryInterface(Components.interfaces.nsIURI);
+        var uri = Cc["@mozilla.org/network/standard-url;1"]
+                    .createInstance(Ci.nsIStandardURL)
+                    .QueryInterface(Ci.nsIURI);
         uri.init(uri.URLTYPE_STANDARD, this.defaultPort, spec, charset, baseURI);
 
         if (uri.host !== "template") return uri;
