@@ -66,6 +66,10 @@ const Services = Module("services", {
                 class_: "@mozilla.org/uuid-generator;1",
                 iface:  Ci.nsIUUIDGenerator
             },
+            "textToSubURI": {
+                class_: "@mozilla.org/intl/texttosuburi;1",
+                iface: Ci.nsITextToSubURI
+            },
         };
 
         this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);

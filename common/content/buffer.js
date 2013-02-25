@@ -386,6 +386,11 @@ const Buffer = Module("buffer", {
     },
 
     /**
+     * @property {String} The current document's character set
+     */
+    get charset() config.browser.docShell.charset,
+
+    /**
      * @property {number} The buffer's height in pixels.
      */
     get pageHeight() window.content ? window.content.innerHeight : config.browser.contentWindow.innerHeight,

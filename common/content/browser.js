@@ -99,7 +99,10 @@ const Browser = Module("browser", {
     mappings: function () {
         mappings.add([modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
-            function () { util.copyToClipboard(util.losslessDecodeURI(buffer.URL, 'conservative'), true); });
+            function () {
+                var url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
+                util.copyToClipboard(url, true);
+            });
 
         // opening websites
         mappings.add([modes.NORMAL],
@@ -108,7 +111,10 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["O"],
             "Open one or more URLs, based on current location",
-            function () { commandline.open("", "open " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () {
+                var url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
+                commandline.open("", "open " + url, modes.EX);
+            });
 
         mappings.add([modes.NORMAL], ["t"],
             "Open one or more URLs in a new tab",
@@ -116,7 +122,10 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["T"],
             "Open one or more URLs in a new tab, based on current location",
-            function () { commandline.open("", "tabopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () {
+                var url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
+                commandline.open("", "tabopen " + url, modes.EX);
+            });
 
         mappings.add([modes.NORMAL], ["w"],
             "Open one or more URLs in a new window",
@@ -124,7 +133,10 @@ const Browser = Module("browser", {
 
         mappings.add([modes.NORMAL], ["W"],
             "Open one or more URLs in a new window, based on current location",
-            function () { commandline.open("", "winopen " + util.losslessDecodeURI(buffer.URL), modes.EX); });
+            function () {
+                var url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
+                commandline.open("", "winopen " + url, modes.EX);
+            });
 
         mappings.add([modes.NORMAL],
             ["<C-a>"], "Increment last number in URL",

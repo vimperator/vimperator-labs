@@ -104,66 +104,6 @@ const Util = Module("util", {
     },
 
     /**
-     * Normalises URI escapes to provide a more aesthetic view, without changing
-     * the destination (leaves important chars, and invisible chars encoded)
-     *
-     * If conservative is set, then extra characters will be encoded to
-     * facilitate yanking and pasting of the result sanely.
-     *
-     * @param {string} url
-     * @param {boolean} conservative
-     * @returns {string}
-     */
-    // ripped from Firefox; modified
-    losslessDecodeURI: function losslessDecodeURI(url, conservative) {
-        // Countermeasure for "Error: malformed URI sequence".
-        // This error occurs when URL is encoded by not UTF-8 encoding.
-        function _decodeURI(url) {
-            try {
-                return decodeURI(url);
-            }
-            catch (e) {
-                return url;
-            }
-        };
-
-        // 1. decodeURI decodes %25 to %, which creates unintended
-        //    encoding sequences.
-        url = url.split("%25").map(_decodeURI).join("%25");
-        // 2. Re-encode whitespace so that it doesn't get eaten away
-        //    by the location bar (bug 410726).
-        url = url.replace(/[\r\n\t]/g, encodeURIComponent);
-
-        // Encode invisible characters (soft hyphen, zero-width space, BOM,
-        // line and paragraph separator, word joiner, invisible times,
-        // invisible separator, object replacement character) (bug 452979)
-        url = url.replace(/[\v\x0c\x1c\x1d\x1e\x1f\u00ad\u200b\ufeff\u2028\u2029\u2060\u2062\u2063\ufffc]/g,
-            encodeURIComponent);
-
-        // Encode bidirectional formatting characters.
-        // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
-        url = url.replace(/[\u200e\u200f\u202a\u202b\u202c\u202d\u202e]/g,
-            encodeURIComponent);
-
-        // A few extra encodings to make links more portable.
-        if (conservative) {
-            // Encode ny remaining space
-            url = url.replace(/\s/g, encodeURIComponent);
-
-            // Encode trailing punctuation (http://en.wiktionary.org/wiki/e.g.)
-            // XXX: Much more could be put here, if it's desirable.
-            url = url.replace(/[.,]$/,
-                function(x) '%' + x.charCodeAt(0).toString(16).toUpperCase());
-
-            // Encode ' and " to facialiate using the URL in shell context
-            url = url.replace(/['"]/g,
-                function(x) '%' + x.charCodeAt(0).toString(16).toUpperCase());
-        }
-         
-        return url;
-    },
-
-    /**
      * Converts HTML special characters in <b>str</b> to the equivalent HTML
      * entities.
      *

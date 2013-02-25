@@ -36,7 +36,7 @@ const StatusLine = Module("statusline", {
 
         if (url == null)
             // TODO: this probably needs a more general solution.
-            url = util.losslessDecodeURI(buffer.URL);
+            url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
 
         // make it even more Vim-like
         if (url == "about:blank") {
