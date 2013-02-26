@@ -482,6 +482,10 @@ const Editor = Module("editor", {
             e = document.commandDispatcher.focusedWindow;
             if (!Editor.windowIsEditable(e))
                 return null;
+        } else if (config.isComposeWindow
+            && document.compareDocumentPosition(e) & Node.DOCUMENT_POSITION_DISCONNECTED
+            && window.GetCurrentEditor) {
+            return window.GetCurrentEditor().document.defaultView;
         }
         return e;
     },
