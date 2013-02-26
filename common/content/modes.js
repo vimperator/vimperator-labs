@@ -116,6 +116,8 @@ const Modes = Module("modes", {
                 liberator.focusContent(false); // when coming from the commandline, we might want to keep the focus (after a Search, e.g.)
             else
                 liberator.focusContent(true); // unfocus textareas etc.
+        } else if (newMode === modes.COMPOSE) {
+            services.get("focus").clearFocus(window);
         }
     },
 
