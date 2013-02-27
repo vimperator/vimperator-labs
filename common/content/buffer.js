@@ -993,21 +993,11 @@ const Buffer = Module("buffer", {
         if (win === document.commandDispatcher.focusedWindow) return;
 
         // XXX: if win has frame and win is not content's focus window, win.focus() cannot focus.
-        if (win.frames.length && win !== this.focusedWindow) {
-            let html = win.document.documentElement;
-            let selection = win.getSelection();
-
-            let ranges = let(it = (function () {for (let i in util.range(0, selection.rangeCount)) yield selection.getRangeAt(i);})()) [r for(r in it)];
-
-            html.focus();
-            html.blur();
-
-            selection.removeAllRanges();
-            for (let r of ranges)
-                selection.addRange(r);
-            events.onFocusChange({});
-        } else
-            win.focus();
+        var e = win.document.activeElement;
+        if (e && e.contentWindow) {
+            services.get("focus").clearFocus(win);
+        }
+        win.focus();
     },
 
     getFocusedWindow: function (win) {
