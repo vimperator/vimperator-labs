@@ -388,7 +388,13 @@ const Buffer = Module("buffer", {
     /**
      * @property {String} The current document's character set
      */
-    get charset() config.browser.docShell.charset,
+    get charset() {
+        try {
+            return config.browser.docShell.charset;
+        } catch (e) {
+            return "UTF-8";
+        }
+    },
 
     /**
      * @property {number} The buffer's height in pixels.
