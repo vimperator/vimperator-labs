@@ -1061,23 +1061,20 @@ const Buffer = Module("buffer", {
     },
 
     findScrollable: function findScrollable(dir, horizontal) {
-        let pos = "scrollTop", size = "clientHeight", max = "scrollHeight", layoutSize = "offsetHeight",
-            overflow = "overflowX", border1 = "borderTopWidth", border2 = "borderBottomWidth";
+        let pos = "scrollTop", maxPos = "scrollTopMax", rectSize = "height", clientSize = "clientHeight", max = "scrollHeight";
         if (horizontal)
-            pos = "scrollLeft", size = "clientWidth", max = "scrollWidth", layoutSize = "offsetWidth",
-            overflow = "overflowX", border1 = "borderLeftWidth", border2 = "borderRightWidth";
+            pos = "scrollLeft", maxPos = "scrollLeftMax", rectSize = "width", clientSize = "clientWidth", max = "scrollWidth";
 
         function find(elem) {
+            if (!(elem instanceof Element))
+                elem = elem.parentNode;
+
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
-                let style = util.computedStyle(elem);
-                let borderSize = parseInt(style[border1]) + parseInt(style[border2]);
-                let realSize = elem[size];
-                // Stupid Gecko eccentricities. May fail for quirks mode documents.
-                if (elem[size] + borderSize >= elem[max] || elem[size] == 0) // Stupid, fallible heuristic.
+                let size = elem[clientSize];
+                let realSize = elem.getBoundingClientRect()[rectSize];
+                if (realSize >= elem[max] || size == 0)
                     continue;
-                if (style[overflow] == "hidden")
-                    realSize += borderSize;
-                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] + realSize < elem[max])
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos])
                     break;
             }
             return elem;
