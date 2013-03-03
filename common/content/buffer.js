@@ -1061,18 +1061,16 @@ const Buffer = Module("buffer", {
     },
 
     findScrollable: function findScrollable(dir, horizontal) {
-        let pos = "scrollTop", maxPos = "scrollTopMax", rectSize = "height", clientSize = "clientHeight", max = "scrollHeight";
+        let pos = "scrollTop", maxPos = "scrollTopMax", clientSize = "clientHeight";
         if (horizontal)
-            pos = "scrollLeft", maxPos = "scrollLeftMax", rectSize = "width", clientSize = "clientWidth", max = "scrollWidth";
+            pos = "scrollLeft", maxPos = "scrollLeftMax", clientSize = "clientWidth";
 
         function find(elem) {
             if (!(elem instanceof Element))
                 elem = elem.parentNode;
 
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
-                let size = elem[clientSize];
-                let realSize = elem.getBoundingClientRect()[rectSize];
-                if (realSize >= elem[max] || size == 0)
+                if (elem[clientSize] == 0)
                     continue;
                 if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos])
                     break;
