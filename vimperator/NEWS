@@ -1,6 +1,7 @@
-2013-xx-xx:
+2013-04-03: It's not an April's fool (Part II)
     * version 3.7
     * Fix :preferences and some :dialog commands for recent Firefoxs
+    * Compatibility fixes for Firefox 20
     * Make sure :dialog addons really opens a dialog instead of a tab
     * add -private option to :winopen and :window for Firefox 20+ PrivateBrowsing-per-window
     * Pushed minVersion to Firefox 17
