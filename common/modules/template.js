@@ -81,10 +81,10 @@ function convert(str, debug) {
                 if (offset === 1) break root_loop;
                 continue root_loop;
             // xxx: 
-            } else if (c0 === "=") {
-                offset++;
-                isOp = false;
             } else if (isOp) {
+                if (c0 === "=") {
+                    offset++;
+                }
                 isOp = false;
             } else {
                 // RegExp Literal
