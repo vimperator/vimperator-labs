@@ -680,7 +680,7 @@ lookup:
                         if (!command) {
                             let lineNumber = i + 1;
 
-                            liberator.echoerr("Error detected while processing: " + file.path, commandline.FORCE_MULTILINE);
+                            liberator.echoerr("Error detected while processing: " + file.path);
                             commandline.echo("line " + lineNumber + ":", commandline.HL_LINENR, commandline.APPEND_TO_MESSAGES);
                             liberator.echoerr("Not an editor command: " + line);
                         }
