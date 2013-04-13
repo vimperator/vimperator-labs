@@ -1,10 +1,6 @@
 var EXPORTED_SYMBOLS = ["convert"];
 const Cu = Components.utils;
 
-gDebugOutput = false;
-var scope = {};
-Cu.import("resource://gre/modules/Services.jsm", scope);
-
 //
 // STATE
 // ALL
@@ -16,11 +12,7 @@ Cu.import("resource://gre/modules/Services.jsm", scope);
 //      4 SUBSTITUDE
 // ROUND1
 //      1 keyword
-function convert(str, debug) {
-    //xxx: ignore debug action
-    //var $$;
-    gDebugOutput = !!debug;
-
+function convert(str, options) {
     function fnRawEscape(str) {
         return ({
             "\n":   "\\n\\\n",
@@ -363,7 +355,36 @@ cooked: ["' + cooked.join('", "') + '"]' +
         let lineNumber = (str.substr(0, offset).match(reEOL)||[]).length + 1;
         Cu.reportError([lineNumber, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
         Cu.reportError(JSON.stringify(stack.slice(0, depth), null, 1));
-        throw SyntaxError("TemplateConvertError", "", lineNumber);
+
+        // force build source
+        stack[depth] = state;
+        Cu.reportError(JSON.stringify(stack.slice(0, depth + 1), null, 1));
+        let rest = str.substring(start);
+        while (state = stack[depth--]) {
+            if (state[0] === TEMPLATE) {
+                let [,,tag, raw, args] = state;
+
+                raw = raw.map(function (r) '"' + r.replace(reRawEscape, fnRawEscape) + '"');
+
+                if (raw.length === args.length) {
+                    raw.push('`"' + rest.replace(reRawEscape, fnRawEscape) + '"`');
+                } else {
+                    args.push("`" + res + rest + "`");
+                    res = "";
+                }
+                rest = tag + "(({raw: [" + raw.join(", ") + "]}), [" + args.join(", ") + "])";
+                break;
+            }
+        }
+        while (state = stack[depth--]) {
+            if (state[0] === TEMPLATE) {
+                let [,,tag, raw, args] = state;
+                raw = raw.map(function (r) '"' + r.replace(reRawEscape, fnRawEscape) + '"');
+                args.push(rest);
+                rest = tag + "(({raw: [" + raw.join(", ") + "]}), [" + args.join(", ") + "])";
+            }
+        }
+        return res + rest;
     }
     return res + str.substring(start);
 }
