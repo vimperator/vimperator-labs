@@ -786,8 +786,8 @@ const Util = Module("util", {
         var range = doc.createRange();
         var fragment = range.createContextualFragment(
             xml`<div xmlns:ns=${NS} xmlns:xul=${XUL} xmlns=${XHTML}>${node}</div>`.toString());
-        for (let node of fragment.firstChild.childNodes)
-            dom.appendChild(node);
+        while (fragment.firstChild.childNodes.length > 0)
+            dom.appendChild(fragment.firstChild.firstChild)
 
         range.detach();
 
