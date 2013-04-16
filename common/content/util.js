@@ -782,12 +782,12 @@ const Util = Module("util", {
      * @see util.xmlToDom
      */
     xmlToDomForTemplate: function xmlToDomForTemplate(node, doc, nodes) {
-        var dom = doc.createDocumentFragment();
         var range = doc.createRange();
         var fragment = range.createContextualFragment(
             xml`<div xmlns:ns=${NS} xmlns:xul=${XUL} xmlns=${XHTML}>${node}</div>`.toString());
-        while (fragment.firstChild.childNodes.length > 0)
-            dom.appendChild(fragment.firstChild.firstChild)
+
+        range.selectNodeContents(fragment.firstChild);
+        var dom = range.extractContents();
 
         range.detach();
 
