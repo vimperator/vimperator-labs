@@ -32,7 +32,7 @@ const History = Module("history", {
             return {
                 url: node.uri,
                 title: node.title,
-                icon: node.icon ? node.icon.spec : DEFAULT_FAVICON
+                icon: node.icon,
             };
         });
         root.containerOpen = false; // close a container after using it!

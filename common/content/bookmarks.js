@@ -64,7 +64,7 @@ const Bookmarks = Module("bookmarks", {
                 let uri = util.newURI(node.uri);
                 let keyword = bookmarksService.getKeywordForBookmark(node.itemId);
                 let tags = tagging.getTagsForURI(uri, {}) || [];
-                let bmark = Bookmark(node.uri, node.title, node.icon && node.icon.spec, keyword, tags, node.itemId);
+                let bmark = Bookmark(node.uri, node.title, node.icon, keyword, tags, node.itemId);
 
                 bookmarks.push(bmark);
                 return bmark;
@@ -207,7 +207,8 @@ const Bookmarks = Module("bookmarks", {
     get format() ({
         anchored: false,
         title: ["URL", "Info"],
-        keys: { text: "url", description: "title", icon: "icon", extra: "extra", tags: "tags", keyword: "keyword" },
+        keys: { text: "url", description: "title", icon: function(item) item.icon || DEFAULT_FAVICON,
+                extra: "extra", tags: "tags", keyword: "keyword" },
         process: [template.icon, template.bookmarkDescription]
     }),
 
@@ -718,7 +719,7 @@ const Bookmarks = Module("bookmarks", {
 
             context.title = ["Search Keywords"];
             context.completions = keywords.concat(engines);
-            context.keys = { text: 0, description: 1, icon: 2 };
+            context.keys = { text: 0, description: 1, icon: function(item) item[2] || DEFAULT_FAVICON };
 
             if (!space || noSuggest)
                 return;
