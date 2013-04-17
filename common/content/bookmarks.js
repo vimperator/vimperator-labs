@@ -94,23 +94,6 @@ const Bookmarks = Module("bookmarks", {
 
             this.isBookmark = function (id) rootFolders.indexOf(self.findRoot(id)) >= 0;
 
-            // nsILivemarkService will be deprecated since Gecho version 13
-            // and a livemark item doesn't have id, so the id (gotten by bookmarkService.getBookmarkIdsForURI)
-            // is not livemark item always.
-            // TODO: remove this code when minVersion >= 13
-            this.isRegularBookmark = ("mozIAsyncLivemarks" in Ci) ?
-                function() true :
-                function findRoot(id) {
-                    var livemarkService = PlacesUtils.livemarks;
-                    do {
-                        var root = id;
-                        if (livemarkService.isLivemark(id))
-                            return false;
-                        id = bookmarksService.getFolderIdForItem(id);
-                    } while (id != bookmarksService.placesRoot && id != root);
-                    return rootFolders.indexOf(root) >= 0;
-                };
-
             // since we don't use a threaded bookmark loading (by set preload)
             // anymore, is this loading synchronization still needed? --mst
             let loading = false;
@@ -288,21 +271,13 @@ const Bookmarks = Module("bookmarks", {
         }
     },
 
-    isBookmarked: function isBookmarked(url) {
-        try {
-            return services.get("bookmarks").getBookmarkIdsForURI(makeURI(url), {})
-                                   .some(this._cache.isRegularBookmark);
-        }
-        catch (e) {
-            return false;
-        }
-    },
+    isBookmarked: function isBookmarked(url) services.get("bookmarks").isBookmarked(util.newURI(url)),
 
     // returns number of deleted bookmarks
     remove: function remove(url) {
         try {
             let uri = util.newURI(url);
-            let bmarks = services.get("bookmarks").getBookmarkIdsForURI(uri, {}).filter(this._cache.isRegularBookmark);
+            let bmarks = services.get("bookmarks").getBookmarkIdsForURI(uri, {});
             bmarks.forEach(services.get("bookmarks").removeItem);
             return bmarks.length;
         }
