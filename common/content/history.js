@@ -47,16 +47,7 @@ const History = Module("history", {
         obj.__iterator__ = function () util.Array.iteritems(this);
         for (let i in util.range(0, sh.count)) {
             obj[i] = { index: i, __proto__: sh.getEntryAtIndex(i, false) };
-            util.memoize(obj[i], "icon", function (obj) {
-                var icon = null;
-                services.get("favicon").getFaviconDataForPage(obj.URI, function (uri) {
-                    icon = uri ? uri.spec : ""
-                });
-                while (icon === null)
-                    liberator.threadYield(false, true);
-
-                return icon;
-            });
+            util.memoize(obj[i], "icon", function (obj) bookmarks.getFavicon(obj.URI));
         }
         return obj;
     },
