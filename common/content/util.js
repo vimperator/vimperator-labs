@@ -797,11 +797,48 @@ const Util = Module("util", {
         }
         return dom.childNodes.length === 1 ? dom.childNodes[0] : dom;
     },
-    domToStr: function domToStr(node) {
-        var enc=Cc["@mozilla.org/layout/documentEncoder;1?type=text/plain"].getService(Ci.nsIDocumentEncoder);
-        enc.init(node.ownerDocument, "text/html", 0);
-        enc.setNode(node);
-        return enc.encodeToString();
+    /**
+     * encoding dom
+     *
+     * @param {Node|Range|Selection|Document} node
+     * @param {String} type     example "text/plain", "text/html", "text/xml", "application/xhtml+xml" etc...
+     * @param {Number} flags    nsIDocumentEncoder.OutputXXXX
+     * @returns {String}
+     */
+    domToStr: let (Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init"))
+    function domToStr(node, type, flags) {
+        var doc, method;
+
+        if (node instanceof Document) {
+            doc = node;
+            node = null;
+            method = "setNode";
+        } else if (node instanceof Node) {
+            doc = node.ownerDocument;
+            method = "setNode";
+        } else if (node instanceof Range) {
+            doc = node.startContainer;
+            if (doc.ownerDocument) {
+                doc = doc.ownerDocument;
+            }
+            method = "setRange";
+        } else if (node instanceof Selection) {
+            // can not found document
+            if (node.rangeCount === 0) {
+                return "";
+            }
+            doc = node.getRangeAt(0).startContainer;
+            if (doc.ownerDocument) {
+                doc = doc.ownerDocument;
+            }
+            method = "setSelection";
+        } else {
+            return null;
+        }
+
+        var encoder = new Encoder(doc, type || "text/html", flags || 0);
+        encoder[method](node);
+        return encoder.encodeToString();
     },
 }, {
     // TODO: Why don't we just push all util.BuiltinType up into modules? --djk
