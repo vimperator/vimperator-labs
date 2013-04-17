@@ -16,16 +16,6 @@ const Bookmarks = Module("bookmarks", {
         const historyService   = services.get("history");
         const tagging          = PlacesUtils.tagging;
 
-        this.getFavicon = getFavicon;
-        function getFavicon(uri) {
-            try {
-                return faviconService.getFaviconImageForPage(util.newURI(uri)).spec;
-            }
-            catch (e) {
-                return "";
-            }
-        }
-
         // Fix for strange Firefox bug:
         // Error: [Exception... "Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIObserverService.addObserver]"
         //     nsresult: "0x8000ffff (NS_ERROR_UNEXPECTED)"
@@ -36,7 +26,16 @@ const Bookmarks = Module("bookmarks", {
 
         const Bookmark = Struct("url", "title", "icon", "keyword", "tags", "id");
         const Keyword = Struct("keyword", "title", "icon", "url");
-        Bookmark.defaultValue("icon", function () getFavicon(this.url));
+        Bookmark.defaultValue("icon", function () {
+            var icon = null;
+            faviconService.getFaviconDataForPage(util.newURI(this.url), function (uri) {
+                icon = uri ? uri.spec : "";
+            });
+            while (icon === null)
+                liberator.threadYield(false, true);
+
+            return icon;
+        });
         Bookmark.prototype.__defineGetter__("extra", function () [
                                 ["keyword", this.keyword,         "Keyword"],
                                 ["tags",    this.tags.join(", "), "Tag"]
