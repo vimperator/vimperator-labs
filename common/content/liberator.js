@@ -1144,12 +1144,7 @@ const Liberator = Module("liberator", {
             {
                 setter: function (value) {
                     let win = document.documentElement;
-                    function updateTitle(old, current) {
-                        document.title = document.title.replace(RegExp("(.*)" + util.escapeRegex(old)), "$1" + current);
-                    }
-
                     if (liberator.has("privatebrowsing")) {
-                        liberator.log("has feature: privateBrowsing");
                         let oldValue = win.getAttribute("titlemodifier_normal");
                         let suffix = win.getAttribute("titlemodifier_privatebrowsing").substr(oldValue.length);
 
@@ -1160,14 +1155,22 @@ const Liberator = Module("liberator", {
                                   .getInterface(Ci.nsIWebNavigation)
                                   .QueryInterface(Ci.nsILoadContext)
                                   .usePrivateBrowsing) {
-                            updateTitle(oldValue + suffix, value + suffix);
                             win.setAttribute("titlemodifier", value + suffix);
-                            return value;
                         }
+                        else
+                            win.setAttribute("titlemodifier", value);
                     }
+                    else
+                        win.setAttribute("titlemodifier", value);
 
-                    updateTitle(win.getAttribute("titlemodifier"), value);
-                    win.setAttribute("titlemodifier", value);
+                    switch (config.hostApplication) {
+                    case "Firefox":
+                        config.tabbrowser.updateTitlebar();
+                        break;
+                    case "Thunderbird":
+                        config.tabbrowser.setDocumentTitle(config.tabbrowser.currentTabInfo);
+                        break;
+                    }
 
                     return value;
                 }
