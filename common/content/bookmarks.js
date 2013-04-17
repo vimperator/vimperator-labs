@@ -25,7 +25,7 @@ const Bookmarks = Module("bookmarks", {
                 url = iconURI ? iconURI.spec : "";
             });
             while (url === null)
-                liberator.threaded(false, true);
+                liberator.threadYield(false, true);
 
             return url;
         }
