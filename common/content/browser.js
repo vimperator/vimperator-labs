@@ -54,7 +54,9 @@ const Browser = Module("browser", {
 
         // only available in FF 3.5-19
         // TODO: remove when FF ESR's version is over 20. privateBrowsing will be per-window from FF 20+
-        if (services.get("privateBrowsing")) {
+        // XXX: on Fx20, nsIPrivateBrowsingService exists yet but has no properties
+        let pb = services.get("privateBrowsing");
+        if (pb && "privateBrowsingEnabled" in pb) {
             options.add(["private", "pornmode"],
                 "Set the 'private browsing' option",
                 "boolean", false,
