@@ -98,6 +98,10 @@ xpi:
 	$(CP) -L $(XPI_FILES) -t $(XPI_PATH) || true
 	@echo "Update chrome.manifest for paths used inside the XPI..."
 	$(SED) -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
+	if [ "x$(LOCALE)" != "x" ]; then \
+		echo "locale $(NAME) $(LOCALE) locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
+		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
+	fi
 	# Copy components and modules directories
 	$(CP) -Lr $(XPI_DIRS) -t $(XPI_PATH) || true
 	# Copy all chrome files, from both commmon/ and vimperator/ folders
