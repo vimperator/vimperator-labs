@@ -153,7 +153,9 @@
 }
 .liberator-hiding {
     opacity: 0;
-    transition: opacity 0.5s;
+    visibility: collapse;
+    transition-property: opacity, visibility;
+    transition-duration: .5s;
 }
 
 #sidebar {
