@@ -1349,13 +1349,15 @@ const Buffer = Module("buffer", {
                 return "#";
             return " ";
         }
+        const SessionStore = services.get("sessionStore");
         function getURLFromTab (tab) {
             if ("linkedBrowser" in tab) {
-                if ("__SS_restoreState" in tab.linkedBrowser && "__SS_data" in tab.linkedBrowser) {
-                    if (tab.linkedBrowser.__SS_data.entries.length)
-                        return tab.linkedBrowser.__SS_data.entries.slice(-1)[0].url;
+                if ("__SS_restoreState" in tab.linkedBrowser) {
+                    let tabState = JSON.parse(SessionStore.getTabState(tab));
+                    if (tabState.entries.length)
+                        return tabState.entries.slice(-1)[0].url;
                     else
-                        return tab.linkedBrowser.__SS_data.userTypedValue || 'about:blank';
+                        return tabState.userTypedValue || 'about:blank';
                 } else
                     return tab.linkedBrowser.contentDocument.location.href;
             } else {
