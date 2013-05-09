@@ -705,9 +705,13 @@ const Tabs = Module("tabs", {
         commands.add(["tab"],
             "Execute a command and tell it to output in a new tab",
             function (args) {
-                liberator.forceNewTab = true;
-                liberator.execute(args.string, null, true);
-                liberator.forceNewTab = false;
+                try {
+                    liberator.forceNewTab = true;
+                    liberator.execute(args.string, null, true);
+                }
+                finally {
+                    liberator.forceNewTab = false;
+                }
             }, {
                 argCount: "+",
                 completer: function (context) completion.ex(context),
