@@ -209,9 +209,13 @@ const Config = Module("config", ConfigBase, {
             "Execute a command and tell it to output in a new window",
             function (args) {
                 var prop = args["-private"] ? "forceNewPrivateWindow" : "forceNewWindow";
-                liberator[prop] = true;
-                liberator.execute(args.literalArg, null, true);
-                liberator[prop] = false;
+                try {
+                    liberator[prop] = true;
+                    liberator.execute(args.literalArg, null, true);
+                }
+                finally {
+                    liberator[prop] = false;
+                }
             },
             {
                 argCount: "+",
