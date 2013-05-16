@@ -1,5 +1,6 @@
-xxxx-xx-xx:
-    * version 3.8
+2013-05-xx:
+    * version 3.7.1
+    * Firefox 21 compatibility (Fix :dialog import)
 
 2013-04-03: It's not an April's fool (Part II)
     * version 3.7
