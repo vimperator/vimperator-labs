@@ -1637,8 +1637,8 @@ const Liberator = Module("liberator", {
                         let str = template.genericOutput("Code execution summary",
                                 xml`<table>
                                     <tr><td>Executed:</td><td align="right"><span class="times-executed">${count}</span></td><td>times</td></tr>
-                                    <tr><td>Average time:</td><td align="right"><span class="time-average">${each.toFixed(2)}</span></td><td>{eachUnits}</td></tr>
-                                    <tr><td>Total time:</td><td align="right"><span class="time-total">${total.toFixed(2)}</span></td><td>{totalUnits}</td></tr>
+                                    <tr><td>Average time:</td><td align="right"><span class="time-average">${each.toFixed(2)}</span></td><td>${eachUnits}</td></tr>
+                                    <tr><td>Total time:</td><td align="right"><span class="time-total">${total.toFixed(2)}</span></td><td>${totalUnits}</td></tr>
                                 </table>`);
                         commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
