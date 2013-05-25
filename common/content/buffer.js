@@ -1349,18 +1349,10 @@ const Buffer = Module("buffer", {
                 return "#";
             return " ";
         }
-        const SessionStore = services.get("sessionStore");
         function getURLFromTab (tab) {
-            if ("linkedBrowser" in tab) {
-                if ("__SS_restoreState" in tab.linkedBrowser) {
-                    let tabState = JSON.parse(SessionStore.getTabState(tab));
-                    if (tabState.entries.length)
-                        return tabState.entries.slice(-1)[0].url;
-                    else
-                        return tabState.userTypedValue || 'about:blank';
-                } else
-                    return tab.linkedBrowser.contentDocument.location.href;
-            } else {
+            if ("linkedBrowser" in tab)
+                return tab.linkedBrowser.contentDocument.location.href;
+            else {
                 let i = config.tabbrowser.mTabContainer.getIndexOfItem(tab);
                 let info = config.tabbrowser.tabInfo[i];
                 return info.browser ?

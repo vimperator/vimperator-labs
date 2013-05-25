@@ -417,7 +417,6 @@ const Tabs = Module("tabs", {
             }
         }
 
-        const SessionStore = services.get("sessionStore")
         matches = [];
         let lowerBuffer = buffer.toLowerCase();
         let first = tabs.index();
@@ -426,18 +425,8 @@ const Tabs = Module("tabs", {
             let index = (i + first) % nbrowsers;
             let browser = config.tabbrowser.browsers[index];
             let tab = tabs.getTab(index);
-            let url, title;
-            if ("__SS_restoreState" in browser) {
-                let tabState = JSON.parse(SessionStore.getTabState(tab));
-                let entry = tabState.entries[tabState.index - 1];
-                url = entry.url;
-                title = entry.title || url;
-            }
-            else {
-                url = browser.contentDocument.location.href;
-                title = browser.contentDocument.title;
-            }
-            title = title.toLowerCase();
+            let url = borwser.contentDocument.location.href;
+            let title = tab.label.toLowerCase();
             if (url == buffer)
                 return [tab];
 
