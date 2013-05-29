@@ -692,7 +692,7 @@ const Liberator = Module("liberator", {
         if (typeof msg == "object")
             msg = Cc["@mozilla.org/feed-unescapehtml;1"]
                     .getService(Ci.nsIScriptableUnescapeHTML)
-                    .unescape(util.objectToString(msg, false));
+                    .unescape(util.objectToString(msg, false).value);
 
         services.get("console").logStringMessage(config.name.toLowerCase() + ": " + msg);
     },

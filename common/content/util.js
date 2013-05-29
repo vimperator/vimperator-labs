@@ -569,7 +569,7 @@ const Util = Module("util", {
             return String.localeCompare(a[0], b[0]);
         }
         xml["+="](string, template.map2(xml, keys.sort(compare), function (f) f[1]));
-        return color ? string : [s for each (s in string)].join("");
+        return string;
     },
 
     /**
