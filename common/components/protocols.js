@@ -239,12 +239,12 @@ Liberator.prototype = {
                             text = convert(text);
 
                             var stream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
-                            Cu.reportError(temp.leafName);
+                            Services.console.logStringMessage("create:" + temp.leafName);
                             stream.init(temp, 0x2 | 0x8 | 0x20, 0644, 0);
                             stream.write(text, text.length);
                             stream.close();
                             temp.lastModifiedTime = lastModifiedTime;
-                        } else { Cu.reportError("use cache:" + uri.spec); }
+                        } else { Services.console.logStringMessage("use cache:" + uri.spec); }
                         return ioService.newChannelFromURI(ioService.newFileURI(temp));
                         } catch (ex) { Cu.reportError(ex); }
                     }
