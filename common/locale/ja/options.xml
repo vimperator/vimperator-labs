@@ -722,27 +722,27 @@
     </description>
 </item>
 
-
 <item>
-    <tags>'ls' 'laststatus'</tags>
-    <spec>'laststatus' 'ls'</spec>
-    <type>number</type>
-    <default>2</default>
+    <tags>'status'</tags>
+    <spec>'status'</spec>
+    <type>stringlist</type>
+    <default>input,location,bookmark,history,tabcount,position</default>
     <description>
-        <p>ステータスラインを表示するタイミングを決定します。</p>
+        <p>ステータスラインに表示する要素を示します。</p>
 
-        <p>以下の値が使用できます:</p>
+        <p>指定可能な値</p>
 
         <dl>
-            <dt>0</dt>      <dd>常に表示しません</dd>
-            <dt>1</dt>      <dd>複数のウィンドウがあるときのみ表示します</dd>
-            <dt>2</dt>      <dd>常に表示します</dd>
+            <dt>input</dt>      <dd>'gg' と入力する場合、'g' の様に入力キーの一部を表示します</dd>
+            <dt>location</dt>   <dd>現在表示しているページのURLを表示します</dd>
+            <dt>bookmark</dt>   <dd>現在のURLがブックマーク済みである場合に &#x2764; を表示します</dd>
+            <dt>history</dt>    <dd>履歴の戻る/進むを &lt;&gt; で示します</dd>
+            <dt>tabcount</dt>   <dd>現Windowのタブ数と現タブの位置を [タブ位置/タブ数] で示します</dd>
+            <dt>position</dt>   <dd>スクロール位置を示します</dd>
+            <dt>ssl</dt>        <dd>SSL接続している場合にアイコンを表示します</dd>
         </dl>
-
-        <note>laststatus=1 はまだ実装されていません。</note>
     </description>
 </item>
-
 
 <item>
     <tags>'nolks' 'nolinksearch'</tags>

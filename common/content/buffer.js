@@ -244,6 +244,7 @@ const Buffer = Module("buffer", {
         // for notifying the user about secure web pages
         onSecurityChange: function onSecurityChange(webProgress, request, state) {
             onSecurityChange.superapply(this, arguments);
+            statusline.updateField("ssl", state);
         },
         onStatusChange: function onStatusChange(webProgress, request, status, message) {
             onStatusChange.superapply(this, arguments);

@@ -752,6 +752,7 @@
             <dt>tabcount</dt>   <dd>[N/M]: N is the index of the currently selected tab and M is
                                     the total number of tabs in the current window.</dd>
             <dt>position</dt>   <dd>The vertical scroll position</dd>
+            <dt>ssl</dt>        <dd>Show an icon when the current buffer is connecting with SSL.</dd>
         </dl>
     </description>
 </item>

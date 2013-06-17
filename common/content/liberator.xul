@@ -90,6 +90,8 @@
                     <toolbaritem id="liberator-status" flex="10000000" liberator:highlight="StatusLine">
                         <spacer liberatorPosition="-1" flex="10000000"/>
                         <label id="liberator-status-input"/>
+                        <toolbarbutton id="liberator-status-ssl"
+                                       oncommand="liberator.modules.statusline.ssl.openPopup(this);"/>
                         <label id="liberator-status-location" flex="1" crop="center"/>
                         <label id="liberator-status-history"/>
                         <label id="liberator-status-bookmark"/>

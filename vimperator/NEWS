@@ -1,4 +1,6 @@
 2013-XX-XX:
+    * version 3.8
+    * Add "ssl" field shows SSL connection icon to "status" option (default: off)
 
 2013-05-22:
     * version 3.7.1

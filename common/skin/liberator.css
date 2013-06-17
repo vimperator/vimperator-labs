@@ -117,7 +117,7 @@
     border: none !important;
     padding: 0 0px !important;
     background: transparent !important;
-    height: 18px !important;
+    height: 16px !important;
 }
 #liberator-statusline > *,
 #liberator-commandline > * {
@@ -141,6 +141,25 @@
 #liberator-status > * {
     padding: 0 1px;
     margin: 0;
+}
+#liberator-status-ssl {
+    -moz-appearance: none;
+    width: 16px;
+    height: 16px;
+    visibility: collapse;
+    -moz-image-region: rect(0, 16px, 16px, 0);
+}
+#liberator-status-ssl.verifiedIdentity {
+    visibility: visible;
+    list-style-image: url(chrome://browser/skin/identity-icons-https-ev.png);
+}
+#liberator-status-ssl.verifiedDomain {
+    visibility: visible;
+    list-style-image: url(chrome://browser/skin/identity-icons-https.png);
+}
+#liberator-status-ssl.mixedActiveContent {
+    visibility: visible;
+    list-style-image: url(chrome://browser/skin/identity-icons-https-mixed-active.png);
 }
 
 #liberator-commandline-prompt {
