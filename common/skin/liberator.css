@@ -134,7 +134,7 @@
 #liberator-message-toolbar {
     -moz-box-align: center;
 }
-#liberator-statusline[customizing="true"] :-moz-any(#liberator-message-toolbar, #liberator-status-toolbar) {
+#liberator-statusline[customizing="true"] :-moz-any(#liberator-message-toolbar, #liberator-status) {
     border: 1px dotted gray;
     min-width: 1em;
 }

@@ -77,7 +77,7 @@
                     customizable      = "true"
                     fullscreentoolbar = "true"
                     context           = "toolbar-context-menu"
-                    defaultset        = "liberator-mode-toolbar,liberator-message-toolbar,liberator-status-toolbar"
+                    defaultset        = "liberator-mode-toolbar,liberator-message-toolbar,liberator-status"
                 >
                     <!-- the flex values are like they are to make sure the liberator-message always gets
                          maximum size up to the screen size, but still do not enlarge the whole window for very, very long strings-->
