@@ -1061,7 +1061,7 @@ const Events = Module("events", {
         finally {
             let motionMap = (this._input.pendingMotionMap && this._input.pendingMotionMap.names[0]) || "";
             if (!(modes.extended & modes.HINTS))
-                statusline.updateInputBuffer(motionMap + this._input.buffer);
+                statusline.updateField("input", motionMap + this._input.buffer);
         }
     },
 

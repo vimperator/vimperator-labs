@@ -161,7 +161,7 @@ const Buffer = Module("buffer", {
 
     // called when the active document is scrolled
     _updateBufferPosition: function _updateBufferPosition() {
-        statusline.updateBufferPosition();
+        statusline.updateField("position");
         // modes.show();
     },
 
@@ -254,9 +254,9 @@ const Buffer = Module("buffer", {
         // happens when the users switches tabs
         onLocationChange: function onLocationChange() {
             onLocationChange.superapply(this, arguments);
-            statusline.updateUrl();
-            statusline.updateBookmark();
-            statusline.updateHistory();
+            statusline.updateField("location");
+            statusline.updateField("bookmark");
+            statusline.updateField("history");
 
             // This is a bit scary but we trigger ignore mode when the new URL is in the list
             // of pages with ignored keys and then exit it on a new page but ONLY, if:
@@ -273,7 +273,7 @@ const Buffer = Module("buffer", {
             autocommands.trigger("LocationChange", { url: buffer.URL });
 
             // if this is not delayed we get the position of the old buffer
-            setTimeout(function () { statusline.updateBufferPosition(); }, 250);
+            setTimeout(function () { statusline.updateField("position"); }, 250);
         },
         // called at the very end of a page load
         asyncUpdateUI: function asyncUpdateUI() {
@@ -284,8 +284,8 @@ const Buffer = Module("buffer", {
             let ssli = options["showstatuslinks"];
             if (link && ssli) {
                 if (ssli == 1) {
-                    statusline.updateUrl("Link: " + link);
-                    statusline.updateBookmark(link);
+                    statusline.updateField("location", "Link: " + link);
+                    statusline.updateField("bookmark", link);
                 }
                 else if (ssli == 2)
                     liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
@@ -293,8 +293,8 @@ const Buffer = Module("buffer", {
 
             if (link == "") {
                 if (ssli == 1) {
-                    statusline.updateUrl();
-                    statusline.updateBookmark();
+                    statusline.updateField("location");
+                    statusline.updateField("bookmark");
                 }
                 else if (ssli == 2)
                     modes.show();

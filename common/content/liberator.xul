@@ -87,8 +87,14 @@
                     <toolbaritem id="liberator-message-toolbar" flex="1">
                         <label class="plain" collapsed="false" id="liberator-message" flex="1" crop="end" liberator:highlight="Normal"/>
                     </toolbaritem>
-                    <toolbaritem id="liberator-status-toolbar" flex="10000000" >
-                        <label flex="1" class="plain" id="liberator-status" crop="center" style="text-align: end;" liberator:highlight="StatusLine"/>
+                    <toolbaritem id="liberator-status" flex="10000000" liberator:highlight="StatusLine">
+                        <spacer liberatorPosition="-1" flex="10000000"/>
+                        <label id="liberator-status-input"/>
+                        <label id="liberator-status-location" flex="1" crop="center"/>
+                        <label id="liberator-status-history"/>
+                        <label id="liberator-status-bookmark"/>
+                        <label id="liberator-status-tabcount"/>
+                        <label id="liberator-status-position"/>
                     </toolbaritem>
                 </toolbar>
                 <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CmdLine">

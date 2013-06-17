@@ -82,7 +82,7 @@ const Hints = Module("hints", {
      * Reset hints, so that they can be cleanly used again.
      */
     _reset: function () {
-        statusline.updateInputBuffer("");
+        statusline.updateField("input", "");
         this._hintString = "";
         this._hintNumber = 0;
         this._usedTabKey = false;
@@ -103,7 +103,7 @@ const Hints = Module("hints", {
      * Display the current status to the user.
      */
     _updateStatusline: function () {
-        statusline.updateInputBuffer((hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber ? this._num2chars(this._hintNumber) : ""));
+        statusline.updateField("input", (hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber ? this._num2chars(this._hintNumber) : ""));
     },
 
     /**

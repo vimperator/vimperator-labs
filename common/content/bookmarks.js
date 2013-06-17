@@ -151,14 +151,14 @@ const Bookmarks = Module("bookmarks", {
                         if (self.isBookmark(itemId)) {
                             let bmark = loadBookmark(readBookmark(itemId));
                             storage.fireEvent(name, "add", bmark);
-                            statusline.updateBookmark();
+                            statusline.updateField("bookmark");
                         }
                     }
                 },
                 onItemRemoved: function onItemRemoved(itemId, folder, index) {
                     if (deleteBookmark(itemId)) {
                         storage.fireEvent(name, "remove", itemId);
-                        statusline.updateBookmark();
+                        statusline.updateField("bookmark");
                     }
                 },
                 onItemChanged: function onItemChanged(itemId, property, isAnnotation, value) {

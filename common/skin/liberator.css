@@ -138,6 +138,10 @@
     border: 1px dotted gray;
     min-width: 1em;
 }
+#liberator-status > * {
+    padding: 0 1px;
+    margin: 0;
+}
 
 #liberator-commandline-prompt {
     background-color: inherit;

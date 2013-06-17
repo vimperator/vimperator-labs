@@ -26,14 +26,14 @@ const Tabs = Module("tabs", {
     },
 
     _updateTabCount: function () {
-        statusline.updateTabCount(true);
+        statusline.updateField("tabcount", true);
     },
 
     _onTabSelect: function () {
         // TODO: is all of that necessary?
         //       I vote no. --Kris
         modes.reset();
-        statusline.updateTabCount(true);
+        statusline.updateField("tabcount", true);
         this.updateSelectionHistory();
         if (options["focuscontent"])
             setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
