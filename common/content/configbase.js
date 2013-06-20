@@ -105,8 +105,9 @@ const ConfigBase = Class(ModuleBase, {
      * @property {string} The leaf name of any temp files created by
      *     {@link io.createTempFile}.
      */
-    get tempFile() this.name.toLowerCase() + ".tmp"
+    get tempFile() this.name.toLowerCase() + ".tmp",
 
+    updateTitlebar: function () {},
 });
 
 // vim: set fdm=marker sw=4 ts=4 et:

@@ -135,6 +135,11 @@ const Config = Module("config", ConfigBase, {
         }
     },
 
+    updateTitlebar: function () {
+        if (!this.isComposeWindow)
+            this.tabbrowser.setDocumentTitle(this.tabbrowser.currentTabInfo);
+    },
+
     modes: [
         ["MESSAGE", { char: "m" }],
         ["COMPOSE"]

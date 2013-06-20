@@ -135,7 +135,11 @@ const Config = Module("config", ConfigBase, {
         tabs:       [["TabsToolbar"],     "Tab bar"]
     },
 
-    get visualbellWindow() getBrowser().mPanelContainer
+    get visualbellWindow() getBrowser().mPanelContainer,
+
+    updateTitlebar: function () {
+        config.tabbrowser.updateTitlebar();
+    },
 }, {
 }, {
     commands: function () {

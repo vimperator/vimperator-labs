@@ -1165,15 +1165,7 @@ const Liberator = Module("liberator", {
                     else
                         win.setAttribute("titlemodifier", value);
 
-                    switch (config.hostApplication) {
-                    case "Firefox":
-                        config.tabbrowser.updateTitlebar();
-                        break;
-                    case "Thunderbird":
-                        config.tabbrowser.setDocumentTitle(config.tabbrowser.currentTabInfo);
-                        break;
-                    }
-
+                    config.updateTitlebar();
                     return value;
                 }
             });
