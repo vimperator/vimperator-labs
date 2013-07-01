@@ -67,7 +67,8 @@ function iter(obj) {
         })();
     if (isinstance(obj, [HTMLCollection, NodeList]))
         return (node for (node of obj));
-    if (obj instanceof NamedNodeMap)
+    if ((typeof NamedNodeMap !== "undefined" && obj instanceof NamedNodeMap) ||
+        (typeof MozNamedAttrMap !== "undefined" && obj instanceof MozNamedAttrMap))
         return (function () {
             for (let i = 0, len = obj.length; i < len; ++i)
                 yield [obj[i].name, obj[i]];
