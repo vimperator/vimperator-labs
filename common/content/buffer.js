@@ -1499,7 +1499,7 @@ const Buffer = Module("buffer", {
                 if (Editor.windowIsEditable()) {
                     if (options["insertmode"])
                         modes.set(modes.INSERT);
-                    else if (win.getSelection().toString() != "")
+                    else if (Buffer.focusedWindow.getSelection().toString() != "")
                         modes.set(modes.VISUAL, modes.TEXTAREA);
                     else
                         modes.main = modes.TEXTAREA;
