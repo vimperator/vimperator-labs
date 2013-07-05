@@ -1501,8 +1501,10 @@ const Buffer = Module("buffer", {
                         modes.set(modes.INSERT);
                     else if (Buffer.focusedWindow.getSelection().toString() != "")
                         modes.set(modes.VISUAL, modes.TEXTAREA);
-                    else
+                    else {
+                        options.setPref("accessibility.browsewithcaret", true);
                         modes.main = modes.TEXTAREA;
+                    }
                 } else {
                     // setting this option notifies an observer which takes care of the
                     // mode setting

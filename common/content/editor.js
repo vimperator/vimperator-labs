@@ -478,7 +478,7 @@ const Editor = Module("editor", {
 }, {
     getEditor: function () {
         let e = liberator.focus;
-        if (!e) {
+        if (!e || e.isContentEditable) {
             e = document.commandDispatcher.focusedWindow;
             if (!Editor.windowIsEditable(e))
                 return null;
@@ -509,8 +509,8 @@ const Editor = Module("editor", {
             .QueryInterface(Ci.nsIInterfaceRequestor)
             .getInterface(Ci.nsIEditingSession);
         return editingSession.windowIsEditable(win) &&
-               win.document.body &&
-               util.computedStyle(win.document.body).getPropertyValue("-moz-user-modify") == "read-write";
+               (win.document.designMode === "on" ||
+                    (services.get("focus").getFocusedElementForWindow(win, true, {})||{}).isContentEditable);
     }
 }, {
     mappings: function () {
