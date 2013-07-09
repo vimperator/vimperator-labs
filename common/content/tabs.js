@@ -922,7 +922,7 @@ const Tabs = Module("tabs", {
                     liberator.assert(args.length <= 2 && !args.some(function (i) !/^\d+$/.test(i)),
                         "Trailing characters");
 
-                    let [winIndex, tabIndex] = args.map(parseInt);
+                    let [winIndex, tabIndex] = args.map(function(i) { return parseInt(i, 10) });
                     let win = liberator.windows[winIndex - 1];
 
                     liberator.assert(win, "Window " + winIndex + " does not exist");
