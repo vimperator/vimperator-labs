@@ -104,8 +104,18 @@ const Finder = Module("finder", {
      * Searches the current buffer for <b>str</b>.
      *
      * @param {string} str The string to find.
+     * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    find: function (str) {
+    find: Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+    function (str) {
+        let fastFind = config.browser.getFindBar();
+        this._processUserPattern(str);
+        fastFind._typeAheadCaseSensitive = this._caseSensitive;
+        fastFind._typeAheadLinksOnly = this._linksOnly;
+        let result = fastFind._find(str);
+    } :
+    // FIXME: remove when minVersion > 24
+    function (str) {
         let fastFind = config.browser.fastFind;
 
         this._processUserPattern(str);
@@ -120,8 +130,21 @@ const Finder = Module("finder", {
      *
      * @param {boolean} reverse Whether to search forwards or backwards.
      * @default false
+     * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    findAgain: function (reverse) {
+    findAgain: Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+    function (reverse) {
+        let fastFind = config.browser.getFindBar();
+        if (fastFind._findField.value != this._lastSearchString)
+            this.find(this._lastSearchString);
+
+        let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
+        fastFind._typeAheadLinksOnly = this._linksOnly;
+        let result = fastFind._findAgain(backwards);
+        this._displayFindResult(result, backwards);
+    } :
+    // FIXME: remove when minVersion > 24
+    function (reverse) {
         // This hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search.  Since searchString is
         // readonly we have to call find() again to update it.
@@ -193,7 +216,9 @@ const Finder = Module("finder", {
         // focus links after searching, so the user can just hit <Enter> another time to follow the link
         // This has to be done async, because the mode reset after onSubmit would
         // clear the focus 
-        let elem = config.browser.fastFind.foundLink;
+        let elem = Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+                    config.browser.getFindBar()._foundLinkRef.get() :
+                    config.browser.fastFind.foundLink; // FIXME: remove when minVersion > 24
         this.setTimeout(function() {
             if (elem)
                 elem.focus();
