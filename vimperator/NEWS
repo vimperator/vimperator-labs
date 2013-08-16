@@ -1,6 +1,7 @@
 2013-XX-XX:
     * version 3.8
     * Add "ssl" field shows SSL connection icon to "status" option (default: off)
+    * Tabs count and it's index in status-line are changed to the current group's tabs count and it's index.
 
 2013-05-22:
     * version 3.7.1

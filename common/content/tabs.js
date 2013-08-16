@@ -61,7 +61,7 @@ const Tabs = Module("tabs", {
     /**
      * @property {number} The number of tabs in the current window.
      */
-    get count() config.tabbrowser.mTabs.length,
+    get count() config.tabbrowser.visibleTabs.length,
 
     /**
      * @property {Object} The local options store for the current tab.
@@ -115,9 +115,9 @@ const Tabs = Module("tabs", {
      */
     index: function (tab) {
         if (tab)
-            return Array.indexOf(config.tabbrowser.mTabs, tab);
+            return Array.indexOf(config.tabbrowser.visibleTabs, tab);
         else
-            return config.tabbrowser.mTabContainer.selectedIndex;
+            return Array.indexOf(config.tabbrowser.visibleTabs, config.tabbrowser.tabContainer.selectedItem);
     },
 
     // TODO: implement filter
