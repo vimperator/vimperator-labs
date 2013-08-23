@@ -1010,11 +1010,14 @@ const Buffer = Module("buffer", {
     getFocusedWindow: function (win) {
         win = win || config.browser.contentWindow;
         let elem = win.document.activeElement;
-        let doc;
-        while (doc = elem.contentDocument) {
-            elem = doc.activeElement;
-        }
-        return elem.ownerDocument.defaultView;
+        if (elem) {
+            let doc;
+            while (doc = elem.contentDocument) {
+                elem = doc.activeElement;
+            }
+            return elem.ownerDocument.defaultView;
+        } else
+            return win;
     },
 
     setZoom: function setZoom(value, fullZoom) {
@@ -1067,7 +1070,7 @@ const Buffer = Module("buffer", {
             pos = "scrollLeft", maxPos = "scrollLeftMax", clientSize = "clientWidth";
 
         function find(elem) {
-            if (!(elem instanceof Element))
+            if (elem && !(elem instanceof Element))
                 elem = elem.parentNode;
 
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
