@@ -425,7 +425,7 @@ const Tabs = Module("tabs", {
             let index = (i + first) % nbrowsers;
             let browser = config.tabbrowser.browsers[index];
             let tab = tabs.getTab(index);
-            let url = borwser.contentDocument.location.href;
+            let url = browser.contentDocument.location.href;
             let title = tab.label.toLowerCase();
             if (url == buffer)
                 return [tab];
