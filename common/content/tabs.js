@@ -526,17 +526,10 @@ const Tabs = Module("tabs", {
      * Selects the alternate tab.
      */
     selectAlternateTab: function () {
-        liberator.assert(tabs.alternate != null && tabs.getTab() != tabs.alternate, "No alternate page");
+        let alternate = tabs.alternate;
+        liberator.assert(alternate != null && tabs.getTab() != alternate, "No alternate page");
 
-        // NOTE: this currently relies on v.tabs.index() returning the
-        // currently selected tab index when passed null
-        let index = tabs.index(tabs.alternate);
-
-        // TODO: since a tab close is more like a bdelete for us we
-        // should probably reopen the closed tab when a 'deleted'
-        // alternate is selected
-        liberator.assert(index >= 0, "Alternate buffer does not exist");  // TODO: This should read "Buffer N does not exist"
-        tabs.select(index, false, true);
+        config.tabbrowser.tabContainer.selectedItem = alternate;
     },
 
     // NOTE: when restarting a session FF selects the first tab and then the
