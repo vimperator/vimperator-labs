@@ -1,8 +1,13 @@
 2013-XX-XX
     * version 3.8
+    * Many fixes for Firefox 25 (search and alternate tabs were broken)
+    * :tabattach works correctly now
+    * liberator.log() fixes
     * Add "ssl" field shows SSL connection icon to "status" option (default: off)
     * Tabs count and it's index in status-line are changed to the current group's tabs count and it's index.
     * Fixed "TypeError: elem is null" error when scrolling while the page is being loaded
+    * General bug fixing
+    * Set maxVersion to Firefox 26 as we fixed many compatibility issues
 
 2013-05-22:
     * version 3.7.1
