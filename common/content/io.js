@@ -330,23 +330,30 @@ const IO = Module("io", {
         this._lastRunCommand = ""; // updated whenever the users runs a command with :!
         this._scriptNames = [];
 
-        this.downloadListener = {
-            onDownloadStateChange: function (state, download) {
-                if (download.state == services.get("downloads").DOWNLOAD_FINISHED) {
-                    let url   = download.source.spec;
-                    let title = download.displayName;
-                    let file  = download.targetFile.path;
-                    let size  = download.size;
+        // XXX: nsIDownloadManager is deprecated on Firefox 26
+        // FIXME: need to listen to download state ? -- teramako
+        // FIXME: need to adapt to Download.jsm instead of nsIDownloadManager
+        try {
+            this.downloadListener = {
+                onDownloadStateChange: function (state, download) {
+                    if (download.state == services.get("downloads").DOWNLOAD_FINISHED) {
+                        let url   = download.source.spec;
+                        let title = download.displayName;
+                        let file  = download.targetFile.path;
+                        let size  = download.size;
 
-                    liberator.echomsg("Download of " + title + " to " + file + " finished");
-                    autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
-                }
-            },
-            onStateChange:    function () {},
-            onProgressChange: function () {},
-            onSecurityChange: function () {}
-        };
-        services.get("downloads").addListener(this.downloadListener);
+                        liberator.echomsg("Download of " + title + " to " + file + " finished");
+                        autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
+                    }
+                },
+                onStateChange:    function () {},
+                onProgressChange: function () {},
+                onSecurityChange: function () {}
+            };
+            services.get("downloads").addListener(this.downloadListener);
+        } catch (e) {
+            Cu.reportError(e);
+        }
     },
 
     destroy: function () {
