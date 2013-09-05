@@ -333,7 +333,7 @@ const IO = Module("io", {
         // XXX: nsIDownloadManager is deprecated on Firefox 26
         // FIXME: need to listen to download state ? -- teramako
         // FIXME: need to adapt to Download.jsm instead of nsIDownloadManager
-        try {
+        if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
             this.downloadListener = {
                 onDownloadStateChange: function (state, download) {
                     if (download.state == services.get("downloads").DOWNLOAD_FINISHED) {
@@ -351,13 +351,50 @@ const IO = Module("io", {
                 onSecurityChange: function () {}
             };
             services.get("downloads").addListener(this.downloadListener);
-        } catch (e) {
-            Cu.reportError(e);
+        } else {
+            let downloadListener = this.downloadListener = {
+                onDownloadChanged: function (download) {
+                    if (download.succeeded) {
+                        let {
+                            source: { url },
+                            target: {path: file},
+                            totalBytes: size,
+                        } = download;
+                        let title = File(file).leafName;
+                        liberator.echomsg("Download of " + title + " to " + file + " finished");
+                        autocommands.trigger("DownloadPost", { url: url, title: title, file: file, size: size });
+                    }
+                },
+            };
+            let {Downloads} = Cu.import("resource://gre/modules/Downloads.jsm", {});
+            //let listName = (window.QueryInterface(Ci.nsIInterfaceRequestor)
+            //                      .getInterface(Ci.nsIWebNavigation)
+            //                      .QueryInterface(Ci.nsILoadContext)
+            //                      .usePrivateBrowsing)
+            //                      ? "getPrivateDownloadList"
+            //                      : "getPublicDownloadList";
+            for (let listName of ["getPrivateDownloadList", "getPublicDownloadList"]) {
+                Downloads[listName]()
+                    .then(function (downloadList) {
+                        downloadList.addView(downloadListener);
+                    });
+            }
         }
     },
 
     destroy: function () {
-        services.get("downloads").removeListener(this.downloadListener);
+        if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
+            services.get("downloads").removeListener(this.downloadListener);
+        } else {
+            let {Downloads} = Cu.import("resource://gre/modules/Downloads.jsm", {});
+            let downloadListener = this.downloadListener;
+            for (let listName of ["getPrivateDownloadList", "getPublicDownloadList"]) {
+                Downloads[listName]()
+                    .then(function (downloadList) {
+                        downloadList.removeView(downloadListener);
+                    });
+            }
+        }
         for (let [, plugin] in Iterator(plugins.contexts))
             if (plugin.onUnload)
                 plugin.onUnload();
