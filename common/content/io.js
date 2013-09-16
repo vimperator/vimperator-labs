@@ -367,18 +367,10 @@ const IO = Module("io", {
                 },
             };
             let {Downloads} = Cu.import("resource://gre/modules/Downloads.jsm", {});
-            //let listName = (window.QueryInterface(Ci.nsIInterfaceRequestor)
-            //                      .getInterface(Ci.nsIWebNavigation)
-            //                      .QueryInterface(Ci.nsILoadContext)
-            //                      .usePrivateBrowsing)
-            //                      ? "getPrivateDownloadList"
-            //                      : "getPublicDownloadList";
-            for (let listName of ["getPrivateDownloadList", "getPublicDownloadList"]) {
-                Downloads[listName]()
-                    .then(function (downloadList) {
-                        downloadList.addView(downloadListener);
-                    });
-            }
+            Downloads.getList(Downloads.ALL)
+                .then(function (downloadList) {
+                    downloadList.addView(downloadListener);
+                });
         }
     },
 
@@ -388,12 +380,10 @@ const IO = Module("io", {
         } else {
             let {Downloads} = Cu.import("resource://gre/modules/Downloads.jsm", {});
             let downloadListener = this.downloadListener;
-            for (let listName of ["getPrivateDownloadList", "getPublicDownloadList"]) {
-                Downloads[listName]()
-                    .then(function (downloadList) {
-                        downloadList.removeView(downloadListener);
-                    });
-            }
+            Downloads.getList(Downloads.ALL)
+                .then(function (downloadList) {
+                    downloadList.removeView(downloadListener);
+                });
         }
         for (let [, plugin] in Iterator(plugins.contexts))
             if (plugin.onUnload)
