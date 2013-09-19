@@ -1020,14 +1020,14 @@ const Buffer = Module("buffer", {
             return win;
     },
 
-    setZoom: function setZoom(value, fullZoom) {
+    setZoom: function setZoom(value, fullZoom, browser = config.tabbrowser.mCurrentBrowser) {
         liberator.assert(value >= Buffer.ZOOM_MIN || value <= Buffer.ZOOM_MAX,
             "Zoom value out of range (" + Buffer.ZOOM_MIN + " - " + Buffer.ZOOM_MAX + "%)");
 
         ZoomManager.useFullZoom = fullZoom;
         ZoomManager.zoom = value / 100;
         if ("FullZoom" in window)
-            FullZoom._applySettingToPref();
+            FullZoom._applyZoomToPref(browser);
         liberator.echomsg((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
     },
 

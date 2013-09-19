@@ -123,6 +123,7 @@ const Config = Module("config", ConfigBase, {
         get mTabs() this.tabContainer.childNodes,
         get visibleTabs() Array.slice(this.mTabs),
         get mCurrentTab() this.tabContainer.selectedItem,
+        get mCurrentBrowser() this.getBrowserForSelectedTab(),
         get mStrip() this.tabStrip,
         get browsers() {
             let browsers = [];
