@@ -62,7 +62,7 @@ const StatusField = Class("StatusField", {
         if (this._updater)
             this._updater(this.node, value);
     },
-    desctroy: function () {
+    destroy: function () {
         this.node.parentNode.removeChild(this.node);
     },
 });
