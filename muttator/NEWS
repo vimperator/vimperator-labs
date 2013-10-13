@@ -1,4 +1,4 @@
-2012-xx-xx:
+2013-10-13:
     * version 1.2
     * Fix unmappable key "-". (Use \- or '-' or "-")
     * support command-count from map
