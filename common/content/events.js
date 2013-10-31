@@ -1067,7 +1067,7 @@ const Events = Module("events", {
 
     // this is need for sites like msn.com which focus the input field on keydown
     onKeyUpOrDown: function (event) {
-        if (modes.passNextKey || modes.passAllKeys || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown || Events.isInputElemFocused())
             return;
         event.stopPropagation();
     },
