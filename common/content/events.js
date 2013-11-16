@@ -1078,7 +1078,9 @@ const Events = Module("events", {
         modes.isMenuShown = true;
     },
 
-    onPopupHidden: function () {
+    onPopupHidden: function (event) {
+        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
+            return;
         // gContextMenu is set to NULL, when a context menu is closed
         if ((window.gContextMenu == null || !window.gContextMenu.shouldDisplay) && !this._activeMenubar)
             modes.isMenuShown = false;
