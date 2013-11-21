@@ -1067,7 +1067,7 @@ const Events = Module("events", {
 
     // this is need for sites like msn.com which focus the input field on keydown
     onKeyUpOrDown: function (event) {
-        if (modes.passNextKey || modes.passAllKeys || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown || Events.isInputElemFocused())
             return;
         event.stopPropagation();
     },
@@ -1078,7 +1078,9 @@ const Events = Module("events", {
         modes.isMenuShown = true;
     },
 
-    onPopupHidden: function () {
+    onPopupHidden: function (event) {
+        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
+            return;
         // gContextMenu is set to NULL, when a context menu is closed
         if ((window.gContextMenu == null || !window.gContextMenu.shouldDisplay) && !this._activeMenubar)
             modes.isMenuShown = false;

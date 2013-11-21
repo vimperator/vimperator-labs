@@ -106,7 +106,7 @@ const Finder = Module("finder", {
      * @param {string} str The string to find.
      * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    find: Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+    find: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
     function (str) {
         let fastFind = config.browser.getFindBar();
         this._processUserPattern(str);
@@ -114,7 +114,7 @@ const Finder = Module("finder", {
         fastFind._typeAheadLinksOnly = this._linksOnly;
         let result = fastFind._find(str);
     } :
-    // FIXME: remove when minVersion > 24
+    // FIXME: remove when minVersion >= 25
     function (str) {
         let fastFind = config.browser.fastFind;
 
