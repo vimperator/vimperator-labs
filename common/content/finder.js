@@ -132,7 +132,7 @@ const Finder = Module("finder", {
      * @default false
      * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    findAgain: Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+    findAgain: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
     function (reverse) {
         let fastFind = config.browser.getFindBar();
         if (fastFind._findField.value != this._lastSearchString)
@@ -143,7 +143,7 @@ const Finder = Module("finder", {
         let result = fastFind._findAgain(backwards);
         this._displayFindResult(result, backwards);
     } :
-    // FIXME: remove when minVersion > 24
+    // FIXME: remove when minVersion >= 25
     function (reverse) {
         // This hack is needed to make n/N work with the correct string, if
         // we typed /foo<esc> after the original search.  Since searchString is
@@ -216,9 +216,9 @@ const Finder = Module("finder", {
         // focus links after searching, so the user can just hit <Enter> another time to follow the link
         // This has to be done async, because the mode reset after onSubmit would
         // clear the focus 
-        let elem = Services.vc.compare(Services.appinfo.version, "24.0") > 0 ?
+        let elem = Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
                     config.browser.getFindBar()._foundLinkRef.get() :
-                    config.browser.fastFind.foundLink; // FIXME: remove when minVersion > 24
+                    config.browser.fastFind.foundLink; // FIXME: remove when minVersion >= 25
         this.setTimeout(function() {
             if (elem)
                 elem.focus();
