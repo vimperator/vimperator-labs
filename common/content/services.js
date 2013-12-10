@@ -70,6 +70,10 @@ const Services = Module("services", {
                 class_: "@mozilla.org/intl/texttosuburi;1",
                 iface: Ci.nsITextToSubURI
             },
+            "io": {
+                class_: "@mozilla.org/network/io-service;1",
+                iface: Ci.nsIIOService
+            },
         };
 
         this.addClass("file",       "@mozilla.org/file/local;1",                 Ci.nsILocalFile);

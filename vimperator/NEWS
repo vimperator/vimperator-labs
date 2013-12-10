@@ -1,3 +1,8 @@
+XXXX-XX-XX
+    * When you copy the URL with y, copy it as-is with only space encoded as %20
+    * Add 'yankencodedurl' option, so you can get the old behavior to encode any
+      any non-ASCII character with the encoded character
+
 2013-11-22
     * version 3.8.1
     * Fix arrow keys in menus

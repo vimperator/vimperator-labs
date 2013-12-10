@@ -96,13 +96,21 @@ const Browser = Module("browser", {
         options.add(["urlseparator"],
             "Set the separator regex used to separate multiple URL args",
             "string", ",\\s");
+
+        options.add(["yankencodedurl"],
+            "Set the yank mode copying encoded URL",
+            "boolean", false);
     },
 
     mappings: function () {
         mappings.add([modes.NORMAL],
             ["y"], "Yank current location to the clipboard",
             function () {
-                var url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
+                var url = buffer.URL;
+                if (options.get("yankencodedurl").value)
+                    url = services.get("io").newURI(url, buffer.charser, null).asciiSpec;
+                else
+                    url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, url).replace(/ /g, "%20");
                 util.copyToClipboard(url, true);
             });
 
