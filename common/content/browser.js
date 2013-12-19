@@ -252,7 +252,7 @@ const Browser = Module("browser", {
         commands.add(["downl[oads]", "dl"],
             "Show progress of current downloads",
             function () {
-                liberator.open("chrome://mozapps/content/downloads/downloads.xul",
+                liberator.open("chrome://browser/content/downloads/contentAreaDownloadsView.xul",
                     { from: "downloads"});
             },
             { argCount: "0" });
