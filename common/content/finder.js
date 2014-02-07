@@ -244,15 +244,17 @@ const Finder = Module("finder", {
 
     get _highlight() {
         var gFindBar = window.gFindBar;
+        var fn = function no_highligh() {};
         if (config.name === "Muttator") {
-            gFindBar = document.getElementById("FindToolbar");
+            fn = function _highlight(aHighlight, word) {
+                return document.getElementById("FindToolbar")._highlightDoc(aHighlight, word);
+            };
+        } else if (window.gFindBar) {
+            fn = window.gFindBar._highlightDoc
+                ? function _highlight(aHighlight, word) { return window.gFindBar._highlightDoc(aHighlight, word); }
+                : function _highlight(aHighlight, word) { return window.gFindBar.browser.finder._highlight(aHighlight, word); };
         }
-        if (!gFindBar) return null;
 
-        var fn = gFindBar._highlightDoc
-            //? gFindBar._highlightDoc.bind(gFindBar)
-            ? function _highlight(aHighlight, word) { return gFindBar._highlightDoc(aHighlight, word); }
-            : function _highlight(aHighlight, word) { return window.gFindBar.browser.finder._highlight(aHighlight, word); };
         Object.defineProperty(this, "_highlight", { value: fn });
         return fn;
     },
