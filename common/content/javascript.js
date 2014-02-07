@@ -40,9 +40,7 @@ const JavaScript = Module("javascript", {
             let orig = obj;
 
             function iterObj(obj, toplevel) {
-                function isXPCNativeWrapper(obj) isobject(obj) && XPCNativeWrapper.unwrap(obj) !== obj
-
-                if (isXPCNativeWrapper(obj)) {
+                if (Cu.isXrayWrapper(obj)) {
                     if (toplevel) {
                         yield {get wrappedJSObject() 0};
                     }
