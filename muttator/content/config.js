@@ -67,7 +67,7 @@ const Config = Module("config", ConfigBase, {
         ["accounts",      "Account Manager",
             function () { MsgAccountManager(); }],
         ["checkupdates",     "Check for updates",
-            function () { window.checkForUpdates(); }],
+            function () { var s = "checkForUpdates"; window[window[s] ? s: "openAboutDialog"]()}],
         /*["cleardata",        "Clear private data",
          function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
