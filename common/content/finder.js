@@ -106,13 +106,20 @@ const Finder = Module("finder", {
      * @param {string} str The string to find.
      * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
+    get fastFind() {
+        var fn = config.browser.fastFind
+                ? function _fastFind() config.browser.fastFind
+                : function _fastFind() window.gFindBar.browser.fastFind
+            ;
+        Object.defineProperty(this, "fastFind", { get: fn });
+        return fn();
+    },
     find: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
     function (str) {
-        let fastFind = config.browser.getFindBar();
+        let fastFind = this.fastFind;
         this._processUserPattern(str);
-        fastFind._typeAheadCaseSensitive = this._caseSensitive;
-        fastFind._typeAheadLinksOnly = this._linksOnly;
-        let result = fastFind._find(str);
+        let result = fastFind.find(str, this._linksOnly);
+        window.gFindBar._findField.value = str;
     } :
     // FIXME: remove when minVersion >= 25
     function (str) {
@@ -134,13 +141,12 @@ const Finder = Module("finder", {
      */
     findAgain: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
     function (reverse) {
-        let fastFind = config.browser.getFindBar();
-        if (fastFind._findField.value != this._lastSearchString)
+        let fastFind = this.fastFind;
+        if (window.gFindBar._findField.value != this._lastSearchString)
             this.find(this._lastSearchString);
 
         let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
-        fastFind._typeAheadLinksOnly = this._linksOnly;
-        let result = fastFind._findAgain(backwards);
+        let result = fastFind.findAgain(backwards, this._linksOnly);
         this._displayFindResult(result, backwards);
     } :
     // FIXME: remove when minVersion >= 25
@@ -216,9 +222,7 @@ const Finder = Module("finder", {
         // focus links after searching, so the user can just hit <Enter> another time to follow the link
         // This has to be done async, because the mode reset after onSubmit would
         // clear the focus 
-        let elem = Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
-                    config.browser.getFindBar()._foundLinkRef.get() :
-                    config.browser.fastFind.foundLink; // FIXME: remove when minVersion >= 25
+        let elem = this.fastFind.foundLink;
         this.setTimeout(function() {
             if (elem)
                 elem.focus();
@@ -238,6 +242,21 @@ const Finder = Module("finder", {
             this.highlight(this._searchString);
     },
 
+    get _highlight() {
+        var gFindBar = window.gFindBar;
+        if (config.name === "Muttator") {
+            gFindBar = document.getElementById("FindToolbar");
+        }
+        if (!gFindBar) return null;
+
+        var fn = gFindBar._highlightDoc
+            //? gFindBar._highlightDoc.bind(gFindBar)
+            ? function _highlight(aHighlight, word) { return gFindBar._highlightDoc(aHighlight, word); }
+            : function _highlight(aHighlight, word) { return window.gFindBar.browser.finder._highlight(aHighlight, word); };
+        Object.defineProperty(this, "_highlight", { value: fn });
+        return fn;
+    },
+
     /**
      * Highlights all occurances of <b>str</b> in the buffer.
      *
@@ -250,8 +269,8 @@ const Finder = Module("finder", {
 
         if (window.gFindBar) {
             window.gFindBar._setCaseSensitivity(this._caseSensitive);
-            window.gFindBar._highlightDoc(false);
-            window.gFindBar._highlightDoc(true, str);
+            this._highlight(false);
+            this._highlight(true, str);
         }
     },
 
@@ -264,7 +283,7 @@ const Finder = Module("finder", {
             return;
 
         if (window.gFindBar)
-            window.gFindBar._highlightDoc(false);
+            this._highlight(false);
     }
 }, {
 }, {
