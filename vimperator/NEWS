@@ -1,4 +1,6 @@
-XXXX-XX-XX
+2014-02-14: A Valentine's gift
+    * Version 3.8.2
+    * Fix search for Firefox 27
     * When you copy the URL with y, copy it as-is with only space encoded as %20
     * Fix :downloads for new Firefoxs (thanks sven)
     * Add 'yankencodedurl' option, so you can get the old behavior to encode any
