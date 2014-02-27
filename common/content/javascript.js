@@ -63,12 +63,15 @@ const JavaScript = Module("javascript", {
             }
 
             for (let obj in iterObj(orig, toplevel)) {
-                for (let k of Object.getOwnPropertyNames(obj)) {
-                    let name = "|" + k;
-                    if (name in seen)
-                        continue;
-                    seen[name] = 1;
-                    yield [k, this.getKey(orig, k)];
+                try {
+                    for (let k of Object.getOwnPropertyNames(obj)) {
+                        let name = "|" + k;
+                        if (name in seen)
+                            continue;
+                        seen[name] = 1;
+                        yield [k, this.getKey(orig, k)];
+                    }
+                } catch (ex) {
                 }
             }
         }
