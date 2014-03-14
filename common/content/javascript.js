@@ -90,7 +90,7 @@ const JavaScript = Module("javascript", {
 
         let completions;
         if (modules.isPrototypeOf(obj))
-            completions = [v for (v in Iterator(obj))];
+            completions = toplevel ? [v for (v in Iterator(obj))] : [];
         else {
             completions = [k for (k in this.iter(obj, toplevel))];
             if (!toplevel)
