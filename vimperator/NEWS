@@ -1,3 +1,7 @@
+201x-00-00
+    * Version 3.8.3
+    * Push minVersion to Firefox25, as we have some problems on older Firefoxs regarding search
+
 2014-02-14: A Valentine's gift
     * Version 3.8.2
     * Fix search for Firefox 27
