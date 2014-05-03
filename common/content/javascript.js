@@ -58,7 +58,7 @@ const JavaScript = Module("javascript", {
                 if (toplevel)
                     yield obj;
                 else
-                    for (let o = obj.__proto__; o; o = o.__proto__)
+                    for (let o = obj; o = Object.getPrototypeOf(o);)
                         yield o;
             }
 
