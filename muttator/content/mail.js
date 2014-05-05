@@ -74,6 +74,9 @@ const Mail = Module("mail", {
 
     _moveOrCopy: function (copy, destinationFolder, operateOnThread) {
         let folders = mail.getFolders(destinationFolder);
+        if (folders.length > 1) {
+            folders = mail.getExactFolder(destinationFolder);
+        }
         if (folders.length == 0)
             return void liberator.echoerr("No matching folder for: " + destinationFolder);
         else if (folders.length > 1)
@@ -246,6 +249,22 @@ const Mail = Module("mail", {
             let folder = row._folder;
             // XXX: row._folder.prettyName is needed ? -- teramako
             if (name.toLowerCase().indexOf(filter) >= 0)
+                folders.push(row._folder);
+        }
+        return folders;
+    },
+
+    // returns an array of only one nsIMsgFolder object: an exact match to the filter
+    getExactFolder: function (filter, includeServers, includeMsgFolders) {
+        let folders = [];
+        if (!filter || filter == "") return folders;
+
+        filter = filter.toLowerCase();
+
+        for (let [row, name] in this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
+            let folder = row._folder;
+            // XXX: row._folder.prettyName is needed ? -- teramako
+            if (name.toLowerCase() == filter)
                 folders.push(row._folder);
         }
         return folders;
