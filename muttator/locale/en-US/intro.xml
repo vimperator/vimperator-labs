@@ -37,7 +37,7 @@ hitting the back button in the toolbar.
 </p>
         
 <p>
-    But &liberator.appname; is more than just a simple command interface to Firefox — it is a
+    But &liberator.appname; is more than just a simple command interface to &liberator.host; — it is a
     complete development environment as well. If you are a web developer, you can
     enjoy an interactive JavaScript shell — even with completion support. Or if you
     want to extend &liberator.appname;, you can easily do that by just dropping a JavaScript
