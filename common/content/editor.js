@@ -446,7 +446,7 @@ const Editor = Module("editor", {
         if (!textbox)
             return false;
         let text      = textbox.value;
-        if (typeof(text) !== "string")
+        if (typeof text !== "string")
             return false;
 
         let currStart = textbox.selectionStart;
