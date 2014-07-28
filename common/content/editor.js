@@ -310,11 +310,11 @@ const Editor = Module("editor", {
             nsEditor instanceof Ci.nsIHTMLEditor;
         }
         else {
-	    if (field !== undefined) {
-		    textBox = field; // if I reply 'yes', textBox.value == 'yes', so get the real value
-	    } else {
-		    textBox = liberator.focus;
-	    }
+            if (field !== undefined) {
+                textBox = field; // if I reply 'yes', textBox.value == 'yes', so get the real value
+            } else {
+                textBox = liberator.focus;
+            }
         }
 
         if (!forceEditing && textBox && textBox.type == "password") {
@@ -446,6 +446,9 @@ const Editor = Module("editor", {
         if (!textbox)
             return false;
         let text      = textbox.value;
+        if (typeof text !== "string")
+            return false;
+
         let currStart = textbox.selectionStart;
         let currEnd   = textbox.selectionEnd;
         let foundWord = text.substring(0, currStart).replace(/.*[\s\n]/gm, '').match(RegExp('(' + abbreviations._match + ')$'));
