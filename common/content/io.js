@@ -330,9 +330,6 @@ const IO = Module("io", {
         this._lastRunCommand = ""; // updated whenever the users runs a command with :!
         this._scriptNames = [];
 
-        // XXX: nsIDownloadManager is deprecated on Firefox 26
-        // FIXME: need to listen to download state ? -- teramako
-        // FIXME: need to adapt to Download.jsm instead of nsIDownloadManager
         if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
             this.downloadListener = {
                 onDownloadStateChange: function (state, download) {
