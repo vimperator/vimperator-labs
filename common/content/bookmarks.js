@@ -599,13 +599,22 @@ const Bookmarks = Module("bookmarks", {
             "Delete a bookmark",
             function (args) {
                 if (args.bang) {
-                    commandline.input("This will delete all bookmarks. Would you like to continue? (yes/[no]) ",
-                        function (resp) {
-                            if (resp && resp.match(/^y(es)?$/i)) {
-                                bookmarks._cache.bookmarks.forEach(function (bmark) { services.get("bookmarks").removeItem(bmark.id); });
-                                liberator.echomsg("All bookmarks deleted");
-                            }
-                        });
+
+                    function deleteAll() {
+                        bookmarks._cache.bookmarks.forEach(function (bmark) { services.get("bookmarks").removeItem(bmark.id); });
+                        liberator.echomsg("All bookmarks deleted");
+                    }
+
+                    if (commandline.silent)
+                        deleteAll();
+                    else {
+                        commandline.input("This will delete all bookmarks. Would you like to continue? (yes/[no]) ",
+                            function (resp) {
+                                if (resp && resp.match(/^y(es)?$/i)) {
+                                    deleteAll();
+                                }
+                            });
+                    }
                 }
                 else {
                     let url = args.string || buffer.URL;
