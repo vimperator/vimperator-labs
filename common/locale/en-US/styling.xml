@@ -48,7 +48,7 @@
             restrict the match to matching elements.
         </p>
 
-        <p>Valid groups are:</p>
+        <p>Common highlight groups are:</p>
 
         <dl>
             <dt>Bell</dt>              <dd>&liberator.appname;'s visual bell</dd>
@@ -85,7 +85,6 @@
             <dt>Object</dt>            <dd>A JavaScript Object</dd>
             <dt>Preview</dt>           <dd></dd>
             <dt>Question</dt>          <dd>A prompt for a decision</dd>
-            <dt>Search</dt>            <dd>Highlighted search results in a web page</dd>
             <dt>StatusLine</dt>        <dd>The status bar</dd>
             <dt>String</dt>            <dd>A JavaScript String object</dd>
             <dt>TabClose</dt>          <dd>The close button of a browser tab</dd>
@@ -98,6 +97,10 @@
             <dt>URL</dt>               <dd>A URL</dd>
             <dt>WarningMsg</dt>        <dd>A warning message</dd>
         </dl>
+
+        <p>
+            The full list of supported highlight groups and there current values can be seen by calling <ex>:highlight</ex> without any arguments.
+        </p>
 
         <p>
             Every invocation completely replaces the styling of any previous invocation,
