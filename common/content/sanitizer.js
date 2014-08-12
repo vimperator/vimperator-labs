@@ -95,18 +95,19 @@ const Sanitizer = Module("sanitizer", {
                 }
                 else {
                     liberator.assert(args.length > 0, "Argument required");
-                    let items = [item for (item of args.map(Sanitizer.argToPref))];
-                    for (let item of items) {
-                        if (!options.get("sanitizeitems").isValidValue(item)) {
-                            liberator.echoerr("Invalid data item: " + item);
+
+                    for (let [,elem] in args) {
+                        if (!options.get("sanitizeitems").isValidValue(elem)) {
+                            liberator.echoerr("Invalid data item: " + elem);
                             return;
                         }
                     }
 
                     liberator.echomsg("Sanitizing " + args + " items...");
 
+                    let items = [item for (item of args.map(Sanitizer.argToPref))];
                     for (let item of items) {
-                        if (sanitizer.canClearItem(item)) {
+                        if (sanitizer.canClearItem(item, function () {})) {
                             try {
                                 sanitizer.clearItem(item);
                             }
