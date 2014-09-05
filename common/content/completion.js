@@ -208,7 +208,13 @@ const CompletionContext = Class("CompletionContext", {
                     __proto__: item
                 }));
             });
-            return { start: minStart, items: util.Array.flatten(items), longestSubstring: this.longestAllSubstring };
+            return { start: minStart, items: util.Array.flatten(items),
+                get longestSubstring() {
+                    var value = this.longestAllSubstring;
+                    Object.defineProperty(this, "longestSubstring", { value: value});
+                    return value;
+                }
+            };
         }
         catch (e) {
             liberator.echoerr(e);
