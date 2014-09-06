@@ -577,7 +577,7 @@ const Liberator = Module("liberator", {
         const ps = new DOMParser;
         const encoder = Cc["@mozilla.org/layout/documentEncoder;1?type=text/xml"].getService(Ci.nsIDocumentEncoder);
         encoder.init(document, "text/xml", 0);
-        body = xml.map([con for ([,con] in Iterator(plugins.contexts))], function (context) {
+        var body = xml.map([con for ([,con] in Iterator(plugins.contexts))], function (context) {
             try { // debug
             var info = context.INFO;
             if (!info) return "";
