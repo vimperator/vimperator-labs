@@ -1464,7 +1464,7 @@ const CommandLine = Module("commandline", {
             commands.add([command.name],
                 command.description,
                 function (args) {
-                    var str = args.literalArg;
+                    let str = args.literalArg;
 
                     str = CommandLine.echoArgumentToString(str, true);
                     if (str != null)
