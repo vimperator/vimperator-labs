@@ -548,6 +548,8 @@ const Commands = Module("commands", {
         var onlyArgumentsRemaining = allowUnknownOptions || (options.length == 0 && subCommands.length == 0) || false; // after a -- has been found
         var arg = null;
         var count = 0; // the length of the argument
+        var quote = null;
+        var error = null;
         var i = 0;
         var completeOpts;
 
@@ -692,7 +694,7 @@ const Commands = Module("commands", {
             }
 
             // if not an option, treat this token as an argument
-            let [count, arg, quote, error] = getNextArg(sub);
+            [count, arg, quote, error] = getNextArg(sub);
             liberator.assert(!error, error);
 
             if (complete) {
