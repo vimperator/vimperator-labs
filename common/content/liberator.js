@@ -1717,9 +1717,9 @@ const Liberator = Module("liberator", {
                     return void liberator.echoerr("No usage information for: " + args[0]);
 
                 if (args[0])
-                    var usage = template.genericOutput(config.name + " Usage", usage[args[0]]());
+                    usage = template.genericOutput(config.name + " Usage", usage[args[0]]());
                 else
-                    var usage = template.genericOutput(config.name + " Usage", xml`${ usage["mappings"]() }<br/>${ usage["commands"]() }<br/>${ usage["options"]()}`);
+                    usage = template.genericOutput(config.name + " Usage", xml`${ usage["mappings"]() }<br/>${ usage["commands"]() }<br/>${ usage["options"]()}`);
                 liberator.echo(usage, commandline.FORCE_MULTILINE);
             }, {
                 argCount: "?",

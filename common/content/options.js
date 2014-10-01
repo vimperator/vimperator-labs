@@ -123,11 +123,11 @@ const Option = Class("Option", {
         else
             scope = this.scope;
 
+        let value;
         // Options with a custom getter are always responsible for returning a meaningful value
         if (this.getter)
             return liberator.trapErrors(this.getter, this, value);
 
-        let value;
         if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             value = tabs.options[this.name];
         if ((scope & Option.SCOPE_GLOBAL) && (value == undefined))
