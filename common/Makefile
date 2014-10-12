@@ -34,8 +34,10 @@ CURL = curl
 B64ENCODE = base64
 # Mac OS X's sed and cp is not run because BSD's syntax
 # use make -e SED=gsed CP=gcp ...
-SED  ?= sed
-CP   ?= cp
+SED   ?= sed
+CP    ?= cp
+FIND  ?= find
+XARGS ?= xargs
 
 .SILENT:
 
@@ -103,13 +105,13 @@ xpi:
 		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
 	fi
 	# Copy components and modules directories
-	find $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
+	$(FIND) $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | $(XARGS) -0i $(CP) --parents {} -t $(XPI_PATH) || true
 	# Copy all chrome files, from both commmon/ and vimperator/ folders
-	cd $(COMMON_DIR) && find $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH)/common || true
-	find $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
+	cd $(COMMON_DIR) && $(FIND) $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | $(XARGS) -0i $(CP) --parents {} -t $(XPI_PATH)/common || true
+	$(FIND) $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | $(XARGS) -0i $(CP) --parents {} -t $(XPI_PATH) || true
 	# TODO: Replace ###VERSION### tags
 	@echo "Replacing ###VERSION### and ###DATE### tags"
-	find $(XPI_PATH) -type f ! -name "*.png" -exec $(SED) -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
+	$(FIND) $(XPI_PATH) -type f ! -name "*.png" -exec $(SED) -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
 	# Zip the whole directory and remove dist folder
 	cd $(XPI_PATH) && zip -9r ../$(XPI_NAME).xpi *
 	rm -rf $(XPI_PATH)
