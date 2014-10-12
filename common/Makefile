@@ -93,7 +93,7 @@ clean:
 xpi:
 	@echo "Building XPI..."
 	# Create folder structure
-	mkdir -p $(XPI_PATH)/common
+	mkdir -p $(XPI_PATH)/common $(XPI_PATH)/components
 	# Copy top level files
 	$(CP) -L $(XPI_FILES) -t $(XPI_PATH) || true
 	@echo "Update chrome.manifest for paths used inside the XPI..."
@@ -103,10 +103,10 @@ xpi:
 		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
 	fi
 	# Copy components and modules directories
-	$(CP) -Lr $(XPI_DIRS) -t $(XPI_PATH) || true
+	find $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) {} -t $(XPI_PATH)/components || true
 	# Copy all chrome files, from both commmon/ and vimperator/ folders
-	cd $(COMMON_DIR) && $(CP) -Lr --parents $(COMMON_CHROME_DIRS) -t $(XPI_PATH)/common || true
-	$(CP) -Lr --parents $(CHROME_DIRS) -t $(XPI_PATH) || true
+	cd $(COMMON_DIR) && find $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH)/common || true
+	find $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
 	# TODO: Replace ###VERSION### tags
 	@echo "Replacing ###VERSION### and ###DATE### tags"
 	find $(XPI_PATH) -type f ! -name "*.png" -exec $(SED) -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
