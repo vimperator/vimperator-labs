@@ -504,33 +504,49 @@ const Events = Module("events", {
 
                 if (event.keyCode in this._code_key)
                     key = this._code_key[event.keyCode];
-            }
-            // [Ctrl-Bug] special handling of mysterious <C-[>, <C-\\>, <C-]>, <C-^>, <C-_> bugs (OS/X)
-            //            (i.e., cntrl codes 27--31)
-            // ---
-            // For more information, see:
-            //     [*] Vimp FAQ: http://vimperator.org/trac/wiki/Vimperator/FAQ#WhydoesntC-workforEscMacOSX
-            //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/vimperator/2008-May/001548.html
-            //     [*] Mozilla bug 416227: event.charCode in keypress handler has unexpected values on Mac for Ctrl with chars in "[ ] _ \"
-            //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=416227
-            //     [*] Mozilla bug 432951: Ctrl+'foo' doesn't seem same charCode as Meta+'foo' on Cocoa
-            //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=432951
-            // ---
-            //
-            // The following fixes are only activated if liberator.has("MacUnix").
-            // Technically, they prevent mappings from <C-Esc> (and
-            // <C-C-]> if your fancy keyboard permits such things<?>), but
-            // these <C-control> mappings are probably pathological (<C-Esc>
-            // certainly is on Windows), and so it is probably
-            // harmless to remove the has("MacUnix") if desired.
-            //
-            else if (liberator.has("MacUnix") && event.ctrlKey && charCode >= 27 && charCode <= 31) {
-                if (charCode == 27) { // [Ctrl-Bug 1/5] the <C-[> bug
-                    key = "Esc";
-                    modifier = modifier.replace("C-", "");
+
+                // [Ctrl-Bug] special handling of mysterious <C-[>, <C-\\>, <C-]>, <C-^>, <C-_> <C--> bugs (OS/X)
+                // ---
+                // For more information, see:
+                //     [*] Vimp FAQ: http://vimperator.org/trac/wiki/Vimperator/FAQ#WhydoesntC-workforEscMacOSX
+                //     [*] Referenced mailing list msg: http://www.mozdev.org/pipermail/vimperator/2008-May/001548.html
+                //     [*] Mozilla bug 416227: event.charCode in keypress handler has unexpected values on Mac for Ctrl with chars in "[ ] _ \"
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=416227
+                //     [*] Mozilla bug 432951: Ctrl+'foo' doesn't seem same charCode as Meta+'foo' on Cocoa
+                //         https://bugzilla.mozilla.org/show_bug.cgi?query_format=specific&order=relevance+desc&bug_status=__open__&id=432951
+                // ---
+                //
+                // The following fixes are only activated if liberator.has("MacUnix").
+                // Technically, they prevent mappings from <C-Esc> (and
+                // <C-C-]> if your fancy keyboard permits such things<?>), but
+                // these <C-control> mappings are probably pathological (<C-Esc>
+                // certainly is on Windows), and so it is probably
+                // harmless to remove the has("MacUnix") if desired.
+
+                if (liberator.has("MacUnix") && event.ctrlKey) {
+                    switch (event.keyCode) {
+                    case 219:   // <C-[>
+                        key = "Esc";
+                        modifier = modifier.replace("C-", "");
+                        break;
+                    case 220:   // <C-\\>
+                        key = "\\";
+                        break;
+                    case 221:   // <C-]>
+                        key = "]";
+                        break;
+                    case 173:   // <C-_> and <C-->
+                        key = event.shiftKey ? "_" : "-";
+                        modifier = modifier.replace("S-", "");
+                        break;
+                    case 54:   // <C-^>
+                        key = "^";
+                        modifier = modifier.replace("S-", "");
+                        break;
+                    default:
+                        break;
+                    }
                 }
-                else // [Ctrl-Bug 2,3,4,5/5] the <C-\\>, <C-]>, <C-^>, <C-_> bugs
-                    key = String.fromCharCode(charCode + 64);
             }
             // a normal key like a, b, c, 0, etc.
             else if (charCode > 0) {
