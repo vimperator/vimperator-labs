@@ -524,20 +524,36 @@ const Liberator = Module("liberator", {
         let fileMap = services.get("liberator:").FILE_MAP;
         let overlayMap = services.get("liberator:").OVERLAY_MAP;
 
+        // XXX: util.httpGet is very heavy on startup. (Fx32)
+        function httpGet(url) {
+            var channel = services.get("io").newChannelFromURI(makeURI(url));
+            try {
+                var stream = channel.open();
+            } catch (ex) {
+                return null;
+            }
+
+            var ps = new DOMParser;
+            var res = ps.parseFromStream(stream, "utf-8", stream.available(), "text/xml");
+            stream.close();
+            return {responseXML: res};
+        }
+
         // Left as an XPCOM instantiation so it can easilly be moved
         // into XPCOM code.
         function XSLTProcessor(sheet) {
             let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);
-            xslt.importStylesheet(util.httpGet(sheet).responseXML);
+            xslt.importStylesheet(httpGet(sheet).responseXML);
             return xslt;
         }
 
         // Find help and overlay files with the given name.
         function findHelpFile(file) {
             let result = [];
+
             for (let namespace of namespaces) {
                 let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
-                let res = util.httpGet(url);
+                let res = httpGet(url);
                 if (res) {
                     if (res.responseXML.documentElement.localName == "document")
                         fileMap[file] = url;
@@ -611,7 +627,7 @@ const Liberator = Module("liberator", {
             </document>`.toString();
         fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
 
-        addTags("plugins", util.httpGet("liberator://help/plugins").responseXML);
+        addTags("plugins", httpGet("liberator://help/plugins").responseXML);
     },
 
     /**

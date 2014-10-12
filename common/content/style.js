@@ -401,10 +401,17 @@ function Styles(name, store) {
     this.addSheet = function (system, name, filter, css, agent) {
         let sheets = system ? systemSheets : userSheets;
         let names = system ? systemNames : userNames;
-        if (name && name in names)
+        let sites = filter.split(",").filter(util.identity);
+        if (name && name in names) {
+            let s = names[name];
+            if (s.css === css && s.sites.join(",") === sites.join(",")) {
+                if (!s.enabled) s.enabled = true;
+                return null;
+            }
             this.removeSheet(system, name);
+        }
 
-        let sheet = Sheet(name, id++, filter.split(",").filter(util.identity), String(css), system, agent);
+        let sheet = Sheet(name, id++, sites, String(css), system, agent);
 
         try {
             sheet.enabled = true;
