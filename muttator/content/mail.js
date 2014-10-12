@@ -376,7 +376,7 @@ const Mail = Module("mail", {
                     for (let j = (i == currentIndex() && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
                              reverse ? (j >= 0) : (j < thread.numChildren);
                              reverse ? j-- : j++) {
-                        msg = thread.getChildAt(j);
+                        msg = thread.getChild(thread.getChildKeyAt(j));
                         if (validatorFunc(msg) && --count == 0) {
                             // this hack is needed to get the correct message, because getChildAt() does not
                             // necessarily return the messages in the order they are displayed
