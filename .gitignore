@@ -9,6 +9,7 @@
 */locale/*/*.html
 */chrome
 */contrib/vim/*.vba
+downloads/
 
 ## Editor backup and swap files
 *~
