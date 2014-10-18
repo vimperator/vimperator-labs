@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="insert"
+    title="&liberator.appname; Insert Mode"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="Insert-mode Insert mode-insert">Insert mode</h1>
+<toc start="2"/>
+
+<p>
+    Insert mode is used to enter text in text boxes and text areas. When
+    <o>insertmode</o> is set, focusing on a text area immediately switches to
+    Insert mode.
+</p>
+
+<item>
+    <tags>i_i</tags>
+    <spec>i_i</spec>
+    <description>
+        <p>Starts Insert mode in text areas when <o>insertmode</o> is not set.</p>
+    </description>
+</item>
+
+
+
+<h2 tag="ins-special-keys">Insert-mode special keys</h2>
+
+<item>
+    <tags><![CDATA[i_<C-i>]]></tags>
+    <spec>&lt;C-i></spec>
+    <description>
+        <p>Launch the external editor. See the <o>editor</o> option.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[i_<C-]>]]></tags>
+    <spec>&lt;C-]></spec>
+    <description>
+        <p>Expand an Insert-mode abbreviation.</p>
+    </description>
+</item>
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

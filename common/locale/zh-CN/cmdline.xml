@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="cmdline"
+    title="&liberator.appname; Command-line"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="Command-line-mode Command-line mode-cmdline">Command-line mode</h1>
+<toc start="2"/>
+
+Command-line mode is used to enter Ex commands (<k>:</k>) and text search patterns
+(<k>/</k> and <k>?</k>).
+
+<item>
+    <tags>:</tags>
+    <spec>:</spec>
+    <description>
+        <p>
+            Start Command-line mode. In Command-line mode, you can perform extended
+            commands, which may require arguments.
+        </p>
+    </description>
+</item>
+
+
+
+<h2 tag="cmdline-editing">Command-line editing</h2>
+
+<item>
+    <tags><![CDATA[c_<C-c>]]></tags>
+    <spec>&lt;C-c></spec>
+    <description>
+        <p>Quit Command-line mode without executing.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<C-]>]]></tags>
+    <spec>&lt;C-]></spec>
+    <description>
+        <p>Expand a command-line abbreviation.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<Up>]]></tags>
+    <spec>&lt;Up></spec>
+    <description>
+        <p>
+            Recall the previous command line from the history list which matches the
+            current command line.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<Down>]]></tags>
+    <spec>&lt;Down></spec>
+    <description>
+        <p>
+            Recall the next command line from the history list which matches the current
+            command line.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Up> c_<PageUp>]]></tags>
+    <spec>&lt;S-Up></spec>
+    <spec>&lt;PageUp></spec>
+    <description>
+        <p>Recall the previous command line from the history list.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Down> c_<PageDown>]]></tags>
+    <spec>&lt;S-Down></spec>
+    <spec>&lt;PageDown></spec>
+    <description>
+        <p>Recall the next command line from the history list.</p>
+    </description>
+</item>
+
+
+<h2 tag="cmdline-completion">Command-line completion</h2>
+
+<item>
+    <tags><![CDATA[c_<Tab>]]></tags>
+    <spec>&lt;Tab></spec>
+    <description>
+        <p>
+            Complete the word in front of the cursor according to the behavior specified in
+            <o>wildmode</o>. If <o>wildmode</o> contains "list" and there are multiple matches then
+            the completion menu window is opened.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[c_<S-Tab>]]></tags>
+    <spec>&lt;S-Tab></spec>
+    <description>
+        <p>Complete the previous full match when <o>wildmode</o> contains "full".</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

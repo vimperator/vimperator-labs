@@ -1,0 +1,1418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="options"
+    title="&liberator.appname; Options"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="options">Options</h1>
+<toc start="2"/>
+
+<p>
+    &liberator.appname; has a number of internal variables and switches which can be set to
+    achieve special effects. These options come in 5 forms:
+</p>
+
+<dl>
+    <dt>boolean</dt>       <dd>can only be on or off</dd>
+    <dt>number</dt>        <dd>has a numeric value</dd>
+    <dt>string</dt>        <dd>has a string value</dd>
+    <dt>charlist</dt>      <dd>like a string but with unique characters</dd>
+    <dt>stringlist</dt>    <dd>a comma-separated list of strings</dd>
+</dl>
+
+<h2 tag="set-option">Setting options</h2>
+
+<item>
+    <tags>:set :se</tags>
+    <spec>:se[t]</spec>
+    <description short="true">
+        <p>Show all options that differ from their default value.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] all</spec>
+    <description short="true">
+        <p>Show all options.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] <a>option</a>?</spec>
+    <description>
+        <p>Show value of <a>option</a>.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] <a>option</a> […]</spec>
+    <description>
+        <dl>
+            <dt>Toggle option</dt> <dd>set, switch it on.</dd>
+            <dt>Number option</dt> <dd>show value.</dd>
+            <dt>String option</dt> <dd>show value.</dd>
+        </dl>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] no<a>option</a> […]</spec>
+    <description>
+        <p>Toggle option: Reset, switch it off.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] <a>option</a>! […]</spec>
+    <spec>:se[t] inv<a>option</a> […]</spec>
+    <description>
+        <p>Toggle option: Invert value.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] inv<a>option</a>=<a>value</a> […]</spec>
+    <spec>:se[t] <a>option</a>!=<a>value</a> […]</spec>
+    <description>
+        <p>For list options, toggle the specified values.</p>
+
+        <p>If the option is a list, the given values are toggled. Given</p>
+        <code><ex>:set opt=foo,bar</ex></code>
+        <p>then,</p>
+        <code><ex>:set opt!=foo,baz</ex></code>
+        <p>has the same result as</p>
+        <code><ex>:set opt=bar,baz</ex></code>
+    </description>
+</item>
+
+<item>
+    <tags>:set-default</tags>
+    <spec>:se[t] <a>option</a>&amp; […]</spec>
+    <description>
+        <p>Reset option to its default value.</p>
+    </description>
+</item>
+
+<item>
+    <spec>:se[t] all&amp;</spec>
+    <description>
+        <p>Set all options to their default value.</p>
+    </description>
+</item>
+
+<item>
+    <tags>:set-args</tags>
+    <spec>:se[t] <a>option</a>=<a>value</a> […]</spec>
+    <description>
+        <p>
+            Set string or number option to <a>value</a>.
+            For numeric options the value must be given in decimal.
+            The old value can be inserted by typing <k name="Tab"/>.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set+=</tags>
+    <spec>:se[t] <a>option</a>+=<a>value</a> […]</spec>
+    <description>
+        <p>
+            Add the <a>value</a> to a number option, or append the <a>value</a>
+            to a string option.  When the option is a comma separated list, a
+            comma is added, unless the value was empty. If the option is a list
+            of flags, superfluous flags are removed.  When adding a flag that
+            was already present the option value doesn't change.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set^=</tags>
+    <spec>:se[t] <a>option</a>^=<a>value</a> […]</spec>
+    <description>
+        <p>
+            Multiply the <a>value</a> to a number option, or prepend the
+            <a>value</a> to a string option. When the option is a comma
+            separated list, a comma is added, unless the value was empty.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set-=</tags>
+    <spec>:se[t] <a>option</a>-=<a>value</a> […]</spec>
+    <description>
+        <p>
+            Subtract the <a>value</a> from a number option, or remove the
+            <a>value</a> from a string option if it is there. If the
+            <a>value</a> is not found in a string option, there is no error or
+            warning. When the option is a comma separated list, a comma is
+            deleted, unless the option becomes empty. When the option is a list
+            of flags, <a>value</a> must be exactly as they appear in the option.
+            Remove flags one by one to avoid problems.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:setlocal :setl</tags>
+    <spec>:setl[ocal]</spec>
+    <spec>:setl[ocal] all</spec>
+    <spec>:setl[ocal] <a>option</a>?</spec>
+    <spec>:setl[ocal] <a>option</a></spec>
+    <spec>:setl[ocal] no<a>option</a></spec>
+    <spec>:setl[ocal] inv<a>option</a></spec>
+    <spec>:setl[ocal] <a>option</a>&amp;</spec>
+    <spec>:setl[ocal] all&amp;</spec>
+    <spec>:setl[ocal] <a>option</a>=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>+=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>^=<a>value</a></spec>
+    <spec>:setl[ocal] <a>option</a>-=<a>value</a></spec>
+    <description>
+        <p>
+            The same as <ex>:set</ex> command, but operates on current tab options
+            only. See <ex>:set</ex> for details.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:setglobal :setg</tags>
+    <spec>:setg[lobal]</spec>
+    <spec>:setg[lobal] all</spec>
+    <spec>:setg[lobal] <a>option</a>?</spec>
+    <spec>:setg[lobal] <a>option</a></spec>
+    <spec>:setg[lobal] no<a>option</a></spec>
+    <spec>:setg[lobal] inv<a>option</a></spec>
+    <spec>:setg[lobal] <a>option</a>&amp;</spec>
+    <spec>:setg[lobal] all&amp;</spec>
+    <spec>:setg[lobal] <a>option</a>=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>+=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>^=<a>value</a></spec>
+    <spec>:setg[lobal] <a>option</a>-=<a>value</a></spec>
+    <description>
+        <p>
+            The same as <ex>:set</ex> command, but operates on global options only.
+            See <ex>:set</ex> for details.
+        </p>
+    </description>
+</item>
+
+<tags>expand-environment-var expand-env :set_env</tags>
+
+<p>
+    Environment variables are expanded for path options like <o>cdpath</o> and
+    <o>runtimepath</o>. The variable notation is <em>$VAR</em> (terminated by a non-word
+    character) or <em>$<a>VAR</a></em>. <em>%VAR%</em> is also supported on Windows.
+</p>
+
+<h2 tag="&liberator.host;-options preferences">Setting &liberator.host; options</h2>
+
+<p>&liberator.host; options can be viewed and set with the following commands:</p>
+
+<item>
+    <tags>:prefs :preferences</tags>
+    <spec>:pref[erences]</spec>
+    <description>
+        <p>
+            Show the &liberator.host; preferences dialog. You can change the browser
+            preferences from this dialog. Be aware that not all &liberator.host;
+            preferences work, because &liberator.appname; overrides some key bindings and
+            changes &liberator.host;'s GUI.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:prefs! :preferences!</tags>
+    <spec>:pref[erences]!</spec>
+    <description>
+        <p>
+            Opens about:config in the current tab where you can change advanced &liberator.host;
+            preferences.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:set! :set-!</tags>
+    <spec>:se[t]! <a>preference</a>=<a>value</a></spec>
+    <description>
+        <p>
+            Change any &liberator.host; <a>preference</a> (those in the about:config
+            window). You can also reset/delete those preferences with
+            <ex>:set! <a>preference</a>&amp;</ex>.
+        </p>
+    </description>
+</item>
+
+<tags>overridden-preferences</tags>
+
+<p>
+    &liberator.appname; sets several &liberator.host; preferences at startup. If this is undesirable,
+    they can be changed to a different value in your RC file using
+    <ex>:set! <a>preference</a>=<a>value</a></ex>
+</p>
+
+<p>The following preferences are set:</p>
+
+<ul>
+    <li><link topic="http://kb.mozillazine.org/Dom.popup_allowed_events">dom.popup_allowed_events</link></li>
+    <li><link topic="http://kb.mozillazine.org/Accessibility.typeaheadfind.autostart">accessibility.typeaheadfind.autostart</link></li>
+    <li><link topic="http://kb.mozillazine.org/Accessibility.typeaheadfind">accessibility.typeaheadfind</link></li>
+</ul>
+
+<!-- TODO: others? -->
+
+<h2 tag="list-options">List of options</h2>
+
+<item>
+    <tags>'act' 'activate'</tags>
+    <spec>'activate' 'act'</spec>
+    <type>stringlist</type>
+    <default>addons,downloads,extoptions,help,homepage,quickmark,tabopen,paste</default>
+    <description>
+        <p>Define when tabs are automatically activated. Available items:</p>
+
+        <dl>
+            <dt>all</dt>           <dd>All tabs created by any commands and mappings</dd>
+            <dt>addons</dt>        <dd><ex>:addo[ns]</ex> command</dd>
+            <dt>downloads</dt>     <dd><ex>:downl[oads]</ex> command</dd>
+            <dt>extoptions</dt>    <dd><ex>:exto[ptions]</ex> command</dd>
+            <dt>help</dt>          <dd><ex>:h[elp]</ex> command</dd>
+            <dt>homepage</dt>      <dd><k>gH</k> mapping</dd>
+            <dt>quickmark</dt>     <dd><k>go</k> and <k>gn</k> mappings</dd>
+            <dt>tabopen</dt>       <dd><ex>:tabopen[!]</ex> command</dd>
+            <dt>paste</dt>         <dd><k>P</k> and <k>gP</k> mappings</dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'ac' 'autocomplete'</tags>
+    <spec>'autocomplete' 'ac'</spec>
+    <type>boolean</type>
+    <default>true</default>
+    <description>
+        <p>If set, automatically list completions while typing.</p>
+        <warning>Setting this option might be slow on older hardware, so turn that option off if you experience unwanted slowdowns.</warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>$CDPATH</tags>
+    <tags>'cd' 'cdpath'</tags>
+    <spec>'cdpath' 'cd'</spec>
+    <type>string</type>
+    <default type="plain">equivalent to <em>$CDPATH</em> or <str>,,</str></default>
+    <description>
+        <p>
+            List of directories searched when executing the <ex>:cd</ex>
+            command. This is only used for relative paths if an absolute path is
+            specified then the option is ignored.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'cpt' 'complete'</tags>
+    <spec>'complete' 'cpt'</spec>
+    <type>charlist</type>
+    <default>slf</default>
+    <description>
+        <p>Items which are completed at the <ex>:open</ex> prompts. Available items:</p>
+
+        <dl>
+            <dt>s</dt>     <dd>Search engines and keyword URLs</dd>
+            <dt>f</dt>     <dd>Local files</dd>
+            <dt>l</dt>     <dd>&liberator.host; location bar entries (bookmarks and history sorted in an intelligent way)</dd>
+            <dt>b</dt>     <dd>Bookmarks</dd>
+            <dt>h</dt>     <dd>History</dd>
+            <dt>S</dt>     <dd>Search engine suggestions</dd>
+            <dt>t</dt>     <dd>Open tabs</dd>
+        </dl>
+
+        <p>
+            The order is important, so <ex>:set complete=bs</ex> would list bookmarks first,
+            and then any available quick searches.
+        </p>
+
+        <warning>
+            Using <em>b</em> and <em>h</em> can make completion very slow if there are many items.
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ds' 'defsearch'</tags>
+    <spec>'defsearch' 'ds'</spec>
+    <type>string</type>
+    <default>Your default search engine keyword or "google"</default>
+    <description>
+        <p>
+            Sets the default search engine. The default search engine name is
+            used in the <ex>:open [arg]</ex> command if [arg] neither
+            looks like a URL nor like a specified search engine/keyword.
+        </p>
+
+        <p>
+            This means that if you set <o>defsearch</o> to <str>youtube</str>,
+            then <ex>:open arnold schwarzenegger</ex> will be exactly the same as
+            <ex>:open youtube arnold schwarzenegger</ex>. Therefore, you need
+            to add a keyword or search engine <str>youtube</str> first.
+        </p>
+
+        <p>
+            If <o>defsearch</o> is empty, then &liberator.host; will always attempt to
+            open the raw [arg].
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'editor'</tags>
+    <spec>'editor'</spec>
+    <type>string</type>
+    <default>gvim -f</default>
+    <description>
+        <p>
+            Set the external text editor.
+            Sets the editor to run when <k name="C-i"/> is pressed in Insert and TextArea
+            modes.
+        </p>
+
+        <warning>
+            &liberator.appname; will not behave correctly if the editor forks its own
+            process, such as with gvim without the -f argument.
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noex' 'noexrc'</tags>
+    <tags>'ex' 'exrc'</tags>
+    <spec>'exrc' 'ex'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Allow reading of an RC file in the current directory. This file is
+            sourced in addition to, and after, your default RC file.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'eht' 'extendedhinttags'</tags>
+    <spec>'extendedhinttags' 'eht'</spec>
+    <type>string</type>
+    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] |
+//a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe |
+//textarea | //xhtml:textarea | //button | //xhtml:button | //select |
+//xhtml:select |
+//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link']</default>
+    <description>
+        <p>The XPath string of hintable elements activated by <k>;</k>.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noeb' 'noerrorbells'</tags>
+    <tags>'eb' 'errorbells'</tags>
+    <spec>'errorbells' 'eb'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>Ring the bell when an error message is displayed.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ei' 'eventignore'</tags>
+    <spec>'eventignore'</spec>
+    <type>stringlist</type>
+    <default></default>
+    <description>
+        <p>
+            A list of autocommand event names which should be ignored. If the list contains
+            the value <str>all</str> then all events are ignored.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'enc' 'encoding'</tags>
+    <spec>'encoding'</spec>
+    <type>string</type>
+    <default>UTF-8</default>
+    <description>
+        <p>
+            Changes the character encoding of the current buffer. Valid only for
+            the current page.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'fenc' 'fileencoding'</tags>
+    <spec>'fileencoding'</spec>
+    <type>string</type>
+    <default>UTF-8</default>
+    <description>
+        <p>Changes the character encoding that &liberator.appname; uses to read and write files.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nofc' 'nofocuscontent'</tags>
+    <tags>'fc' 'focuscontent'</tags>
+    <spec>'focuscontent' 'fc'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Focus the content after a page has loaded. This is useful if you
+            always want to stay in Normal mode when browsing between web sites.
+            When <str>on</str>, it blurs any textbox which often is
+            automatically focused on page load.  If you usually like
+            <o>focuscontent</o> but sometimes you'd like to focus the first
+            input field, you can use <k>gi</k> to jump to it.
+        </p>
+        <note>Some pages use JavaScript to focus the textfield, then 'focuscontent'
+        might not work as expected.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'fh' 'followhints'</tags>
+    <spec>'followhints' 'fh'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>Change the behaviour of <k name="Return"/> in Hints mode.</p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>Follow the first hint as soon as typed text uniquely identifies it.</dd>
+            <dt>1</dt>      <dd>Follow the selected hint on <k name="Return"/>.</dd>
+            <dt>2</dt>      <dd>Follow the selected hint on <k name="Return"/> only if it's been <k name="Tab"/>-selected.</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nofs' 'nofullscreen'</tags>
+    <tags>'fs' 'fullscreen'</tags>
+    <spec>'fullscreen' 'fs'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Show the current window fullscreen. Also hide certain GUI elements like the
+            statusline.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hf' 'helpfile'</tags>
+    <spec>'helpfile' 'hf'</spec>
+    <type>string</type>
+    <default>intro</default>
+    <description>
+        <p>
+            Name of the main help file. This is the tail component of the chrome
+            URL as displayed in the status line when viewing the page.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'hc' 'hintchars'</tags>
+    <spec>'hintchars' 'hc'</spec>
+    <type>string</type>
+    <default>0123456789</default>
+    <description>
+        <p>
+            Controls which characters are used to generate hint labels.
+            Case-sensitive.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'hin' 'hintinputs'</tags>
+    <spec>'hintinputs' 'hin'</spec>
+    <type>stringlist</type>
+    <default>label,value</default>
+    <description>
+        <p>
+            When generating hints for input elements that do not have an
+            explicit caption, this specifies the methods to try and generate a
+            textual hint. It tries the options in the order that you give, and
+            uses the first that it finds.
+        </p>
+
+        <dl>
+            <dt>value</dt>      <dd>The hint is the value displayed in a text input, or the selected option for a dropdown.</dd>
+            <dt>label</dt>      <dd>The value of an explicit label for the input, this will not match most manually added labels that are found on sites.</dd>
+            <dt>name </dt>      <dd>The name of the input will be used, although the name is not designed for user consumption, it is frequently very similar to the label.</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hm' 'hintmatching'</tags>
+    <spec>'hintmatching' 'hm'</spec>
+    <type>string</type>
+    <default>contains</default>
+    <description>
+        <p>Change the hint matching algorithm during Hints mode.</p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>contains</dt>           <dd>The typed characters are split on whitespace, and these character groups have to match anywhere inside the text of the link.</dd>
+            <dt>wordstartswith</dt>     <dd>The typed characters are matched with the beginning of the first word (see <o>wordseparators</o>) in the link as long as possible. If no matches occur in the current word, then the matching is continued at the beginning of the next word. The words are worked through in the order they appear in the link. If the typed characters contain spaces, then the characters are split on whitespace. These character groups are then matched with the beginning of the words, beginning at the first one and continuing with the following words in the order they appear in the link.</dd>
+            <dt>firstletters</dt>       <dd>Behaves like wordstartswith, but non-matching words aren't overleaped.</dd>
+            <dt>custom</dt>             <dd>Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ht' 'hinttags'</tags>
+    <spec>'hinttags' 'ht'</spec>
+    <type>string</type>
+    <default>//input[not(@type='hidden')] | //xhtml:input[not(@type='hidden')] | //a | //xhtml:a | //area | //xhtml:area | //iframe | //xhtml:iframe | //textarea | //xhtml:textarea | //button | //xhtml:button | //select | //xhtml:select | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link'or @role='button' or @role='checkbox' or @role='combobox' or @role='listbox' or @role='listitem' or @role='menuitem' or @role='menuitemcheckbox' or @role='menuitemradio' or @role='option' or @role='radio' or @role='scrollbar' or @role='slider' or @role='spinbutton' or @role='tab' or @role='textbox' or @role='treeitem' or @tabindex]</default>
+    <description>
+        <p>XPath string of hintable elements activated by <k>f</k> and <k>F</k></p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hto' 'hinttimeout'</tags>
+    <spec>'hinttimeout' 'hto'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>
+            Timeout before automatically following a non-unique numerical hint. Set to 0
+            (the default) to only follow numeric hints after pressing <k name="Return"/> or
+            when the hint is unique.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'hi' 'history'</tags>
+    <spec>'history' 'hi'</spec>
+    <type>number</type>
+    <default>500</default>
+    <description>
+        <p>Number of Ex commands and search patterns to store in the command-line history.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noprivate' 'private'</tags>
+    <spec>'private'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Set the <str>private browsing</str> option. In private browsing mode
+            history, cache files, cookies, form data, passwords, download list
+            entries, local and URL marks, command-line history and macros are
+            available only for the duration of the private browsing session and
+            deleted when returning to normal browsing mode.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nohls' 'nohlsearch'</tags>
+    <tags>'hls' 'hlsearch'</tags>
+    <spec>'hlsearch' 'hls'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>Highlight previous search pattern matches</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noic' 'noignorecase'</tags>
+    <tags>'ic' 'ignorecase'</tags>
+    <spec>'ignorecase' 'ic'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Ignore case in search patterns.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nois' 'noincsearch'</tags>
+    <tags>'is' 'incsearch'</tags>
+    <spec>'incsearch' 'is'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Show where the search pattern matches as it is typed.</p>
+
+        <note>Incremental searching currently only works in the forward direction.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noim' 'noinsertmode'</tags>
+    <tags>'im' 'insertmode'</tags>
+    <spec>'insertmode' 'im'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            Use Insert mode as the default for text areas. This is useful if you
+            want to use the known &liberator.host; interface for editing text areas.
+            Input fields default to this behaviour irrespective of this option's
+            setting.
+        </p>
+
+        <p>
+            Textarea mode can be entered with <k name="C-t"/> from Insert mode.
+            <!-- TODO: <C-t> is not documented yet. -->
+        </p>
+    </description>
+</item>
+
+<!--deliberately not documented, as we should either ensure it's safe or not support it
+<item>
+    <tags>'noinspectcontentobjects'</tags>
+    <tags>'inspectcontentobjects'</tags>
+    <spec>'inspectcontentobjects'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Allow completion of JavaScript objects coming from web content.
+            E.g. <code><ex>:echo window.content.&lt;tab&gt;</ex></code>
+            will also show properties set from the web page. Without this
+            option, you would need to go through <str>window.content.wrappedJSObject</str>
+            to access those properties.
+        </p>
+        <warning>POSSIBLY INSECURE!</warning>
+    </description>
+</item-->
+
+<item>
+    <tags>'status'</tags>
+    <spec>'status'</spec>
+    <type>stringlist</type>
+    <default>input,location,bookmark,history,tabcount,position</default>
+    <description>
+        <p>Determines which elements to show in the status bar.</p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>input</dt>      <dd>A partial command like 'g' if you just start typing 'gg'</dd>
+            <dt>location</dt>   <dd>The URL of the currently loaded page</dd>
+            <dt>bookmark</dt>   <dd>&#x2764;: indicates current page has been bookmarked</dd>
+            <dt>history</dt>    <dd>&lt;&gt;: go backward and forward in history indicators</dd>
+            <dt>tabcount</dt>   <dd>[N/M]: N is the index of the currently selected tab and M is
+                                    the total number of tabs in the current window.</dd>
+            <dt>position</dt>   <dd>The vertical scroll position</dd>
+            <dt>ssl</dt>        <dd>Show an icon when the current buffer is connecting with SSL.</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nolks' 'nolinksearch'</tags>
+    <tags>'lks' 'linksearch'</tags>
+    <spec>'linksearch' 'lks'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Limit the search to hyperlink text.  This includes (X)HTML elements
+            with an <str>href</str> atrribute and XLink <str>simple</str> links.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nolpl' 'lpl'</tags>
+    <tags>'noloadplugins' 'loadplugins'</tags>
+    <spec>'loadplugins' 'lpl'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            Load plugin scripts when starting up. When on, yet unloaded plugins
+            are automatically loaded after the &liberator.name;rc file has been
+            sourced. To load plugins earlier, use the <ex>:loadplugins</ex>
+            command within the &liberator.name;rc.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'maxitems'</tags>
+    <spec>'maxitems'</spec>
+    <type>number</type>
+    <default>20</default>
+    <description>
+        <p>Maximum number of items to display at once in a listing.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'msgs' 'messages'</tags>
+    <spec>'messages' 'msgs'</spec>
+    <type>number</type>
+    <default>100</default>
+    <description>
+        <p>Number of messages to store in the message history.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'mto' 'messagetimeout'</tags>
+    <spec>'messagetimeout' 'mto'</spec>
+    <type>number</type>
+    <default>5000</default>
+    <description>
+        <p>
+            Timeout before hiding informational messages in milliseconds. If
+            you have ever missed a message, you can always just type
+            <ex>:messages</ex> to view the last messages.
+            You can also disable this timeout completely by setting it to -1.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nextpattern'</tags>
+    <spec>'nextpattern'</spec>
+    <type>stringlist</type>
+    <default>\bnext,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b</default>
+    <description>
+        <p>
+            Patterns to use when guessing the <o>next</o> page in a document
+            sequence when the user hits <k>]]</k>. Each pattern, in order, is
+            matched against all links in the page with the first match being
+            used. The patterns are case insensitive regular expressions and the
+            link elements are those defined by <o>hinttags</o>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'newtab'</tags>
+    <spec>'newtab'</spec>
+    <type>stringlist</type>
+    <default></default>
+    <description>
+        <p>
+            Define which Ex commands output the result in a new tab
+            automatically. You can also use <ex>:tab command</ex> to manually
+            output a command in a new tab.
+        </p>
+
+        <p>The possible values:</p>
+
+        <dl>
+            <dt>all</dt>            <dd>All commands</dd>
+            <dt>addons</dt>         <dd><ex>:addo[ns]</ex> command</dd>
+            <dt>downloads</dt>      <dd><ex>:downl[oads]</ex> command</dd>
+            <dt>extoptions</dt>     <dd><ex>:exto[ptions]</ex> command</dd>
+            <dt>help</dt>           <dd><ex>:h[elp]</ex> command</dd>
+            <dt>javascript</dt>     <dd><ex>:javascript!</ex> or <ex>:js!</ex> command</dd>
+            <dt>prefs</dt>          <dd><ex>:pref[erences]!</ex> or <ex>:prefs!</ex> command</dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'noonline' 'online'</tags>
+    <spec>'online'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Show and set the 'work offline' behavior.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'pageinfo' 'pa'</tags>
+    <spec>'pageinfo' 'pa'</spec>
+
+    <type>charlist</type>
+    <default>gfm</default>
+    <description>
+        <p>Desired info in the <ex>:pageinfo</ex> output.</p>
+
+        <p>Available items:</p>
+
+        <dl>
+            <dt>g</dt>      <dd>General info</dd>
+            <dt>f</dt>      <dd>Feeds</dd>
+            <dt>m</dt>      <dd>Meta tags</dd>
+        </dl>
+
+        <p>
+            The order of the options defines the order in which they appear in
+            the result.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'pps' 'popups'</tags>
+    <spec>'popups' 'pps'</spec>
+    <type>stringlist</type>
+    <default>tab</default>
+    <description>
+        <p>
+            Define where to show requested popup windows.  Does not apply to
+            windows which are opened by middle clicking a link, they always open
+            in a new tab.
+        </p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>tab</dt>            <dd>Open popups in a new tab</dd>
+            <dt>window</dt>         <dd>Open popups in a new window</dd>
+            <dt>resized</dt>        <dd>Open resized popups in a new window</dd>
+        </dl>
+
+        <p>
+            If neither <em>tab</em> nor <em>window</em> is provided, all popups open in the current tab.
+            <em>tab</em> and <em>window</em> are mutually exclusive, and the last one listed is
+            effective.
+        </p>
+
+        <note>This option does not change the popup blocker of &liberator.host; in any way.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'previouspattern'</tags>
+    <spec>'previouspattern'</spec>
+    <type>stringlist</type>
+    <default><![CDATA[\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$]]></default>
+    <description>
+        <p>
+            Patterns to use when guessing the <o>previous</o> page in a document
+            sequence when the user hits <ex>[[</ex>. Each pattern, in order, is
+            matched against all links in the page with the first match being
+            used. The patterns are case insensitive regular expressions and the
+            link elements are those defined by <o>hinttags</o>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>$&liberator.idname;_RUNTIME</tags>
+    <tags>'rtp' 'runtimepath'</tags>
+    <spec>'runtimepath' 'rtp'</spec>
+    <type>stringlist</type>
+    <default type="plain"><str>$&liberator.idname;_RUNTIME</str> or
+    Unix, Mac: <str>~/.&liberator.name;</str>,
+    Windows: <str>~/&liberator.name;</str></default>
+    <description>
+        <p>List of directories searched for runtime files:</p>
+
+        <ul>
+            <li>colors/</li>
+            <li>macros/</li>
+            <li>plugin/</li>
+        </ul>
+
+        <p>Example:</p>
+
+        <code><ex>:set runtimepath=<str>~/my&liberator.name;,~/.&liberator.name;</str></ex></code>
+
+        <p>
+            This will search for plugins in both
+            <str>~/my&liberator.name;/plugin</str> and
+            <str>~/.&liberator.name;/plugin</str>
+        </p>
+
+        <p>
+            On startup, if the environment variable <em>$&liberator.idname;_RUNTIME</em> does not
+            exist, &liberator.appname; will set it to match this value.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'si' 'sanitizeitems'</tags>
+    <spec>'sanitizeitems' 'si'</spec>
+    <type>stringlist</type>
+    <default>cache,commandline,cookies,formdata,history,marks,sessions</default>
+    <description>
+        <p>The default list of private items to sanitize.</p>
+
+        <dl>
+            <dt>cache       </dt>       <dd>Cache</dd>
+            <dt>commandline </dt>       <dd>Command-line history</dd>
+            <dt>cookies     </dt>       <dd>Cookies</dd>
+            <dt>downloads   </dt>       <dd>Download history</dd>
+            <dt>formdata    </dt>       <dd>Saved form and search history</dd>
+            <dt>history     </dt>       <dd>Browsing history</dd>
+            <dt>marks       </dt>       <dd>Local and URL marks</dd>
+            <dt>macros      </dt>       <dd>Saved macros</dd>
+            <dt>offlineapps </dt>       <dd>Offline website data</dd>
+            <dt>passwords   </dt>       <dd>Saved passwords</dd>
+            <dt>sessions    </dt>       <dd>Authenticated sessions</dd>
+            <dt>sitesettings</dt>       <dd>Site preferences</dd>
+        </dl>
+
+        <p>
+            When history items are sanitized <ex>:open</ex>,
+            <ex>:tabopen</ex> and <ex>:winopen</ex> command-line
+            history entries are also removed.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'sts' 'sanitizetimespan'</tags>
+    <spec>'sanitizetimespan' 'sts'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            The default sanitizer time span. Only items created within this timespan are
+            deleted.
+        </p>
+
+        <note>This only applies to <em>cookies</em>, <em>history</em>, <em>formdata</em>, and <em>downloads</em>.</note>
+
+        <dl>
+            <dt>0</dt>      <dd>Everything</dd>
+            <dt>1</dt>      <dd>Last hour</dd>
+            <dt>2</dt>      <dd>Last two hours</dd>
+            <dt>3</dt>      <dd>Last four hours</dd>
+            <dt>4</dt>      <dd>Today</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'scr' 'scroll'</tags>
+    <spec>'scroll' 'scr'</spec>
+    <type>number</type>
+    <default>0</default>
+    <description>
+        <p>
+            Number of lines to scroll with <k name="C-u"/> and <k name="C-d"/>
+            commands.  The number of lines scrolled defaults to half the window
+            size.  When a [count] is specified to the <k name="C-u"/> or
+            <k name="C-d"/> commands this is used to set the value of
+            <o>scroll</o> and also used for the current command. The value can
+            be reset to half the window height with <ex>:set scroll=0</ex>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosb' 'noscrollbars'</tags>
+    <tags>'sb' 'scrollbars'</tags>
+    <spec>'scrollbars' 'sb'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Show or hide the scrollbars in the main content window. If the
+        document has a frameset, then only the outermost scrollbars are affected.</p>
+
+        <note>This option requires a page reload to take effect.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosi' 'nosmallicons'</tags>
+    <tags>'si' 'smallicons'</tags>
+    <spec>'smallicons' 'si'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Defines the icon size in the main toolbar.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'shell' 'sh'</tags>
+    <spec>'shell' 'sh'</spec>
+    <type>string</type>
+    <default>_$SHELL_ or "sh", Windows: "cmd.exe"</default>
+    <description>
+        <p>Shell to use for executing <ex>:!</ex> and <ex>:run</ex> commands.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'shellcmdflag' 'shcf'</tags>
+    <spec>'shellcmdflag' 'shcf'</spec>
+    <type>string</type>
+    <default type="plain"><str>-c</str>, Windows: <str>/c</str></default>
+    <description>
+        <p>Flag passed to shell when executing <ex>:!</ex> and <ex>:run</ex> commands.</p>
+
+        <example><str>bash -c gvim</str></example>
+    </description>
+</item>
+
+
+<item>
+    <tags>'nosmd' 'noshowmode'</tags>
+    <tags>'smd' 'showmode'</tags>
+    <spec>'showmode' 'smd'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Show the current mode in the command line.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'ssli' 'showstatuslinks'</tags>
+    <spec>'showstatuslinks' 'ssli'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            Show the destination of the link under the cursor in the status bar.
+            Also links which are focused by keyboard commands like
+            <k name="Tab"/> are shown.
+        </p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>0</dt>      <dd>Don't show link destination</dd>
+            <dt>1</dt>      <dd>Show the link in the status line</dd>
+            <dt>2</dt>      <dd>Show the link in the command line</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>'noscs' 'nosmartcase'</tags>
+    <tags>'scs' 'smartcase'</tags>
+    <spec>'smartcase' 'scs'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>
+            Override the <o>ignorecase</o> option if the pattern contains
+            uppercase characters.  This is only used if the <o>ignorecase</o>
+            option is set.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'suggestengines'</tags>
+    <spec>'suggestengines'</spec>
+    <type>stringlist</type>
+    <default>google</default>
+    <description>
+        <p>
+            Set the search engines which can be used for completion suggestions.
+            Add <str>S</str> to the <o>complete</o> option if you want to use
+            this feature.
+        </p>
+
+        <warning>
+            This feature could make tab-completion slower because it needs to
+            wait for changes, so use it only if you have a fast internet
+            connection.
+        </warning>
+    </description>
+</item>
+
+
+<item>
+    <tags>'notn' 'notabnumbers'</tags>
+    <tags>'tn' 'tabnumbers'</tags>
+    <spec>'tabnumbers' 'tn'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Tab numbers appear as small numbers in the right corner of tabs.
+            They can be used to quickly get the position of a tab, which can
+            be used by other commands like 12<k>gt</k> to to to tab number 12.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'titlestring'</tags>
+    <spec>'titlestring'</spec>
+    <type>string</type>
+    <default>&liberator.appname;</default>
+    <description>
+        <p>
+            Change the title of the browser window.  &liberator.appname; changes the
+            browser title from <str>Title of web page - Mozilla &liberator.host;</str>
+            to <str>Title of web page - &liberator.appname;</str>.  If you don't like
+            that, you can restore it with:
+        </p>
+        <code><ex>:set titlestring=<str>Mozilla &liberator.host;</str></ex></code>
+    </description>
+</item>
+
+
+<item>
+    <tags>'gui' 'toolbars'</tags>
+    <spec>'toolbars' 'gui'</spec>
+    <type>stringlist</type>
+    <default></default>
+    <description>
+        <p>Show or hide &liberator.host;'s GUI elements like the menu bar, toolbars or the tab bar.</p>
+        <note>Since everything in Firefox is basically a toolbar, the <o>toolbars</o> and <o>gui</o>
+            aliases are equivalent and can be used interchangeably. <ex>:set gui=none,tabs</ex>
+            might read better for some, whereas <ex>:set toolbars=nonavigation</ex> might be better
+            in other cases.
+        </note>
+
+        <p>This option is designed to allow full UI customization with Firefox's capabilities,
+            as well as with Vimperator's. Therefore the default value <ex>:set gui=</ex> just
+            means that we don't touch any GUI elements by default. If you want a truely minimal
+            GUI, you can - however - just use <ex>:set gui=none</ex> in your .vimperatorrc file.</p>
+
+        <p>Individual elements can be shown with <ex>:set toolbars=&lt;toolbar&gt;</ex> and hidden with
+            <ex>:set toolbars=no&lt;toolbar&gt;</ex>. If you want to toggle the display of an element,
+            just use <ex>:set toolbars=inv&lt;toolbar&gt;</ex>, which also provides a good basis for
+            adding some mappings to quickly toggle certain elements.
+        </p>
+
+        <p>Supported elements:</p>
+
+        <dl>
+            <dt>menu</dt>       <dd>Menu Bar</dd>
+            <dt>tabs</dt>       <dd>Tab Bar <warning>Due to a bug, currently gets shown again by Firefox</warning></dd>
+            <dt>navigation</dt> <dd>Main toolbar which contains buttons for navigating back/forward as well as the location box.</dd>
+            <dt>bookmarks</dt>  <dd>Bookmark bar</dd>
+            <dt>addons</dt>     <dd>Optional add-on bar at the bottom. By default, only shown if there are addons using it.</dd>
+        </dl>
+
+        <p>In order to quickly change the whole GUI, &liberator.appname; provides two more meta elements:</p>
+        <dl>
+            <dt>all</dt>        <dd>Show as much GUI as possible</dd>
+            <dt>none</dt>       <dd>Hide all GUI</dd>
+        </dl>
+
+        Since the elements are processed sequentially, you can combine these items
+        to change the whole GUI really quickly. E.g. to just show the tab bar, but
+        no other GUI elements, use <ex>:set gui=none,tabs</ex>.
+
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'noum' 'nousermode'</tags>
+    <tags>'um' 'usermode'</tags>
+    <spec>'usermode' 'um'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>Show current website with a minimal style sheet to make it easily accessible.</p>
+
+        <note>This is a local option for now, a global value may be supported in the future.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>'urlseparator'</tags>
+    <spec>'urlseparator'</spec>
+    <type>string</type>
+    <default>,\\s</default>
+    <description>
+        <p>
+            Set the separator regex used to separate multiple URL args. Multiple
+            arguments can be specified for <ex>:open</ex>, and similar commands,
+            using this regex as the separator. Using whitespace alone is not
+            generally useful since it is often contained in a single argument.
+            E.g., <ex>:open linus torvalds</ex> should perform a single search
+            for the key words <str>linus</str> and <str>torvalds</str>. If this
+            is set to the empty string then these arguments will never be split.
+
+        </p>
+        <p>
+            If regex special character is used as url separator, it has to be escaped.
+            For instance, <str>|</str> should be escaped as <str>\\|</str>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'verbose', 'vbs'</tags>
+    <spec>'verbose' 'vbs'</spec>
+    <type>number</type>
+    <default>1</default>
+    <description>
+        <p>
+            Define which info messages are displayed.  When bigger than zero,
+            &liberator.appname; will give messages about what it is doing.  These can be
+            viewed at any time with the <ex>:messages</ex> command. The highest
+            value is 15, being the most verbose mode.
+        </p>
+        <!-- TODO: list levels and associated messages -->
+    </description>
+</item>
+
+
+<item>
+    <tags>'novb' 'novisualbell'</tags>
+    <tags>'vb' 'visualbell'</tags>
+    <spec>'visualbell' 'vb'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Use visual bell instead of beeping on errors. The visual bell style is
+            controlled by <ex>:hi Bell</ex>.
+        </p>
+
+        <p>
+            To disable both the audible and visual bells use <ex>:set visualbell</ex>
+            and <ex>:hi Bell display: none;</ex>
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>'wim' 'wildmode'</tags>
+    <spec>'wildmode' 'wim'</spec>
+    <type>stringlist</type>
+    <default>list:full</default>
+    <description>
+        <p>
+            Defines how command-line completion works.  It is a comma-separated
+            list of parts, where each part specifies what to do for each
+            consecutive use of the completion key.  The first part specifies the
+            behavior for the first use of the completion key, the second part
+            for the second use, etc.
+        </p>
+
+        <p>These are the possible values for each part:</p>
+
+        <dl>
+            <dt><str></str></dt>             <dd>Complete only the first match.</dd>
+            <dt><str>full</str></dt>         <dd>Complete the next full match. After the last, the original string is used.</dd>
+            <dt><str>longest</str></dt>      <dd>Complete till the longest common string.</dd>
+            <dt><str>list</str></dt>         <dd>When more than one match, list all matches.</dd>
+            <dt><str>list:full</str></dt>    <dd>When more than one match, list all matches and complete the first match.</dd>
+            <dt><str>list:longest</str></dt>
+            <dd>
+                When more than one match, list all matches and
+                complete till the longest common string. When there
+                is only a single match, it is fully completed
+                regardless of the case.
+            </dd>
+        </dl>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>'wsp' 'wordseparators'</tags>
+    <spec>'wordseparators' 'wsp'</spec>
+    <type>string</type>
+    <default><![CDATA[[\.,!\?:;/\\"\^\$%&?\(\)\[\]\\<a>\\</a><>#\\*\+\\|=~ _\\-]]]></default>
+    <description>
+        <p>
+            A regex which defines the word separators which are used for the
+            <o>hintmatching</o> types <str>wordstartswith</str> and
+            "firstletters" to split the words in the text of a link.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>'yankencodedurl'</tags>
+    <spec>'yankencodedurl'</spec>
+    <type>boolean</type>
+    <default>false</default>
+    <description>
+        <p>Set the yank mode for copying URLs. By default, only whitespace charaters are replaced by %20 to make pasting in other apps easy. If yankencodedurl is <str>true</str>, any non-ASCII character is URL encoded as well.</p>
+    </description>
+</item>
+
+<item>
+    <tags> 'ani' 'animations'</tags>
+    <spec> 'animations' 'ani'</spec>
+    <type>boolean</type>
+    <default>false</default>
+    <description>
+        <p>animation on/off.</p>
+    </description>
+</item>
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

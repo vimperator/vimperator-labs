@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="hints"
+    title="&liberator.appname; Hints"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="quick-hints hints">Hints</h1>
+<toc start="2"/>
+
+Hints are the way in which &liberator.appname; allows you to follow links on a page. By
+providing each link with a suitable hint, you can access all links with a
+similar amount of minimal effort. This contrasts strongly with the traditional
+approaches offered by the mouse, in which you must first find and then aim for
+the link you would like, and by using repeated tabbing which quickly becomes
+tedious unless you always visit the first link on a page.
+
+<item>
+    <tags>f</tags>
+    <spec>f<a>hint</a></spec>
+    <description>
+        <p>
+            Start QuickHint mode. In QuickHint mode, every hintable item
+            (according to the <o>hinttags</o> XPath query) is assigned a
+            unique number. You can either type this number or type part of the
+            link text as specified by the <o>hintmatching</o> option, and it
+            is followed as soon as it can be uniquely identified. Often it can
+            be useful to combine these techniques to narrow down results with
+            some letters, and then typing a single digit to make the match
+            unique. Pressing <k name="Leader"/> (defaults to
+            <ex>:let mapleader = "\"</ex>) toggles "escape-mode", where numbers are
+            treated as normal text. <k name="Esc"/> stops this mode at any
+            time.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>F</tags>
+    <spec>F<a>hint</a></spec>
+    <description>
+        <p>
+            Start QuickHint mode, but open link in a new tab. Like normal QuickHint
+            mode (activated with <k>f</k>) but opens the link in a new tab. The new
+            tab will be loaded in background according to the
+            <str>browser.tabs.loadInBackground</str> &liberator.host; preference.
+        </p>
+    </description>
+</item>
+
+
+<tags>extended-hints</tags>
+
+<item>
+    <tags>;</tags>
+    <spec>;<a>mode</a><a>empty</a><a>hint</a></spec>
+    <description>
+        <p>
+            Start an extended hint mode. ExtendedHint mode is useful for
+            performing operations on hinted elements other than the default
+            left mouse click. For example, you can yank link locations, open
+            them in a new window or save images.  If you want to yank the
+            location of hint <em>24</em>, press <k>;y</k> to start this hint
+            mode. Then press <em>24</em> to copy the hint location.
+        </p>
+
+        <p><a>mode</a> can be one of:</p>
+
+        <ul>
+            <li><tag>;;</tag> <em>;</em> to focus an element</li>
+            <li><tag>;?</tag> <em>?</em> to show information about an element (incomplete)</li>
+            <li><tag>;s</tag> <em>s</em> to save a link's destination</li>
+            <li><tag>;S</tag> <em>S</em> to save a media object</li>
+            <li><tag>;a</tag> <em>a</em> to save a link's destination (prompting for save location)</li>
+            <li><tag>;A</tag> <em>B</em> to save a media object (prompting for save location)</li>
+            <li><tag>;f</tag> <em>f</em> to focus a frame</li>
+            <li><tag>;o</tag> <em>o</em> to open its location in the current tab</li>
+            <li><tag>;t</tag> <em>t</em> to open its location in a new tab</li>
+            <li><tag>;b</tag> <em>b</em> to open its location in a new background tab</li>
+            <li><tag>;w</tag> <em>w</em> to open its destination in a new window</li>
+            <li><tag>;F</tag> <em>F</em> to follow a sequence of <k name="CR"/>-delimited hints in background tabs</li>
+            <li><tag>;O</tag> <em>O</em> to generate an <ex>:open</ex> with hint's URL (like <k>O</k>)</li>
+            <li><tag>;T</tag> <em>T</em> to generate a <ex>:tabopen</ex> with hint's URL (like <k>T</k>)</li>
+            <li><tag>;W</tag> <em>W</em> to generate a <ex>:winopen</ex> with hint's URL</li>
+            <li><tag>;v</tag> <em>v</em> to view its destination source</li>
+            <li><tag>;V</tag> <em>V</em> to view its destination source in the external editor</li>
+            <li><tag>;y</tag> <em>y</em> to yank its destination location</li>
+            <li><tag>;Y</tag> <em>Y</em> to yank its text description</li>
+            <li><tag>;c</tag> <em>c</em> to open its context menu</li>
+            <li><tag>;i</tag> <em>i</em> to open a media object</li>
+            <li><tag>;I</tag> <em>I</em> to open a media object in a new tab</li>
+            <li><tag>;x</tag> <em>A</em> to display an element's title text, or alt text if none.</li>
+        </ul>
+
+        <p>
+            Depending on the value of <o>complete</o>, you can get a list of
+            extended hint modes by pressing <k name="Tab"/> from the <k>;</k>
+            prompt.
+        </p>
+
+        <p>
+            Hintable elements for all extended hint modes can be set in the
+            <o>extendedhinttags</o> XPath string.
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

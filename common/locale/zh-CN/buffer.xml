@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="buffer"
+    title="&liberator.appname; Buffer"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="buffer document">Buffer</h1>
+<toc start="2"/>
+
+&liberator.appname; holds exactly one buffer object for each tab. It is usually an
+(X)HTML document with advanced features.
+
+<h2 tag="buffer-information">Buffer information</h2>
+
+<item>
+    <tags><![CDATA[<C-g>]]></tags>
+    <spec>&lt;C-g></spec>
+    <description>
+        <p>
+            Print the current file name. Also shows some additional file information like
+            file size or the last modified date.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[g<C-g>]]></tags>
+    <spec>g&lt;C-g></spec>
+    <description>
+        <p>Print file information. Same as <ex>:pa<oa>geinfo</oa></ex>.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:pa :pageinfo</tags>
+    <spec>:pa<oa>geinfo</oa></spec>
+    <description>
+        <p>Show various page information. See <ex>:help <o>pageinfo</o></ex> for available options.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gf</tags>
+    <spec>gf</spec>
+    <description>
+        <p>
+            Toggle between rendered and source view. Alternates the page in the current tab
+            between a normally rendered view and the internal editor source view.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gF</tags>
+    <spec>gF</spec>
+    <description>
+        <p>
+            View source with an external editor. Opens the source code of the current web
+            site with the external editor specified by the <o>editor</o> option. For now the
+            external editor must be able to download and open files from a remote URL.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:vie :viewsource</tags>
+    <spec>:vie<oa>wsource</oa><oa>!</oa> <oa>url</oa></spec>
+    <description>
+        <p>
+            View source code of current document. If <oa>url</oa> is specified then view the
+            source of that document. When <oa>!</oa> is given, it is opened with the external
+            editor.
+        </p>
+    </description>
+</item>
+
+
+
+<h2 tag="motion scrolling">Motion commands</h2>
+
+<item>
+    <tags>^ 0</tags>
+    <spec>0</spec>
+    <description>
+        <p>
+            Scroll to the absolute left of the document. Unlike in Vim, <k>0</k> and <k>^</k>
+            work exactly the same way.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>$</tags>
+    <spec>$</spec>
+    <description>
+        <p>Scroll to the absolute right of the document</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Home> gg]]></tags>
+    <spec><oa>count</oa>gg</spec>
+    <description>
+        <p>
+            Go to the top of the document. When used with <oa>count</oa> like in <k>35gg</k>, it
+            scrolls to 35% of the document.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<End> G]]></tags>
+    <spec><oa>count</oa>G</spec>
+    <description>
+        <p>
+            Go to the end of the document. When used with <oa>count</oa> like in <k>35G</k>, it
+            scrolls to 35% of the document.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>N%</tags>
+    <spec><a>count</a>%</spec>
+    <description>
+        <p>Scroll to <a>count</a> percent of the document.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Left> h]]></tags>
+    <spec><oa>count</oa>h</spec>
+    <description>
+        <p>
+            Scroll document to the left. If <oa>count</oa> is specified then move <oa>count</oa> times as
+            much to the left.
+        </p>
+        <p>
+            If the document cannot scroll more, a beep is emitted (unless <o>visualbell</o> is
+            set).
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-e> <Down> j]]></tags>
+    <spec><oa>count</oa>j</spec>
+    <description>
+        <p>
+            Scroll document down. If <oa>count</oa> is specified then move <oa>count</oa> times as much
+            down.
+        </p>
+        <p>
+            If the document cannot scroll more, a beep is emitted (unless <o>visualbell</o> is
+            set).
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-y> <Up> k]]></tags>
+    <spec><oa>count</oa>k</spec>
+    <description>
+        <p>
+            Scroll document up. If <oa>count</oa> is specified then move <oa>count</oa> times as much up.
+        </p>
+        <p>
+            If the document cannot scroll more, a beep is emitted (unless <o>visualbell</o> is
+            set).
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Right> l]]></tags>
+    <spec><oa>count</oa>l</spec>
+    <description>
+        <p>
+            Scroll document to the right. If <oa>count</oa> is specified then move <oa>count</oa> times
+            as much to the right.
+        </p>
+        <p>
+            If the document cannot scroll more, a beep is emitted (unless <o>visualbell</o> is
+            set).
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-d>]]></tags>
+    <spec><oa>count</oa>&lt;C-d></spec>
+    <description>
+        <p>
+            Scroll window downwards in the buffer. The number of lines is set by the
+            <o>scroll</o> option which defaults to half a page. If <oa>count</oa> is given <o>scroll</o> is
+            first set to this value.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-u>]]></tags>
+    <spec><oa>count</oa>&lt;C-u></spec>
+    <description>
+        <p>
+            Scroll window upwards in the buffer. The number of lines is set by the
+            <o>scroll</o> option which defaults to half a page. If <oa>count</oa> is given <o>scroll</o> is
+            first set to this value.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<S-Space> <PageUp> <C-b>]]></tags>
+    <spec><oa>count</oa>&lt;C-b></spec>
+    <description>
+        <p>Scroll up a full page. Scroll window <oa>count</oa> pages Backwards (upwards) in the buffer.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Space> <PageDown> <C-f>]]></tags>
+    <spec><oa>count</oa>&lt;C-f></spec>
+    <description>
+        <p>Scroll down a full page. Scroll window <oa>count</oa> pages Forwards (downwards) in the buffer.</p>
+    </description>
+</item>
+
+
+<h2 tag="jumping">Jumping to elements</h2>
+
+<item>
+    <tags><![CDATA[<Tab>]]></tags>
+    <spec>&lt;Tab></spec>
+    <description>
+        <p>Advance keyboard focus to the next element.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<S-Tab>]]></tags>
+    <spec>&lt;S-Tab></spec>
+    <description>
+        <p>Rewind keyboard focus to the previous element.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gi</tags>
+    <spec><oa>count</oa>gi</spec>
+    <description>
+        <p>
+            Focus last used input field. If there is no last input field, it focuses the
+            first input field. When used with <oa>count</oa> it directly jumps to the <oa>count</oa>th input
+            field.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>]f</tags>
+    <spec><oa>count</oa>]f</spec>
+    <description>
+        <p>
+            Focus next frame. Transfer keyboard focus to the <oa>count</oa>th next frame in
+            order. The newly focused frame is briefly colored red. Does not wrap.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>[f</tags>
+    <spec><oa>count</oa>[f</spec>
+    <description>
+        <p>
+            Focus previous frame. Transfer keyboard focus to the <oa>count</oa>th previous frame
+            in order. The newly focused frame is briefly colored red. Does not wrap.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>]]</tags>
+    <spec><oa>count</oa>]]</spec>
+    <description>
+        <p>
+            Follow the link labeled <str>next</str> or <str>></str>
+            if it exists. Useful when browsing forums or
+            documentation. Change <o>nextpattern</o> to modify its
+            behavior. It follows relations between files too.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>[[</tags>
+    <spec><oa>count</oa>[[</spec>
+    <description>
+        <p>
+            Follow the link labeled <str>prev</str>,
+            <str>previous</str> or <str>&lt;</str> if it exists. Useful
+            when browsing forums or documentation. Change
+            <o>previouspattern</o> to modify its behavior. It
+            follows relations between files too.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="zooming zoom">Zooming</h2>
+
+The zooming commands are dependent on two properties -- a zoom range and a
+series of levels within that range.
+
+The absolute value of the page zoom is limited to a value within the configured
+zoom range (default: 30%--300%). The zoom levels are used by
+<k>zi</k>/<k>zo</k>, and similar commands, to change the zoom value in steps. The
+default zoom levels are 30%, 50%, 67%, 80%, 90%, 100%, 110%, 120%, 133%, 150%,
+170%, 200%, 240%, 300%.
+
+The available zoom range can be changed by setting the
+<link topic="http://kb.mozillazine.org/Zoom.minPercent">'zoom.minPercent'</link> and
+<link topic="http://kb.mozillazine.org/Zoom.maxPercent">'zoom.maxPercent'</link> &liberator.host;
+preferences. The zoom levels can be changed using the
+<link topic="http://kb.mozillazine.org/Toolkit.zoomManager.zoomValues">'toolkit.ZoomManager.zoomLevels'</link>
+preference.
+
+<note>
+    'toolkit.ZoomManager.zoomLevels' is specified as a list of
+    values between 0 and 1, not as a percentage.
+</note>
+
+<item>
+    <tags>+ zi</tags>
+    <spec><oa>count</oa>zi</spec>
+    <description>
+        <p>Enlarge text zoom of current web page. Mnemonic: zoom in.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zm</tags>
+    <spec><oa>count</oa>zm</spec>
+    <description>
+        <p>Enlarge text zoom of current web page by a larger amount. Mnemonic: zoom more.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>- zo</tags>
+    <spec><oa>count</oa>zo</spec>
+    <description>
+        <p>Reduce text zoom of current web page. Mnemonic: zoom out.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zr</tags>
+    <spec><oa>count</oa>zr</spec>
+    <description>
+        <p>Reduce text zoom of current web page by a larger amount. Mnemonic: zoom reduce.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zz</tags>
+    <spec><oa>count</oa>zz</spec>
+    <description>
+        <p>
+            Set text zoom value of current web page. Zoom value can be between 30% and 300%.
+            If it is omitted, text zoom is reset to 100%.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zI</tags>
+    <spec><oa>count</oa>zI</spec>
+    <description>
+        <p>Enlarge full zoom of current web page. Mnemonic: zoom in.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zM</tags>
+    <spec><oa>count</oa>zM</spec>
+    <description>
+        <p>Enlarge full zoom of current web page by a larger amount. Mnemonic: zoom more.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zO</tags>
+    <spec><oa>count</oa>zO</spec>
+    <description>
+        <p>Reduce full zoom of current web page. Mnemonic: zoom out.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zR</tags>
+    <spec><oa>count</oa>zR</spec>
+    <description>
+        <p>Reduce full zoom of current web page by a larger amount. Mnemonic: zoom reduce.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>zZ</tags>
+    <spec><oa>count</oa>zZ</spec>
+    <description>
+        <p>
+            Set full zoom value of current web page. Zoom value can be between 30 and
+            300%. If it is omitted, full zoom is reset to 100%.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:zo :zoom</tags>
+    <spec>:zo<oa>om</oa><oa>!</oa> <oa>value</oa></spec>
+    <spec>:zo<oa>om</oa><oa>!</oa> +<a>value</a> | -<a>value</a></spec>
+    <description>
+        <p>
+            Set zoom value of current web page. <oa>value</oa> can be an absolute value
+            between 30% and 300% or a relative value if prefixed with "-" or "+". If
+            <oa>value</oa> is omitted, zoom is reset to 100%.
+        </p>
+
+        <p>
+            Normally this command operates on the text zoom; if used with <oa>!</oa>, it
+            operates on full zoom.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="frames">Working with frames</h2>
+
+<item>
+    <tags>:frameo :frameonly</tags>
+    <spec>:frameo<oa>nly</oa></spec>
+    <description>
+        <p>Show only the current frame's page.</p>
+    </description>
+</item>
+
+
+<h2 tag="copying yanking">Copying text</h2>
+
+When running in X11, the text of the following commands is not only
+copied to the clipboard but is also put into the X11 selection, which
+can be pasted with the middle mouse button:
+
+<item>
+    <tags>y</tags>
+    <spec>y</spec>
+    <description>
+        <p>
+            Yank current location to the clipboard. When running in X11 the location is
+            also put into the selection, which can be pasted with the middle mouse button.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>Y</tags>
+    <spec>Y</spec>
+    <description>
+        <p>Copy currently selected text to the system clipboard.</p>
+    </description>
+</item>
+
+
+<h2 tag="alternate-stylesheet">Alternate style sheets</h2>
+
+Page authors may specify alternate style sheets for an HTML document. Users can
+then switch between these various style sheets, selecting their favorite.
+
+<item>
+    <tags>:pagest :pagestyle</tags>
+    <spec>:pagest<oa>yle</oa> <oa>stylesheet</oa></spec>
+    <description>
+        <p>
+            Select the author style sheet to apply. If <oa>stylesheet</oa> is not specified
+            the page's default style sheet is used.
+        </p>
+
+        <p>All author styling can be removed by setting the <o>usermode</o> option.</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

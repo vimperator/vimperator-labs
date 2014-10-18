@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="message"
+    title="&liberator.appname; Messages"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="messages">Error and informational messages</h1>
+<toc start="2"/>
+
+<tags>message-history</tags>
+
+<p>
+    &liberator.appname; stores all info and error messages in a message
+    history. The type of info messages output can be controlled by
+    the <o>verbose</o> option. The number of stored messages can be set
+    with the <o>messages</o> option.
+</p>
+
+<item>
+    <tags>:mes :messages</tags>
+    <spec>:mes<oa>sages</oa></spec>
+    <description>
+        <p>Display previously given messages.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:messc :messclear</tags>
+    <spec>:messc<oa>lear</oa></spec>
+    <description>
+        <p>Clear the message history.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[g<]]></tags>
+    <spec>g&lt;</spec>
+    <description>
+        <p>
+            Redisplay the last command output. Only the most recent command's output is
+            available.
+        </p>
+    </description>
+</item>
+
+<tags>pager more-prompt</tags>
+
+<code>
+ -- More --
+ -- More -- SPACE/d/j: screen/page/line down, b/u/k: up, q: quit
+</code>
+
+<p>
+    This message is given when the message window is filled with messages. It is
+    only given when the <o>more</o> option is on. It is highlighted with the <em>MoreMsg</em>
+    group.
+</p>
+
+<dl>
+    <dt><k name="CR"/> or j or <k name="Down"/>  </dt><dd>one more line</dd>
+    <dt>d                                        </dt><dd>down a page (half a screen)</dd>
+    <dt><k name="Space"/> or <k name="PageDown"/></dt><dd>down a screen</dd>
+    <dt>G                                        </dt><dd>down all the way, until the hit-enter prompt</dd>
+    <dt/><dd/>
+    <dt><k name="BS"/> or k or <k name="Up"/>    </dt><dd>one line back</dd>
+    <dt>u                                        </dt><dd>up a page (half a screen)</dd>
+    <dt>b or <k name="PageUp"/>                            </dt><dd>back a screen</dd>
+    <dt>g                                        </dt><dd>back to the start</dd>
+    <dt/><dd/>
+    <dt>q, <k name="Esc"/> or CTRL-C             </dt><dd>stop the listing</dd>
+    <dt>:                                        </dt><dd>stop the listing and enter a command-line</dd>
+    <dt>;                                        </dt><dd>start an <t>extended-hints</t> command</dd>
+    <dt><k name="C-Y"/>                          </dt><dd>yank (copy) a modeless selection to the clipboard</dd>
+</dl>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

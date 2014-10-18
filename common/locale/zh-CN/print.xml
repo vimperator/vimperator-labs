@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="print"
+    title="&liberator.appname; Printing"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="printing">Printing</h1>
+<toc start="2"/>
+
+<item>
+    <tags>:ha :hardcopy</tags>
+    <spec>:ha<oa>rdcopy</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            Print current document. Open a GUI dialog where you can select the printer,
+            number of copies, orientation, etc. When used with <oa>!</oa>, the dialog is skipped
+            and the default printer used.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:ha<oa>rdcopy</oa><oa>!</oa> ><a>filename</a></spec>
+    <description>
+        <p>As above, but write the output to <a>filename</a>.</p>
+
+        <note>Not available on Windows.</note>
+    </description>
+</item>
+
+
+<h2 tag="&liberator.host;-print-dialogs">&liberator.host; printing dialogs</h2>
+
+<p>
+    The "Print Preview" and "Page Setup" dialogs can be opened via the <ex>:dialog</ex>
+    command
+</p>
+<code><ex>:dialog printpreview</ex></code>
+<p>
+    and
+</p>
+<code><ex>:dialog printsetup</ex></code>
+<p>
+    respectively.
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="browsing"
+    title="&liberator.appname; Browsing"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="surfing browsing">Browsing</h1>
+<toc start="2"/>
+
+<h2 tag="ignoring">Temporarily disable &liberator.appname;</h2>
+
+&liberator.appname; overrides nearly all &liberator.host; keys in order to make browsing more
+pleasant for Vim users. On the rare occasions when you want to pass a keystroke
+to &liberator.host;, or to the web page, and have it retain its original meaning you
+have the following possibilities:
+
+<item>
+    <tags><![CDATA[ignore-all-keys <S-Esc> <Insert>]]></tags>
+    <spec>&lt;S-Esc></spec>
+    <spec>&lt;Insert></spec>
+    <description>
+        <p>
+            Disable all &liberator.appname; keys and pass them to the next event
+            handler.  This mode is especially useful if JavaScript controlled
+            forms (e.g., the RichEdit form fields of Gmail) don't work anymore
+            or you want to work with web apps like Google Reader which have a
+            lot of useful shortcuts themselves. To exit this mode, press <k
+                name="S-Esc"/> again. <k name="Esc"/> is a special case as
+            it is sent to the web page, but still handles unfocusing of input
+            fields.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>ignore-key i</tags>
+    <spec>i</spec>
+    <description>
+        <p>
+            If you only need to pass a single key to a JavaScript form field or another
+            extension prefix the key with <k>i</k>. Also works to unshadow &liberator.host;
+            shortcuts like <k name="C-o"/> which are otherwise hidden in &liberator.appname;.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="opening">Opening web pages</h2>
+
+<item>
+    <tags>o :o :open</tags>
+    <spec>:o<oa>pen</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>o</spec>
+    <description>
+        <p>
+            Open one or more URLs in the current tab.
+            Multiple URLs can be separated with <o>urlseparator</o> (default: ", " Note that the
+            space after the comma is required.)
+            The first URL is opened in the current tab, and all other URLs are
+            opened in new tabs.
+            Each token is analyzed and in this order:
+        </p>
+
+        <ol>
+            <li>
+                Opened as a local file if it is an existing relative or absolute filename.
+                <ul>
+                    <li><ex>:open /etc/fstab</ex> shows the file system table.</li>
+                    <li><ex>:open ../other/foo.html</ex> in your home directory opens <tt>/home/other/foo.html</tt></li>
+                </ul>
+            </li>
+            <li>
+                 Opened with the specified search engine if the
+                 token looks like a search string and the first word
+                 is the name of a search engine (
+                 <ex>:open wikipedia linus torvalds</ex> opens the Wikipedia entry for
+                 linus torvalds). The short name of a search engine
+                 is automatically guessed from its name. If you want
+                 to set a custom name, you can change it with
+                 <ex>:dialog searchengines</ex>.
+            </li>
+            <li>
+                Opened with the default search engine or keyword
+                (specified with the <o>defsearch</o> option) if the first
+                word is no search engine (<ex>:open linus torvalds</ex>
+                opens a Google search for linus torvalds).
+           </li>
+           <li>
+               Passed directly to &liberator.host; in all other cases
+               (<ex>:open www.osnews.com, www.slashdot.org</ex>
+               opens OSNews in the current, and Slashdot in a new
+               background tab).
+           </li>
+        </ol>
+
+        <p>
+            You can use <ex>:open -tags linux torvalds<k name="Tab"/></ex> to complete bookmarks with
+            tag "linux" and which contain "torvalds". Note that -tags support is only
+            available for tab completion, not for the actual command.
+            The items which are completed on <k name="Tab"/> are specified in the <o>complete</o>
+            option.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>t :t :tabopen :tabnew</tags>
+    <spec>:tabopen<oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>t</spec>
+    <description>
+        <p>
+            Just like <ex>:open</ex> but also uses a new tab for the first URL. When
+            used with <oa>!</oa>, the <em>tabopen</em> value of the <o>activate</o> option is negated.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>T</tags>
+    <spec>T</spec>
+    <description>
+        <p>
+            Show a <ex>:tabopen</ex> prompt containing the current URL. Useful if you want to
+            go somewhere by editing the URL of the current page.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:tabdu :tabduplicate</tags>
+    <spec>:<oa>count</oa>tabdu<oa>plicate</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            Duplicates current tab <oa>count</oa> times. Uses <em>tabopen</em> value of the <o>activate</o>
+            option to determine if the last cloned tab should be activated. When used with
+            <oa>!</oa>, <em>tabopen</em> value is negated.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>O</tags>
+    <spec>O</spec>
+    <description>
+        <p>
+            Show an <ex>:open</ex> prompt containing the current URL. Useful if you want to
+            go somewhere by editing the URL of the current page.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>w :winopen :wopen</tags>
+    <spec>:wino<oa>pen</oa><oa>!</oa> <oa>arg1</oa>, <oa>arg2</oa>, …</spec>
+    <spec>w</spec>
+    <description>
+        <p>Just like <ex>:tabopen</ex> but opens the resulting web page(s) in a new window.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>W</tags>
+    <spec>W</spec>
+    <description>
+        <p>
+            Open one or more URLs in a new window based on current location. Works like
+            <k>w</k> but preselects current URL in the <ex>:winopen</ex> query.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<MiddleMouse> p]]></tags>
+    <spec>p</spec>
+    <description>
+        <p>
+            Open (put) a URL based on the current clipboard contents in the current buffer.
+            You can also just select (for non-X11 users: copy) some non-URL text, and
+            search for it with the default search engine or keyword (specified by the
+            <o>defsearch</o> option) with <k>p</k>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>P</tags>
+    <spec>P</spec>
+    <description>
+        <p>
+            Open (put) a URL based on the current clipboard contents in a new buffer. Works
+            like <k>p</k> but opens a new tab.
+        </p>
+        <p>
+            Whether the new buffer is activated, depends on the <o>activate</o> option.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gP</tags>
+    <spec>gP</spec>
+    <description>
+        <p>
+            Open (put) a URL based on the current clipboard contents in a new buffer.
+            Works like <k>P</k> but inverts the <o>activate</o> option.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-x>]]></tags>
+    <spec><oa>count</oa>&lt;C-x></spec>
+    <description>
+        <p>
+            Decrements the last number in URL by 1, or by <oa>count</oa> if given. Negative
+            numbers are not supported, as this is not generally useful, so the number cannot
+            be decremented past 0.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<C-a>]]></tags>
+    <spec><oa>count</oa>&lt;C-a></spec>
+    <description>
+        <p>Increments the last number in URL by 1, or by <oa>count</oa> if given.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>~</tags>
+    <spec>~</spec>
+    <description>
+        <p>
+            Open home directory. You can also use the hints and have the probably fastest
+            file browser on earth. :)
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="navigating">Navigating</h2>
+
+<item>
+    <tags><![CDATA[H <C-o> CTRL-O :ba :back]]></tags>
+    <spec>:<oa>count</oa>ba<oa>ck</oa> <oa>url</oa></spec>
+    <spec>:ba<oa>ck</oa>!</spec>
+    <spec>CTRL-o</spec>
+    <description>
+        <p>
+            Go <oa>count</oa> pages back in the browser history. If <oa>url</oa> is specified go back to
+            the first matching URL. The special version <ex>:back!</ex> goes to the beginning
+            of the browser history.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[L <C-i> CTRL-i :fo :fw :forward]]></tags>
+    <spec>:<oa>count</oa>fo<oa>rward</oa> <oa>url</oa></spec>
+    <spec>:fo<oa>rward</oa>!</spec>
+    <spec>CTRL-i</spec>
+    <description>
+        <p>
+            Go <oa>count</oa> pages forward in the browser history. If <oa>url</oa> is specified go
+            forward to the first matching URL. The special version <ex>:forward!</ex> goes to
+            the end of the browser history.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ju :jumps</tags>
+    <spec>:ju<oa>mps</oa></spec>
+    <description>
+        <p>List all jumps aka current tab's history aka session history.</p>
+
+        <p>
+            Current history position is marked with >, jump numbers are counters to be used
+            with <ex>:back</ex> (above zero record) or <ex>:forward</ex> (below zero record).
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gh</tags>
+    <spec>gh</spec>
+    <description>
+        <p>Go home. Opens the homepage in the current tab.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gH</tags>
+    <spec>gH</spec>
+    <description>
+        <p>
+            Go home in a new tab. Opens the homepage in a new tab. Whether the new tab is
+            activated or not depends on the <o>activate</o> option.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>gu</tags>
+    <spec><oa>count</oa>gu</spec>
+    <description>
+        <p>Go to <oa>count</oa>th parent directory.</p>
+
+        <p>Pressing <k>gu</k> repeatedly would ascend the URL in this order:</p>
+        <ul>
+            <li><tt>http://www.example.com/path/to/file.txt?query=value#anchor</tt></li>
+            <li><tt>http://www.example.com/path/to/file.txt?query=value</tt></li>
+            <li><tt>http://www.example.com/path/to/file.txt</tt></li>
+            <li><tt>http://www.example.com/path/to/</tt></li>
+            <li><tt>http://www.example.com/path/</tt></li>
+            <li><tt>http://www.example.com/</tt></li>
+            <li><tt>http://example.com/</tt></li>
+        </ul>
+
+    </description>
+</item>
+
+
+<item>
+    <tags>gU</tags>
+    <spec>gU</spec>
+    <description>
+        <p>Go to the root of the web site.</p>
+
+        <p>
+            <k>gU</k> on <tt>http://www.example.com/dir1/dir2/file.htm</tt> opens
+            <tt>http://www.example.com/</tt>.
+            When browsing a local directory, it goes to the root directory.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="reloading">Reloading</h2>
+
+<item>
+    <tags>r</tags>
+    <spec>r</spec>
+    <description>
+        <p>Force reloading of the current web page.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>R</tags>
+    <spec>R</spec>
+    <description>
+        <p>Force reloading of the current web page skipping the cache.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:re :reload</tags>
+    <spec>:re<oa>load</oa><oa>!</oa></spec>
+    <description>
+        <p>
+            Reload current web page. Forces reloading of the current page. If <oa>!</oa> is given,
+            skip the cache.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:reloada :reloadall</tags>
+    <spec>:reloada<oa>ll</oa><oa>!</oa></spec>
+    <description>
+        <p>Reload all pages. Forces reloading of all pages. If <oa>!</oa> is given, skip the cache.</p>
+    </description>
+</item>
+
+
+<h2 tag="stopping">Stopping</h2>
+
+<item>
+    <tags><![CDATA[<C-c>]]></tags>
+    <spec>&lt;C-c></spec>
+    <description>
+        <p>Stop loading the current web page. This only works if there is no selection, otherwise the
+           selected text is copied to the clipboard. Usually this duality isn't a problem, as while
+           a page is loading, there is seldom a text to copy.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:st :stop</tags>
+    <spec>:st<oa>op</oa></spec>
+    <description>
+        <p>Stop loading the current web page.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:stopa :stopall</tags>
+    <spec>:stopa<oa>ll</oa></spec>
+    <description>
+        <p>Stop loading all web pages.</p>
+    </description>
+</item>
+
+
+<h2 tag="writing save-file">Writing</h2>
+
+<item>
+    <tags>:w :write :sav :saveas</tags>
+    <spec>:sav<oa>eas</oa><oa>!</oa> <oa>file</oa></spec>
+    <description>
+        <p>
+            Save current web page to disk. If <oa>file</oa> is omitted, save to the page's
+            default filename. Existing documents will only be overwritten if <oa>!</oa> is given.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="quitting save-session">Quitting</h2>
+
+<item>
+    <tags>:q :quit</tags>
+    <spec>:q<oa>uit</oa></spec>
+    <description>
+        <p>
+            Quit current tab. If this is the last tab in the window, close the window. If
+            this was the last window, close &liberator.appname;. When quitting &liberator.appname;, the
+            session is not stored.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:qa :qall :quita :quitall</tags>
+    <spec>:quita<oa>ll</oa></spec>
+    <description>
+        <p>
+            Quit &liberator.appname;. Quit &liberator.appname;, no matter how many tabs/windows are open.
+            The session is not stored.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:wc :wclose :winc :winclose</tags>
+    <spec>:winc<oa>lose</oa></spec>
+    <description>
+        <p>Close window.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:winon :winonly</tags>
+    <spec>:winon<oa>ly</oa></spec>
+    <description>
+        <p>Close all other windows.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:xa :xall :wq :wqa :wqall</tags>
+    <spec>:wqa<oa>ll</oa></spec>
+    <spec>:xa<oa>ll</oa></spec>
+    <description>
+        <p>
+            Save the session and quit. Quit &liberator.appname;, no matter how many tabs/windows
+            are open. The session is stored. <ex>:wq</ex> is different from Vim, as it
+            closes the window instead of just one tab by popular demand. Complain on the
+            mailing list if you want to change that.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>ZQ</tags>
+    <spec>ZQ</spec>
+    <description>
+        <p>Quit and don't save the session. Works like <ex>:qall</ex>.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>ZZ</tags>
+    <spec>ZZ</spec>
+    <description>
+        <p>
+            Quit and save the session. Quit &liberator.appname;, no matter how many tabs/windows
+            are open. The session is stored. Works like <ex>:xall</ex>.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="current-directory">The current directory</h2>
+
+<item>
+    <tags>:chd :chdir :cd</tags>
+    <spec>:cd <oa>-|path</oa></spec>
+    <description>
+        <p>Change the current directory. <ex>:cd -</ex> changes to the last directory.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:pw :pwd</tags>
+    <spec>:pw<oa>d</oa></spec>
+    <description>
+        <p>Print the current directory name.</p>
+    </description>
+</item>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

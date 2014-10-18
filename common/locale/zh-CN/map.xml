@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="map"
+    title="&liberator.appname; Key Mappings"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="map">Key mappings, abbreviations, and user-defined commands</h1>
+<toc start="2"/>
+
+<h2 tag="key-mapping mapping map macro">Key mapping</h2>
+
+<p>
+    The key mapping commands can be used to either redefine the standard key
+    bindings or define new ones. A mapping consists of a key, or <t>key-sequence</t>,
+    which is translated to a string of characters. Example:
+</p>
+<code><ex>:map <k name="F2"/> :echo new Date().toDateString()<k name="CR"/></ex></code>
+<p>
+    will echo the current date to the command line when <k name="F2"/> is pressed.
+</p>
+
+<tags>:map-modes</tags>
+
+<p>
+    Keys can be mapped in four distinct modes:
+</p>
+
+<ul>
+    <li>Normal mode: When browsing normally</li>
+    <li>Visual mode: When selecting text with the cursor keys</li>
+    <li>Insert mode: When interacting with text fields on a website</li>
+    <li>Command-line mode: When typing into the &liberator.appname; command line</li>
+</ul>
+
+<warning>
+    Mappings are NOT saved between sessions, make sure you put them in your
+    &liberator.name;rc file!
+</warning>
+
+<h3 tag=":map-commands">Map commands</h3>
+
+<item>
+    <tags>:map</tags>
+    <spec>:map <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nm :nmap</tags>
+    <spec>:nm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vm :vmap</tags>
+    <spec>:vm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:im :imap</tags>
+    <spec>:im<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cm :cmap</tags>
+    <spec>:cm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>
+            Map the <t>key-sequence</t> <a>lhs</a> to <a>rhs</a> for the applicable mode(s). The <a>rhs</a> is
+            remapped, allowing for nested and recursive mappings.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:no :noremap</tags>
+    <spec>:no<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nn :nnoremap</tags>
+    <spec>:nn<oa>oremap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vn :vnoremap</tags>
+    <spec>:vn<oa>oremap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:ino :inoremap</tags>
+    <spec>:ino<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cno :cnoremap</tags>
+    <spec>:cno<oa>remap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>
+            Map the <t>key-sequence</t> <a>lhs</a> to <a>rhs</a> for the applicable mode(s). No remapping of
+            the <a>rhs</a> is performed.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:unm :unmap</tags>
+    <spec>:map <a>lhs</a> <a>rhs</a></spec>
+    <tags>:nun :nunmap</tags>
+    <spec>:nun<oa>map</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:vun :vunmap</tags>
+    <spec>:vun<oa>map</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:iu :iunmap</tags>
+    <spec>:iu<oa>nmap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <tags>:cu :cunmap</tags>
+    <spec>:cu<oa>nmap</oa> <a>lhs</a> <a>rhs</a></spec>
+    <description>
+        <p>Remove the mapping of <a>lhs</a> for the applicable mode(s).</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:mapc :mapclear</tags>
+    <spec>:mapc<oa>lear</oa></spec>
+    <tags>:nmapc :nmapclear</tags>
+    <spec>:nmapc<oa>lear</oa></spec>
+    <tags>:vmapc :vmapclear</tags>
+    <spec>:vmapc<oa>lear</oa></spec>
+    <tags>:imapc :imapclear</tags>
+    <spec>:imapc<oa>lear</oa></spec>
+    <tags>:cmapc :cmapclear</tags>
+    <spec>:cmapc<oa>lear</oa></spec>
+    <description>
+        <p>
+            Remove all mappings for the applicable mode(s). All user-defined mappings are
+            cleared.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:map</spec>
+    <spec>:nm<oa>ap</oa></spec>
+    <spec>:vm<oa>ap</oa></spec>
+    <spec>:im<oa>ap</oa></spec>
+    <spec>:cm<oa>ap</oa></spec>
+    <description>
+        <p>List all mappings for the applicable mode(s).</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:map_l</tags>
+    <spec>:map <a>lhs</a></spec>
+    <tags>:nmap_l</tags>
+    <spec>:nm<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:vmap_l</tags>
+    <spec>:vm<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:imap_l</tags>
+    <spec>:im<oa>ap</oa> <a>lhs</a></spec>
+    <tags>:cmap_l</tags>
+    <spec>:cm<oa>ap</oa> <a>lhs</a></spec>
+    <description>
+        <p>List all mappings starting with <a>lhs</a> for the applicable mode(s).</p>
+    </description>
+</item>
+
+
+
+<h3 tag=":map-arguments">Special arguments</h3>
+
+<tags>:map-&lt;silent></tags>
+
+<p>
+    When the first argument to one of the mapping commands is <k name="silent"/>,
+    <a>rhs</a> is not echoed to the command line, nor, for that matter, anything
+    else until the command has completed.
+</p>
+
+
+<tags>:map-urls</tags>
+
+<p>
+    The mapping becomes an effective mapping only on the page specifed by <a>urlpattern</a>,
+    if <a>-urls=<a>urlpattern</a></a> is given to a mappings command.
+    <a>urlpattern</a> must be regular expression.
+</p>
+
+
+<p>
+    Below is an overview of which modes each map command applies to:
+</p>
+
+<!-- TODO: table format -->
+
+<code>
+:map   :noremap   :unmap   :mapclear  – both Normal and Visual modes
+:nmap  :nnoremap  :nunmap  :nmapclear – Normal mode
+:vmap  :vnoremap  :vunmap  :vmapclear – Visual mode
+:imap  :inoremap  :iunmap  :imapclear – Insert mode
+:cmap  :cnoremap  :cunmap  :cmapclear – Command-line mode
+</code>
+
+<h3 tag="key-notation,key-sequence">Key sequences</h3>
+
+<p>
+    For most keys, the key-sequence is the same as the character you see when you
+    type that key, however there are some exceptions which allow for a much larger
+    number of keys to be used in mappings.
+</p>
+
+<ul>
+    <li><k name="lt"/>, <k>&lt;</k>, <k name="Space"/>, <k>\ </k> allow a literal &lt; or space character.</li>
+    <li>', " and \ must be used to avoid escaping issues when mapping a quote or backslash.</li>
+    <li>
+        <k name="Left"/> <k name="Right"/> <k name="Up"/>
+        <k name="Down"/> <k name="PageUp"/> <k name="PageDown"/>
+        <k name="Esc"/> <k name="CR"/> (for carriage return/enter)
+    </li>
+    <li><k name="CapsLock"/> <k name="NumLock"/> <k name="Ins"/> <k name="Del"/> <k name="Tab"/> <k name="BS"/> (for a backspace)</li>
+    <li><k name="F1"/> through <k name="F12"/> work as expected</li>
+</ul>
+
+<p>
+    Most keyboards have some modifiers such as the control, alt or meta keys. In
+    order to create a mapping that uses these keys the correct prefix must be used
+    within the angle brackets.
+</p>
+
+<ol>
+    <li><k name="C-x"/>: The control or ctrl key.</li>
+    <li><k name="A-x"/>: The alt key.</li>
+    <li><k name="M-x"/>: The meta key, windows key, or command key</li>
+    <li><k name="S-x"/>: The shift key.</li>
+</ol>
+
+<p>
+    These prefixes can be combined however you see fit, though you should note that
+    within angle brackets all alphabetic characters are read as lowercase. In order
+    to force them to be uppercase, you must specify the S- prefix as well.
+    Additionally, you should never use the S- prefix with a number or piece of
+    punctuation, even if you require a shift to type that character; doing so will
+    give you a mapping that cannot be typed. With non-character keys, tab and
+    space, the S- modifier works just like C- A- and M-. Some examples may clarify
+    the situation:
+</p>
+
+<ol>
+    <li><k>xc</k>: type x, and then type c</li>
+    <li><k name="C-x">c</k>: hold control and type x, then type c without control</li>
+    <li><k name="C-2"/>: type 2 while holding control</li>
+    <li><k name="C-@"/>: type @ while holding control</li>
+    <li><k name="S-Space"/>: press space while holding shift</li>
+    <li><k name="C-A-j"/>: press j while holding control and alt</li>
+    <li><k name="C-A-J"/>: exactly the same as above</li>
+    <li><k name="C-A-S-j"/>: press J while holding control and alt</li>
+</ol>
+
+<h3 tag=":map-special-chars">Special characters</h3>
+
+<item>
+    <tags><![CDATA[<Nop>]]></tags>
+    <spec>&lt;Nop></spec>
+    <description>
+        <p>
+            Do nothing. This command is useful for disabling a specific mapping.
+            <ex>:map <k name="C-n"/> <k name="Nop"/></ex> will prevent <k name="C-n"/> from doing anything.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<CR> map_return]]></tags>
+    <spec>&lt;CR></spec>
+    <description>
+        <p>
+            Expand to a line terminator in a key mapping. An Ex command in the <a>rhs</a> of a
+            mapping requires a line terminator after it so that it is executed when the
+            mapping is expanded. <k name="CR"/> should be used for this purpose.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags><![CDATA[<Leader> mapleader]]></tags>
+    <spec>&lt;Leader></spec>
+    <description>
+        <p>
+            Expands to the value of the "mapleader" variable in key mapping. If
+            "mapleader" is unset or empty then <str>\</str> is used. Example:
+        </p>
+        <code><ex>:map <k name="Leader"/>h :echo "Hello"<k name="CR"/></ex></code>
+        <p>works like</p>
+        <code><ex>:map \h :echo "Hello"<k name="CR"/></ex></code>
+        <p>but after</p>
+        <code><ex>let mapleader = ","</ex></code>
+        <p>it works like</p>
+        <code><ex>:map ,h :echo "Hello"<k name="CR"/></ex></code>
+    </description>
+</item>
+
+
+<h2 tag="abbreviations">Abbreviations</h2>
+
+<p>
+    &liberator.appname; can automatically replace words identified as abbreviations,
+    which may be used to save typing or to correct commonly misspelled
+    words. An abbreviation can be one of three types that are defined by the
+    types of constituent characters. Whitespace and quotes are non-keyword
+    types, and all other characters are keyword types.
+</p>
+
+<ol>
+    <li>A "full-id" abbreviation consists entirely of keyword characters (e.g., "teh", "msoft").</li>
+    <li>An "end-id" abbreviation ends in keyword character but otherwise contains all non-keyword characters (e.g., "'i").</li>
+    <li>A "non-id" abbreviation ends in a non-keyword character but otherwise contains any non-whitespace character (e.g., "def'").</li>
+</ol>
+
+<p>
+    Strings that cannot be abbreviations include "a'b" and "a b".
+</p>
+
+<p>
+    An abbreviation is recognized when a space, quote character, or
+    <k name="C-]"/> is typed after the abbreviation. There are no default
+    abbreviations, and abbreviations are never recursive.
+</p>
+
+<item>
+    <tags>:ab :abbreviate</tags>
+    <spec>:ab<oa>breviate</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ab<oa>breviate</oa> <a>lhs</a></spec>
+    <spec>:ab<oa>breviate</oa></spec>
+    <description>
+        <p>
+            Define an abbreviation. Expand <a>lhs</a> to <a>rhs</a>.
+            If <oa>-javascript</oa> is given and <a>rhs</a> contains JavaScript code,
+            <a>rhs</a> will be expanded to the result of the JavaScript code.
+            If only <a>lhs</a> is given, list all abbreviations that start with <a>lhs</a>.
+            If no arguments are given, list all abbreviations.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ca :cabbrev</tags>
+    <spec>:ca<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ca<oa>bbrev</oa> <a>lhs</a></spec>
+    <spec>:ca<oa>bbrev</oa></spec>
+    <description>
+        <p>
+            Define an abbreviation for Command-line mode. Same as <ex>:ab<oa>breviate</oa></ex>,
+            but for Command-line mode only.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ia :iabbrev</tags>
+    <spec>:ia<oa>bbrev</oa> <oa>-j<oa>avascript</oa></oa> <a>lhs</a> <a>rhs</a></spec>
+    <spec>:ia<oa>bbrev</oa> <a>lhs</a></spec>
+    <spec>:ia<oa>bbrev</oa></spec>
+    <description>
+        <p>
+            Define an abbreviation for Insert mode. Same as <ex>:ab<oa>breviate</oa></ex> but
+            for Insert mode only.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:una :unabbreviate</tags>
+    <spec>:una<oa>bbreviate</oa> <a>lhs</a></spec>
+    <description>
+        <p>Remove an abbreviation.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:cuna :cunabbrev</tags>
+    <spec>:cuna<oa>bbrev</oa> <a>lhs</a></spec>
+    <description>
+        <p>
+            Remove an abbreviation for Command-line mode. Same as <ex>:una<oa>bbreviate</oa></ex>,
+            but for Command-line mode only.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:iuna :iunabbrev</tags>
+    <spec>:iuna<oa>bbrev</oa> <a>lhs</a></spec>
+    <description>
+        <p>
+            Remove an abbreviation for Insert mode. Same as <ex>:una<oa>bbreviate</oa></ex> but for
+            Insert mode only.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:abc :abclear</tags>
+    <spec>:abc<oa>lear</oa></spec>
+    <description>
+        <p>Remove all abbreviations.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:cabc :cabclear</tags>
+    <spec>:cabc<oa>lear</oa></spec>
+    <description>
+        <p>Remove all abbreviations for Command-line mode.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:iabc :iabclear</tags>
+    <spec>:iabc<oa>lear</oa></spec>
+    <description>
+        <p>Remove all abbreviations for Insert mode.</p>
+    </description>
+</item>
+
+
+<h2 tag="user-commands">User-defined commands</h2>
+
+<item>
+    <tags>:com :command</tags>
+    <spec>:com<oa>mand</oa></spec>
+    <description>
+        <p>List all user-defined commands.</p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:com<oa>mand</oa> <a>cmd</a></spec>
+    <description>
+        <p>List all user-defined commands that start with <a>cmd</a>.</p>
+    </description>
+</item>
+
+
+<item>
+    <spec>:com<oa>mand</oa><oa>!</oa> <oa><a>attr</a>…</oa> <a>cmd</a> <a>rep</a></spec>
+    <description>
+        <p>
+            Define a new user command. The name of the command is <a>cmd</a> and its replacement
+            text is <a>rep</a>. The command's attributes are <a>attr</a>. If a command with this name
+            already exists an error is reported unless <oa>!</oa> is specified, in which case the
+            command is redefined. Unlike Vim, the command may start with a lowercase
+            letter.
+        </p>
+
+        <p>
+            The command's behavior can be specified by providing attributes when the
+            command is defined.
+        </p>
+
+        <p tag=":command-nargs">
+            Argument handling
+        </p>
+
+        <p>
+            By default user commands accept no arguments. This can be changed by specifying
+            the -nargs attribute.
+        </p>
+
+        <p>The valid values are:</p>
+
+        <dl>
+            <dt>-nargs=0</dt><dd>No arguments are allowed (default)</dd>
+            <dt>-nargs=1</dt><dd>One argument is allowed</dd>
+            <dt>-nargs=*</dt><dd>Zero or more arguments are allowed</dd>
+            <dt>-nargs=?</dt><dd>Zero or one argument is allowed</dd>
+            <dt>-nargs=+</dt><dd>One or more arguments are allowed</dd>
+        </dl>
+
+        <p tag=":command-complete">
+            Argument completion
+        </p>
+
+        <p>
+            Completion for arguments to user defined commands is not available by default.
+            Completion can be enabled by specifying one of the following arguments to the
+            -complete option when defining the command.
+        </p>
+
+        <dl>
+            <dt>altstyle</dt>     <dd>alternate author style sheets</dd>
+            <dt>bookmark</dt>     <dd>bookmarks</dd>
+            <dt>buffer</dt>       <dd>buffers</dd>
+            <dt>color</dt>        <dd>color schemes</dd>
+            <dt>command</dt>      <dd>Ex commands</dd>
+            <dt>dialog</dt>       <dd>&liberator.host; dialogs</dd>
+            <dt>dir</dt>          <dd>directories</dd>
+            <dt>environment</dt>  <dd>environment variables</dd>
+            <dt>event</dt>        <dd>autocommand events</dd>
+            <dt>file</dt>         <dd>files</dd>
+            <dt>help</dt>         <dd>help tags</dd>
+            <dt>highlight</dt>    <dd>highlight groups</dd>
+            <dt>history</dt>      <dd>history</dd>
+            <dt>javascript</dt>   <dd>JavaScript expressions</dd>
+            <dt>macro</dt>        <dd>named macros</dd>
+            <dt>mapping</dt>      <dd>user mappings</dd>
+            <dt>menu</dt>         <dd>menu items</dd>
+            <dt>option</dt>       <dd>&liberator.appname; options</dd>
+            <dt>preference</dt>   <dd>&liberator.host; preferences</dd>
+            <dt>search</dt>       <dd>search engines and keywords</dd>
+            <dt>shellcmd</dt>     <dd>shell commands</dd>
+            <dt>sidebar</dt>      <dd>sidebar panels</dd>
+            <dt>url</dt>          <dd>URLs</dd>
+            <dt>usercommand</dt>  <dd>user commands</dd>
+            <dt>custom,<a>func</a></dt><dd>custom completion, provided by <a>func</a></dd>
+        </dl>
+
+        <p tag=":command-completion-custom">
+            Custom completion
+        </p>
+
+        <p>
+            Custom completion can be provided by specifying the <str>custom,<a>func</a></str> argument to
+            -complete. The <a>func</a> is called with two arguments, a completion context, and
+            an object describing the command's arguments. It should set the context's
+            <str>completions</str> property, or return an object, with <str>items</str> and <str>start</str>
+            properties, describing the completions and where the replacement is to start.
+        </p>
+
+        <p>
+            <em>start</em> is the index into the word being completed at which the returned values
+            should be applied and <em>completions</em> is a two dimensional array of the form:
+            [[arg1, description1], [arg2, description2], …]
+        </p>
+
+        <!-- TODO: add examples -->
+
+        <p tag=":command-count">
+            Count handling
+        </p>
+
+        <p>
+            By default user commands do not accept a count. Use the -count attribute if
+            you'd like to have a count passed to your user command. This will then be
+            available for expansion as &lt;count> in the argument.
+        </p>
+
+        <p tag=":command-bang">
+            Special cases
+        </p>
+
+        <p>
+            By default a user command does not have a special version, i.e. a version
+            executed with the ! modifier. Providing the -bang attribute will enable this
+            and &lt;bang> will be available in the argument.
+        </p>
+
+        <p tag=":command-description">
+            Command description
+        </p>
+
+        <p>
+            The command's description text can be set with -description. Otherwise it will
+            default to "User-defined command".
+        </p>
+
+        <p tag=":command-replacement-text">
+            Replacement text
+        </p>
+
+        <p>
+            The replacement text <a>rep</a> is scanned for escape sequences and these are
+            replaced with values from the user-entered command line. The resulting string
+            is then executed as an Ex command.
+        </p>
+
+        <p>The valid escape sequences are:</p>
+
+        <dl>
+            <dt>&lt;args></dt> <dd>The command arguments exactly as supplied</dd>
+            <dt>&lt;count></dt><dd>Any supplied count, e.g. 5</dd>
+            <dt>&lt;bang></dt> <dd>! if the command was executed with the ! modifier</dd>
+            <dt>&lt;lt></dt>
+            <dd>
+                A literal '&lt;' character to allow for a literal copy of one
+                of the escape sequences. E.g., &lt;lt>args> will expand to a
+                literal &lt;args>
+            </dd>
+        </dl>
+
+        <p>
+            "q-" can be prefixed to the escape sequence so that the value is quoted, making
+            it suitable for expression evaluation. Example: &lt;q-args>
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:comc :comclear</tags>
+    <spec>:comc<oa>lear</oa></spec>
+    <description>
+        <p>Delete all user-defined commands.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:delc :delcommand</tags>
+    <spec>:delc<oa>ommand</oa> <a>cmd</a></spec>
+    <description>
+        <p>Delete the user-defined command <a>cmd</a>.</p>
+    </description>
+</item>
+
+
+<h2 tag="command-examples">Examples</h2>
+
+<p>Add a :Google command to search via google:</p>
+<code><ex>:command -nargs=* Google open google &lt;args></ex></code>
+
+<!-- TODO: add decent examples -->
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

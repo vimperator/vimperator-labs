@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="intro"
+    title="&liberator.appname; Introduction"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<html:p style="text-align: center; font-weight: bold;">
+First there was a Navigator, then there was an Explorer.
+Later it was time for a Konqueror. Now it's time for an Imperator, the
+VIMperator :)
+</html:p>
+
+<h1 tag="intro">Introduction</h1>
+
+<p>
+<link topic="http://vimperator.org">&liberator.appname;</link> is a
+<link topic="http://www.mozilla.com/firefox/">Firefox</link>
+browser extension with strong inspiration from the Vim text editor,
+with a mind towards faster and more efficient browsing. It has similar key
+bindings and you could call it a modal web browser, as key bindings differ
+according to which mode you are in. For example, it has a special Hint mode,
+where you can follow links easily with the keyboard only. Also most
+functionality is available as commands, typing <ex>:back</ex> will go back
+within the current page history, just like hitting the back button in the
+toolbar.
+</p>
+
+<p>
+    However, &liberator.appname; does not try to be a 100% Vim clone, it rather brings Vim's
+    ideas to the 21st century. This means making use of new graphical capabilities
+    but also of faster computers. Furthermore, great care is taken into making
+    its command line interface more consistent and easier to use, while still
+    being a powerful extension for advanced users.
+</p>
+        
+<p>
+    But &liberator.appname; is more than just a simple command interface to Firefox — it is a
+    complete development environment as well. If you are a web developer, you can
+    enjoy an interactive JavaScript shell — even with completion support. Or if you
+    want to extend &liberator.appname;, you can easily do that by just dropping a JavaScript
+    file in its plugin directory.
+</p>
+
+<tags>author donation sponsor</tags>
+<strut/>
+<p>
+    &liberator.appname; was initially written by
+    <link topic="mailto:stubenschrott@vimperator.org">Martin
+    Stubenschrott</link> but has found many other
+    <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/AUTHORS/">invaluable contributors</link>
+    who helped out fixing bugs and adding new features.
+    
+    If you appreciate the work on &liberator.appname; and want to
+    encourage us working on it more, you can send us greetings, patches, or
+    donations:
+</p>
+
+<pan><handle/></pan>
+
+<p>
+    If you prefer getting some nice products for your money, you can also support
+    us by buying some cool
+    <link topic="http://www.zazzle.com/maxauthority*">merchandise</link> like
+    t-shirts or mugs. Of course, as we believe in free, open source software, only
+    support us financially if you really like &liberator.appname; and the money doesn't hurt
+    — otherwise just use it, recommend it, and like it :)
+</p>
+
+<h2 tag="overview">Help topics</h2>
+
+<ol>
+    <li>
+        <link topic="tutorial">Quick-start tutorial</link>:
+        A quick-start tutorial for new users.
+    </li>
+    <li>
+        <link topic="starting">Starting &liberator.appname;</link>:
+        How &liberator.appname; starts up, where it reads the config file…
+    </li>
+    <li>
+        <link topic="browsing">Browsing</link>:
+        Basic mappings and commands needed for a browsing session (how to open
+        a web page or go back in history).
+    </li>
+    <li>
+        <link topic="buffer">Buffer</link>:
+        Operations on the current document like scrolling or copying text.
+    </li>
+    <li>
+        <link topic="cmdline">Command-line mode</link>:
+        Command-line editing.
+    </li>
+    <li>
+        <link topic="insert">Insert mode</link>:
+        Insert-mode editing.
+    </li>
+    <li>
+        <link topic="options">Options</link>:
+        A description of all options.
+    </li>
+    <li>
+        <link topic="pattern">Text search commands</link>:
+        Searching for text in the current buffer.
+    </li>
+    <li>
+        <link topic="tabs">Tabs</link>:
+        Managing your tabbed browsing session.
+    </li>
+    <li>
+        <link topic="hints">Hints</link>:
+        Selecting hyperlinks and other page elements.
+    </li>
+    <li>
+        <link topic="map">Key mappings, abbreviations, and user-defined commands</link>:
+        Defining new key mappings, abbreviations and user commands.
+    </li>
+    <li>
+        <link topic="eval">Expression evaluation</link>:
+        Executing JavaScript.
+    </li>
+    <li>
+        <link topic="marks">Marks</link>:
+        Using bookmarks, QuickMarks, history and local marks.
+    </li>
+    <li>
+        <link topic="repeat">Repeating commands</link>:
+        Using macros to repeat recurring workflows.
+    </li>
+    <li>
+        <link topic="autocommands">Automatic commands</link>:
+        Automatically executing code on certain events.
+    </li>
+    <li>
+        <link topic="print">Printing</link>:
+        Printing pages.
+    </li>
+    <li>
+        <link topic="gui">&liberator.appname;'s GUI</link>:
+        Accessing &liberator.host; menus, dialogs and the sidebar.
+    </li>
+    <li>
+        <link topic="styling">Styling the GUI and web pages</link>:
+        Changing the styling of content pages and &liberator.appname; itself.
+    </li>
+    <li>
+        <link topic="message">Error and informational messages</link>:
+        A description of messages and error messages.
+    </li>
+    <li>
+        <link topic="developer">Developer information</link>:
+        How to write docs or plugins.
+    </li>
+    <li>
+        <link topic="various">Various commands</link>:
+        Other help which didn't fit into any other category.
+    </li>
+    <li>
+        <link topic="plugins">Plugins</link>:
+        Documentation for any plugins you may have installed.
+    </li>
+</ol>
+
+<p>
+You can also jump directly to the help of a specific command with <ex>:help o</ex>
+or <ex>:help :set</ex>.
+</p>
+
+<h2 tag="features">Features</h2>
+
+<ul>
+    <li>Vim-like keybindings (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, etc.)</li>
+    <li>Ex commands (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …) with a proper command line</li>
+    <li>Tab completion available for all commands, showing suggestions while you type</li>
+    <li>Hint mode (start with <k>f</k> to follow a link)</li>
+    <li>Extensions! Yes, you can extend Vimperator's functionality with <link href="http://ticket.vimperator.org/Vimperator/plugin/">scripts</link> just like you can extend Firefox with extensions</li>
+    <li>Explore JavaScript objects with <ex>:echo window</ex> and even context-sensitive tab completion</li>
+    <li>Easily customizable GUI (easily hide all GUI elements with <ex>:set gui=none</ex>)</li>
+    <li>Ability to <ex>:source</ex> JavaScript files, and to use a <em>~/.vimperatorrc</em> file with syntax highlighting if you install vimperator.vim</li>
+    <li>Easy quick searches (<ex>:open foo</ex> will search for "foo" in google, <ex>:open ebay terminator</ex> will search for "terminator" on ebay) with support for &liberator.host; keyword bookmarks and search engines</li>
+    <li>Count supported for many commands (<em>3</em><k name="C-o"/> will go back 3 pages)</li>
+    <li>Beep on errors</li>
+    <li>Marks support (<k>m</k><em>a</em> to set mark a on a web page, <k>'</k><em>a</em> to go there)</li>
+    <li>QuickMarks support (quickly go to previously marked web pages with <k>go</k><a>a-zA-Z0-9</a>)</li>
+    <li><ex>:map</ex> and <ex>:command</ex> support (and feedkeys() for script writers)</li>
+    <li><ex>:time</ex> support for profiling</li>
+    <li>Move the text cursor and select text with Vim keys and a Visual mode</li>
+    <li>External editor support</li>
+    <li>Macros to replay key strokes</li>
+    <li>AutoCommands to execute actions on certain events</li>
+    <li>A comprehensive help system, explaining all commands, mappings and options</li>
+</ul>
+
+<h2 tag="changelog version">ChangeLog</h2>
+We keep a list of changes between versions <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/NEWS">here</link>.
+
+<h2 tag="contact bugs patches">Contact</h2>
+<p>
+    Please report any bugs/feature requests using the project's <link topic="http://code.google.com/p/vimperator-labs/issues/list">bug tracker</link>.
+    You can also attach patches there.
+    Another way is to use the <link topic="https://groups.google.com/forum/?fromgroups=#%21forum/vimperator-labs">mailing list</link>.
+    You will also find us on the <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> IRC channel
+    on <link topic="http://www.freenode.net/">Freenode</link>.
+    Some more info and tips can be found in the <link topic="http://code.google.com/p/vimperator-labs/wiki/&liberator.appname;FAQ">
+    frequently asked questions (FAQ)</link> on the <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">Wiki</link>.
+
+    Make sure you have read the <link topic="http://vimperator-labs.googlecode.com/hg/vimperator/TODO">TODO</link> file first, as we are aware of many
+    things which can be improved when we find time for it or receive patches.
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

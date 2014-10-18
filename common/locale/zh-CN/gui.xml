@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="gui"
+    title="&liberator.appname; GUI"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="gui">&liberator.appname;'s GUI</h1>
+<toc start="2"/>
+
+<p>
+    Although &liberator.appname; offers the most frequently used &liberator.host; functionality via
+    Ex and Normal mode commands there may be times when directly accessing the GUI
+    is required. There are commands for accessing the menu system, standard dialogs
+    and the sidebar.
+</p>
+
+<h2 tag="menu">Menus</h2>
+
+<item>
+    <tags>:emenu</tags>
+    <spec>:emenu <a>menu</a></spec>
+    <description>
+        <p>
+            Execute <a>menu</a> from the command line. This command provides command-line access
+            to all menu items available from the main &liberator.host; menubar. <a>menu</a> is a
+            hierarchical path to the menu item with each submenu separated by a period.
+            E.g. <ex>:emenu File.Open File…</ex>
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="dialogs">Dialogs</h2>
+
+<item>
+    <tags>:addo :addons</tags>
+    <spec>:addo<oa>ns</oa></spec>
+    <description>
+        <p>
+            Show available &liberator.host; Extensions and Themes.
+            You can add/remove/disable browser extensions from this dialog.
+            Be aware that not all &liberator.host; extensions work, because &liberator.appname; overrides
+            some key bindings and changes &liberator.host;'s GUI.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dia :dialog</tags>
+    <spec>:dia<oa>log</oa> <oa>&liberator.host;-dialog</oa></spec>
+    <description>
+        <p>Open a &liberator.host; dialog.</p>
+
+        <p>Available dialogs:</p>
+        <dl tag="dialog-list">
+            <dt>about</dt>           <dd>About Mozilla &liberator.host;;</dd>
+            <dt>addbookmark</dt>     <dd>Add bookmark for the current page</dd>
+            <dt>addons</dt>          <dd>Manage Add-ons</dd>
+            <dt>bookmarks</dt>       <dd>List your bookmarks</dd>
+            <dt>checkupdates</dt>    <dd>Check for updates</dd>
+            <dt>cleardata</dt>       <dd>Clear private data</dd>
+            <dt>cookies</dt>         <dd>List your cookies</dd>
+            <dt>console</dt>         <dd>JavaScript console</dd>
+            <dt>customizetoolbar</dt><dd>Customize the Toolbar</dd>
+            <dt>dominspector</dt>    <dd>DOM Inspector</dd>
+            <dt>downloads</dt>       <dd>Manage Downloads</dd>
+            <dt>history</dt>         <dd>List your history</dd>
+            <dt>import</dt>          <dd>Import Preferences, Bookmarks, History, etc. from other browsers</dd>
+            <dt>openfile</dt>        <dd>Open the file selector dialog</dd>
+            <dt>pageinfo</dt>        <dd>Show information about the current page</dd>
+            <dt>pagesource</dt>      <dd>View page source</dd>
+            <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
+            <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
+            <dt>printpreview</dt>    <dd>Preview the page before printing</dd>
+            <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
+            <dt>print</dt>           <dd>Show print dialog</dd>
+            <dt>saveframe</dt>       <dd>Save frame to disk</dd>
+            <dt>savepage</dt>        <dd>Save page to disk</dd>
+            <dt>searchengines</dt>   <dd>Manage installed search engines</dd>
+            <dt>selectionsource</dt> <dd>View selection source</dd>
+        </dl>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dl :downl :downloads</tags>
+    <spec>:downl<oa>oads</oa></spec>
+    <description>
+        <p>
+            Show progress of current downloads. Open the original &liberator.host; download dialog
+            in a new tab. Here, downloads can be paused, canceled and resumed.
+        </p>
+    </description>
+</item>
+
+
+<!-- TODO: Does this really fit into gui.xml? -->
+<h2 tag="extensions add-ons">Add-ons</h2>
+
+<item>
+    <tags>:exta :extadd</tags>
+    <spec>:exta<oa>dd</oa> <a>file</a></spec>
+    <description>
+        <p>Install an extension. <a>file</a> is an extension XPInstall file (*.xpi).</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extde :extdelete</tags>
+    <spec>:extde<oa>lete</oa> <a>extension</a></spec>
+    <spec>:extde<oa>lete</oa>!</spec>
+    <description>
+        <p>
+            Uninstall an extension. <a>extension</a> is the extension's name. When <oa>!</oa> is given
+            all extensions are uninstalled.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extd :extdisable</tags>
+    <spec>:extd<oa>isable</oa> <a>extension</a></spec>
+    <spec>:extd<oa>isable</oa>!</spec>
+    <description>
+        <p>
+            Disable an extension. <a>extension</a> is the extension's name. When <oa>!</oa> is given
+            all extensions are disabled.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exte :extenable</tags>
+    <spec>:exte<oa>nable</oa> <a>extension</a></spec>
+    <spec>:exte<oa>nable</oa>!</spec>
+    <description>
+        <p>
+            Enable an extension. <a>extension</a> is the extension's name. When <oa>!</oa> is given all
+            extensions are enabled.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:extens :extensions</tags>
+    <spec>:extens<oa>ions</oa></spec>
+    <description>
+        <p>List all installed extensions.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exto :extoptions</tags>
+    <tags>:extp :extpreferences</tags>
+    <spec>:exto<oa>ptions</oa><oa>!</oa> <a>extension</a></spec>
+    <spec>:extp<oa>references</oa><oa>!</oa> <a>extension</a></spec>
+    <description>
+        <p>
+            Open the preferences dialog for an extension. If <oa>!</oa> is given, open a dialog,
+            otherwise open a buffer. See also <o>newtab</o>.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="sidebar">Sidebar</h2>
+
+<item>
+    <tags>:sbcl :sbclose</tags>
+    <spec>:sbcl<oa>ose</oa></spec>
+    <description>
+        <p>Close the sidebar window.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:sbope :sbopen :sb :sbar :sideb :sidebar</tags>
+    <spec>:sidebar <a>name</a></spec>
+    <description>
+        <p>
+            Open the sidebar window. <a>name</a> is any of the menu items listed under the
+            standard &liberator.host; View->Sidebar menu. Add-ons, Preferences and Downloads are
+            also available in the sidebar.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="status-line status-bar">Status bar</h2>
+
+<p>
+    The status line appears at the bottom right of each window. The <o>status</o>
+    option can be used to specify which elements appear in the status bar and in which order.
+</p>
+
+
+<h2 tag="toolbar">Toolbars</h2>
+
+<p>
+    Vimperator allows quickly changing visible toolbars.
+    See the <o>toolbars</o> option for details.
+</p>
+
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

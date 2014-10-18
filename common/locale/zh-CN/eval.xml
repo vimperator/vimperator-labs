@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="eval"
+    title="&liberator.appname; Expression Evaluation"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="expression expr eval">Expression evaluation</h1>
+<toc start="2"/>
+
+<!-- INTRO TO BE WRITTEN… -->
+
+<item>
+    <tags>:ec :echo</tags>
+    <spec>:ec<oa>ho</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            Echo the expression. Useful for showing informational messages. Multiple lines
+            can be separated by \n. <a>expr</a> can either be a quoted string, or any expression
+            which can be fed to eval() like 4+5. You can also view the source code of
+            objects and functions if the return value of <a>expr</a> is an object or function.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:echoe :echoerr</tags>
+    <spec>:echoe<oa>rr</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            Echo the expression as an error message. Just like <ex>:ec<oa>ho</oa></ex> but echoes
+            the result highlighted as ErrorMsg and saves it to the message history.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:echom :echomsg</tags>
+    <spec>:echom<oa>sg</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            Echo the expression as an informational message. Just like <ex>:ec<oa>ho</oa></ex> but
+            also saves the message in the message history.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:exe :execute</tags>
+    <spec>:exe<oa>cute</oa> <a>expr</a></spec>
+    <description>
+        <p>
+            Execute the string that results from the evaluation of <a>expr</a> as an Ex command.
+            Example: <ex>:execute "source " + io.getRCFile().path</ex> sources the appropriate
+            RC file.
+        </p>
+
+        <p>Note: Unlike Vim this currently only supports a single argument.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:js :javas :javascript</tags>
+    <spec>:javas<oa>cript</oa> <a>cmd</a></spec>
+    <spec>:javascript &lt;&lt;<a>endpattern</a>\n<a>empty</a><a>script</a>\n<a>empty</a><a>endpattern</a></spec>
+    <spec>:javascript<oa>!</oa></spec>
+    <description>
+        <p>
+            Run any JavaScript command through eval(). Acts as a JavaScript interpreter by
+            passing the argument to <tt>eval()</tt>.
+            <ex>:javascript alert(<str>Hello world</str>)</ex> shows
+            a dialog box with the text "Hello world".
+            <ex>:javascript &lt;&lt;EOF</ex> reads all the lines
+            until a line starting with "EOF"
+            is found, and interpret them with the JavaScript <em>eval()</em> function.
+        </p>
+
+        <p>
+            The special version <ex>:javascript!</ex> opens the JavaScript console of
+            &liberator.host;.
+        </p>
+
+        <p>
+            <k name="Tab"/> completion is available for <ex>:javascript <a>cmd</a><k name="Tab"/></ex> (but not
+            yet for the <ex>:js &lt;&lt;EOF</ex> multiline widget). Be aware that &liberator.appname; needs
+            to run <a>cmd</a> through eval() to get the completions, which could have unwanted
+            side effects.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:let</tags>
+    <spec>:let <a>var-name</a> [+-.]= <a>expr1</a></spec>
+    <spec>:let <a>var-name</a></spec>
+    <spec>:let</spec>
+    <description>
+        <p>
+            Sets or lists a variable. Sets the variable {var-name} to the value of the
+            expression <a>expr1</a>. If no expression is given, the value of the variable is
+            displayed. Without arguments, displays a list of all variables.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:unl :unlet</tags>
+    <spec>:unl<oa>et</oa><oa>!</oa> <a>name</a> …</spec>
+    <description>
+        <p>
+            Deletes the variable <a>name</a>. Several variable names can be given. When used
+            with <oa>!</oa> no error message is output for non-existing variables.
+        </p>
+    </description>
+</item>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->
