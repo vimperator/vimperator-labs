@@ -103,10 +103,10 @@ xpi:
 		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
 	fi
 	# Copy components and modules directories
-	find $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
+	find $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0 -I{} $(CP) --parents {} -t $(XPI_PATH) || true
 	# Copy all chrome files, from both commmon/ and vimperator/ folders
-	cd $(COMMON_DIR) && find $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH)/common || true
-	find $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
+	cd $(COMMON_DIR) && find $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0 -I{} $(CP) --parents {} -t $(XPI_PATH)/common || true
+	find $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0 -I{} $(CP) --parents {} -t $(XPI_PATH) || true
 	# TODO: Replace ###VERSION### tags
 	@echo "Replacing ###VERSION### and ###DATE### tags"
 	find $(XPI_PATH) -type f ! -name "*.png" -exec $(SED) -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
