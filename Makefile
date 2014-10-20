@@ -6,7 +6,7 @@ all: xpi ;
 
 $(TARGETS:%=\%.%):
 	echo MAKE $@
-	$(MAKE) -C $* $(@:$*.%=%)
+	$(MAKE) -C $* $(@:$*.%=%) TOPLEVEL=yes
 
 $(TARGETS):
 	$(MAKE) $(DIRS:%=%.$@)

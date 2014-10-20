@@ -1,11 +1,7 @@
 #### configuration
 
-TOP           = $(shell pwd)
-OS            = $(shell uname -s)
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 COMMON_DIR    = ../common
-GOOGLE_PROJ   = vimperator-labs
-GOOGLE	      = https://$(GOOGLE_PROJ).googlecode.com/files
 
 LOCALEDIR     = locale
 ifeq ($(LOCALE),)
@@ -15,27 +11,20 @@ else
 endif
 DOC_FILES     = $(foreach dir,$(LOCALEDIR),$(wildcard $(dir)/*.xml))
 
-# TODO: only add these file types?
-# JAR_TEXTS     = js css dtd xml xul html xhtml xsl
-# JAR_BINS      = png
-# XPI_TEXTS     = js jsm
-
 XPI_FILES     = install.rdf TODO AUTHORS NEWS chrome.manifest ../License.txt
 XPI_DIRS      = components $(COMMON_DIR)/components
-CHROME_DIRS   = content skin $(LOCALEDIR)
-COMMON_CHROME_DIRS   = content skin modules $(LOCALEDIR)
+CHROME_DIRS   = content skin
+COMMON_CHROME_DIRS   = content skin modules
 
 XPI_NAME      = $(NAME)-$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
 XPI           = $(XPI_PATH).xpi
 
-AWK  = awk
-CURL = curl
-B64ENCODE = base64
-# Mac OS X's sed and cp is not run because BSD's syntax
-# use make -e SED=gsed CP=gcp ...
-SED  ?= sed
-CP   ?= cp
+ifeq ($(TOPLEVEL),)
+	XPI_FILE = $(XPI)
+else
+	XPI_FILE = downloads/$(XPI_NAME).xpi
+endif
 
 .SILENT:
 
@@ -43,7 +32,7 @@ CP   ?= cp
 
 TARGETS = all help info xpi clean
 $(TARGETS:%=\%.%):
-	echo MAKE $* $(@:$*.%=%)
+	@echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
 
 .PHONY: $(TARGETS)
@@ -55,7 +44,6 @@ help:
 	@echo "  make help      - display this help"
 	@echo "  make info      - show some info about the system"
 	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
-	@echo "  make dist      - uploads to Google Code (this is not for you)"
 	@echo "  make clean     - clean up"
 	@echo
 	@echo "running some commands with V=1 will show more build details"
@@ -66,26 +54,6 @@ info:
 	@echo "doc files           $(DOC_FILES)"
 	@echo "xpi files           $(XPI_FILES)"
 
-# This is not for you!
-dist: $(XPI)
-	@echo DIST $(XPI) $(GOOGLE)
-	set -e;							        	\
-	which $$(echo $(B64ENCODE) | $(AWK) '{print $1}') >/dev/null;		\
-								        	\
-	proj=$$(echo -n $(NAME) | $(SED) 's/\(.\).*/\1/' | tr a-z A-Z);    	\
-	proj="$$proj$$(echo $(NAME) | $(SED) 's/.//')";                    	\
-	[ -z "$$summary" ] && summary="$$proj $(VERSION) Release"; 		\
-	labels="Project-$$proj,$(labels)";					\
-	[ -n "$(featured)" ] && labels="$$labels,Featured";             	\
-								        	\
-	IFS=,; for l in $$labels; do						\
-		set -- "$$@" --form-string "label=$$l";				\
-	done;									\
-	$(CURL) "$$@" --form-string "summary=$$summary" 			\
-		-F "filename=@$(XPI)"						\
-		-H "Authorization: Basic $$(echo -n "$(GOOGLE_USER):$(GOOGLE_PASS)" | $(B64ENCODE))" \
-		-i "$(GOOGLE)" | $(SED) -n '/^Location/{p;q;}'
-
 clean:
 	@echo "General $(NAME) cleanup..."
 	rm -f $(XPI)
@@ -93,25 +61,67 @@ clean:
 xpi:
 	@echo "Building XPI..."
 	# Create folder structure
-	mkdir -p $(XPI_PATH)/common
+	mkdir -p $(XPI_PATH)/common/locale
+	mkdir -p $(XPI_PATH)/locale
+
 	# Copy top level files
-	$(CP) -L $(XPI_FILES) -t $(XPI_PATH) || true
+	cp -L $(XPI_FILES) $(XPI_PATH)
+
 	@echo "Update chrome.manifest for paths used inside the XPI..."
-	$(SED) -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
+	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
+
 	if [ "x$(LOCALE)" != "x" ]; then \
 		echo "locale $(NAME) $(LOCALE) locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
 		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
 	fi
+
 	# Copy components and modules directories
-	find $(XPI_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
-	# Copy all chrome files, from both commmon/ and vimperator/ folders
-	cd $(COMMON_DIR) && find $(COMMON_CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH)/common || true
-	find $(CHROME_DIRS) -follow -type f ! -name ".*" -print0 | xargs -0i $(CP) --parents {} -t $(XPI_PATH) || true
-	# TODO: Replace ###VERSION### tags
+	cp -LR $(XPI_DIRS) $(XPI_PATH)
+
+	# Copy all chrome files from commmon/ folder
+	cd $(COMMON_DIR) && \
+	cp -LR $(COMMON_CHROME_DIRS) $(XPI_PATH)/common && \
+	cp -LR $(LOCALEDIR) $(XPI_PATH)/common/locale || true
+
+	# Copy all chrome files from vimperator|muttator folder
+	cp -LR $(CHROME_DIRS) $(XPI_PATH)
+	cp -LR $(LOCALEDIR) $(XPI_PATH)/locale || true
+
 	@echo "Replacing ###VERSION### and ###DATE### tags"
-	find $(XPI_PATH) -type f ! -name "*.png" -exec $(SED) -i -e "s,###VERSION###,$(VERSION),g" -e "s,###DATE###,$(BUILD_DATE),g" {} \;
+	for file in `grep -rl -e "###VERSION###" -e "###DATE###" $(XPI_PATH)`; do \
+		sed -i -e "s,###VERSION###,$(VERSION),g" $${file}; \
+		sed -i -e "s,###DATE###,$(BUILD_DATE),g" $${file}; \
+	done
+
+	# Delete unknown file types
+	find $(XPI_PATH) -type f         \
+		   ! -name 'AUTHORS'         \
+		-a ! -name 'TODO'            \
+		-a ! -name 'NEWS'            \
+		-a ! -name 'install.rdf'     \
+		-a ! -name 'chrome.manifest' \
+		-a ! -name 'License.txt'     \
+		-a ! -name 'Makefile'        \
+		-a ! -name '*.css'           \
+		-a ! -name '*.dtd'           \
+		-a ! -name '*.xml'           \
+		-a ! -name '*.xul'           \
+		-a ! -name '*.html'          \
+		-a ! -name '*.xhtml'         \
+		-a ! -name '*.xsl'           \
+		-a ! -name '*.png'           \
+		-a ! -name '*.svg'           \
+		-a ! -name '*.js'            \
+		-a ! -name '*.jsm'           \
+		-delete
+
 	# Zip the whole directory and remove dist folder
-	cd $(XPI_PATH) && zip -9r ../$(XPI_NAME).xpi *
+	@echo Packaging up $(XPI_NAME).xpi
+	cd $(XPI_PATH) && zip -q -9r ../$(XPI_NAME).xpi *
+
+	# Clean out build files
 	rm -rf $(XPI_PATH)
-	@echo "SUCCESS: $(XPI_PATH).xpi"
+	rm -rf ../downloads/common
+
+	@echo "SUCCESS: $(XPI_FILE)"
 
