@@ -257,7 +257,7 @@
     </xsl:template>
 
     <xsl:template match="liberator:o" mode="pass-2">
-        <span liberator:highlight="HelpOption">
+        <span liberator:highlight="HelpOpt">
             <xsl:call-template name="linkify-tag">
                 <xsl:with-param name="contents" select='concat("&#39;", text(), "&#39;")'/>
             </xsl:call-template>
