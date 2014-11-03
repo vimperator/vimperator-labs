@@ -1,5 +1,5 @@
 // vim: set fdm=marker:
-var EXPORTED_SYMBOLS = ["raw", "safehtml", "tmpl", "xml", "e4x", "cooked"];
+var EXPORTED_SYMBOLS = ["raw", "safehtml", "tmpl", "xml", "cooked"];
 
 // {{{ escape function
 //var obj1 = {};
@@ -248,9 +248,7 @@ function templateTmpl(portion, args) // {{{
                 }
             }
             if (i >= j) break label_root;
-            else if (typeof arg === "xml") {
-                res += "`" + arg.toXMLString().replace(/([\\`])/g, "\\$1", "g") + "`";
-            } else if (arg instanceof TemplateTmpl) {
+            else if (arg instanceof TemplateTmpl) {
                 res += "(" + arg.value + ")";
             } else if (arg instanceof TemplateXML) {
                 res += "`" + arg.value.replace(/([\\`])/g, "\\$1", "g") + "`";
@@ -339,8 +337,6 @@ templateTmpl.map = function templateTmplMap(data, fn) {
         val = fn(data[i]);
         if (val instanceof TemplateTmpl)
             res += "(" + val.value + ")";
-        else if (typeof val === "xml")
-            res += encodeTmplXml(val.toXMLString());
         else if (val instanceof TemplateXML)
             res += encodeTmplXml(val.value);
         else
@@ -360,8 +356,6 @@ templateTmpl["+="] = function (self, value) {
         self.value += "(" + value.value + ")";
     else if (value instanceof TemplateXML)
         self.value += "`" + value.value.replace(/`/g, "\\`") + "`";
-    else if (typeof value === "xml")
-        self.value += "`" + value.toXMLString().replace(/`/g, "\\`") + "`";
     else
         self.value = "{" + String(value).replace(/}/g, "\\}") + "}";
     return self;
@@ -420,7 +414,7 @@ function templateXML(portion, args) // {{{
                 }
             }
             if (i >= j) break label_root;
-            else if (arg instanceof TemplateTmpl || typeof arg === "xml") {
+            else if (arg instanceof TemplateTmpl) {
                 res += arg.toXMLString();
             } else if (arg instanceof TemplateXML) {
                 res += arg.value;
@@ -521,7 +515,7 @@ templateXML.map = function templateXmlMap(data, fn) {
     var val, res = "";
     for (var i = 0, j = data.length; i < j; i++) {
         val = fn(data[i]);
-        if (val instanceof TemplateTmpl || typeof val === "xml")
+        if (val instanceof TemplateTmpl)
             res += val.toXMLString();
         else if (val instanceof TemplateXML)
             res += val.value;
@@ -550,8 +544,6 @@ templateXML["+="] = function (self, value) {
         self.value += value.toXMLString();
     else if (value instanceof TemplateXML)
         self.value += value.value;
-    else if (typeof value === "xml")
-        self.value += value.toXMLString();
     else
         self.value += escapeHTML(value);
     return self;
@@ -594,51 +586,10 @@ function templateSafeHtml(portion, args) {
     return res;
 }
 
-function templateE4X(portion, args) // e4x {{{
-{
-    try {
-    return new XMLList(templateXML(portion, args).value);
-    } catch (ex) {
-        alert(ex.stack);
-        throw ex;
-    }
-}
-templateE4X.raw = function raw(portion, args) {
-    return new XMLList(templateRaw(portion, args));
-};
-templateE4X.cdata = function cdata(portion, args) {
-    return new XMLList("<![CDATA[" + templateRaw(portion, args).replace(/>/g, "&gt;") + "]]>");
-};
-templateE4X["+"] = function operatorPlus(lhs, rhs) {
-    function toE4X(a) {
-        if (a instanceof TemplateTmpl)
-            return new XMLList(a.toXMLString());
-        else if (a instanceof TemplateXML)
-            return new XMLList(a.toString());
-        else
-            return a;
-    }
-    return toE4X(lhs) + toE4X(rhs);
-};
-// xxx: xml object to E4X
-templateE4X.cast = function cast(obj) {
-    if (obj instanceof TemplateTmpl)
-        return new XMLList(obj.toXMLString());
-    else if (obj instanceof TemplateXML)
-        return new XMLList(obj.value);
-    else
-        return obj;
-};
-templateE4X["+="] = function (self, value) {
-    if (typeof self !== "xml") throw SyntaxError();
-    self += templateE4X.cast(value);
-    return self;
-};
 //}}}
 
 var tmpl = templateTmpl;
 var xml = templateXML;
-var e4x = templateE4X;
 var raw = templateRaw;
 var cooked = templateCooked;
 var safehtml = templateSafeHtml;

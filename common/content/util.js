@@ -5,22 +5,18 @@
 
 /** @scope modules */
 
-//xxx:
-this.$$Namespace = function (prefix, uri) {
-    return "XMLList" in window ? Namespace(prefix, uri)
-        : {
-            prefix: prefix,
-            uri: uri,
-            toString: function () {
-                return this.uri;
-            },
+const {XHTML, XUL, NS} = (function () {
+    function Namespace(prefix, uri) {
+        this.prefix = prefix;
+        this.uri = uri;
+    }
+    Namespace.prototype.toString = function toString() { return this.uri; };
+    return {
+        XHTML: new Namespace("html", "http://www.w3.org/1999/xhtml"),
+        XUL  : new Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
+        NS   : new Namespace("liberator", "http://vimperator.org/namespaces/liberator"),
     };
-}
-const XHTML = $$Namespace("html", "http://www.w3.org/1999/xhtml");
-const XUL = $$Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-const NS =  $$Namespace("liberator", "http://vimperator.org/namespaces/liberator");
-if ("XMLList" in window) eval("default xml namespace = XHTML");
-delete this.$$Namespace;
+})();
 
 const Util = Module("util", {
     init: function () {
@@ -731,9 +727,6 @@ const Util = Module("util", {
      * @returns {Node|DocumentFragment}
      */
     xmlToDom: function xmlToDom(node, doc, nodes) {
-        if (typeof node === "xml")
-            return this.xmlToDomForE4X(node, doc, nodes);
-
         var dom = this.xmlToDomForTemplate(node, doc, nodes);
 
         //xxx: change highlight's namespace
@@ -746,39 +739,6 @@ const Util = Module("util", {
             node.setAttributeNS(NS, str, attr);
         }
         return dom;
-    },
-    /**
-     * Converts an E4X XML literal to a DOM node.
-     *
-     * @param {Node} node
-     * @param {Document} doc
-     * @param {Object} nodes
-     * @returns {Node}
-     * @deprecated
-     * @see util.xmlToDom
-     */
-    xmlToDomForE4X: function xmlToDomForE4X(node, doc, nodes) {
-        if (node.length() != 1) {
-            let domnode = doc.createDocumentFragment();
-            for each (let child in node)
-                domnode.appendChild(arguments.callee(child, doc, nodes));
-            return domnode;
-        }
-        switch (node.nodeKind()) {
-        case "text":
-            return doc.createTextNode(String(node));
-        case "element":
-            let domnode = doc.createElementNS(node.namespace(), node.localName());
-            for each (let attr in node.attributes())
-                domnode.setAttributeNS(attr.name() == "highlight" ? NS.uri : attr.namespace(), attr.name(), String(attr));
-            for each (let child in node.children())
-                domnode.appendChild(arguments.callee(child, doc, nodes));
-            if (nodes && node.attribute("key"))
-                nodes[node.attribute("key")] = domnode;
-            return domnode;
-        default:
-            return null;
-        }
     },
     /**
      * Converts an string of TemplateXML object to a DOM node.

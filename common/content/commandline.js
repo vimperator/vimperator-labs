@@ -609,7 +609,7 @@ const CommandLine = Module("commandline", {
                 action = this._echoMultiline;
             }
 
-            if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || typeof str == "xml" || str instanceof TemplateSupportsXML ) && !(flags & this.FORCE_SINGLELINE))
+            if ((flags & this.FORCE_MULTILINE) || (/\n/.test(str) || str instanceof TemplateSupportsXML ) && !(flags & this.FORCE_SINGLELINE))
                 action = this._echoMultiline;
 
             if (single)
