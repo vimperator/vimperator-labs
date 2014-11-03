@@ -219,10 +219,11 @@ templateXML.map = function templateXmlMap(data, fn) {
     return new TemplateXML(res);
 }
 
+var DOMParser = Components.Constructor("@mozilla.org/xmlextras/domparser;1");
 // xxx: xml check
 templateXML.raw = function templateXmlRaw(portion, args) {
     var str = templateRaw(portion, args);
-    var ps = new DOMParser
+    var ps = DOMParser();
     var doc = ps.parseFromString("<root>" + str + "</root>", "text/xml");
     if (doc.documentElement.tagName === "parsererror") {
         throw SyntaxError(doc.documentElement.childNodes[0].data);

@@ -30,8 +30,7 @@
 
     let prefix = [BASE];
 
-    //Cu.import("resource://liberator/template-tag.js", modules);
-    loader.loadSubScript("resource://liberator/template-tag.js", modules);
+    Cu.import("resource://liberator/template-tag.js", modules);
 
     // TODO: This list is much too long, we should try to minimize
     // the number of required components for easier porting to new applications
