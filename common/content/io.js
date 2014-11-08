@@ -1017,14 +1017,23 @@ lookup:
 
         completion.charset = function (context) {
             context.anchored = false;
-            context.generate = function () {
-                let names = util.Array(
-                    "more1 more2 more3 more4 more5 static".split(" ").map(function (key)
-                        options.getPref("intl.charsetmenu.browser." + key).split(', '))
-                ).flatten().uniq();
-                let bundle = document.getElementById("liberator-charset-bundle");
-                return names.map(function (name) [name, bundle.getString(name.toLowerCase() + ".title")]);
-            };
+            if (services.get("vc").compare(Application.version, "32") < 0) {
+                context.generate = function () {
+                    let names = util.Array(
+                        "more1 more2 more3 more4 more5 static".split(" ").map(function (key)
+                            options.getPref("intl.charsetmenu.browser." + key).split(', '))
+                    ).flatten().uniq();
+                    let bundle = document.getElementById("liberator-charset-bundle");
+                    return names.map(function (name) [name, bundle.getString(name.toLowerCase() + ".title")]);
+                };
+            }
+            else {
+                context.generate = function () {
+                    let {CharsetMenu} = Cu.import("resource://gre/modules/CharsetMenu.jsm", {});
+                    let data = CharsetMenu.getData();
+                    return data.pinnedCharsets.concat(data.otherCharsets).map(function (o) [o.value, o.label]);
+                };
+            }
         };
 
         completion.directory = function directory(context, full) {
