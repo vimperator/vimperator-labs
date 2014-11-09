@@ -1,10 +1,12 @@
-201x-00-00
+2014-11-09
     * Version 3.8.3
+    * Many compatibility fixes with new Firefox versions (up to Firefox 35)
+    * Rewrite Makefile so it works on MacOS, also to not include any unwanted files
     * Only show "Executing Autocommand ..." message on verbose level >= 9
+    * :set encoding= completion works again on Firefox >= 32.
     * Push minVersion to Firefox25, as we have some problems on older Firefoxs regarding search
     * Make 'gH' command work with multiple home pages
     * Don't prompt user for confirmation when 'delbmarks!' command is invoked in silent mode
-    * Many compatibility fixes with new Firefox versions
 
 2014-02-14: A Valentine's gift
     * Version 3.8.2
