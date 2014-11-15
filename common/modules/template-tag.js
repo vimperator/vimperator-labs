@@ -60,7 +60,7 @@ function TemplateXML(s) {this.value = s;}
 TemplateXML.prototype = new TemplateSupportsXML;
 TemplateXML.prototype.toString = function () this.value;
 
-function templateXML(portion, args) // {{{
+function templateXML(portion, ...args) // {{{
 {
     var res = "";
 
@@ -221,7 +221,7 @@ templateXML.map = function templateXmlMap(data, fn) {
 
 var DOMParser = Components.Constructor("@mozilla.org/xmlextras/domparser;1");
 // xxx: xml check
-templateXML.raw = function templateXmlRaw(portion, args) {
+templateXML.raw = function templateXmlRaw(portion, ...args) {
     var str = templateRaw(portion, args);
     var ps = DOMParser();
     var doc = ps.parseFromString("<root>" + str + "</root>", "text/xml");
@@ -230,7 +230,7 @@ templateXML.raw = function templateXmlRaw(portion, args) {
     }
     return new TemplateXML(str);
 };
-templateXML.cdata = function templateXmlCDATA(portion, args) {
+templateXML.cdata = function templateXmlCDATA(portion, ...args) {
     return new TemplateXML("<![CDATA[" + templateRaw(portion, args).replace(/>/g, "&gt;") + "]]>");
 };
 templateXML["+="] = function (self, value) {

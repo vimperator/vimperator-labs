@@ -1,3 +1,4 @@
+// TODO: delete me when minversion is greater than 35
 var EXPORTED_SYMBOLS = ["convert"];
 const Cu = Components.utils;
 
