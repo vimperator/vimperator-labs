@@ -408,9 +408,15 @@ const Util = Module("util", {
 
         if (services.get("vc").compare(Application.version, "33") >= 0
             && Cu.isXrayWrapper(result)) {
-            let (xr = result, s = asIterator ? "iterateNext" : "snapshotItem") {
-                result = Object.create(xr);
-                result[s] = xr[s].bind(xr);
+            let xr = result;
+
+            if (asIterator) {
+                result = { iterateNext: function iterateNext() xr.iterateNext()};
+            } else {
+                result = {
+                    snapshotItem: function snapshotItem(num) xr.snapshotItem(num),
+                    get snapshotLength() xr.snapshotLength,
+                };
             }
         }
 
