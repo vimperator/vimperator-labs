@@ -8,9 +8,9 @@
 /**
  * @param {String} name
  * @param {String} description
- * @param {String|TemplateXML} node
+ * @param {String|TemplateSupportsXML} node
  *      String     : the id attribute value of the existing node
- *      TemplateXML: a TemplateXML instance. e.g) xml`<xul:label ...>`
+ *      TemplateSupportsXML: a TemplateSupportsXML instance. e.g) xml`<xul:label ...>`
  * @param {Function} updater
  * @param {Object} extraInfo
  */
@@ -26,13 +26,13 @@ const StatusField = Class("StatusField", {
             if (!this.node)
                 throw new Error('the element is not found: "' + node + '"');
         }
-        else if (node instanceof TemplateXML) {
+        else if (node instanceof TemplateSupportsXML) {
             this.node = util.xmlToDom(node, document);
             this.node.setAttribute("id", "liberator-status-" + name);
             statusline._statuslineWidget.appendChild(this.node);
         }
         else
-            throw new TypeError("the argument node must be String or TemplateXML: " + node);
+            throw new TypeError("the argument node must be String or TemplateSupportsXML: " + node);
 
         this.node.hidden = true;
         if (extraInfo)
