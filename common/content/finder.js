@@ -120,6 +120,7 @@ const Finder = Module("finder", {
         this._processUserPattern(str);
         let result = fastFind.find(str, this._linksOnly);
         window.gFindBar._findField.value = str;
+        this._displayFindResult(result, this._backwards);
     } :
     // FIXME: remove when minVersion >= 25
     function (str) {
