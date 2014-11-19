@@ -5,6 +5,7 @@
 
 (function () {
     const modules = {};
+    // TODO: FIXME when minVersion is greater than 34
     var {isSupport: TemplateIsSupport} = Components.utils.import("resource://liberator/CheckTemplate.jsm", {});
     const BASE = TemplateIsSupport ?
         "chrome://liberator/content/" : "liberator://template/chrome://liberator/content/";
@@ -32,6 +33,7 @@
 
     let prefix = [BASE];
 
+    // TODO: FIXME when minVersion is greater than 34
     Components.utils.import("resource://liberator/template-tag" + (TemplateIsSupport ? ".js" : "-old.js"), modules);
 
     // TODO: This list is much too long, we should try to minimize

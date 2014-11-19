@@ -332,7 +332,7 @@ const Liberator = Module("liberator", {
      *     should be loaded.
      */
     loadScript: function (uri, context) {
-        // TODO: delete me when minVersion is greater than 35
+        // TODO: delete me when minVersion is greater than 34
         if (options.expandtemplate) {
             var prefix = "liberator://template/";
             if (uri.lastIndexOf(prefix, 0) === -1)
@@ -346,7 +346,7 @@ const Liberator = Module("liberator", {
             if (!context)
                 context = userContext;
 
-            // TODO: delete me when minVersion is greater than 35
+            // TODO: delete me when minVersion is greater than 34
             if (options.expandtemplate) {
                 var obj = new Object;
                 Cu.import("resource://liberator/template.js", obj);

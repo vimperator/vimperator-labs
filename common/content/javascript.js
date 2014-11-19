@@ -638,7 +638,7 @@ const JavaScript = Module("javascript", {
             "Allow completion of JavaScript objects coming from web content. POSSIBLY INSECURE!",
             "boolean", false);
 
-        // TODO: delete me when minVersion is greater than 35
+        // TODO: delete me when minVersion is greater than 34
         if (!liberator.has("template")) {
             options.add(["expandtemplate"],
                 "Expand TemplateLiteral",

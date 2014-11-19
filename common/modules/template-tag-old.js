@@ -1,3 +1,4 @@
+// TODO: delete me when minVersion is greater than 34
 
 var EXPORTED_SYMBOLS = ["xml", "TemplateSupportsXML"];
 (function () {

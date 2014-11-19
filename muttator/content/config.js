@@ -10,6 +10,7 @@ const Config = Module("config", ConfigBase, {
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
 
+        // TODO: delete me when minversion is greater than 34
         var {isSupport} = Cu.import("resource://liberator/CheckTemplate.jsm", {});
         if (isSupport) this.features.add("template");
     },
