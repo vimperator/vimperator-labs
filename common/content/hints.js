@@ -496,6 +496,10 @@ const Hints = Module("hints", {
             }
         }
 
+        if (firstHint === null) {
+            return false;
+        }
+
         this._tabNavigation[firstHint].prev = lastHint;
         this._tabNavigation[lastHint].next = firstHint;
 
