@@ -637,8 +637,12 @@ const JavaScript = Module("javascript", {
         options.add(["inspectcontentobjects"],
             "Allow completion of JavaScript objects coming from web content. POSSIBLY INSECURE!",
             "boolean", false);
-        options.add(["expandtemplate"],
-            "Expand TemplateLiteral",
-            "boolean", !("XMLList" in window));
+
+        // TODO: delete me when minVersion is greater than 34
+        if (!liberator.has("template")) {
+            options.add(["expandtemplate"],
+                "Expand TemplateLiteral",
+                "boolean", !("XMLList" in window));
+        }
     }
 })
