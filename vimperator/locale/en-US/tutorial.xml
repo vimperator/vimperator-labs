@@ -73,8 +73,7 @@
 </code>
 
 <p>
-    Finally, in addition to the help system itself, <ex>:exusage</ex>, <ex>:viusage</ex>
-    and <ex>:optionusage</ex> are useful quick-reference commands.
+    Finally, in addition to the help system itself, <ex>:usage</ex> is a useful quick-reference command.
 </p>
 
 <h2 tag="living-mouseless">Mouseless</h2>
