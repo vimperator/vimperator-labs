@@ -3,13 +3,7 @@
 BUILD_DATE    = $(shell date "+%Y/%m/%d %H:%M:%S")
 COMMON_DIR    = ../common
 
-LOCALEDIR     = locale
-ifeq ($(LOCALE),)
-	LOCALEDIR = locale/en-US
-else
-	LOCALEDIR = locale/en-US locale/$(LOCALE)
-endif
-DOC_FILES     = $(foreach dir,$(LOCALEDIR),$(wildcard $(dir)/*.xml))
+DOC_FILES     = $(foreach dir,locale/en-US,$(wildcard $(dir)/*.xml))
 
 XPI_FILES     = install.rdf TODO AUTHORS NEWS chrome.manifest ../License.txt
 XPI_DIRS      = components $(COMMON_DIR)/components
@@ -25,6 +19,21 @@ ifeq ($(TOPLEVEL),)
 else
 	XPI_FILE = downloads/$(XPI_NAME).xpi
 endif
+
+### Locales
+L1 = $(shell ls locale)
+L2 = $(shell ls ../common/locale)
+L1_LEN = $(shell echo $(L1) | wc -c)
+L2_LEN = $(shell echo $(L2) | wc -c)
+OPTION = $(shell test $(L1_LEN) -gt $(L2_LEN) && echo 1)
+
+ifeq ($(OPTION),1)
+	SUPPORTED_LOCALES = $(L1)
+else
+	SUPPORTED_LOCALES = $(L2)
+endif
+
+LOCALE_MAP = . locale $(NAME)\n.. common/locale liberator\n
 
 .SILENT:
 
@@ -45,13 +54,12 @@ help:
 	@echo "  make info      - show some info about the system"
 	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
 	@echo "  make clean     - clean up"
-	@echo
-	@echo "running some commands with V=1 will show more build details"
 
 info:
 	@echo "version             $(VERSION)"
 	@echo "release file        $(XPI)"
 	@echo "doc files           $(DOC_FILES)"
+	@echo "supported locales   $(SUPPORTED_LOCALES)"
 	@echo "xpi files           $(XPI_FILES)"
 
 clean:
@@ -67,25 +75,43 @@ xpi:
 	# Copy top level files
 	cp -L $(XPI_FILES) $(XPI_PATH)
 
-	@echo "Update chrome.manifest for paths used inside the XPI..."
-	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
-
-	if [ "x$(LOCALE)" != "x" ]; then \
-		echo "locale $(NAME) $(LOCALE) locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
-		echo "locale liberator $(LOCALE) common/locale/$(LOCALE)/" >> $(XPI_PATH)/chrome.manifest; \
-	fi
-
 	# Copy components and modules directories
 	cp -LR $(XPI_DIRS) $(XPI_PATH)
 
 	# Copy all chrome files from commmon/ folder
 	cd $(COMMON_DIR) && \
-	cp -LR $(COMMON_CHROME_DIRS) $(XPI_PATH)/common && \
-	cp -LR $(LOCALEDIR) $(XPI_PATH)/common/locale || true
+	cp -LR $(COMMON_CHROME_DIRS) $(XPI_PATH)/common
 
 	# Copy all chrome files from vimperator|muttator folder
 	cp -LR $(CHROME_DIRS) $(XPI_PATH)
-	cp -LR $(LOCALEDIR) $(XPI_PATH)/locale || true
+
+	# Remove existing locale entries from the manifest file
+	for locale in $(SUPPORTED_LOCALES); do \
+		sed -i -e "/$$locale/d" $(XPI_PATH)/chrome.manifest; \
+	done
+
+	# Package up locale specific documentation files
+	#  * Create a folder for the requested locale in the build directory
+	#  * Copy the English version of the documentation files there
+	#  * Overwrite them with documentation files from the requested locale
+	#  * Add an entry for the requested locale in the chrome.manifest file
+	for locale in $(SUPPORTED_LOCALES); do \
+		echo "Including $$locale documentation"; \
+		printf "$(LOCALE_MAP)" | \
+		while read parent dir name; do\
+			src=$$parent/$$dir/$$locale; \
+			dest=$(XPI_PATH)/$$dir/$$locale; \
+			mkdir -p $$dest; \
+			cp -LR $$parent/$$dir/en-US/. $$dest; \
+			test -d $$src && \
+				cp -LR $$src/. $$dest; \
+			echo "locale $$name $$locale $$dir/$$locale/" >> $(XPI_PATH)/chrome.manifest; \
+		done;\
+	done
+
+	# Update locale paths in manifest file
+	sed -i -e 's# ./locale/# locale/#' $(XPI_PATH)/chrome.manifest
+	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
 
 	@echo "Replacing ###VERSION### and ###DATE### tags"
 	for file in `grep -rl -e "###VERSION###" -e "###DATE###" $(XPI_PATH)`; do \
@@ -124,4 +150,3 @@ xpi:
 	rm -rf ../downloads/common
 
 	@echo "SUCCESS: $(XPI_FILE)"
-
