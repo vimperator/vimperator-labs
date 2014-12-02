@@ -833,9 +833,24 @@ const Hints = Module("hints", {
             };
         } //}}}
 
+        /**
+         * Get a hint matcher for hintmatching=fuzzy
+         *
+         * The user input can be anything. The matcher looks for occurances of
+         * the characters in the user input. If all occurances are found in the
+         * link, in order, the link is relevant.
+         *
+         * @param {string} hintString The string typed by the user.
+         * @returns {function(string):boolean} A function that takes the text
+         *      of a hint and returns true if all characters of the input are
+         *      found in the link.
+         */
         function fuzzyMatcher(hintString) {
             expression = '';
 
+            // Build a regex for fuzzy matching with the input.
+            //
+            // If the input is 'abc', the regex will be '[^a]*a[^b]*b[^c]c'.
             for (var i = 0; i < hintString.length; i ++) {
                 var char = hintString[i];
                 expression += '[^' + char + ']*' + char;
