@@ -862,7 +862,7 @@ const Hints = Module("hints", {
                 var found = linkText.search(re) != -1;
 
                 return found;
-            }
+            };
         }
 
         let indexOf = String.indexOf;
