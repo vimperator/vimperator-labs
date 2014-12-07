@@ -98,7 +98,7 @@ const Template = Module("template", {
                 return xml`<span highlight="Number">${str}</span>`;
             case "string":
                 if (processStrings)
-                    str = str.quote();
+                    str = JSON.stringify(str);
                 return xml`<span highlight="String">${str}</span>`;
             case "boolean":
                 return xml`<span highlight="Boolean">${str}</span>`;

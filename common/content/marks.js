@@ -166,7 +166,7 @@ const Marks = Module("marks", {
 
         if (filter.length > 0) {
             marks = marks.filter(function (mark) filter.indexOf(mark[0]) >= 0);
-            liberator.assert(marks.length > 0, "No matching marks for: " + filter.quote());
+            liberator.assert(marks.length > 0, "No matching marks for: " + JSON.stringify(filter));
         }
 
         let list = template.tabular(
@@ -306,7 +306,7 @@ const Marks = Module("marks", {
 
                 // ignore invalid mark characters unless there are no valid mark chars
                 liberator.assert(!args || /[a-zA-Z]/.test(args),
-                    "No matching marks for: " + args.quote());
+                    "No matching marks for: " + JSON.stringify(args));
 
                 let filter = args.replace(/[^a-zA-Z]/g, "");
                 marks.list(filter);

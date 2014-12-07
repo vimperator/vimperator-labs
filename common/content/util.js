@@ -281,7 +281,7 @@ const Util = Module("util", {
 
                         data.push("<"); data.push(node.localName);
                         if (node instanceof HTMLHtmlElement)
-                            data.push(" xmlns=" + XHTML.uri.quote());
+                            data.push(" xmlns=" + JSON.stringify(XHTML.uri));
 
                         for (let { name: name, value: value } in util.Array.itervalues(node.attributes)) {
                             if (name == "liberator:highlight") {

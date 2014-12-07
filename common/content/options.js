@@ -532,7 +532,7 @@ const Options = Module("options", {
 
         if (option.name in this._optionHash) {
             // never replace for now
-            liberator.echomsg("Option '" + names[0].quote() + "' already exists, NOT replacing existing option.");
+            liberator.echomsg("Option '" + JSON.stringify(names[0]) + "' already exists, NOT replacing existing option.");
             return false;
         }
 

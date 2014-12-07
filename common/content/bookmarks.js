@@ -620,7 +620,7 @@ const Bookmarks = Module("bookmarks", {
                     let url = args.string || buffer.URL;
                     let deletedCount = bookmarks.remove(url);
 
-                    liberator.echomsg("Deleted " + deletedCount + " bookmark(s) with url: " + url.quote());
+                    liberator.echomsg("Deleted " + deletedCount + " bookmark(s) with url: " + JSON.stringify(url));
                 }
 
             },
