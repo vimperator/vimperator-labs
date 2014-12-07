@@ -912,7 +912,7 @@ const Buffer = Module("buffer", {
             if (bookmarks.isBookmarked(this.URL))
                 xml["+="](info, ", bookmarked");
 
-            let pageInfoText = xml`${file.quote()} [${info}] ${title}`;
+            let pageInfoText = xml`${JSON.stringify(file)} [${info}] ${title}`;
             liberator.echo(pageInfoText, commandline.FORCE_SINGLELINE);
             return;
         }

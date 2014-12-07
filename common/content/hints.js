@@ -155,7 +155,7 @@ const Hints = Module("hints", {
                     case "label":
                         if (elem.id) {
                             // TODO: (possibly) do some guess work for label-like objects
-                            let label = util.evaluateXPath(["label[@for=" + elem.id.quote() + "]"], doc).snapshotItem(0);
+                            let label = util.evaluateXPath(["label[@for=" + JSON.stringify(elem.id) + "]"], doc).snapshotItem(0);
                             if (label)
                                 return [label.textContent.toLowerCase(), true];
                         }
@@ -507,9 +507,9 @@ const Hints = Module("hints", {
             let css = [];
             // FIXME: Broken for imgspans.
             for (let { doc } of this._docs) {
-                for (let elem in util.evaluateXPath(" {//*[@liberator:highlight and @number]", doc)) {
+                for (let elem in util.evaluateXPath("//*[@liberator:highlight and @number]", doc)) {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
-                    css.push(highlight.selector(group) + "[number=" + elem.getAttribute("number").quote() + "] { " + elem.style.cssText + " }");
+                    css.push(highlight.selector(group) + "[number=" + JSON.stringify(elem.getAttribute("number")) + "] { " + elem.style.cssText + " }");
                 }
             }
             styles.addSheet(true, "hint-positions", "*", css.join("\n"));

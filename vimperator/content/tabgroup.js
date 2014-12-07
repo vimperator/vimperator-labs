@@ -326,7 +326,7 @@ const TabGroup = Module("tabGroup", {
                         if (args.bang)
                             group = tabGroup.createGroup(groupName);
                         else {
-                            liberator.echoerr("No such group: " + groupName.quote() + ". Add \"!\" if you want to create it.");
+                            liberator.echoerr("No such group: " + JSON.stringify(groupName) + ". Add \"!\" if you want to create it.");
                             return;
                         }
                     }

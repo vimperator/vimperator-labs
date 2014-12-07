@@ -339,9 +339,9 @@ function Styles(name, store) {
     const storage = modules.storage;
     const ios = services.get("io");
     const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-    const namespace = "@namespace html " + XHTML.uri.quote() + ";\n" +
-                      "@namespace xul " + XUL.uri.quote() + ";\n" +
-                      "@namespace liberator " + NS.uri.quote() + ";\n";
+    const namespace = "@namespace html " + JSON.stringify(XHTML.uri) + ";\n" +
+                      "@namespace xul " + JSON.stringify(XUL.uri) + ";\n" +
+                      "@namespace liberator " + JSON.stringify(NS.uri) + ";\n";
 
     const Sheet = Struct("name", "id", "sites", "css", "system", "agent");
     Sheet.prototype.__defineGetter__("fullCSS", function wrapCSS() {

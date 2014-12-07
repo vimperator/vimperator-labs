@@ -646,7 +646,7 @@ const Liberator = Module("liberator", {
             if (helpFile in services.get("liberator:").FILE_MAP)
                 liberator.open("liberator://help/" + helpFile, { from: "help" });
             else
-                liberator.echomsg("Sorry, help file " + helpFile.quote() + " not found");
+                liberator.echomsg("Sorry, help file " + JSON.stringify(helpFile) + " not found");
             return;
         }
 
@@ -1357,7 +1357,7 @@ const Liberator = Module("liberator", {
                     liberator.echoerr("Invalid argument: " + arg);
                 }
                 catch (e) {
-                    liberator.echoerr("Error opening " + arg.quote() + ": " + e);
+                    liberator.echoerr("Error opening " + JSON.stringify(arg) + ": " + e);
                 }
             }, {
                 argCount: "1",

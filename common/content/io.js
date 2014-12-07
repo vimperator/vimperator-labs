@@ -886,7 +886,7 @@ lookup:
                     }
 
                     if (!found)
-                        liberator.echoerr("Can't find directory " + arg.quote() + " in cdpath\n" + "Command failed");
+                        liberator.echoerr("Can't find directory " + JSON.stringify(arg) + " in cdpath\n" + "Command failed");
                 }
             }, {
                 argCount: "?",
