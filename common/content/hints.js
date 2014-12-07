@@ -507,7 +507,7 @@ const Hints = Module("hints", {
             let css = [];
             // FIXME: Broken for imgspans.
             for (let { doc } of this._docs) {
-                for (let elem in util.evaluateXPath(" {//*[@liberator:highlight and @number]", doc)) {
+                for (let elem in util.evaluateXPath("//*[@liberator:highlight and @number]", doc)) {
                     let group = elem.getAttributeNS(NS.uri, "highlight");
                     css.push(highlight.selector(group) + "[number=" + elem.getAttribute("number").quote() + "] { " + elem.style.cssText + " }");
                 }
