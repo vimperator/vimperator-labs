@@ -708,6 +708,9 @@ const Completion = Module("completion", {
         let start = 0;
         let skip = 0;
 
+        if (context.filter.length === 0)
+            return;
+
         if (options["urlseparator"])
             skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
 
