@@ -1,3 +1,7 @@
+XXXX-XX-XX
+    * Version 3.8.4
+    * Make <Ctrl-[> key always behave like <Esc> key
+
 2014-11-09
     * Version 3.8.3
     * Many compatibility fixes with new Firefox versions (up to Firefox 35)
