@@ -860,6 +860,7 @@ const CommandLine = Module("commandline", {
         switch (key) {
             // close the window
             case "<Esc>":
+            case "<C-[>":
             case "q":
                 modes.reset();
                 return; // handled globally in events.js:onEscape()

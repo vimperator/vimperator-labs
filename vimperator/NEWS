@@ -1,4 +1,6 @@
 201x-xx-xx
+    * Version 3.8.4
+    * Make <Ctrl-[> key always behave like <Esc> key (was missing from the command line handler)
     * Add support for :set hintmatching=fuzzy as a new, alternative way for hintmatching.
 
 2014-11-09
