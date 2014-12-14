@@ -833,6 +833,38 @@ const Hints = Module("hints", {
             };
         } //}}}
 
+        /**
+         * Get a hint matcher for hintmatching=fuzzy
+         *
+         * The user input can be anything. The matcher looks for occurances of
+         * the characters in the user input. If all occurances are found in the
+         * link, in order, the link is relevant.
+         *
+         * @param {string} hintString The string typed by the user.
+         * @returns {function(string):boolean} A function that takes the text
+         *      of a hint and returns true if all characters of the input are
+         *      found in the link.
+         */
+        function fuzzyMatcher(hintString) {
+            expression = '';
+
+            // Build a regex for fuzzy matching with the input.
+            //
+            // If the input is 'abc', the regex will be '[^a]*a[^b]*b[^c]c'.
+            for (var i = 0; i < hintString.length; i ++) {
+                var char = hintString[i];
+                expression += '[^' + char + ']*' + char;
+            }
+
+            var re = new RegExp(expression, 'i');
+
+            return function(linkText) {
+                var found = linkText.search(re) != -1;
+
+                return found;
+            };
+        }
+
         let indexOf = String.indexOf;
         if (options.get("hintmatching").has("transliterated"))
             indexOf = Hints.indexOf;
@@ -841,6 +873,7 @@ const Hints = Module("hints", {
         case "contains"      : return containsMatcher(hintString);
         case "wordstartswith": return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ true);
         case "firstletters"  : return wordStartsWithMatcher(hintString, /*allowWordOverleaping=*/ false);
+        case "fuzzy"         : return fuzzyMatcher(hintString);
         case "custom"        : return liberator.plugins.customHintMatcher(hintString);
         default              : liberator.echoerr("Invalid hintmatching type: " + hintMatching);
         }
@@ -1268,6 +1301,7 @@ const Hints = Module("hints", {
                     ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
                     ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
                     ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
+                    ["fuzzy",          "Hints are matched according to the fuzzy search algorithm."],
                     ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
                     ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"]
                 ]

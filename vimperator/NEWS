@@ -1,3 +1,6 @@
+201x-xx-xx
+    * Add support for :set hintmatching=fuzzy as a new, alternative way for hintmatching.
+
 2014-11-09
     * Version 3.8.3
     * Many compatibility fixes with new Firefox versions (up to Firefox 35)
