@@ -85,7 +85,7 @@
 
 <item>
     <tags>:unm :unmap</tags>
-    <spec>:map <a>lhs</a> <a>rhs</a></spec>
+    <spec>:unm<oa>ap</oa> <a>lhs</a> <a>rhs</a></spec>
     <tags>:nun :nunmap</tags>
     <spec>:nun<oa>map</oa> <a>lhs</a> <a>rhs</a></spec>
     <tags>:vun :vunmap</tags>
