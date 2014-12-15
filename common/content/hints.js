@@ -851,7 +851,7 @@ const Hints = Module("hints", {
             // Build a regex for fuzzy matching with the input.
             //
             // If the input is 'abc', the regex will be '[^a]*a[^b]*b[^c]c'.
-            var escapeChar = new Set("()[{.*\\");
+            var escapeChar = new Set("()[{?.*+^$|\\");
             for (var i = 0, j = hintString.length; i < j; i ++) {
                 var char = hintString[i];
 
