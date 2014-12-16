@@ -37,7 +37,7 @@
             <spec>add <oa>-except=key1,key2,...</oa> <a>url-regexp</a></spec>
             <description>
                 <p>
-                    Add a new URL (anyone matching the <a>url-regexp</a> regular expression
+                    Add a new URL (anyone matching the <a>url-regexp</a> regular expression)
                     to the list of sites which automatically turn on IGNORE ALL KEYS mode.
                     If <oa>-except</oa> is specified, allow those specified keys to still be handled
                     by &liberator.appname;.
