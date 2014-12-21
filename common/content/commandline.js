@@ -852,6 +852,9 @@ const CommandLine = Module("commandline", {
                     break;
             }
 
+        }
+
+        if (event.type == "click") {
             return;
         }
 
