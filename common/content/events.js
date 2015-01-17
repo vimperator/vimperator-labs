@@ -1125,7 +1125,8 @@ const Events = Module("events", {
         return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
                  elem instanceof HTMLTextAreaElement ||
                  elem instanceof HTMLObjectElement ||
-                 elem instanceof HTMLEmbedElement);
+                 elem instanceof HTMLEmbedElement ||
+                 (elem && elem.contentEditable === "true"));
     }
 }, {
     commands: function () {
