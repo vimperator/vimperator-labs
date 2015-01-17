@@ -679,7 +679,11 @@ const Editor = Module("editor", {
 
         mappings.add([modes.INSERT],
             ["<C-t>"], "Edit text field in Vi mode",
-            function () { liberator.mode = modes.TEXTAREA; });
+            function () {
+                let edtr = Editor.getEditor();
+                edtr.setSelectionRange(edtr.selectionStart - 1, edtr.selectionStart - 1);
+                liberator.mode = modes.TEXTAREA;
+            });
 
         mappings.add([modes.INSERT],
             ["<Space>", "<Return>"], "Expand insert mode abbreviation",
@@ -812,7 +816,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharForward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos, true, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
             },
             { arg: true, count: true });
 
@@ -830,7 +834,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharForward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos - 2, true, liberator.mode == modes.VISUAL);
             },
             { arg: true, count: true });
 
