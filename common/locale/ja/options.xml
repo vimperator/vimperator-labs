@@ -298,7 +298,7 @@
     <tags>'cpt' 'complete'</tags>
     <spec>'complete' 'cpt'</spec>
     <type>charlist</type>
-    <default>slf</default>
+    <default>sl</default>
     <description>
         <p><ex>:open</ex> プロンプトで補完される項目です。以下の値が使用できます。:</p>
 

@@ -36,7 +36,7 @@ const Config = Module("config", ConfigBase, {
                    ["VimperatorLeave",    "Triggered before exiting Firefox"]],
 
     defaults: {
-        complete: "slf",
+        complete: "sl",
         titlestring: "Vimperator"
     },
 

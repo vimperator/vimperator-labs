@@ -326,7 +326,7 @@
     <tags>'cpt' 'complete'</tags>
     <spec>'complete' 'cpt'</spec>
     <type>charlist</type>
-    <default>slf</default>
+    <default>sl</default>
     <description>
         <p>Items which are completed at the <ex>:open</ex> prompts. Available items:</p>
 

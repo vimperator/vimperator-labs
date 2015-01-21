@@ -1560,7 +1560,7 @@ const CommandLine = Module("commandline", {
 
         options.add(["complete", "cpt"],
             "Items which are completed at the :open prompts",
-            "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "slf",
+            "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "sl",
             {
                 completer: function (context) array(values(completion.urlCompleters))
             });

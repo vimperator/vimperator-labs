@@ -1,5 +1,8 @@
-201x-xx-xx
+2015-xx-xx
     * Version 3.8.4
+    * Finally remove local file completions from the :open prompt which causes lots of problems (and
+      slowdowns) for many people. If you want them back, use :set complete=slf
+      to get back the old default value.
     * Make <Ctrl-[> key always behave like <Esc> key (was missing from the command line handler)
     * Add support for :set hintmatching=fuzzy as a new, alternative way for hintmatching.
     * Don't display help message in command line for a normal click.
