@@ -43,7 +43,10 @@ const Browser = Module("browser", {
                     // Stolen from browser.jar/content/browser/browser.js, more or less.
                     try {
                         config.browser.docShell.QueryInterface(Ci.nsIDocCharset).charset = val;
-                        PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
+                        if (PlacesUtils.history.setCharsetForURI !== undefined)
+                            PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
+                        else
+                            PlacesUtils.setCharsetForURI(getWebNavigation().currentURI, val);
                         getWebNavigation().reload(Ci.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
                     }
                     catch (e) { liberator.echoerr(e); }
