@@ -43,7 +43,7 @@ const Browser = Module("browser", {
                     // Stolen from browser.jar/content/browser/browser.js, more or less.
                     try {
                         config.browser.docShell.QueryInterface(Ci.nsIDocCharset).charset = val;
-                        if (PlacesUtils.history.setCharsetForURI !== undefined)
+                        if (PlacesUtils.history.setCharsetForURI)
                             PlacesUtils.history.setCharsetForURI(getWebNavigation().currentURI, val);
                         else
                             PlacesUtils.setCharsetForURI(getWebNavigation().currentURI, val);
