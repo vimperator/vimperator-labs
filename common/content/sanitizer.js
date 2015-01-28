@@ -74,7 +74,7 @@ const Sanitizer = Module("sanitizer", {
         commands.add(["sa[nitize]"],
             "Clear private data",
             function (args) {
-                liberator.assert(!options['private'], "Cannot sanitize items in private mode");
+                liberator.assert(!liberator.isPrivateWindow(), "Cannot sanitize items in private mode");
 
                 let timespan = args["-timespan"] == undefined ? options["sanitizetimespan"] : args["-timespan"];
 

@@ -151,8 +151,6 @@ function loadPref(name, store, type) {
 }
 
 function savePref(obj) {
-    if (obj.privateData)
-        return;
     if (obj.store && storage.infoPath)
         writeFile(getFile(obj.name), obj.serial);
 }
