@@ -254,6 +254,25 @@ const Liberator = Module("liberator", {
         window.dump(msg.replace(/^./gm, ("config" in modules && config.name.toLowerCase()) + ": $&"));
     },
 
+    isPrivateWindow: function () {
+        return window.QueryInterface(Ci.nsIInterfaceRequestor)
+                     .getInterface(Ci.nsIWebNavigation)
+                     .QueryInterface(Ci.nsILoadContext)
+                     .usePrivateBrowsing;
+    },
+
+    windowID: function() {
+        return window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                     .getInterface(Components.interfaces.nsIDOMWindowUtils)
+                     .outerWindowID;
+
+    },
+
+    storeName: function(mode, isPrivate) {
+        let prefix = isPrivate ? "private-" + this.windowID() + "-" : "";
+        return prefix + "history-" + mode ;
+    },
+
     /**
      * Outputs a plain message to the command line.
      *
@@ -1171,10 +1190,7 @@ const Liberator = Module("liberator", {
                         win.setAttribute("titlemodifier_normal", value);
                         win.setAttribute("titlemodifier_privatebrowsing", value + suffix);
 
-                        if (window.QueryInterface(Ci.nsIInterfaceRequestor)
-                                  .getInterface(Ci.nsIWebNavigation)
-                                  .QueryInterface(Ci.nsILoadContext)
-                                  .usePrivateBrowsing) {
+                        if (liberator.isPrivateWindow()) {
                             win.setAttribute("titlemodifier", value + suffix);
                         }
                         else

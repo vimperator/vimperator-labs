@@ -641,23 +641,6 @@
 
 
 <item>
-    <tags>'noprivate' 'private'</tags>
-    <spec>'private'</spec>
-    <type>boolean</type>
-    <default>off</default>
-    <description>
-        <p>
-            Set the <str>private browsing</str> option. In private browsing mode
-            history, cache files, cookies, form data, passwords, download list
-            entries, local and URL marks, command-line history and macros are
-            available only for the duration of the private browsing session and
-            deleted when returning to normal browsing mode.
-        </p>
-    </description>
-</item>
-
-
-<item>
     <tags>'nohls' 'nohlsearch'</tags>
     <tags>'hls' 'hlsearch'</tags>
     <spec>'hlsearch' 'hls'</spec>

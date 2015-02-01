@@ -11,8 +11,8 @@ const Marks = Module("marks", {
     requires: ["config", "storage"],
 
     init: function init() {
-        this._localMarks = storage.newMap("local-marks", { store: true, privateData: true });
-        this._urlMarks = storage.newMap("url-marks", { store: false, privateData: true });
+        this._localMarks = storage.newMap("local-marks", { store: true });
+        this._urlMarks = storage.newMap("url-marks", { store: false });
 
         this._pendingJumps = [];
     },

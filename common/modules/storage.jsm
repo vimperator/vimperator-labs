@@ -151,8 +151,6 @@ function loadPref(name, store, type) {
 }
 
 function savePref(obj) {
-    if (obj.privateData && storage.privateMode)
-        return;
     if (obj.store && storage.infoPath)
         writeFile(getFile(obj.name), obj.serial);
 }
@@ -357,14 +355,6 @@ var storage = {
             savePref(obj);
     },
 
-    _privateMode: false,
-    get privateMode() this._privateMode,
-    set privateMode(val) {
-        if (!val && this._privateMode)
-            for (let key in keys)
-                this.load(key);
-        return this._privateMode = Boolean(val);
-    }
 };
 
 // vim: set fdm=marker sw=4 sts=4 et ft=javascript:

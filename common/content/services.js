@@ -42,10 +42,6 @@ const Services = Module("services", {
                 class_: "@mozilla.org/browser/nav-history-service;1",
                 iface:  [Ci.nsINavHistoryService, Ci.nsIBrowserHistory]
             },
-            "privateBrowsing": {
-                class_: "@mozilla.org/privatebrowsing;1",
-                iface:  Ci.nsIPrivateBrowsingService
-            },
             "profile": {
                 class_: "@mozilla.org/toolkit/profile-service;1",
                 iface:  Ci.nsIToolkitProfileService
