@@ -1094,10 +1094,9 @@ const CommandLine = Module("commandline", {
             if (liberator.has("sanitizer") && (timespan || options["sanitizetimespan"]))
                 range = sanitizer.getClearRange(timespan || options["sanitizetimespan"]);
 
-            const self = this;
             this.store.mutate("filter", function (item) {
                 let timestamp = (item.timestamp || Date.now()/1000) * 1000;
-                return !line.privateData || timestamp < self.range[0] || timestamp > self.range[1];
+                return !item.privateData || timestamp < range[0] || timestamp > range[1];
             });
         },
         /**
