@@ -251,9 +251,11 @@ Liberator.prototype = {
                 }
                 return fakeChannel(uri);
             }
+
+            let url;
             switch(uri.host) {
                 case "help":
-                    let url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
+                    url = this.FILE_MAP[uri.path.replace(/^\/|#.*/g, "")];
                     return makeChannel(url, uri);
                 case "help-overlay":
                     url = this.OVERLAY_MAP[uri.path.replace(/^\/|#.*/g, "")];
