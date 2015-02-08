@@ -681,7 +681,8 @@ const Editor = Module("editor", {
             ["<C-t>"], "Edit text field in Vi mode",
             function () {
                 let edtr = Editor.getEditor();
-                edtr.setSelectionRange(edtr.selectionStart - 1, edtr.selectionStart - 1);
+                if (edtr.setSelectionRange)
+                    edtr.setSelectionRange(edtr.selectionStart - 1, edtr.selectionStart - 1);
                 liberator.mode = modes.TEXTAREA;
             });
 
