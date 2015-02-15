@@ -1,5 +1,5 @@
-2015-xx-xx
-    * Version 3.8.4
+2015-02-15: Missed Valentine's day
+    * Version 3.9
     * We don't override <S-Insert> in textboxes anymore, so it does the default
       action (which is pasting the clipboard). For Windows and Mac users, this doesn't
       change anything. For Linux, this means it pasts the clipboard instead of the X11
