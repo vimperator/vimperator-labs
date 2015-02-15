@@ -2,9 +2,9 @@
     * Version 3.9
     * We don't override <S-Insert> in textboxes anymore, so it does the default
       action (which is pasting the clipboard). For Windows and Mac users, this doesn't
-      change anything. For Linux, this means it pasts the clipboard instead of the X11
+      change anything. For Linux, this means it pastes the clipboard instead of the X11
       selection, but that's actually also the default for most GUI apps on Linux nowadays.
-      On the other hand, it also fixes an annying bug where the first completion stayed
+      On the other hand, it also fixes an annoying bug where the first completion stayed
       active when using <S-Insert> in the command line.
     * Finally remove local file completions from the :open prompt which causes lots of problems (and
       slowdowns) for many people. If you want them back, use :set complete=slf
