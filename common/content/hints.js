@@ -35,6 +35,7 @@ const Hints = Module("hints", {
         Mode.defaultValue("tags", function () function () options.hinttags);
         function extended() options.extendedhinttags;
         function images() "//*[@src]";
+        function anchors() "//*[@id or @name]";
 
         this._hintModes = {
             ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
@@ -56,6 +57,11 @@ const Hints = Module("hints", {
             V: Mode("View hint source in external editor",  function (elem, loc) buffer.viewSource(loc, true),                     extended),
             y: Mode("Yank hint location",                   function (elem, loc) util.copyToClipboard(loc, true)),
             Y: Mode("Yank hint description",                function (elem) util.copyToClipboard(elem.textContent || "", true),    extended),
+            "#": Mode("Yank hint anchor URL",               function (elem) {
+                let uri = elem.ownerDocument.documentURIObject.clone();
+                uri.ref = elem.id || elem.name;
+                util.copyToClipboard(uri.spec, true);
+            }, anchors),
             c: Mode("Open context menu",                    function (elem) buffer.openContextMenu(elem),                          extended),
             i: Mode("Show media object",                    function (elem) liberator.open(elem.src),                              images),
             I: Mode("Show media object in a new tab",       function (elem) liberator.open(elem.src, liberator.NEW_TAB),           images),

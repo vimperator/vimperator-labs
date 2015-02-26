@@ -1,3 +1,8 @@
+201x-xx-xx:
+    * Add ';#', an extended hint mode for yanking the anchor URL of an element
+      (the URL of the page with the fragment set to the element's 'id' or
+      'name' attribute)
+
 2015-02-15: Missed Valentine's day
     * Version 3.9
     * We don't override <S-Insert> in textboxes anymore, so it does the default
