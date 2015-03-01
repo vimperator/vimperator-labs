@@ -21,22 +21,17 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript;version=1.8" src="&liberator.content;liberator-overlay.js"/>
-    <script type="application/x-javascript;version=1.8">
-        function captureOnEscape(element) {
-            let listener = function (event) {
-                if (event.keyCode == KeyEvent.DOM_VK_ESCAPE)
-                    liberator.modules.events.onEscape();
-            };
-            element.addEventListener('keydown', listener, true);
-        }
-    </script>
 
-    <window id="&liberator.mainWindow;"
-            onload="captureOnEscape(this)">
+    <window id="&liberator.mainWindow;">
         <stringbundleset id="liberator-stringbundles">
             <stringbundle id="liberator-charset-bundle"
                 src="chrome://global/locale/charsetTitles.properties"/>
         </stringbundleset>
+
+        <keyset id="&liberator.idkeyset;">
+            <key id="key_stop" keycode="VK_ESCAPE" oncommand="window.liberator &and; liberator.modules.events.onEscape();"/>
+            <!-- other keys are handled inside the event loop in events.js -->
+        </keyset>
 
         <popupset>
             <panel id="liberator-visualbell" liberator:highlight="Bell"/>
