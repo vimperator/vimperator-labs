@@ -337,8 +337,10 @@ const Editor = Module("editor", {
                     lastUpdate = Date.now();
 
                     let val = tmpfile.read();
-                    if (textBox)
+                    if (textBox) {
                         textBox.value = val;
+                        textBox.dispatchEvent(new InputEvent('input'));
+                    }
                     else if (nsEditor) {
                         let wholeDocRange = nsEditor.document.createRange();
                         let rootNode = nsEditor.rootElement.QueryInterface(Ci.nsIDOMNode);
