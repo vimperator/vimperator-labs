@@ -1533,22 +1533,22 @@ const Buffer = Module("buffer", {
             });
 
         // scrolling
-        mappings.add(myModes, ["j", "<Down>", "<C-e>"],
+        mappings.add(myModes, ["j", "<C-e>"],
             "Scroll document down",
             function (count) { buffer.scrollLines(Math.max(count, 1)); },
             { count: true });
 
-        mappings.add(myModes, ["k", "<Up>", "<C-y>"],
+        mappings.add(myModes, ["k", "<C-y>"],
             "Scroll document up",
             function (count) { buffer.scrollLines(-Math.max(count, 1)); },
             { count: true });
 
-        mappings.add(myModes, liberator.has("mail") ? ["h"] : ["h", "<Left>"],
+        mappings.add(myModes, ["h"], // <Left> is mapped implicitly by Firefox
             "Scroll document to the left",
             function (count) { buffer.scrollColumns(-Math.max(count, 1)); },
             { count: true });
 
-        mappings.add(myModes, liberator.has("mail") ? ["l"] : ["l", "<Right>"],
+        mappings.add(myModes, ["l"], // <Right> is mapped implicitly by Firefox
             "Scroll document to the right",
             function (count) { buffer.scrollColumns(Math.max(count, 1)); },
             { count: true });
@@ -1561,12 +1561,12 @@ const Buffer = Module("buffer", {
             "Scroll to the absolute right of the document",
             function () { buffer.scrollEnd(); });
 
-        mappings.add(myModes, ["gg", "<Home>"],
+        mappings.add(myModes, ["gg"], // <Home> is mapped implicitly by Firefox
             "Go to the top of the document",
             function (count) { buffer.scrollToPercent(buffer.scrollXPercent, Math.max(count, 0)); },
             { count: true });
 
-        mappings.add(myModes, ["G", "<End>"],
+        mappings.add(myModes, ["G"], // <End> is mapped implicitly by Firefox
             "Go to the end of the document",
             function (count) { buffer.scrollToPercent(buffer.scrollXPercent, count != null ? count : 100); },
             { count: true });
@@ -1589,12 +1589,12 @@ const Buffer = Module("buffer", {
             function (count) { buffer._scrollByScrollSize(count, false); },
             { count: true });
 
-        mappings.add(myModes, ["<C-b>", "<PageUp>", "<S-Space>"],
+        mappings.add(myModes, ["<C-b>"], // <S-Space> and <PageUp> is mapped implicitly by Firefox
             "Scroll up a full page",
             function (count) { buffer.scrollPages(-Math.max(count, 1)); },
             { count: true });
 
-        mappings.add(myModes, ["<C-f>", "<PageDown>", "<Space>"],
+        mappings.add(myModes, ["<C-f>",], // <Space> and <PageDown> is mapped implicitly by Firefox
             "Scroll down a full page",
             function (count) { buffer.scrollPages(Math.max(count, 1)); },
             { count: true });

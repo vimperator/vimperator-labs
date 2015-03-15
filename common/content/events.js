@@ -478,6 +478,8 @@ const Events = Module("events", {
      *
      * @param {Event} event
      * @returns {string}
+     *
+     * @see http://unixpapa.com/js/key.html
      */
     toString: function (event) {
         if (!event)
@@ -497,7 +499,7 @@ const Events = Module("events", {
             modifier += "M-";
 
         if (/^key/.test(event.type)) {
-            let charCode = event.type == "keyup" ? 0 : event.charCode;
+            let charCode = (event.type == "keydown" || event.type == "keyup") ? 0 : event.charCode;
             if (charCode == 0) {
                 if (event.shiftKey)
                     modifier += "S-";
@@ -546,6 +548,13 @@ const Events = Module("events", {
                     default:
                         break;
                     }
+                }
+
+                if (!key) { // For alphabetical caracters
+                    key = String.fromCharCode(event.keyCode); // Gives by default the uppercased version for keydown/keyup of normal keys
+                    if (!event.shiftKey)
+                        key = key.toLowerCase();
+                    return key; // Always the "pure" key without any <..> around them or without any modifiers
                 }
             }
             // a normal key like a, b, c, 0, etc.
@@ -613,6 +622,14 @@ const Events = Module("events", {
      * @returns {boolean}
      */
     isCancelKey: function (key) key == "<Esc>" || key == "<C-[>" || key == "<C-c>",
+
+    /**
+     * Whether <b>key</b> is a key code defined to go back to NORMAL mode
+     *
+     * @param {string} key The key code to test.
+     * @returns {boolean}
+     */
+    isEscapeKey: function (key) key == "<Esc>" || key == "<C-[>",
 
     /**
      * Waits for the current buffer to successfully finish loading. Returns
@@ -842,8 +859,6 @@ const Events = Module("events", {
     // the commandline has focus
     // TODO: ...help me...please...
     onKeyPress: function (event) {
-        function isEscapeKey(key) key == "<Esc>" || key == "<C-[>";
-
         function killEvent() {
             event.preventDefault();
             event.stopPropagation();
@@ -943,7 +958,7 @@ const Events = Module("events", {
 
             // TODO: handle middle click in content area
 
-            if (!isEscapeKey(key)) {
+            if (!this.isEscapeKey(key)) {
                 // custom mode...
                 if (liberator.mode == modes.CUSTOM) {
                     plugins.onEvent(event);
@@ -1003,7 +1018,7 @@ const Events = Module("events", {
                 this._input.buffer = "";
                 let map = this._input.pendingArgMap;
                 this._input.pendingArgMap = null;
-                if (!isEscapeKey(key)) {
+                if (!this.isEscapeKey(key)) {
                     if (modes.isReplaying && !this.waitForPageLoad())
                         return;
                     map.execute(null, this._input.count, key);
@@ -1020,7 +1035,7 @@ const Events = Module("events", {
                     this._input.pendingArgMap = map;
                 }
                 else if (this._input.pendingMotionMap) {
-                    if (!isEscapeKey(key))
+                    if (!this.isEscapeKey(key))
                         this._input.pendingMotionMap.execute(candidateCommand, this._input.count, null);
                     this._input.pendingMotionMap = null;
                 }
@@ -1053,7 +1068,7 @@ const Events = Module("events", {
                 this._input.pendingMotionMap = null;
                 this._input.pendingMap = null;
 
-                if (!isEscapeKey(key)) {
+                if (!this.isEscapeKey(key)) {
                     // allow key to be passed to the host app if we can't handle it
                     stop = false;
 
@@ -1081,11 +1096,38 @@ const Events = Module("events", {
         }
     },
 
-    // this is need for sites like msn.com which focus the input field on keydown
     onKeyUpOrDown: function (event) {
+        // Always let the event be handled by the webpage/Firefox for certain modes
         if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown || Events.isInputElemFocused())
             return;
-        event.stopPropagation();
+
+        // Many sites perform (useful) actions on keydown.
+        // Let's keep the most common ones unless we have a mapping for that
+        let key = events.toString(event);
+        if (event.type == "keydown" && this.isEscapeKey(key)) {
+            this.onEscape(); // We do our Escape handling here, as the on "onKeyPress" may not always work if websites override the keydown event
+            event.stopPropagation();
+            return;
+        }
+
+        let url = typeof(buffer) != "undefined" ? buffer.URL : "";
+        let inputStr = this._input.buffer + key;
+        let countStr = inputStr.match(/^[1-9][0-9]*|/)[0];
+        let candidateCommand = inputStr.substr(countStr.length);
+        let map = mappings[event.noremap ? "getDefault" : "get"](liberator.mode, candidateCommand, url);
+        if (map) {
+            event.stopPropagation();
+            return;
+        }
+
+        // Or we have a mapping starting with that key
+        let candidates = mappings.getCandidates(liberator.mode, candidateCommand, url);
+        if (candidates.length > 0) { // We want to handle that key ourselves
+            event.stopPropagation();
+            return;
+        }
+
+        // liberator.echo ("key: " + key + "\nkeycode: " + event.keyCode + "\nchar: " + event.charCode + "\ntype: " + event.type + "\nwhich: " + event.which);
     },
 
     onPopupShown: function (event) {

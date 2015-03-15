@@ -1,4 +1,9 @@
 201x-xx-xx:
+    * Keep default Firefox mapping of <PageDown>, <PageUp>, <Left>, <Right>,
+      <Up>, <Down>, <Home> and <End>.
+      This is done to (a) allow default Firefox smooth scrolling and (b) to
+      easily allow web pages to override these keys as they are often done
+      for <Left>/<Right> for navigating image galleries
     * Add ';#', an extended hint mode for yanking the anchor URL of an element
       (the URL of the page with the fragment set to the element's 'id' or
       'name' attribute)
