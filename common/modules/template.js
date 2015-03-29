@@ -354,7 +354,7 @@ cooked: ["' + cooked.join('", "') + '"]' +
     if (depth > 0) {
         reEOL.lastIndex = 0;
         let lineNumber = (str.substr(0, offset).match(reEOL)||[]).length + 1;
-        Cu.reportError([lineNumber, str.substr(offset -16, 16).quote(), str.substr(offset, 16).quote()]);
+        Cu.reportError([lineNumber, str.substr(offset -16, 16), str.substr(offset, 16)]);
         Cu.reportError(JSON.stringify(stack.slice(0, depth), null, 1));
 
         // force build source

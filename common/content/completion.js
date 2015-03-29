@@ -513,8 +513,8 @@ const CompletionContext = Class("CompletionContext", {
 
     getText: function getText(item) {
         let text = item[self.keys["text"]];
-        if (self.quote)
-            return self.quote(text);
+        //if (self.quote)
+            //return self.quote(text);
         return text;
     },
 
