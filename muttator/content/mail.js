@@ -187,8 +187,7 @@ const Mail = Module("mail", {
 
         params.type = Ci.nsIMsgCompType.New;
 
-        const msgComposeService = Cc["@mozilla.org/messengercompose;1"].getService();
-        msgComposeService = msgComposeService.QueryInterface(Ci.nsIMsgComposeService);
+        const msgComposeService = Cc["@mozilla.org/messengercompose;1"].getService().QueryInterface(Ci.nsIMsgComposeService);
         msgComposeService.OpenComposeWindowWithParams(null, params);
     },
 
