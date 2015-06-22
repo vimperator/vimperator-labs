@@ -18,7 +18,7 @@
     bindings or define new ones. A mapping consists of a key, or <t>key-sequence</t>,
     which is translated to a string of characters. Example:
 </p>
-<code><ex>:map <k name="F2"/> :echo new Date().toDateString()<k name="CR"/></ex></code>
+<code><ex>:map &lt;F2&gt; :echo new Date().toDateString()&lt;CR"gt;</ex></code>
 <p>
     will echo the current date to the command line when <k name="F2"/> is pressed.
 </p>
