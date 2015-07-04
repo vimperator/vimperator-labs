@@ -276,7 +276,9 @@ const Hints = Module("hints", {
             return false;
 
         let computedStyle = doc.defaultView.getComputedStyle(elem, null);
-        if (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none")
+        // visibility and display style are misleading for area tags and they get "display: none" by default.
+        // See https://github.com/vimperator/vimperator-labs/issues/236
+        if (elem.nodeName.toLowerCase() != "area" && (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none"))
             return false;
 
         return true;
