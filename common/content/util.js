@@ -18,6 +18,8 @@ const {XHTML, XUL, NS} = (function () {
     };
 })();
 
+let Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init");
+
 const Util = Module("util", {
     init: function () {
         this.Array = Util.Array;
@@ -779,8 +781,7 @@ const Util = Module("util", {
      * @param {Number} flags    nsIDocumentEncoder.OutputXXXX
      * @returns {String}
      */
-    domToStr: let (Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init"))
-    function domToStr(node, type, flags) {
+    domToStr: function domToStr(node, type, flags) {
         var doc, method;
 
         if (node instanceof Document) {

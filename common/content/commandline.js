@@ -11,6 +11,8 @@
  * It consists of a prompt and command field be sure to only create objects of
  * this class when the chrome is ready.
  */
+let timeID = null;
+
 const CommandLine = Module("commandline", {
     requires: ["config", "liberator", "modes", "services", "storage", "template", "util"],
 
@@ -286,7 +288,7 @@ const CommandLine = Module("commandline", {
      * @param {boolean} forceSingle If provided, don't let over-long
      *     messages move to the MOW.
      */
-    _echoLine: let (timeID = null) function (str, highlightGroup, forceSingle) {
+    _echoLine: function (str, highlightGroup, forceSingle) {
         if (timeID) {
             window.clearTimeout(timeID);
             timeID = null;
@@ -973,12 +975,11 @@ const CommandLine = Module("commandline", {
                     showHelp = true;
                 break;
             case "Y":
-                let (sel = win.getSelection().toString()) {
-                    if (sel)
-                        util.copyToClipboard(sel, false);
-                    else
-                        showHelp = true;
-                }
+                let sel = win.getSelection().toString();
+                if (sel)
+                    util.copyToClipboard(sel, false);
+                else
+                    showHelp = true;
                 break;
             // unmapped key -> show Help
             default:
@@ -1192,10 +1193,9 @@ const CommandLine = Module("commandline", {
             // Change the completion text.
             // The second line is a hack to deal with some substring
             // preview corner cases.
-            let (str = this.prefix + completion + this.suffix) {
-                commandline._commandWidget.value = str;
-                this.editor.selection.focusNode.textContent = str;
-            }
+            let str = this.prefix + completion + this.suffix;
+            commandline._commandWidget.value = str;
+            this.editor.selection.focusNode.textContent = str;
 
             // Reset the caret to one position after the completion.
             this.caret = this.prefix.length + completion.length;
