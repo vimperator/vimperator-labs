@@ -272,7 +272,7 @@ const File = Class("File", {
         // TODO: Vim expands paths twice, once before checking for ~, once
         // after, but doesn't document it. Is this just a bug? --Kris
         path = expand(path);
-        return path.replace("/", IO.PATH_SEP, "g");
+        return path.replace(/\//g, IO.PATH_SEP);
     },
 
     getPathsFromPathList: function (list) {

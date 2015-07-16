@@ -716,7 +716,7 @@ const Options = Module("options", {
      *     any of the options's names.
      */
     remove: function (name) {
-        for each (let option in this._optionHash) {
+        for (let option of this._optionHash) {
             if (option.hasName(name))
                 delete this._optionHash[option.name];
         }

@@ -714,7 +714,8 @@ const Liberator = Module("liberator", {
         }
 
         liberator.log('Searching for "plugin/**/*.{js,vimp}" in "'
-                            + [dir.path.replace(/.plugin$/, "") for (dir of dirs)].join(",") + '"');
+                            + dirs.map(function(dir) { return dir.path.replace(/.plugins$/, ''); }).join(',')
+                            + '"');
 
         dirs.forEach(function (dir) {
             liberator.log("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
@@ -1307,7 +1308,9 @@ const Liberator = Module("liberator", {
                 validator: function (value) {
                     let toolbars = config.toolbars || {};
                     // "ne" is a simple hack, since in the next line val.replace() makes "ne" out from "none"
-                    let values = ["all", "ne"].concat([toolbar for each([toolbar, ] in Iterator(toolbars))]);
+                    let values = ["all", "ne"].concat(Object.keys(toolbars).map(function(tl) {
+                        return tl[0];
+                    }));
                     return value.every(function(val) values.indexOf(val.replace(/^(no|inv)/, "")) >= 0);
                 }
             });
