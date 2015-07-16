@@ -9,8 +9,6 @@
 Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 Cu.import("resource://gre/modules/AddonManager.jsm")
 
-const util = Cu.util;
-
 const plugins = { __proto__: modules };
 const userContext = { __proto__: modules };
 
