@@ -155,7 +155,7 @@ const Mail = Module("mail", {
         let params = Cc["@mozilla.org/messengercompose/composeparams;1"].createInstance(Ci.nsIMsgComposeParams);
         params.composeFields = Cc["@mozilla.org/messengercompose/composefields;1"].createInstance(Ci.nsIMsgCompFields);
 
-        let identity = window.accoutManager.defaultAccount.defaultIdentity;
+        let identity = window.accountManager.defaultAccount.defaultIdentity;
         let selectedFolder = window.gFolderTreeView.getSelectedFolders()[0];
         if (selectedFolder) {
             if (selectedFolder.customIdentity)
