@@ -155,6 +155,16 @@ const Mail = Module("mail", {
         let params = Cc["@mozilla.org/messengercompose/composeparams;1"].createInstance(Ci.nsIMsgComposeParams);
         params.composeFields = Cc["@mozilla.org/messengercompose/composefields;1"].createInstance(Ci.nsIMsgCompFields);
 
+        let identity = window.accountManager.defaultAccount.defaultIdentity;
+        let selectedFolder = window.gFolderTreeView.getSelectedFolders()[0];
+        if (selectedFolder) {
+            if (selectedFolder.customIdentity)
+                identity = selectedFolder.customIdentity;
+            else if (window.getIdentityForServer(selectedFolder.server))
+                identity = window.getIdentityForServer(selectedFolder.server);
+        }
+        params.identity = identity;
+
         if (args) {
             if (args.originalMsg)
                 params.originalMsgURI = args.originalMsg;
