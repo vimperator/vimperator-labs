@@ -1385,7 +1385,7 @@
     <type>boolean</type>
     <default>false</default>
     <description>
-        <p>Set the yank mode for copying URLs. By default, only whitespace charaters are replaced by %20 to make pasting in other apps easy. If yankencodedurl is <str>true</str>, any non-ASCII character is URL encoded as well.</p>
+        <p>Set the yank mode for copying URLs. By default, only whitespace characters are replaced by %20 to make pasting in other apps easy. If yankencodedurl is <str>true</str>, any non-ASCII character is URL encoded as well.</p>
     </description>
 </item>
 
