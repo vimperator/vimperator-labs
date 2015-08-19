@@ -27,6 +27,13 @@ const Browser = Module("browser", {
         }
 
         liberator.open(pre + newNumberStr + post);
+    },
+
+    toggleReaderView: function () {
+        let rv = document.getElementById("View:ReaderView");
+        if (rv) {
+            rv.click();
+        }
     }
 }, {
     options: function () {
@@ -135,6 +142,10 @@ const Browser = Module("browser", {
                 liberator.open(homepages, { from: "homepage", where: liberator.NEW_TAB });
             });
 
+        mappings.add([modes.NORMAL], ["gr"],
+            "Toggle Reader View",
+            function() { Browser.toggleReaderView(); });
+
         mappings.add([modes.NORMAL], ["gu"],
             "Go to parent directory",
             function (count) {
@@ -232,6 +243,12 @@ const Browser = Module("browser", {
                 literal: 0,
                 privateData: true
             });
+
+        commands.add(["reader"],
+            "Toggle Reader View",
+            function() { Browser.toggleReaderView(); },
+            { argCount: "0" });
+
     }
 });
 
