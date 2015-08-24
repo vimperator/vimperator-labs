@@ -197,7 +197,7 @@ const Option = Class("Option", {
      * Returns whether the specified <b>values</b> are valid for this option.
      * @see Option#validator
      */
-    isValidValue: function (values) this.validator(values),
+    isValidValue: function (vs) this.validator(vs),
 
     /**
      * Resets the option to its default value.
