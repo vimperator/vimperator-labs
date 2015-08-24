@@ -1305,11 +1305,10 @@ const Liberator = Module("liberator", {
                 },
                 validator: function (value) {
                     let toolbars = config.toolbars || {};
-                    // "ne" is a simple hack, since in the next line val.replace() makes "ne" out from "none"
-                    let values = ["all", "ne"].concat(Object.keys(toolbars).map(function(tl) {
-                        return tl[0];
-                    }));
-                    return value.every(function(val) values.indexOf(val.replace(/^(no|inv)/, "")) >= 0);
+                    let opts = Object.keys(toolbars);
+                    return value.every(function(val) {
+                        return opts.indexOf(val.replace(/^(no|inv)/, "")) >= 0;
+                    });
                 }
             });
 
