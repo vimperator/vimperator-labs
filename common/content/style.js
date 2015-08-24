@@ -261,7 +261,7 @@ function Highlights(name, store) {
         }
 
         let css = newStyle.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
-                          .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
+                          .replace(/;!important;/g, ";"); // Seeming Spidermonkey bug
         if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css)) {
             css = style.selector + " { " + css + " }";
 
