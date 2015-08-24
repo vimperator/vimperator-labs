@@ -1354,9 +1354,13 @@ const Buffer = Module("buffer", {
             return " ";
         }
         function getURLFromTab (tab) {
-            if ("linkedBrowser" in tab)
-                return tab.linkedBrowser.contentDocument.location.href;
-            else {
+            if ("linkedBrowser" in tab) {
+                if (tab.linkedBrowser.contentDocument) {
+                    return tab.linkedBrowser.contentDocument.location.href;
+                } else if (tab.linkedBrowser.lastURI.asciiSpec) {
+                    return tab.linkedBrowser.lastURI.asciiSpec
+                }
+            } else {
                 let i = config.tabbrowser.mTabContainer.getIndexOfItem(tab);
                 let info = config.tabbrowser.tabInfo[i];
                 return info.browser ?
