@@ -1164,6 +1164,9 @@ const Events = Module("events", {
 }, {
     isInputElemFocused: function () {
         let elem = liberator.focus;
+        if (!elem) {
+            return false;
+        }
         return ((elem instanceof HTMLInputElement && !/image/.test(elem.type)) ||
                  elem instanceof HTMLTextAreaElement ||
                  elem instanceof HTMLObjectElement ||
