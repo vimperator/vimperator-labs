@@ -1305,7 +1305,8 @@ const Liberator = Module("liberator", {
                 },
                 validator: function (value) {
                     let toolbars = config.toolbars || {};
-                    let opts = Object.keys(toolbars);
+                    // "ne" is a simple hack, since val.replace(), below, makes "ne" out from "none"
+                    let opts = ['all', 'ne'].concat(Object.keys(toolbars));
                     return value.every(function(val) {
                         return opts.indexOf(val.replace(/^(no|inv)/, "")) >= 0;
                     });
