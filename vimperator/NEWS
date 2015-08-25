@@ -1,4 +1,10 @@
 201x-xx-xx:
+
+2015-08-25:
+    * Version 3.10
+    * Keeping the lights on with support for Aurora and Nightly builds of firefox.
+    * Bump up minimum version to current ESR release of firefox (version 38).
+    * First release by @gkatsev
     * Keep default Firefox mapping of <PageDown>, <PageUp>, <Left>, <Right>,
       <Up>, <Down>, <Home> and <End>.
       This is done to (a) allow default Firefox smooth scrolling and (b) to
