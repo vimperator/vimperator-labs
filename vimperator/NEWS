@@ -1,6 +1,10 @@
 201x-xx-xx:
 
 2015-08-25:
+    * Version 3.10.1
+    * Max version is 44.
+
+2015-08-25:
     * Version 3.10
     * Keeping the lights on with support for Aurora and Nightly builds of firefox.
     * Bump up minimum version to current ESR release of firefox (version 38).
