@@ -1110,6 +1110,10 @@ const Events = Module("events", {
             return;
         }
 
+        if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
+            return;
+        }
+
         let url = typeof(buffer) != "undefined" ? buffer.URL : "";
         let inputStr = this._input.buffer + key;
         let countStr = inputStr.match(/^[1-9][0-9]*|/)[0];
@@ -1123,11 +1127,6 @@ const Events = Module("events", {
         // Or we have a mapping starting with that key
         let candidates = mappings.getCandidates(liberator.mode, candidateCommand, url);
         if (candidates.length > 0) { // We want to handle that key ourselves
-            event.stopPropagation();
-            return;
-        }
-        
-        if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
             event.stopPropagation();
             return;
         }
