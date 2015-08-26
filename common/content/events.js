@@ -1098,7 +1098,7 @@ const Events = Module("events", {
 
     onKeyUpOrDown: function (event) {
         // Always let the event be handled by the webpage/Firefox for certain modes
-        if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown) 
             return;
 
         // Many sites perform (useful) actions on keydown.
@@ -1124,6 +1124,11 @@ const Events = Module("events", {
         let candidates = mappings.getCandidates(liberator.mode, candidateCommand, url);
         if (candidates.length > 0) { // We want to handle that key ourselves
             event.stopPropagation();
+            return;
+        }
+        
+        if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
+            event.stropPropagation();
             return;
         }
 
