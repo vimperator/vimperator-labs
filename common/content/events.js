@@ -1128,7 +1128,7 @@ const Events = Module("events", {
         }
         
         if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
-            event.stropPropagation();
+            event.stopPropagation();
             return;
         }
 
