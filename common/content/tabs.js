@@ -204,14 +204,14 @@ const Tabs = Module("tabs", {
      *         1  - Focus the tab to the right of the remove tab.
      *         0  - Focus the altanate tab of the remove tab. if alternate tab is none, same as 1
      *         -1 - Focus the tab to the left of the remove tab.
-     * @param {number} quitOnLastTab Whether to quit if the tab being
+     * @param {number} forceQuitOnLastTab Whether to quit if the tab being
      *     deleted is the only tab in the tab list:
      *         1 - quit without saving session
      *         2 - quit and save session
      * @param {boolean} force Close even if the tab is an app tab.
      */
     // FIXME: what is quitOnLastTab {1,2} all about then, eh? --djk
-    remove: function (tab, count, orientation, quitOnLastTab, force) {
+    remove: function (tab, count, orientation, forceQuitOnLastTab, force) {
         let vTabs = config.tabbrowser.visibleTabs;
         let removeOrBlankTab = {
                 Firefox: function (tab) {
@@ -239,11 +239,14 @@ const Tabs = Module("tabs", {
         if (typeof count != "number" || count < 1)
             count = 1;
 
-        if (quitOnLastTab >= 1 && config.tabbrowser.mTabs.length <= count) {
+        if (options.getPref("browser.tabs.closeWindowWithLastTab") && !forceQuitOnLastTab)
+            forceQuitOnLastTab = 1;
+
+        if (forceQuitOnLastTab >= 1 && config.tabbrowser.mTabs.length <= count) {
             if (liberator.windows.length > 1)
                 window.close();
             else
-                liberator.quit(quitOnLastTab == 2);
+                liberator.quit(forceQuitOnLastTab == 2);
 
             return;
         }
