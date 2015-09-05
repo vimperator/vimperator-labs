@@ -1,4 +1,5 @@
 201x-xx-xx:
+    * Stop propagation for keyboard event if that key are contained in -except option on :ignorekeys
 
 2015-08-25:
     * Version 3.10.1
