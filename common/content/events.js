@@ -1098,12 +1098,22 @@ const Events = Module("events", {
 
     onKeyUpOrDown: function (event) {
         // Always let the event be handled by the webpage/Firefox for certain modes
-        if (modes.passNextKey || modes.passAllKeys || modes.isMenuShown || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.isMenuShown || Events.isInputElemFocused())
             return;
+
+        let key = events.toString(event);
+        if (modes.passAllKeys) {
+            // Respect "unignored" keys
+            if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0) {
+                return;
+            } else {
+                event.stopPropagation();
+                return;
+            }
+        }
 
         // Many sites perform (useful) actions on keydown.
         // Let's keep the most common ones unless we have a mapping for that
-        let key = events.toString(event);
         if (event.type == "keydown" && this.isEscapeKey(key)) {
             this.onEscape(); // We do our Escape handling here, as the on "onKeyPress" may not always work if websites override the keydown event
             event.stopPropagation();

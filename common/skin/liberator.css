@@ -228,6 +228,10 @@
     #content-frame, #appcontent {
         border: 0px;
     }
+
+    #liberator-commandline-command .textbox-search-icons {
+        display: none !important;
+    }
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */
