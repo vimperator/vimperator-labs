@@ -1098,7 +1098,7 @@ const Events = Module("events", {
 
     onKeyUpOrDown: function (event) {
         // Always let the event be handled by the webpage/Firefox for certain modes
-        if (modes.passNextKey || modes.isMenuShown || Events.isInputElemFocused())
+        if (modes.passNextKey || modes.isMenuShown) 
             return;
 
         let key = events.toString(event);
@@ -1117,6 +1117,10 @@ const Events = Module("events", {
         if (event.type == "keydown" && this.isEscapeKey(key)) {
             this.onEscape(); // We do our Escape handling here, as the on "onKeyPress" may not always work if websites override the keydown event
             event.stopPropagation();
+            return;
+        }
+
+        if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
             return;
         }
 
