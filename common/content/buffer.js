@@ -1095,6 +1095,12 @@ const Buffer = Module("buffer", {
 
     scrollVertical: function scrollVertical(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, false);
+
+        if (elem == null && buffer.loaded == 0) {
+            liberator.echoerr("Page is still loading");
+            return;
+        }
+
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         if (increment == "lines")
             increment = fontSize;
@@ -1108,6 +1114,12 @@ const Buffer = Module("buffer", {
 
     scrollHorizontal: function scrollHorizontal(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, true);
+
+        if (elem == null && buffer.loaded == 0) {
+            liberator.echoerr("Page is still loading");
+            return;
+        }
+
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         if (increment == "columns")
             increment = fontSize; // Good enough, I suppose.
