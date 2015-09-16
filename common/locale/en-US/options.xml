@@ -894,6 +894,17 @@
 
 
 <item>
+    <tags>'nopassthrough' 'passthrough'</tags>
+    <spec>'passthrough'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>Define if keypresses are passed to webpages if you are not in Insert mode.</p>
+    </description>
+</item>
+
+
+<item>
     <tags>'pps' 'popups'</tags>
     <spec>'popups' 'pps'</spec>
     <type>stringlist</type>
