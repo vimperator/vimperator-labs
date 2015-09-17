@@ -698,7 +698,7 @@ const Buffer = Module("buffer", {
      * Scrolls to the bottom of the current buffer.
      */
     scrollBottom: function () {
-        Buffer.scrollToPercent(null, 100);
+        Buffer.scrollElemToPercent(null, null, 100);
     },
 
     /**
@@ -715,7 +715,7 @@ const Buffer = Module("buffer", {
      * Scrolls to the top of the current buffer.
      */
     scrollEnd: function () {
-        Buffer.scrollToPercent(100, null);
+        Buffer.scrollElemToPercent(null, 100, null);
     },
 
     /**
@@ -772,7 +772,7 @@ const Buffer = Module("buffer", {
      * @param {number} y The vertical page percentile.
      */
     scrollToPercent: function (x, y) {
-        Buffer.scrollToPercent(x, y);
+        Buffer.scrollElemToPercent(null, x, y);
     },
 
     /**
@@ -790,14 +790,14 @@ const Buffer = Module("buffer", {
      * Scrolls the current buffer laterally to its leftmost.
      */
     scrollStart: function () {
-        Buffer.scrollToPercent(0, null);
+        Buffer.scrollElemToPercent(null, 0, null);
     },
 
     /**
      * Scrolls the current buffer vertically to the top.
      */
     scrollTop: function () {
-        Buffer.scrollToPercent(null, 0);
+        Buffer.scrollElemToPercent(null, null, 0);
     },
 
     // TODO: allow callback for filtering out unwanted frames? User defined?
@@ -1064,7 +1064,7 @@ const Buffer = Module("buffer", {
         return win;
     },
 
-    findScrollable: function findScrollable(dir, horizontal) {
+    findScrollable: function findScrollable(dir = 0, horizontal) {
         let pos = "scrollTop", maxPos = "scrollTopMax", clientSize = "clientHeight";
         if (horizontal)
             pos = "scrollLeft", maxPos = "scrollLeftMax", clientSize = "clientWidth";
@@ -1076,7 +1076,7 @@ const Buffer = Module("buffer", {
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
                 if (elem[clientSize] == 0)
                     continue;
-                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos])
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos] || dir == 0 && elem[maxPos] > 0)
                     break;
             }
             return elem;
