@@ -742,21 +742,19 @@ const Buffer = Module("buffer", {
      * Scrolls the buffer vertically 'scroll' lines.
      *
      * @param {boolean} direction The direction to scroll. If true then
-     *     scroll up and if false scroll down.
+     *     scroll down and if false scroll up.
      * @param {number} count The multiple of 'scroll' lines to scroll.
      * @optional
      */
     scrollByScrollSize: function (direction, count) {
         direction = direction ? 1 : -1;
         count = count || 1;
-        let win = Buffer.findScrollableWindow();
-
-        Buffer.checkScrollYBounds(win, direction);
+        let elem = Buffer.findScrollable(direction, false);
 
         if (options["scroll"] > 0)
             this.scrollLines(options["scroll"] * direction);
         else // scroll half a page down in pixels
-            win.scrollBy(0, win.innerHeight / 2 * direction);
+            elem.scrollTop += elem.scrollHeight / 2 * direction;
     },
 
     _scrollByScrollSize: function _scrollByScrollSize(count, direction) {
