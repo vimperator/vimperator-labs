@@ -754,7 +754,7 @@ const Buffer = Module("buffer", {
         if (options["scroll"] > 0)
             this.scrollLines(options["scroll"] * direction);
         else // scroll half a page down in pixels
-            elem.scrollTop += elem.scrollHeight / 2 * direction;
+            elem.scrollTop += Buffer.findScrollableWindow().innerHeight / 2 * direction;
     },
 
     _scrollByScrollSize: function _scrollByScrollSize(count, direction) {
