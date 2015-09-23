@@ -717,7 +717,8 @@ const Tabs = Module("tabs", {
         commands.add(["tabd[o]", "bufd[o]"],
             "Execute a command in each tab",
             function (args) {
-                for (let i = 0; i < tabs.count; i++) {
+                let count = tabs.count;
+                for (let i = 0; i < Math.min(tabs.count, count); i++) {
                     tabs.select(i);
                     liberator.execute(args.string, null, true);
                 }
