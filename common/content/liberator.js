@@ -1349,7 +1349,7 @@ const Liberator = Module("liberator", {
     commands: function () {
         commands.add(["addo[ns]"],
             "Manage available Extensions and Themes",
-            function () { liberator.open("about:addons", { from: "addons" }); },
+            function () { liberator.open("about:addons", { from: "addons", where: liberator.NEW_TAB }); },
             { argCount: "0" });
 
         commands.add(["beep"],
