@@ -249,7 +249,7 @@ const Events = Module("events", {
      */
     deleteMacros: function (filter) {
         let re = RegExp("[" + filter.replace(/\s+/g, "") + "]");
- 
+
         for (let [item, ] in this._macros) {
             if (re.test(item))
                 this._macros.remove(item);
