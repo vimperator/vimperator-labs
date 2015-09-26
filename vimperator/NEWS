@@ -1,4 +1,5 @@
 201x-xx-xx:
+    * :delmacro matches the syntax and behaviour of :delqmark, e.g. allowing ranges as argument
     * Stop propagation for keyboard event if that key are contained in -except option on :ignorekeys
     * Improvements in handling Esc for unfocusing text fields
     * Closing the last tab of a window now respects the Firefox setting:
