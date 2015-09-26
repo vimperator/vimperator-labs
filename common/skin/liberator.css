@@ -2,7 +2,7 @@
 
 [liberator|highlight~=HintImage],
 [liberator|highlight~=Hint] {
-    z-index: 5000;
+    z-index: 2147483647;
     position: absolute !important;
 }
 [liberator|highlight~=Search] {
