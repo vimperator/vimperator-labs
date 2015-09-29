@@ -358,6 +358,19 @@ have the following possibilities:
     </description>
 </item>
 
+<item>
+    <tags>gr</tags>
+    <spec>gr</spec>
+    <description>
+        <p>View current tab in Reader View.</p>
+
+        <p>
+            <k>gr</k> on <tt>http://www.example.com</tt> opens
+            <tt>about:reader?url=http://www.example.com/</tt>.
+            Some pages are not compatible with Reader View, and an error message will be displayed.
+        </p>
+    </description>
+</item>
 
 <h2 tag="reloading">Reloading</h2>
 

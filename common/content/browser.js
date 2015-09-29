@@ -178,7 +178,7 @@ const Browser = Module("browser", {
                         if (path) {
                             if (path = getParentPath(path))
                                 parent = scheme + host + "/" + path;
-                            else 
+                            else
                                 parent = scheme + host + "/";
                         }
                         else {
@@ -206,6 +206,16 @@ const Browser = Module("browser", {
                 let uri = content.document.location;
                 liberator.assert(!/(about|mailto):/.test(uri.protocol)); // exclude these special protocols for now
                 liberator.open(uri.protocol + "//" + (uri.host || "") + "/");
+            });
+        mappings.add([modes.NORMAL], ["gr"],
+            "View current tab in Reader View",
+            function () {
+                let uri = content.document.location;
+                if !(uri.match(/about:reader/)) {
+                    liberator.open('about:reader?url=' + uri);
+                } else {
+                    liberator.open(uri.substr("about:reader?url=".length));
+                }
             });
     },
 
