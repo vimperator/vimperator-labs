@@ -102,7 +102,7 @@
                 <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CmdLine">
                     <label class="plain" id="liberator-commandline-prompt-text" liberator:highlight="PromptText" flex="0" crop="end" value="" collapsed="false"/>
                     <label class="plain" id="liberator-commandline-prompt" liberator:highlight="Prompt" flex="0" crop="none" value="" collapsed="false"/>
-                    <textbox class="plain" id="liberator-commandline-command" flex="1" type="timed" timeout="100"
+                    <textbox class="plain" id="liberator-commandline-command" flex="1" type="search" timeout="100"
                         oninput="window.liberator &and; liberator.modules.commandline.onEvent(event);"
                         onkeyup="window.liberator &and; liberator.modules.commandline.onEvent(event);"
                         onfocus="window.liberator &and; liberator.modules.commandline.onEvent(event);"

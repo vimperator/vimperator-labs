@@ -132,7 +132,7 @@ const Modes = Module("modes", {
     get mainMode() this._modeMap[this._main],
 
     addMode: function (name, extended, options) {
-        let disp = name.replace("_", " ", "g");
+        let disp = name.replace(/_/g, " ");
         this[name] = 1 << this._lastMode++;
         if (typeof extended == "object") {
             options = extended;

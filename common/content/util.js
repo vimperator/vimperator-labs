@@ -18,6 +18,8 @@ const {XHTML, XUL, NS} = (function () {
     };
 })();
 
+let Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init");
+
 const Util = Module("util", {
     init: function () {
         this.Array = Util.Array;
@@ -136,7 +138,7 @@ const Util = Module("util", {
      * @returns {string}
      */
     escapeString: function escapeString(str, delimiter) {
-        if (delimiter == undefined)
+        if (delimiter === undefined)
             delimiter = '"';
         return delimiter + str.replace(/([\\'"])/g, "\\$1").replace("\n", "\\n", "g").replace("\t", "\\t", "g") + delimiter;
     },
@@ -256,9 +258,9 @@ const Util = Module("util", {
         zip.open(FILE, io.MODE_CREATE | io.MODE_WRONLY | io.MODE_TRUNCATE);
         function addURIEntry(file, uri)
             zip.addEntryChannel(PATH + file, TIME, 9,
-                services.get("io").newChannel(uri, null, null), false);
+                services.get("io").newChannel(uri, null, null), false)
         function addDataEntry(file, data) // Inideal to an extreme.
-            addURIEntry(file, "data:text/plain;charset=UTF-8," + encodeURI(data));
+            addURIEntry(file, "data:text/plain;charset=UTF-8," + encodeURI(data))
 
         let empty = util.Array.toObject(
             "area base basefont br col frame hr img input isindex link meta param"
@@ -284,25 +286,25 @@ const Util = Module("util", {
                             data.push(" xmlns=" + JSON.stringify(XHTML.uri));
 
                         for (let { name: name, value: value } in util.Array.itervalues(node.attributes)) {
-                            if (name == "liberator:highlight") {
+                            if (name === "liberator:highlight") {
                                 name = "class";
                                 value = "hl-" + value;
                             }
-                            if (name == "href") {
-                                if (value.indexOf("liberator://help-tag/") == 0)
+                            if (name === "href") {
+                                if (value.indexOf("liberator://help-tag/") === 0)
                                     value = services.get("io").newChannel(value, null, null).originalURI.path.substr(1);
                                 if (!/[#\/]/.test(value))
                                     value += ".xhtml";
                             }
-                            if (name == "src" && value.indexOf(":") > 0) {
-                                chrome[value] = value.replace(/.*\//, "");;
+                            if (name === "src" && value.indexOf(":") > 0) {
+                                chrome[value] = value.replace(/.*\//, "");
                                 value = value.replace(/.*\//, "");
                             }
                             data.push(" ");
                             data.push(name);
                             data.push('="');
                             data.push(xml`${value}`.toString());
-                            data.push('"')
+                            data.push('"');
                         }
                         if (node.localName in empty)
                             data.push(" />");
@@ -311,7 +313,9 @@ const Util = Module("util", {
                             if (node instanceof HTMLHeadElement)
                                 data.push(`<link rel="stylesheet" type="text/css" href="help.css"/>`/*toXMLString()*/);
                             Array.map(node.childNodes, arguments.callee);
-                            data.push("</"); data.push(node.localName); data.push(">");
+                            data.push("</");
+                            data.push(node.localName);
+                            data.push(">");
                         }
                         break;
                     case Node.TEXT_NODE:
@@ -355,7 +359,7 @@ const Util = Module("util", {
             xmlhttp.mozBackgroundRequest = true;
             if (callback) {
                 xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState == 4)
+                    if (xmlhttp.readyState === 4)
                         callback(xmlhttp);
                 };
             }
@@ -512,7 +516,7 @@ const Util = Module("util", {
         ]);
         if (object instanceof Element) {
             let elem = object;
-            if (elem.nodeType == elem.TEXT_NODE)
+            if (elem.nodeType === elem.TEXT_NODE)
                 return elem.data;
             function namespaced(node) {
                 var ns = NAMESPACES[node.namespaceURI];
@@ -556,7 +560,7 @@ const Util = Module("util", {
                 }
                 catch (e) {}
                 if (!hasValue) {
-                    if (i instanceof Array && i.length == 2)
+                    if (i instanceof Array && i.length === 2)
                         [i, value] = i;
                     else
                         var noVal = true;
@@ -779,8 +783,7 @@ const Util = Module("util", {
      * @param {Number} flags    nsIDocumentEncoder.OutputXXXX
      * @returns {String}
      */
-    domToStr: let (Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init"))
-    function domToStr(node, type, flags) {
+    domToStr: function domToStr(node, type, flags) {
         var doc, method;
 
         if (node instanceof Document) {
@@ -838,7 +841,7 @@ const Util = Module("util", {
         }
     }, {
         isinstance: function isinstance(obj) {
-            return Object.prototype.toString.call(obj) == "[object Array]";
+            return Object.prototype.toString.call(obj) === "[object Array]";
         },
 
         /**

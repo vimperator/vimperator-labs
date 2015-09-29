@@ -1095,6 +1095,12 @@ const Buffer = Module("buffer", {
 
     scrollVertical: function scrollVertical(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, false);
+
+        if (elem == null && buffer.loaded == 0) {
+            liberator.echoerr("Page is still loading");
+            return;
+        }
+
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         if (increment == "lines")
             increment = fontSize;
@@ -1108,6 +1114,12 @@ const Buffer = Module("buffer", {
 
     scrollHorizontal: function scrollHorizontal(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, true);
+
+        if (elem == null && buffer.loaded == 0) {
+            liberator.echoerr("Page is still loading");
+            return;
+        }
+
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
         if (increment == "columns")
             increment = fontSize; // Good enough, I suppose.
@@ -1354,9 +1366,13 @@ const Buffer = Module("buffer", {
             return " ";
         }
         function getURLFromTab (tab) {
-            if ("linkedBrowser" in tab)
-                return tab.linkedBrowser.contentDocument.location.href;
-            else {
+            if ("linkedBrowser" in tab) {
+                if (tab.linkedBrowser.contentDocument) {
+                    return tab.linkedBrowser.contentDocument.location.href;
+                } else if (tab.linkedBrowser.lastURI.asciiSpec) {
+                    return tab.linkedBrowser.lastURI.asciiSpec
+                }
+            } else {
                 let i = config.tabbrowser.mTabContainer.getIndexOfItem(tab);
                 let info = config.tabbrowser.tabInfo[i];
                 return info.browser ?

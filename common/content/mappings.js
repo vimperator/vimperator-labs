@@ -347,10 +347,10 @@ const Mappings = Module("mappings", {
      * @param {RegExp|string} URL matching pattern or URL.
      * @returns {boolean}
      */
-    hasMap:
-        function (mode, cmd, patternOrUrl)
-            let (self = this)
-                this._user[mode].some(function (map) map.hasName(cmd) && self._matchingUrlsTest(map, patternOrUrl)),
+    hasMap: function (mode, cmd, patternOrUrl) {
+        let self = this;
+        return this._user[mode].some(function (map) map.hasName(cmd) && self._matchingUrlsTest(map, patternOrUrl));
+    },
 
     /**
      * Remove the user-defined mapping named <b>cmd</b> for <b>mode</b>.

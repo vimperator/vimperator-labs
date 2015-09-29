@@ -10,233 +10,228 @@
 }
 
 /* Applied only to completion buffer and MOW */
-@-moz-document
-    url-prefix(chrome://liberator/) {
+@-moz-document url-prefix(chrome://liberator/) {
 
-*:-moz-loading, *:-moz-broken { display: none !important; }
+    *:-moz-loading, *:-moz-broken { display: none !important; }
 
-[liberator|highlight~=Completions] {
-    width: 100%;
-    display: table;
-}
-[liberator|highlight~=CompItem],
-[liberator|highlight~=CompTitle] {
-    display: table-row;
-}
-[liberator|highlight~=Completions] > ul {
-    display: table-row;
-}
-[liberator|highlight~=CompItem] > *,
-[liberator|highlight~=CompTitle] > * {
-    /* disabled for now, since it throws SecurityErrors to the console */
-    /* -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td); */
-    display: table-cell;
-    vertical-align: middle;
-}
+    [liberator|highlight~=Completions] {
+        width: 100%;
+        display: table;
+    }
+    [liberator|highlight~=CompItem],
+    [liberator|highlight~=CompTitle] {
+        display: table-row;
+    }
+    [liberator|highlight~=Completions] > ul {
+        display: table-row;
+    }
+    [liberator|highlight~=CompItem] > *,
+    [liberator|highlight~=CompTitle] > * {
+        /* disabled for now, since it throws SecurityErrors to the console */
+        /* -moz-binding: url(chrome://liberator/content/bindings.xml#compitem-td); */
+        display: table-cell;
+        vertical-align: middle;
+    }
 
-[liberator|highlight~=CompMsg] {
-    height: 1.5em;
-    line-height: 1.5em !important;
-}
+    [liberator|highlight~=CompMsg] {
+        height: 1.5em;
+        line-height: 1.5em !important;
+    }
 
-.td-span {
-    display: inline-block;
-    overflow: visible;
-    width: 0px;
-    height: 1.5em;
-    line-height: 1.5em !important;
-}
-.td-strut {
-    display: inline-block;
-    vertical-align: middle;
-    height: 16px;
-    width: 0px;
-}
+    .td-span {
+        display: inline-block;
+        overflow: visible;
+        width: 0px;
+        height: 1.5em;
+        line-height: 1.5em !important;
+    }
+    .td-strut {
+        display: inline-block;
+        vertical-align: middle;
+        height: 16px;
+        width: 0px;
+    }
 
-.extra-info { color: gray; }
+    .extra-info { color: gray; }
 
-.times-executed, .time-average { color: green; }
-.time-total { color: red; }
+    .times-executed, .time-average { color: green; }
+    .time-total { color: red; }
 
 }
 
 /* Applied to completion buffer, MOW, browser window */
-@-moz-document
-    url-prefix(chrome://) {
+@-moz-document url-prefix(chrome://) {
 
-.liberator-container > * {
-    font-family: inherit;
-}
+    .liberator-container > * {
+        font-family: inherit;
+    }
 
-.liberator-floatbox {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-}
+    .liberator-floatbox {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
 
-.liberator-container.animation[collapsed='true'] {
-    opacity: 0;
-    pointer-events: none;
-    max-height: 10px !important;
-    min-height: 10px;
-}
+    .liberator-container.animation[collapsed='true'] {
+        opacity: 0;
+        pointer-events: none;
+        max-height: 10px !important;
+        min-height: 10px;
+    }
 
-.liberator-floatbox #liberator-completions,
-.liberator-floatbox #liberator-multiline-output {
-    background-color: transparent;
-}
+    .liberator-floatbox > iframe {
+        height: 100%;
+        width: 100%;
+    }
 
-.liberator-floatbox > iframe {
-    height: 100%;
-    width: 100%;
-}
+    .liberator-container.animation {
+        transition: all 0.2s;
+    }
 
-.liberator-container.animation {
-    transition: all 0.2s;
-}
+    #liberator-completions {
+        -moz-user-focus: ignore;
+        overflow: -moz-scrollbars-none !important;
+        border-width: 0px !important;
+    }
 
-#liberator-completions {
-    -moz-user-focus: ignore;
-    overflow: -moz-scrollbars-none !important;
-    border-width: 0px !important;
-}
+    #liberator-bottombar:-moz-lwtheme {
+        text-shadow: none;
+    }
 
-#liberator-bottombar:-moz-lwtheme {
-    text-shadow: none;
-}
+    /* all elements in the statusline and commandline need some padding to look good */
+    #liberator-statusline {
+        font-family: monospace;
+        margin: 0px;
+        -moz-appearance: none;
+        border: none !important;
+        min-height: 16px !important;
+    }
+    #liberator-statusline:not([customizing="true"]) :-moz-any(toolbarbutton) {
+        border: none !important;
+        padding: 0 0px !important;
+        background: transparent !important;
+        height: 16px !important;
+    }
+    #liberator-statusline > *,
+    #liberator-commandline > * {
+        padding: 0px 2px;
+        font-family: monospace;
+    }
 
-/* all elements in the statusline and commandline need some padding to look good */
-#liberator-statusline {
-    font-family: monospace;
-    margin: 0px;
-    -moz-appearance: none;
-    border: none !important;
-    min-height: 16px !important;
-}
-#liberator-statusline:not([customizing="true"]) :-moz-any(toolbarbutton) {
-    border: none !important;
-    padding: 0 0px !important;
-    background: transparent !important;
-    height: 16px !important;
-}
-#liberator-statusline > *,
-#liberator-commandline > * {
-    padding: 0px 2px;
-    font-family: monospace;
-}
+    #liberator-commandline.hidden {
+        opacity: 0;
+        pointer-events: none; /* so we can click through when the command line is hidden */
+    }
 
-#liberator-commandline.hidden {
-    opacity: 0;
-    pointer-events: none; /* so we can click through when the command line is hidden */
-}
+    #liberator-statusline,
+    #liberator-message-toolbar {
+        -moz-box-align: center;
+    }
+    #liberator-statusline[customizing="true"] :-moz-any(#liberator-mode-toolbar, #liberator-message-toolbar, #liberator-status) {
+        border: 1px dotted gray;
+        min-width: 1em;
+        min-height: 1em;
+    }
+    #liberator-status > * {
+        padding: 0 1px;
+        margin: 0;
+    }
+    #liberator-status-ssl {
+        -moz-appearance: none;
+        width: 16px;
+        height: 16px;
+        visibility: collapse;
+        -moz-image-region: rect(0, 16px, 16px, 0);
+    }
+    #liberator-status-ssl.verifiedIdentity {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-icons-https-ev.png);
+    }
+    #liberator-status-ssl.verifiedDomain {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-icons-https.png);
+    }
+    #liberator-status-ssl.mixedActiveContent {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-icons-https-mixed-active.png);
+    }
 
-#liberator-statusline,
-#liberator-message-toolbar {
-    -moz-box-align: center;
-}
-#liberator-statusline[customizing="true"] :-moz-any(#liberator-mode-toolbar, #liberator-message-toolbar, #liberator-status) {
-    border: 1px dotted gray;
-    min-width: 1em;
-    min-height: 1em;
-}
-#liberator-status > * {
-    padding: 0 1px;
-    margin: 0;
-}
-#liberator-status-ssl {
-    -moz-appearance: none;
-    width: 16px;
-    height: 16px;
-    visibility: collapse;
-    -moz-image-region: rect(0, 16px, 16px, 0);
-}
-#liberator-status-ssl.verifiedIdentity {
-    visibility: visible;
-    list-style-image: url(chrome://browser/skin/identity-icons-https-ev.png);
-}
-#liberator-status-ssl.verifiedDomain {
-    visibility: visible;
-    list-style-image: url(chrome://browser/skin/identity-icons-https.png);
-}
-#liberator-status-ssl.mixedActiveContent {
-    visibility: visible;
-    list-style-image: url(chrome://browser/skin/identity-icons-https-mixed-active.png);
-}
+    #liberator-commandline-prompt {
+        background-color: inherit;
+        margin: 0px;
+    }
+    #liberator-commandline-command {
+        background-color: inherit;
+        color: inherit;
+        margin: 0px;
+    }
+    #liberator-message {
+        margin: 0px;
+    }
+    .liberator-hiding {
+        opacity: 0;
+        visibility: collapse;
+        transition-property: opacity, visibility;
+        transition-duration: .5s;
+    }
 
-#liberator-commandline-prompt {
-    background-color: inherit;
-    margin: 0px;
-}
-#liberator-commandline-command {
-    background-color: inherit;
-    color: inherit;
-    margin: 0px;
-}
-#liberator-message {
-    margin: 0px;
-}
-.liberator-hiding {
-    opacity: 0;
-    visibility: collapse;
-    transition-property: opacity, visibility;
-    transition-duration: .5s;
-}
+    #sidebar {
+        max-width: 90% !important;
+        min-width: 10% !important;
+    }
 
-#sidebar {
-    max-width: 90% !important;
-    min-width: 10% !important;
-}
+    /* MOW */
 
-/* MOW */
+    #liberator-completions,
+    #liberator-multiline-output,
+    #liberator-multiline-input {
+        overflow: hidden;
+        background-color: white;
+        color: black;
+    }
 
-#liberator-completions,
-#liberator-multiline-output,
-#liberator-multiline-input {
-    overflow: hidden;
-    background-color: white;
-    color: black;
-}
+    #liberator-completions-content,
+    #liberator-multiline-output-content,
+    #liberator-multiline-input {
+        white-space: pre;
+        font-family: -moz-fixed;
+        margin: 0px;
+    }
 
-#liberator-completions-content,
-#liberator-multiline-output-content,
-#liberator-multiline-input {
-    white-space: pre;
-    font-family: -moz-fixed;
-    margin: 0px;
-}
+    #liberator-completions-content *,
+    #liberator-multiline-output-content *,
+    #liberator-commandline-prompt *,
+    #liberator-commandline-command {
+        font: inherit;
+    }
 
-#liberator-completions-content *,
-#liberator-multiline-output-content *,
-#liberator-commandline-prompt *,
-#liberator-commandline-command {
-    font: inherit;
-}
+    #liberator-commandline-prompt-text {
+        max-width: 0;
+        transition-property: max-width;
+        transition-duration: 0.25s;
+    }
 
-#liberator-commandline-prompt-text {
-    max-width: 0;
-    transition-property: max-width;
-    transition-duration: 0.25s;
-}
+    #liberator-completions-content table,
+    #liberator-multiline-output-content table {
+        white-space: inherit;
+        border-spacing: 0px;
+    }
 
-#liberator-completions-content table,
-#liberator-multiline-output-content table {
-    white-space: inherit;
-    border-spacing: 0px;
-}
+    #liberator-completions-content td,
+    #liberator-multiline-output-content td,
+    #liberator-completions-content th,
+    #liberator-multiline-output-content th {
+        padding: 0px 2px;
+    }
 
-#liberator-completions-content td,
-#liberator-multiline-output-content td,
-#liberator-completions-content th,
-#liberator-multiline-output-content th {
-    padding: 0px 2px;
-}
+    /* for muttator's composer */
+    #content-frame, #appcontent {
+        border: 0px;
+    }
 
-/* for muttator's composer */
-#content-frame, #appcontent {
-    border: 0px;
-}
-
+    #liberator-commandline-command .textbox-search-icons {
+        display: none !important;
+    }
 }
 
 /* vim: set fdm=marker sw=4 ts=4 et: */

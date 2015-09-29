@@ -155,7 +155,7 @@ const Command = Class("Command", {
     action: null,
     /**
      * @property {string} This command's argument count spec.
-     * @see Commands#parseArguments
+     * @see Commands#parseArgs
      */
     argCount: 0,
     /**
@@ -167,7 +167,7 @@ const Command = Class("Command", {
     hereDoc: false,
     /**
      * @property {Array} The options this command takes.
-     * @see Commands@parseArguments
+     * @see Commands@parseArgs
      */
     options: [],
     /**

@@ -1,4 +1,20 @@
 201x-xx-xx:
+    * Stop propagation for keyboard event if that key are contained in -except option on :ignorekeys
+    * Improvements in handling Esc for unfocusing text fields
+    * Closing the last tab of a window now respects the Firefox setting:
+    browser.tabs.closeWindowWithLastTab, which means those who are used to :tabclose never closing
+    the window when closing the last tab, should set this option to false (either through about:config
+    or with :set! browser.tabs.closeWindowWithLastTab=false)
+
+2015-08-25:
+    * Version 3.10.1
+    * Max version is 44.
+
+2015-08-25:
+    * Version 3.10
+    * Keeping the lights on with support for Aurora and Nightly builds of firefox.
+    * Bump up minimum version to current ESR release of firefox (version 38).
+    * First release by @gkatsev
     * Keep default Firefox mapping of <PageDown>, <PageUp>, <Left>, <Right>,
       <Up>, <Down>, <Home> and <End>.
       This is done to (a) allow default Firefox smooth scrolling and (b) to

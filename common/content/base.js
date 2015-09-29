@@ -290,7 +290,14 @@ function extend(subclass, superclass, overrides) {
  * @returns {function} The constructor for the resulting class.
  */
 function Class() {
-    function constructor() {
+    var args = Array.slice(arguments);
+    if (isstring(args[0]))
+        var name = args.shift();
+    var superclass = Class;
+    if (callable(args[0]))
+        superclass = args.shift();
+
+    let Constructor = eval(`(function ${(name || superclass.name).replace(/\W/g, '_')}() {
         let self = {
             __proto__: Constructor.prototype,
             constructor: Constructor,
@@ -305,17 +312,7 @@ function Class() {
         };
         var res = self.init.apply(self, arguments);
         return res !== undefined ? res : self;
-    }
-
-    var args = Array.slice(arguments);
-    if (isstring(args[0]))
-        var name = args.shift();
-    var superclass = Class;
-    if (callable(args[0]))
-        superclass = args.shift();
-
-    var Constructor = eval("(function " + (name || superclass.name).replace(/\W/g, "_") +
-            String.substr(constructor, 20) + ")");
+    })`);
     Constructor.__proto__ = superclass;
 
     if (!("init" in superclass.prototype) && !("init" in args[0])) {

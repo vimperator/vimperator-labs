@@ -19,7 +19,7 @@ const Template = Module("template", {
         let ret = tag``;
         let n = 0;
         var op = tag["+="] || tag["+"] ||function (lhs, rhs) tag`${lhs}${rhs}`;
-        for each (let i in Iterator(iter)) {
+        for (let i of Iterator(iter)) {
             let val = func(i);
             if (val == undefined || (tag.isEmpty && tag.isEmpty(val)))
                 continue;

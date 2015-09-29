@@ -261,7 +261,7 @@ function Highlights(name, store) {
         }
 
         let css = newStyle.replace(/(?:!\s*important\s*)?(?:;?\s*$|;)/g, "!important;")
-                          .replace(";!important;", ";", "g"); // Seeming Spidermonkey bug
+                          .replace(/;!important;/g, ";"); // Seeming Spidermonkey bug
         if (!/^\s*(?:!\s*important\s*)?;*\s*$/.test(css)) {
             css = style.selector + " { " + css + " }";
 
@@ -550,28 +550,27 @@ Module("styles", {
     requires: ["config", "liberator", "storage", "util"],
 
     init: function () {
-        let (array = util.Array) {
-            update(Styles.prototype, {
-                get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
-                completeSite: function (context, content) {
-                    context.anchored = false;
-                    try {
-                        context.fork("current", 0, this, function (context) {
-                            context.title = ["Current Site"];
-                            context.completions = [
-                                [content.location.host, "Current Host"],
-                                [content.location.href, "Current URL"]
-                            ];
-                        });
-                    }
-                    catch (e) {}
-                    context.fork("others", 0, this, function (context) {
-                        context.title = ["Site"];
-                        context.completions = [[s, ""] for (s of styles.sites)];
+        let array = util.Array;
+        update(Styles.prototype, {
+            get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
+            completeSite: function (context, content) {
+                context.anchored = false;
+                try {
+                    context.fork("current", 0, this, function (context) {
+                        context.title = ["Current Site"];
+                        context.completions = [
+                            [content.location.host, "Current Host"],
+                            [content.location.href, "Current URL"]
+                        ];
                     });
                 }
-            });
-        }
+                catch (e) {}
+                context.fork("others", 0, this, function (context) {
+                    context.title = ["Site"];
+                    context.completions = [[s, ""] for (s of styles.sites)];
+                });
+            }
+        });
         return storage.newObject("styles", Styles, { store: false });
     }
 }, {
