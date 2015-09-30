@@ -349,7 +349,7 @@ const Mappings = Module("mappings", {
      */
     hasMap: function (mode, cmd, patternOrUrl) {
         let self = this;
-        this._user[mode].some(function (map) map.hasName(cmd) && self._matchingUrlsTest(map, patternOrUrl));
+        return this._user[mode].some(function (map) map.hasName(cmd) && self._matchingUrlsTest(map, patternOrUrl));
     },
 
     /**
