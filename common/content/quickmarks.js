@@ -159,6 +159,13 @@ const QuickMarks = Module("quickmarks", {
             { arg: true });
 
         mappings.add(myModes,
+            ["gw"], "Jump to a QuickMark in a new window",
+            function (arg) {
+                quickmarks.jumpTo(arg, liberator.NEW_WINDOW);
+            },
+            { arg: true });
+
+        mappings.add(myModes,
             ["M"], "Add new QuickMark for current URL",
             function (arg) {
                 liberator.assert(/^[a-zA-Z0-9]$/.test(arg));
