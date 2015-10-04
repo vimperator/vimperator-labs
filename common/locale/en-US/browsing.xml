@@ -367,7 +367,7 @@ have the following possibilities:
         <p>
             <k>gr</k> on <tt>http://www.example.com</tt> opens
             <tt>about:reader?url=http://www.example.com/</tt>.
-            Some pages are not compatible with Reader View, and an error message will be displayed.
+            Not all pages are compatible with Reader View, so the page will sometimes fail to load.
         </p>
     </description>
 </item>
