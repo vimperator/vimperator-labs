@@ -6,6 +6,7 @@
     browser.tabs.closeWindowWithLastTab, which means those who are used to :tabclose never closing
     the window when closing the last tab, should set this option to false (either through about:config
     or with :set! browser.tabs.closeWindowWithLastTab=false)
+    * gr toggles Reader View
 
 2015-08-25:
     * Version 3.10.1
