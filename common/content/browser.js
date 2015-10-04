@@ -210,8 +210,8 @@ const Browser = Module("browser", {
         mappings.add([modes.NORMAL], ["gr"],
             "View current tab in Reader View",
             function () {
-                let uri = content.document.location;
-                if !(uri.startsWith("about:reader")) {
+                let uri = content.document.location.href;
+                if (!uri.startsWith("about:reader")) {
                     liberator.open('about:reader?url=' + uri);
                 } else {
                     liberator.open(uri.substr("about:reader?url=".length));
