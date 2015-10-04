@@ -359,6 +359,18 @@ have the following possibilities:
 </item>
 
 
+<item>
+    <tags>gr :reader</tags>
+    <spec>gr</spec>
+    <spec>:reader</spec>
+    <description>
+        <p>
+            Toggle Reader View.
+        </p>
+    </description>
+</item>
+
+
 <h2 tag="reloading">Reloading</h2>
 
 <item>
