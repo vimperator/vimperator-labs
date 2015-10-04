@@ -211,7 +211,7 @@ const Browser = Module("browser", {
             "View current tab in Reader View",
             function () {
                 let uri = content.document.location;
-                if !(uri.match(/about:reader/)) {
+                if !(uri.startsWith("about:reader")) {
                     liberator.open('about:reader?url=' + uri);
                 } else {
                     liberator.open(uri.substr("about:reader?url=".length));
