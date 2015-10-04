@@ -70,10 +70,15 @@
     <spec>:delmac<oa>ros</oa> <a>args</a></spec>
     <spec>:delmac<oa>ros</oa>!</spec>
     <description>
-        <p>
-            Delete recorded macros matching the regular expression <a>args</a>. If <oa>!</oa> is given
-            all macros are deleted.
-        </p>
+        <p>Delete the specified macros. Macros are presented as a list.</p>
+
+        <p>Examples:</p>
+
+        <ul>
+            <li><ex>:delmacros Aa b p</ex> deletes macros A, a, b and p</li>
+            <li><ex>:delmacros b-p</ex> deletes all macros in the range b to p</li>
+            <li><ex>:delmacros!</ex> deletes all macros</li>
+        </ul>
     </description>
 </item>
 

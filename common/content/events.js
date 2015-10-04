@@ -241,16 +241,17 @@ const Events = Module("events", {
     },
 
     /**
-     * Deletes all macros matching <b>filter</b>.
+     * Deletes the specified macros. The <b>filter</b> is a list of
+     * macros and ranges are supported. Eg. "ab c d e-k".
      *
-     * @param {string} filter A regular expression filter string. A null
-     *     filter deletes all macros.
+     * @param {string} filter The list of macros to delete.
+     *
      */
     deleteMacros: function (filter) {
-        let re = RegExp(filter);
+        let re = RegExp("[" + filter.replace(/\s+/g, "") + "]");
 
         for (let [item, ] in this._macros) {
-            if (re.test(item) || !filter)
+            if (re.test(item))
                 this._macros.remove(item);
         }
     },
