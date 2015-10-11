@@ -145,15 +145,15 @@
     }
     #liberator-status-ssl.verifiedIdentity {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https-ev.png);
+        list-style-image: url(chrome://browser/skin/identity-secure.svg);
     }
     #liberator-status-ssl.verifiedDomain {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https.png);
+        list-style-image: url(chrome://browser/skin/identity-secure.svg);
     }
     #liberator-status-ssl.mixedActiveContent {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https-mixed-active.png);
+        list-style-image: url(chrome://browser/skin/identity-mixed-active-loaded.svg);
     }
 
     #liberator-commandline-prompt {
