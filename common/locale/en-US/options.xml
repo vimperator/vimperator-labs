@@ -1031,7 +1031,7 @@
     </description>
 </item>
 
-
+t
 <item>
     <tags>'scr' 'scroll'</tags>
     <spec>'scroll' 'scr'</spec>
@@ -1183,7 +1183,7 @@
         <p>
             Tab numbers appear as small numbers in the right corner of tabs.
             They can be used to quickly get the position of a tab, which can
-            be used by other commands like 12<k>gt</k> to to to tab number 12.
+            be used by other commands like 12<k>gt</k> to go to tab number 12.
         </p>
     </description>
 </item>
