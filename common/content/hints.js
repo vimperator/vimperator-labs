@@ -1332,7 +1332,9 @@ const Hints = Module("hints", {
                 completer: function (context) [
                     ["0123456789", "Numbers only"],
                     ["hjklasdf", "Home row"],
+                    ["dhtnaoeu", "Home row (Dvorak)"],
                     ["hjklasdfgyuiopqwertnmzxcvb", "Smart order"],
+                    ["dhtnaoeuifgcrl',.pybm;qjkx", "Smart order (Dvorak)"],
                     ["abcdefghijklmnopqrstuvwxyz", "Alphabetically ordered"],
                 ],
                 validator: function (arg) {
