@@ -123,6 +123,63 @@ const StatusLine = Module("statusline", {
         }
     },
 
+    // set the visibility of the statusline
+    setVisibility: function (request) {
+        if ( typeof this.setVisibility.currVisibility == 'undefined' ) {
+            this.setVisibility.currVisibility = true;
+            this.setVisibility.prevVisibility = true;
+            this.setVisibility.contentSeparator
+                = highlight.get('ContentSeparator').value;
+
+            // kinds of requests
+            this.setVisibility.MODE_ON  = 0;      // commandline active
+            this.setVisibility.MODE_OFF = 1;      // commandline inactive
+            this.setVisibility.TOGGLE = 2;        // toggle on or off
+            this.setVisibility.FULLSCREEN = 3;    // in or out of fullscreen
+        }
+
+        let bb = document.getElementById("liberator-bottombar");
+        let sv = this.setVisibility;
+
+        if (!bb) return;
+
+        var toggle_off = function () {
+            bb.style.height = '0px';
+            bb.style.overflow = 'hidden';
+            highlight.set('ContentSeparator', 'display: none;');
+        };
+
+        var toggle_on = function () {
+            bb.style.height = '';
+            bb.style.overflow = '';
+            highlight.set('ContentSeparator', sv.contentSeparatorValue);
+        };
+
+        switch (request) {
+        case sv.TOGGLE:
+            sv.currVisibility = !sv.currVisibility;
+            if (sv.currVisibility) toggle_on();
+            else toggle_off();
+            break;
+        case sv.FULLSCREEN:
+            if (window.fullScreen) {
+                sv.prevVisibility = sv.currVisibility;
+                sv.currVisibility = false;
+                toggle_off();
+            } else {
+                sv.currVisibility = sv.currVisibility || sv.prevVisibility;
+                if (sv.currVisibility) toggle_on();
+            }
+            break;
+        case sv.MODE_ON:
+            if (!sv.currVisibility) toggle_on();
+            break;
+        case sv.MODE_OFF:
+            if (!sv.currVisibility) toggle_off();
+            break;
+        }
+    },
+
     /**
      * Set any field in the statusbar
      *
