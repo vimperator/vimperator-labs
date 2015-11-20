@@ -8,6 +8,10 @@
     the window when closing the last tab, should set this option to false (either through about:config
     or with :set! browser.tabs.closeWindowWithLastTab=false)
     * gr toggles Reader View
+    * Autohide statusbar: When entering fullscreen mode, the statusbar is
+      hidden and temporarily showed up with command inputs. Also, Users can
+      manually hide and unhide the statusbar with a command:
+      :js statusline.setVisibility(statusline.setVisibility.TOGGLE)
 
 2015-08-25:
     * Version 3.10.1
