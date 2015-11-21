@@ -72,6 +72,8 @@ const StatusLine = Module("statusline", {
         // our status bar fields
         this._statusfields = {};
         this._statuslineWidget = document.getElementById("liberator-status");
+        // initialize setVisibility static variables
+        this.setVisibility(-1);
     },
 
     /**
@@ -138,8 +140,8 @@ const StatusLine = Module("statusline", {
             this.setVisibility.FULLSCREEN = 3;    // in or out of fullscreen
         }
 
-        let bb = document.getElementById("liberator-bottombar");
-        let sv = this.setVisibility;
+        const bb = document.getElementById("liberator-bottombar");
+        const sv = this.setVisibility;
 
         if (!bb) return;
 
