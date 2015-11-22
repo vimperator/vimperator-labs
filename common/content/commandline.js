@@ -14,7 +14,7 @@
 let timeID = null;
 
 const CommandLine = Module("commandline", {
-    requires: ["config", "liberator", "modes", "services", "storage", "template", "util", "styles"],
+    requires: ["config", "liberator", "modes", "services", "storage", "template", "util"],
 
     init: function () {
         const self = this;
@@ -25,9 +25,6 @@ const CommandLine = Module("commandline", {
             let isPrivate = liberator.isPrivateWindow();
             storage.newArray(liberator.storeName(mode, isPrivate), { store: !isPrivate});
         }, this);
-
-        liberator.registerObserver("fullscreen", this.updateBottombar);
-        liberator.registerObserver("modeChange", this.updateBottombar);
 
         // Really inideal.
         let services = modules.services; // Storage objects are global to all windows, 'modules' isn't.
@@ -182,9 +179,6 @@ const CommandLine = Module("commandline", {
         this._keepOpenForInput = false;
 
         this._commandlineDisplayTimeoutID = null;
-
-        this._bottomBarHidden = false;
-        this._hlContentSepValue;
 
         this.registerCallback("submit", modes.EX, function (command) {
             if (self._commandlineDisplayTimeoutID) {
@@ -565,38 +559,6 @@ const CommandLine = Module("commandline", {
         // on subsequent calls
         this._setPrompt("");
     },
-
-    /**
-     * Callback function for updating the Bottombar
-     */
-    updateBottombar: function (){
-        hide = window.fullScreen && liberator.mode == 1;
-        commandline.hideBottombar(hide);
-    },
-    /**
-     * Totally hides the vimperator bar at the bottom of the screen (for fullscreen mode)
-     */
-    hideBottombar: function (hide){
-        if( hide == this._bottomBarHidden)
-            return;
-        this._bottomBarHidden = hide;
-        let bb = document.getElementById('liberator-bottombar');
-        if (! bb)
-            return;
-
-        if (hide) {
-            this._hlContentSepValue = highlight.get('ContentSeparator').value;
-            bb.style.height = '0px';
-            bb.style.overflow = 'hidden';
-            highlight.set('ContentSeparator', 'display:none', true, false);
-        }
-        else {
-            bb.style.height = '';
-            bb.style.overflow = '';
-            highlight.set('ContentSeparator', this._hlContentSepValue, true, false);
-        }
-    },
-
 
     /**
      * Make the command line visible, hiding the status messages below
