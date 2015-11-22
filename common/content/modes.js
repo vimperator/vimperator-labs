@@ -104,6 +104,7 @@ const Modes = Module("modes", {
                 if (oldExtended & modes.HINTS)
                     hints.hide();
                 commandline.close();
+                statusline.setVisibility(statusline.setVisibility.MODE_OFF);
                 break;
         }
 
@@ -119,6 +120,11 @@ const Modes = Module("modes", {
         } else if (newMode === modes.COMPOSE) {
             services.get("focus").clearFocus(window);
         }
+
+        if (newMode == modes.COMMAND_LINE) {
+            statusline.setVisibility(statusline.setVisibility.MODE_ON);
+        }
+
     },
 
     NONE: 0,
