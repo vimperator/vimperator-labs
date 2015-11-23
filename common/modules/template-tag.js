@@ -178,8 +178,9 @@ function templateXML(portion, ...args) // {{{
             break;
         case ATTR2:
             whiteSpace.lastIndex = offset;
-            whiteSpace.exec(str);
-            offset = whiteSpace.lastIndex;
+                if (whiteSpace.exec(str)) {
+                        offset = whiteSpace.lastIndex;
+                   }
             close = str[offset++];
             if (!close) {
                 if (i >= j) throw SyntaxError("attr right");

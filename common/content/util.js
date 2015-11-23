@@ -827,7 +827,7 @@ const Util = Module("util", {
             return {
                 __proto__: ary,
                 __iterator__: function () this.iteritems(),
-                __noSuchMethod__: function (meth, args) {
+                mapImpl: function (meth, args) {
                     var res = util.Array[meth].apply(null, [this.__proto__].concat(args));
 
                     if (util.Array.isinstance(res))
@@ -836,7 +836,8 @@ const Util = Module("util", {
                 },
                 toString: function () this.__proto__.toString(),
                 concat: function () this.__proto__.concat.apply(this.__proto__, arguments),
-                map: function () this.__noSuchMethod__("map", Array.slice(arguments))
+                map: function () this.mapImpl("map", Array.slice(arguments)),
+                flatten: function () this.mapImpl("flatten", arguments)
             };
         }
     }, {
