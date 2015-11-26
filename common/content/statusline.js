@@ -214,32 +214,48 @@ const StatusLine = Module("statusline", {
             });
         statusline.addField("ssl", "The currently SSL status", "liberator-status-ssl",
             function updateSSLState (node, state) {
-                var className = "";
+                var className = "notSecure";
+                var tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
                 if (!state) {
                     let securityUI = config.tabbrowser.securityUI;
                     if (securityUI)
                         state = securityUI.state || 0;
                 }
                 const WPL = Components.interfaces.nsIWebProgressListener;
-                if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL)
+                if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL) {
                     className = "verifiedIdentity";
-                else if (state & WPL.STATE_IS_SECURE)
+                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                        className = "mixedActiveBlocked";
+                    tooltip = gNavigatorBundle.getFormattedString(
+                        "identity.identified.verifier",
+                        [gIdentityHandler.getIdentityData().caOrg]);
+                } else if (state & WPL.STATE_IS_SECURE) {
                     className = "verifiedDomain";
-                else if (state & WPL.STATE_IS_BROKEN) {
-                    if ((state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT) &&
-                        options.getPref("security.mixed_content.block_active_content", false))
+                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                        className = "mixedActiveBlocked";
+                    tooltip = gNavigatorBundle.getFormattedString(
+                        "identity.identified.verifier",
+                        [gIdentityHandler.getIdentityData().caOrg]);
+                } else if (state & WPL.STATE_IS_BROKEN) {
+                    if (state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT)
                         className = "mixedActiveContent";
+                    else
+                        className = "mixedDisplayContent";
+                    tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
                 }
-
                 node.className = className;
+                node.setAttribute("tooltiptext", tooltip);
             }, {
                 openPopup: function (anchor) {
                     var handler = window.gIdentityHandler;
                     if (typeof handler === "undefiend") // Thunderbird has none
                         return;
 
+                    if (handler.refreshIdentityPopup)
+                        handler.refreshIdentityPopup();
+                    else
+                        handler.setPopupMessages(handler._identityBox.className);
                     handler._identityPopup.hidden = false;
-                    handler.setPopupMessages(handler._identityBox.className);
                     handler._identityPopup.openPopup(anchor);
                 },
             });

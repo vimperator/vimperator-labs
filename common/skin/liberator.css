@@ -155,6 +155,18 @@
         visibility: visible;
         list-style-image: url(chrome://browser/skin/identity-mixed-active-loaded.svg);
     }
+    #liberator-status-ssl.mixedDisplayContent {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-mixed-passive-loaded.svg);
+    }
+    #liberator-status-ssl.mixedActiveBlocked {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-mixed-active-blocked.svg);
+    }
+    #liberator-status-ssl.notSecure {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-not-secure.svg);
+    }
 
     #liberator-commandline-prompt {
         background-color: inherit;
