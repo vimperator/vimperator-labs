@@ -1128,8 +1128,9 @@
 
         <dl>
             <dt>0</dt>      <dd>Don't show link destination</dd>
-            <dt>1</dt>      <dd>Show the link in the status line</dd>
-            <dt>2</dt>      <dd>Show the link in the command line</dd>
+            <dt>1</dt>      <dd>Show the link destination in the status line</dd>
+            <dt>2</dt>      <dd>Show the link destination in the command line</dd>
+            <dt>3</dt>      <dd>Show the link destination in the content area</dd>
         </dl>
     </description>
 </item>
