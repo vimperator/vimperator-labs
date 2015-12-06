@@ -281,8 +281,13 @@ const Buffer = Module("buffer", {
             asyncUpdateUI.superapply(this, arguments);
         },
         setOverLink: function setOverLink(link, b) {
-            setOverLink.superapply(this, arguments);
             let ssli = options["showstatuslinks"];
+
+            if (ssli == 3) {
+                setOverLink.superapply(this, arguments);
+                return;
+            }
+
             if (link && ssli) {
                 if (ssli == 1) {
                     statusline.updateField("location", "Link: " + link);
@@ -299,7 +304,7 @@ const Buffer = Module("buffer", {
                 }
                 else if (ssli == 2)
                     modes.show();
-                }
+            }
         },
     },
 
@@ -1792,8 +1797,9 @@ const Buffer = Module("buffer", {
             {
                 completer: function (context) [
                     ["0", "Don't show link destination"],
-                    ["1", "Show the link in the status line"],
-                    ["2", "Show the link in the command line"]
+                    ["1", "Show the link destination in the status line"],
+                    ["2", "Show the link destination in the command line"],
+                    ["3", "Show the link destination in the content area"]
                 ]
             });
 
