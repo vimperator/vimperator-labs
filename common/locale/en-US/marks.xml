@@ -301,6 +301,10 @@
         <p>
              <ex>:qmark f http://forum1.com, http://forum2.com, imdb some artist</ex>
         </p>
+
+        <p>
+            <o>urlseparator</o> defines the delimiter between the URLs (default: ", ")
+        </p>
     </description>
 </item>
 
