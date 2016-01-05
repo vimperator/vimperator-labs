@@ -1617,7 +1617,7 @@ const CommandLine = Module("commandline", {
              "stringlist", "google",
              {
                  completer: function completer(value) {
-                     let engines = services.get("search").getEngines({})
+                     let engines = services.get("search").getVisibleEngines({})
                                            .filter(function (engine) engine.supportsResponseType("application/x-suggestions+json"));
 
                      return engines.map(function (engine) [engine.alias, engine.description]);

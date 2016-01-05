@@ -1,4 +1,6 @@
 201x-xx-xx:
+    * QuickMarks: new mapping [m]gw{a-z}[m] to open Quickmark in a new window as the single open tab 
+    * :delmacro matches the syntax and behaviour of :delqmark, e.g. allowing ranges as argument
     * Stop propagation for keyboard event if that key are contained in -except option on :ignorekeys
     * Improvements in handling Esc for unfocusing text fields
     * Closing the last tab of a window now respects the Firefox setting:
@@ -8,6 +10,11 @@
     * Added setting for controlling if keypresses are passed to webpages when
     outside of Insert/Passthrough modes (to revert to old setting,
     :set passthrough=true)
+    * gr toggles Reader View
+    * Autohide statusbar: When entering fullscreen mode, the statusbar is
+      hidden and temporarily showed up with command inputs. Also, Users can
+      manually hide and unhide the statusbar with a command:
+      :js statusline.setVisibility(statusline.setVisibility.TOGGLE)
 
 2015-08-25:
     * Version 3.10.1

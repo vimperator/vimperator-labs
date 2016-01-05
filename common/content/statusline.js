@@ -72,6 +72,8 @@ const StatusLine = Module("statusline", {
         // our status bar fields
         this._statusfields = {};
         this._statuslineWidget = document.getElementById("liberator-status");
+        // initialize setVisibility static variables
+        this.setVisibility(-1);
     },
 
     /**
@@ -123,6 +125,63 @@ const StatusLine = Module("statusline", {
         }
     },
 
+    // set the visibility of the statusline
+    setVisibility: function (request) {
+        if ( typeof this.setVisibility.currVisibility == 'undefined' ) {
+            this.setVisibility.currVisibility = true;
+            this.setVisibility.prevVisibility = true;
+            this.setVisibility.contentSeparator
+                = highlight.get('ContentSeparator').value;
+
+            // kinds of requests
+            this.setVisibility.MODE_ON  = 0;      // commandline active
+            this.setVisibility.MODE_OFF = 1;      // commandline inactive
+            this.setVisibility.TOGGLE = 2;        // toggle on or off
+            this.setVisibility.FULLSCREEN = 3;    // in or out of fullscreen
+        }
+
+        const bb = document.getElementById("liberator-bottombar");
+        const sv = this.setVisibility;
+
+        if (!bb) return;
+
+        var toggle_off = function () {
+            bb.style.height = '0px';
+            bb.style.overflow = 'hidden';
+            highlight.set('ContentSeparator', 'display: none;');
+        };
+
+        var toggle_on = function () {
+            bb.style.height = '';
+            bb.style.overflow = '';
+            highlight.set('ContentSeparator', sv.contentSeparatorValue);
+        };
+
+        switch (request) {
+        case sv.TOGGLE:
+            sv.currVisibility = !sv.currVisibility;
+            if (sv.currVisibility) toggle_on();
+            else toggle_off();
+            break;
+        case sv.FULLSCREEN:
+            if (window.fullScreen) {
+                sv.prevVisibility = sv.currVisibility;
+                sv.currVisibility = false;
+                toggle_off();
+            } else {
+                sv.currVisibility = sv.currVisibility || sv.prevVisibility;
+                if (sv.currVisibility) toggle_on();
+            }
+            break;
+        case sv.MODE_ON:
+            if (!sv.currVisibility) toggle_on();
+            break;
+        case sv.MODE_OFF:
+            if (!sv.currVisibility) toggle_off();
+            break;
+        }
+    },
+
     /**
      * Set any field in the statusbar
      *
@@ -155,32 +214,48 @@ const StatusLine = Module("statusline", {
             });
         statusline.addField("ssl", "The currently SSL status", "liberator-status-ssl",
             function updateSSLState (node, state) {
-                var className = "";
+                var className = "notSecure";
+                var tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
                 if (!state) {
                     let securityUI = config.tabbrowser.securityUI;
                     if (securityUI)
                         state = securityUI.state || 0;
                 }
                 const WPL = Components.interfaces.nsIWebProgressListener;
-                if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL)
+                if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL) {
                     className = "verifiedIdentity";
-                else if (state & WPL.STATE_IS_SECURE)
+                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                        className = "mixedActiveBlocked";
+                    tooltip = gNavigatorBundle.getFormattedString(
+                        "identity.identified.verifier",
+                        [gIdentityHandler.getIdentityData().caOrg]);
+                } else if (state & WPL.STATE_IS_SECURE) {
                     className = "verifiedDomain";
-                else if (state & WPL.STATE_IS_BROKEN) {
-                    if ((state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT) &&
-                        options.getPref("security.mixed_content.block_active_content", false))
+                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                        className = "mixedActiveBlocked";
+                    tooltip = gNavigatorBundle.getFormattedString(
+                        "identity.identified.verifier",
+                        [gIdentityHandler.getIdentityData().caOrg]);
+                } else if (state & WPL.STATE_IS_BROKEN) {
+                    if (state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT)
                         className = "mixedActiveContent";
+                    else
+                        className = "mixedDisplayContent";
+                    tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
                 }
-
                 node.className = className;
+                node.setAttribute("tooltiptext", tooltip);
             }, {
                 openPopup: function (anchor) {
                     var handler = window.gIdentityHandler;
                     if (typeof handler === "undefiend") // Thunderbird has none
                         return;
 
+                    if (handler.refreshIdentityPopup)
+                        handler.refreshIdentityPopup();
+                    else
+                        handler.setPopupMessages(handler._identityBox.className);
                     handler._identityPopup.hidden = false;
-                    handler.setPopupMessages(handler._identityBox.className);
                     handler._identityPopup.openPopup(anchor);
                 },
             });

@@ -246,6 +246,19 @@
 </item>
 
 <item>
+    <tags>gw</tags>
+    <spec>a-zA-Z0-9</spec>
+    <description>
+        <p>
+            Jump to a QuickMark in a new window. Works like
+            <k>go</k><a>a-zA-Z0-9</a> but opens the QuickMark in a
+            new windows single open and active tab. The new window
+            is opened in foreground.
+        </p>
+    </description>
+</item>
+
+<item>
     <tags>M</tags>
     <spec>a-zA-Z0-9</spec>
     <description>
@@ -287,6 +300,10 @@
 
         <p>
              <ex>:qmark f http://forum1.com, http://forum2.com, imdb some artist</ex>
+        </p>
+
+        <p>
+            <o>urlseparator</o> defines the delimiter between the URLs (default: ", ")
         </p>
     </description>
 </item>

@@ -1170,7 +1170,7 @@ const Tabs = Module("tabs", {
                             styles.addSheet(true, "tabnumbers", "chrome://*",
                                 // we need to change the visible of the "new tab" buttons because the "inline" "new tab" button in the toolbar
                                 // gets moved just after the last app tab with tab numbers on
-                                "#TabsToolbar { counter-reset:tabnumber; } #TabsToolbar tab::after { counter-increment:tabnumber; content:counter(tabnumber); font:bold 0.84em monospace; cursor: default; } #TabsToolbar tab:not([pinned])::after { display:block; padding-bottom:0.4em; } .tabs-newtab-button { display: none !important; } #new-tab-button { visibility: visible !important; }"
+                                "#TabsToolbar { counter-reset:tabnumber; } #TabsToolbar tab::after { counter-increment:tabnumber; content:counter(tabnumber); font:bold 0.84em monospace; cursor: default; background-image: none !important; opacity: 1 !important; } #TabsToolbar tab:not([pinned])::after { display:block; padding-bottom:0.4em; } .tabs-newtab-button { display: none !important; } #new-tab-button { visibility: visible !important; }"
                             );
                         else
                             styles.removeSheet(true, "tabnumbers");

@@ -285,6 +285,10 @@
         <p>
              <ex>:qmark f http://forum1.com, http://forum2.com, imdb some artist</ex>
         </p>
+
+        <p>
+            <o>urlseparator</o> は URL 間の区切り文字を指定する（デフォルト: ", "）
+        </p>
     </description>
 </item>
 

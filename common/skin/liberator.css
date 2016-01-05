@@ -2,7 +2,7 @@
 
 [liberator|highlight~=HintImage],
 [liberator|highlight~=Hint] {
-    z-index: 5000;
+    z-index: 2147483647;
     position: absolute !important;
 }
 [liberator|highlight~=Search] {
@@ -145,15 +145,27 @@
     }
     #liberator-status-ssl.verifiedIdentity {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https-ev.png);
+        list-style-image: url(chrome://browser/skin/identity-secure.svg);
     }
     #liberator-status-ssl.verifiedDomain {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https.png);
+        list-style-image: url(chrome://browser/skin/identity-secure.svg);
     }
     #liberator-status-ssl.mixedActiveContent {
         visibility: visible;
-        list-style-image: url(chrome://browser/skin/identity-icons-https-mixed-active.png);
+        list-style-image: url(chrome://browser/skin/identity-mixed-active-loaded.svg);
+    }
+    #liberator-status-ssl.mixedDisplayContent {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-mixed-passive-loaded.svg);
+    }
+    #liberator-status-ssl.mixedActiveBlocked {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-mixed-active-blocked.svg);
+    }
+    #liberator-status-ssl.notSecure {
+        visibility: visible;
+        list-style-image: url(chrome://browser/skin/identity-not-secure.svg);
     }
 
     #liberator-commandline-prompt {

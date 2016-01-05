@@ -1042,7 +1042,6 @@
     </description>
 </item>
 
-
 <item>
     <tags>'scr' 'scroll'</tags>
     <spec>'scroll' 'scr'</spec>
@@ -1140,8 +1139,9 @@
 
         <dl>
             <dt>0</dt>      <dd>Don't show link destination</dd>
-            <dt>1</dt>      <dd>Show the link in the status line</dd>
-            <dt>2</dt>      <dd>Show the link in the command line</dd>
+            <dt>1</dt>      <dd>Show the link destination in the status line</dd>
+            <dt>2</dt>      <dd>Show the link destination in the command line</dd>
+            <dt>3</dt>      <dd>Show the link destination in the content area</dd>
         </dl>
     </description>
 </item>
@@ -1194,7 +1194,7 @@
         <p>
             Tab numbers appear as small numbers in the right corner of tabs.
             They can be used to quickly get the position of a tab, which can
-            be used by other commands like 12<k>gt</k> to to to tab number 12.
+            be used by other commands like 12<k>gt</k> to go to tab number 12.
         </p>
     </description>
 </item>

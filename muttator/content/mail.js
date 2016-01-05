@@ -17,7 +17,7 @@ const Mail = Module("mail", {
         this._mailSession = Cc["@mozilla.org/messenger/services/session;1"].getService(Ci.nsIMsgMailSession);
         this._notifyFlags = Ci.nsIFolderListener.intPropertyChanged | Ci.nsIFolderListener.event;
         this._mailSession.AddFolderListener(this._folderListener, this._notifyFlags);
-
+        this._prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch(null).QueryInterface(Ci.nsIPrefBranch2);
         liberator.open = this.open;
     },
 
@@ -466,9 +466,10 @@ const Mail = Module("mail", {
         if (typeof value != "number" || value < 0 || value > 2)
             value = 1;
 
-        gPrefBranch.setBoolPref("mailnews.display.prefer_plaintext", values[value][0]);
-        gPrefBranch.setIntPref("mailnews.display.html_as", values[value][1]);
-        gPrefBranch.setIntPref("mailnews.display.disallow_mime_handlers", values[value][2]);
+        mail._prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch(null).QueryInterface(Ci.nsIPrefBranch2);
+        mail._prefs.setBoolPref("mailnews.display.prefer_plaintext", values[value][0]);
+        mail._prefs.setIntPref("mailnews.display.html_as", values[value][1]);
+        mail._prefs.setIntPref("mailnews.display.disallow_mime_handlers", values[value][2]);
         ReloadMessage();
     },
 
@@ -1077,15 +1078,15 @@ const Mail = Module("mail", {
         mappings.add(myModes, ["h"],
             "Toggle displayed headers",
             function () {
-                let value = gPrefBranch.getIntPref("mail.show_headers", 2);
-                gPrefBranch.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
+                let value = mail._prefs.getIntPref("mail.show_headers", 2);
+                mail._prefs.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
                 ReloadMessage();
             });
 
         mappings.add(myModes, ["x"],
             "Toggle HTML message display",
             function () {
-                let wantHtml = (gPrefBranch.getIntPref("mailnews.display.html_as", 1) == 1);
+                let wantHtml = (mail._prefs.getIntPref("mailnews.display.html_as", 1) == 1);
                 mail.setHTML(wantHtml ? 1 : 0);
             });
 

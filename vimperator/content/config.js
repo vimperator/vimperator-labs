@@ -5,7 +5,7 @@
 // This work is licensed for reuse under an MIT license. Details are
 // given in the License.txt file included with this file.
 
-const Config = Module("config", ConfigBase, {
+var Config = Module("config", ConfigBase, {
     init: function () {
         // TODO: delete me when minversion is greater than 34
         var {isSupport} = Cu.import("resource://liberator/CheckTemplate.jsm", {});
