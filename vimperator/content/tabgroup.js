@@ -11,13 +11,13 @@
 /**
  * @instance tabgroup
  */
-const TabGroup = Module("tabGroup", {
+var TabGroup = Module("tabGroup", {
     requires: ["config", "tabs"],
 
-    TV: window.TabView,
+    get TV () { return window.TabView; },
 
     get tabView () {
-        const TV = window.TabView;
+        let TV = this.TV;
         if (!TV)
             return null;
         if (!TV._window || !TV._window.GroupItems) {
@@ -26,8 +26,7 @@ const TabGroup = Module("tabGroup", {
             while (waiting)
                 liberator.threadYield(false, true);
         }
-        delete this.tabView;
-        return this.tabView = TV._window;
+        return TV._window;
     },
 
     get appTabs () {
