@@ -1147,6 +1147,9 @@ const Events = Module("events", {
             return;
         }
 
+        if (!options['passthrough'])
+            event.stopPropagation();
+
         // liberator.echo ("key: " + key + "\nkeycode: " + event.keyCode + "\nchar: " + event.charCode + "\ntype: " + event.type + "\nwhich: " + event.which);
     },
 
