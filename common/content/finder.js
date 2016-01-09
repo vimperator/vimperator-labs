@@ -13,27 +13,31 @@
 //     : 'linksearch' searches should highlight link matches only
 //     : changing any search settings should also update the search state including highlighting
 //     : incremental searches shouldn't permanently update search modifiers
-//
-// TODO: Clean up this rat's nest. --Kris
+
+// NOTE: (by Quicksaver) please don't do any of the above TODOs. Right now the findbar is
+// not only per-tab, but it is also completely asynchronous to allow for proper behavior in e10s.
+// Because of that, it's better to have Vimperator be more of a mediator between the user
+// and the findbar (using its methods, keeping in sync with it, etc), than implementing any
+// components itself.
 
 /**
  * @instance finder
  */
-const Finder = Module("finder", {
+var Finder = Module("finder", {
     requires: ["config"],
 
     init: function () {
-        const self = this;
-
-        this._found = false;               // true if the last search was successful
         this._backwards = false;           // currently searching backwards
-        this._searchString = "";           // current search string (without modifiers)
         this._searchPattern = "";          // current search string (includes modifiers)
         this._lastSearchPattern = "";      // the last searched pattern (includes modifiers)
-        this._lastSearchString = "";       // the last searched string (without modifiers)
-        this._lastSearchBackwards = false; // like "backwards", but for the last search, so if you cancel a search with <esc> this is not set
-        this._caseSensitive = false;       // search string is case sensitive
-        this._linksOnly = false;           // search is limited to link text only
+    },
+
+    get findbar () {
+        return (config.name == "Muttator") ? document.getElementById('FindToolbar') : window.gFindBar;
+    },
+
+    get findbarInitialized () {
+        return (config.name == "Muttator") || window.gFindBarInitialized;
     },
 
     // set searchString, searchPattern, caseSensitive, linksOnly
@@ -45,31 +49,36 @@ const Finder = Module("finder", {
         //    pattern = pattern.replace(/\/.*/, "");
 
         this._searchPattern = pattern;
+        let findbar = this.findbar;
 
         // links only search - \l wins if both modifiers specified
+        let fm = findbar._findMode;
         if (/\\l/.test(pattern))
-            this._linksOnly = true;
-        else if (/\L/.test(pattern))
-            this._linksOnly = false;
+            fm = findbar.FIND_LINKS;
+        else if (/\\L/.test(pattern))
+            fm = findbar.FIND_NORMAL;
         else if (options["linksearch"])
-            this._linksOnly = true;
+            fm = findbar.FIND_LINKS;
         else
-            this._linksOnly = false;
+            fm = findbar.FIND_NORMAL;
+        this.updateFindMode(fm);
 
         // strip links-only modifiers
         pattern = pattern.replace(/(\\)?\\[lL]/g, function ($0, $1) { return $1 ? $0 : ""; });
 
         // case sensitivity - \c wins if both modifiers specified
-        if (/\c/.test(pattern))
-            this._caseSensitive = false;
-        else if (/\C/.test(pattern))
-            this._caseSensitive = true;
+        let cs = findbar._typeAheadCaseSensitive;
+        if (/\\c/.test(pattern))
+            cs = false;
+        else if (/\\C/.test(pattern))
+            cs = true;
         else if (options["ignorecase"] && options["smartcase"] && /[A-Z]/.test(pattern))
-            this._caseSensitive = true;
+            cs = true;
         else if (options["ignorecase"])
-            this._caseSensitive = false;
+            cs = false;
         else
-            this._caseSensitive = true;
+            cs = true;
+        this.updateCaseSensitive(cs);
 
         // strip case-sensitive modifiers
         pattern = pattern.replace(/(\\)?\\[cC]/g, function ($0, $1) { return $1 ? $0 : ""; });
@@ -77,7 +86,7 @@ const Finder = Module("finder", {
         // remove any modifier escape \
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
-        this._searchString = pattern;
+        findbar._findField.value = pattern;
     },
 
     /**
@@ -92,44 +101,41 @@ const Finder = Module("finder", {
         //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
             onChange: function() { if (options["incsearch"]) finder.find(commandline.command) }
-        
         });
         //modes.extended = mode;
 
         // TODO: focus the top of the currently visible screen
     },
 
-    // TODO: backwards seems impossible i fear
     /**
      * Searches the current buffer for <b>str</b>.
      *
      * @param {string} str The string to find.
-     * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    get fastFind() {
-        var fn = config.browser.fastFind
-                ? function _fastFind() config.browser.fastFind
-                : function _fastFind() window.gFindBar.browser.fastFind
-            ;
-        Object.defineProperty(this, "fastFind", { get: fn });
-        return fn();
-    },
-    find: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
-    function (str) {
-        let fastFind = this.fastFind;
+    find: function (str) {
         this._processUserPattern(str);
-        let result = fastFind.find(str, this._linksOnly);
-        window.gFindBar._findField.value = str;
-        this._displayFindResult(result, this._backwards);
-    } :
-    // FIXME: remove when minVersion >= 25
-    function (str) {
-        let fastFind = config.browser.fastFind;
 
-        this._processUserPattern(str);
-        fastFind.caseSensitive = this._caseSensitive;
-        let result = fastFind.find(this._searchString, this._linksOnly);
-        this._displayFindResult(result, this._backwards);
+        let findbar = this.findbar;
+        if (!findbar.vimperated) {
+            findbar.vimperated = true;
+
+            // Make sure we're listening for the result, so that we show it on the prompt later.
+            findbar.browser.finder.addResultListener(this);
+
+            // PDF.JS files are different, they use their own messages to communicate the results.
+            // So we piggyback the end changes to the findbar when there are any.
+            findbar._original_updateControlState = findbar.updateControlState;
+            findbar.updateControlState = function(aResult, aFindPrevious) {
+                this._original_updateControlState(aResult, aFindPrevious);
+                finder.onFindResult({
+                    searchString: this._findField.value,
+                    result: aResult,
+                    findBackwards: aFindPrevious
+                });
+            };
+        }
+
+        findbar._find();
     },
 
     /**
@@ -140,54 +146,30 @@ const Finder = Module("finder", {
      * @default false
      * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
-    findAgain: Services.vc.compare(Services.appinfo.version, "25.0") >= 0 ?
-    function (reverse) {
-        let fastFind = this.fastFind;
-        if (window.gFindBar._findField.value != this._lastSearchString)
-            this.find(this._lastSearchString);
+    findAgain: function (reverse) {
+        // Nothing to find?
+        if (!this.findbarInitialized || !this.findbar._findField.value)
+            return;
 
-        let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
-        let result = fastFind.findAgain(backwards, this._linksOnly);
-        this._displayFindResult(result, backwards);
-    } :
-    // FIXME: remove when minVersion >= 25
-    function (reverse) {
-        // This hack is needed to make n/N work with the correct string, if
-        // we typed /foo<esc> after the original search.  Since searchString is
-        // readonly we have to call find() again to update it.
-        if (config.browser.fastFind.searchString != this._lastSearchString)
-            this.find(this._lastSearchString);
-
-        let backwards = reverse ? !this._lastSearchBackwards : this._lastSearchBackwards;
-        let result = config.browser.fastFind.findAgain(backwards, this._linksOnly);
-        this._displayFindResult(result, backwards);
-
+        this.findbar.onFindAgainCommand(reverse);
     },
 
-    _displayFindResult: function(result, backwards) {
-        if (result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-            liberator.echoerr("Pattern not found: " + this._searchString, commandline.FORCE_SINGLELINE);
+    /**
+     * Updates the status line with the result from the find operation;
+     * this is done aSync from the main (input) process.
+     */
+    onFindResult: function(aData) {
+        if (aData.result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
+            liberator.echoerr("Pattern not found: " + aData.searchString, commandline.FORCE_SINGLELINE);
         }
-        else if (result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
-            let msg = backwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
+        else if (aData.result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
+            let msg = aData.findBackwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
             commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
         }
         else {
-            liberator.echomsg("Found pattern: " + this._searchString);
+            liberator.echomsg("Found pattern: " + aData.searchString);
         }
     },
-
-
-    /**
-     * Called when the user types a key in the search dialog. Triggers a
-     * search attempt if 'incsearch' is set.
-     *
-     * @param {string} str The search string.
-     */
-    /*onKeyPress: function (str) {
-        if (options["incsearch"])
-            this.find(str);
-        },*/
 
     /**
      * Called when the <Enter> key is pressed to trigger a search.
@@ -199,65 +181,33 @@ const Finder = Module("finder", {
      * @default false
      */
     onSubmit: function (str, forcedBackward) {
+        let findbar = this.findbar;
+
         if (typeof forcedBackward === "boolean")
             this._backwards = forcedBackward;
 
+        let pattern;
         if (str)
-            var pattern = str;
+            pattern = str;
         else {
             liberator.assert(this._lastSearchPattern, "No previous search pattern");
             pattern = this._lastSearchPattern;
         }
 
-        this.clear();
-
         // liberator.log('inc: ' + options["incsearch"] + ' sea:' + this._searchPattern + ' pat:' + pattern);
-        if (!options["incsearch"] /*|| !str || !this._found */|| this._searchPattern != pattern) {
-            // prevent any current match from matching again
-            if (!window.content.getSelection().isCollapsed)
-                window.content.getSelection().getRangeAt(0).collapse(this._backwards);
-
+        if (!options["incsearch"] || this._searchPattern != pattern) {
             this.find(pattern);
         }
 
-        // focus links after searching, so the user can just hit <Enter> another time to follow the link
-        // This has to be done async, because the mode reset after onSubmit would
-        // clear the focus 
-        let elem = this.fastFind.foundLink;
-        this.setTimeout(function() {
-            if (elem)
-                elem.focus();
-                // fm.moveFocus(elem.ownerDocument.defaultView, null, Ci.nsIFocusManager.MOVEFOCUS_CARET, Ci.nsIFocusManager.FLAG_NOSCROLL);*/
-        }, 0);
-
-        this._lastSearchBackwards = this._backwards;
         this._lastSearchPattern = pattern;
-        this._lastSearchString = this._searchString;
 
         // TODO: move to find() when reverse incremental searching is kludged in
         // need to find again for reverse searching
         if (this._backwards)
-            this.setTimeout(function () { this.findAgain(false); }, 0);
+            this.findAgain(true);
 
         if (options["hlsearch"])
-            this.highlight(this._searchString);
-    },
-
-    get _highlight() {
-        var gFindBar = window.gFindBar;
-        var fn = function no_highligh() {};
-        if (config.name === "Muttator") {
-            fn = function _highlight(aHighlight, word) {
-                return document.getElementById("FindToolbar")._highlightDoc(aHighlight, word);
-            };
-        } else if (window.gFindBar) {
-            fn = window.gFindBar._highlightDoc
-                ? function _highlight(aHighlight, word) { return window.gFindBar._highlightDoc(aHighlight, word); }
-                : function _highlight(aHighlight, word) { return window.gFindBar.browser.finder._highlight(aHighlight, word); };
-        }
-
-        Object.defineProperty(this, "_highlight", { value: fn });
-        return fn;
+            this.highlight(findbar._findField.value);
     },
 
     /**
@@ -266,27 +216,54 @@ const Finder = Module("finder", {
      * @param {string} str The string to highlight.
      */
     highlight: function (str) {
-        // FIXME: Thunderbird incompatible
-        if (config.name == "Muttator")
-            return;
+        let findbar = this.findbar;
 
-        if (window.gFindBar) {
-            window.gFindBar._setCaseSensitivity(this._caseSensitive);
-            this._highlight(false);
-            this._highlight(true, str);
-        }
+        let btn = findbar.getElement("highlight");
+        btn.checked = true;
+
+        findbar._setHighlightTimeout();
     },
 
     /**
      * Clears all search highlighting.
      */
     clear: function () {
-        // FIXME: Thunderbird incompatible
-        if (config.name == "Muttator")
+        if (!this.findbarInitialized)
             return;
 
-        if (window.gFindBar)
-            this._highlight(false);
+        let findbar = this.findbar;
+
+        let btn = findbar.getElement("highlight");
+        btn.checked = false;
+
+        findbar.toggleHighlight(false);
+    },
+
+    /**
+     * Updates the case sensitivity parameter.
+     */
+    updateCaseSensitive: function (cs) {
+        let findbar = this.findbar;
+        if (cs != findbar._typeAheadCaseSensitive) {
+            findbar._setCaseSensitivity(cs);
+        }
+    },
+
+    /**
+     * Updates the find mode to show only matches in links or all matches.
+     */
+    updateFindMode: function (fm) {
+        let findbar = this.findbar;
+
+        // We need to pretend like we're opening the findbar with a different mode,
+        // but not actually do it.
+        if (fm != findbar._findMode) {
+            findbar._findMode = fm;
+            findbar._findFailedString = null;
+            if(!findbar.hidden) {
+                findbar._updateFindUI();
+            }
+        }
     }
 }, {
 }, {
@@ -320,14 +297,12 @@ const Finder = Module("finder", {
         mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["*"],
             "Find word under cursor",
             function () {
-                this._found = false;
                 finder.onSubmit(buffer.getCurrentWord(), false);
             });
 
         mappings.add(myModes.concat([modes.CARET, modes.TEXTAREA]), ["#"],
             "Find word under cursor backwards",
             function () {
-                this._found = false;
                 finder.onSubmit(buffer.getCurrentWord(), true);
             });
     },
@@ -350,7 +325,16 @@ const Finder = Module("finder", {
 
         options.add(["ignorecase", "ic"],
             "Ignore case in search patterns",
-            "boolean", true);
+            "boolean", true, {
+                setter: function (value) {
+                    try {
+                        finder.updateCaseSensitive(!value);
+                    }
+                    catch (e) {}
+
+                    return value;
+                }
+            });
 
         options.add(["incsearch", "is"],
             "Show where the search pattern matches as it is typed",
@@ -358,7 +342,18 @@ const Finder = Module("finder", {
 
         options.add(["linksearch", "lks"],
             "Limit the search to hyperlink text",
-            "boolean", false);
+            "boolean", false, {
+                setter: function (value) {
+                    try {
+                        let findbar = finder.findbar;
+                        let fm = (value) ? findbar.FIND_LINKS : findbar.FIND_NORMAL;
+                        finder.updateFindMode(fm);
+                    }
+                    catch (e) {}
+
+                    return value;
+                }
+            });
 
         options.add(["smartcase", "scs"],
             "Override the 'ignorecase' option if the pattern contains uppercase characters",
