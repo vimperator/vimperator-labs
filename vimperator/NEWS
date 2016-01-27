@@ -1,4 +1,6 @@
 201x-xx-xx:
+
+2016-01-26:
     * QuickMarks: new mapping [m]gw{a-z}[m] to open Quickmark in a new window as the single open tab 
     * :delmacro matches the syntax and behaviour of :delqmark, e.g. allowing ranges as argument
     * Stop propagation for keyboard event if that key are contained in -except option on :ignorekeys
