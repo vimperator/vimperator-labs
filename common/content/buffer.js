@@ -751,7 +751,7 @@ const Buffer = Module("buffer", {
      * @param {number} count The multiple of 'scroll' lines to scroll.
      * @optional
      */
-    scrollByScrollSize: function (direction, count) {
+    scrollByScrollSize: function (count, direction) {
         direction = direction ? 1 : -1;
         count = count || 1;
         let win = Buffer.findScrollableWindow();
@@ -762,12 +762,6 @@ const Buffer = Module("buffer", {
             this.scrollLines(options["scroll"] * direction);
         else // scroll half a page down in pixels
             win.scrollBy(0, win.innerHeight / 2 * direction);
-    },
-
-    _scrollByScrollSize: function _scrollByScrollSize(count, direction) {
-        if (count > 0)
-            options["scroll"] = count;
-        buffer.scrollByScrollSize(direction);
     },
 
     /**
@@ -1602,12 +1596,12 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["<C-d>"],
             "Scroll window downwards in the buffer",
-            function (count) { buffer._scrollByScrollSize(count, true); },
+            function (count) { buffer.scrollByScrollSize(count, true); },
             { count: true });
 
         mappings.add(myModes, ["<C-u>"],
             "Scroll window upwards in the buffer",
-            function (count) { buffer._scrollByScrollSize(count, false); },
+            function (count) { buffer.scrollByScrollSize(count, false); },
             { count: true });
 
         mappings.add(myModes, ["<C-b>"], // <S-Space> and <PageUp> is mapped implicitly by Firefox
