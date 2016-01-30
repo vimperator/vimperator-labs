@@ -703,7 +703,7 @@ const Buffer = Module("buffer", {
      * Scrolls to the bottom of the current buffer.
      */
     scrollBottom: function () {
-        Buffer.scrollToPercent(null, 100);
+        Buffer.scrollElemToPercent(null, null, 100);
     },
 
     /**
@@ -720,7 +720,7 @@ const Buffer = Module("buffer", {
      * Scrolls to the top of the current buffer.
      */
     scrollEnd: function () {
-        Buffer.scrollToPercent(100, null);
+        Buffer.scrollElemToPercent(null, 100, null);
     },
 
     /**
@@ -747,21 +747,19 @@ const Buffer = Module("buffer", {
      * Scrolls the buffer vertically 'scroll' lines.
      *
      * @param {boolean} direction The direction to scroll. If true then
-     *     scroll up and if false scroll down.
+     *     scroll down and if false scroll up.
      * @param {number} count The multiple of 'scroll' lines to scroll.
      * @optional
      */
     scrollByScrollSize: function (direction, count) {
         direction = direction ? 1 : -1;
         count = count || 1;
-        let win = Buffer.findScrollableWindow();
-
-        Buffer.checkScrollYBounds(win, direction);
+        let elem = Buffer.findScrollable(direction, false);
 
         if (options["scroll"] > 0)
             this.scrollLines(options["scroll"] * direction);
         else // scroll half a page down in pixels
-            win.scrollBy(0, win.innerHeight / 2 * direction);
+            elem.scrollTop += Buffer.findScrollableWindow().innerHeight / 2 * direction;
     },
 
     _scrollByScrollSize: function _scrollByScrollSize(count, direction) {
@@ -777,7 +775,7 @@ const Buffer = Module("buffer", {
      * @param {number} y The vertical page percentile.
      */
     scrollToPercent: function (x, y) {
-        Buffer.scrollToPercent(x, y);
+        Buffer.scrollElemToPercent(null, x, y);
     },
 
     /**
@@ -795,14 +793,14 @@ const Buffer = Module("buffer", {
      * Scrolls the current buffer laterally to its leftmost.
      */
     scrollStart: function () {
-        Buffer.scrollToPercent(0, null);
+        Buffer.scrollElemToPercent(null, 0, null);
     },
 
     /**
      * Scrolls the current buffer vertically to the top.
      */
     scrollTop: function () {
-        Buffer.scrollToPercent(null, 0);
+        Buffer.scrollElemToPercent(null, null, 0);
     },
 
     // TODO: allow callback for filtering out unwanted frames? User defined?
@@ -1069,7 +1067,7 @@ const Buffer = Module("buffer", {
         return win;
     },
 
-    findScrollable: function findScrollable(dir, horizontal) {
+    findScrollable: function findScrollable(dir = 0, horizontal) {
         let pos = "scrollTop", maxPos = "scrollTopMax", clientSize = "clientHeight";
         if (horizontal)
             pos = "scrollLeft", maxPos = "scrollLeftMax", clientSize = "clientWidth";
@@ -1081,7 +1079,7 @@ const Buffer = Module("buffer", {
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
                 if (elem[clientSize] == 0)
                     continue;
-                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos])
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos] || dir == 0 && elem[maxPos] > 0)
                     break;
             }
             return elem;
