@@ -1,5 +1,11 @@
 201x-xx-xx:
 
+2016-01-30:
+    * Expose Buffer constructor
+    * Fix scrolling on some pages with gg/G/<C-d>/<C-u>
+    * Make sure to get latest content separator in setVisibility
+    * Expose Command constructor
+
 2016-01-26:
     * QuickMarks: new mapping [m]gw{a-z}[m] to open Quickmark in a new window as the single open tab 
     * :delmacro matches the syntax and behaviour of :delqmark, e.g. allowing ranges as argument
