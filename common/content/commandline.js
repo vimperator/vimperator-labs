@@ -1762,7 +1762,7 @@ const ItemList = Class("ItemList", {
             this._divNodes.completions.appendChild(context.cache.nodes.root);
         }, this);
 
-        setTimeout(this.closure._autoSize, 0);
+        this.setTimeout(this.closure._autoSize, 0);
     },
 
     /**
