@@ -148,7 +148,6 @@ const StatusLine = Module("statusline", {
         var toggle_off = function () {
             bb.style.height = '0px';
             bb.style.overflow = 'hidden';
-            sv.contentSeparator = highlight.get('ContentSeparator').value;
             highlight.set('ContentSeparator', 'display: none;');
         };
 
