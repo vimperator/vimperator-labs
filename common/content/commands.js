@@ -892,7 +892,7 @@ const Commands = Module("commands", {
                 if ((res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
                 else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
-                    arg += eval(res[0] + (res[3] ? "" : '"'));
+                    arg += JSON.parse(res[0] + (res[3] ? "" : '"'));
                 else if ((res = str.match(/^(')((?:[^\\']|\\.)*)('?)/)))
                     arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                 break;
@@ -901,7 +901,7 @@ const Commands = Module("commands", {
                 if ((res = str.match(/^()((?:[^\\\s"']|\\.)+)((?:\\$)?)/)))
                     arg += res[2].replace(/\\(.)/g, "$1");
                 else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
-                    arg += eval(res[0] + (res[3] ? "" : '"'));
+                    arg += JSON.parse(res[0] + (res[3] ? "" : '"'));
                 else if ((res = str.match(/^(')((?:[^']|'')*)('?)/)))
                     arg += res[2].replace("''", "'", "g");
                 break;
@@ -912,7 +912,7 @@ const Commands = Module("commands", {
                 else if ((res = str.match(/^(""")((?:.?.?[^"])*)((?:""")?)/)))
                     arg += res[2];
                 else if ((res = str.match(/^(")((?:[^\\"]|\\.)*)("?)/)))
-                    arg += eval(res[0] + (res[3] ? "" : '"'));
+                    arg += JSON.parse(res[0] + (res[3] ? "" : '"'));
                 else if ((res = str.match(/^(')((?:[^\\']|\\.)*)('?)/)))
                     arg += res[2].replace(/\\(.)/g, function (n0, n1) /[\\']/.test(n1) ? n1 : n0);
                 break;
