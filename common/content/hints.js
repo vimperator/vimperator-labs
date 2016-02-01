@@ -304,7 +304,7 @@ const Hints = Module("hints", {
 
         let res = util.evaluateXPath(this._hintMode.tags(), doc, null, true);
 
-        let fragment = util.xmlToDom(xml`<div highlight="hints" style="position:fixed;top:0;left:0px;"/>`, doc);
+        let fragment = util.xmlToDom(xml`<div highlight="hints" style="position:fixed;top:0;left:0px;z-index:2147483647;"/>`, doc);
         let pageHints = this._pageHints;
         let start = this._pageHints.length;
         let elem;
