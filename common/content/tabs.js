@@ -1130,6 +1130,10 @@ const Tabs = Module("tabs", {
                     ]
                 });
 
+            options.add(["passthrough"],
+                "Define if keypresses are passed to webpages outside of Insert mode",
+                "boolean", false);
+
             options.add(["popups", "pps"],
                 "Where to show requested popup windows",
                 "stringlist", "tab",

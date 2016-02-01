@@ -347,6 +347,35 @@ var TabGroup = Module("tabGroup", {
                     completer: function (context) completion.tabgroup(context, false),
                 }),
             /**
+             * Panorama SubCommand rename
+             * rename {name}.
+             * clear the name of the current group if bang(!) specified and {name} is ommited.
+             */
+            new Command(["rename", "mv"], "Rename current tab group (or reset to '(Untitled)').",
+                function (args) {
+                    let title = args.literalArg;
+                    if (!title) {
+                        if (args.bang)
+                            title = "";
+                        else {
+                            liberator.echoerr("No title supplied!  Add \"!\" if want to clear it.");
+                            return;
+                        }
+                    }
+                    let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
+                    if (activeGroup)
+                        activeGroup.setTitle(title);
+                }, {
+                    bang: true,
+                    literal: 0,
+                    completer: function (context) {
+                        context.title = ["Rename current group"];
+                        let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
+                        let title = activeGroup ? activeGroup.getTitle() : "";
+                        context.completions = title ? [[title, ""]] : [];
+                    }
+                }),
+            /**
              * Panorama SubCommand switch
              * switch to the {group}.
              * switch to {count}th next group if {count} specified.

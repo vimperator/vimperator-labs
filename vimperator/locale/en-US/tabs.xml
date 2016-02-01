@@ -124,6 +124,21 @@
         </item>
 
         <item>
+            <tags>tabgroups-rename tabgroups-mv</tags>
+            <spec>rename<oa>!</oa> <oa>newGroupName</oa></spec>
+            <spec>mv<oa>!</oa> <oa>newGroupName</oa></spec>
+            <description>
+                <p>
+                    Rename current tab group to <oa>newGroupName</oa>.
+                </p>
+                <p>
+                    If <oa>newGroupName</oa> is not supplied and <oa>!</oa> is
+                    specified, resets group's name to <o>(Untitled)</o>.
+                </p>
+            </description>
+        </item>
+
+        <item>
             <tags>tabgroups-switch</tags>
             <spec><oa>count</oa>switch <a>groupName</a></spec>
             <description>

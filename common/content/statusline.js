@@ -154,7 +154,7 @@ const StatusLine = Module("statusline", {
         var toggle_on = function () {
             bb.style.height = '';
             bb.style.overflow = '';
-            highlight.set('ContentSeparator', sv.contentSeparatorValue);
+            highlight.set('ContentSeparator', sv.contentSeparator);
         };
 
         switch (request) {
