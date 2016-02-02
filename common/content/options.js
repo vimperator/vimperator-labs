@@ -41,7 +41,7 @@ const Option = Class("Option", {
 
         // add no{option} variant of boolean {option} to this.names
         if (this.type == "boolean")
-            this.names = array([name, "no" + name] for (name in values(names))).flatten().__proto__;
+            this.names = util.Array.flatten(Array([name, "no" + name] for (name in values(names)))).__proto__;
 
         if (this.globalValue == undefined)
             this.globalValue = this.defaultValue;
