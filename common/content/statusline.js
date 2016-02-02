@@ -130,8 +130,6 @@ const StatusLine = Module("statusline", {
         if ( typeof this.setVisibility.currVisibility == 'undefined' ) {
             this.setVisibility.currVisibility = true;
             this.setVisibility.prevVisibility = true;
-            this.setVisibility.contentSeparator
-                = highlight.get('ContentSeparator').value;
 
             // kinds of requests
             this.setVisibility.MODE_ON  = 0;      // commandline active
@@ -146,6 +144,7 @@ const StatusLine = Module("statusline", {
         if (!bb) return;
 
         var toggle_off = function () {
+            sv.contentSeparator = highlight.get('ContentSeparator').value;
             bb.style.height = '0px';
             bb.style.overflow = 'hidden';
             highlight.set('ContentSeparator', 'display: none;');
@@ -161,23 +160,31 @@ const StatusLine = Module("statusline", {
         case sv.TOGGLE:
             sv.currVisibility = !sv.currVisibility;
             if (sv.currVisibility) toggle_on();
-            else toggle_off();
+            else if (liberator.mode != modes.COMMAND_LINE) toggle_off();
             break;
         case sv.FULLSCREEN:
             if (window.fullScreen) {
                 sv.prevVisibility = sv.currVisibility;
-                sv.currVisibility = false;
-                toggle_off();
+                if (sv.currVisibility) {
+                    sv.currVisibility = false;
+                    if (liberator.mode != modes.COMMAND_LINE) toggle_off();
+                }
             } else {
-                sv.currVisibility = sv.currVisibility || sv.prevVisibility;
-                if (sv.currVisibility) toggle_on();
+                if (sv.prevVisibility && !sv.currVisibility) {
+                    sv.currVisibility = true;
+                    toggle_on();
+                }
             }
             break;
         case sv.MODE_ON:
-            if (!sv.currVisibility) toggle_on();
+            if (!sv.currVisibility) {
+                toggle_on();
+            }
             break;
         case sv.MODE_OFF:
-            if (!sv.currVisibility) toggle_off();
+            if (!sv.currVisibility) {
+                toggle_off();
+            }
             break;
         }
     },
