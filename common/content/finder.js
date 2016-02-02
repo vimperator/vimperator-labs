@@ -128,14 +128,26 @@ var Finder = Module("finder", {
 
             // PDF.JS files are different, they use their own messages to communicate the results.
             // So we piggyback the end changes to the findbar when there are any.
-            findbar._original_updateControlState = findbar.updateControlState;
+            findbar._vimpbackup_updateControlState = findbar.updateControlState;
             findbar.updateControlState = function(aResult, aFindPrevious) {
-                this._original_updateControlState(aResult, aFindPrevious);
+                this._vimpbackup_updateControlState(aResult, aFindPrevious);
                 finder.onFindResult({
                     searchString: this._findField.value,
                     result: aResult,
                     findBackwards: aFindPrevious
                 });
+            };
+
+            // Normally the findbar appears to notify on failed results.
+            // However, this shouldn't happen when we're finding through the command line,
+            // even though that way we lose any kind of no matches notification until we
+            // stop typing altogether; something to work on at a later time:
+            // - show the quick findbar which will hide after a few seconds?
+            // - or notify the user somehow in the command line itself?
+            findbar._vimpbackup_open = findbar.open;
+            findbar.open = function (aMode) {
+                if (commandline._keepOpenForInput) { return false; }
+                return this._vimpbackup_open(aMode);
             };
         }
 
@@ -277,6 +289,18 @@ var Finder = Module("finder", {
             "Remove the search highlighting",
             function () { finder.clear(); },
             { argCount: "0" });
+    },
+    events: function() {
+        if (config.name == 'Vimperator') {
+            // Same thing as the note above for not showing the findbar on failed results
+            // through the command line, but for compatibility with FindBar Tweak.
+            events.addSessionListener(window, "WillOpenFindBar", function (event) {
+                if (commandline._keepOpenForInput) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }, true);
+        }
     },
     mappings: function () {
         var myModes = config.browserModes;
