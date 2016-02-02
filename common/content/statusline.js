@@ -127,17 +127,33 @@ const StatusLine = Module("statusline", {
 
     // set the visibility of the statusline
     setVisibility: function (request) {
-        if ( typeof this.setVisibility.currVisibility == 'undefined' ) {
-            this.setVisibility.currVisibility = true;
-            this.setVisibility.prevVisibility = true;
-            this.setVisibility.contentSeparator
-                = highlight.get('ContentSeparator').value;
+        if ( typeof this.setVisibility.MODE_AUTO == 'undefined' ) { // TODO proper initialization
+            /*
+             * There are three modes:
+             *
+             *     AUTO: This shows or hides the statusline depending on the fullscreen state.
+             *     ON:   Here the statusline is always visible, even in fullscreen.
+             *     OFF:  The statusline is hidden, only the commandline is shown after typing a colon.
+             */
+            this.setVisibility.MODE_AUTO        = 0;
+            this.setVisibility.MODE_ON          = 1;
+            this.setVisibility.MODE_OFF         = 2;
 
-            // kinds of requests
-            this.setVisibility.MODE_ON  = 0;      // commandline active
-            this.setVisibility.MODE_OFF = 1;      // commandline inactive
-            this.setVisibility.TOGGLE = 2;        // toggle on or off
-            this.setVisibility.FULLSCREEN = 3;    // in or out of fullscreen
+            /*
+             * Several events can happen:
+             *
+             *     FULLSCREEN:    Whenever the fullscreen state changes.
+             *     TOGGLE:        Cycles through all three modes. Currently there's no indicator, so it's not easy with three modes instead of two.
+             *     SHOW and HIDE: These are emitted when entering or leaving the commandline.
+             */
+            this.setVisibility.EVENT_TOGGLE     = 3;
+            this.setVisibility.EVENT_FULLSCREEN = 4;
+            this.setVisibility.EVENT_SHOW       = 5;
+            this.setVisibility.EVENT_HIDE       = 6;
+
+            this.setVisibility.contentSeparator = highlight.get('ContentSeparator').value;
+            this.setVisibility.mode = this.setVisibility.MODE_AUTO;
+            this.setVisibility.isVisible = true;
         }
 
         const bb = document.getElementById("liberator-bottombar");
@@ -145,40 +161,85 @@ const StatusLine = Module("statusline", {
 
         if (!bb) return;
 
-        var toggle_off = function () {
+        var hideStatusline = function () {
+            // Do nothing if statusline is invisible, because it would store an invalid version of ContentSeparator.
+            // Do nothing if we are in commandline mode, because the user interacts with the statusline.
+            if (!sv.isVisible || liberator.mode == modes.COMMAND_LINE) {
+                return;
+            }
+
             bb.style.height = '0px';
             bb.style.overflow = 'hidden';
+            sv.contentSeparator = highlight.get('ContentSeparator').value;
             highlight.set('ContentSeparator', 'display: none;');
+            sv.isVisible = false;
         };
 
-        var toggle_on = function () {
+        var showStatusline = function () {
+            if (sv.isVisible) {
+                return;
+            }
+
             bb.style.height = '';
             bb.style.overflow = '';
             highlight.set('ContentSeparator', sv.contentSeparator);
+            sv.isVisible = true;
         };
 
         switch (request) {
-        case sv.TOGGLE:
-            sv.currVisibility = !sv.currVisibility;
-            if (sv.currVisibility) toggle_on();
-            else toggle_off();
-            break;
-        case sv.FULLSCREEN:
-            if (window.fullScreen) {
-                sv.prevVisibility = sv.currVisibility;
-                sv.currVisibility = false;
-                toggle_off();
-            } else {
-                sv.currVisibility = sv.currVisibility || sv.prevVisibility;
-                if (sv.currVisibility) toggle_on();
-            }
-            break;
-        case sv.MODE_ON:
-            if (!sv.currVisibility) toggle_on();
-            break;
-        case sv.MODE_OFF:
-            if (!sv.currVisibility) toggle_off();
-            break;
+            case sv.MODE_AUTO:
+                sv.mode = sv.MODE_AUTO;
+                statusline.setVisibility(sv.EVENT_FULLSCREEN);
+                break;
+
+            case sv.MODE_ON:
+                sv.mode = sv.MODE_ON;
+                showStatusline();
+                break;
+
+            case sv.MODE_OFF:
+                sv.mode = sv.MODE_OFF;
+                hideStatusline();
+                break;
+
+            case sv.EVENT_FULLSCREEN:
+                // Ignore fullscreen event if we are not in AUTO mode, visiblity was set manually.
+                if (sv.mode != sv.MODE_AUTO) {
+                    break;
+                }
+
+                if (window.fullScreen) {
+                    hideStatusline();
+                } else {
+                    showStatusline();
+                }
+                break;
+
+            case sv.EVENT_TOGGLE:
+                // Cycle through all available modes.
+                switch (sv.mode) {
+                    case sv.MODE_AUTO:
+                        statusline.setVisibility(sv.MODE_ON);
+                        break;
+                    case sv.MODE_ON:
+                        statusline.setVisibility(sv.MODE_OFF);
+                        break;
+                    case sv.MODE_OFF:
+                        statusline.setVisibility(sv.MODE_AUTO);
+                        break;
+                }
+                break;
+
+            case sv.EVENT_SHOW:
+                showStatusline();
+                break;
+
+            case sv.EVENT_HIDE:
+                // Only hide when in AUTO+fullscreen or OFF.
+                if ((sv.mode == sv.MODE_AUTO && window.fullScreen) || sv.mode == sv.MODE_OFF) {
+                    hideStatusline();
+                }
+                break;
         }
     },
 
