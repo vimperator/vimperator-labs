@@ -100,7 +100,11 @@ var Finder = Module("finder", {
         this._backwards = mode == modes.SEARCH_BACKWARD;
         //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
-            onChange: function() { if (options["incsearch"]) finder.find(commandline.command) }
+            onChange: function() {
+                if (options["incsearch"] && !commandline._isIMEComposing) {
+                    finder.find(commandline.command);
+                }
+            }
         });
         //modes.extended = mode;
 
