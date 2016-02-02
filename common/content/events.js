@@ -1182,7 +1182,7 @@ const Events = Module("events", {
             this._fullscreen = window.fullScreen;
             liberator.triggerObserver("fullscreen", this._fullscreen);
             autocommands.trigger("Fullscreen", { state: this._fullscreen });
-            statusline.setVisibility(statusline.setVisibility.EVENT_FULLSCREEN);
+            statusline.setVisibility(statusline.setVisibility.UPDATE);
         }
     }
 }, {

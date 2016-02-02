@@ -104,7 +104,7 @@ const Modes = Module("modes", {
                 if (oldExtended & modes.HINTS)
                     hints.hide();
                 commandline.close();
-                statusline.setVisibility(statusline.setVisibility.EVENT_HIDE);
+                statusline.setVisibility(statusline.setVisibility.HIDE);
                 break;
         }
 
@@ -122,7 +122,7 @@ const Modes = Module("modes", {
         }
 
         if (newMode == modes.COMMAND_LINE) {
-            statusline.setVisibility(statusline.setVisibility.EVENT_SHOW);
+            statusline.setVisibility(statusline.setVisibility.SHOW);
         }
 
     },
