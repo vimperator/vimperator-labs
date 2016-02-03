@@ -406,7 +406,7 @@ const Tabs = Module("tabs", {
         let matches = buffer.match(/^(\d+):?/);
         if (matches)
             return [tabs.getTab(parseInt(matches[1], 10) - 1)];
-        else if (liberator.has("tabgroup")) {
+        else if (liberator.has("tabgroup") && tabGroup.TV) {
             matches = buffer.match(/^(.+?)\.(\d+):?/);
             if (matches) {
                 let [, groupName, tabNum] = matches;
