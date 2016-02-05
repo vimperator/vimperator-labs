@@ -176,7 +176,12 @@ var Finder = Module("finder", {
      */
     onFindResult: function(aData) {
         if (aData.result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-            liberator.echoerr("Pattern not found: " + aData.searchString, commandline.FORCE_SINGLELINE);
+            // Don't use aData.searchString, it may be a substring of the
+            // user's actual input text and that can be confusing.
+            // See https://github.com/vimperator/vimperator-labs/issues/401#issuecomment-180522987
+            // for an example.
+            let searchString = this.findbar._findField.value;
+            liberator.echoerr("Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
         }
         else if (aData.result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
             let msg = aData.findBackwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
