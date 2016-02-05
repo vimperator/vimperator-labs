@@ -46,6 +46,9 @@ var TabGroup = Module("tabGroup", {
      * @return {GroupItem}
      */
     getGroup: function getGroup (name, count) {
+        if (!this.TV)
+            return null;
+
         let i = 0;
         if (!count)
             count = 1;
@@ -83,6 +86,9 @@ var TabGroup = Module("tabGroup", {
      * @param {Boolean} wrap
      */
     switchTo: function (spec, wrap) {
+        if (!tabGroup.TV)
+            return;
+
         const GI = tabGroup.tabView.GroupItems;
         let current = GI.getActiveGroupItem() || GI.getActiveOrphanTab();
         let groups = GI.groupItems;
@@ -150,6 +156,9 @@ var TabGroup = Module("tabGroup", {
      * @return {GroupItem} created GroupItem instance
      */
     createGroup: function createGroup (name, shouldSwitch, tab) {
+        if (!tabGroup.TV)
+            return null;
+
         let pageBounds = tabGroup.tabView.Items.getPageBounds();
         pageBounds.inset(20, 20);
         let box = new tabGroup.tabView.Rect(pageBounds);
@@ -185,6 +194,9 @@ var TabGroup = Module("tabGroup", {
      *                  if {group} doesn't exist.
      */
     moveTab: function moveTabToGroup (tab, group, shouldSwitch) {
+        if (!tabGroup.TV)
+            return;
+
         liberator.assert(tab && !tab.pinned, "Cannot move an AppTab");
 
         let groupItem = (group instanceof tabGroup.tabView.GroupItem) ? group : tabGroup.getGroup(group);
@@ -202,6 +214,9 @@ var TabGroup = Module("tabGroup", {
      * @param {string} groupName
      */
     remove: function removeGroup (groupName) {
+        if (!tabGroup.TV)
+            return;
+
         const GI = tabGroup.tabView.GroupItems;
         let activeGroup = GI.getActiveGroupItem();
         let group = groupName ? tabGroup.getGroup(groupName) : activeGroup;
