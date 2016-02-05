@@ -131,6 +131,7 @@ const StatusLine = Module("statusline", {
             this.setVisibility.UPDATE = 0; // Apply current configuration
             this.setVisibility.SHOW   = 1; // Temporarily show statusline
             this.setVisibility.HIDE   = 2; // Temporarily hide statusline
+            this.setVisibility.TOGGLE = 3; // Cycle through all three modes (auto, visible, hidden)
 
             this.setVisibility.contentSeparator = highlight.get('ContentSeparator').value;
             this.setVisibility.isVisible = true;
@@ -195,6 +196,14 @@ const StatusLine = Module("statusline", {
                 // Only hide when in auto+fullscreen or hidden.
                 if ((mode == "auto" && window.fullScreen) || mode == "hidden") {
                     hideStatusline();
+                }
+                break;
+
+            case sv.TOGGLE:
+                switch (mode) {
+                    case "auto":    options["statuslinevisibility"] = "visible"; break;
+                    case "visible": options["statuslinevisibility"] = "hidden";  break;
+                    case "hidden":  options["statuslinevisibility"] = "auto";    break;
                 }
                 break;
         }
