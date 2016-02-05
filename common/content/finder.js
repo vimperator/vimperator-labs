@@ -290,18 +290,6 @@ var Finder = Module("finder", {
             function () { finder.clear(); },
             { argCount: "0" });
     },
-    events: function() {
-        if (config.name == 'Vimperator') {
-            // Same thing as the note above for not showing the findbar on failed results
-            // through the command line, but for compatibility with FindBar Tweak.
-            events.addSessionListener(window, "WillOpenFindBar", function (event) {
-                if (commandline._keepOpenForInput) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-            }, true);
-        }
-    },
     mappings: function () {
         var myModes = config.browserModes;
         myModes = myModes.concat([modes.CARET]);
