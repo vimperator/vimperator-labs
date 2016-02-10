@@ -10,7 +10,11 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm", modules);
 Cu.import("resource://gre/modules/AddonManager.jsm")
 
 const plugins = { __proto__: modules };
-const userContext = { __proto__: modules };
+Object.defineProperty(this, "userContext", {
+    value: { __proto__: modules },
+    enumerable: true,
+    writeable: true
+});
 
 const EVAL_ERROR = "__liberator_eval_error";
 const EVAL_RESULT = "__liberator_eval_result";
