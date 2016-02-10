@@ -5,17 +5,34 @@
 
 /** @scope modules */
 
-const {XHTML, XUL, NS} = (function () {
+(function () {
     function Namespace(prefix, uri) {
         this.prefix = prefix;
         this.uri = uri;
     }
     Namespace.prototype.toString = function toString() { return this.uri; };
-    return {
-        XHTML: new Namespace("html", "http://www.w3.org/1999/xhtml"),
-        XUL  : new Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"),
-        NS   : new Namespace("liberator", "http://vimperator.org/namespaces/liberator"),
-    };
+
+    // Expose XHTML,XUL,NS to Global-scope.
+    Object.defineProperties(this, {
+        XHTML: {
+            value: Object.freeze(
+                new Namespace("html", "http://www.w3.org/1999/xhtml")
+            ),
+            enumerable: true
+        },
+        XUL: {
+            value: Object.freeze(
+                new Namespace("xul", "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul")
+            ),
+            enumerable: true
+        },
+        NS: {
+            value: Object.freeze(
+                new Namespace("liberator", "http://vimperator.org/namespaces/liberator")
+            ),
+            enumerable: true
+        }
+    });
 })();
 
 let Encoder = Components.Constructor("@mozilla.org/layout/documentEncoder;1?type=text/plain", "nsIDocumentEncoder", "init");
