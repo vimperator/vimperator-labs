@@ -13,7 +13,7 @@
     Namespace.prototype.toString = function toString() { return this.uri; };
 
     // Expose XHTML,XUL,NS to Global-scope.
-    Object.defineProperties(this, {
+    Object.defineProperties(modules, {
         XHTML: {
             value: Object.freeze(
                 new Namespace("html", "http://www.w3.org/1999/xhtml")
