@@ -100,7 +100,11 @@ var Finder = Module("finder", {
         this._backwards = mode == modes.SEARCH_BACKWARD;
         //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
-            onChange: function() { if (options["incsearch"]) finder.find(commandline.command) }
+            onChange: function() {
+                if (options["incsearch"] && !commandline._isIMEComposing) {
+                    finder.find(commandline.command);
+                }
+            }
         });
         //modes.extended = mode;
 
@@ -124,14 +128,26 @@ var Finder = Module("finder", {
 
             // PDF.JS files are different, they use their own messages to communicate the results.
             // So we piggyback the end changes to the findbar when there are any.
-            findbar._original_updateControlState = findbar.updateControlState;
+            findbar._vimpbackup_updateControlState = findbar.updateControlState;
             findbar.updateControlState = function(aResult, aFindPrevious) {
-                this._original_updateControlState(aResult, aFindPrevious);
+                this._vimpbackup_updateControlState(aResult, aFindPrevious);
                 finder.onFindResult({
                     searchString: this._findField.value,
                     result: aResult,
                     findBackwards: aFindPrevious
                 });
+            };
+
+            // Normally the findbar appears to notify on failed results.
+            // However, this shouldn't happen when we're finding through the command line,
+            // even though that way we lose any kind of no matches notification until we
+            // stop typing altogether; something to work on at a later time:
+            // - show the quick findbar which will hide after a few seconds?
+            // - or notify the user somehow in the command line itself?
+            findbar._vimpbackup_open = findbar.open;
+            findbar.open = function (aMode) {
+                if (commandline._keepOpenForInput) { return false; }
+                return this._vimpbackup_open(aMode);
             };
         }
 
@@ -160,7 +176,12 @@ var Finder = Module("finder", {
      */
     onFindResult: function(aData) {
         if (aData.result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
-            liberator.echoerr("Pattern not found: " + aData.searchString, commandline.FORCE_SINGLELINE);
+            // Don't use aData.searchString, it may be a substring of the
+            // user's actual input text and that can be confusing.
+            // See https://github.com/vimperator/vimperator-labs/issues/401#issuecomment-180522987
+            // for an example.
+            let searchString = this.findbar._findField.value;
+            liberator.echoerr("Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
         }
         else if (aData.result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
             let msg = aData.findBackwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
