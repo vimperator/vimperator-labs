@@ -127,17 +127,14 @@ const StatusLine = Module("statusline", {
 
     // set the visibility of the statusline
     setVisibility: function (request) {
-        if ( typeof this.setVisibility.currVisibility == 'undefined' ) {
-            this.setVisibility.currVisibility = true;
-            this.setVisibility.prevVisibility = true;
-            this.setVisibility.contentSeparator
-                = highlight.get('ContentSeparator').value;
+        if ( typeof this.setVisibility.UPDATE == 'undefined' ) { // TODO proper initialization
+            this.setVisibility.UPDATE = 0; // Apply current configuration
+            this.setVisibility.SHOW   = 1; // Temporarily show statusline
+            this.setVisibility.HIDE   = 2; // Temporarily hide statusline
+            this.setVisibility.TOGGLE = 3; // Cycle through all three modes (auto, visible, hidden)
 
-            // kinds of requests
-            this.setVisibility.MODE_ON  = 0;      // commandline active
-            this.setVisibility.MODE_OFF = 1;      // commandline inactive
-            this.setVisibility.TOGGLE = 2;        // toggle on or off
-            this.setVisibility.FULLSCREEN = 3;    // in or out of fullscreen
+            this.setVisibility.contentSeparator = highlight.get('ContentSeparator').value;
+            this.setVisibility.isVisible = true;
         }
 
         const bb = document.getElementById("liberator-bottombar");
@@ -145,40 +142,70 @@ const StatusLine = Module("statusline", {
 
         if (!bb) return;
 
-        var toggle_off = function () {
+        var hideStatusline = function () {
+            // Do nothing if statusline is invisible, because it would store an invalid version of ContentSeparator.
+            // Do nothing if we are in commandline mode, because the user interacts with the statusline.
+            if (!sv.isVisible || liberator.mode == modes.COMMAND_LINE) {
+                return;
+            }
+
             bb.style.height = '0px';
             bb.style.overflow = 'hidden';
+            sv.contentSeparator = highlight.get('ContentSeparator').value;
             highlight.set('ContentSeparator', 'display: none;');
+            sv.isVisible = false;
         };
 
-        var toggle_on = function () {
+        var showStatusline = function () {
+            if (sv.isVisible) {
+                return;
+            }
+
             bb.style.height = '';
             bb.style.overflow = '';
             highlight.set('ContentSeparator', sv.contentSeparator);
+            sv.isVisible = true;
         };
 
+        let mode = options["statuslinevisibility"];
+
         switch (request) {
-        case sv.TOGGLE:
-            sv.currVisibility = !sv.currVisibility;
-            if (sv.currVisibility) toggle_on();
-            else toggle_off();
-            break;
-        case sv.FULLSCREEN:
-            if (window.fullScreen) {
-                sv.prevVisibility = sv.currVisibility;
-                sv.currVisibility = false;
-                toggle_off();
-            } else {
-                sv.currVisibility = sv.currVisibility || sv.prevVisibility;
-                if (sv.currVisibility) toggle_on();
-            }
-            break;
-        case sv.MODE_ON:
-            if (!sv.currVisibility) toggle_on();
-            break;
-        case sv.MODE_OFF:
-            if (!sv.currVisibility) toggle_off();
-            break;
+            case sv.UPDATE:
+                switch (mode) {
+                    case "auto":
+                        if (window.fullScreen) {
+                            hideStatusline();
+                        } else {
+                            showStatusline();
+                        }
+                        break;
+                    case "visible":
+                        showStatusline();
+                        break;
+                    case "hidden":
+                        hideStatusline();
+                        break;
+                }
+                break;
+
+            case sv.SHOW:
+                showStatusline();
+                break;
+
+            case sv.HIDE:
+                // Only hide when in auto+fullscreen or hidden.
+                if ((mode == "auto" && window.fullScreen) || mode == "hidden") {
+                    hideStatusline();
+                }
+                break;
+
+            case sv.TOGGLE:
+                switch (mode) {
+                    case "auto":    options["statuslinevisibility"] = "visible"; break;
+                    case "visible": options["statuslinevisibility"] = "hidden";  break;
+                    case "hidden":  options["statuslinevisibility"] = "auto";    break;
+                }
+                break;
         }
     },
 
@@ -379,6 +406,23 @@ const StatusLine = Module("statusline", {
                 completer: function completer(context) {
                     var fields = statusline._statusfields;
                     return [[name, fields[name].description] for (name of Object.keys(fields))];
+                },
+            });
+
+        options.add(["statuslinevisibility", "slv"],
+            "Control the visibility of the statusline",
+            "string", "auto",
+            {
+                setter: function setter(value) {
+                    statusline.setVisibility(statusline.setVisibility.UPDATE);
+                    return value;
+                },
+                completer: function completer(context) {
+                    return [
+                        ["auto",    "Hide statusline in fullscreen automatically"],
+                        ["visible", "Always show the statusline"],
+                        ["hidden",  "Never show the statusline"]
+                    ];
                 },
             });
     }
