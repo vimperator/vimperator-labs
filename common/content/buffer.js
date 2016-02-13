@@ -1445,7 +1445,7 @@ const Buffer = Module("buffer", {
                 context.completions = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
             }
 
-            if (!liberator.has("tabgroup"))
+            if (!liberator.has("tabgroup") || !tabGroup.TV)
                 return;
 
             let groups = tabGroup.tabView.GroupItems;

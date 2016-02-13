@@ -46,6 +46,9 @@ var TabGroup = Module("tabGroup", {
      * @return {GroupItem}
      */
     getGroup: function getGroup (name, count) {
+        if (!this.TV)
+            return null;
+
         let i = 0;
         if (!count)
             count = 1;
@@ -83,6 +86,9 @@ var TabGroup = Module("tabGroup", {
      * @param {Boolean} wrap
      */
     switchTo: function (spec, wrap) {
+        if (!tabGroup.TV)
+            return;
+
         const GI = tabGroup.tabView.GroupItems;
         let current = GI.getActiveGroupItem() || GI.getActiveOrphanTab();
         let groups = GI.groupItems;
@@ -150,6 +156,9 @@ var TabGroup = Module("tabGroup", {
      * @return {GroupItem} created GroupItem instance
      */
     createGroup: function createGroup (name, shouldSwitch, tab) {
+        if (!tabGroup.TV)
+            return null;
+
         let pageBounds = tabGroup.tabView.Items.getPageBounds();
         pageBounds.inset(20, 20);
         let box = new tabGroup.tabView.Rect(pageBounds);
@@ -185,6 +194,9 @@ var TabGroup = Module("tabGroup", {
      *                  if {group} doesn't exist.
      */
     moveTab: function moveTabToGroup (tab, group, shouldSwitch) {
+        if (!tabGroup.TV)
+            return;
+
         liberator.assert(tab && !tab.pinned, "Cannot move an AppTab");
 
         let groupItem = (group instanceof tabGroup.tabView.GroupItem) ? group : tabGroup.getGroup(group);
@@ -202,6 +214,9 @@ var TabGroup = Module("tabGroup", {
      * @param {string} groupName
      */
     remove: function removeGroup (groupName) {
+        if (!tabGroup.TV)
+            return;
+
         const GI = tabGroup.tabView.GroupItems;
         let activeGroup = GI.getActiveGroupItem();
         let group = groupName ? tabGroup.getGroup(groupName) : activeGroup;
@@ -252,12 +267,12 @@ var TabGroup = Module("tabGroup", {
 
         mappings.add([modes.NORMAL], ["<C-S-n>", "<C-S-PageDown>"],
             "Switch to next tab group",
-            function (count) { tabGroup.switchTo("+" + (count || 1), true); },
+            function (count) { if (tabGroup.TV) tabGroup.switchTo("+" + (count || 1), true); },
             { count: true });
 
         mappings.add([modes.NORMAL], ["<C-S-p>", "<C-S-PageUp>"],
             "Switch to previous tab group",
-            function (count) { tabGroup.switchTo("-" + (count || 1), true); },
+            function (count) { if (tabGroup.TV) tabGroup.switchTo("-" + (count || 1), true); },
             { count: true });
     },
 
@@ -269,14 +284,14 @@ var TabGroup = Module("tabGroup", {
              * take up the current tab to the group if bang(!) specified.
              */
             new Command(["add"], "Create a new tab group",
-                function (args) { tabGroup.createGroup(args.literalArg, true, args.bang ? tabs.getTab() : null); },
+                function (args) { if (tabGroup.TV) tabGroup.createGroup(args.literalArg, true, args.bang ? tabs.getTab() : null); },
                 { bang: true, literal: 0 }),
             /**
              * Panorama SubCommand list
              * list current tab groups
              */
             new Command(["list", "ls"], "List current tab groups",
-                function (args) { completion.listCompleter("tabgroup"); },
+                function (args) { if (tabGroup.TV) completion.listCompleter("tabgroup"); },
                 { bang: false, argCount: 0 }),
             /**
              * Panorama SubCommad pullTab
@@ -284,6 +299,9 @@ var TabGroup = Module("tabGroup", {
              */
             new Command(["pull[tab]"], "Pull a tab from another group",
                 function (args) {
+                    if (!tabGroup.TV)
+                        return;
+
                     let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
                     if (!activeGroup) {
                         liberator.echoerr("Cannot pull tab to the current group");
@@ -314,6 +332,9 @@ var TabGroup = Module("tabGroup", {
              */
             new Command(["push[tab]", "stash"], "Move the current tab to another group",
                 function (args) {
+                    if (!tabGroup.TV)
+                        return;
+
                     let currentTab = tabs.getTab();
                     if (currentTab.pinned) {
                         liberator.echoerr("Cannot move an App Tab");
@@ -341,7 +362,7 @@ var TabGroup = Module("tabGroup", {
              * remove the current group if {group} is ommited.
              */
             new Command(["remove", "rm"], "Close the tab group (including all tabs!)",
-                function (args) { tabGroup.remove(args.literalArg); },
+                function (args) { if (tabGroup.TV) tabGroup.remove(args.literalArg); },
                 {
                     literal: 0,
                     completer: function (context) completion.tabgroup(context, false),
@@ -353,6 +374,9 @@ var TabGroup = Module("tabGroup", {
              */
             new Command(["rename", "mv"], "Rename current tab group (or reset to '(Untitled)').",
                 function (args) {
+                    if (!tabGroup.TV)
+                        return;
+
                     let title = args.literalArg;
                     if (!title) {
                         if (args.bang)
@@ -370,7 +394,7 @@ var TabGroup = Module("tabGroup", {
                     literal: 0,
                     completer: function (context) {
                         context.title = ["Rename current group"];
-                        let activeGroup = tabGroup.tabView.GroupItems.getActiveGroupItem();
+                        let activeGroup = tabGroup.TV && tabGroup.tabView.GroupItems.getActiveGroupItem();
                         let title = activeGroup ? activeGroup.getTitle() : "";
                         context.completions = title ? [[title, ""]] : [];
                     }
@@ -382,6 +406,9 @@ var TabGroup = Module("tabGroup", {
              */
             new Command(["switch"], "Switch to another group",
                 function (args) {
+                    if (!tabGroup.TV)
+                        return;
+
                     if (args.count > 0)
                         tabGroup.switchTo("+" + args.count, true);
                     else
@@ -404,6 +431,13 @@ var TabGroup = Module("tabGroup", {
 
     completion: function () {
         completion.tabgroup = function TabGroupCompleter (context, excludeActiveGroup) {
+            context.title = ["Tab Group"];
+            context.anchored = false;
+            if (!tabGroup.TV) {
+                context.completions = [];
+                return;
+            }
+
             const GI = tabGroup.tabView.GroupItems;
             let groupItems = GI.groupItems;
             if (excludeActiveGroup) {
@@ -411,8 +445,6 @@ var TabGroup = Module("tabGroup", {
                 if (activeGroup)
                     groupItems = groupItems.filter(function(group) group.id != activeGroup.id);
             }
-            context.title = ["Tab Group"];
-            context.anchored = false;
             context.completions = groupItems.map(function(group) {
                 let title = group.id + ": " + (group.getTitle() || "(Untitled)");
                 let desc = "Tabs: " + group.getChildren().length;
