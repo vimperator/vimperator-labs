@@ -87,6 +87,7 @@ var Finder = Module("finder", {
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
         findbar._findField.value = pattern;
+        this._lastSearchPattern = pattern;
     },
 
     /**
@@ -164,8 +165,11 @@ var Finder = Module("finder", {
      */
     findAgain: function (reverse) {
         // Nothing to find?
-        if (!this.findbarInitialized || !this.findbar._findField.value)
+        if (!this._lastSearchPattern)
             return;
+
+        if (this._lastSearchPattern != this.findbar._findField.value)
+	    this._processUserPattern(this._searchPattern);
 
         this.findbar.onFindAgainCommand(reverse);
     },
@@ -219,8 +223,6 @@ var Finder = Module("finder", {
         if (!options["incsearch"] || this._searchPattern != pattern) {
             this.find(pattern);
         }
-
-        this._lastSearchPattern = pattern;
 
         // TODO: move to find() when reverse incremental searching is kludged in
         // need to find again for reverse searching
