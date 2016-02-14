@@ -161,7 +161,6 @@ var Finder = Module("finder", {
      *
      * @param {boolean} reverse Whether to search forwards or backwards.
      * @default false
-     * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
     findAgain: function (reverse) {
         // Nothing to find?
@@ -230,15 +229,13 @@ var Finder = Module("finder", {
             this.findAgain(true);
 
         if (options["hlsearch"])
-            this.highlight(findbar._findField.value);
+            this.highlight();
     },
 
     /**
      * Highlights all occurances of <b>str</b> in the buffer.
-     *
-     * @param {string} str The string to highlight.
      */
-    highlight: function (str) {
+    highlight: function () {
         let findbar = this.findbar;
 
         let btn = findbar.getElement("highlight");
