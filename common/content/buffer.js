@@ -1814,6 +1814,9 @@ const Buffer = Module("buffer", {
 });
 
 /* Expose Buffer constructor */
-Object.defineProperty(this, "Buffer", { value: Buffer });
+Object.defineProperty(modules, "Buffer", {
+    value: Buffer,
+    enumerable: true
+});
 
 // vim: set fdm=marker sw=4 ts=4 et:
