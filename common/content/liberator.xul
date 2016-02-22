@@ -97,6 +97,7 @@
                         <label id="liberator-status-bookmark"/>
                         <label id="liberator-status-tabcount"/>
                         <label id="liberator-status-position"/>
+                        <label id="liberator-status-zoomlevel"/>
                     </toolbaritem>
                 </toolbar>
                 <hbox id="liberator-commandline" class="liberator-container" liberator:highlight="CmdLine">

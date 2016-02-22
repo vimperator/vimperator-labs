@@ -737,6 +737,7 @@
                                     the total number of tabs in the current window.</dd>
             <dt>position</dt>   <dd>The vertical scroll position</dd>
             <dt>ssl</dt>        <dd>Show an icon when the current buffer is connecting with SSL.</dd>
+            <dt>zoomlevel</dt>  <dd>The main content's zoom level</dd>
         </dl>
     </description>
 </item>
