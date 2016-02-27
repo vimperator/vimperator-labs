@@ -87,6 +87,7 @@ var Finder = Module("finder", {
         pattern = pattern.replace(/\\(\\[cClL])/g, "$1");
 
         findbar._findField.value = pattern;
+        this._lastSearchPattern = pattern;
     },
 
     /**
@@ -160,12 +161,14 @@ var Finder = Module("finder", {
      *
      * @param {boolean} reverse Whether to search forwards or backwards.
      * @default false
-     * @see Bug537013 https://bugzilla.mozilla.org/show_bug.cgi?id=537013
      */
     findAgain: function (reverse) {
         // Nothing to find?
-        if (!this.findbarInitialized || !this.findbar._findField.value)
+        if (!this._lastSearchPattern)
             return;
+
+        if (this._lastSearchPattern != this.findbar._findField.value)
+	    this._processUserPattern(this._searchPattern);
 
         this.findbar.onFindAgainCommand(reverse);
     },
@@ -220,23 +223,19 @@ var Finder = Module("finder", {
             this.find(pattern);
         }
 
-        this._lastSearchPattern = pattern;
-
         // TODO: move to find() when reverse incremental searching is kludged in
         // need to find again for reverse searching
         if (this._backwards)
             this.findAgain(true);
 
         if (options["hlsearch"])
-            this.highlight(findbar._findField.value);
+            this.highlight();
     },
 
     /**
      * Highlights all occurances of <b>str</b> in the buffer.
-     *
-     * @param {string} str The string to highlight.
      */
-    highlight: function (str) {
+    highlight: function () {
         let findbar = this.findbar;
 
         let btn = findbar.getElement("highlight");
