@@ -230,11 +230,17 @@ function Highlights(name, store) {
         let base = this.class.match(/^(\w*)/)[0];
         return base != this.class && base in highlight ? highlight[base] : null;
     });
-    Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + [k + ": " + util.escapeString(v || "undefined") for ([k, v] in this)].join("\n\t");
 
-    function keys() [k for ([k, v] in Iterator(highlight))].sort();
+    let hightlightKeys = [];
+    for ([k, v] in this)
+        hightlightKeys.push(k + ": " + util.escapeString(v || "undefined"));
+    Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + hightlightKeys.join("\n\t");
 
-    this.__iterator__ = function () (highlight[v] for (v of keys()));
+    function keys() {
+        return Object.keys(hightlight).sort();
+    }
+
+    this.__iterator__ = function () iter(keys().map(v => highlight[v]));
 
     this.get = function (k) highlight[k];
     this.set = function (key, newStyle, force, append) {
@@ -456,7 +462,7 @@ function Styles(name, store) {
         let names = system ? systemNames : userNames;
 
         // Grossly inefficient.
-        let matches = [k for ([k, v] in Iterator(sheets))];
+        let matches = Object.keys(sheets);
         if (index)
             matches = String(index).split(",").filter(function (i) i in sheets);
         if (name)
@@ -552,7 +558,9 @@ Module("styles", {
     init: function () {
         let array = util.Array;
         update(Styles.prototype, {
-            get sites() array([v.sites for ([k, v] in this.userSheets)]).flatten().uniq().__proto__,
+            get sites() {
+                return array(Array.from(this.userSheets).map(([k, v]) => v.sites)).flatten().uniq().__proto__;
+            },
             completeSite: function (context, content) {
                 context.anchored = false;
                 try {
@@ -567,7 +575,7 @@ Module("styles", {
                 catch (e) {}
                 context.fork("others", 0, this, function (context) {
                     context.title = ["Site"];
-                    context.completions = [[s, ""] for (s of styles.sites)];
+                    context.completions = styles.sites.map(s => [s, ""]);
                 });
             }
         });
@@ -583,15 +591,20 @@ Module("styles", {
                 let name = args["-name"];
 
                 if (!css) {
-                    let list = Array.concat([i for (i in styles.userNames)],
-                                            [i for (i in styles.userSheets) if (!i[1].name)]);
+                    let list = Array.concat(Array.from(styles.userNames),
+                                            Array.from(styles.userSheets).filter(i => !i[1].name));
                     let str = template.tabular([{ header: "", style: "min-width: 1em; text-align: center; font-weight: bold;", highlight: "Disabled" }, "Name", "Filter", "CSS"],
-                        ([sheet.enabled ? "" : "\u00d7",
-                          key,
-                          sheet.sites.join(","),
-                          sheet.css]
-                         for ([key, sheet] of list)
-                             if ((!filter || sheet.sites.indexOf(filter) >= 0) && (!name || sheet.name == name))));
+                        iter(list.filter(([key, sheet]) =>
+                                     (!filter || sheet.sites.indexOf(filter) >= 0) &&
+                                     (!name || sheet.name == name))
+                                 .map(([key, sheet]) => [
+                                     sheet.enabled ? "" : "\u00d7",
+                                     key,
+                                     sheet.sites.join(","),
+                                     sheet.css
+                                 ])
+                        )
+                    );
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                 }
@@ -622,17 +635,18 @@ Module("styles", {
                 },
                 hereDoc: true,
                 literal: 1,
-                options: [[["-name", "-n"], commands.OPTION_STRING, null, function () [[k, v.css] for ([k, v] in Iterator(styles.userNames))]],
+                options: [[["-name", "-n"], commands.OPTION_STRING, null, function () Array.from(styles.userNames).map(([k, v]) => [k, v.css])],
                           [["-append", "-a"], commands.OPTION_NOARG]],
-                serial: function () [
-                    {
-                        command: this.name,
-                        bang: true,
-                        options: sty.name ? { "-name": sty.name } : {},
-                        arguments: [sty.sites.join(",")],
-                        literalArg: sty.css
-                    } for ([k, sty] in styles.userSheets)
-                ]
+                serial: function () {
+                    return Array.from(styles.userSheets)
+                                .map(([k, sty]) => ({
+                                    command: this.name,
+                                    bang: true,
+                                    options: sty.name ? { "-name": sty.name } : {},
+                                    arguments: [sty.sites.join(",")],
+                                    literalArg: sty.css
+                                }));
+                }
             });
 
         [
@@ -670,14 +684,16 @@ Module("styles", {
                 options: [[["-index", "-i"], commands.OPTION_INT, null,
                             function (context) {
                                 context.compare = CompletionContext.Sort.number;
-                                return [[i, `${sheet.sites.join(",")}: ${sheet.css.replace("\n", "\\n")}`]
-                                        for ([i, sheet] in styles.userSheets)
-                                        if (!cmd.filter || cmd.filter(sheet))];
+                                return Array.from(styles.userSheets)
+                                            .filter(([i, sheet]) => !cmd.filter && cmd.filter(sheet))
+                                            .map(([i, sheet]) =>
+                                                [i, `${sheet.sites.join(",")}: ${sheet.css.replace("\n", "\\n")}`]
+                                            );
                             }],
                           [["-name", "-n"],  commands.OPTION_STRING, null,
-                            function () [[name, sheet.css]
-                                         for ([name, sheet] in Iterator(styles.userNames))
-                                         if (!cmd.filter || cmd.filter(sheet))]]]
+                            function () Array.from(styles.userNames)
+                                             .filter(([name, sheet]) => !cmd.filter || cmd.filter(sheet))
+                                             .map(([name, sheet]) => [name, sheet.css])]]
             });
         });
     },
@@ -753,11 +769,15 @@ Module("highlight", {
                 if (!css && !clear) {
                     // List matching keys
                     let str = template.tabular(["Key", { header: "Sample", style: "text-align: center" }, "CSS"],
-                        ([h.class,
-                          xml`<span style=${h.value + style}>XXX</span>`,
-                          template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) xml`<span style="font-weight: bold;">${str}</span>`)]
-                            for (h in highlight)
-                                if (!key || h.class.indexOf(key) > -1)));
+                        iter(Array.from(iter(highlight))
+                                  .filter(h => !key || h.class.indexOf(key) > -1)
+                                  .map(h => [
+                                      h.class,
+                                      xml`<span style=${h.value + style}>XXX</span>`,
+                                      template.highlightRegexp(h.value, /\b[-\w]+(?=:)/g, function (str) xml`<span style="font-weight: bold;">${str}</span>`)
+                                  ])
+                        )
+                    );
 
                     commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     return;
@@ -778,7 +798,8 @@ Module("highlight", {
                         args.completeArg = args.completeArg > 1 ? -1 : 0;
 
                     if (args.completeArg == 0)
-                        context.completions = [[v.class, v.value] for (v in highlight)];
+                        context.completions = Array.from(iter(highlight))
+                                                   .map(v => [v.class, v.value]);
                     else if (args.completeArg == 1) {
                         let hl = highlight.get(args[0]);
                         if (hl)
@@ -788,15 +809,15 @@ Module("highlight", {
                 hereDoc: true,
                 literal: 1,
                 options: [[["-append", "-a"], commands.OPTION_NOARG]],
-                serial: function () [
-                    {
-                        command: this.name,
-                        arguments: [v.class],
-                        literalArg: v.value
-                    }
-                    for (v in highlight)
-                    if (v.value != v.default)
-                ]
+                serial: function () {
+                    return Array.from(iter(hightlight))
+                                .filter(v => v.value != v.default)
+                                .map(v => ({
+                                    command: this.name,
+                                    arguments: [v.class],
+                                    literalArg: v.value
+                                }));
+                }
             });
     },
     completion: function () {
@@ -812,7 +833,7 @@ Module("highlight", {
 
         completion.highlightGroup = function highlightGroup(context) {
             context.title = ["Highlight Group", "Value"];
-            context.completions = [[v.class, v.value] for (v in highlight)];
+            context.completions = Array.from(iter(highlight)).map(v => [v.class, v.value]);
         };
     }
 });

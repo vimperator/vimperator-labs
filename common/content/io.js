@@ -85,7 +85,7 @@ const File = Class("File", {
         if (!this.isDirectory())
             throw Error("Not a directory");
 
-        let array = [e for (e in this.iterDirectory())];
+        let array = Array.from(this.iterDirectory());
         if (sort)
             array.sort(function (a, b) b.isDirectory() - a.isDirectory() ||  String.localeCompare(a.path, b.path));
         return array;
@@ -917,8 +917,9 @@ lookup:
                 liberator.assert(!file.exists() || args.bang,
                     "File exists: " + filename + ". Add ! to override.");
 
-                // TODO: Use a set/specifiable list here:
-                let lines = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
+                let lines = Array.from(iter(commands))
+                                 .filter(cmd => cmd.serial)
+                                 .map(cmd => cmd.serial().map(commands.commandToString));
                 lines = util.Array.flatten(lines);
 
                 // source a user .vimperatorrc file
@@ -957,8 +958,8 @@ lookup:
         commands.add(["scrip[tnames]"],
             "List all sourced script names",
             function () {
-                let list = template.tabular([{ header: "<SNR>", style: "text-align: right; padding-right: 1em;" }, "Filename"], 
-                    ([i + 1, file] for ([i, file] in Iterator(io._scriptNames))));
+                let list = template.tabular([{ header: "<SNR>", style: "text-align: right; padding-right: 1em;" }, "Filename"],
+                    iter(io._scriptNames.map((file, i) => [i + 1, file])));
 
                 commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
             },
@@ -1102,8 +1103,11 @@ lookup:
                 for (let dirName of dirNames) {
                     let dir = io.File(dirName);
                     if (dir.exists() && dir.isDirectory()) {
-                        commands.push([[file.leafName, dir.path] for (file in dir.iterDirectory())
-                                            if (file.isFile() && file.isExecutable())]);
+                        commands.push(
+                            Array.from(dir.iterDirectory())
+                                 .filter(file => file.isFile() && file.isExecutable())
+                                 .map(file => [file.leafName, dir.path])
+                        );
                     }
                 }
 

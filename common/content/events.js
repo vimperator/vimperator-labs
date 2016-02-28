@@ -237,7 +237,8 @@ const Events = Module("events", {
             return this._macros;
 
         let re = RegExp(filter);
-        return ([macro, keys] for ([macro, keys] in this._macros) if (re.test(macro)));
+
+        return iter(Array.from(iter(this._macros)).filter(([macro, keys]) => re.test(macro)));
     },
 
     /**
@@ -365,7 +366,8 @@ const Events = Module("events", {
         };
         var t = TYPES[type];
         var evt = doc.createEvent(t + "Events");
-        evt["init" + t + "Event"].apply(evt, [v for (v of values(update(DEFAULTS[t], opts)))]);
+
+        evt["init" + t + "Event"].apply(evt, Array.from(values(update(DEFAULTS[t], opts))));
         return evt;
     },
 
@@ -928,7 +930,7 @@ const Events = Module("events", {
                 if (liberator.mode == modes.COMMAND_LINE)
                     stop = false;
                 // If we are in the middle of a mapping, we never send the next key to the host app
-                else if (this._input.buffer) 
+                else if (this._input.buffer)
                     stop = false;
                 // Respect "unignored" keys
                 else if (modes._passKeysExceptions == null || modes._passKeysExceptions.indexOf(key) < 0)
@@ -1099,7 +1101,7 @@ const Events = Module("events", {
 
     onKeyUpOrDown: function (event) {
         // Always let the event be handled by the webpage/Firefox for certain modes
-        if (modes.isMenuShown) 
+        if (modes.isMenuShown)
             return;
 
         let key = events.toString(event);

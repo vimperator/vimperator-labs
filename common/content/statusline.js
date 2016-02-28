@@ -428,7 +428,7 @@ const StatusLine = Module("statusline", {
                 },
                 completer: function completer(context) {
                     var fields = statusline._statusfields;
-                    return [[name, fields[name].description] for (name of Object.keys(fields))];
+                    return Object.keys(fields).map(name => [name, fields[name].description]);
                 },
             });
 

@@ -152,8 +152,7 @@ window.Services,
         JavaScript.setCompleter(this.get, [
             function () Object.keys(services.jsm).concat(Object.keys(services.services)).map(function(key) [key, ""])
         ]);
-        JavaScript.setCompleter(this.create, [function () [[c, ""] for (c in services.classes)]]);
-
+        JavaScript.setCompleter(this.create, [function () Object.keys(services.classes).map(c => [c, ""])]);
     }
 });
 

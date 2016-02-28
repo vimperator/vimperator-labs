@@ -964,7 +964,7 @@ const Hints = Module("hints", {
                 promptHighlight: "Normal",
                 completer: function (context) {
                     context.compare = function () 0;
-                    context.completions = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
+                    context.completions = Object.keys(hints._hintModes).map(k => [k, hints._hintModes[k].prompt]);
                 },
                 onChange: function (str) {
                     if (str in hints._hintModes) {

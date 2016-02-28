@@ -10,7 +10,7 @@ const Cu = Components.utils;
 
 function array(obj) {
     if (isgenerator(obj))
-        obj = [k for (k in obj)];
+        obj = Array.from(obj);
     else if (obj.length)
         obj = Array.slice(obj);
     return util.Array(obj);
@@ -66,12 +66,21 @@ function iter(obj) {
             catch (e) {}
         })();
     if (isinstance(obj, [HTMLCollection, NodeList]))
-        return (node for (node of obj));
+        return (function* () {
+            for (node of obj) {
+                yield node;
+            }
+        })();
     if ((typeof NamedNodeMap !== "undefined" && obj instanceof NamedNodeMap) ||
         (typeof MozNamedAttrMap !== "undefined" && obj instanceof MozNamedAttrMap))
         return (function () {
             for (let i = 0, len = obj.length; i < len; ++i)
                 yield [obj[i].name, obj[i]];
+        })();
+    if (obj instanceof Array)
+        return (function () {
+            for (value of obj)
+                yield value;
         })();
     return Iterator(obj);
 }
@@ -401,7 +410,7 @@ const StructBase = Class("StructBase", {
     // Iterator over our named members
     __iterator__: function () {
         let self = this;
-        return ([k, self[i]] for ([i, k] in Iterator(self.members)))
+        return iter(Object.keys(self.members).map(i => [self.members[i], self[i]]));
     }
 }, {
     /**

@@ -1044,7 +1044,7 @@ const Buffer = Module("buffer", {
         if ("FullZoom" in window)
             FullZoom._applyZoomToPref(browser);
         liberator.echomsg((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
-        
+
         statusline.updateField("zoomlevel", value);
     },
 
@@ -1371,7 +1371,7 @@ const Buffer = Module("buffer", {
                 styles[style.title].push(style.href || "inline");
             });
 
-            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
+            context.completions = Object.keys(styles).map(s => [s, styles[s].join(", ")]);
         };
 
         const UNTITLED_LABEL = "(Untitled)";
@@ -1457,7 +1457,7 @@ const Buffer = Module("buffer", {
 
             if (flags & this.buffer.VISIBLE) {
                 context.title = ["Buffers"];
-                context.completions = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
+                context.completions = Array.from(generateTabs(tabs || config.tabbrowser.visibleTabs));
             }
 
             if (!liberator.has("tabgroup") || !tabGroup.TV)
@@ -1472,7 +1472,7 @@ const Buffer = Module("buffer", {
                         let groupName = group.getTitle();
                         context.fork("GROUP_" + group.id, 0, this, function (context) {
                             context.title = [groupName || UNTITLED_LABEL];
-                            context.completions = [item for (item in generateGroupList(group, groupName))];
+                            context.completions = Array.from(generateGroupList(group, groupName));
                         });
                     }
                 }
@@ -1670,9 +1670,12 @@ const Buffer = Module("buffer", {
                                  "textarea[not(@disabled) and not(@readonly)]",
                                  "iframe"];
 
-                    let elements = [m for (m in util.evaluateXPath(xpath))
-                        if(m.getClientRects().length && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
-                    ];
+                    let elements = [];
+                    for (m in util.evaluateXPath(xpath)) {
+                        if (m.getClientRects().length
+                        && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
+                            elements.push(m);
+                    }
 
                     liberator.assert(elements.length > 0);
                     buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
@@ -1795,7 +1798,9 @@ const Buffer = Module("buffer", {
             "Desired info in the :pageinfo output",
             "charlist", "gfm",
             {
-                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(buffer.pageInfo))]
+                completer: function (context) {
+                    return Object.keys(buffer.pageInfo).map(k => [k, buffer.pageInfo[k][1]]);
+                }
             });
 
         options.add(["scroll", "scr"],

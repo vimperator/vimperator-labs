@@ -75,7 +75,7 @@ const QuickMarks = Module("quickmarks", {
      */
     // FIXME: filter should match that of quickmarks.remove or vice versa
     list: function list(filter) {
-        let marks = [k for ([k, v] in this._qmarks)];
+        let marks = Array.from(iter(this._qmarks)).map(([k, v]) => k);
         let lowercaseMarks = marks.filter(function (x) /[a-z]/.test(x)).sort();
         let uppercaseMarks = marks.filter(function (x) /[A-Z]/.test(x)).sort();
         let numberMarks    = marks.filter(function (x) /[0-9]/.test(x)).sort();
@@ -89,7 +89,7 @@ const QuickMarks = Module("quickmarks", {
             liberator.assert(marks.length >= 0, "No matching QuickMarks for: " + filter);
         }
 
-        let items = [[mark, this._qmarks.get(mark)] for (mark of marks)];
+        let items = marks.map(mark => [mark, this._qmarks.get(mark)]);
         template.genericTable(items, { title: ["QuickMark", "URL"] });
     }
 }, {
