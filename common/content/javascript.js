@@ -93,9 +93,9 @@ const JavaScript = Module("javascript", {
 
         let completions;
         if (modules.isPrototypeOf(obj))
-            completions = toplevel ? [v for (v in Iterator(obj))] : [];
+            completions = toplevel ? Array.from(iter(obj)) : [];
         else {
-            completions = [k for (k in this.iter(obj, toplevel))];
+            completions = Array.from(this.iter(obj, toplevel));
             if (!toplevel)
                 completions = util.Array.uniq(completions, true);
         }

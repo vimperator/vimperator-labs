@@ -256,7 +256,18 @@ const AutoCommands = Module("autocommands", {
 
         completion.macro = function macro(context) {
             context.title = ["Macro", "Keys"];
-            context.completions = [item for (item in events.getMacros())];
+
+            // NOTE: was unable to execute this assert
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = [item for (item in events.getMacros())];
+            // let after = Array.from(events.getMacros());
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in autocommands.js');
+            /* assert end */
+
+            context.completions = Array.from(events.getMacros());
         };
     },
     options: function () {

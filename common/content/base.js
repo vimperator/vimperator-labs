@@ -10,7 +10,19 @@ const Cu = Components.utils;
 
 function array(obj) {
     if (isgenerator(obj))
-        obj = [k for (k in obj)];
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let original = Array.from(obj);
+        // obj = iter(original);
+        // let before = [k for (k in obj)];
+        // obj = iter(original);
+        // let after = Array.from(obj);
+        //
+        // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in base.js');
+        /* assert end */
+
+        obj = Array.from(obj);
     else if (obj.length)
         obj = Array.slice(obj);
     return util.Array(obj);
@@ -66,12 +78,34 @@ function iter(obj) {
             catch (e) {}
         })();
     if (isinstance(obj, [HTMLCollection, NodeList]))
-        return (node for (node of obj));
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = (node for (node of obj));
+        // let after = (function* () {
+        //   for (node of obj) {
+        //     yield node;
+        //   }
+        // })();
+        //
+        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#2 in base.js');
+        /* assert end */
+
+        return (function* () {
+            for (node of obj) {
+              yield node;
+            }
+        })();
     if ((typeof NamedNodeMap !== "undefined" && obj instanceof NamedNodeMap) ||
         (typeof MozNamedAttrMap !== "undefined" && obj instanceof MozNamedAttrMap))
         return (function () {
             for (let i = 0, len = obj.length; i < len; ++i)
                 yield [obj[i].name, obj[i]];
+        })();
+    if (obj instanceof Array)
+        return (function () {
+            for (value of obj)
+                yield value;
         })();
     return Iterator(obj);
 }
@@ -401,7 +435,17 @@ const StructBase = Class("StructBase", {
     // Iterator over our named members
     __iterator__: function () {
         let self = this;
-        return ([k, self[i]] for ([i, k] in Iterator(self.members)))
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = ([k, self[i]] for ([i, k] in Iterator(self.members)));
+        // let after = iter(Object.keys(self.members).map(i => [self.members[i], self[i]]));
+        //
+        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#3 in base.js');
+        /* assert end */
+
+        return iter(Object.keys(self.members).map(i => [self.members[i], self[i]]));
     }
 }, {
     /**
