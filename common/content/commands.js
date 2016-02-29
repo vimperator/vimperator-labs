@@ -1188,7 +1188,10 @@ const Commands = Module("commands", {
 
 (function () {
     /* Expose Command constructor for user-defined sub-commands. */
-    Object.defineProperty(this, "Command", { value: Command });
+    Object.defineProperty(modules, "Command", {
+        value: Command,
+        enumerable: true
+    });
 
     Commands.quoteMap = {
         "\n": "n",
