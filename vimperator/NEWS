@@ -1,5 +1,18 @@
 201x-xx-xx:
 
+2016-02-28:
+    * @kmorihiro fixed background color theming for statusline
+    * @kmorihiro fixed broken (hidden) hints
+    * @gkatsev fixed some validator warnings
+    * @quicksaver various findbar fixes
+    * @quicksaver various tabview fixes for firefox 45
+    * @mnphnic expose some properies globally that were hidden because of const/let transition
+    * @SammysHP added a statuslinevisibility option. Also called slv.
+      The three options are `auto`, `visible`, and `hidden`.
+      The setVisibility method can take an enum of UPDATE, SHOW, HIDE, or TOGGLE, where toggle switches between all modes.
+    * @quicksaver updated findbar to remember searches globally
+    * @mnphnic make some globally exposed properties enumerable
+
 2016-01-30:
     * Expose Buffer constructor
     * Fix scrolling on some pages with gg/G/<C-d>/<C-u>
