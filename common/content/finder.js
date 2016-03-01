@@ -230,6 +230,15 @@ var Finder = Module("finder", {
             this.find(pattern);
         }
 
+        // It won't send a message to find in this case, as it will assume the searched word doesn't exist,
+        // so our onFindResult listener won't be triggered. Simulate it here.
+        if (findbar._findFailedString && this._lastSearchPattern.startsWith(findbar._findFailedString)) {
+            this.onFindResult({ result: Ci.nsITypeAheadFind.FIND_NOTFOUND });
+
+            // There's also no point in continuing if there are no matches.
+            return;
+        }
+
         // TODO: move to find() when reverse incremental searching is kludged in
         // need to find again for reverse searching
         if (this._backwards)
