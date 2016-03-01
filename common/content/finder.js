@@ -143,7 +143,7 @@ var Finder = Module("finder", {
             // - or notify the user somehow in the command line itself?
             findbar._vimpbackup_open = findbar.open;
             findbar.open = function (aMode) {
-                if (commandline._keepOpenForInput) { return false; }
+                if (commandline._keepOpenForInput || this._vimp_keepClosed) { return false; }
                 return this._vimpbackup_open(aMode);
             };
         }
@@ -177,6 +177,9 @@ var Finder = Module("finder", {
         if (this._lastSearchPattern != this.findbar._findField.value)
 	    this._processUserPattern(this._searchPattern);
 
+        // We don't want to show the findbar on failed searches when using the commandline.
+        this.findbar._vimp_keepClosed = true;
+
         this.findbar.onFindAgainCommand(reverse);
     },
 
@@ -185,6 +188,7 @@ var Finder = Module("finder", {
      * this is done aSync from the main (input) process.
      */
     onFindResult: function(aData) {
+        this.findbar._vimp_keepClosed = false;
         if (aData.result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
             // Don't use aData.searchString, it may be a substring of the
             // user's actual input text and that can be confusing.
