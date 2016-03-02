@@ -90,7 +90,7 @@ tedious unless you always visit the first link on a page.
             <li><tag>;V</tag> <em>V</em> to view its destination source in the external editor</li>
             <li><tag>;y</tag> <em>y</em> to yank its destination location</li>
             <li><tag>;Y</tag> <em>Y</em> to yank its text description</li>
-            <li><tag>;#</tag> <em>n</em> to yank its anchor URL</li>
+            <li><tag>;#</tag> <em>#</em> to yank its anchor URL</li>
             <li><tag>;c</tag> <em>c</em> to open its context menu</li>
             <li><tag>;i</tag> <em>i</em> to open a media object</li>
             <li><tag>;I</tag> <em>I</em> to open a media object in a new tab</li>
