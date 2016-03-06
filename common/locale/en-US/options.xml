@@ -415,6 +415,19 @@
 
 
 <item>
+    <tags>'xselectpaste'</tags>
+    <spec>'xselectpaste'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p>
+            Allow use of X selection primary paste buffer via <k name="S-Insert"/>.
+        </p>
+    </description>
+</item>
+
+
+<item>
     <tags>'eht' 'extendedhinttags'</tags>
     <spec>'extendedhinttags' 'eht'</spec>
     <type>string</type>
