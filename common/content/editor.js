@@ -62,6 +62,39 @@ const Editor = Module("editor", {
         return text.substring(e.selectionStart, e.selectionEnd);
     },
 
+
+    pasteClipboard: function () {
+            if (liberator.has("Windows")) {
+                this.executeCommand("cmd_paste");
+                return;
+            }
+    
+            if (!options["xselectpaste"])
+                return;
+
+            // FIXME: #93 (<s-insert> in the bottom of a long textarea bounces up)
+            let elem = liberator.focus;
+    
+            if (elem.setSelectionRange && util.readFromClipboard()) {
+                // readFromClipboard would return 'undefined' if not checked
+                // dunno about .setSelectionRange
+                // This is a hacky fix - but it works.
+                let curTop = elem.scrollTop;
+                let curLeft = elem.scrollLeft;
+    
+                let rangeStart = elem.selectionStart; // caret position
+                let rangeEnd = elem.selectionEnd;
+                let tempStr1 = elem.value.substring(0, rangeStart);
+                let tempStr2 = util.readFromClipboard();
+                let tempStr3 = elem.value.substring(rangeEnd);
+                elem.value = tempStr1 + tempStr2 + tempStr3;
+                elem.selectionStart = rangeStart + tempStr2.length;
+                elem.selectionEnd = elem.selectionStart;
+    
+                elem.scrollTop = curTop;
+                elem.scrollLeft = curLeft;
+            }
+    },
     // count is optional, defaults to 1
     executeCommand: function (cmd, count) {
         let controller = Editor.getController(cmd);
@@ -641,6 +674,10 @@ const Editor = Module("editor", {
             ["<C-End>"], "Move cursor to end of text field",
             function () { editor.executeCommand("cmd_moveBottom", 1); });*/
 
+        mappings.add(myModes,
+            ["<S-Insert>"], "Insert clipboard/selection",
+            function () { editor.pasteClipboard(); });
+
         mappings.add(modes.getCharModes("i"),
             ["<C-i>"], "Edit text field with an external editor",
             function () { editor.editFieldExternally(); });
@@ -849,6 +886,10 @@ const Editor = Module("editor", {
         options.add(["insertmode", "im"],
             "Use Insert mode as the default for text areas",
             "boolean", true);
+        
+        options.add(["xselectpaste"],
+            "Allow X selection paste buffer using <S-Insert>",
+            "boolean", false);
     }
 });
 
