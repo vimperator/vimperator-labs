@@ -177,9 +177,6 @@ when the resulting code is hard to read.
 - Prefer Array iterator functions `Array#forEach` and `Array#map` over loops
   and array comprehensions.
 
-  The exceptions to this rule are for objects with `__iterator__` set, and for
-  XML objects (see README.E4X).
-
 - Avoid using `new` with constructors where possible, and use `[]` and
   `{}` rather than `new Array` or `new Object`:
 
