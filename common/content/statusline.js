@@ -407,15 +407,12 @@ const StatusLine = Module("statusline", {
                 if (!percent || typeof percent != "number") {
                     percent = buffer.zoomLevel;
                 }
-                
+
                 if (percent == 100)
                     node.value = "";
                 else {
                     percent = ("  " + Math.round(percent)).substr(-3);
-                    if (full)
-                        node.value = " [" + percent + "%]";
-                    else
-                        node.value = " (" + percent + "%)";
+                    node.value = "zoom: " + percent + "%";
                 }
             });
 
