@@ -73,6 +73,8 @@ this does not mean, you have to avoid all new JavaScript features like list
 comprehension or generators. Use them, when they make sense, but don't use them
 when the resulting code is hard to read.
 
+**Please stick to using only standards compliant JavaScript.**
+
 #### The most important style issues are:
 
 - Use 4 spaces to indent things, no tabs, not 2, nor 8 spaces. If you use Vim,
@@ -145,29 +147,6 @@ when the resulting code is hard to read.
       unfrob();
   ```
 
-- Prefer lambda-style functions where suitable:
-
-  ```javascript
-  // Good
-  list.filter(function (elem) elem.good != elem.BAD);
-  list.forEach(function (elem) { window.alert(elem); });
-
-  // Bad
-  list.filter(function (elem) { return elem.good != elem.BAD });
-  list.forEach(function (elem) window.alert(elem));
-  ```
-
-- Anonymous function definitions should be formatted with a space after the
-  keyword `function`:
-
-  ```javascript
-  // Good
-  function () {}
-
-  // Bad
-  function() {}
-  ```
-
 - Prefer the use of `let` over `var` i.e. only use `var` when required.
 
   For more details, see:
@@ -195,20 +174,8 @@ when the resulting code is hard to read.
 
 - Use UNIX new lines (`\n`), not windows (`\r\n`) or old Mac ones (`\r`).
 
-- Use `Iterator` or `Array#forEach` to iterate over arrays.
-
-  `for (let i in ary)` and `for each (let i in ary)` include members in an
-  `Array.prototype`, which some extensions alter:
-
-  ```javascript
-  // Good
-  for (let [,elem] in Iterator(ary))
-  for (let [k, v] in Iterator(obj))
-  ary.forEach(function (elem) { ...
-
-  // Bad
-  for each (let elem in ary)
-  ```
+- Prefer Array iterator functions `Array#forEach` and `Array#map` over loops
+  and array comprehensions.
 
   The exceptions to this rule are for objects with `__iterator__` set, and for
   XML objects (see README.E4X).
