@@ -13,7 +13,7 @@
 
 ##### Description:
 
-<!-- Explain the issue briefly -->
+<!-- Explain the issue in detail -->
 
 ##### Expected behavior:
 
