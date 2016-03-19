@@ -1,5 +1,7 @@
 201x-xx-xx:
     * add *PluginsLoadPost* autocmd event
+    * Split Vimperator syntax highlighting to seperate repo:
+      https://github.com/vimperator/vimperator.vim
 
 2016-04-20:
     * @pale3 add mapping <S-Insert> for pasting from clipboard or primary selection. This action is operating
