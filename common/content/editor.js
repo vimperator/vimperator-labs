@@ -64,7 +64,7 @@ const Editor = Module("editor", {
 
 
     pasteClipboard: function () {
-            if (liberator.has("Windows")) {
+            if (liberator.has("Windows") || liberator.has("MacUnix")) {
                 this.executeCommand("cmd_paste");
                 return;
             }
