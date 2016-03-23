@@ -86,8 +86,7 @@ const Editor = Module("editor", {
                 let rangeEnd = elem.selectionEnd;
                 let tempStr1 = elem.value.substring(0, rangeStart);
                 let tempStr2 = util.readFromClipboard();
-                let tempStr3 = elem.value.substring(rangeEnd);
-                elem.value = tempStr1 + tempStr2 + tempStr3;
+                elem.value = tempStr1 + tempStr2;
                 elem.selectionStart = rangeStart + tempStr2.length;
                 elem.selectionEnd = elem.selectionStart;
     
