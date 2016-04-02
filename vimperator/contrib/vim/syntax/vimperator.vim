@@ -43,7 +43,7 @@ syn match vimperatorCommand "!" contained
 syn keyword vimperatorAutoCmd au[tocmd] contained nextgroup=vimperatorAutoEventList skipwhite
 
 syn keyword vimperatorAutoEvent BookmarkAdd ColorSheme DOMLoad DownloadPost Fullscreen LocationChange PageLoadPre PageLoad
-    \ PrivateMode Sanitize ShellCmdPost VimperatorEnter VimperatorLeavePre VimperatorLeave
+    \ PluginsLoadPost PrivateMode Sanitize ShellCmdPost VimperatorEnter VimperatorLeavePre VimperatorLeave
     \ contained
 
 syn match vimperatorAutoEventList "\(\a\+,\)*\a\+" contained contains=vimperatorAutoEvent

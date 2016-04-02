@@ -16,6 +16,7 @@
     <dt>LocationChange</dt>    <dd>Triggered when changing tabs or when navigating to a new location</dd>
     <dt>PageLoadPre</dt>       <dd>Triggered after a page load is initiated</dd>
     <dt>PageLoad</dt>          <dd>Triggered when a page gets (re)loaded/opened</dd>
+    <dt>PluginsLoadPost</dt>   <dd>Triggered after all plugins have been (re)loaded</dd>
     <dt>PrivateMode</dt>       <dd>Triggered when private mode is activated or deactivated</dd>
     <dt>Sanitize</dt>	       <dd>Triggered when privata data are sanitized</dd>
     <dt>ShellCmdPost</dt>      <dd>Triggered after executing a shell command with <ex>:!</ex><a>cmd</a></dd>

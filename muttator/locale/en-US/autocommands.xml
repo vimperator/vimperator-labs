@@ -15,6 +15,7 @@
     <dt>LocationChange</dt>    <dd>Triggered when changing tabs or when navigating to a new location</dd>
     <dt>PageLoadPre</dt>       <dd>Triggered after a page load is initiated</dd>
     <dt>PageLoad</dt>          <dd>Triggered when a page gets (re)loaded/opened</dd>
+    <dt>PluginsLoadPost</dt>   <dd>Triggered after all plugins have been (re)loaded</dd>
     <dt>ShellCmdPost</dt>      <dd>Triggered after executing a shell command with <ex>:!</ex><a>cmd</a></dd>
     <dt>&liberator.appname;Enter</dt>   <dd>Triggered after &liberator.host; starts</dd>
     <dt>&liberator.appname;LeavePre</dt><dd>Triggered before exiting &liberator.host;, just before destroying each module</dd>

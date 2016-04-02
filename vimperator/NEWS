@@ -1,4 +1,5 @@
 201x-xx-xx:
+    * add *PluginsLoadPost* autocmd event
 
 2016-02-28:
     * @kmorihiro fixed background color theming for statusline
