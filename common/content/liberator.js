@@ -715,6 +715,7 @@ const Liberator = Module("liberator", {
 
         if (dirs.length == 0) {
             liberator.log("No user plugin directory found");
+            autocommands.trigger("PluginsLoadPost", {});
             return;
         }
 
@@ -726,6 +727,7 @@ const Liberator = Module("liberator", {
             liberator.log("Searching for \"" + (dir.path + "/**/*.{js,vimp}") + "\"", 3);
             sourceDirectory(dir);
         });
+        autocommands.trigger("PluginsLoadPost", {});
     },
 
     /**

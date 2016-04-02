@@ -27,6 +27,7 @@ var Config = Module("config", ConfigBase, {
                    ["LocationChange",     "Triggered when changing tabs or when navigation to a new location"],
                    ["PageLoadPre",        "Triggered after a page load is initiated"],
                    ["PageLoad",           "Triggered when a page gets (re)loaded/opened"],
+                   ["PluginsLoadPost",    "Triggered after all plugins have been (re)loaded"],
                    // TODO: remove when FF ESR's version is over 20
                    ["PrivateMode",        "Triggered when private mode is activated or deactivated"],
                    ["Sanitize",           "Triggered when a sanitizeable item is cleared"],
