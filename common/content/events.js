@@ -1184,6 +1184,7 @@ const Events = Module("events", {
             autocommands.trigger("Fullscreen", { state: this._fullscreen });
             statusline.setVisibility(statusline.setVisibility.UPDATE);
         }
+        statusline.updateField("zoomlevel");
     }
 }, {
     isInputElemFocused: function () {
