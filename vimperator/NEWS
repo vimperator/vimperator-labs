@@ -1,5 +1,10 @@
 201x-xx-xx:
 
+2016-04-20:
+    * @pale3 add mapping <S-Insert> for pasting from clipboard or primary selection. This action is operating
+      system dependent. On linux it will paste from primary selection, but on other systems it will paste from
+      clipboard. For reverting to old style, use example in :h <S-Insert>
+
 2016-02-28:
     * @kmorihiro fixed background color theming for statusline
     * @kmorihiro fixed broken (hidden) hints

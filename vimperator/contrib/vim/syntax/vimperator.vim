@@ -55,7 +55,7 @@ syn keyword vimperatorOption ac act activate animations autocomplete cd cdpath c
     \ eventignore extendedhinttags fenc fileencoding fh followhints go guioptions helpfile hf hi hin hintinputs hintmatching hinttags
     \ hinttimeout history hm ht hto maxitems messages msgs newtab nextpattern pa pageinfo popups pps previouspattern
     \ rtp runtimepath si sanitizeitems sts sanitizetimespan scr scroll scrollbars sh shcf shell shellcmdflag showstatuslinks 
-    \ stal status suggestengines titlestring toolbars urlseparator vbs verbose xselectpaste wildmode wim 
+    \ stal status suggestengines titlestring toolbars urlseparator vbs verbose wildmode wim 
     \ wordseparators wsp
     \ contained nextgroup=vimperatorSetMod
 

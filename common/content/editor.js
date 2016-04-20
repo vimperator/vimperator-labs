@@ -64,15 +64,12 @@ const Editor = Module("editor", {
 
 
     pasteClipboard: function () {
-            if (liberator.has("Windows") || liberator.has("MacUnix")) {
+
+            if (!liberator.has("Unix")) {
                 this.executeCommand("cmd_paste");
                 return;
             }
     
-            if (!options["xselectpaste"])
-                return;
-
-            // FIXME: #93 (<s-insert> in the bottom of a long textarea bounces up)
             let elem = liberator.focus;
     
             if (elem.setSelectionRange && util.readFromClipboard()) {
@@ -94,6 +91,7 @@ const Editor = Module("editor", {
                 elem.scrollLeft = curLeft;
             }
     },
+
     // count is optional, defaults to 1
     executeCommand: function (cmd, count) {
         let controller = Editor.getController(cmd);
@@ -674,7 +672,7 @@ const Editor = Module("editor", {
             function () { editor.executeCommand("cmd_moveBottom", 1); });*/
 
         mappings.add(myModes,
-            ["<S-Insert>"], "Insert clipboard/selection",
+            ["<S-Insert>"], "Paste from clipboard/selection",
             function () { editor.pasteClipboard(); });
 
         mappings.add(modes.getCharModes("i"),
@@ -885,10 +883,6 @@ const Editor = Module("editor", {
         options.add(["insertmode", "im"],
             "Use Insert mode as the default for text areas",
             "boolean", true);
-        
-        options.add(["xselectpaste"],
-            "Allow X selection paste buffer using <S-Insert>",
-            "boolean", false);
     }
 });
 
