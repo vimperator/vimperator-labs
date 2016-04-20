@@ -258,6 +258,7 @@ const Buffer = Module("buffer", {
             statusline.updateField("location");
             statusline.updateField("bookmark");
             statusline.updateField("history");
+            statusline.updateField("zoomlevel");
 
             // This is a bit scary but we trigger ignore mode when the new URL is in the list
             // of pages with ignored keys and then exit it on a new page but ONLY, if:
@@ -413,6 +414,18 @@ const Buffer = Module("buffer", {
      */
     get textZoom() config.browser.markupDocumentViewer.textZoom * 100,
     set textZoom(value) { Buffer.setZoom(value, false); },
+
+    /**
+     * @property {number} The current browser's zoom level, as a
+     *     percentage with 100 as 'normal'.
+     */
+    get zoomLevel() {
+        let v = config.browser.markupDocumentViewer;
+        if (v == null)
+            return this.ZoomManager.zoom * 100;
+
+        return v[v.textZoom == 1 ? "fullZoom" : "textZoom"] * 100;
+    },
 
     /**
      * @property {number} The current browser's text zoom level, as a
@@ -1031,6 +1044,8 @@ const Buffer = Module("buffer", {
         if ("FullZoom" in window)
             FullZoom._applyZoomToPref(browser);
         liberator.echomsg((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
+        
+        statusline.updateField("zoomlevel", value);
     },
 
     bumpZoomLevel: function bumpZoomLevel(steps, fullZoom) {

@@ -740,6 +740,7 @@
             <dt>tabcount</dt>   <dd>現Windowのタブ数と現タブの位置を [タブ位置/タブ数] で示します</dd>
             <dt>position</dt>   <dd>スクロール位置を示します</dd>
             <dt>ssl</dt>        <dd>SSL接続している場合にアイコンを表示します</dd>
+            <dt>zoomlevel</dt>  <dd></dd>
         </dl>
     </description>
 </item>
