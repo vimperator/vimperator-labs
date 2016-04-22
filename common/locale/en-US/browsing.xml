@@ -445,6 +445,27 @@ have the following possibilities:
 </item>
 
 
+<h2 tag="pasting">Pasting</h2>
+
+<item>
+    <tags><![CDATA[<S-Insert>]]></tags>
+    <spec>&lt;S-Insert></spec>
+    <description>
+        <p>
+           On Linux this option paste from primary selection. On other operating systems like
+           Windows and Mac, this option will paste from clipboard. To force vimperator always
+           use pasting from clipboard regaring operating system, use:
+        </p>
+       <p>Example:</p>
+
+        <ul>
+            <li><ex>:inoremap <![CDATA[<S-Insert> <C-v>]]></ex></li>
+            <li><ex>:cnoremap <![CDATA[<S-Insert> <C-v>]]></ex></li>
+        </ul>
+    </description>
+</item>
+
+
 <h2 tag="writing save-file">Writing</h2>
 
 <item>
