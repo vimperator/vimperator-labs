@@ -16,6 +16,7 @@
     <dt>LocationChange</dt>    <dd>タブを切り替えた際や新しい URL に移動した際に発生します</dd>
     <dt>PageLoadPre</dt>       <dd>ページの読み込みが開始された直後に発生します</dd>
     <dt>PageLoad</dt>          <dd>ページの ( 再 ) 読み込みが終了した際やページが開かれた際に発生します</dd>
+    <dt>PluginsLoadPost</dt>   <dd>Triggered after all plugins have been (re)loaded</dd>
     <dt>PrivateMode</dt>       <dd>プライベートブラウジングに切り替えた際と元に戻った際に発生します</dd>
     <dt>Sanitize</dt>	       <dd>プライベートデータを削除した際に発生します</dd>
     <dt>ShellCmdPost</dt>      <dd><ex>:!</ex><a>cmd</a> でシェルコマンドが実行された直後に発生します</dd>
