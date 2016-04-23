@@ -5,7 +5,7 @@
 
 const DEFAULT_FAVICON = "chrome://global/skin/icons/Portrait.png";
 
-const Config = Module("config", ConfigBase, {
+var Config = Module("config", ConfigBase, {
     init: function () {
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
