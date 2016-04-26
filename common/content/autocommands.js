@@ -256,7 +256,7 @@ const AutoCommands = Module("autocommands", {
 
         completion.macro = function macro(context) {
             context.title = ["Macro", "Keys"];
-            context.completions = [item for (item in events.getMacros())];
+            context.completions = Array.from(events.getMacros());
         };
     },
     options: function () {

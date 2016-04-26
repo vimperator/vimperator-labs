@@ -198,9 +198,8 @@ const Mappings = Module("mappings", {
     // Return all mappings present in all @modes
     _mappingsIterator: function (modes, stack) {
         modes = modes.slice();
-        return (map for (map of stack[modes.shift()])
-            if (modes.every(function (mode) stack[mode].some(
-                        function (m) map.equals(m)))))
+        return iter(stack[modes.shift()].filter(map =>
+            modes.every(mode => stack[mode].some(m => map.equals(m)))));
     },
 
     // NOTE: just normal mode for now
@@ -383,9 +382,9 @@ const Mappings = Module("mappings", {
     list: function (modes, filter, urlPattern) {
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
-            maps = [map for (map of maps) if (map.names[0] == filter)];
+            maps = Array.from(maps).filter(map => map.names[0] == filter);
         if (urlPattern)
-            maps = [map for (map of maps) if (this._matchingUrlsTest(map, urlPattern))];
+            maps = Array.from(maps).filter(map => this._matchingUrlsTest(map, urlPattern));
 
         // build results
         let displayMaps = [];
@@ -474,11 +473,11 @@ const Mappings = Module("mappings", {
 
             function urlsCompleter (modes, current) {
                 return function () {
-                    let completions = util.Array.uniq([
-                        m.matchingUrls.source
-                        for (m in mappings.getUserIterator(modes))
-                        if (m.matchingUrls)
-                    ]).map(function (re) [re, re]);
+                    let completions = util.Array.uniq(
+                        Array.from(mappings.getUserIterator(modes))
+                             .filter(m => m.matchingUrls)
+                             .map(m => m.matchingUrls.source)
+                    ).map(function (re) [re, re]);
                     if (current) {
                         if (buffer.URL)
                             completions.unshift([util.escapeRegex(buffer.URL), "Current buffer URL"]);
@@ -507,16 +506,14 @@ const Mappings = Module("mappings", {
                         }
 
                         let noremap = this.name.indexOf("noremap") > -1;
-                        return [
-                            {
-                                command: this.name,
-                                options: options(map),
-                                arguments: [map.names[0]],
-                                literalArg: map.rhs
-                            }
-                            for (map in mappings._mappingsIterator(modes, mappings._user))
-                            if (map.rhs && map.noremap == noremap && !isMultiMode(map, this.name))
-                        ];
+                        return Array.from(mappings._mappingsIterator(modes, mappings._user))
+                                    .filter(map => map.rhs && map.noremap == noremap && !isMultiMode(map, this.name))
+                                    .map(map => ({
+                                        command: this.name,
+                                        options: options(map),
+                                        arguments: [map.names[0]],
+                                        literalArg: map.rhs
+                                    }))
                     }
             };
 
@@ -564,9 +561,12 @@ const Mappings = Module("mappings", {
 
         for (let mode in modes.mainModes)
             if (mode.char && !commands.get(mode.char + "map"))
-                addMapCommands(mode.char,
-                               [m.mask for (m in modes.mainModes) if (m.char == mode.char)],
-                               [mode.disp.toLowerCase()]);
+                addMapCommands(
+                    mode.char,
+                    Array.from(modes.mainModes)
+                         .filter(m => m.char == mode.char)
+                         .map(m => m.mask),
+                    [mode.disp.toLowerCase()]);
     },
     completion: function () {
         JavaScript.setCompleter(this.get,
@@ -574,10 +574,13 @@ const Mappings = Module("mappings", {
                 null,
                 function (context, obj, args) {
                     let mode = args[0];
-                    return [
-                        [name, map.description]
-                            for (map of mappings._user[mode].concat(mappings._main[mode]))
-                                for (name of map.names)];
+                    let completions = [];
+
+                    mappings._user[mode].concat(mappings._main[mode])
+                            .forEach(map => map.names.forEach(name =>
+                                completions.push([name, map.description])));
+
+                    return completions;
                 }
             ]);
 
@@ -587,11 +590,9 @@ const Mappings = Module("mappings", {
             let urls = args["-urls"] && RegExp(args["-urls"]);
 
             if (args.completeArg == 0) {
-                let maps = [
-                    [m.names[0], ""]
-                    for (m in mappings.getUserIterator(modes))
-                    if (mappings._matchingUrlsTest(m, urls))
-                ];
+                let maps = Array.from(mappings.getUserIterator(modes))
+                                .filter(m => mappings._matchingUrlsTest(m ,urls))
+                                .map(m => [m.names[0], ""]);
                 context.completions = maps;
             }
         };

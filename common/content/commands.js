@@ -556,8 +556,10 @@ const Commands = Module("commands", {
         // XXX
         function matchOpts(arg) {
             // Push possible option matches into completions
-            if (complete && !onlyArgumentsRemaining)
-                completeOpts = [[opt[0], opt[0][0]] for (opt of options) if (!(opt[0][0] in args))];
+            if (complete && !onlyArgumentsRemaining) {
+                completeOpts = options.filter(opt => !(opt[0][0] in args))
+                                      .map(opt => [opt[0], opt[0][0]]);
+            }
         }
         function resetCompletions() {
             completeOpts = null;
@@ -945,7 +947,7 @@ const Commands = Module("commands", {
     },
 
     completion: function () {
-        JavaScript.setCompleter(this.get, [function () ([c.name, c.description] for (c in commands))]);
+        JavaScript.setCompleter(this.get, [function () iter(Array.from(iter(commands)).map(c => [c.name, c.description]))]);
 
         completion.command = function command(context, subCmds) {
             context.keys = { text: "longNames", description: "description" };
@@ -954,7 +956,7 @@ const Commands = Module("commands", {
                 context.completions = subCmds;
             } else {
                 context.title = ["Command"];
-                context.completions = [k for (k in commands)];
+                context.completions = Array.from(iter(commands));
             }
         };
 
@@ -1010,10 +1012,8 @@ const Commands = Module("commands", {
 
         completion.userCommand = function userCommand(context) {
             context.title = ["User Command", "Definition"];
-            context.completions = [
-                [command.name, command.replacementText || "function () { ... }"]
-                for (command of commands.getUserCommands())
-            ];
+            context.completions = commands.getUserCommands().map(command =>
+                [command.name, command.replacementText || "function () { ... }"]);
         };
     },
 
@@ -1096,10 +1096,12 @@ const Commands = Module("commands", {
                 }
                 else {
                     function completerToString(completer) {
-                        if (completer)
-                            return [k for ([k, v] in Iterator(completeOptionMap)) if (completer == completion[v])][0] || "custom";
-                        else
+                        if (completer) {
+                            return Object.keys(completeOptionMap)
+                                         .filter(k => (completer == completion[completeOptionMap[k]]))[0] || "custom";
+                        } else {
                             return "";
+                        }
                     }
 
                     // TODO: using an array comprehension here generates flakey results across repeated calls
@@ -1109,13 +1111,15 @@ const Commands = Module("commands", {
 
                     if (cmds.length > 0) {
                         let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"],
-                            ([cmd.bang ? "!" : " ",
-                              cmd.name,
-                              cmd.argCount,
-                              cmd.count ? "0c" : "",
-                              completerToString(cmd.completer),
-                              cmd.replacementText || "function () { ... }"]
-                             for ([, cmd] in Iterator(cmds))));
+                            iter(cmds.map(cmd => [
+                                cmd.bang ? "!" : " ",
+                                cmd.name,
+                                cmd.argCount,
+                                cmd.count ? "0c" : "",
+                                completerToString(cmd.completer),
+                                cmd.replacementText || "function () { ... }"
+                            ]))
+                        );
 
                         commandline.echo(str, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
                     }
@@ -1143,24 +1147,33 @@ const Commands = Module("commands", {
                     [["-description"], commands.OPTION_STRING],
                     [["-complete"], commands.OPTION_STRING,
                          function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
-                         function (context) [[k, ""] for ([k, v] in Iterator(completeOptionMap))]]
+                         function (context) Object.keys(completeOptionMap).map(k => [k, ""])]
                 ],
                 literal: 1,
-                serial: function () [ {
-                        command: this.name,
-                        bang: true,
-                        options: util.Array.toObject(
-                            [[v, typeof cmd[k] == "boolean" ? null : cmd[k]]
-                             // FIXME: this map is expressed multiple times
-                             for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count", description: "-description" }))
-                             // FIXME: add support for default values to parseArgs
-                             if (k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")]),
-                        arguments: [cmd.name],
-                        literalArg: cmd.replacementText
-                    }
-                    for ([k, cmd] in Iterator(commands._exCommands))
-                    if (cmd.user && cmd.replacementText)
-                ]
+                serial: function() {
+                    return commands._exCommands
+                        .filter(cmd => cmd.user && cmd.replacementText)
+                        .map(cmd => ({
+                            command: this.name,
+                            bang: true,
+                            options: util.Array.toObject(
+                                (function() {
+                                    let options = {
+                                        argCount: "-nargs",
+                                        bang: "-bang",
+                                        count: "-count",
+                                        description: "-description"
+                                    };
+
+                                    return Object.keys(options)
+                                                 .filter(k => k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")
+                                                 .map(k => [options[k], typeof cmd[k] == "boolean" ? null : cmd[k]]);
+                                }())
+                            ),
+                            arguments: [cmd.name],
+                            literalArg: cmd.replacementText
+                        }));
+                }
             });
 
         commands.add(["comc[lear]"],

@@ -275,10 +275,12 @@ var Config = Module("config", ConfigBase, {
             services.get("autoCompleteSearch").stopSearch(); // just to make sure we cancel old running completions
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
-                context.completions = [
-                    [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
-                        for (i in util.range(0, result.matchCount))
-                ];
+
+                let completions = [];
+                for (i of util.range(0, result.matchCount)) {
+                    completions.push([result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]);
+                }
+                context.completions = completions;
             });
             services.get("autoCompleteSearch").startSearch(context.filter, "", context.result, {
                 onSearchResult: function onSearchResult(search, result) {

@@ -20,7 +20,8 @@ var EXPORTED_SYMBOLS = ["xml", "TemplateSupportsXML"] ;
 //alert(JSON.stringify([obj1, obj2], null, 1));
 function createEscapeFunc(obj) {
     const c2c = obj;
-    const re = new RegExp("[" + [c for (c in c2c)].join("") + "]", "g");
+    const re = new RegExp("[" + Object.keys(c2c).join("") + "]", "g");
+
     return function _escapeFunc(s) String(s).replace(re, function (c) c2c[c]);
 }
 
@@ -243,7 +244,7 @@ templateXML["+="] = function (self, value) {
     return self;
 };
 templateXML.is = function is(obj) {
-    return obj instanceof TemplateXML; 
+    return obj instanceof TemplateXML;
 };
 templateXML.isEmpty = function (value) {
     return (value instanceof TemplateXML) && value.value === "";
@@ -261,4 +262,3 @@ function templateRaw(portion, args) {
 }
 
 var xml = templateXML;
-

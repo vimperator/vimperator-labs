@@ -59,10 +59,12 @@ const Bookmarks = Module("bookmarks", {
             this.__defineGetter__("store", function () store);
             this.__defineGetter__("bookmarks", function () this.load());
 
-            this.__defineGetter__("keywords",
-                function () [Keyword(k.keyword, k.title, k.icon, k.url) for (k of self.bookmarks) if (k.keyword)]);
+            this.__defineGetter__("keywords", function () {
+                return self.bookmarks.filter(k => k.keyword)
+                                     .map(k => Keyword(k.keyword, k.title, k.icon, k.url));
+            });
 
-            this.__iterator__ = function () (val for (val of self.bookmarks));
+            this.__iterator__ = function () iter(self.bookmarks);
 
             function loadBookmark(node) {
                 if (node.uri == null) // How does this happen?
@@ -335,7 +337,8 @@ const Bookmarks = Module("bookmarks", {
             let results = [];
             try {
                 results = JSON.parse(resp.responseText)[1];
-                results = [[item, ""] for ([k, item] in Iterator(results)) if (typeof item == "string")];
+                results = results.filter((item, k) => typeof item == "string")
+                                 .map((item, k) => [item, ""]);
             }
             catch (e) {}
             if (!callback)
@@ -502,11 +505,13 @@ const Bookmarks = Module("bookmarks", {
             "Show jumplist",
             function () {
                 let sh = history.session;
-                let jumps = [[idx == sh.index ? ">" : "",
-                              Math.abs(idx - sh.index),
-                              val.title,
-                              xml`<a highlight="URL" href=${val.URI.spec}>${val.URI.spec}</a>`]
-                              for ([idx, val] in Iterator(sh))];
+                let jumps = Array.from(iter(sh))
+                                 .map(([idx, val]) => [
+                                     idx == sh.index ? ">" : "",
+                                     Math.abs(idx - sh.index),
+                                     val.title,
+                                     xml`<a highlight="URL" href=${val.URI.spec}>${val.URI.spec}</a>`
+                                 ]);
                 let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 },
                     { header: "", style: "text-align: right", highlight: "Number" },
                     { header: "Title", style: "width: 250px; max-width: 500px; overflow: hidden" },
@@ -525,9 +530,12 @@ const Bookmarks = Module("bookmarks", {
             args.completeFilter = have.pop();
 
             let prefix = filter.substr(0, filter.length - args.completeFilter.length);
-            let tags = util.Array.uniq(util.Array.flatten([b.tags for (b of bookmarks._cache.bookmarks)]));
+            let tags = util.Array.uniq(
+                util.Array.flatten(bookmarks._cache.bookmarks.map(b => b.tags))
+            );
 
-            return [[prefix + tag, tag] for (tag of tags) if (have.indexOf(tag) < 0)];
+            return tags.filter(tag => have.indexOf(tag) < 0)
+                       .map(tag => [prefix + tag, tag]);
         }
 
         function title(context, args) {
@@ -539,8 +547,10 @@ const Bookmarks = Module("bookmarks", {
         }
 
         function keyword(context, args) {
-            let keywords = util.Array.uniq(util.Array.flatten([b.keyword for (b of bookmarks._cache.keywords)]));
-            return [[kw, kw] for (kw of keywords)];
+            let keywords = util.Array.uniq(
+                util.Array.flatten(bookmarks._cache.keywords.map(b => b.keyword))
+            );
+            return keywords.map(kw => [kw, kw]);
         }
 
         commands.add(["bma[rk]"],

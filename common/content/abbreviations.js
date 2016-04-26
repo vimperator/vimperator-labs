@@ -130,7 +130,11 @@ const Abbreviations = Module("abbreviations", {
      */
     get merged() {
         let result = [];
-        let lhses = util.Array.uniq([lhs for ([, mabbrevs] in Iterator(this.abbrevs)) for (lhs of Object.keys(mabbrevs))].sort());
+
+        let lhses = util.Array.uniq(
+            Array.from(values(this.abbrevs))
+                 .reduce((abbrevs, mabbrev) => [...abbrevs, ...Object.keys(mabbrev)], [])
+        );
 
         for (let lhs of lhses) {
             let exists = {};
@@ -208,7 +212,7 @@ const Abbreviations = Module("abbreviations", {
         completion.abbreviation = function abbreviation(context, args, modes) {
             if (args.completeArg == 0) {
                 let abbrevs = abbreviations.merged.filter(function (abbr) abbr.inModes(modes));
-                context.completions = [[abbr.lhs, abbr.rhs] for (abbr of abbrevs)];
+                context.completions = abbrevs.map(abbr => [abbr.lhs, abbr.rhs]);
             }
         };
     },
@@ -249,15 +253,16 @@ const Abbreviations = Module("abbreviations", {
                         completion.abbreviation(context, args, modes)
                     },
                     literal: 0,
-                    serial: function () [ {
-                            command: this.name,
-                            arguments: [abbr.lhs],
-                            literalArg: abbr.rhs,
-                            options: abbr.rhs instanceof Function ? {"-javascript": null} : {}
-                        }
-                        for ([, abbr] in Iterator(abbreviations.merged))
-                        if (abbr.modesEqual(modes))
-                    ]
+                    serial: function () {
+                        return abbreviations.merged
+                            .filter(abbr => abbr.modesEqual(modes))
+                            .map(abbr => ({
+                                command: this.name,
+                                arguments: [abbr.lhs],
+                                literalArg: abbr.rhs,
+                                options: abbr.rhs instanceof Function ? {"-javascript": null} : {}
+                            }));
+                    }
                 });
 
             commands.add([ch ? ch + "una[bbrev]" : "una[bbreviate]"],

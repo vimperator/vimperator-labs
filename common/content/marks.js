@@ -24,13 +24,15 @@ const Marks = Module("marks", {
     get all() {
         // local marks
         let location = window.content.location.href;
-        let lmarks = [i for (i in this._localMarkIter()) if (i[1].location == location)];
+        let lmarks = Array.from(this._localMarkIter())
+                          .filter(i => i[1].location == location);
         lmarks.sort();
 
         // URL marks
         // FIXME: why does umarks.sort() cause a "Component is not available =
         // NS_ERROR_NOT_AVAILABLE" exception when used here?
-        let umarks = [i for (i in this._urlMarks)];
+
+        let umarks = Array.from(iter(this._urlMarks));
         umarks.sort(function (a, b) a[0].localeCompare(b[0]));
 
         return lmarks.concat(umarks);
@@ -174,11 +176,11 @@ const Marks = Module("marks", {
                   { header: "Line",   style: "text-align: right" },
                   { header: "Column", style: "text-align: right" },
                   { header: "File",   highlight: "URL" }],
-                ([mark[0],
-                  Math.round(mark[1].position.x * 100) + "%",
-                  Math.round(mark[1].position.y * 100) + "%",
-                  mark[1].location]
-                 for (mark of marks)));
+                marks.map(mark => [
+                    mark[0],
+                    Math.round(mark[1].position.x * 100) + "%",
+                    Math.round(mark[1].position.y * 100) + "%",
+                    mark[1].location]));
 
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
     },
@@ -216,7 +218,9 @@ const Marks = Module("marks", {
     },
 
     _localMarkIter: function _localMarkIter() {
-        return ([m,val] for ([m, value] in marks._localMarks) for (val of value));
+        return iter(Array.from(iter(marks._localMarks))
+                         .reduce((marks, [m, value]) =>
+                             marks.concat(value.map(val => [m, val])), []));
     }
 
 }, {
