@@ -77,13 +77,13 @@ const Liberator = Module("liberator", {
         config.features.add(platform);
         if (/^Win(32|64)$/.test(platform))
             config.features.add('Windows');
-        
+
         if (AddonManager) {
             let self = this;
             self._extensions = [];
             AddonManager.getAddonsByTypes(["extension"], function (e) self._extensions = e);
-            this.onEnabled = this.onEnabling = this.onDisabled = this.onDisabling = this.onInstalled = 
-                this.onInstalling = this.onUninstalled = this.onUninstalling = 
+            this.onEnabled = this.onEnabling = this.onDisabled = this.onDisabling = this.onInstalled =
+                this.onInstalling = this.onUninstalled = this.onUninstalling =
                 function () AddonManager.getAddonsByTypes(["extension"], function (e) self._extensions = e);
             AddonManager.addAddonListener(this);
         }
@@ -605,9 +605,21 @@ const Liberator = Module("liberator", {
         // Always process main and overlay files, since XSLTProcessor and
         // XMLHttpRequest don't allow access to chrome documents.
         tagMap.all = "all";
-        let files = findHelpFile("all").map(function (doc)
-                [f.value for (f in util.evaluateXPath(
-                    "//liberator:include/@href", doc))]);
+        let files = findHelpFile("all").map(function (doc) {
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = [f.value for (f in util.evaluateXPath(
+            //     "//liberator:include/@href", doc))];
+            // let after = Array.from(iter(util.evaluateXPath("//liberator:include/@href", doc)))
+            //                  .map(f => f.value);
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in liberator.js');
+            /* assert end */
+
+            return Array.from(iter(util.evaluateXPath("//liberator:include/@href", doc)))
+                        .map(f => f.value);
+        });
 
         // Scrape the tags from the rest of the help files.
         util.Array.flatten(files).forEach(function (file) {
@@ -621,7 +633,17 @@ const Liberator = Module("liberator", {
         const ps = new DOMParser;
         const encoder = Cc["@mozilla.org/layout/documentEncoder;1?type=text/xml"].getService(Ci.nsIDocumentEncoder);
         encoder.init(document, "text/xml", 0);
-        var body = xml.map([con for ([,con] in Iterator(plugins.contexts))], function (context) {
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        // let before = [con for ([,con] in Iterator(plugins.contexts))];
+        // let after = Array.from(values(plugins.contexts));
+        //
+        // dump('>>>' + before + '\n');
+        // assert(before.length == after.length, '#2 in liberator.js');
+        /* assert end */
+
+        var body = xml.map(Array.from(values(plugins.contexts)), function (context) {
             try { // debug
             var info = context.INFO;
             if (!info) return "";
@@ -1252,7 +1274,7 @@ const Liberator = Module("liberator", {
                                     }
                                     else
                                         collapsed = false;
-                                    
+
                                     actions[id] = collapsed; // add the action, or change an existing action
                                 }
                             }
@@ -1535,13 +1557,36 @@ const Liberator = Module("liberator", {
                 let extensions = liberator.extensions.filter(function (e) e.name.indexOf(filter) >= 0);
 
                 if (extensions.length > 0) {
+
+                    /* assert start */
+                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                    //
+                    // let before =
+                    //     ([template.icon(e, e.name),
+                    //       e.version,
+                    //       e.enabled ? xml`<span highlight="Enabled">enabled</span>`
+                    //                 : xml`<span highlight="Disabled">disabled</span>`,
+                    //       e.description] for ([, e] in Iterator(extensions)))
+                    // let after = util.Array.itervalues(extensions.map(e =>
+                    //     [template.icon(e, e.name),
+                    //      e.version,
+                    //      e.enabled ? xml`<span highlight="Enabled">enabled</span>`
+                    //                : xml`<span highlight="Disabled">disabled</span>`,
+                    //      e.description]
+                    // ));
+                    //
+                    // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#3 in liberator.js');
+                    /* assert end */
+
                     let list = template.tabular(
                         ["Name", "Version", "Status", "Description"],
-                        ([template.icon(e, e.name),
-                          e.version,
-                          e.enabled ? xml`<span highlight="Enabled">enabled</span>`
-                                    : xml`<span highlight="Disabled">disabled</span>`,
-                          e.description] for ([, e] in Iterator(extensions)))
+                        util.Array.itervalues(extensions.map(e =>
+                            [template.icon(e, e.name),
+                             e.version,
+                             e.enabled ? xml`<span highlight="Enabled">enabled</span>`
+                                       : xml`<span highlight="Disabled">disabled</span>`,
+                             e.description]
+                        ))
                     );
 
                     commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -1754,9 +1799,9 @@ const Liberator = Module("liberator", {
             "List all commands, mappings and options with a short description",
             function (args) {
                 let usage = {
-                    mappings: function() template.table2(xml, "Mappings", [[item.name || item.names[0], item.description] for (item in mappings)].sort()),
-                    commands: function() template.table2(xml, "Commands", [[item.name || item.names[0], item.description] for (item in commands)]),
-                    options:  function() template.table2(xml, "Options",  [[item.name || item.names[0], item.description] for (item in options)])
+                    mappings: function() template.table2(xml, "Mappings", Array.from(iter(mappings)).map(item => [item.name || item.names[0], item.description]).sort()),
+                    commands: function() template.table2(xml, "Commands", Array.from(iter(commands)).map(item => [item.name || item.names[0], item.description])),
+                    options:  function() template.table2(xml, "Options",  Array.from(iter(options)).map(item => [item.name || item.names[0], item.description]))
                 }
 
                 if (args[0] && !usage[args[0]])

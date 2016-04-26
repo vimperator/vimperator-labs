@@ -40,8 +40,23 @@ const Option = Class("Option", {
             update(this, extraInfo);
 
         // add no{option} variant of boolean {option} to this.names
-        if (this.type == "boolean")
-            this.names = array([name, "no" + name] for (name in values(names))).flatten().__proto__;
+        if (this.type == "boolean") {
+
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = array([name, "no" + name] for (name in values(names))).flatten().__proto__;
+            // let after = array(Object.keys(names)
+            //                 .map(k => [names[k], "no" + names[k]]))
+            //                 .flatten().__proto__;
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in options.js');
+            /* assert end */
+
+            this.names = array(Object.keys(names)
+                .map(k => [names[k], "no" + names[k]]))
+                .flatten().__proto__;
+        }
 
         if (this.globalValue == undefined)
             this.globalValue = this.defaultValue;
@@ -477,8 +492,32 @@ const Options = Module("options", {
 
     /** @property {Iterator(Option)} @private */
     __iterator__: function () {
-        let sorted = [o for ([i, o] in Iterator(this._optionHash))].sort(function (a, b) String.localeCompare(a.name, b.name));
-        return (v for (v of sorted));
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = [o for ([i, o] in Iterator(this._optionHash))].sort(function (a, b) String.localeCompare(a.name, b.name));
+        // let after = Object.keys(this._optionHash)
+        //     .map(i => this._optionHash[i])
+        //     .sort(function (a, b) String.localeCompare(a.name, b.name));
+        //
+        // assert(JSON.stringify(before) == JSON.stringify(after), '#2 in options.js');
+        /* assert end */
+
+        let sorted = Object.keys(this._optionHash)
+            .map(i => this._optionHash[i])
+            .sort(function (a, b) String.localeCompare(a.name, b.name));
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = (v for (v of sorted));
+        // let after = iter(sorted);
+        //
+        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#3 in options.js');
+        /* assert end */
+
+        return iter(sorted);
     },
 
     /** @property {Object} Observes preference value changes. */
@@ -1210,15 +1249,39 @@ const Options = Module("options", {
                 completer: function (context, args) {
                     return setCompleter(context, args);
                 },
-                serial: function () [
-                    {
-                        command: this.name,
-                        arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
-                                                          : opt.name + "=" + opt.value]
-                    }
-                    for (opt in options)
-                    if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
-                ]
+                serial: function () {
+
+                    /* assert start */
+                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                    //
+                    // let before = [
+                    //     {
+                    //         command: this.name,
+                    //         arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                    //                                           : opt.name + "=" + opt.value]
+                    //     }
+                    //     for (opt in options)
+                    //     if (!opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
+                    // ];
+                    // let after = Array.from(iter(options))
+                    //     .filter(opt => !opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
+                    //     .map(opt => ({
+                    //         command: this.name,
+                    //         arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                    //                                           : opt.name + "=" + opt.value]
+                    //     }));
+                    //
+                    // assert(JSON.stringify(before) == JSON.stringify(after), '#4 in options.js');
+                    /* assert end */
+
+                    return Array.from(iter(options))
+                        .filter(opt => !opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
+                        .map(opt => ({
+                            command: this.name,
+                            arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                                                              : opt.name + "=" + opt.value]
+                        }));
+                }
             });
 
         commands.add(["unl[et]"],
@@ -1241,7 +1304,17 @@ const Options = Module("options", {
             });
     },
     completion: function () {
-        JavaScript.setCompleter(this.get, [function () ([o.name, o.description] for (o in options))]);
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = ([o.name, o.description] for (o in options));
+        // let after = iter(Array.from(iter(options)).map(o => [o.name, o.description]));
+        //
+        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#5 in options.js');
+        /* assert end */
+
+        JavaScript.setCompleter(this.get, [function () iter(Array.from(iter(options)).map(o => [o.name, o.description]))]);
         JavaScript.setCompleter([this.getPref, this.safeSetPref, this.setPref, this.resetPref, this.invertPref],
                 [function () options.allPrefs().map(function (pref) [pref, ""])]);
 

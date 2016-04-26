@@ -133,7 +133,22 @@ const Modes = Module("modes", {
 
     get all() this._mainModes.slice(),
 
-    get mainModes() (mode for ([k, mode] in Iterator(modes._modeMap)) if (!mode.extended && mode.name == k)),
+    get mainModes() {
+
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = (mode for ([k, mode] in Iterator(modes._modeMap)) if (!mode.extended && mode.name == k));
+        // let after = iter(Object.keys(modes._modeMap)
+        //                        .filter(k => !modes._modeMap[k].extended && modes._modeMap[k].name == k)
+        //                        .map(k => modes._modeMap[k]));
+        //
+        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#1 in modes.js');
+        /* assert end */
+        return iter(Object.keys(modes._modeMap)
+                          .filter(k => !modes._modeMap[k].extended && modes._modeMap[k].name == k)
+                          .map(k => modes._modeMap[k]));
+    },
 
     get mainMode() this._modeMap[this._main],
 
@@ -161,9 +176,40 @@ const Modes = Module("modes", {
 
     getMode: function (name) this._modeMap[name],
 
-    getCharModes: function (chr) [m for (m in values(this._modeMap)) if (m.char == chr)],
+    getCharModes: function (chr) {
 
-    matchModes: function (obj) [m for (m in values(this._modeMap)) if (array(keys(obj)).every(function (k) obj[k] == (m[k] || false)))],
+    /* assert start */
+    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+    //
+    // let before = [m for (m in values(this._modeMap)) if (m.char == chr)];
+    // let after = Object.keys(this._modeMap)
+    //                   .map(k => this._modeMap[k])
+    //                   .filter(m => m.char == chr);
+    //
+    // assert(JSON.stringify(before) == JSON.stringify(after), '#2 in modes.js');
+    /* assert end */
+
+    return Object.keys(this._modeMap)
+                 .map(k => this._modeMap[k])
+                 .filter(m => m.char == chr);
+    },
+
+    matchModes: function (obj) {
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = [m for (m in values(this._modeMap)) if (array(keys(obj)).every(function (k) obj[k] == (m[k] || false)))];
+        // let after = Object.keys(this._modeMap)
+        //                   .map(k => this._modeMap[k])
+        //                   .filter(m => array(keys(obj)).every(function (k) obj[k] == (m[k] || false)));
+        //
+        // assert(JSON.stringify(before) == JSON.stringify(after), '#3 in modes.js');
+        /* assert end */
+
+        return Object.keys(this._modeMap)
+                     .map(k => this._modeMap[k])
+                     .filter(m => array(keys(obj)).every(function (k) obj[k] == (m[k] || false)));
+    },
 
     // show the current mode string in the command line
     show: function () {

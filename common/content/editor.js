@@ -492,7 +492,7 @@ const Editor = Module("editor", {
 
     getVisualMode: function() {
         return this._visualMode;
-    }, 
+    },
 
     setVisualMode: function(value) {
         this._visualMode = value;
