@@ -1,6 +1,7 @@
 201x-xx-xx:
 
 2016-04-28:
+    * @reepush changed all array and generator comprehensions to iterators and standards compliant javascript thus making vimeprator work with firefox 46
     * @amlitzer made iabbr work in contenteditable text boxes
     * @amlitzer add *PluginsLoadPost* autocmd event
     * @timss Split Vimperator syntax highlighting to seperate repo:
