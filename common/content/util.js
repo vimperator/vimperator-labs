@@ -343,21 +343,6 @@ const Util = Module("util", {
             addDataEntry(file + ".xhtml", data.join(""));
         }
 
-        /* assert start */
-        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-        //
-        // let before = [h.selector.replace(/^\[.*?=(.*?)\]/, ".hl-$1").replace(/html\|/, "") +
-        //                  "\t{" + h.value + "}"
-        //              for (h in highlight) if (/^Help|^Logo/.test(h.class))];
-        // let after = Array.from(iter(highlight))
-        //                  .filter(h => /^Help|^Logo/.test(h.class))
-        //                  .map(h =>
-        //                      h.selector.replace(/^\[.*?=(.*?)\]/, ".hl-$1").replace(/html\|/, "") +
-        //                      "\t{" + h.value + "}"
-        //                  );
-        //
-        // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in util.js');
-        /* assert end */
         let data = Array.from(iter(highlight))
                         .filter(h => /^Help|^Logo/.test(h.class))
                         .map(h =>

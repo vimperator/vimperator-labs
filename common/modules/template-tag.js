@@ -21,16 +21,6 @@ var EXPORTED_SYMBOLS = ["xml", "TemplateSupportsXML"] ;
 function createEscapeFunc(obj) {
     const c2c = obj;
     const re = new RegExp("[" + Object.keys(c2c).join("") + "]", "g");
-
-    /* assert start */
-    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-    //
-    // let before = [c for (c in c2c)].join("");
-    // let after = Object.keys(c2c).join("");
-    //
-    // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in template-tag.js');
-    /* assert end */
-
     return function _escapeFunc(s) String(s).replace(re, function (c) c2c[c]);
 }
 
