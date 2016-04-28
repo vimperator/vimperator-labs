@@ -152,8 +152,17 @@ window.Services,
         JavaScript.setCompleter(this.get, [
             function () Object.keys(services.jsm).concat(Object.keys(services.services)).map(function(key) [key, ""])
         ]);
-        JavaScript.setCompleter(this.create, [function () [[c, ""] for (c in services.classes)]]);
 
+        /* assert start */
+        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+        //
+        // let before = [[c, ""] for (c in services.classes)];
+        // let after = Object.keys(services.classes).map(c => [c, ""]);
+        //
+        // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in services.js');
+        /* assert end */
+
+        JavaScript.setCompleter(this.create, [function () Object.keys(services.classes).map(c => [c, ""])]);
     }
 });
 

@@ -196,7 +196,23 @@ const CompletionContext = Class("CompletionContext", {
     get allItems() {
         try {
             let self = this;
-            let minStart = Math.min.apply(Math, [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)]);
+
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = [context.offset for ([k, context] in Iterator(this.contexts)) if (context.items.length && context.hasItems)];
+            // let after = Object.keys(this.contexts)
+            //                   .filter(k => this.contexts[k].items.length && this.contexts[k].hasItems)
+            //                   .map(k => this.contexts[k].offset);
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in completion.js');
+            /* assert end */
+
+            let minStart = Math.min.apply(Math,
+                Object.keys(this.contexts)
+                      .filter(k => this.contexts[k].items.length && this.contexts[k].hasItems)
+                      .map(k => this.contexts[k].offset)
+            );
             if (minStart == Infinity)
                 minStart = 0;
             let items = this.contextList.map(function (context) {
@@ -251,8 +267,19 @@ const CompletionContext = Class("CompletionContext", {
     get completions() this._completions || [],
     set completions(items) {
         // Accept a generator
-        if ({}.toString.call(items) != '[object Array]')
-            items = [x for (x in Iterator(items))];
+        if ({}.toString.call(items) != '[object Array]') {
+            // NOTE: was unable to execute this assert
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = [x for (x in Iterator(items))];
+            // let after = Array.from(iter(items));
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#2 in completion.js');
+            /* assert end */
+
+            items = Array.from(iter(items));
+        }
         delete this.cache.filtered;
         delete this.cache.filter;
         this.cache.rows = [];

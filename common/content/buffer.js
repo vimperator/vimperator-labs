@@ -314,6 +314,7 @@ const Buffer = Module("buffer", {
      *     buffer. Only returns style sheets for the 'screen' media type.
      */
     get alternateStyleSheets() {
+        // NOTE: getAllStyleSheets seems to be not supported
         let stylesheets = window.getAllStyleSheets(config.browser.contentWindow);
 
         return stylesheets.filter(
@@ -1371,7 +1372,17 @@ const Buffer = Module("buffer", {
                 styles[style.title].push(style.href || "inline");
             });
 
-            context.completions = [[s, styles[s].join(", ")] for (s in styles)];
+            // NOTE: was unable to execute this assert
+            /* assert start */
+            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+            //
+            // let before = [[s, styles[s].join(", ")] for (s in styles)];
+            // let after = Object.keys(styles).map(s => [s, styles[s].join(", ")]);
+            //
+            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in buffer.js');
+            /* assert end */
+
+            context.completions = Object.keys(styles).map(s => [s, styles[s].join(", ")]);
         };
 
         const UNTITLED_LABEL = "(Untitled)";
@@ -1457,7 +1468,18 @@ const Buffer = Module("buffer", {
 
             if (flags & this.buffer.VISIBLE) {
                 context.title = ["Buffers"];
-                context.completions = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
+
+                /* assert start */
+                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                //
+                // let before = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
+                // let after = Array.from(generateTabs(tabs || config.tabbrowser.visibleTabs));
+                //
+                // dump(JSON.stringify(before));
+                // assert(JSON.stringify(before) == JSON.stringify(after), '#2 in buffer.js');
+                /* assert end */
+
+                context.completions = Array.from(generateTabs(tabs || config.tabbrowser.visibleTabs));
             }
 
             if (!liberator.has("tabgroup") || !tabGroup.TV)
@@ -1472,7 +1494,7 @@ const Buffer = Module("buffer", {
                         let groupName = group.getTitle();
                         context.fork("GROUP_" + group.id, 0, this, function (context) {
                             context.title = [groupName || UNTITLED_LABEL];
-                            context.completions = [item for (item in generateGroupList(group, groupName))];
+                            context.completions = Array.from(generateGroupList(group, groupName));
                         });
                     }
                 }
@@ -1670,9 +1692,29 @@ const Buffer = Module("buffer", {
                                  "textarea[not(@disabled) and not(@readonly)]",
                                  "iframe"];
 
-                    let elements = [m for (m in util.evaluateXPath(xpath))
-                        if(m.getClientRects().length && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
-                    ];
+                    /* assert start */
+                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                    //
+                    // let after = [];
+                    // for (m in util.evaluateXPath(xpath)) {
+                    //     if (m.getClientRects().length
+                    //     && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
+                    //         after.push(m);
+                    // }
+                    // let before = [m for (m in util.evaluateXPath(xpath))
+                    //     if(m.getClientRects().length && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
+                    // ];
+                    //
+                    // assert(JSON.stringify(before) == JSON.stringify(after), '#3 in buffer.js');
+                    /* assert end */
+
+                    // NOTE: Array.from doesn't work here
+                    let elements = [];
+                    for (let m in util.evaluateXPath(xpath)) {
+                        if (m.getClientRects().length
+                        && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
+                            elements.push(m);
+                    }
 
                     liberator.assert(elements.length > 0);
                     buffer.focusElement(elements[util.Math.constrain(count, 1, elements.length) - 1]);
@@ -1795,7 +1837,18 @@ const Buffer = Module("buffer", {
             "Desired info in the :pageinfo output",
             "charlist", "gfm",
             {
-                completer: function (context) [[k, v[1]] for ([k, v] in Iterator(buffer.pageInfo))]
+                completer: function (context) {
+                    /* assert start */
+                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                    //
+                    // let before = [[k, v[1]] for ([k, v] in Iterator(buffer.pageInfo))];
+                    // let after = Object.keys(buffer.pageInfo).map(k => [k, buffer.pageInfo[k][1]]);
+                    //
+                    // assert(JSON.stringify(before) == JSON.stringify(after), '#4 in buffer.js');
+                    /* assert end */
+
+                    return Object.keys(buffer.pageInfo).map(k => [k, buffer.pageInfo[k][1]]);
+                }
             });
 
         options.add(["scroll", "scr"],

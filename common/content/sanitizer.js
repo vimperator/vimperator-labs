@@ -105,7 +105,7 @@ const Sanitizer = Module("sanitizer", {
 
                     liberator.echomsg("Sanitizing " + args + " items...");
 
-                    let items = [item for (item of args.map(Sanitizer.argToPref))];
+                    let items = args.map(Sanitizer.argToPref);
                     for (let item of items) {
                         if (sanitizer.canClearItem(item, function () {})) {
                             try {

@@ -428,7 +428,17 @@ const StatusLine = Module("statusline", {
                 },
                 completer: function completer(context) {
                     var fields = statusline._statusfields;
-                    return [[name, fields[name].description] for (name of Object.keys(fields))];
+
+                    /* assert start */
+                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
+                    //
+                    // let before = [[name, fields[name].description] for (name of Object.keys(fields))];
+                    // let after = Object.keys(fields).map(name => [name, fields[name].description]);
+                    //
+                    // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in statusline.js');
+                    /* assert end */
+
+                    return Object.keys(fields).map(name => [name, fields[name].description]);
                 },
             });
 
