@@ -1710,7 +1710,7 @@ const Buffer = Module("buffer", {
 
                     // NOTE: Array.from doesn't work here
                     let elements = [];
-                    for (m in util.evaluateXPath(xpath)) {
+                    for (let m in util.evaluateXPath(xpath)) {
                         if (m.getClientRects().length
                         && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
                             elements.push(m);

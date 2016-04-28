@@ -293,7 +293,7 @@ var Config = Module("config", ConfigBase, {
                 /* assert end */
 
                 let completions = [];
-                for (i of util.range(0, result.matchCount)) {
+                for (let i of util.range(0, result.matchCount)) {
                   completions.push([result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]);
                 }
                 context.completions = completions;

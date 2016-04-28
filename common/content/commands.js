@@ -1152,7 +1152,8 @@ const Commands = Module("commands", {
                             /* assert end */
 
                             return Object.keys(completeOptionMap)
-                                         .filter(k => (completer == completion[completeOptionMap[k]]))[0] || "custom";
+                                         .filter(k => (completer == completion[completeOptionMap[k]]))[0] ||
+                                   "custom";
                         } else {
                             return "";
                         }
