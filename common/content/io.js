@@ -917,17 +917,6 @@ lookup:
                 liberator.assert(!file.exists() || args.bang,
                     "File exists: " + filename + ". Add ! to override.");
 
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = [cmd.serial().map(commands.commandToString) for (cmd in commands) if (cmd.serial)];
-                // let after = Array.from(iter(commands))
-                //                  .filter(cmd => cmd.serial)
-                //                  .map(cmd => cmd.serial().map(commands.commandToString));
-                //
-                // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in io.js');
-                /* assert end */
-
                 let lines = Array.from(iter(commands))
                                  .filter(cmd => cmd.serial)
                                  .map(cmd => cmd.serial().map(commands.commandToString));
@@ -969,15 +958,6 @@ lookup:
         commands.add(["scrip[tnames]"],
             "List all sourced script names",
             function () {
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = ([i + 1, file] for ([i, file] in Iterator(io._scriptNames)))
-                // let after = iter(io._scriptNames.map((file, i) => [i + 1, file]));
-                //
-                // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#2 in io.js');
-                /* assert end */
-
                 let list = template.tabular([{ header: "<SNR>", style: "text-align: right; padding-right: 1em;" }, "Filename"],
                     iter(io._scriptNames.map((file, i) => [i + 1, file])));
 
@@ -1123,18 +1103,6 @@ lookup:
                 for (let dirName of dirNames) {
                     let dir = io.File(dirName);
                     if (dir.exists() && dir.isDirectory()) {
-                        /* assert start */
-                        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                        //
-                        // let before = [[file.leafName, dir.path] for (file in dir.iterDirectory())
-                        //              if (file.isFile() && file.isExecutable())];
-                        // let after = Array.from(dir.iterDirectory())
-                        //                  .filter(file => file.isFile() && file.isExecutable())
-                        //                  .map(file => [file.leafName, dir.path]);
-                        //
-                        // assert(JSON.stringify(before) == JSON.stringify(after), '#3 in io.js');
-                        /* assert end */
-
                         commands.push(
                             Array.from(dir.iterDirectory())
                                  .filter(file => file.isFile() && file.isExecutable())

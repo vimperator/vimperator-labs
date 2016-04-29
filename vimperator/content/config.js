@@ -276,22 +276,6 @@ var Config = Module("config", ConfigBase, {
             let timer = new Timer(50, 100, function (result) {
                 context.incomplete = result.searchResult >= result.RESULT_NOMATCH_ONGOING;
 
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = [
-                //     [result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]
-                //         for (i in util.range(0, result.matchCount))
-                // ];
-                //
-                // let after = [];
-                // for (i of util.range(0, result.matchCount)) {
-                //   after.push([result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]);
-                // }
-                //
-                // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in config.js');
-                /* assert end */
-
                 let completions = [];
                 for (let i of util.range(0, result.matchCount)) {
                   completions.push([result.getValueAt(i), result.getCommentAt(i), result.getImageAt(i)]);

@@ -964,16 +964,6 @@ const Hints = Module("hints", {
                 promptHighlight: "Normal",
                 completer: function (context) {
                     context.compare = function () 0;
-
-                    /* assert start */
-                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                    //
-                    // let before = [[k, v.prompt] for ([k, v] in Iterator(hints._hintModes))];
-                    // let after = Object.keys(hints._hintModes).map(k => [k, hints._hintModes[k].prompt]);
-                    //
-                    // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in hints.js');
-                    /* assert end */
-
                     context.completions = Object.keys(hints._hintModes).map(k => [k, hints._hintModes[k].prompt]);
                 },
                 onChange: function (str) {

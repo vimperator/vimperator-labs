@@ -237,16 +237,6 @@ const Events = Module("events", {
             return this._macros;
 
         let re = RegExp(filter);
-
-        /* assert start */
-        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-        //
-        // let before = ([macro, keys] for ([macro, keys] in this._macros) if (re.test(macro)));
-        // let after = iter(Array.from(iter(this._macros)).filter(([macro, keys]) => re.test(macro)));
-        //
-        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#1 in events.js');
-        /* assert end */
-
         return iter(Array.from(iter(this._macros)).filter(([macro, keys]) => re.test(macro)));
     },
 
@@ -375,16 +365,6 @@ const Events = Module("events", {
         };
         var t = TYPES[type];
         var evt = doc.createEvent(t + "Events");
-
-        /* assert start */
-        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-        //
-        // let before = [v for (v of values(update(DEFAULTS[t], opts)))];
-        // let after = Array.from(values(update(DEFAULTS[t], opts)));
-        //
-        // assert(before.length == after.length, '#2 in events.js');
-        /* assert end */
-
         evt["init" + t + "Event"].apply(evt, Array.from(values(update(DEFAULTS[t], opts))));
         return evt;
     },

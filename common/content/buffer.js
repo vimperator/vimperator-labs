@@ -314,7 +314,6 @@ const Buffer = Module("buffer", {
      *     buffer. Only returns style sheets for the 'screen' media type.
      */
     get alternateStyleSheets() {
-        // NOTE: getAllStyleSheets seems to be not supported
         let stylesheets = window.getAllStyleSheets(config.browser.contentWindow);
 
         return stylesheets.filter(
@@ -1045,7 +1044,7 @@ const Buffer = Module("buffer", {
         if ("FullZoom" in window)
             FullZoom._applyZoomToPref(browser);
         liberator.echomsg((fullZoom ? "Full" : "Text") + " zoom: " + value + "%");
-        
+
         statusline.updateField("zoomlevel", value);
     },
 
@@ -1371,17 +1370,6 @@ const Buffer = Module("buffer", {
 
                 styles[style.title].push(style.href || "inline");
             });
-
-            // NOTE: was unable to execute this assert
-            /* assert start */
-            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-            //
-            // let before = [[s, styles[s].join(", ")] for (s in styles)];
-            // let after = Object.keys(styles).map(s => [s, styles[s].join(", ")]);
-            //
-            // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in buffer.js');
-            /* assert end */
-
             context.completions = Object.keys(styles).map(s => [s, styles[s].join(", ")]);
         };
 
@@ -1468,17 +1456,6 @@ const Buffer = Module("buffer", {
 
             if (flags & this.buffer.VISIBLE) {
                 context.title = ["Buffers"];
-
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = [item for (item in generateTabs(tabs || config.tabbrowser.visibleTabs))];
-                // let after = Array.from(generateTabs(tabs || config.tabbrowser.visibleTabs));
-                //
-                // dump(JSON.stringify(before));
-                // assert(JSON.stringify(before) == JSON.stringify(after), '#2 in buffer.js');
-                /* assert end */
-
                 context.completions = Array.from(generateTabs(tabs || config.tabbrowser.visibleTabs));
             }
 
@@ -1692,23 +1669,6 @@ const Buffer = Module("buffer", {
                                  "textarea[not(@disabled) and not(@readonly)]",
                                  "iframe"];
 
-                    /* assert start */
-                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                    //
-                    // let after = [];
-                    // for (m in util.evaluateXPath(xpath)) {
-                    //     if (m.getClientRects().length
-                    //     && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
-                    //         after.push(m);
-                    // }
-                    // let before = [m for (m in util.evaluateXPath(xpath))
-                    //     if(m.getClientRects().length && (!(m instanceof HTMLIFrameElement) || Editor.windowIsEditable(m.contentWindow)))
-                    // ];
-                    //
-                    // assert(JSON.stringify(before) == JSON.stringify(after), '#3 in buffer.js');
-                    /* assert end */
-
-                    // NOTE: Array.from doesn't work here
                     let elements = [];
                     for (let m in util.evaluateXPath(xpath)) {
                         if (m.getClientRects().length
@@ -1838,15 +1798,6 @@ const Buffer = Module("buffer", {
             "charlist", "gfm",
             {
                 completer: function (context) {
-                    /* assert start */
-                    // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                    //
-                    // let before = [[k, v[1]] for ([k, v] in Iterator(buffer.pageInfo))];
-                    // let after = Object.keys(buffer.pageInfo).map(k => [k, buffer.pageInfo[k][1]]);
-                    //
-                    // assert(JSON.stringify(before) == JSON.stringify(after), '#4 in buffer.js');
-                    /* assert end */
-
                     return Object.keys(buffer.pageInfo).map(k => [k, buffer.pageInfo[k][1]]);
                 }
             });

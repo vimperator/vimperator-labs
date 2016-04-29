@@ -557,16 +557,6 @@ const Commands = Module("commands", {
         function matchOpts(arg) {
             // Push possible option matches into completions
             if (complete && !onlyArgumentsRemaining) {
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = [[opt[0], opt[0][0]] for (opt of options) if (!(opt[0][0] in args))];
-                // let after = options.filter(opt => !(opt[0][0] in args))
-                //                    .map(opt => [opt[0], opt[0][0]]);
-                //
-                // assert(JSON.stringify(before) == JSON.stringify(after), '#1 in commands.js');
-                /* assert end */
-
                 completeOpts = options.filter(opt => !(opt[0][0] in args))
                                       .map(opt => [opt[0], opt[0][0]]);
             }
@@ -957,16 +947,6 @@ const Commands = Module("commands", {
     },
 
     completion: function () {
-        /* assert start */
-        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-        //
-        // let before = ([c.name, c.description] for (c in commands));
-        // let after = iter(Array.from(iter(commands)).map(c => [c.name, c.description]));
-        //
-        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#2 in commands.js');
-        /* assert end */
-
-        // NOTE: Array.from() doesn't work here, but we can do Array.from(iter(commands)).
         JavaScript.setCompleter(this.get, [function () iter(Array.from(iter(commands)).map(c => [c.name, c.description]))]);
 
         completion.command = function command(context, subCmds) {
@@ -976,16 +956,6 @@ const Commands = Module("commands", {
                 context.completions = subCmds;
             } else {
                 context.title = ["Command"];
-
-                /* assert start */
-                // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                //
-                // let before = [k for (k in commands)];
-                // let after = Array.from(iter(commands));
-                //
-                // assert(JSON.stringify(before) == JSON.stringify(after), '#3 in commands.js');
-                /* assert end */
-
                 context.completions = Array.from(iter(commands));
             }
         };
@@ -1042,20 +1012,6 @@ const Commands = Module("commands", {
 
         completion.userCommand = function userCommand(context) {
             context.title = ["User Command", "Definition"];
-
-            /* assert start */
-            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-            //
-            // let before = [
-            //     [command.name, command.replacementText || "function () { ... }"]
-            //     for (command of commands.getUserCommands())
-            // ];
-            // let after = commands.getUserCommands().map(command =>
-            //     [command.name, command.replacementText || "function () { ... }"]);
-            //
-            // assert(JSON.stringify(before) == JSON.stringify(after), '#4 in commands.js');
-            /* assert end */
-
             context.completions = commands.getUserCommands().map(command =>
                 [command.name, command.replacementText || "function () { ... }"]);
         };
@@ -1141,16 +1097,6 @@ const Commands = Module("commands", {
                 else {
                     function completerToString(completer) {
                         if (completer) {
-                            /* assert start */
-                            // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                            //
-                            // let before = [k for ([k, v] in Iterator(completeOptionMap)) if (completer == completion[v])][0] || "custom";
-                            // let after = Object.keys(completeOptionMap)
-                            //                   .filter(k => (completer == completion[completeOptionMap[k]]))[0] || "custom";
-                            //
-                            // assert(JSON.stringify(before) == JSON.stringify(after), '#5 in commands.js');
-                            /* assert end */
-
                             return Object.keys(completeOptionMap)
                                          .filter(k => (completer == completion[completeOptionMap[k]]))[0] ||
                                    "custom";
@@ -1165,28 +1111,6 @@ const Commands = Module("commands", {
                     let cmds = commands._exCommands.filter(function (c) c.user && (!cmd || c.name.match("^" + cmd)));
 
                     if (cmds.length > 0) {
-                        /* assert start */
-                        // function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                        //
-                        // let before = ([cmd.bang ? "!" : " ",
-                        //       cmd.name,
-                        //       cmd.argCount,
-                        //       cmd.count ? "0c" : "",
-                        //       completerToString(cmd.completer),
-                        //       cmd.replacementText || "function () { ... }"]
-                        //      for ([, cmd] in Iterator(cmds)));
-                        // let after = iter(cmds.map(cmd => [
-                        //       cmd.bang ? "!" : " ",
-                        //       cmd.name,
-                        //       cmd.argCount,
-                        //       cmd.count ? "0c" : "",
-                        //       completerToString(cmd.completer),
-                        //       cmd.replacementText || "function () { ... }"
-                        // ]));
-                        //
-                        // assert(JSON.stringify(Array.from(before)) == JSON.stringify(Array.from(after)), '#6 in commands.js');
-                        /* assert end */
-
                         let str = template.tabular(["", "Name", "Args", "Range", "Complete", "Definition"],
                             iter(cmds.map(cmd => [
                                 cmd.bang ? "!" : " ",
@@ -1224,16 +1148,6 @@ const Commands = Module("commands", {
                     [["-description"], commands.OPTION_STRING],
                     [["-complete"], commands.OPTION_STRING,
                          function (arg) arg in completeOptionMap || /custom,\w+/.test(arg),
-                         /* assert start */
-                        //  (function() {
-                        //      function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                        //      let before = [[k, ""] for ([k, v] in Iterator(completeOptionMap))];
-                        //      let after = Object.keys(completeOptionMap).map(k => [k, ""]);
-                         //
-                        //      dump('>>> before: ' + JSON.stringify(before) + '\n');
-                        //      assert(JSON.stringify(before) == JSON.stringify(after), '#7 in commands.js');
-                        //  })(),
-                         /* assert end */
                          function (context) Object.keys(completeOptionMap).map(k => [k, ""])]
                 ],
                 literal: 1,
@@ -1244,26 +1158,6 @@ const Commands = Module("commands", {
                             command: this.name,
                             bang: true,
                             options: util.Array.toObject(
-                                /* assert start */
-                                // (function() {
-                                //     function assert(condition, bookmark) { dump(bookmark+': '); if (!condition) dump('FAILED\n'); else dump('PASSED\n'); }
-                                //
-                                //     let before = [[v, typeof cmd[k] == "boolean" ? null : cmd[k]]
-                                //         for ([k, v] in Iterator({ argCount: "-nargs", bang: "-bang", count: "-count", description: "-description" }))
-                                //         if (k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")];
-                                //     let options = {
-                                //         argCount: "-nargs",
-                                //         bang: "-bang",
-                                //         count: "-count",
-                                //         description: "-description"
-                                //     };
-                                //     let after = Object.keys(options)
-                                //                       .filter(k => k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")
-                                //                       .map(k => [options[k], typeof cmd[k] == "boolean" ? null : cmd[k]]);
-                                //
-                                //     assert(JSON.stringify(before) == JSON.stringify(after), '#8 in commands.js');
-                                // }()),
-                                /* assert end */
                                 (function() {
                                     let options = {
                                         argCount: "-nargs",
