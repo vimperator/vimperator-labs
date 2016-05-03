@@ -231,13 +231,13 @@ function Highlights(name, store) {
         return base != this.class && base in highlight ? highlight[base] : null;
     });
 
-    let hightlightKeys = [];
+    let highlightKeys = [];
     for ([k, v] in this)
-        hightlightKeys.push(k + ": " + util.escapeString(v || "undefined"));
-    Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + hightlightKeys.join("\n\t");
+        highlightKeys.push(k + ": " + util.escapeString(v || "undefined"));
+    Highlight.prototype.toString = function () "Highlight(" + this.class + ")\n\t" + highlightKeys.join("\n\t");
 
     function keys() {
-        return Object.keys(hightlight).sort();
+        return Object.keys(highlight).sort();
     }
 
     this.__iterator__ = function () iter(keys().map(v => highlight[v]));
@@ -811,7 +811,7 @@ Module("highlight", {
                 literal: 1,
                 options: [[["-append", "-a"], commands.OPTION_NOARG]],
                 serial: function () {
-                    return Array.from(iter(hightlight))
+                    return Array.from(iter(highlight))
                                 .filter(v => v.value != v.default)
                                 .map(v => ({
                                     command: this.name,
