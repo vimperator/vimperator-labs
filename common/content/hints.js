@@ -92,7 +92,6 @@ const Hints = Module("hints", {
         this._hintNumber = null;         // only the numerical part of the hint
         this._usedTabKey = false;        // when we used <Tab> to select an element
         this._prevInput = "";            // record previous user input type, "text" || "number"
-        this._canUpdate = false;
     },
 
     /**
@@ -939,7 +938,6 @@ const Hints = Module("hints", {
         // get all keys from the input queue
         liberator.threadYield(true);
 
-        this._canUpdate = true;
         this._showHints();
 
         if (this._validHints.length == 0) {
@@ -1008,7 +1006,6 @@ const Hints = Module("hints", {
      */
     onEvent: function (event) {
         let key = events.toString(event);
-        let followFirst = false;
 
         // clear any timeout which might be active after pressing a number
         if (this._activeTimeout) {
@@ -1018,9 +1015,8 @@ const Hints = Module("hints", {
 
         switch (key) {
         case "<Return>":
-            followFirst = true;
-            break;
-
+            this._processHints(true);
+            return;
         case "<Tab>":
         case "<S-Tab>":
             this._usedTabKey = true;
@@ -1042,7 +1038,6 @@ const Hints = Module("hints", {
                 this._hintNumber = Math.floor(this._hintNumber / 10);
                 if (this._hintNumber === 0)
                     this._resetInput();
-                    this._canUpdate = true;
             }
             else {
                 this._usedTabKey = false;
@@ -1072,13 +1067,6 @@ const Hints = Module("hints", {
 
             let oldHintNumber = this._hintNumber;
 
-            if (!this._canUpdate)
-                return;
-
-            if (this._docs.length == 0) {
-                this._generate();
-                this._showHints();
-            }
             this._showActiveHint(this._hintNumber, oldHintNumber || 1);
 
             this._checkUnique();
@@ -1086,13 +1074,11 @@ const Hints = Module("hints", {
 
         this._updateStatusline();
 
-        if (this._canUpdate) {
-            if (this._docs.length == 0 && this._hintString.length > 0)
-                this._generate();
-
-            this._showHints();
-            this._processHints(followFirst);
+        if (this._docs.length == 0 && this._hintString.length > 0) {
+            this._generate();
         }
+        this._showHints();
+        this._processHints(false);
     }
 
     // FIXME: add resize support
