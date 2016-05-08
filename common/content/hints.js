@@ -11,25 +11,11 @@ const Hints = Module("hints", {
     requires: ["config"],
 
     init: function () {
-
         this._hintMode = null;
-        this._submode    = "";           // used for extended mode, can be "o", "t", "y", etc.
-        this._hintString = "";           // the typed string part of the hint is in this string
-        this._hintNumber = 0;            // only the numerical part of the hint
-        this._usedTabKey = false;        // when we used <Tab> to select an element
-        this._prevInput = "";            // record previous user input type, "text" || "number"
+        this._submode  = "";             // used for extended mode, can be "o", "t", "y", etc.
         this._extendedhintCount = null;  // for the count argument of Mode#action (extended hint only)
 
-        this._pageHints = [];
-        this._validHints = [];           // store the indices of the "hints" array with valid elements
-        this._tabNavigation = {};        // for navigating between valid hints when TAB key is pressed
-
-        this._activeTimeout = null;  // needed for hinttimeout > 0
-        this._canUpdate = false;
-
-        // keep track of the documents which we generated the hints for
-        // this._docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
-        this._docs = [];
+        this._reset();
 
         const Mode = Hints.Mode;
         Mode.defaultValue("tags", function () function () options.hinttags);
@@ -88,18 +74,31 @@ const Hints = Module("hints", {
      * Reset hints, so that they can be cleanly used again.
      */
     _reset: function () {
-        statusline.updateField("input", "");
-        this._hintString = "";
-        this._hintNumber = 0;
-        this._usedTabKey = false;
-        this._prevInput = "";
+        this._hintString = "";           // the typed string part of the hint is in this string
         this._pageHints = [];
-        this._validHints = [];
-        this._tabNavigation = {};
-        this._canUpdate = false;
-        this._docs = [];
-        hints.escNumbers = false;
+        this._validHints = [];           // store the indices of the "hints" array with valid elements
+        this._tabNavigation = {};        // for navigating between valid hints when TAB key is pressed
 
+        this._resetInput();
+
+        // keep track of the documents which we generated the hints for
+        // this._docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
+        this._docs = [];
+
+        this._clearTimeout();
+    },
+
+    _resetInput: function() {
+        this._hintNumber = 0;            // only the numerical part of the hint
+        this._usedTabKey = false;        // when we used <Tab> to select an element
+        this._prevInput = "";            // record previous user input type, "text" || "number"
+        this._canUpdate = false;
+    },
+
+    /**
+     * Clear _activeTimeout, a handle to delayed event (setTimeout)
+     */
+    _clearTimeout: function() {
         if (this._activeTimeout)
             clearTimeout(this._activeTimeout);
         this._activeTimeout = null;
@@ -563,6 +562,8 @@ const Hints = Module("hints", {
         styles.removeSheet(true, "hint-positions");
 
         this._reset();
+        statusline.updateField("input", "");
+        hints.escNumbers = false;
     },
 
     _num2chars: function (num) {
@@ -671,10 +672,7 @@ const Hints = Module("hints", {
         this._prevInput = "text";
 
         // clear any timeout which might be active after pressing a number
-        if (this._activeTimeout) {
-            clearTimeout(this._activeTimeout);
-            this._activeTimeout = null;
-        }
+        this._clearTimeout();
 
         this._hintNumber = 0;
         this._hintString = commandline.command;
@@ -926,10 +924,7 @@ const Hints = Module("hints", {
 
         this._submode = minor;
         this._hintString = filter || "";
-        this._hintNumber = 0;
-        this._usedTabKey = false;
-        this._prevInput = "";
-        this._canUpdate = false;
+        this._resetInput();
 
         this._generate(win);
 
