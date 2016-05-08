@@ -979,6 +979,17 @@ const Hints = Module("hints", {
     },
 
     /**
+     * Return true if key is a valid entry point for hints handling
+     */
+    canHandleKey: function(key) {
+        return (
+            ["<Return>", "<Tab>", "<S-Tab>", mappings.getMapLeader()].indexOf(key) > -1 ||
+            (key == "<BS>" && hints.previnput === "number") ||
+            (hints._isHintNumber(key) && !hints.escNumbers)
+        );
+    },
+
+    /**
      * Handle a hint mode event.
      *
      * @param {Event} event The event to handle.

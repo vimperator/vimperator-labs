@@ -966,14 +966,9 @@ const Events = Module("events", {
                     throw killEvent();
                 }
 
-                // All of these special cases for hint mode are driving
-                // me insane! -Kris
                 if (modes.extended & modes.HINTS) {
                     // under HINT mode, certain keys are redirected to hints.onEvent
-                    if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
-                        || key == mappings.getMapLeader()
-                        || (key == "<BS>" && hints.previnput == "number")
-                        || (hints._isHintNumber(key) && !hints.escNumbers)) {
+                    if (hints.canHandleKey(key)) {
                         hints.onEvent(event);
                         this._input.buffer = "";
                         throw killEvent();
