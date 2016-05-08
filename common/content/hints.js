@@ -651,11 +651,11 @@ const Hints = Module("hints", {
     _checkUnique: function () {
         if (
             this._hintNumber === null ||
-            this._hintNumber === this._chars2num(options.hintchars[0])
+            this._hintNumber === this._chars2num(options.hintchars[0]) ||
+            this._hintNumber > this._validHints.length
         ) {
             return;
         }
-        liberator.assert(this._hintNumber <= this._validHints.length);
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
