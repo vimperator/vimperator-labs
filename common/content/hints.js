@@ -89,7 +89,7 @@ const Hints = Module("hints", {
     },
 
     _resetInput: function() {
-        this._hintNumber = 0;            // only the numerical part of the hint
+        this._hintNumber = null;         // only the numerical part of the hint
         this._usedTabKey = false;        // when we used <Tab> to select an element
         this._prevInput = "";            // record previous user input type, "text" || "number"
         this._canUpdate = false;
@@ -108,7 +108,11 @@ const Hints = Module("hints", {
      * Display the current status to the user.
      */
     _updateStatusline: function () {
-        statusline.updateField("input", (hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber ? this._num2chars(this._hintNumber) : ""));
+        statusline.updateField(
+            "input",
+            (hints.escNumbers ? mappings.getMapLeader() : "") +
+            (this._hintNumber !== null ? this._num2chars(this._hintNumber) : "")
+        );
     },
 
     /**
@@ -449,7 +453,7 @@ const Hints = Module("hints", {
                 let valid = validHint(hint.text);
                 let hintnumchars = this._num2chars(hintnum);
                 let display = valid && (
-                    this._hintNumber == 0 ||
+                    this._hintNumber === null ||
                     hintnumchars.indexOf(String(activeHintChars)) == 0
                 );
 
@@ -645,8 +649,12 @@ const Hints = Module("hints", {
     },
 
     _checkUnique: function () {
-        if (this._hintNumber == 0)
+        if (
+            this._hintNumber === null ||
+            this._hintNumber === this._chars2num(options.hintchars[0])
+        ) {
             return;
+        }
         liberator.assert(this._hintNumber <= this._validHints.length);
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
@@ -674,7 +682,7 @@ const Hints = Module("hints", {
         // clear any timeout which might be active after pressing a number
         this._clearTimeout();
 
-        this._hintNumber = 0;
+        this._hintNumber = null;
         this._hintString = commandline.command;
         this._updateStatusline();
         this._showHints();
@@ -985,7 +993,11 @@ const Hints = Module("hints", {
         return (
             ["<Return>", "<Tab>", "<S-Tab>", mappings.getMapLeader()].indexOf(key) > -1 ||
             (key == "<BS>" && hints.previnput === "number") ||
-            (hints._isHintNumber(key) && !hints.escNumbers)
+            (
+                hints._isHintNumber(key) &&
+                !hints.escNumbers &&
+                (key !== options.hintchars[0] || this._prevInput === "number")
+            )
         );
     },
 
@@ -1012,7 +1024,7 @@ const Hints = Module("hints", {
         case "<Tab>":
         case "<S-Tab>":
             this._usedTabKey = true;
-            if (this._hintNumber == 0)
+            if (this._hintNumber === null)
                 this._hintNumber = 1;
 
             let oldId = this._hintNumber;
@@ -1026,14 +1038,14 @@ const Hints = Module("hints", {
             return;
 
         case "<BS>":
-            if (this._hintNumber > 0 && !this._usedTabKey) {
+            if (this._hintNumber !== null && !this._usedTabKey) {
                 this._hintNumber = Math.floor(this._hintNumber / 10);
-                if (this._hintNumber == 0)
+                if (this._hintNumber === 0)
                     this._prevInput = "text";
             }
             else {
                 this._usedTabKey = false;
-                this._hintNumber = 0;
+                this._hintNumber = null;
                 liberator.beep();
                 return;
             }
@@ -1042,38 +1054,33 @@ const Hints = Module("hints", {
        case mappings.getMapLeader():
            hints.escNumbers = !hints.escNumbers;
            if (hints.escNumbers && this._usedTabKey) // this._hintNumber not used normally, but someone may wants to toggle
-               this._hintNumber = 0;            // <tab>s ? this._reset. Prevent to show numbers not entered.
+               this._hintNumber = null;            // <tab>s ? this._reset. Prevent to show numbers not entered.
 
            this._updateStatusline();
            return;
 
         default:
-            if (this._isHintNumber(key)) {
-                this._prevInput = "number";
-
-                let oldHintNumber = this._hintNumber;
-                if (this._hintNumber == 0 || this._usedTabKey) {
-                    this._usedTabKey = false;
-                    this._hintNumber = this._chars2num(key);
-                }
-                else
-                    this._hintNumber = this._chars2num(this._num2chars(this._hintNumber) + key);
-
-                this._updateStatusline();
-
-                if (!this._canUpdate)
-                    return;
-
-                if (this._docs.length == 0) {
-                    this._generate();
-                    this._showHints();
-                }
-                this._showActiveHint(this._hintNumber, oldHintNumber || 1);
-
-                liberator.assert(this._hintNumber != 0);
-
-                this._checkUnique();
+            if (this._hintNumber !== null) {
+                this._hintNumber = this._chars2num(this._num2chars(this._hintNumber) + key);
             }
+            else {
+                this._usedTabKey = false;
+                this._hintNumber = this._chars2num(key);
+            }
+            this._prevInput = "number";
+
+            let oldHintNumber = this._hintNumber;
+
+            if (!this._canUpdate)
+                return;
+
+            if (this._docs.length == 0) {
+                this._generate();
+                this._showHints();
+            }
+            this._showActiveHint(this._hintNumber, oldHintNumber || 1);
+
+            this._checkUnique();
         }
 
         this._updateStatusline();
