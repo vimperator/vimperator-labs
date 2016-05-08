@@ -992,7 +992,7 @@ const Hints = Module("hints", {
     canHandleKey: function(key) {
         return (
             ["<Return>", "<Tab>", "<S-Tab>", mappings.getMapLeader()].indexOf(key) > -1 ||
-            (key == "<BS>" && hints.previnput === "number") ||
+            (key == "<BS>" && hints._prevInput === "number") ||
             (
                 hints._isHintNumber(key) &&
                 !hints.escNumbers &&
@@ -1041,7 +1041,8 @@ const Hints = Module("hints", {
             if (this._hintNumber !== null && !this._usedTabKey) {
                 this._hintNumber = Math.floor(this._hintNumber / 10);
                 if (this._hintNumber === 0)
-                    this._prevInput = "text";
+                    this._resetInput();
+                    this._canUpdate = true;
             }
             else {
                 this._usedTabKey = false;
