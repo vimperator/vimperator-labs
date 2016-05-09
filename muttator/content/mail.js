@@ -32,7 +32,7 @@ const Mail = Module("mail", {
 
         OnItemEvent: function (folder, event) {
             let eventType = event.toString();
-            if (eventType == "FolderLoaded") {
+            if (eventType === "FolderLoaded") {
                 if (folder) {
                     let msgFolder = folder.QueryInterface(Ci.nsIMsgFolder);
                     autocommands.trigger("FolderLoaded", { url: msgFolder });
@@ -77,7 +77,7 @@ const Mail = Module("mail", {
         if (folders.length > 1) {
             folders = mail.getExactFolder(destinationFolder);
         }
-        if (folders.length == 0)
+        if (folders.length === 0)
             return void liberator.echoerr("No matching folder for: " + destinationFolder);
         else if (folders.length > 1)
             return liberator.echoerr("More than one match for: " + destinationFolder);
@@ -230,7 +230,7 @@ const Mail = Module("mail", {
         }
         for (let i = 0; i < gFolderTreeView.rowCount; i++) {
             let row = gFolderTreeView._rowMap[i];
-            if (row.level != 0)
+            if (row.level !== 0)
                 continue;
 
             let folder = row._folder;
@@ -266,14 +266,14 @@ const Mail = Module("mail", {
     // returns an array of only one nsIMsgFolder object: an exact match to the filter
     getExactFolder: function (filter, includeServers, includeMsgFolders) {
         let folders = [];
-        if (!filter || filter == "") return folders;
+        if (!filter || filter === "") return folders;
 
         filter = filter.toLowerCase();
 
         for (let [row, name] in this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
             let folder = row._folder;
             // XXX: row._folder.prettyName is needed ? -- teramako
-            if (name.toLowerCase() == filter)
+            if (name.toLowerCase() === filter)
                 folders.push(row._folder);
         }
         return folders;
@@ -359,14 +359,14 @@ const Mail = Module("mail", {
             if (!(gDBView.viewFlags & nsMsgViewFlagsType.kThreadedDisplay))
                 return false;
 
-            index = (typeof index == "number") ? index : currentIndex();
+            index = (typeof index === "number") ? index : currentIndex();
             return !gDBView.isContainerOpen(index) && !gDBView.isContainerEmpty(index);
         }
 
-        if (typeof validatorFunc != "function")
+        if (typeof validatorFunc !== "function")
             return;
 
-        if (typeof count != "number" || count < 1)
+        if (typeof count !== "number" || count < 1)
             count = 1;
 
         // first try to find in current folder
@@ -383,11 +383,11 @@ const Mail = Module("mail", {
                     let thread = gDBView.db.GetThreadContainingMsgHdr(msg);
                     let originalCount = count;
 
-                    for (let j = (i == currentIndex() && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
+                    for (let j = (i === currentIndex() && !reverse) ? 1 : (reverse ? thread.numChildren - 1 : 0);
                              reverse ? (j >= 0) : (j < thread.numChildren);
                              reverse ? j-- : j++) {
                         msg = thread.getChild(thread.getChildKeyAt(j));
-                        if (validatorFunc(msg) && --count == 0) {
+                        if (validatorFunc(msg) && --count === 0) {
                             // this hack is needed to get the correct message, because getChildAt() does not
                             // necessarily return the messages in the order they are displayed
                             gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
@@ -401,7 +401,7 @@ const Mail = Module("mail", {
                     }
                 }
                 else { // simple non-threaded message
-                    if (validatorFunc(msg) && --count == 0) {
+                    if (validatorFunc(msg) && --count === 0) {
                         gDBView.selection.timedSelect(i, GetThreadTree()._selectDelay || 500);
                         GetThreadTree().treeBoxObject.ensureRowIsVisible(i);
                         return;
@@ -463,7 +463,7 @@ const Mail = Module("mail", {
                       [false, 0, 0],                          // HTML
                       [false, 3, gDisallow_classes_no_html]]; // sanitized/simple HTML
 
-        if (typeof value != "number" || value < 0 || value > 2)
+        if (typeof value !== "number" || value < 0 || value > 2)
             value = 1;
 
         mail._prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch(null).QueryInterface(Ci.nsIPrefBranch2);
@@ -497,22 +497,22 @@ const Mail = Module("mail", {
             if (!("where" in params) && options["newtab"] && options.get("newtab").has("all", params.from))
                 where = liberator.NEW_TAB;
             if (options["activate"] && !options.get("activate").has("all", params.from)) {
-                if (where == liberator.NEW_TAB)
+                if (where === liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
-                else if (where == liberator.NEW_BACKGROUND_TAB)
+                else if (where === liberator.NEW_BACKGROUND_TAB)
                     where = liberator.NEW_TAB;
             }
         }
 
         function openTarget(target, where) {
             if (target instanceof Ci.nsIMsgFolder) {
-                if (where == liberator.CURRENT_TAB && tabmail.currentTabInfo.mode.name == "folder") {
+                if (where === liberator.CURRENT_TAB && tabmail.currentTabInfo.mode.name === "folder") {
                     SelectFolder(target.URI);
                     return;
                 }
                 let args = {
                     folder: target,
-                    background: where != liberator.NEW_TAB
+                    background: where !== liberator.NEW_TAB
                 };
                 ["folderPaneVisible", "messagePaneVisible", "msgHdr"].forEach(function(opt){
                     if (opt in params)
@@ -521,7 +521,7 @@ const Mail = Module("mail", {
                 tabmail.openTab("folder", args);
                 return;
             }
-            if (typeof target == "string") {
+            if (typeof target === "string") {
                 try {
                     target = util.createURI(target);
                 } catch(e) {
@@ -537,7 +537,7 @@ const Mail = Module("mail", {
             }
             switch (where) {
             case liberator.CURRENT_TAB:
-                if (tabmail.currentTabInfo.mode.name == "contentTab") {
+                if (tabmail.currentTabInfo.mode.name === "contentTab") {
                     tabmail.currentTabInfo.browser.loadURI(target.spec);
                     break;
                 }
@@ -546,7 +546,7 @@ const Mail = Module("mail", {
             case liberator.NEW_BACKGROUND_TAB:
                 let tab = tabmail.openTab("contentTab", {
                     contentPage: target.spec,
-                    background: where != liberator.NEW_TAB,
+                    background: where !== liberator.NEW_TAB,
                     clickHandler: "liberator.modules.mail.siteClickHandler(event)"
                 });
                 let browser = tab.browser;
@@ -585,7 +585,7 @@ const Mail = Module("mail", {
                 isOpenExternal = false;
                 break;
             case "liberator":
-                if (event.target.ownerDocument.location.protocol == "liberator:")
+                if (event.target.ownerDocument.location.protocol === "liberator:")
                     config.browser.loadURI(uri.spec);
                 event.preventDefault();
                 return true;
@@ -772,7 +772,7 @@ const Mail = Module("mail", {
             function (count) {
                 try {
                     let author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                    mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, false, count);
+                    mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) === 0, true, true, false, count);
                 }
                 catch (e) { liberator.beep(); }
             },
@@ -783,7 +783,7 @@ const Mail = Module("mail", {
             function (count) {
                 try {
                     let author = gDBView.hdrForFirstSelectedMessage.mime2DecodedAuthor.toLowerCase();
-                    mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) == 0, true, true, true, count);
+                    mail.selectMessage(function (msg) msg.mime2DecodedAuthor.toLowerCase().indexOf(author) === 0, true, true, true, count);
                 }
                 catch (e) { liberator.beep(); }
             },
@@ -1079,14 +1079,14 @@ const Mail = Module("mail", {
             "Toggle displayed headers",
             function () {
                 let value = mail._prefs.getIntPref("mail.show_headers", 2);
-                mail._prefs.setIntPref("mail.show_headers", value == 2 ? 1 : 2);
+                mail._prefs.setIntPref("mail.show_headers", value === 2 ? 1 : 2);
                 ReloadMessage();
             });
 
         mappings.add(myModes, ["x"],
             "Toggle HTML message display",
             function () {
-                let wantHtml = (mail._prefs.getIntPref("mailnews.display.html_as", 1) == 1);
+                let wantHtml = (mail._prefs.getIntPref("mailnews.display.html_as", 1) === 1);
                 mail.setHTML(wantHtml ? 1 : 0);
             });
 
@@ -1115,7 +1115,7 @@ const Mail = Module("mail", {
                             text = gDBView.hdrForFirstSelectedMessage.mime2DecodedRecipients + (cc ? ", " + cc : "");
                             break;
                         case "u":
-                            if (mail.currentAccount.server.type == "rss") {
+                            if (mail.currentAccount.server.type === "rss") {
                                 text = util.this._getRSSUrl(); // TODO: util.this?
                             } // if else, yank nothing
                             break;
@@ -1135,7 +1135,7 @@ const Mail = Module("mail", {
             "Open RSS message in browser",
             function () {
                 try {
-                    if (mail.currentAccount.server.type == "rss")
+                    if (mail.currentAccount.server.type === "rss")
                         messenger.launchExternalURL(mail._getRSSUrl());
                     // TODO: what to do for non-rss message?
                 }
@@ -1175,7 +1175,7 @@ const Mail = Module("mail", {
             {
                 getter: function () services.get("smtpService").defaultServer.key,
                 setter: function (value) {
-                    let server = mail.smtpServers.filter(function (s) s.key == value)[0];
+                    let server = mail.smtpServers.filter(function (s) s.key === value)[0];
                     services.get("smtpService").defaultServer = server;
                     return value;
                 },
@@ -1210,17 +1210,17 @@ const Mail = Module("mail", {
             {
                 scope: Option.SCOPE_LOCAL,
                 getter: function () {
-                    if (config.browser.id == "messagepane") {
+                    if (config.browser.id === "messagepane") {
                         let msg = gMessageDisplay.displayedMessage;
                         if (msg)
-                            return msg.getUint32Property("remoteContentPolicy") == kAllowRemoteContent ? true : false;
+                            return msg.getUint32Property("remoteContentPolicy") === kAllowRemoteContent ? true : false;
                     }
                 },
                 setter: function (value) {
                     var policy = value ? kAllowRemoteContent : kBlockRemoteContent;
-                    if (config.browser.id == "messagepane") {
+                    if (config.browser.id === "messagepane") {
                         let msg = gMessageDisplay.displayedMessage;
-                        if (msg && msg.getUint32Property("remoteContentPolicy") != policy) {
+                        if (msg && msg.getUint32Property("remoteContentPolicy") !== policy) {
                             msg.setUint32Property("remoteContentPolicy", policy);
                             ReloadMessage();
                         }

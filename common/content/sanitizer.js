@@ -67,7 +67,7 @@ const Sanitizer = Module("sanitizer", {
 
     get prefNames() util.Array.flatten([this.prefDomain, this.prefDomain2].map(options.allPrefs))
 }, {
-    argToPref: function (arg) ["commandLine", "offlineApps", "siteSettings"].filter(function (pref) pref.toLowerCase() == arg)[0] || arg,
+    argToPref: function (arg) ["commandLine", "offlineApps", "siteSettings"].filter(function (pref) pref.toLowerCase() === arg)[0] || arg,
     prefToArg: function (pref) pref.toLowerCase().replace(/.*\./, "")
 }, {
     commands: function () {
@@ -76,13 +76,13 @@ const Sanitizer = Module("sanitizer", {
             function (args) {
                 liberator.assert(!liberator.isPrivateWindow(), "Cannot sanitize items in private mode");
 
-                let timespan = args["-timespan"] == undefined ? options["sanitizetimespan"] : args["-timespan"];
+                let timespan = args["-timespan"] === undefined ? options["sanitizetimespan"] : args["-timespan"];
 
                 sanitizer.range = Sanitizer.getClearRange(timespan);
 
 
                 if (args.bang) {
-                    liberator.assert(args.length == 0, "Trailing characters");
+                    liberator.assert(args.length === 0, "Trailing characters");
 
                     liberator.echomsg("Sanitizing all items in 'sanitizeitems'...");
 
@@ -203,7 +203,7 @@ const Sanitizer = Module("sanitizer", {
                         options.setPref(pref, false);
 
                         for (let value of this.parseValues(values)) {
-                            if (Sanitizer.prefToArg(pref) == value) {
+                            if (Sanitizer.prefToArg(pref) === value) {
                                 options.setPref(pref, true);
                                 break;
                             }

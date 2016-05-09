@@ -86,7 +86,7 @@ const JavaScript = Module("javascript", {
     // off of it and it's quoted.
     objectKeys: function objectKeys(obj, toplevel) {
         // Things we can dereference
-        if (["object", "string", "function"].indexOf(typeof obj) == -1)
+        if (["object", "string", "function"].indexOf(typeof obj) === -1)
             return [];
         if (!obj)
             return [];
@@ -165,19 +165,19 @@ const JavaScript = Module("javascript", {
     },
 
     _pop: function pop(arg) {
-        if (this._top.char != arg) {
+        if (this._top.char !== arg) {
             this.context.highlight(this._top.offset, this._i - this._top.offset, "SPELLCHECK");
             this.context.highlight(this._top.offset, 1, "FIND");
             throw new Error("Invalid JS");
         }
 
-        if (this._i == this.context.caret - 1)
+        if (this._i === this.context.caret - 1)
             this.context.highlight(this._top.offset, 1, "FIND");
 
         // The closing character of this stack frame will have pushed a new
         // statement, leaving us with an empty statement. This doesn't matter,
         // now, as we simply throw away the frame when we pop it, but it may later.
-        if (this._top.statements[this._top.statements.length - 1] == this._i)
+        if (this._top.statements[this._top.statements.length - 1] === this._i)
             this._top.statements.pop();
         this._top = this._get(-2);
         this._last = this._top.char;
@@ -193,7 +193,7 @@ const JavaScript = Module("javascript", {
         this._c = "";     // Current index and character, respectively.
 
         // Reuse the old stack.
-        if (this._str && filter.substr(0, this._str.length) == this._str) {
+        if (this._str && filter.substr(0, this._str.length) === this._str) {
             this._i = this._str.length;
             if (this.popStatement)
                 this._top.statements.pop();
@@ -212,19 +212,19 @@ const JavaScript = Module("javascript", {
         let length = this._str.length;
         for (; this._i < length; this._lastChar = this._c, this._i++) {
             this._c = this._str[this._i];
-            if (this._last == '"' || this._last == "'" || this._last == "/") {
-                if (this._lastChar == "\\") { // Escape. Skip the next char, whatever it may be.
+            if (this._last === '"' || this._last === "'" || this._last === "/") {
+                if (this._lastChar === "\\") { // Escape. Skip the next char, whatever it may be.
                     this._c = "";
                     this._i++;
                 }
-                else if (this._c == this._last)
+                else if (this._c === this._last)
                     this._pop(this._c);
             } else if (this._last === "`") {
-                if (this._lastChar == "\\") { // Escape. Skip the next char, whatever it may be.
+                if (this._lastChar === "\\") { // Escape. Skip the next char, whatever it may be.
                     this._c = "";
                     this._i++;
                 }
-                else if (this._c == "`") {
+                else if (this._c === "`") {
                     this._pop("`");
                     this._pop("``");
                 } else if (this._c === "{" && this._lastChar === "$") {
@@ -239,8 +239,8 @@ const JavaScript = Module("javascript", {
 
                 // A "." or a "[" dereferences the last "statement" and effectively
                 // joins it to this logical statement.
-                if ((this._c == "." || this._c == "[") && /[\w$\])"']/.test(this._lastNonwhite)
-                ||  this._lastNonwhite == "." && /[a-zA-Z_$]/.test(this._c))
+                if ((this._c === "." || this._c === "[") && /[\w$\])"']/.test(this._lastNonwhite)
+                ||  this._lastNonwhite === "." && /[a-zA-Z_$]/.test(this._c))
                         this._top.statements.pop();
 
                 switch (this._c) {
@@ -288,7 +288,7 @@ const JavaScript = Module("javascript", {
         }
 
         this.popStatement = false;
-        if (!/[\w$]/.test(this._lastChar) && this._lastNonwhite != ".") {
+        if (!/[\w$]/.test(this._lastChar) && this._lastNonwhite !== ".") {
             this.popStatement = true;
             this._top.statements.push(this._i);
         }
@@ -324,7 +324,7 @@ const JavaScript = Module("javascript", {
                 break;
             let s = this._str.substring(prev, dot);
 
-            if (prev != statement)
+            if (prev !== statement)
                 s = JavaScript.EVAL_TMP + "." + s;
             cacheKey = this._str.substring(statement, dot);
 
@@ -340,7 +340,7 @@ const JavaScript = Module("javascript", {
     _getObjKey: function (frame) {
         let dot = this._get(frame, 0, "dots") || -1; // Last dot in frame.
         let statement = this._get(frame, 0, "statements") || 0; // Current statement.
-        let end = (frame == -1 ? this._lastIdx : this._get(frame + 1).offset);
+        let end = (frame === -1 ? this._lastIdx : this._get(frame + 1).offset);
 
         this._cacheKey = null;
         let obj = [[this.cache.evalContext, "Local Variables"],
@@ -383,7 +383,7 @@ const JavaScript = Module("javascript", {
                 //  Constants are unsorted, and appear before other non-null strings.
                 //  Other strings are sorted in the default manner.
                 let compare = context.compare;
-                function isnan(item) item != '' && isNaN(item);
+                function isnan(item) item !== '' && isNaN(item);
                 context.compare = function (a, b) {
                     if (!isnan(a.item.key) && !isnan(b.item.key))
                         return a.item.key - b.item.key;
@@ -391,7 +391,7 @@ const JavaScript = Module("javascript", {
                 };
                 if (!context.anchored) // We've already listed anchored matches, so don't list them again here.
                     context.filters.push(function (item) util.compareIgnoreCase(item.text.substr(0, this.filter.length), this.filter));
-                if (obj == self.cache.evalContext)
+                if (obj === self.cache.evalContext)
                     context.regenerate = true;
                 context.generate = function () self.objectKeys(obj, !recurse);
             };
@@ -430,7 +430,7 @@ const JavaScript = Module("javascript", {
     },
 
     _getKey: function () {
-        if (this._last == "")
+        if (this._last === "")
             return "";
         // After the opening [ upto the opening ", plus '' to take care of any operators before it
         let key = this._str.substring(this._get(-2, 0, "statements"), this._get(-1, null, "offset")) + "''";
@@ -448,7 +448,7 @@ const JavaScript = Module("javascript", {
             this._buildStack.call(this, context.filter);
         }
         catch (e) {
-            if (e.message != "Invalid JS")
+            if (e.message !== "Invalid JS")
                 liberator.echoerr(e);
             this._lastIdx = 0;
             return null;
@@ -472,7 +472,7 @@ const JavaScript = Module("javascript", {
 
         // In a string. Check if we're dereferencing an object.
         // Otherwise, do nothing.
-        if (this._last == "'" || this._last == '"' || this._last == "`") {
+        if (this._last === "'" || this._last === '"' || this._last === "`") {
             //
             // str = "foo[bar + 'baz"
             // obj = "foo"
@@ -485,7 +485,7 @@ const JavaScript = Module("javascript", {
             string = eval(this._last + string + this._last);
 
             // Is this an object accessor?
-            if (this._get(-2).char == "[") { // Are we inside of []?
+            if (this._get(-2).char === "[") { // Are we inside of []?
                 // Stack:
                 //  [-1]: "...
                 //  [-2]: [...
@@ -493,7 +493,7 @@ const JavaScript = Module("javascript", {
 
                 // Yes. If the [ starts at the beginning of a logical
                 // statement, we're in an array literal, and we're done.
-                 if (this._get(-3, 0, "statements") == this._get(-2).offset)
+                 if (this._get(-3, 0, "statements") === this._get(-2).offset)
                     return null;
 
                 // Beginning of the statement upto the opening [
@@ -503,14 +503,14 @@ const JavaScript = Module("javascript", {
             }
 
             // Is this a function call?
-            if (this._get(-2).char == "(") {
+            if (this._get(-2).char === "(") {
                 // Stack:
                 //  [-1]: "...
                 //  [-2]: (...
                 //  [-3]: base statement
 
                 // Does the opening "(" mark a function call?
-                if (this._get(-3, 0, "functions") != this._get(-2).offset)
+                if (this._get(-3, 0, "functions") !== this._get(-2).offset)
                     return null; // No. We're done.
 
                 let [offset, obj, func] = this._getObjKey(-3);
@@ -568,7 +568,7 @@ const JavaScript = Module("javascript", {
         let [offset, obj, key] = this._getObjKey(-1);
 
         // Wait for a keypress before completing the default objects.
-        if (!this.context.tabPressed && key == "" && obj.length > 1) {
+        if (!this.context.tabPressed && key === "" && obj.length > 1) {
             this.context.waitingForTab = true;
             this.context.message = "Waiting for key press";
             return null;

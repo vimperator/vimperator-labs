@@ -25,7 +25,7 @@ const Marks = Module("marks", {
         // local marks
         let location = window.content.location.href;
         let lmarks = Array.from(this._localMarkIter())
-                          .filter(i => i[1].location == location);
+                          .filter(i => i[1].location === location);
         lmarks.sort();
 
         // URL marks
@@ -117,7 +117,7 @@ const Marks = Module("marks", {
         if (Marks.isURLMark(mark)) {
             let slice = this._urlMarks.get(mark);
             if (slice && slice.tab && slice.tab.linkedBrowser) {
-                if (slice.tab.parentNode != config.browser.tabContainer) {
+                if (slice.tab.parentNode !== config.browser.tabContainer) {
                     this._pendingJumps.push(slice);
                     // NOTE: this obviously won't work on generated pages using
                     // non-unique URLs :(
@@ -125,10 +125,10 @@ const Marks = Module("marks", {
                     return;
                 }
                 let index = tabs.index(slice.tab);
-                if (index != -1) {
+                if (index !== -1) {
                     tabs.select(index, false, true);
                     let win = slice.tab.linkedBrowser.contentWindow;
-                    if (win.location.href != slice.location) {
+                    if (win.location.href !== slice.location) {
                         this._pendingJumps.push(slice);
                         win.location.href = slice.location;
                         return;
@@ -143,7 +143,7 @@ const Marks = Module("marks", {
             let slice = this._localMarks.get(mark) || [];
 
             for (let lmark of slice) {
-                if (win.location.href == lmark.location) {
+                if (win.location.href === lmark.location) {
                     buffer.scrollToPercent(lmark.position.x * 100, lmark.position.y * 100);
                     ok = true;
                     break;
@@ -187,7 +187,7 @@ const Marks = Module("marks", {
     _onPageLoad: function _onPageLoad(event) {
         let win = event.originalTarget.defaultView;
         for (let [i, mark] in Iterator(this._pendingJumps)) {
-            if (win && win.location.href == mark.location) {
+            if (win && win.location.href === mark.location) {
                 buffer.scrollToPercent(mark.position.x * 100, mark.position.y * 100);
                 this._pendingJumps.splice(i, 1);
                 return;
@@ -200,9 +200,9 @@ const Marks = Module("marks", {
         if (localmark) {
             let win = window.content;
             for (let [i, lmark] in Iterator(localmark)) {
-                if (lmark.location == win.location.href) {
+                if (lmark.location === win.location.href) {
                     localmark.splice(i, 1);
-                    if (localmark.length == 0)
+                    if (localmark.length === 0)
                         this._localMarks.remove(mark);
                     break;
                 }

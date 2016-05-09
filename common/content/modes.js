@@ -54,7 +54,7 @@ const Modes = Module("modes", {
         if (this._passNextKey) {
             return "IGNORE";
         } else if (this._passAllKeys) {
-            if (!this._passKeysExceptions || this._passKeysExceptions.length == 0)
+            if (!this._passKeysExceptions || this._passKeysExceptions.length === 0)
                 return "IGNORE ALL KEYS (Press <S-Esc> or <Insert> to exit)";
             else
                 return "IGNORE MOST KEYS (All except " + this._passKeysExceptions + ")";
@@ -84,7 +84,7 @@ const Modes = Module("modes", {
                 break;
 
             case modes.VISUAL:
-                if (newMode == modes.CARET) {
+                if (newMode === modes.CARET) {
                     try { // clear any selection made; a simple if (selection) does not work
                         let selection = Buffer.focusedWindow.getSelection();
                         selection.collapseToStart();
@@ -108,12 +108,12 @@ const Modes = Module("modes", {
                 break;
         }
 
-        if (newMode == modes.NORMAL) {
+        if (newMode === modes.NORMAL) {
             // disable caret mode when we want to switch to normal mode
             if (options.getPref("accessibility.browsewithcaret"))
                 options.setPref("accessibility.browsewithcaret", false);
 
-            if (oldMode == modes.COMMAND_LINE)
+            if (oldMode === modes.COMMAND_LINE)
                 liberator.focusContent(false); // when coming from the commandline, we might want to keep the focus (after a Search, e.g.)
             else
                 liberator.focusContent(true); // unfocus textareas etc.
@@ -121,7 +121,7 @@ const Modes = Module("modes", {
             services.get("focus").clearFocus(window);
         }
 
-        if (newMode == modes.COMMAND_LINE) {
+        if (newMode === modes.COMMAND_LINE) {
             statusline.setVisibility(statusline.setVisibility.SHOW);
         }
 
@@ -135,7 +135,7 @@ const Modes = Module("modes", {
 
     get mainModes() {
         return iter(Object.keys(modes._modeMap)
-                          .filter(k => !modes._modeMap[k].extended && modes._modeMap[k].name == k)
+                          .filter(k => !modes._modeMap[k].extended && modes._modeMap[k].name === k)
                           .map(k => modes._modeMap[k]));
     },
 
@@ -144,7 +144,7 @@ const Modes = Module("modes", {
     addMode: function (name, extended, options) {
         let disp = name.replace(/_/g, " ");
         this[name] = 1 << this._lastMode++;
-        if (typeof extended == "object") {
+        if (typeof extended === "object") {
             options = extended;
             extended = false;
         }
@@ -168,13 +168,13 @@ const Modes = Module("modes", {
     getCharModes: function (chr) {
         return Object.keys(this._modeMap)
                      .map(k => this._modeMap[k])
-                     .filter(m => m.char == chr);
+                     .filter(m => m.char === chr);
     },
 
     matchModes: function (obj) {
         return Object.keys(this._modeMap)
                      .map(k => this._modeMap[k])
-                     .filter(m => array(keys(obj)).every(function (k) obj[k] == (m[k] || false)));
+                     .filter(m => array(keys(obj)).every(function (k) obj[k] === (m[k] || false)));
     },
 
     // show the current mode string in the command line
@@ -192,7 +192,7 @@ const Modes = Module("modes", {
     // helper function to set both modes in one go
     // if silent == true, you also need to take care of the mode handling changes yourself
     set: function (mainMode, extendedMode, silent, stack) {
-        silent = (silent || this._main == mainMode && this._extended == extendedMode);
+        silent = (silent || this._main === mainMode && this._extended === extendedMode);
         // if a this._main mode is set, the this._extended is always cleared
         let oldMain = this._main, oldExtended = this._extended;
         if (typeof extendedMode === "number")
@@ -202,7 +202,7 @@ const Modes = Module("modes", {
             if (!extendedMode)
                 this._extended = modes.NONE;
 
-            if (this._main != oldMain) {
+            if (this._main !== oldMain) {
                 this._handleModeChange(oldMain, mainMode, oldExtended);
                 liberator.triggerObserver("modeChange", [oldMain, oldExtended], [this._main, this._extended]);
                 // liberator.log("Changing mode from " + oldMain + "/" + oldExtended + " to " + this._main + "/" + this._extended + "(" + this._getModeMessage() + ")");

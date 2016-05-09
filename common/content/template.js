@@ -21,11 +21,11 @@ const Template = Module("template", {
         var op = tag["+="] || tag["+"] ||function (lhs, rhs) tag`${lhs}${rhs}`;
         for (let i of Iterator(iter)) {
             let val = func(i);
-            if (val == undefined || (tag.isEmpty && tag.isEmpty(val)))
+            if (val === undefined || (tag.isEmpty && tag.isEmpty(val)))
                 continue;
             if (sep && n++)
                 ret = op(ret, sep);
-            if (interruptable && n % interruptable == 0)
+            if (interruptable && n % interruptable === 0)
                 liberator.threadYield(true, true);
             ret = op(ret, val);
         }
@@ -44,7 +44,7 @@ const Template = Module("template", {
     },
 
     completionRow: function completionRow(item, highlightGroup) {
-        if (typeof icon == "function")
+        if (typeof icon === "function")
             icon = icon();
 
         if (highlightGroup) {
@@ -130,7 +130,7 @@ const Template = Module("template", {
     },
 
     highlightFilter: function highlightFilter(str, filter, highlight) {
-        if (filter.length == 0)
+        if (filter.length === 0)
             return str;
 
         let filterArr = filter.split(" ");
@@ -181,7 +181,7 @@ const Template = Module("template", {
     highlightSubstrings: function highlightSubstrings(str, iter, highlight) {
         if (str instanceof TemplateSupportsXML)
             return str;
-        if (str == "")
+        if (str === "")
             return xml`${str}`;
 
         str = String(str).replace(" ", "\u00a0");
@@ -280,7 +280,7 @@ const Template = Module("template", {
     // @param {object} rows: The rows as an array or arrays (or other iterable objects)
     tabular: function tabular(columns, rows) {
         function createHeadings() {
-            if (typeof(columns) == "string")
+            if (typeof(columns) === "string")
                 return xml`<th colspan=${(rows && rows[0].length) || 1}>${columns}</th>`;
 
             let colspan = 1;
@@ -290,7 +290,7 @@ const Template = Module("template", {
                     return xml``;
                 }
 
-                if (typeof(h) == "string")
+                if (typeof(h) === "string")
                     return xml`<th>${h}</th>`;
 
                 let header = h.header || "";
@@ -301,7 +301,7 @@ const Template = Module("template", {
 
         function createRow(row) {
             return template.map(Iterator(row), function ([i, d]) {
-                let style = ((columns && columns[i] && columns[i].style) || "") + (i == (row.length - 1) ? "; width: 100%" : ""); // the last column should take the available space -> width: 100%
+                let style = ((columns && columns[i] && columns[i].style) || "") + (i === (row.length - 1) ? "; width: 100%" : ""); // the last column should take the available space -> width: 100%
                 let highlight = (columns && columns[i] && columns[i].highlight) || "";
                 return xml`<td style=${style} highlight=${highlight}>${template.maybeXML(d)}</td>`;
             });

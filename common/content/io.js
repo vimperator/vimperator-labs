@@ -111,7 +111,7 @@ const File = Class("File", {
 
         let buffer = [];
         let str = {};
-        while (icstream.readString(4096, str) != 0)
+        while (icstream.readString(4096, str) !== 0)
             buffer.push(str.value);
 
         icstream.close();
@@ -154,9 +154,9 @@ const File = Class("File", {
         if (!encoding)
             encoding = options["fileencoding"];
 
-        if (mode == ">>")
+        if (mode === ">>")
             mode = File.MODE_WRONLY | File.MODE_CREATE | File.MODE_APPEND;
-        else if (!mode || mode == ">")
+        else if (!mode || mode === ">")
             mode = File.MODE_WRONLY | File.MODE_CREATE | File.MODE_TRUNCATE;
 
         if (!perms)
@@ -169,7 +169,7 @@ const File = Class("File", {
         }
         catch (e) {
             // liberator.log(e);
-            if (e.result == Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA) {
+            if (e.result === Cr.NS_ERROR_LOSS_OF_SIGNIFICANT_DATA) {
                 ocstream = getStream("?".charCodeAt(0));
                 ocstream.writeString(buf);
                 return false;
@@ -280,7 +280,7 @@ const File = Class("File", {
             return [];
         // empty list item means the current directory
         return list.replace(/,$/, "").split(",")
-                   .map(function (dir) dir == "" ? io.getCurrentDirectory().path : dir);
+                   .map(function (dir) dir === "" ? io.getCurrentDirectory().path : dir);
     },
 
     replacePathSep: function (path) path.replace("/", IO.PATH_SEP, "g"),
@@ -333,7 +333,7 @@ const IO = Module("io", {
         if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
             this.downloadListener = {
                 onDownloadStateChange: function (state, download) {
-                    if (download.state == services.get("downloads").DOWNLOAD_FINISHED) {
+                    if (download.state === services.get("downloads").DOWNLOAD_FINISHED) {
                         let url   = download.source.spec;
                         let title = download.displayName;
                         let file  = download.targetFile.path;
@@ -448,7 +448,7 @@ const IO = Module("io", {
     setCurrentDirectory: function (newDir) {
         newDir = newDir || "~";
 
-        if (newDir == "-") {
+        if (newDir === "-") {
             [this._cwd, this._oldcwd] = [this._oldcwd, this.getCurrentDirectory()];
         } else {
             let dir = File(newDir);
@@ -716,7 +716,7 @@ lookup:
                             liberator.echoerr("Not an editor command: " + line);
                         }
                         else {
-                            if (command.name == "finish")
+                            if (command.name === "finish")
                                 break;
                             else if (command.hereDoc) {
                                 // check for a heredoc
@@ -742,7 +742,7 @@ lookup:
                     execute(heredoc);
             }
 
-            if (this._scriptNames.indexOf(file.path) == -1)
+            if (this._scriptNames.indexOf(file.path) === -1)
                 this._scriptNames.push(file.path);
 
             liberator.log("Sourced: " + filename);
@@ -776,7 +776,7 @@ lookup:
 
             // TODO: implement 'shellredir'
             if (liberator.has("Windows")) {
-                if (options["shell"] == "cmd.exe") {
+                if (options["shell"] === "cmd.exe") {
                     command = "cd /D " + this._cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
                 } else {
                     // in this case, assume the shell is unix-like
@@ -795,7 +795,7 @@ lookup:
             if (res > 0)
                 output += "\nshell returned " + res;
             // if there is only one \n at the end, chop it off
-            else if (output && output.indexOf("\n") == output.length - 1)
+            else if (output && output.indexOf("\n") === output.length - 1)
                 output = output.substr(0, output.length - 1);
 
             return output;
@@ -858,7 +858,7 @@ lookup:
 
                 if (!arg) {
                     arg = "~";
-                } else if (arg == "-") {
+                } else if (arg === "-") {
                     liberator.assert(io._oldcwd, "No previous directory");
                     arg = io._oldcwd.path;
                 }

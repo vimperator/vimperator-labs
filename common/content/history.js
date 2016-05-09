@@ -15,7 +15,7 @@ const History = Module("history", {
         let query = services.get("history").getNewQuery();
         let options = services.get("history").getNewQueryOptions();
 
-        if (typeof filter == "string")
+        if (typeof filter === "string")
             filter = { searchTerms: filter };
         for (let [k, v] in Iterator(filter))
             query[k] = v;
@@ -58,7 +58,7 @@ const History = Module("history", {
         let end = window.getWebNavigation().sessionHistory.count - 1;
         let current = window.getWebNavigation().sessionHistory.index;
 
-        if (current == start && steps < 0 || current == end && steps > 0)
+        if (current === start && steps < 0 || current === end && steps > 0)
             liberator.beep();
         else {
             let index = util.Math.constrain(current + steps, start, end);
@@ -122,7 +122,7 @@ const History = Module("history", {
                             return void window.getWebNavigation().gotoIndex(sh.index - parseInt(url));
 
                         for (let [i, ent] in Iterator(sh.slice(0, sh.index).reverse()))
-                            if (ent.URI.spec == url)
+                            if (ent.URI.spec === url)
                                 return void window.getWebNavigation().gotoIndex(i);
                         liberator.echoerr("URL not found in history: " + url);
                     }
@@ -161,7 +161,7 @@ const History = Module("history", {
                             return void window.getWebNavigation().gotoIndex(sh.index + parseInt(url));
 
                         for (let [i, ent] in Iterator(sh.slice(sh.index + 1)))
-                            if (ent.URI.spec == url)
+                            if (ent.URI.spec === url)
                                 return void window.getWebNavigation().gotoIndex(i);
                         liberator.echoerr("URL not found in history: " + url);
                     }
@@ -191,7 +191,7 @@ const History = Module("history", {
             function (args) { 
                 if (args["-remove"]) {
                     let items = completion.runCompleter("history", args.join(" "), args["-max"] || 1000);
-                    if (items.length == 0)
+                    if (items.length === 0)
                         liberator.echoerr("No matching history items for: " + args.join(" "));
                     else {
                         var browserHistory = Components.classes["@mozilla.org/browser/nav-history-service;1"]
@@ -199,7 +199,7 @@ const History = Module("history", {
                         var urls = [];
                         items.map(function (i) { urls.push(makeURI(i.url)) });
                         browserHistory.removePages(urls, urls.length);
-                        if (urls.length == 1)
+                        if (urls.length === 1)
                             liberator.echo("Removed history item " + urls[0].spec);
                         else
                             liberator.echo("Removed " + urls.length + " history items matching " + args.join(" "));

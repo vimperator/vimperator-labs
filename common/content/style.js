@@ -228,7 +228,7 @@ function Highlights(name, store) {
     Highlight.defaultValue("value", function () this.default);
     Highlight.defaultValue("base", function () {
         let base = this.class.match(/^(\w*)/)[0];
-        return base != this.class && base in highlight ? highlight[base] : null;
+        return base !== this.class && base in highlight ? highlight[base] : null;
     });
 
     let highlightKeys = [];
@@ -288,7 +288,7 @@ function Highlights(name, store) {
     this.selector = function (class_) {
         let [, hl, rest] = class_.match(/^(\w*)(.*)/);
         let pattern = "[liberator|highlight~=" + hl + "]"
-        if (highlight[hl] && highlight[hl].class != class_)
+        if (highlight[hl] && highlight[hl].class !== class_)
             pattern = highlight[hl].selector;
         return pattern + rest;
     };
@@ -317,11 +317,11 @@ function Highlights(name, store) {
 
                 let old = highlight[style.class];
                 highlight[style.class] = style;
-                if (old && old.value != old.default)
+                if (old && old.value !== old.default)
                     style.value = old.value;
         });
         for (let [class_, hl] in Iterator(highlight)) {
-            if (hl.value == hl.default)
+            if (hl.value === hl.default)
                 this.set(class_);
         }
     };
@@ -353,7 +353,7 @@ function Styles(name, store) {
     Sheet.prototype.__defineGetter__("fullCSS", function wrapCSS() {
         let filter = this.sites;
         let css = this.css;
-        if (filter[0] == "*")
+        if (filter[0] === "*")
             return namespace + css;
         let selectors = filter.map(function (part) (/[*]$/.test(part)   ? "url-prefix" :
                                                     /[\/:]/.test(part)  ? "url"
@@ -466,9 +466,9 @@ function Styles(name, store) {
         if (index)
             matches = String(index).split(",").filter(function (i) i in sheets);
         if (name)
-            matches = matches.filter(function (i) sheets[i] == names[name]);
+            matches = matches.filter(function (i) sheets[i] === names[name]);
         if (css)
-            matches = matches.filter(function (i) sheets[i].css == css);
+            matches = matches.filter(function (i) sheets[i].css === css);
         if (filter)
             matches = matches.filter(function (i) sheets[i].sites.indexOf(filter) >= 0);
         return matches.map(function (i) sheets[i]);
@@ -488,7 +488,7 @@ function Styles(name, store) {
      */
     this.removeSheet = function (system, name, filter, css, index) {
         let self = this;
-        if (arguments.length == 1) {
+        if (arguments.length === 1) {
             var matches = [system];
             system = matches[0].system;
         }
@@ -499,12 +499,12 @@ function Styles(name, store) {
             return filter.split(",").reduce(
                 function (n, f) n + self.removeSheet(system, name, f, index), 0);
 
-        if (filter == undefined)
+        if (filter === undefined)
             filter = "";
 
         if (!matches)
             matches = this.findSheets(system, name, filter, css, index);
-        if (matches.length == 0)
+        if (matches.length === 0)
             return null;
 
         for (let sheet of matches.reverse()) {
@@ -516,7 +516,7 @@ function Styles(name, store) {
 
             /* Re-add if we're only changing the site filter. */
             if (filter) {
-                let sites = sheet.sites.filter(function (f) f != filter);
+                let sites = sheet.sites.filter(function (f) f !== filter);
                 if (sites.length)
                     this.addSheet(system, name, sites.join(","), css, sheet.agent);
             }
@@ -596,7 +596,7 @@ Module("styles", {
                     let str = template.tabular([{ header: "", style: "min-width: 1em; text-align: center; font-weight: bold;", highlight: "Disabled" }, "Name", "Filter", "CSS"],
                         iter(list.filter(([key, sheet]) =>
                                      (!filter || sheet.sites.indexOf(filter) >= 0) &&
-                                     (!name || sheet.name == name))
+                                     (!name || sheet.name === name))
                                  .map(([key, sheet]) => [
                                      sheet.enabled ? "" : "\u00d7",
                                      key,
@@ -625,9 +625,9 @@ Module("styles", {
                 bang: true,
                 completer: function (context, args) {
                     let compl = [];
-                    if (args.completeArg == 0)
+                    if (args.completeArg === 0)
                         styles.completeSite(context, content);
-                    else if (args.completeArg == 1) {
+                    else if (args.completeArg === 1) {
                         let sheet = styles.get(false, args["-name"]);
                         if (sheet)
                             context.completions = [[sheet.css.replace(/\n+/g, " "), "Current Value"]];
@@ -715,7 +715,7 @@ Module("highlight", {
     init: function () {
         const self = storage.newObject("highlight", Highlights, { store: false });
 
-        if (self.CSS != Highlights.prototype.CSS) {
+        if (self.CSS !== Highlights.prototype.CSS) {
             self.CSS = Highlights.prototype.CSS;
             self.loadCSS(self.CSS);
         }
@@ -729,7 +729,7 @@ Module("highlight", {
             function (args) {
                 let scheme = args[0];
 
-                if (scheme == "default")
+                if (scheme === "default")
                     highlight.clear();
                 else
                     liberator.assert(io.sourceFromRuntimePath(["colors/" + scheme + ".vimp"]),
@@ -759,7 +759,7 @@ Module("highlight", {
                     height: 1em !important; min-height: 1em !important; max-height: 1em !important;
                     overflow: hidden !important;
                 `;
-                let clear = args[0] == "clear";
+                let clear = args[0] === "clear";
                 if (clear)
                     args.shift();
 
@@ -795,13 +795,13 @@ Module("highlight", {
                 // TODO: add this as a standard highlight completion function?
                 completer: function (context, args) {
                     // Complete a highlight group on :hi clear ...
-                    if (args.completeArg > 0 && args[0] == "clear")
+                    if (args.completeArg > 0 && args[0] === "clear")
                         args.completeArg = args.completeArg > 1 ? -1 : 0;
 
-                    if (args.completeArg == 0)
+                    if (args.completeArg === 0)
                         context.completions = Array.from(iter(highlight))
                                                    .map(v => [v.class, v.value]);
-                    else if (args.completeArg == 1) {
+                    else if (args.completeArg === 1) {
                         let hl = highlight.get(args[0]);
                         if (hl)
                             context.completions = [[hl.value.replace(/\n+/g, " "), "Current Value"], [hl.default || "", "Default Value"]];
@@ -812,7 +812,7 @@ Module("highlight", {
                 options: [[["-append", "-a"], commands.OPTION_NOARG]],
                 serial: function () {
                     return Array.from(iter(highlight))
-                                .filter(v => v.value != v.default)
+                                .filter(v => v.value !== v.default)
                                 .map(v => ({
                                     command: this.name,
                                     arguments: [v.class],

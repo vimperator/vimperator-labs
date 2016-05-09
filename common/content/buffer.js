@@ -66,7 +66,7 @@ const Buffer = Module("buffer", {
             for (let link in util.evaluateXPath(["link[@href and (@rel='feed' or (@rel='alternate' and @type))]"], doc)) {
                 let rel = link.rel.toLowerCase();
                 let feed = { title: link.title, href: link.href, type: link.type || "" };
-                if (isValidFeed(feed, doc.nodePrincipal, rel == "feed")) {
+                if (isValidFeed(feed, doc.nodePrincipal, rel === "feed")) {
                     nFeed++;
                     let type = feedTypes[feed.type] || "RSS";
                     if (verbose)
@@ -98,14 +98,14 @@ const Buffer = Module("buffer", {
             if (cacheEntryDescriptor) {
                 pageSize[0] = util.formatBytes(cacheEntryDescriptor.dataSize, 0, false);
                 pageSize[1] = util.formatBytes(cacheEntryDescriptor.dataSize, 2, true);
-                if (pageSize[1] == pageSize[0])
+                if (pageSize[1] === pageSize[0])
                     pageSize.length = 1; // don't output "xx Bytes" twice
             }
 
             let lastModVerbose = new Date(doc.lastModified).toLocaleString();
             let lastMod = new Date(doc.lastModified).toLocaleFormat("%x %X");
 
-            if (lastModVerbose == "Invalid Date" || new Date(doc.lastModified).getFullYear() == 1970)
+            if (lastModVerbose === "Invalid Date" || new Date(doc.lastModified).getFullYear() === 1970)
                 lastModVerbose = lastMod = null;
 
             if (!verbose) {
@@ -128,7 +128,7 @@ const Buffer = Module("buffer", {
 
             yield ["Mime-Type", doc.contentType];
             yield ["Encoding", doc.characterSet];
-            yield ["Compatibility", doc.compatMode == "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"];
+            yield ["Compatibility", doc.compatMode === "BackCompat" ? "Quirks Mode" : "Full/Almost Standards Mode"];
             if (lastModVerbose)
                 yield ["Last Modified", lastModVerbose];
         });
@@ -190,13 +190,13 @@ const Buffer = Module("buffer", {
             doc.pageIsFullyLoaded = 1;
 
             // code which is only relevant if the page load is the current tab goes here:
-            if (doc == config.browser.contentDocument) {
+            if (doc === config.browser.contentDocument) {
                 // we want to stay in command mode after a page has loaded
                 // TODO: move somewhere else, as focusing can already happen earlier than on "load"
                 if (options["focuscontent"]) {
                     setTimeout(function () {
                         let focused = liberator.focus;
-                        if (focused && (focused.value != null) && focused.value.length == 0)
+                        if (focused && (focused.value != null) && focused.value.length === 0)
                             focused.blur();
                     }, 0);
                 }
@@ -230,14 +230,14 @@ const Buffer = Module("buffer", {
 
                     // don't reset mode if a frame of the frameset gets reloaded which
                     // is not the focused frame
-                    if (document.commandDispatcher.focusedWindow == webProgress.DOMWindow) {
+                    if (document.commandDispatcher.focusedWindow === webProgress.DOMWindow) {
                         setTimeout(function () { modes.reset(false); },
-                            liberator.mode == modes.HINTS ? 500 : 0);
+                            liberator.mode === modes.HINTS ? 500 : 0);
                     }
                 }
                 else if (flags & Ci.nsIWebProgressListener.STATE_STOP) {
-                    webProgress.DOMWindow.document.pageIsFullyLoaded = (status == 0 ? 1 : 2);
-                    buffer.loaded = (status == 0 ? 1 : 2);
+                    webProgress.DOMWindow.document.pageIsFullyLoaded = (status === 0 ? 1 : 2);
+                    buffer.loaded = (status === 0 ? 1 : 2);
                 }
             }
         },
@@ -264,7 +264,7 @@ const Buffer = Module("buffer", {
             // of pages with ignored keys and then exit it on a new page but ONLY, if:
             // a) The new page hasn't ignore as well and
             // b) We initiated ignore mode, and not the user manually with <Insert>
-            if (modules.ignoreKeys != undefined) {
+            if (modules.ignoreKeys !== undefined) {
                 let ignoredKeyExceptions = ignoreKeys.hasIgnoredKeys(buffer.URL);
                 if (ignoredKeyExceptions !== null)
                     modes.passAllKeysExceptSome(ignoredKeyExceptions);
@@ -284,26 +284,26 @@ const Buffer = Module("buffer", {
         setOverLink: function setOverLink(link, b) {
             let ssli = options["showstatuslinks"];
 
-            if (ssli == 3) {
+            if (ssli === 3) {
                 setOverLink.superapply(this, arguments);
                 return;
             }
 
             if (link && ssli) {
-                if (ssli == 1) {
+                if (ssli === 1) {
                     statusline.updateField("location", "Link: " + link);
                     statusline.updateField("bookmark", link);
                 }
-                else if (ssli == 2)
+                else if (ssli === 2)
                     liberator.echo("Link: " + link, commandline.DISALLOW_MULTILINE);
             }
 
-            if (link == "") {
-                if (ssli == 1) {
+            if (link === "") {
+                if (ssli === 1) {
                     statusline.updateField("location");
                     statusline.updateField("bookmark");
                 }
-                else if (ssli == 2)
+                else if (ssli === 2)
                     modes.show();
             }
         },
@@ -424,7 +424,7 @@ const Buffer = Module("buffer", {
         if (v == null)
             return this.ZoomManager.zoom * 100;
 
-        return v[v.textZoom == 1 ? "fullZoom" : "textZoom"] * 100;
+        return v[v.textZoom === 1 ? "fullZoom" : "textZoom"] * 100;
     },
 
     /**
@@ -507,8 +507,8 @@ const Buffer = Module("buffer", {
                 selController.setCaretEnabled(caretmode);
                 return String.match(selection, /\w*/)[0];
             }
-            if (util.computedStyle(range.startContainer).whiteSpace == "pre"
-                && util.computedStyle(range.endContainer).whiteSpace == "pre")
+            if (util.computedStyle(range.startContainer).whiteSpace === "pre"
+                && util.computedStyle(range.endContainer).whiteSpace === "pre")
                 return String(range);
             return String(selection);
         }
@@ -526,7 +526,7 @@ const Buffer = Module("buffer", {
     focusElement: function (elem) {
         if (elem instanceof HTMLFrameElement || elem instanceof HTMLIFrameElement)
             Buffer.focusedWindow = elem.contentWindow;
-        else if (elem instanceof HTMLInputElement && elem.type == "file") {
+        else if (elem instanceof HTMLInputElement && elem.type === "file") {
             Buffer.openUploadPrompt(elem);
             buffer.lastInputField = elem;
         }
@@ -563,7 +563,7 @@ const Buffer = Module("buffer", {
         function followFrame(frame) {
             function iter(elems) {
                 for (let i = 0; i < elems.length; i++)
-                    if (elems[i].rel.toLowerCase() == rel || elems[i].rev.toLowerCase() == rel)
+                    if (elems[i].rel.toLowerCase() === rel || elems[i].rev.toLowerCase() === rel)
                         yield elems[i];
             }
 
@@ -631,7 +631,7 @@ const Buffer = Module("buffer", {
             offsetX = Number(coords[0]) + 1;
             offsetY = Number(coords[1]) + 1;
         }
-        else if (elem instanceof HTMLInputElement && elem.type == "file") {
+        else if (elem instanceof HTMLInputElement && elem.type === "file") {
             Buffer.openUploadPrompt(elem);
             return;
         }
@@ -641,7 +641,7 @@ const Buffer = Module("buffer", {
         case liberator.NEW_TAB:
         case liberator.NEW_BACKGROUND_TAB:
             ctrlKey = true;
-            shiftKey = (where != liberator.NEW_BACKGROUND_TAB);
+            shiftKey = (where !== liberator.NEW_BACKGROUND_TAB);
             break;
         case liberator.NEW_WINDOW:
             shiftKey = true;
@@ -838,7 +838,7 @@ const Buffer = Module("buffer", {
             Array.forEach(frame.frames, findFrames);
         })(content);
 
-        if (frames.length == 0) // currently top is always included
+        if (frames.length === 0) // currently top is always included
             return;
 
         // remove all unfocusable frames
@@ -846,7 +846,7 @@ const Buffer = Module("buffer", {
         let start = document.commandDispatcher.focusedWindow;
         frames = frames.filter(function (frame) {
             frame.focus();
-            return document.commandDispatcher.focusedWindow == frame;
+            return document.commandDispatcher.focusedWindow === frame;
         });
         start.focus();
 
@@ -863,7 +863,7 @@ const Buffer = Module("buffer", {
             next = current + count;
 
             if (next > frames.length - 1) {
-                if (current == frames.length - 1)
+                if (current === frames.length - 1)
                     liberator.beep();
                 next = frames.length - 1; // still allow the frame indicator to be activated
             }
@@ -872,7 +872,7 @@ const Buffer = Module("buffer", {
             next = current - count;
 
             if (next < 0) {
-                if (current == 0)
+                if (current === 0)
                     liberator.beep();
                 next = 0; // still allow the frame indicator to be activated
             }
@@ -880,7 +880,7 @@ const Buffer = Module("buffer", {
 
         // focus next frame and scroll into view
         frames[next].focus();
-        if (frames[next] != window.content)
+        if (frames[next] !== window.content)
             frames[next].frameElement.scrollIntoView(false);
 
         // add the frame indicator
@@ -947,7 +947,7 @@ const Buffer = Module("buffer", {
     viewSelectionSource: function () {
         // copied (and tuned somebit) from browser.jar -> nsContextMenu.js
         let focusedWindow = document.commandDispatcher.focusedWindow;
-        if (focusedWindow == window)
+        if (focusedWindow === window)
             focusedWindow = config.browser.contentWindow;
 
         let docCharset = null;
@@ -1053,7 +1053,7 @@ const Buffer = Module("buffer", {
         let cur = values.indexOf(ZoomManager.snap(ZoomManager.zoom));
         let i = util.Math.constrain(cur + steps, 0, values.length - 1);
 
-        if (i == cur && fullZoom == ZoomManager.useFullZoom)
+        if (i === cur && fullZoom === ZoomManager.useFullZoom)
             liberator.beep();
 
         Buffer.setZoom(Math.round(values[i] * 100), fullZoom);
@@ -1061,7 +1061,7 @@ const Buffer = Module("buffer", {
 
     checkScrollYBounds: function checkScrollYBounds(win, direction) {
         // NOTE: it's possible to have scrollY > scrollMaxY - FF bug?
-        if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY == 0)
+        if (direction > 0 && win.scrollY >= win.scrollMaxY || direction < 0 && win.scrollY === 0)
             liberator.beep();
     },
 
@@ -1091,9 +1091,9 @@ const Buffer = Module("buffer", {
                 elem = elem.parentNode;
 
             for (; elem && elem.parentNode instanceof Element; elem = elem.parentNode) {
-                if (elem[clientSize] == 0)
+                if (elem[clientSize] === 0)
                     continue;
-                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos] || dir == 0 && elem[maxPos] > 0)
+                if (dir < 0 && elem[pos] > 0 || dir > 0 && elem[pos] < elem[maxPos] || dir === 0 && elem[maxPos] > 0)
                     break;
             }
             return elem;
@@ -1113,15 +1113,15 @@ const Buffer = Module("buffer", {
     scrollVertical: function scrollVertical(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, false);
 
-        if (elem == null && buffer.loaded == 0) {
+        if (elem == null && buffer.loaded === 0) {
             liberator.echoerr("Page is still loading");
             return;
         }
 
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
-        if (increment == "lines")
+        if (increment === "lines")
             increment = fontSize;
-        else if (increment == "pages")
+        else if (increment === "pages")
             increment = elem.clientHeight - fontSize;
         else
             throw Error()
@@ -1132,15 +1132,15 @@ const Buffer = Module("buffer", {
     scrollHorizontal: function scrollHorizontal(elem, increment, number) {
         elem = elem || Buffer.findScrollable(number, true);
 
-        if (elem == null && buffer.loaded == 0) {
+        if (elem == null && buffer.loaded === 0) {
             liberator.echoerr("Page is still loading");
             return;
         }
 
         let fontSize = parseInt(util.computedStyle(elem).fontSize);
-        if (increment == "columns")
+        if (increment === "columns")
             increment = fontSize; // Good enough, I suppose.
-        else if (increment == "pages")
+        else if (increment === "pages")
             increment = elem.clientWidth - fontSize;
         else
             throw Error()
@@ -1203,7 +1203,7 @@ const Buffer = Module("buffer", {
                 let arg = args[0];
 
                 // FIXME: arg handling is a bit of a mess, check for filename
-                liberator.assert(!arg || arg[0] == ">" && !liberator.has("Windows"),
+                liberator.assert(!arg || arg[0] === ">" && !liberator.has("Windows"),
                     "Trailing characters");
 
                 options.withContext(function () {
@@ -1375,9 +1375,9 @@ const Buffer = Module("buffer", {
 
         const UNTITLED_LABEL = "(Untitled)";
         function getIndicator (tab) {
-            if (tab == config.tabbrowser.mCurrentTab)
+            if (tab === config.tabbrowser.mCurrentTab)
                 return "%";
-            else if (tab == tabs.alternate)
+            else if (tab === tabs.alternate)
                 return "#";
             return " ";
         }
@@ -1467,7 +1467,7 @@ const Buffer = Module("buffer", {
                 let activeGroup = groups.getActiveGroupItem();
                 let activeGroupId = activeGroup === null ? null : activeGroup.id;
                 for (let group of groups.groupItems) {
-                    if (group.id != activeGroupId) {
+                    if (group.id !== activeGroupId) {
                         let groupName = group.getTitle();
                         context.fork("GROUP_" + group.id, 0, this, function (context) {
                             context.title = [groupName || UNTITLED_LABEL];
@@ -1483,7 +1483,7 @@ const Buffer = Module("buffer", {
     },
     events: function () {
         let browserWindow;
-        if  (config.hostApplication == "Thunderbird") {
+        if  (config.hostApplication === "Thunderbird") {
             browserWindow = "MsgStatusFeedback";
             let activityManager = Cc["@mozilla.org/activity-manager;1"].getService(Ci.nsIActivityManager);
             activityManager.removeListener(window.MsgStatusFeedback);
@@ -1534,7 +1534,7 @@ const Buffer = Module("buffer", {
                 if (Editor.windowIsEditable()) {
                     if (options["insertmode"])
                         modes.set(modes.INSERT);
-                    else if (Buffer.focusedWindow.getSelection().toString() != "")
+                    else if (Buffer.focusedWindow.getSelection().toString() !== "")
                         modes.set(modes.VISUAL, modes.TEXTAREA);
                     else {
                         options.setPref("accessibility.browsewithcaret", true);

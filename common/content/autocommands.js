@@ -31,7 +31,7 @@ const AutoCommands = Module("autocommands", {
      * @param {string} cmd The Ex command to run.
      */
     add: function (events, regex, cmd) {
-        if (typeof events == "string")
+        if (typeof events === "string")
             events = events.split(",");
 
         events.forEach(function (event) {
@@ -110,20 +110,20 @@ const AutoCommands = Module("autocommands", {
         if (options.get("eventignore").has("all", event))
             return;
 
-        let autoCmds = this._store.filter(function (autoCmd) autoCmd.event == event);
+        let autoCmds = this._store.filter(function (autoCmd) autoCmd.event === event);
 
         let lastPattern = null;
         let url = args.url || "";
 
         for (let autoCmd of autoCmds) {
             if (autoCmd.pattern.test(url)) {
-                if (options["verbose"] >= 9 && (!lastPattern || lastPattern.source != autoCmd.pattern.source))
+                if (options["verbose"] >= 9 && (!lastPattern || lastPattern.source !== autoCmd.pattern.source))
                     liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"");
 
                 lastPattern = autoCmd.pattern;
                 // liberator.echomsg("autocommand " + autoCmd.command, 9);
 
-                if (typeof autoCmd.command == "function") {
+                if (typeof autoCmd.command === "function") {
                     try {
                         autoCmd.command.call(autoCmd, args);
                     }
@@ -139,7 +139,7 @@ const AutoCommands = Module("autocommands", {
     }
 }, {
     matchAutoCmd: function (autoCmd, event, regex) {
-        return (!event || autoCmd.event == event) && (!regex || autoCmd.pattern.source == regex);
+        return (!event || autoCmd.event === event) && (!regex || autoCmd.pattern.source === regex);
     }
 }, {
     commands: function () {
@@ -174,12 +174,12 @@ const AutoCommands = Module("autocommands", {
                     autocommands.add(events, regex, cmd);
                 }
                 else {
-                    if (event == "*")
+                    if (event === "*")
                         event = null;
 
                     if (args.bang) {
                         // TODO: "*" only appears to work in Vim when there is a {group} specified
-                        if (args[0] != "*" || regex)
+                        if (args[0] !== "*" || regex)
                             autocommands.remove(event, regex); // remove all
                     }
                     else
@@ -188,9 +188,9 @@ const AutoCommands = Module("autocommands", {
             }, {
                 bang: true,
                 completer: function (context, args) {
-                    if (args.length == 1)
+                    if (args.length === 1)
                         return completion.autocmdEvent(context);
-                    if (args.length == 3)
+                    if (args.length === 3)
                         return args["-javascript"] ? completion.javascript(context) : completion.ex(context);
                 },
                 literal: 2,
@@ -211,7 +211,7 @@ const AutoCommands = Module("autocommands", {
                 // TODO: Perhaps this should take -args to pass to the command?
                 function (args) {
                     // Vim compatible
-                    if (args.length == 0) {
+                    if (args.length === 0) {
                         liberator.echomsg("No matching autocommands");
                         return;
                     }
@@ -221,14 +221,14 @@ const AutoCommands = Module("autocommands", {
                     let validEvents = config.autocommands.map(function (e) e[0]);
 
                     // TODO: add command validators
-                    liberator.assert(event != "*",
+                    liberator.assert(event !== "*",
                         "Cannot execute autocommands for ALL events");
                     liberator.assert(validEvents.indexOf(event) >= 0,
                         "No such group or event: " + args);
                     liberator.assert(autocommands.get(event).some(function (c) c.pattern.test(defaultURL)),
                         "No matching autocommands");
 
-                    if (this.name == "doautoall" && liberator.has("tabs")) {
+                    if (this.name === "doautoall" && liberator.has("tabs")) {
                         let current = tabs.index();
 
                         for (let i = 0; i < tabs.count; i++) {

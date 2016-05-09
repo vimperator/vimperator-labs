@@ -117,7 +117,7 @@ const Map = Class("Map", {
 
         let self = this;
         function repeat() self.action.apply(self, args);
-        if (this.names[0] != ".") // FIXME: Kludge.
+        if (this.names[0] !== ".") // FIXME: Kludge.
             mappings.repeat = repeat;
 
         return liberator.trapErrors(repeat);
@@ -130,7 +130,7 @@ const Map = Class("Map", {
      * @returns {boolean}
      */
     equals: function (map) {
-        return this.rhs == map.rhs && this.names[0] == map.names && this.matchingUrls == map.matchingUrls;
+        return this.rhs === map.rhs && this.names[0] === map.names && this.matchingUrls === map.matchingUrls;
     }
 
 });
@@ -150,7 +150,7 @@ const Mappings = Module("mappings", {
         if (!patternOrUrl)
             return !map.matchingUrls;
         if (patternOrUrl instanceof RegExp)
-            return map.matchingUrls && (patternOrUrl.toString() == map.matchingUrls.toString());
+            return map.matchingUrls && (patternOrUrl.toString() === map.matchingUrls.toString());
         return !map.matchingUrls || map.matchingUrls.test(patternOrUrl);
     },
 
@@ -183,9 +183,9 @@ const Mappings = Module("mappings", {
             if (!this._matchingUrlsTest(map, patternOrUrl))
                 continue;
             for (let [j, name] in Iterator(map.names)) {
-                if (name == cmd) {
+                if (name === cmd) {
                     map.names.splice(j, 1);
-                    if (map.names.length == 0)
+                    if (map.names.length === 0)
                         maps.splice(i, 1);
                     return;
                 }
@@ -316,7 +316,7 @@ const Mappings = Module("mappings", {
             for (let name of map.names) {
                 if (name.startsWith(prefix) && name.length > prefix.length) {
                     // for < only return a candidate if it doesn't look like a <c-x> mapping
-                    if (prefix != "<" || !/^<.+>/.test(name))
+                    if (prefix !== "<" || !/^<.+>/.test(name))
                         matches.push(map);
                 }
             }
@@ -382,7 +382,7 @@ const Mappings = Module("mappings", {
     list: function (modes, filter, urlPattern) {
         let maps = this._mappingsIterator(modes, this._user);
         if (filter)
-            maps = Array.from(maps).filter(map => map.names[0] == filter);
+            maps = Array.from(maps).filter(map => map.names[0] === filter);
         if (urlPattern)
             maps = Array.from(maps).filter(map => this._matchingUrlsTest(map, urlPattern));
 
@@ -392,7 +392,7 @@ const Mappings = Module("mappings", {
             let modes = "";
             map.modes.forEach(function (mode) {
                 for (let m in modules.modes.mainModes)
-                    if (mode == m.mask)// && modeSign.indexOf(m.char) == -1)
+                    if (mode === m.mask)// && modeSign.indexOf(m.char) == -1)
                         //modeSign += (modeSign ? "" : ",") + m.name;
                         modes += (modes ? ", " : "") + m.name;
             });
@@ -408,7 +408,7 @@ const Mappings = Module("mappings", {
             displayMaps.push([map.names, map.rhs || "function () { ... }", modes, option, map.matchingUrls]);
         }
 
-        if (displayMaps.length == 0) {
+        if (displayMaps.length === 0) {
             liberator.echomsg("No mapping found");
             return;
         }
@@ -507,7 +507,7 @@ const Mappings = Module("mappings", {
 
                         let noremap = this.name.indexOf("noremap") > -1;
                         return Array.from(mappings._mappingsIterator(modes, mappings._user))
-                                    .filter(map => map.rhs && map.noremap == noremap && !isMultiMode(map, this.name))
+                                    .filter(map => map.rhs && map.noremap === noremap && !isMultiMode(map, this.name))
                                     .map(map => ({
                                         command: this.name,
                                         options: options(map),
@@ -564,7 +564,7 @@ const Mappings = Module("mappings", {
                 addMapCommands(
                     mode.char,
                     Array.from(modes.mainModes)
-                         .filter(m => m.char == mode.char)
+                         .filter(m => m.char === mode.char)
                          .map(m => m.mask),
                     [mode.disp.toLowerCase()]);
     },
@@ -589,7 +589,7 @@ const Mappings = Module("mappings", {
             modes = modes || [modules.modes.NORMAL];
             let urls = args["-urls"] && RegExp(args["-urls"]);
 
-            if (args.completeArg == 0) {
+            if (args.completeArg === 0) {
                 let maps = Array.from(mappings.getUserIterator(modes))
                                 .filter(m => mappings._matchingUrlsTest(m ,urls))
                                 .map(m => [m.names[0], ""]);

@@ -33,11 +33,11 @@ var Finder = Module("finder", {
     },
 
     get findbar () {
-        return (config.name == "Muttator") ? document.getElementById('FindToolbar') : window.gFindBar;
+        return (config.name === "Muttator") ? document.getElementById('FindToolbar') : window.gFindBar;
     },
 
     get findbarInitialized () {
-        return (config.name == "Muttator") || window.gFindBarInitialized;
+        return (config.name === "Muttator") || window.gFindBarInitialized;
     },
 
     // set searchString, searchPattern, caseSensitive, linksOnly
@@ -98,7 +98,7 @@ var Finder = Module("finder", {
      * @default modes.SEARCH_FORWARD
      */
     openPrompt: function (mode) {
-        this._backwards = mode == modes.SEARCH_BACKWARD;
+        this._backwards = mode === modes.SEARCH_BACKWARD;
         //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
             onChange: function() {
@@ -174,7 +174,7 @@ var Finder = Module("finder", {
             return;
 
         this.setupFindbar();
-        if (this._lastSearchPattern != this.findbar._findField.value)
+        if (this._lastSearchPattern !== this.findbar._findField.value)
 	    this._processUserPattern(this._searchPattern);
 
         // We don't want to show the findbar on failed searches when using the commandline.
@@ -189,7 +189,7 @@ var Finder = Module("finder", {
      */
     onFindResult: function(aData) {
         this.findbar._vimp_keepClosed = false;
-        if (aData.result == Ci.nsITypeAheadFind.FIND_NOTFOUND) {
+        if (aData.result === Ci.nsITypeAheadFind.FIND_NOTFOUND) {
             // Don't use aData.searchString, it may be a substring of the
             // user's actual input text and that can be confusing.
             // See https://github.com/vimperator/vimperator-labs/issues/401#issuecomment-180522987
@@ -197,7 +197,7 @@ var Finder = Module("finder", {
             let searchString = this.findbar._findField.value;
             liberator.echoerr("Pattern not found: " + searchString, commandline.FORCE_SINGLELINE);
         }
-        else if (aData.result == Ci.nsITypeAheadFind.FIND_WRAPPED) {
+        else if (aData.result === Ci.nsITypeAheadFind.FIND_WRAPPED) {
             let msg = aData.findBackwards ? "Search hit TOP, continuing at BOTTOM" : "Search hit BOTTOM, continuing at TOP";
             commandline.echo(msg, commandline.HL_WARNINGMSG, commandline.APPEND_TO_MESSAGES | commandline.FORCE_SINGLELINE);
         }
@@ -230,7 +230,7 @@ var Finder = Module("finder", {
         }
 
         // liberator.log('inc: ' + options["incsearch"] + ' sea:' + this._searchPattern + ' pat:' + pattern);
-        if (!options["incsearch"] || this._searchPattern != pattern) {
+        if (!options["incsearch"] || this._searchPattern !== pattern) {
             this.find(pattern);
         }
 
@@ -287,7 +287,7 @@ var Finder = Module("finder", {
     updateCaseSensitive: function (cs) {
         this.setupFindbar();
         let findbar = this.findbar;
-        if (cs != findbar._typeAheadCaseSensitive) {
+        if (cs !== findbar._typeAheadCaseSensitive) {
             findbar._setCaseSensitivity(cs);
         }
     },
@@ -301,7 +301,7 @@ var Finder = Module("finder", {
 
         // We need to pretend like we're opening the findbar with a different mode,
         // but not actually do it.
-        if (fm != findbar._findMode) {
+        if (fm !== findbar._findMode) {
             findbar._findMode = fm;
             findbar._findFailedString = null;
             if(!findbar.hidden) {

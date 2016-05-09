@@ -148,7 +148,7 @@ const Tabs = Module("tabs", {
     // FIXME: Only called once...necessary?
     getContentIndex: function (content) {
         for (let [i, browser] in this.browsers) {
-            if (browser.contentWindow == content || browser.contentDocument == content)
+            if (browser.contentWindow === content || browser.contentDocument === content)
                 return i;
         }
         return -1;
@@ -163,7 +163,7 @@ const Tabs = Module("tabs", {
      * @returns {Object}
      */
     getTab: function (index) {
-        if (index != undefined)
+        if (index !== undefined)
             return config.tabbrowser.mTabs[index];
         else
             return config.tabbrowser.mCurrentTab;
@@ -219,7 +219,7 @@ const Tabs = Module("tabs", {
                         config.tabbrowser.removeTab(tab);
                     else {
                         let url = buffer.URL;
-                        if (url != "about:blank" || url != "about:newtab" ||
+                        if (url !== "about:blank" || url !== "about:newtab" ||
                             window.getWebNavigation().sessionHistory.count > 0) {
                             liberator.open("", liberator.NEW_BACKGROUND_TAB);
                             config.tabbrowser.removeTab(tab);
@@ -236,7 +236,7 @@ const Tabs = Module("tabs", {
                 },
             }[config.hostApplication] || function () {};
 
-        if (typeof count != "number" || count < 1)
+        if (typeof count !== "number" || count < 1)
             count = 1;
 
         if (options.getPref("browser.tabs.closeWindowWithLastTab") && !forceQuitOnLastTab)
@@ -246,7 +246,7 @@ const Tabs = Module("tabs", {
             if (liberator.windows.length > 1)
                 window.close();
             else
-                liberator.quit(forceQuitOnLastTab == 2);
+                liberator.quit(forceQuitOnLastTab === 2);
 
             return;
         }
@@ -289,7 +289,7 @@ const Tabs = Module("tabs", {
         let currentIndex = vTabs.indexOf(tabs.getTab());
         if (start <= currentIndex && currentIndex <= end) {
             let selTab = vTabs[selIndex];
-            if (orientation == 0 &&
+            if (orientation === 0 &&
                 config.tabbrowser.mTabContainer.contains(this.alternate) &&
                 !this.alternate.hidden) // XXX: should be in the visible tabs ?
             {
@@ -327,7 +327,7 @@ const Tabs = Module("tabs", {
     select: function (spec, wrap, allTabs) {
         let index = Tabs.indexFromSpec(spec, wrap, allTabs);
         // FIXME:
-        if (index == -1)
+        if (index === -1)
             liberator.beep();
         else
             config.tabbrowser.mTabContainer.selectedIndex = index;
@@ -397,10 +397,10 @@ const Tabs = Module("tabs", {
      * @return {array} array of tabs
      */
     getTabsFromBuffer: function (buffer) {
-        if (!buffer || typeof buffer != "string")
+        if (!buffer || typeof buffer !== "string")
             return [];
 
-        if (buffer == "#")
+        if (buffer === "#")
             return [tabs.alternate];
 
         let matches = buffer.match(/^(\d+):?/);
@@ -430,7 +430,7 @@ const Tabs = Module("tabs", {
             let tab = tabs.getTab(index);
             let url = browser.contentDocument.location.href;
             let title = tab.label.toLowerCase();
-            if (url == buffer)
+            if (url === buffer)
                 return [tab];
 
             if (url.indexOf(buffer) >= 0 || title.indexOf(lowerBuffer) >= 0)
@@ -455,7 +455,7 @@ const Tabs = Module("tabs", {
      */
     // FIXME: help!
     switchTo: function (buffer, allowNonUnique, count, reverse) {
-        if (buffer == "")
+        if (buffer === "")
             return;
 
         if (buffer != null) {
@@ -471,13 +471,13 @@ const Tabs = Module("tabs", {
 
         if (!count || count < 1)
             count = 1;
-        if (typeof reverse != "boolean")
+        if (typeof reverse !== "boolean")
             reverse = false;
 
         let tabItems = tabs.getTabsFromBuffer(buffer);
-        if (tabItems.length == 0)
+        if (tabItems.length === 0)
             liberator.echoerr("No matching buffer for: " + buffer);
-        else if (tabItems.length == 1)
+        else if (tabItems.length === 1)
             config.tabbrowser.mTabContainer.selectedItem = tabItems[0];
         else if (!allowNonUnique)
             liberator.echoerr("More than one match for: " + buffer);
@@ -530,7 +530,7 @@ const Tabs = Module("tabs", {
      */
     selectAlternateTab: function () {
         let alternate = tabs.alternate;
-        liberator.assert(alternate != null && tabs.getTab() != alternate, "No alternate page");
+        liberator.assert(alternate !== null && tabs.getTab() !== alternate, "No alternate page");
 
         config.tabbrowser.tabContainer.selectedItem = alternate;
     },
@@ -650,7 +650,7 @@ const Tabs = Module("tabs", {
 
                             [host, title, uri] = [host, title, uri].map(String.toLowerCase);
 
-                            if (host.indexOf(str) >= 0 || uri == str ||
+                            if (host.indexOf(str) >= 0 || uri === str ||
                                 (special && (title.indexOf(str) >= 0 || uri.indexOf(str) >= 0))) {
                                 tabs.remove(tabs.getTab(i), 1, orientation, 0, special);
                                 removed++;
@@ -658,7 +658,7 @@ const Tabs = Module("tabs", {
                         }
                     }
 
-                    if (removed == 1)
+                    if (removed === 1)
                         liberator.echomsg("Removed tab: " + arg);
                     else if (removed > 1)
                         liberator.echomsg("Removed " + removed + " tabs");
@@ -923,7 +923,7 @@ const Tabs = Module("tabs", {
                     let win = liberator.windows[winIndex - 1];
 
                     liberator.assert(win, "Window " + winIndex + " does not exist");
-                    liberator.assert(win != window, "Cannot reattach to the same window");
+                    liberator.assert(win !== window, "Cannot reattach to the same window");
 
                     let browser = win.getBrowser();
                     let dummy = browser.addTab("about:blank");
@@ -941,8 +941,8 @@ const Tabs = Module("tabs", {
                 }, {
                     argCount: "+",
                     completer: function (context, args) {
-                        if (args.completeArg == 0) {
-                            context.filters.push(function ({ item: win }) win != window);
+                        if (args.completeArg === 0) {
+                            context.filters.push(function ({ item: win }) win !== window);
                             completion.window(context);
                         }
                     }
@@ -963,7 +963,7 @@ const Tabs = Module("tabs", {
                         window.undoCloseTab(Number(m[1]) - 1);
                     else if (args) {
                         for (let [i, item] in Iterator(tabs.closedTabs))
-                            if (item.state.entries[item.state.index - 1].url == args) {
+                            if (item.state.entries[item.state.index - 1].url === args) {
                                 window.undoCloseTab(i);
                                 return;
                             }
@@ -1141,11 +1141,11 @@ const Tabs = Module("tabs", {
                     setter: function (value) {
                         let [open, restriction] = [1, 0];
                         for (let opt of this.parseValues(value)) {
-                            if (opt == "tab")
+                            if (opt === "tab")
                                 open = 3;
-                            else if (opt == "window")
+                            else if (opt === "window")
                                 open = 2;
-                            else if (opt == "resized")
+                            else if (opt === "resized")
                                 restriction = 2;
                         }
 

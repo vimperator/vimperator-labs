@@ -14,7 +14,7 @@ function checkFragment() {
 
 document.addEventListener("load", checkFragment, true);
 window.addEventListener("message", function (event) {
-    if (event.data == "fragmentChange")
+    if (event.data === "fragmentChange")
         checkFragment();
 }, true);
 

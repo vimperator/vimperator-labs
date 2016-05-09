@@ -43,7 +43,7 @@ var Config = Module("config", ConfigBase, {
     },
 
     //get isComposeWindow() window.wintype == "msgcompose",
-    get isComposeWindow() window.document.location == "chrome://messenger/content/messengercompose/messengercompose.xul",
+    get isComposeWindow() window.document.location === "chrome://messenger/content/messengercompose/messengercompose.xul",
     get browserModes() [modes.MESSAGE],
     get mailModes() [modes.NORMAL],
     // focusContent() focuses this widget
@@ -207,7 +207,7 @@ var Config = Module("config", ConfigBase, {
                 "boolean", true,
                 {
                     setter: function (value) {
-                        if (MailOfflineMgr.isOnline() != value)
+                        if (MailOfflineMgr.isOnline() !== value)
                             MailOfflineMgr.toggleOfflineStatus();
                         return value;
                     },

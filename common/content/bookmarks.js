@@ -88,7 +88,7 @@ const Bookmarks = Module("bookmarks", {
 
             function deleteBookmark(id) {
                 let length = bookmarks.length;
-                bookmarks = bookmarks.filter(function (item) item.id != id);
+                bookmarks = bookmarks.filter(function (item) item.id !== id);
                 return bookmarks.length < length;
             }
 
@@ -96,7 +96,7 @@ const Bookmarks = Module("bookmarks", {
                 do {
                     var root = id;
                     id = bookmarksService.getFolderIdForItem(id);
-                } while (id != bookmarksService.placesRoot && id != root);
+                } while (id !== bookmarksService.placesRoot && id !== root);
                 return root;
             };
 
@@ -129,9 +129,9 @@ const Bookmarks = Module("bookmarks", {
                     // iterate over the immediate children of this folder
                     for (let i = 0; i < folder.childCount; i++) {
                         let node = folder.getChild(i);
-                        if (node.type == node.RESULT_TYPE_FOLDER)   // folder
+                        if (node.type === node.RESULT_TYPE_FOLDER)   // folder
                             folders.push(node.itemId);
-                        else if (node.type == node.RESULT_TYPE_URI) // bookmark
+                        else if (node.type === node.RESULT_TYPE_URI) // bookmark
                             loadBookmark(node);
                     }
 
@@ -149,7 +149,7 @@ const Bookmarks = Module("bookmarks", {
                 onItemVisited:      function onItemVisited() {},
                 onItemMoved:        function onItemMoved() {},
                 onItemAdded: function onItemAdded(itemId, folder, index) {
-                    if (bookmarksService.getItemType(itemId) == bookmarksService.TYPE_BOOKMARK) {
+                    if (bookmarksService.getItemType(itemId) === bookmarksService.TYPE_BOOKMARK) {
                         if (self.isBookmark(itemId)) {
                             let bmark = loadBookmark(readBookmark(itemId));
                             storage.fireEvent(name, "add", bmark);
@@ -167,9 +167,9 @@ const Bookmarks = Module("bookmarks", {
                     if (isAnnotation)
                         return;
 
-                    let bookmark = bookmarks.filter(function (item) item.id == itemId)[0];
+                    let bookmark = bookmarks.filter(function (item) item.id === itemId)[0];
                     if (bookmark) {
-                        if (property == "tags")
+                        if (property === "tags")
                             value = tagging.getTagsForURI(util.newURI(bookmark.url), {});
                         if (property in bookmark)
                             bookmark[property] = value;
@@ -187,7 +187,7 @@ const Bookmarks = Module("bookmarks", {
         }
 
         let bookmarkObserver = function (key, event, arg) {
-            if (event == "add")
+            if (event === "add")
                 autocommands.trigger("BookmarkAdd", arg);
         };
 
@@ -215,7 +215,7 @@ const Bookmarks = Module("bookmarks", {
             let uri = util.createURI(url);
             if (!force) {
                 for (let bmark in this._cache) {
-                    if (bmark[0] == uri.spec) {
+                    if (bmark[0] === uri.spec) {
                         var id = bmark[5];
                         if (title)
                             bs.setItemTitle(id, title);
@@ -242,7 +242,7 @@ const Bookmarks = Module("bookmarks", {
                     return false;
                 }
             }
-            if (id == undefined)
+            if (id === undefined)
                 id = bs.insertBookmark(folderId, uri, -1, title || url);
             if (!id)
                 return false;
@@ -272,7 +272,7 @@ const Bookmarks = Module("bookmarks", {
         else {
             let title = buffer.title || url;
             let extra = "";
-            if (title != url)
+            if (title !== url)
                 extra = " (" + title + ")";
             this.add(true, title, url);
             liberator.echomsg("Added bookmark: " + url);
@@ -309,13 +309,13 @@ const Bookmarks = Module("bookmarks", {
             // make sure we can use search engines which would have the same alias (add numbers at the end)
             let newAlias = alias;
             for (let j = 1; j <= 10; j++) { // <=10 is intentional
-                if (!searchEngines.some(function (item) item[0] == newAlias))
+                if (!searchEngines.some(function (item) item[0] === newAlias))
                     break;
 
                 newAlias = alias + j;
             }
             // only write when it changed, writes are really slow
-            if (engine.alias != newAlias)
+            if (engine.alias !== newAlias)
                 engine.alias = newAlias;
 
             searchEngines.push([engine.alias, engine.description, engine.iconURI && engine.iconURI.spec]);
@@ -337,7 +337,7 @@ const Bookmarks = Module("bookmarks", {
             let results = [];
             try {
                 results = JSON.parse(resp.responseText)[1];
-                results = results.filter((item, k) => typeof item == "string")
+                results = results.filter((item, k) => typeof item === "string")
                                  .map((item, k) => [item, ""]);
             }
             catch (e) {}
@@ -418,7 +418,7 @@ const Bookmarks = Module("bookmarks", {
 
         let [url, postData] = getShortcutOrURI(searchString);
 
-        if (url == searchString)
+        if (url === searchString)
             return null;
         if (postData)
             return [url, postData];
@@ -433,7 +433,7 @@ const Bookmarks = Module("bookmarks", {
         // block and does so only when listing items, not opening them. In
         // short it breaks the :bmarks command which doesn't make much
         // sense to me but I'm old-fashioned. --djk
-        let kw = (keyword == "") ? undefined : {keyword:keyword};
+        let kw = (keyword === "") ? undefined : {keyword:keyword};
         if (!openItems)
             return completion.listCompleter("bookmark", filter, maxItems, tags, kw, CompletionContext.Filter.textAndDescription);
         let items = completion.runCompleter("bookmark", filter, maxItems, tags, kw, CompletionContext.Filter.textAndDescription);
@@ -455,7 +455,7 @@ const Bookmarks = Module("bookmarks", {
     getBookmarkFolder: function (folders, rootFolderId) {
         var q = PlacesUtils.history.getNewQuery(),
             o = PlacesUtils.history.getNewQueryOptions();
-        if (rootFolderId == PlacesUtils.tagsFolderId)
+        if (rootFolderId === PlacesUtils.tagsFolderId)
             o.resultType = o.RESULTS_AS_TAG_QUERY;
         else {
             q.setFolders([rootFolderId], 1);
@@ -472,7 +472,7 @@ const Bookmarks = Module("bookmarks", {
 
         function getFolderFromNode (node, title) {
             for (let child in Bookmarks.iterateFolderChildren(node)) {
-                if (child.title == title && child instanceof Ci.nsINavHistoryContainerResultNode) {
+                if (child.title === title && child instanceof Ci.nsINavHistoryContainerResultNode) {
                     node.containerOpen = false;
                     return child;
                 }
@@ -507,7 +507,7 @@ const Bookmarks = Module("bookmarks", {
                 let sh = history.session;
                 let jumps = Array.from(iter(sh))
                                  .map(([idx, val]) => [
-                                     idx == sh.index ? ">" : "",
+                                     idx === sh.index ? ">" : "",
                                      Math.abs(idx - sh.index),
                                      val.title,
                                      xml`<a highlight="URL" href=${val.URI.spec}>${val.URI.spec}</a>`
@@ -556,14 +556,14 @@ const Bookmarks = Module("bookmarks", {
         commands.add(["bma[rk]"],
             "Add a bookmark",
             function (args) {
-                let url = args.length == 0 ? buffer.URL : args[0];
-                let title = args["-title"] || (args.length == 0 ? buffer.title : null);
+                let url = args.length === 0 ? buffer.URL : args[0];
+                let title = args["-title"] || (args.length === 0 ? buffer.title : null);
                 let keyword = args["-keyword"] || null;
                 let tags =    args["-tags"] || [];
                 let folder =  args["-folder"] || "";
 
                 if (bookmarks.add(false, title, url, keyword, tags, folder, args.bang)) {
-                    let extra = (title == url) ? "" : " (" + title + ")";
+                    let extra = (title === url) ? "" : " (" + title + ")";
                     liberator.echomsg("Added bookmark: " + url + extra);
                 }
                 else
@@ -649,9 +649,9 @@ const Bookmarks = Module("bookmarks", {
             function () {
                 let options = {};
 
-                let bmarks = bookmarks.get(buffer.URL).filter(function (bmark) bmark.url == buffer.URL);
+                let bmarks = bookmarks.get(buffer.URL).filter(function (bmark) bmark.url === buffer.URL);
 
-                if (bmarks.length == 1) {
+                if (bmarks.length === 1) {
                     let bmark = bmarks[0];
 
                     options["-title"] = bmark.title;
@@ -661,7 +661,7 @@ const Bookmarks = Module("bookmarks", {
                         options["-tags"] = bmark.tags.join(", ");
                 }
                 else {
-                    if (buffer.title != buffer.URL)
+                    if (buffer.title !== buffer.URL)
                         options["-title"] = buffer.title;
                 }
 
@@ -727,7 +727,7 @@ const Bookmarks = Module("bookmarks", {
             context.fork("suggest", keyword.length + space.length, this, "searchEngineSuggest",
                     keyword, true);
 
-            let item = keywords.filter(function (k) k.keyword == keyword)[0];
+            let item = keywords.filter(function (k) k.keyword === keyword)[0];
             if (item && item.url.indexOf("%s") > -1) {
                 context.fork("keyword/" + keyword, keyword.length + space.length, null, function (context) {
                     context.format = history.format;
@@ -740,7 +740,7 @@ const Bookmarks = Module("bookmarks", {
                         return history.get({ uri: window.makeURI(begin), uriIsPrefix: true }).map(function (item) {
                             let rest = item.url.length - end.length;
                             let query = item.url.substring(begin.length, rest);
-                            if (item.url.substr(rest) == end && query.indexOf("&") == -1) {
+                            if (item.url.substr(rest) === end && query.indexOf("&") === -1) {
                                 query = query.replace(/#.*/, "");
                                 // Countermeasure for "Error: malformed URI sequence".
                                 try {
@@ -769,7 +769,7 @@ const Bookmarks = Module("bookmarks", {
                 if (!engine)
                     return;
                 let [, word] = /^\s*(\S+)/.exec(context.filter) || [];
-                if (!kludge && word == name) // FIXME: Check for matching keywords
+                if (!kludge && word === name) // FIXME: Check for matching keywords
                     return;
                 let ctxt = context.fork(name, 0);
 

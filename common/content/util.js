@@ -526,7 +526,7 @@ const Util = Module("util", {
         if (object === null)
             return "null\n";
 
-        if (typeof object != "object")
+        if (typeof object !== "object")
             return false;
 
         const NAMESPACES = util.Array.toObject([
@@ -709,7 +709,7 @@ const Util = Module("util", {
             if (!url)
                 return "";
 
-            if (url.substr(0, 5) != "file:") {
+            if (url.substr(0, 5) !== "file:") {
                 try {
                     // Try to find a matching file.
                     let file = io.File(url);

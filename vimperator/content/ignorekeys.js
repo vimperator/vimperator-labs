@@ -39,7 +39,7 @@ const IgnoreKeys = Module("ignoreKeys", {
 
     isKeyIgnored: function isKeyIgnored(url, key) {
         // Don't cripple Vimperator ;) Later this will be part of a new "unignorekeys" option
-        if (key == ":")
+        if (key === ":")
             return false;
 
         for (let [page, exceptions] in this._ignoredKeys) {
@@ -57,7 +57,7 @@ const IgnoreKeys = Module("ignoreKeys", {
         }
 
         for (let [page, ] in this._ignoredKeys) {
-            if (filter == page)
+            if (filter === page)
                 this._ignoredKeys.remove(page);
         }
     },
@@ -94,7 +94,7 @@ const IgnoreKeys = Module("ignoreKeys", {
                             ],
                             completer: function (context, args) {
                                 let completions = [];
-                                if (args.completeArg == 0) {
+                                if (args.completeArg === 0) {
                                     if (buffer.URL)
                                         completions.unshift([util.escapeRegex(buffer.URL), "Current URL"]);
                                     if (content.document && content.document.domain)
@@ -113,7 +113,7 @@ const IgnoreKeys = Module("ignoreKeys", {
                     new Command(["list", "ls"], "List pages with ignored keys",
                         function (args) {
                             let res = ignoreKeys.get(args.literalArg || "");
-                            if (res.length == undefined || res.length == 0) {
+                            if (res.length === undefined || res.length === 0) {
                                 if (!args.literalArg)
                                     liberator.echomsg("No ignored keys");
                                 else
