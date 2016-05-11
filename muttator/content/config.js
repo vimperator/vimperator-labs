@@ -9,10 +9,6 @@ var Config = Module("config", ConfigBase, {
     init: function () {
         // don't wait too long when selecting new messages
         // GetThreadTree()._selectDelay = 300; // TODO: make configurable
-
-        // TODO: delete me when minversion is greater than 34
-        var {isSupport} = Cu.import("resource://liberator/CheckTemplate.jsm", {});
-        if (isSupport) this.features.add("template");
     },
 
     /*** required options, no checks done if they really exist, so be careful ***/
