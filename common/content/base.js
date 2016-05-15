@@ -333,7 +333,9 @@ function Class() {
     }
 
     extend(Constructor, superclass, args[0]);
-    update(Constructor, args[1]);
+    if (args[1]) {
+        update(Constructor, args[1]);
+    }
     args = args.slice(2);
     Array.forEach(args, function (obj) {
         if (callable(obj))

@@ -358,12 +358,6 @@ const Liberator = Module("liberator", {
      *     should be loaded.
      */
     loadScript: function (uri, context) {
-        // TODO: delete me when minVersion is greater than 34
-        if (options.expandtemplate) {
-            var prefix = "liberator://template/";
-            if (uri.lastIndexOf(prefix, 0) === -1)
-                uri = prefix + uri;
-        }
         services.get("scriptloader").loadSubScript(uri, context, "UTF-8");
     },
 
@@ -371,14 +365,6 @@ const Liberator = Module("liberator", {
         try {
             if (!context)
                 context = userContext;
-
-            // TODO: delete me when minVersion is greater than 34
-            if (options.expandtemplate) {
-                var obj = new Object;
-                Cu.import("resource://liberator/template.js", obj);
-                str = obj.convert(str);
-            }
-
             context[EVAL_ERROR] = null;
             context[EVAL_STRING] = str;
             context[EVAL_RESULT] = null;

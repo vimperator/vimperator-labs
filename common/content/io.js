@@ -7,6 +7,8 @@
 
 /** @scope modules */
 
+const VERSION = Services.appinfo.platformVersion;
+
 plugins.contexts = {};
 const Script = Class("Script", {
     init: function (file) {
@@ -330,7 +332,7 @@ const IO = Module("io", {
         this._lastRunCommand = ""; // updated whenever the users runs a command with :!
         this._scriptNames = [];
 
-        if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
+        if (services.get("vc").compare(VERSION, "26.0a1") < 0) {
             this.downloadListener = {
                 onDownloadStateChange: function (state, download) {
                     if (download.state === services.get("downloads").DOWNLOAD_FINISHED) {
@@ -372,7 +374,7 @@ const IO = Module("io", {
     },
 
     destroy: function () {
-        if (services.get("vc").compare(Application.version, "26.0a1") < 0) {
+        if (services.get("vc").compare(VERSION, "26.0a1") < 0) {
             services.get("downloads").removeListener(this.downloadListener);
         } else {
             let {Downloads} = Cu.import("resource://gre/modules/Downloads.jsm", {});

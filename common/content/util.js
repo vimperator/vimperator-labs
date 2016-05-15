@@ -426,7 +426,7 @@ const Util = Module("util", {
             null
         );
 
-        if (services.get("vc").compare(Application.version, "33") >= 0
+        if (services.get("vc").compare(VERSION, "33") >= 0
             && Cu.isXrayWrapper(result)) {
             let xr = result;
 
