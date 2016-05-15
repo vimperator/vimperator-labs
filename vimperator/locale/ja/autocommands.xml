@@ -17,7 +17,6 @@
     <dt>PageLoadPre</dt>       <dd>ページの読み込みが開始された直後に発生します</dd>
     <dt>PageLoad</dt>          <dd>ページの ( 再 ) 読み込みが終了した際やページが開かれた際に発生します</dd>
     <dt>PluginsLoadPost</dt>   <dd>Triggered after all plugins have been (re)loaded</dd>
-    <dt>PrivateMode</dt>       <dd>プライベートブラウジングに切り替えた際と元に戻った際に発生します</dd>
     <dt>Sanitize</dt>	       <dd>プライベートデータを削除した際に発生します</dd>
     <dt>ShellCmdPost</dt>      <dd><ex>:!</ex><a>cmd</a> でシェルコマンドが実行された直後に発生します</dd>
     <dt>&liberator.appname;Enter</dt>   <dd>&liberator.host; が起動した直後に発生します</dd>
@@ -35,7 +34,7 @@
     <dt>&lt;icon></dt>      <dd>&lt;url> に関連づけられたアイコンです。 <em>BookmarkAdd</em> 専用です。</dd>
     <dt>&lt;size></dt>      <dd>ダウンロードされたファイルのサイズです。 <em>DownloadPost</em> 専用です。</dd>
     <dt>&lt;file></dt>      <dd>ダウンロードした場所です。 <em>DownloadPost</em> 専用です。</dd>
-    <dt>&lt;state></dt>     <dd>切り替え後の状態です。 <em>Fullscreen</em> と <em>PrivateMode</em> 専用です。</dd>
+    <dt>&lt;state></dt>     <dd>切り替え後の状態です。 <em>Fullscreen</em> 専用です。</dd>
     <dt>&lt;name></dt>      <dd>アイテムの名前です。<em>ColorScheme</em> と <em>Sanitize</em> 専用です。</dd>
 </dl>
 
