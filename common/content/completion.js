@@ -517,7 +517,7 @@ const CompletionContext = Class("CompletionContext", {
     },
 
     getText: function getText(item) {
-        let text = item[self.keys["text"]];
+        let text = item[self.keys.text];
         //if (self.quote)
             //return self.quote(text);
         return text;
@@ -714,14 +714,14 @@ const Completion = Module("completion", {
         let start = 0;
         let skip = 0;
 
-        if (options["urlseparator"])
-            skip = context.filter.match("^.*" + options["urlseparator"]); // start after the last 'urlseparator'
+        if (options.urlseparator)
+            skip = context.filter.match("^.*" + options.urlseparator); // start after the last 'urlseparator'
 
         if (skip)
             context.advance(skip[0].length);
 
         if (typeof complete === "undefined")
-            complete = options["complete"];
+            complete = options.complete;
 
         // Will, and should, throw an error if !(c in opts)
         Array.forEach(complete, function (c) {

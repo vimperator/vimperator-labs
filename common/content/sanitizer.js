@@ -76,7 +76,7 @@ const Sanitizer = Module("sanitizer", {
             function (args) {
                 liberator.assert(!liberator.isPrivateWindow(), "Cannot sanitize items in private mode");
 
-                let timespan = args["-timespan"] == undefined ? options["sanitizetimespan"] : args["-timespan"];
+                let timespan = args["-timespan"] == undefined ? options.sanitizetimespan : args["-timespan"];
 
                 sanitizer.range = Sanitizer.getClearRange(timespan);
 
@@ -159,7 +159,7 @@ const Sanitizer = Module("sanitizer", {
             },
             {
                 name: "macros",
-                action: function () { storage["macros"].clear(); }
+                action: function () { storage.macros.clear(); }
             },
             {
                 name: "marks",

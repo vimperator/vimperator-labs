@@ -57,7 +57,7 @@ var Finder = Module("finder", {
             fm = findbar.FIND_LINKS;
         else if (/\\L/.test(pattern))
             fm = findbar.FIND_NORMAL;
-        else if (options["linksearch"])
+        else if (options.linksearch)
             fm = findbar.FIND_LINKS;
         else
             fm = findbar.FIND_NORMAL;
@@ -72,9 +72,9 @@ var Finder = Module("finder", {
             cs = false;
         else if (/\\C/.test(pattern))
             cs = true;
-        else if (options["ignorecase"] && options["smartcase"] && /[A-Z]/.test(pattern))
+        else if (options.ignorecase && options.smartcase && /[A-Z]/.test(pattern))
             cs = true;
-        else if (options["ignorecase"])
+        else if (options.ignorecase)
             cs = false;
         else
             cs = true;
@@ -102,7 +102,7 @@ var Finder = Module("finder", {
         //commandline.open(this._backwards ? "Find backwards" : "Find", "", mode);
         commandline.input(this._backwards ? "Find backwards" : "Find", this.closure.onSubmit, {
             onChange: function() {
-                if (options["incsearch"] && !commandline._isIMEComposing) {
+                if (options.incsearch && !commandline._isIMEComposing) {
                     finder.find(commandline.command);
                 }
             }
@@ -230,7 +230,7 @@ var Finder = Module("finder", {
         }
 
         // liberator.log('inc: ' + options["incsearch"] + ' sea:' + this._searchPattern + ' pat:' + pattern);
-        if (!options["incsearch"] || this._searchPattern != pattern) {
+        if (!options.incsearch || this._searchPattern != pattern) {
             this.find(pattern);
         }
 
@@ -248,7 +248,7 @@ var Finder = Module("finder", {
         if (this._backwards)
             this.findAgain(true);
 
-        if (options["hlsearch"])
+        if (options.hlsearch)
             this.highlight();
     },
 

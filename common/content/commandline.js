@@ -70,7 +70,7 @@ const CommandLine = Module("commandline", {
         this._messageHistory = { //{{{
             _messages: [],
             get messages() {
-                let max = options["messages"];
+                let max = options.messages;
 
                 // resize if 'messages' has changed
                 if (this._messages.length > max)
@@ -89,7 +89,7 @@ const CommandLine = Module("commandline", {
                 if (!message)
                     return;
 
-                if (this._messages.length >= options["messages"])
+                if (this._messages.length >= options.messages)
                     this._messages.shift();
 
                 this._messages.push(message);
@@ -112,7 +112,7 @@ const CommandLine = Module("commandline", {
         });
 
         this._autocompleteTimer = new Timer(200, 500, function autocompleteTell(tabPressed) {
-            if (!events.feedingKeys && self._completions && options["autocomplete"]) {
+            if (!events.feedingKeys && self._completions && options.autocomplete) {
                 self._completions.complete(true, false);
                 self._completions.itemList.show();
             }
@@ -298,10 +298,10 @@ const CommandLine = Module("commandline", {
 
         this._setHighlightGroup(highlightGroup);
         this._messageBox.value = str;
-        if (str && options["messagetimeout"] != -1 &&
+        if (str && options.messagetimeout != -1 &&
             [this.HL_INFOMSG, this.HL_WARNINGMSG].indexOf(highlightGroup) != -1)
             timeID = this.setTimeout(function(){ this._messageBox.classList.add("liberator-hiding"); },
-                options["messagetimeout"]);
+                options.messagetimeout);
 
         liberator.triggerObserver("echoLine", str, highlightGroup, forceSingle);
 
@@ -1085,7 +1085,7 @@ const CommandLine = Module("commandline", {
                 return;
             this.store.mutate("filter", function (line) (line.value || line) != str);
             this.store.push({ value: str, timestamp: Date.now(), privateData: this.checkPrivate(str) });
-            this.store.truncate(options["history"], true);
+            this.store.truncate(options.history, true);
         },
         /**
          * @property {function} Returns whether a data item should be
@@ -1102,8 +1102,8 @@ const CommandLine = Module("commandline", {
          */
         sanitize: function (timespan) {
             let range = [0, Number.MAX_VALUE];
-            if (liberator.has("sanitizer") && (timespan || options["sanitizetimespan"]))
-                range = sanitizer.getClearRange(timespan || options["sanitizetimespan"]);
+            if (liberator.has("sanitizer") && (timespan || options.sanitizetimespan))
+                range = sanitizer.getClearRange(timespan || options.sanitizetimespan);
 
             this.store.mutate("filter", function (item) {
                 let timestamp = (item.timestamp || Date.now()/1000) * 1000;
@@ -1593,7 +1593,7 @@ const CommandLine = Module("commandline", {
 
         options.add(["complete", "cpt"],
             "Items which are completed at the :open prompts",
-            "charlist", typeof(config.defaults["complete"]) == "string" ? config.defaults["complete"] : "sl",
+            "charlist", typeof(config.defaults.complete) == "string" ? config.defaults.complete : "sl",
             {
                 completer: function (context) array(values(completion.urlCompleters))
             });
@@ -1752,7 +1752,7 @@ const ItemList = Class("ItemList", {
                 <div key="completions"/>
                 <div highlight="Completions">
                 ${
-                    template.map2(xml, util.range(0, options["maxitems"] * 2), function (i)
+                    template.map2(xml, util.range(0, options.maxitems * 2), function (i)
                     xml`<span highlight="CompItem">
                         <li highlight="NonText">~</li>
                     </span>`)
@@ -1793,11 +1793,11 @@ const ItemList = Class("ItemList", {
             return false;
 
         this._startIndex = offset;
-        this._endIndex = Math.min(this._startIndex + options["maxitems"], this._items.allItems.items.length);
+        this._endIndex = Math.min(this._startIndex + options.maxitems, this._items.allItems.items.length);
 
         let haveCompletions = false;
         let off = 0;
-        let end = this._startIndex + options["maxitems"];
+        let end = this._startIndex + options.maxitems;
         function getRows(context) {
             function fix(n) util.Math.constrain(n, 0, len);
             let len = context.items.length;
@@ -1890,7 +1890,7 @@ const ItemList = Class("ItemList", {
         let sel = this._selIndex;
         let len = this._items.allItems.items.length;
         let newOffset = this._startIndex;
-        let maxItems = options["maxitems"];
+        let maxItems = options.maxitems;
         let contextLines = Math.min(3, parseInt((maxItems - 1) / 2));
 
         if (index == -1 || index == null || index == len) { // wrapped around

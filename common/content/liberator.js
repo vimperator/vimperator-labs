@@ -183,7 +183,7 @@ const Liberator = Module("liberator", {
      */
     beep: function () {
         // FIXME: popups clear the command line
-        if (options["visualbell"]) {
+        if (options.visualbell) {
             // flash the visual bell
             let popup = document.getElementById("liberator-visualbell");
             let win = config.visualbellWindow;
@@ -306,7 +306,7 @@ const Liberator = Module("liberator", {
             if (typeof str == "object" && "echoerr" in str)
                 str = str.echoerr;
 
-            if (options["errorbells"])
+            if (options.errorbells)
                 liberator.beep();
 
             commandline.echo((prefix || "") + str, commandline.HL_ERRORMSG, flags);
@@ -641,7 +641,7 @@ const Liberator = Module("liberator", {
 
                 ${body}
             </document>`.toString();
-        fileMap["plugins"] = function () ['text/xml;charset=UTF-8', help];
+        fileMap.plugins = function () ['text/xml;charset=UTF-8', help];
 
         addTags("plugins", httpGet("liberator://help/plugins").responseXML);
     },
@@ -656,7 +656,7 @@ const Liberator = Module("liberator", {
      */
     help: function (topic, unchunked) {
         if (!topic) {
-            let helpFile = unchunked ? "all" : options["helpfile"];
+            let helpFile = unchunked ? "all" : options.helpfile;
             if (helpFile in services.get("liberator:").FILE_MAP)
                 liberator.open("liberator://help/" + helpFile, { from: "help" });
             else
@@ -668,7 +668,7 @@ const Liberator = Module("liberator", {
         liberator.assert(page != null, "Sorry, no help for: " + topic);
 
         liberator.open("liberator://help/" + page, { from: "help" });
-        if (!options["activate"] || options.get("activate").has("all", "help"))
+        if (!options.activate || options.get("activate").has("all", "help"))
             content.postMessage("fragmentChange", "*");
     },
 
@@ -793,9 +793,9 @@ const Liberator = Module("liberator", {
             where = liberator.NEW_PRIVATE_WINDOW;
 
         if ("from" in params && liberator.has("tabs")) {
-            if (!('where' in params) && options["newtab"] && options.get("newtab").has("all", params.from))
+            if (!('where' in params) && options.newtab && options.get("newtab").has("all", params.from))
                 where = liberator.NEW_TAB;
-            if (options["activate"] && !options.get("activate").has("all", params.from)) {
+            if (options.activate && !options.get("activate").has("all", params.from)) {
                 if (where == liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
                 else if (where == liberator.NEW_BACKGROUND_TAB)
@@ -1109,7 +1109,7 @@ const Liberator = Module("liberator", {
         }
 
         let items = [];
-        addChildren(document.getElementById(config.toolbars["menu"][0][0]), "");
+        addChildren(document.getElementById(config.toolbars.menu[0][0]), "");
         return items;
     },
 
@@ -1755,7 +1755,7 @@ const Liberator = Module("liberator", {
                 if (args[0])
                     usage = template.genericOutput(config.name + " Usage", usage[args[0]]());
                 else
-                    usage = template.genericOutput(config.name + " Usage", xml`${ usage["mappings"]() }<br/>${ usage["commands"]() }<br/>${ usage["options"]()}`);
+                    usage = template.genericOutput(config.name + " Usage", xml`${ usage.mappings() }<br/>${ usage.commands() }<br/>${ usage.options()}`);
                 liberator.echo(usage, commandline.FORCE_MULTILINE);
             }, {
                 argCount: "?",
@@ -1871,7 +1871,7 @@ const Liberator = Module("liberator", {
                         liberator.log("No user RC file found");
                 }
 
-                if (options["exrc"] && !liberator.commandLineOptions.rcFile) {
+                if (options.exrc && !liberator.commandLineOptions.rcFile) {
                     let localRCFile = io.getRCFile(io.getCurrentDirectory().path);
                     if (localRCFile && !localRCFile.equals(rcFile))
                         io.source(localRCFile.path, true);
@@ -1879,9 +1879,9 @@ const Liberator = Module("liberator", {
             }
 
             if (liberator.commandLineOptions.rcFile == "NONE" || liberator.commandLineOptions.noPlugins)
-                options["loadplugins"] = false;
+                options.loadplugins = false;
 
-            if (options["loadplugins"])
+            if (options.loadplugins)
                 liberator.loadPlugins();
 
             liberator.initHelp();

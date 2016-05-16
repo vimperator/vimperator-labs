@@ -179,7 +179,7 @@ const Modes = Module("modes", {
 
     // show the current mode string in the command line
     show: function () {
-        if (options["showmode"])
+        if (options.showmode)
             commandline.setModeMessage(this._getModeMessage());
     },
 

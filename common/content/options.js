@@ -1006,7 +1006,7 @@ const Options = Module("options", {
                         else
                             msg = "  " + option.name + "=" + opt.optionValue;
 
-                        if (options["verbose"] > 0 && option.setFrom)
+                        if (options.verbose > 0 && option.setFrom)
                             msg += "\n        Last set from " + option.setFrom.path;
 
                         // FIXME: Message highlight group wrapping messes up the indent up for multi-arg verbose :set queries

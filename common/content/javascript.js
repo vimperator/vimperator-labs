@@ -51,7 +51,7 @@ const JavaScript = Module("javascript", {
                     // from content scope are never used in unsecured eval(),
                     // we dissallow unwrapping objects for now, unless the user
                     // uses an (undocumented) option 'unwrapjsobjects'
-                    else if (options["inspectcontentobjects"]) {
+                    else if (options.inspectcontentobjects) {
                         obj = obj.wrappedJSObject;
                     }
                 }

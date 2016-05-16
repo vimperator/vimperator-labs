@@ -35,7 +35,7 @@ const Tabs = Module("tabs", {
         modes.reset();
         statusline.updateField("tabcount", true);
         this.updateSelectionHistory();
-        if (options["focuscontent"])
+        if (options.focuscontent)
             setTimeout(function () { liberator.focusContent(true); }, 10); // just make sure, that no widget has focus
     },
 

@@ -15,7 +15,7 @@ const Compose = Module("compose", {
             // this is (also) fired once the new compose window loaded the message for the first time
             NotifyDocumentStateChanged: function (nowDirty) {
                 // only edit with external editor if this window was not cached!
-                if (options["autoexternal"] && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
+                if (options.autoexternal && !window.messageWasEditedExternally/* && !gMsgCompose.recycledWindow*/) {
                     window.messageWasEditedExternally = true;
                     editor.editFieldExternally();
                 }

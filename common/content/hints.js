@@ -141,7 +141,7 @@ const Hints = Module("hints", {
         if (elem instanceof HTMLInputElement && /(submit|button|reset)/.test(type))
             return [elem.value, false];
         else {
-            for (let option of options["hintinputs"].split(",")) {
+            for (let option of options.hintinputs.split(",")) {
                 switch (option) {
                     case "value":
                         if (elem instanceof HTMLSelectElement) {
@@ -566,7 +566,7 @@ const Hints = Module("hints", {
     },
 
     _num2chars: function (num) {
-        let hintchars = options["hintchars"];
+        let hintchars = options.hintchars;
         let chars = "";
         let base = hintchars.length;
         do {
@@ -579,7 +579,7 @@ const Hints = Module("hints", {
 
     _chars2num: function (chars) {
         let num = 0;
-        let hintchars = options["hintchars"];
+        let hintchars = options.hintchars;
         let base = hintchars.length;
         for (let i = 0, l = chars.length; i < l; ++i) {
             num = base * num + hintchars.indexOf(chars[i]);
@@ -587,7 +587,7 @@ const Hints = Module("hints", {
         return num;
     },
 
-    _isHintNumber: function (key) options["hintchars"].indexOf(key) >= 0,
+    _isHintNumber: function (key) options.hintchars.indexOf(key) >= 0,
 
     /**
      * Finish hinting.
@@ -607,13 +607,13 @@ const Hints = Module("hints", {
 
         // This "followhints" option is *too* confusing. For me, and
         // presumably for users, too. --Kris
-        if (options["followhints"] > 0) {
+        if (options.followhints > 0) {
             if (!followFirst)
                 return false; // no return hit; don't examine uniqueness
 
             // OK. return hit. But there's more than one hint, and
             // there's no tab-selected current link. Do not follow in mode 2
-            liberator.assert(options["followhints"] != 2 || this._validHints.length == 1 || this._hintNumber)
+            liberator.assert(options.followhints != 2 || this._validHints.length == 1 || this._hintNumber)
         }
 
         if (!followFirst) {
@@ -650,8 +650,8 @@ const Hints = Module("hints", {
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
-        if (this._hintNumber > 0 && this._hintNumber * options["hintchars"].length <= this._validHints.length) {
-            let timeout = options["hinttimeout"];
+        if (this._hintNumber > 0 && this._hintNumber * options.hintchars.length <= this._validHints.length) {
+            let timeout = options.hinttimeout;
             if (timeout > 0)
                 this._activeTimeout = this.setTimeout(function () { this._processHints(true); }, timeout);
         }
@@ -735,7 +735,7 @@ const Hints = Module("hints", {
          */
         function wordStartsWithMatcher(hintString, allowWordOverleaping) { //{{{
             let hintStrings    = tokenize(/\s+/, hintString);
-            let wordSplitRegex = RegExp(options["wordseparators"]);
+            let wordSplitRegex = RegExp(options.wordseparators);
 
             /**
              * Match a set of characters to the start of words.

@@ -285,7 +285,7 @@ const Editor = Module("editor", {
 
     editFileExternally: function (path) {
         // TODO: save return value in v:shell_error
-        let args = commands.parseArgs(options["editor"], [], [], "*", true);
+        let args = commands.parseArgs(options.editor, [], [], "*", true);
 
         liberator.assert(args.length >= 1, "No editor specified");
 
@@ -295,7 +295,7 @@ const Editor = Module("editor", {
 
     // TODO: clean up with 2 functions for textboxes and currentEditor?
     editFieldExternally: function (forceEditing, field) {
-        if (!options["editor"])
+        if (!options.editor)
             return;
 
         let textBox = null, nsEditor = null;
