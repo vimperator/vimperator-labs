@@ -618,7 +618,7 @@ const Options = Module("options", {
                     option.value = xml`=${template.highlight(opt.value)}`;
                 yield option;
             }
-        };
+        }
 
         let list = template.options("Options", opts());
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);
@@ -658,7 +658,7 @@ const Options = Module("options", {
 
                 yield option;
             }
-        };
+        }
 
         let list = template.options(config.hostApplication + " Options", prefs());
         commandline.echo(list, commandline.HL_NORMAL, commandline.FORCE_MULTILINE);

@@ -33,9 +33,9 @@ const Hints = Module("hints", {
 
         const Mode = Hints.Mode;
         Mode.defaultValue("tags", function () function () options.hinttags);
-        function extended() options.extendedhinttags;
-        function images() "//*[@src]";
-        function anchors() "//*[@id or @name]";
+        function extended() options.extendedhinttags
+        function images() "//*[@src]"
+        function anchors() "//*[@id or @name]"
 
         this._hintModes = {
             ";": Mode("Focus hint",                         function (elem) buffer.focusElement(elem),                             extended),
@@ -698,7 +698,7 @@ const Hints = Module("hints", {
          * @param {string} str The string to split.
          * @returns {Array(string)} The lowercased splits of the splitting.
          */
-        function tokenize(pat, str) str.split(pat).map(String.toLowerCase);
+        function tokenize(pat, str) str.split(pat).map(String.toLowerCase)
 
         /**
          * Get a hint matcher for hintmatching=contains

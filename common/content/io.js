@@ -254,7 +254,7 @@ const File = Class("File", {
             !liberator.has("Windows") ? /\$(\w+)\b|\${(\w+)}/g
                                  : /\$(\w+)\b|\${(\w+)}|%(\w+)%/g,
             function (m, n1, n2, n3) services.get("environment").get(n1 || n2 || n3) || m
-        );
+        )
         path = expand(path);
 
         // expand ~
@@ -770,7 +770,7 @@ lookup:
     system: function (command, input) {
         liberator.echomsg("Executing: " + command);
 
-        function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"';
+        function escape(str) '"' + str.replace(/[\\"$]/g, "\\$&") + '"'
 
         return this.withTempFiles(function (stdin, stdout, cmd) {
             if (input)

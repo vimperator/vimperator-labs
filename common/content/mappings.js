@@ -116,7 +116,7 @@ const Map = Class("Map", {
             args.push(argument);
 
         let self = this;
-        function repeat() self.action.apply(self, args);
+        function repeat() self.action.apply(self, args)
         if (this.names[0] != ".") // FIXME: Kludge.
             mappings.repeat = repeat;
 

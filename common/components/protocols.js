@@ -30,7 +30,7 @@ const systemPrincipal = channel.owner;
 channel.cancel(NS_BINDING_ABORTED);
 delete channel;
 
-function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + encodeURIComponent(data);
+function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + encodeURIComponent(data)
 function makeChannel(url, orig) {
     if (typeof url == "function")
         url = dataURL.apply(null, url());
@@ -40,7 +40,7 @@ function makeChannel(url, orig) {
     channel.originalURI = orig;
     return channel;
 }
-function fakeChannel(orig) makeChannel("chrome://liberator/content/does/not/exist", orig);
+function fakeChannel(orig) makeChannel("chrome://liberator/content/does/not/exist", orig)
 function redirect(to, orig) {
     //xxx: escape
     let html = '<html><head><meta http-equiv="Refresh" content="' + ("0;" + to).replace(/"/g, "&quot;") + '"/></head></html>';
@@ -161,6 +161,6 @@ var components = [ChromeData, Liberator];
 if(XPCOMUtils.generateNSGetFactory)
     var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
 else
-    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule(components);
+    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule(components)
 
 // vim: set fdm=marker sw=4 ts=4 et:
