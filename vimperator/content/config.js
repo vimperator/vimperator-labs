@@ -148,7 +148,7 @@ var Config = Module("config", ConfigBase, {
             "Close all other windows",
             function () {
                 liberator.windows.forEach(function (win) {
-                    if (win != window)
+                    if (win !== window)
                         win.close();
                 });
             },
@@ -182,7 +182,7 @@ var Config = Module("config", ConfigBase, {
             "Open the sidebar window",
             function (args) {
                 let arg = args.literalArg;
-                function compare(a, b) util.compareIgnoreCase(a, b) == 0
+                function compare(a, b) util.compareIgnoreCase(a, b) === 0
 
                 // focus if the requested sidebar is already open
                 if (compare(document.getElementById("sidebar-title").value, arg)) {
@@ -314,7 +314,7 @@ var Config = Module("config", ConfigBase, {
             {
                 setter: function (value) {
                     const ioService = services.get("io");
-                    if (ioService.offline == value)
+                    if (ioService.offline === value)
                         BrowserOffline.toggleOfflineStatus();
                     return value;
                 },

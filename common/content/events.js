@@ -108,7 +108,7 @@ const Events = Module("events", {
                     self[method](event);
                 }
                 catch (e) {
-                    if (e.message == "Interrupted")
+                    if (e.message === "Interrupted")
                         liberator.echoerr("Interrupted");
                     else
                         liberator.echoerr("Processing " + event.type + " event: " + (e.echoerr || e));
@@ -190,19 +190,19 @@ const Events = Module("events", {
      */
     playMacro: function (macro) {
         let res = false;
-        if (!/[a-zA-Z0-9@]/.test(macro) && macro.length == 1) {
+        if (!/[a-zA-Z0-9@]/.test(macro) && macro.length === 1) {
             liberator.echoerr("Invalid macro name: " + macro);
             return false;
         }
 
-        if (macro == "@") { // use lastMacro if it's set
+        if (macro === "@") { // use lastMacro if it's set
             if (!this._lastMacro) {
                 liberator.echoerr("No previously used macro");
                 return false;
             }
         }
         else {
-            if (macro.length == 1)
+            if (macro.length === 1)
                 this._lastMacro = macro.toLowerCase(); // XXX: sets last played macro, even if it does not yet exist
             else
                 this._lastMacro = macro; // e.g. long names are case sensitive
@@ -287,7 +287,7 @@ const Events = Module("events", {
                     let elem = liberator.focus || config.browser.contentWindow;
                     let evt = events.create(doc, "keypress", evt_obj);
 
-                    if (typeof noremap == "object")
+                    if (typeof noremap === "object")
                         for (let [k, v] in Iterator(noremap))
                             evt[k] = v;
                     else
@@ -422,23 +422,23 @@ const Events = Module("events", {
                 modifier = modifier.toUpperCase();
                 keyname = keyname.toLowerCase();
 
-                if (keyname && !(keyname.length == 1 && modifier.length == 0 ||  // disallow <> and <a>
-                    !(keyname.length == 1 || this._key_code[keyname] || keyname == "nop" || /mouse$/.test(keyname)))) { // disallow <misteak>
+                if (keyname && !(keyname.length === 1 && modifier.length === 0 ||  // disallow <> and <a>
+                    !(keyname.length === 1 || this._key_code[keyname] || keyname === "nop" || /mouse$/.test(keyname)))) { // disallow <misteak>
                     evt_obj.ctrlKey  = /C-/.test(modifier);
                     evt_obj.altKey   = /A-/.test(modifier);
                     evt_obj.shiftKey = /S-/.test(modifier);
                     evt_obj.metaKey  = /M-/.test(modifier);
 
-                    if (keyname.length == 1) { // normal characters
+                    if (keyname.length === 1) { // normal characters
                         if (evt_obj.shiftKey) {
                             keyname = keyname.toUpperCase();
-                            if (keyname == keyname.toLowerCase())
+                            if (keyname === keyname.toLowerCase())
                                 evt_obj.liberatorShift = true;
                         }
 
                         evt_obj.charCode = keyname.charCodeAt(0);
                     }
-                    else if (keyname == "nop") {
+                    else if (keyname === "nop") {
                         evt_obj.liberatorString = "<Nop>";
                     }
                     else if (/mouse$/.test(keyname)) { // mouse events
@@ -461,9 +461,9 @@ const Events = Module("events", {
                 evt_obj.charCode = evt_str.charCodeAt(0);
 
             // TODO: make a list of characters that need keyCode and charCode somewhere
-            if (evt_obj.keyCode == 32 || evt_obj.charCode == 32)
+            if (evt_obj.keyCode === 32 || evt_obj.charCode === 32)
                 evt_obj.charCode = evt_obj.keyCode = 32; // <Space>
-            if (evt_obj.keyCode == 60 || evt_obj.charCode == 60)
+            if (evt_obj.keyCode === 60 || evt_obj.charCode === 60)
                 evt_obj.charCode = evt_obj.keyCode = 60; // <lt>
 
             out.push(evt_obj);
@@ -500,8 +500,8 @@ const Events = Module("events", {
             modifier += "M-";
 
         if (/^key/.test(event.type)) {
-            let charCode = (event.type == "keydown" || event.type == "keyup") ? 0 : event.charCode;
-            if (charCode == 0) {
+            let charCode = (event.type === "keydown" || event.type === "keyup") ? 0 : event.charCode;
+            if (charCode === 0) {
                 if (event.shiftKey)
                     modifier += "S-";
 
@@ -572,19 +572,19 @@ const Events = Module("events", {
                 else {
                     // a shift modifier is only allowed if the key is alphabetical and used in a C-A-M- mapping in the uppercase,
                     // or if the shift has been forced for a non-alphabetical character by the user while :map-ping
-                    if ((key != key.toLowerCase() && (event.ctrlKey || event.altKey || event.metaKey)) || event.liberatorShift)
+                    if ((key !== key.toLowerCase() && (event.ctrlKey || event.altKey || event.metaKey)) || event.liberatorShift)
                         modifier += "S-";
-                    else if  (modifier.length == 0)
+                    else if  (modifier.length === 0)
                         return key;
                 }
             }
             if (key == null)
                 return null;
         }
-        else if (event.type == "click" || event.type == "dblclick") {
+        else if (event.type === "click" || event.type === "dblclick") {
             if (event.shiftKey)
                 modifier += "S-";
-            if (event.type == "dblclick")
+            if (event.type === "dblclick")
                 modifier += "2-";
 
             switch (event.button) {
@@ -613,7 +613,7 @@ const Events = Module("events", {
      * @param {string} key The key code to test.
      * @returns {boolean}
      */
-    isAcceptKey: function (key) key == "<Return>" || key == "<C-j>" || key == "<C-m>",
+    isAcceptKey: function (key) key === "<Return>" || key === "<C-j>" || key === "<C-m>",
 
     /**
      * Whether <b>key</b> is a key code defined to reject/cancel input on
@@ -622,7 +622,7 @@ const Events = Module("events", {
      * @param {string} key The key code to test.
      * @returns {boolean}
      */
-    isCancelKey: function (key) key == "<Esc>" || key == "<C-[>" || key == "<C-c>",
+    isCancelKey: function (key) key === "<Esc>" || key === "<C-[>" || key === "<C-c>",
 
     /**
      * Whether <b>key</b> is a key code defined to go back to NORMAL mode
@@ -630,7 +630,7 @@ const Events = Module("events", {
      * @param {string} key The key code to test.
      * @returns {boolean}
      */
-    isEscapeKey: function (key) key == "<Esc>" || key == "<C-[>",
+    isEscapeKey: function (key) key === "<Esc>" || key === "<C-[>",
 
     /**
      * Waits for the current buffer to successfully finish loading. Returns
@@ -641,7 +641,7 @@ const Events = Module("events", {
     waitForPageLoad: function () {
         liberator.threadYield(true); // clear queue
 
-        if (buffer.loaded == 1)
+        if (buffer.loaded === 1)
             return true;
 
         const maxWaitTime = 25;
@@ -663,7 +663,7 @@ const Events = Module("events", {
         }
         modes.show();
 
-        let ret = (buffer.loaded == 1);
+        let ret = (buffer.loaded === 1);
         if (!ret)
             liberator.echoerr("Page did not load completely in " + maxWaitTime + " seconds. Macro stopped.");
 
@@ -679,7 +679,7 @@ const Events = Module("events", {
     // Huh? --djk
     onFocusChange: function (event) {
         // command line has it's own focus change handler
-        if (liberator.mode == modes.COMMAND_LINE)
+        if (liberator.mode === modes.COMMAND_LINE)
             return;
 
         function hasHTMLDocument(win) win && win.document && win.document instanceof HTMLDocument
@@ -687,7 +687,7 @@ const Events = Module("events", {
         let win  = window.document.commandDispatcher.focusedWindow;
         let elem = window.document.commandDispatcher.focusedElement;
 
-        if (win && win.top == content)
+        if (win && win.top === content)
             buffer.localStore.focusedFrame = win;
 
         try {
@@ -706,7 +706,7 @@ const Events = Module("events", {
                 return;
             }
 
-            if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable == "true")) {
+            if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable === "true")) {
                 if (options["insertmode"])
                     modes.set(modes.INSERT);
                 else if (elem.selectionEnd - elem.selectionStart > 0)
@@ -721,7 +721,7 @@ const Events = Module("events", {
             if (Editor.windowIsEditable(win)) {
                 if (options["insertmode"])
                     modes.set(modes.INSERT);
-                else if (win.getSelection().toString() != "")
+                else if (win.getSelection().toString() !== "")
                     modes.set(modes.VISUAL, modes.TEXTAREA);
                 else
                     modes.main = modes.TEXTAREA;
@@ -735,7 +735,7 @@ const Events = Module("events", {
             }
 
             let urlbar = document.getElementById("urlbar");
-            if (elem == null && urlbar && urlbar.inputField == this._lastFocus)
+            if (elem == null && urlbar && urlbar.inputField === this._lastFocus)
                 liberator.threadYield(true);
 
             if (liberator.mode & (modes.EMBED | modes.INSERT | modes.TEXTAREA | modes.VISUAL))
@@ -752,13 +752,13 @@ const Events = Module("events", {
         if (controller && controller.isCommandEnabled("cmd_copy"))
             couldCopy = true;
 
-        if (liberator.mode != modes.VISUAL) {
+        if (liberator.mode !== modes.VISUAL) {
             if (couldCopy) {
-                if ((liberator.mode == modes.TEXTAREA ||
+                if ((liberator.mode === modes.TEXTAREA ||
                      (modes.extended & modes.TEXTAREA))
                         && !options["insertmode"])
                     modes.set(modes.VISUAL, modes.TEXTAREA);
-                else if (liberator.mode == modes.CARET)
+                else if (liberator.mode === modes.CARET)
                     modes.set(modes.VISUAL, modes.CARET);
             }
         }
@@ -798,7 +798,7 @@ const Events = Module("events", {
                 // select only one message in Muttator
                 if (liberator.has("mail") && !config.isComposeWindow) {
                     let i = gDBView.selection.currentIndex;
-                    if (i == -1 && gDBView.rowCount >= 0)
+                    if (i === -1 && gDBView.rowCount >= 0)
                         i = 0;
                     gDBView.selection.select(i);
                 }
@@ -875,10 +875,10 @@ const Events = Module("events", {
         if (!key)
              return;
 
-        let url = typeof(buffer) != "undefined" ? buffer.URL : "";
+        let url = typeof(buffer) !== "undefined" ? buffer.URL : "";
 
         if (modes.isRecording) {
-            if (key == "q" && liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA) { // TODO: should not be hardcoded
+            if (key === "q" && liberator.mode !== modes.INSERT && liberator.mode !== modes.TEXTAREA) { // TODO: should not be hardcoded
                 modes.isRecording = false;
                 liberator.echomsg("Recorded macro '" + this._currentMacro + "'");
                 killEvent();
@@ -888,7 +888,7 @@ const Events = Module("events", {
                 this._macros.set(this._currentMacro, this._macros.get(this._currentMacro) + key);
         }
 
-        if (key == "<C-c>")
+        if (key === "<C-c>")
             liberator.interrupted = true;
 
         // feedingKeys needs to be separate from interrupted so
@@ -896,7 +896,7 @@ const Events = Module("events", {
         // interrupting whatever it's started and a real <C-c>
         // interrupting our playback.
         if (events.feedingKeys && !event.isMacro) {
-            if (key == "<C-c>") {
+            if (key === "<C-c>") {
                 events.feedingKeys = false;
                 if (modes.isReplaying) {
                     modes.isReplaying = false;
@@ -921,11 +921,11 @@ const Events = Module("events", {
                 modes.passNextKey = false;
                 stop = true;
             } else if (modes.passAllKeys) { // handle Escape-all-keys mode (Shift-Esc)
-                if (key == "<S-Esc>" || key == "<Insert>") // FIXME: Don't hardcode!
+                if (key === "<S-Esc>" || key === "<Insert>") // FIXME: Don't hardcode!
                     modes.passAllKeys = false;
 
                 // If we manage to get into command line mode while IGNOREKEYS, let the command line handle keys
-                if (liberator.mode == modes.COMMAND_LINE)
+                if (liberator.mode === modes.COMMAND_LINE)
                     stop = false;
                 // If we are in the middle of a mapping, we never send the next key to the host app
                 else if (this._input.buffer)
@@ -943,7 +943,7 @@ const Events = Module("events", {
             stop = true; // set to false if we should NOT consume this event but let the host app handle it
 
             // just forward event without checking any mappings when the MOW is open
-            if (liberator.mode == modes.COMMAND_LINE && (modes.extended & modes.OUTPUT_MULTILINE)) {
+            if (liberator.mode === modes.COMMAND_LINE && (modes.extended & modes.OUTPUT_MULTILINE)) {
                 commandline.onMultilineOutputEvent(event);
                 throw killEvent();
             }
@@ -961,7 +961,7 @@ const Events = Module("events", {
 
             if (!this.isEscapeKey(key)) {
                 // custom mode...
-                if (liberator.mode == modes.CUSTOM) {
+                if (liberator.mode === modes.CUSTOM) {
                     plugins.onEvent(event);
                     throw killEvent();
                 }
@@ -970,9 +970,9 @@ const Events = Module("events", {
                 // me insane! -Kris
                 if (modes.extended & modes.HINTS) {
                     // under HINT mode, certain keys are redirected to hints.onEvent
-                    if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
-                        || key == mappings.getMapLeader()
-                        || (key == "<BS>" && hints.previnput == "number")
+                    if (key === "<Return>" || key === "<Tab>" || key === "<S-Tab>"
+                        || key === mappings.getMapLeader()
+                        || (key === "<BS>" && hints.previnput === "number")
                         || (hints._isHintNumber(key) && !hints.escNumbers)) {
                         hints.onEvent(event);
                         this._input.buffer = "";
@@ -991,7 +991,7 @@ const Events = Module("events", {
             // whatever reason).  if that happens to be correct, well..
             // XXX: why not just do that as well for HINTS mode actually?
 
-            if (liberator.mode == modes.CUSTOM)
+            if (liberator.mode === modes.CUSTOM)
                 return;
 
             let inputStr = this._input.buffer + key;
@@ -1000,7 +1000,7 @@ const Events = Module("events", {
             let map = mappings[event.noremap ? "getDefault" : "get"](liberator.mode, candidateCommand, url);
 
             let candidates = mappings.getCandidates(liberator.mode, candidateCommand, url);
-            if (candidates.length == 0 && !map) {
+            if (candidates.length === 0 && !map) {
                 map = this._input.pendingMap;
                 this._input.pendingMap = null;
                 if (map && map.arg)
@@ -1027,7 +1027,7 @@ const Events = Module("events", {
             }
             // only follow a map if there isn't a longer possible mapping
             // (allows you to do :map z yy, when zz is a longer mapping than z)
-            else if (map && !event.skipmap && candidates.length == 0) {
+            else if (map && !event.skipmap && candidates.length === 0) {
                 this._input.pendingMap = null;
                 updateCount(countStr);
                 this._input.buffer = "";
@@ -1060,7 +1060,7 @@ const Events = Module("events", {
             }
             else { // if the key is neither a mapping nor the start of one
                 // the mode checking is necessary so that things like g<esc> do not beep
-                if (this._input.buffer != "" && !event.skipmap &&
+                if (this._input.buffer !== "" && !event.skipmap &&
                     (liberator.mode & (modes.INSERT | modes.COMMAND_LINE | modes.TEXTAREA)))
                     events.feedkeys(this._input.buffer, { noremap: true, skipmap: true });
 
@@ -1073,7 +1073,7 @@ const Events = Module("events", {
                     // allow key to be passed to the host app if we can't handle it
                     stop = false;
 
-                    if (liberator.mode == modes.COMMAND_LINE) {
+                    if (liberator.mode === modes.COMMAND_LINE) {
                         if (!(modes.extended & modes.INPUT_MULTILINE))
                             commandline.onEvent(event); // reroute event in command line mode
                     }
@@ -1115,7 +1115,7 @@ const Events = Module("events", {
 
         // Many sites perform (useful) actions on keydown.
         // Let's keep the most common ones unless we have a mapping for that
-        if (event.type == "keydown" && this.isEscapeKey(key)) {
+        if (event.type === "keydown" && this.isEscapeKey(key)) {
             if (modes.passNextKey) {
                 modes.passNextKey = false;
                 return;
@@ -1126,11 +1126,11 @@ const Events = Module("events", {
             return;
         }
 
-        if (liberator.mode == modes.INSERT || liberator.mode == modes.TEXTAREA) {
+        if (liberator.mode === modes.INSERT || liberator.mode === modes.TEXTAREA) {
             return;
         }
 
-        let url = typeof(buffer) != "undefined" ? buffer.URL : "";
+        let url = typeof(buffer) !== "undefined" ? buffer.URL : "";
         let inputStr = this._input.buffer + key;
         let countStr = inputStr.match(/^[1-9][0-9]*|/)[0];
         let candidateCommand = inputStr.substr(countStr.length);
@@ -1154,13 +1154,13 @@ const Events = Module("events", {
     },
 
     onPopupShown: function (event) {
-        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
+        if (event.originalTarget.localName === "tooltip" || event.originalTarget.id === "liberator-visualbell")
             return;
         modes.isMenuShown = true;
     },
 
     onPopupHidden: function (event) {
-        if (event.originalTarget.localName == "tooltip" || event.originalTarget.id == "liberator-visualbell")
+        if (event.originalTarget.localName === "tooltip" || event.originalTarget.id === "liberator-visualbell")
             return;
         // gContextMenu is set to NULL, when a context menu is closed
         if ((window.gContextMenu == null || !window.gContextMenu.shouldDisplay) && !this._activeMenubar)
@@ -1178,7 +1178,7 @@ const Events = Module("events", {
     },
 
     onResize: function (event) {
-        if (window.fullScreen != this._fullscreen) {
+        if (window.fullScreen !== this._fullscreen) {
             this._fullscreen = window.fullScreen;
             liberator.triggerObserver("fullscreen", this._fullscreen);
             autocommands.trigger("Fullscreen", { state: this._fullscreen });

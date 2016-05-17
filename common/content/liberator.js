@@ -123,7 +123,7 @@ const Liberator = Module("liberator", {
         }));
       },
 
-    getExtension: function (name) this.extensions.filter(function (e) e.name == name)[0],
+    getExtension: function (name) this.extensions.filter(function (e) e.name === name)[0],
 
     // Global constants
     CURRENT_TAB: [],
@@ -166,7 +166,7 @@ const Liberator = Module("liberator", {
 
     unregisterObserver: function (type, callback) {
         if (type in this.observers)
-            this.observers[type] = this.observers[type].filter(function (c) c != callback);
+            this.observers[type] = this.observers[type].filter(function (c) c !== callback);
     },
 
     // TODO: "zoom": if the zoom value of the current buffer changed
@@ -253,7 +253,7 @@ const Liberator = Module("liberator", {
      */
     dump: function () {
         let msg = Array.map(arguments, function (msg) {
-            if (typeof msg == "object")
+            if (typeof msg === "object")
                 msg = util.objectToString(msg);
             return msg;
         }).join(", ");
@@ -303,7 +303,7 @@ const Liberator = Module("liberator", {
         try {
             flags |= commandline.APPEND_TO_MESSAGES | commandline.DISALLOW_MULTILINE | commandline.FORCE_SINGLELINE;
 
-            if (typeof str == "object" && "echoerr" in str)
+            if (typeof str === "object" && "echoerr" in str)
                 str = str.echoerr;
 
             if (options["errorbells"])
@@ -458,7 +458,7 @@ const Liberator = Module("liberator", {
      *     element.
      */
     focusContent: function (clearFocusedElement) {
-        if (window != services.get("ww").activeWindow)
+        if (window !== services.get("ww").activeWindow)
             return;
 
         let elem = config.mainWidget || window.content;
@@ -467,7 +467,7 @@ const Liberator = Module("liberator", {
             if (this.has("tabs")) {
                 // select top most frame in a frameset
                 let frame = buffer.localStore.focusedFrame;
-                if (frame && frame.top == window.content)
+                if (frame && frame.top === window.content)
                     elem = frame;
             }
         }
@@ -475,7 +475,7 @@ const Liberator = Module("liberator", {
 
         if (clearFocusedElement && liberator.focus)
             liberator.focus.blur();
-        if (elem && elem != liberator.focus)
+        if (elem && elem !== liberator.focus)
             elem.focus();
     },
 
@@ -495,7 +495,7 @@ const Liberator = Module("liberator", {
      * @returns {boolean}
      */
     hasExtension: function (name) {
-        return this._extensions.some(function (e) e.name == name);
+        return this._extensions.some(function (e) e.name === name);
     },
 
     /**
@@ -515,7 +515,7 @@ const Liberator = Module("liberator", {
         function format(item) item.description + "#" + encodeURIComponent(item.text);
 
         for (let item of items) {
-            if (item.text == topic)
+            if (item.text === topic)
                 return format(item);
             else if (!partialMatch && topic)
                 partialMatch = item;
@@ -569,9 +569,9 @@ const Liberator = Module("liberator", {
                 let url = ["chrome://", namespace, "/locale/", file, ".xml"].join("");
                 let res = httpGet(url);
                 if (res) {
-                    if (res.responseXML.documentElement.localName == "document")
+                    if (res.responseXML.documentElement.localName === "document")
                         fileMap[file] = url;
-                    if (res.responseXML.documentElement.localName == "overlay")
+                    if (res.responseXML.documentElement.localName === "overlay")
                         overlayMap[file] = url;
                     result.push(res.responseXML);
                 }
@@ -701,7 +701,7 @@ const Liberator = Module("liberator", {
 
         let dirs = io.getRuntimeDirectories("plugin");
 
-        if (dirs.length == 0) {
+        if (dirs.length === 0) {
             liberator.log("No user plugin directory found");
             autocommands.trigger("PluginsLoadPost", {});
             return;
@@ -724,7 +724,7 @@ const Liberator = Module("liberator", {
      * @param {string|Object} msg The message to print.
      */
     log: function (msg) {
-        if (typeof msg == "object")
+        if (typeof msg === "object")
             msg = Cc["@mozilla.org/feed-unescapehtml;1"]
                     .getService(Ci.nsIScriptableUnescapeHTML)
                     .unescape(util.objectToString(msg, false).value);
@@ -753,7 +753,7 @@ const Liberator = Module("liberator", {
         //
         // This is strange. And counterintuitive. Is it really
         // necessary? --Kris
-        if (typeof urls == "string") {
+        if (typeof urls === "string") {
             // rather switch to the tab instead of opening a new url in case of "12: Tab Title" like "urls"
             if (liberator.has("tabs")) {
                 let matches = urls.match(/^(\d+):/);
@@ -796,14 +796,14 @@ const Liberator = Module("liberator", {
             if (!('where' in params) && options["newtab"] && options.get("newtab").has("all", params.from))
                 where = liberator.NEW_TAB;
             if (options["activate"] && !options.get("activate").has("all", params.from)) {
-                if (where == liberator.NEW_TAB)
+                if (where === liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
-                else if (where == liberator.NEW_BACKGROUND_TAB)
+                else if (where === liberator.NEW_BACKGROUND_TAB)
                     where = liberator.NEW_TAB;
             }
         }
 
-        if (urls.length == 0)
+        if (urls.length === 0)
             return;
 
         let browser = config.browser;
@@ -839,7 +839,7 @@ const Liberator = Module("liberator", {
 
                     options.withContext(function () {
                         options.setPref("browser.tabs.loadInBackground", true);
-                        browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                        browser.loadOneTab(url, null, null, postdata, where === liberator.NEW_BACKGROUND_TAB);
                     });
                     break;
 
@@ -1051,7 +1051,7 @@ const Liberator = Module("liberator", {
         let matches = string.match(/^([bwtglsv]):(\w+)/);
         if (matches) { // Variable
             // Other variables should be implemented
-            if (matches[1] == "g") {
+            if (matches[1] === "g") {
                 if (matches[2] in this.globalVariables)
                     return [this.globalVariables, matches[2], matches[1]];
                 else
@@ -1085,8 +1085,8 @@ const Liberator = Module("liberator", {
     getPlatformFeature: function () {
         let platform = navigator.platform;
         return /^Mac/.test(platform) ? "MacUnix" :
-               platform == "Win32"   ? "Win32" :
-               platform == "Win64"   ? "Win64" :
+               platform === "Win32"   ? "Win32" :
+               platform === "Win64"   ? "Win64" :
                "Unix";
     },
 
@@ -1094,14 +1094,14 @@ const Liberator = Module("liberator", {
     getMenuItems: function () {
         function addChildren(node, parent) {
             for (let item of node.childNodes) {
-                if (item.childNodes.length == 0 && item.localName == "menuitem"
+                if (item.childNodes.length === 0 && item.localName === "menuitem"
                     && !/rdf:http:/.test(item.getAttribute("label"))) { // FIXME
                     item.fullMenuPath = parent + item.getAttribute("label");
                     items.push(item);
                 }
                 else {
                     let path = parent;
-                    if (item.localName == "menu")
+                    if (item.localName === "menu")
                         path += item.getAttribute("label") + ".";
                     addChildren(item, path);
                 }
@@ -1167,7 +1167,7 @@ const Liberator = Module("liberator", {
                 getter: function () {
                     try {
                         let mainToolbar = config.mainToolbar;
-                        return mainToolbar.getAttribute("iconsize") == "small";
+                        return mainToolbar.getAttribute("iconsize") === "small";
                     } catch (e) {
                         return false;
                     }
@@ -1257,14 +1257,14 @@ const Liberator = Module("liberator", {
                         // just collapsing elements (like showing or hiding the menu button when the menu is hidden/shown)
                         if (window.setToolbarVisibility)
                             window.setToolbarVisibility(elem, !collapsed);
-                        else if (elem.getAttribute("type") == "menubar")
+                        else if (elem.getAttribute("type") === "menubar")
                             elem.setAttribute("autohide", collapsed);
                         else
                             elem.collapsed = collapsed;
 
                         // HACK: prevent the tab-bar from redisplaying when 'toolbars' option has 'notabs'
                         // @see http://code.google.com/p/vimperator-labs/issues/detail?id=520
-                        if (id == "TabsToolbar" && config.tabbrowser.mTabContainer.updateVisibility)
+                        if (id === "TabsToolbar" && config.tabbrowser.mTabContainer.updateVisibility)
                             config.tabbrowser.mTabContainer.updateVisibility = function () { };
 
                     }
@@ -1277,8 +1277,8 @@ const Liberator = Module("liberator", {
                     for (let [name, toolbar] in Iterator(toolbars)) {
                         let elem = document.getElementById(toolbar[0]);
                         if (elem) {
-                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
-                            values.push(elem.getAttribute(hidingAttribute) == "true" ? "no" + name : name);
+                            let hidingAttribute = elem.getAttribute("type") === "menubar" ? "autohide" : "collapsed";
+                            values.push(elem.getAttribute(hidingAttribute) === "true" ? "no" + name : name);
                         }
                     }
                     return this.joinValues(values);
@@ -1291,9 +1291,9 @@ const Liberator = Module("liberator", {
                     for (let [name, toolbar] in Iterator(toolbars)) {
                         let elem = document.getElementById(toolbar[0][0]);
                         if (elem) {
-                            let hidingAttribute = elem.getAttribute("type") == "menubar" ? "autohide" : "collapsed";
-                            completions.push([elem.getAttribute(hidingAttribute) == "true" ? name : "no" + name,
-                                              (elem.getAttribute(hidingAttribute) == "true" ? "Show " : "Hide ") + toolbar[1]]);
+                            let hidingAttribute = elem.getAttribute("type") === "menubar" ? "autohide" : "collapsed";
+                            completions.push([elem.getAttribute(hidingAttribute) === "true" ? name : "no" + name,
+                                              (elem.getAttribute(hidingAttribute) === "true" ? "Show " : "Hide ") + toolbar[1]]);
                         }
                     }
                     context.completions = completions;
@@ -1364,7 +1364,7 @@ const Liberator = Module("liberator", {
                     let dialogs = config.dialogs;
 
                     for (let dialog of dialogs) {
-                        if (util.compareIgnoreCase(arg, dialog[0]) == 0) {
+                        if (util.compareIgnoreCase(arg, dialog[0]) === 0) {
                             dialog[2]();
                             return;
                         }
@@ -1390,11 +1390,11 @@ const Liberator = Module("liberator", {
                 let arg = args.literalArg;
                 let items = Liberator.getMenuItems();
 
-                liberator.assert(items.some(function (i) i.fullMenuPath == arg),
+                liberator.assert(items.some(function (i) i.fullMenuPath === arg),
                     "Menu not found: " + arg);
 
                 for (let [, item] in Iterator(items)) {
-                    if (item.fullMenuPath == arg)
+                    if (item.fullMenuPath === arg)
                         item.doCommand();
                 }
             }, {
@@ -1466,10 +1466,10 @@ const Liberator = Module("liberator", {
                 function (args) {
                     let name = args[0];
                     function action(e) {
-                        if (command.action == "uninstallItem")
+                        if (command.action === "uninstallItem")
                             e.original.uninstall();
                         else
-                            e.original.userDisabled = command.action == "disableItem";
+                            e.original.userDisabled = command.action === "disableItem";
                     };
 
                     if (args.bang)
@@ -1554,7 +1554,7 @@ const Liberator = Module("liberator", {
                 description: "Open the single unchunked help page"
             }
         ].forEach(function (command) {
-            let unchunked = command.name == "helpa[ll]";
+            let unchunked = command.name === "helpa[ll]";
 
             commands.add([command.name],
                 command.description,
@@ -1629,7 +1629,7 @@ const Liberator = Module("liberator", {
                 let special = args.bang;
                 args = args.string;
 
-                if (args[0] == ":")
+                if (args[0] === ":")
                     var method = function () liberator.execute(args, null, true);
                 else
                     method = liberator.eval("(function () {" + args + "})");
@@ -1878,7 +1878,7 @@ const Liberator = Module("liberator", {
                 }
             }
 
-            if (liberator.commandLineOptions.rcFile == "NONE" || liberator.commandLineOptions.noPlugins)
+            if (liberator.commandLineOptions.rcFile === "NONE" || liberator.commandLineOptions.noPlugins)
                 options["loadplugins"] = false;
 
             if (options["loadplugins"])

@@ -45,21 +45,21 @@ let tests = [
     { cmds: [":abbr VIMP vimperator labs", ":abbr"],
       verify: function () getOutput().indexOf("vimperator labs") >= 0 },
     { cmds: [":unabbr VIMP", ":abbr"],
-      verify: function () getOutput().indexOf("vimperator labs") == -1 },
+      verify: function () getOutput().indexOf("vimperator labs") === -1 },
     { cmds: [":bmarks"],
       verify: function () getMultilineOutput().length > 100 },
     { cmds: [":echo \"test\""],
-      verify: function () getSinglelineOutput() == "test" },
+      verify: function () getSinglelineOutput() === "test" },
     { cmds: [":qmark V http://test.vimperator.org", ":qmarks"],
       verify: function () getMultilineOutput().indexOf("test.vimperator.org") >= 0 },
     { cmds: [":javascript liberator.echo('test', commandline.FORCE_MULTILINE)"],
-      verify: function () getMultilineOutput() == "test" },
+      verify: function () getMultilineOutput() === "test" },
     // { cmds: [":echomsg \"testmsg\""],
     //   verify: function () getOutput() == "testmsg" },
     // { cmds: [":echoerr \"testerr\""],
     //   verify: function () getOutput() == "testerr" },
     { cmds: ["gg", "<C-f>"], // NOTE: does not work when there is no page to scroll, we should load a large page before doing these tests
-      verify: function () this._initialPos.y != getBufferPosition().y,
+      verify: function () this._initialPos.y !== getBufferPosition().y,
       init: function () this._initialPos = getBufferPosition() }
 
     // testing tab behavior
@@ -162,12 +162,12 @@ commands.addUserCommand(["regr[essions]"],
             outer:
             for (let [, test] in Iterator(tests)) {
                 currentTest++;
-                if (args.count >= 1 && currentTest != args.count)
+                if (args.count >= 1 && currentTest !== args.count)
                     continue;
 
                 let testDescription = util.clip(test.cmds.join(" -> "), 80);
                 for (let [, cmd] in Iterator(test.cmds)) {
-                    if (skipTests.indexOf(cmd) != -1) {
+                    if (skipTests.indexOf(cmd) !== -1) {
                         skippedTests++;
                         liberator.echomsg("Skipping test " + currentTest + " of " + totalTests + ": " + testDescription);
                         continue outer;
@@ -180,7 +180,7 @@ commands.addUserCommand(["regr[essions]"],
                     test.init();
 
                 test.cmds.forEach(function (cmd) {
-                    if (cmd[0] == ":")
+                    if (cmd[0] === ":")
                         liberator.execute(cmd);
                     else
                         events.feedkeys(cmd);
@@ -195,7 +195,7 @@ commands.addUserCommand(["regr[essions]"],
             // 2.) Run function tests
             for (let [, func] in Iterator(functions)) {
                 currentTest++;
-                if (args.count >= 1 && currentTest != args.count)
+                if (args.count >= 1 && currentTest !== args.count)
                     continue;
 
                 commandline.echo("Running test " + currentTest + " of " + totalTests + ": " + util.clip(func.toString().replace(/[\s\n]+/gm, " "), 80), "Filter", commandline.APPEND_TO_MESSAGES);
@@ -230,7 +230,7 @@ commands.addUserCommand(["regr[essions]"],
 
                 Use :regressions! to skip this prompt.
             </e4x>.*);
-            commandline.input("Type 'yes' to run the tests: ", function (res) { if (res == "yes") run(); } );
+            commandline.input("Type 'yes' to run the tests: ", function (res) { if (res === "yes") run(); } );
             return;
         }
         run();

@@ -119,7 +119,7 @@ function isobject(obj) {
  * is not the case when using (obj instanceof Array).
  */
 function isarray(val) {
-    return Object.prototype.toString.call(val) == "[object Array]";
+    return Object.prototype.toString.call(val) === "[object Array]";
 }
 
 /**
@@ -129,7 +129,7 @@ function isarray(val) {
  * statements such as (x for (x in obj)).
  */
 function isgenerator(val) {
-    return Object.prototype.toString.call(val) == "[object Generator]";
+    return Object.prototype.toString.call(val) === "[object Generator]";
 }
 
 /**
@@ -140,7 +140,7 @@ function isgenerator(val) {
  * using (obj instanceof String) or (typeof obj == "string").
  */
 function isstring(val) {
-    return Object.prototype.toString.call(val) == "[object String]";
+    return Object.prototype.toString.call(val) === "[object String]";
 }
 
 /**
@@ -180,7 +180,7 @@ function call(fn, context, ...args) {
 function curry(fn, length, self, acc) {
     if (length == null)
         length = fn.length;
-    if (length == 0)
+    if (length === 0)
         return fn;
 
     // Close over function with 'this'
@@ -193,7 +193,7 @@ function curry(fn, length, self, acc) {
         let args = acc.concat(Array.slice(arguments));
 
         // The curried result should preserve 'this'
-        if (arguments.length == 0)
+        if (arguments.length === 0)
             return close(self || this, arguments.callee);
 
         if (args.length >= length)

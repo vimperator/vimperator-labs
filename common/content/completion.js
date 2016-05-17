@@ -72,7 +72,7 @@ const CompletionContext = Class("CompletionContext", {
 
             delete self._generate;
             delete self._ignoreCase;
-            if (self != this)
+            if (self !== this)
                 return self;
             ["_caret", "contextList", "maxItems", "onUpdate", "selectionTypes", "tabPressed", "updateAsync", "value"].forEach(function (key) {
                 self.__defineGetter__(key, function () this.top[key]);
@@ -80,7 +80,7 @@ const CompletionContext = Class("CompletionContext", {
             });
         }
         else {
-            if (typeof input == "string")
+            if (typeof input === "string")
                 this._value = input;
             else {
                 this.inputField = input;
@@ -179,7 +179,7 @@ const CompletionContext = Class("CompletionContext", {
          * Returns a key, as detailed in {@link #keys}.
          * @function
          */
-        this.getKey = function (item, key) (typeof self.keys[key] == "function") ? self.keys[key].call(this, item.item) :
+        this.getKey = function (item, key) (typeof self.keys[key] === "function") ? self.keys[key].call(this, item.item) :
                 key in self.keys ? item.item[self.keys[key]]
                                  : item.item[key];
         return this;
@@ -201,7 +201,7 @@ const CompletionContext = Class("CompletionContext", {
                       .filter(k => this.contexts[k].items.length && this.contexts[k].hasItems)
                       .map(k => this.contexts[k].offset)
             );
-            if (minStart == Infinity)
+            if (minStart === Infinity)
                 minStart = 0;
             let items = this.contextList.map(function (context) {
                 if (!context.hasItems)
@@ -235,7 +235,7 @@ const CompletionContext = Class("CompletionContext", {
         });
 
         let substrings = lists.reduce(
-                function (res, list) res.filter(function (str) list.some(function (s) s.substr(0, str.length) == str)),
+                function (res, list) res.filter(function (str) list.some(function (s) s.substr(0, str.length) === str)),
                 lists.pop());
         if (!substrings) // FIXME: How is this undefined?
             return [];
@@ -255,7 +255,7 @@ const CompletionContext = Class("CompletionContext", {
     get completions() this._completions || [],
     set completions(items) {
         // Accept a generator
-        if ({}.toString.call(items) != '[object Array]') {
+        if ({}.toString.call(items) !== '[object Array]') {
             items = Array.from(iter(items));
         }
         delete this.cache.filtered;
@@ -301,9 +301,9 @@ const CompletionContext = Class("CompletionContext", {
         for (let i in Iterator(this.keys)) {
             let [k, v] = i;
             let _k = "_" + k;
-            if (typeof v == "string" && /^[.[]/.test(v))
+            if (typeof v === "string" && /^[.[]/.test(v))
                 v = eval("(function (i) i" + v + ")");
-            if (typeof v == "function")
+            if (typeof v === "function")
                 res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = v(this.item)));
             else
                 res.__defineGetter__(k, function () _k in this ? this[_k] : (this[_k] = this.item[v]));
@@ -312,11 +312,11 @@ const CompletionContext = Class("CompletionContext", {
         return res;
     },
 
-    get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset != this.offset),
+    get regenerate() this._generate && (!this.completions || !this.itemCache[this.key] || this.cache.offset !== this.offset),
     set regenerate(val) { if (val) delete this.itemCache[this.key]; },
 
     get generate() !this._generate ? null : function () {
-        if (this.offset != this.cache.offset)
+        if (this.offset !== this.cache.offset)
             this.itemCache = {};
         this.cache.offset = this.offset;
         if (!this.itemCache[this.key])
@@ -332,10 +332,10 @@ const CompletionContext = Class("CompletionContext", {
             this.incomplete = true;
             let thread = this.getCache("backgroundThread", liberator.newThread);
             liberator.callAsync(thread, this, function () {
-                if (this.cache.backgroundLock != lock)
+                if (this.cache.backgroundLock !== lock)
                     return;
                 let items = this.generate();
-                if (this.cache.backgroundLock != lock)
+                if (this.cache.backgroundLock !== lock)
                     return;
                 this.incomplete = false;
                 this.completions = items;
@@ -355,7 +355,7 @@ const CompletionContext = Class("CompletionContext", {
     get items() {
         if (!this.hasItems || this.backgroundLock)
             return [];
-        if (this.cache.filtered && this.cache.filter == this.filter)
+        if (this.cache.filtered && this.cache.filter === this.filter)
             return this.cache.filtered;
         this.cache.rows = [];
         let items = this.completions;
@@ -407,7 +407,7 @@ const CompletionContext = Class("CompletionContext", {
 
     get substrings() {
         let items = this.items;
-        if (items.length == 0 || !this.hasItems)
+        if (items.length === 0 || !this.hasItems)
             return [];
         if (this._substrings)
             return this._substrings;
@@ -416,7 +416,7 @@ const CompletionContext = Class("CompletionContext", {
         let text = fixCase(items[0].unquoted || items[0].text);
         let filter = fixCase(this.filter);
         if (this.anchored) {
-            var compare = function compare(text, s) text.substr(0, s.length) == s;
+            var compare = function compare(text, s) text.substr(0, s.length) === s;
             var substrings = util.map(util.range(filter.length, text.length + 1),
                 function (end) text.substring(0, end));
         }
@@ -507,7 +507,7 @@ const CompletionContext = Class("CompletionContext", {
     },
 
     fork: function fork(name, offset, self, completer) {
-        if (typeof completer == "string")
+        if (typeof completer === "string")
             completer = self[completer];
         let context = CompletionContext(this, name, offset);
         this.contextList.push(context);
@@ -529,7 +529,7 @@ const CompletionContext = Class("CompletionContext", {
             const selType = Ci.nsISelectionController["SELECTION_" + type];
             const editor = this.editor;
             let sel = editor.selectionController.getSelection(selType);
-            if (length == 0)
+            if (length === 0)
                 sel.removeAllRanges();
             else {
                 let range = editor.selection.getRangeAt(0).cloneRange();
@@ -559,12 +559,12 @@ const CompletionContext = Class("CompletionContext", {
                 str  = str.toLowerCase();
             }
             if (self.anchored)
-               return str.substr(0, word.length) == word; // TODO: Why not just use indexOf() == 0 ?
+               return str.substr(0, word.length) === word; // TODO: Why not just use indexOf() == 0 ?
             else
                return str.indexOf(word) > -1;
          });
 
-        return res.length == filterArr.length;
+        return res.length === filterArr.length;
     },
 
     match: function match(str) {
@@ -606,7 +606,7 @@ const CompletionContext = Class("CompletionContext", {
         //    delete this.contexts[key];
         for (let [, context] in Iterator(this.contexts)) {
             context.hasItems = false;
-            if (context != context.top)
+            if (context !== context.top)
                 context.incomplete = false;
         }
     },

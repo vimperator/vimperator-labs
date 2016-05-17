@@ -127,7 +127,7 @@ const StatusLine = Module("statusline", {
 
     // set the visibility of the statusline
     setVisibility: function (request) {
-        if ( typeof this.setVisibility.UPDATE == 'undefined' ) { // TODO proper initialization
+        if ( typeof this.setVisibility.UPDATE === 'undefined' ) { // TODO proper initialization
             this.setVisibility.UPDATE = 0; // Apply current configuration
             this.setVisibility.SHOW   = 1; // Temporarily show statusline
             this.setVisibility.HIDE   = 2; // Temporarily hide statusline
@@ -145,7 +145,7 @@ const StatusLine = Module("statusline", {
         var hideStatusline = function () {
             // Do nothing if statusline is invisible, because it would store an invalid version of ContentSeparator.
             // Do nothing if we are in commandline mode, because the user interacts with the statusline.
-            if (!sv.isVisible || liberator.mode == modes.COMMAND_LINE) {
+            if (!sv.isVisible || liberator.mode === modes.COMMAND_LINE) {
                 return;
             }
 
@@ -194,7 +194,7 @@ const StatusLine = Module("statusline", {
 
             case sv.HIDE:
                 // Only hide when in auto+fullscreen or hidden.
-                if ((mode == "auto" && window.fullScreen) || mode == "hidden") {
+                if ((mode === "auto" && window.fullScreen) || mode === "hidden") {
                     hideStatusline();
                 }
                 break;
@@ -234,7 +234,7 @@ const StatusLine = Module("statusline", {
              * @param {string} buffer
              */
             function updateInputBuffer (node, buffer) {
-                if (!buffer || typeof buffer != "string")
+                if (!buffer || typeof buffer !== "string")
                     buffer = "";
 
                 node.value = buffer;
@@ -295,7 +295,7 @@ const StatusLine = Module("statusline", {
              * @default buffer.URL
              */
             function updateUrl (node, url) {
-                if (typeof(buffer) == "undefined") // quick hack to make the muttator compose work, needs more thought
+                if (typeof(buffer) === "undefined") // quick hack to make the muttator compose work, needs more thought
                     return;
 
                 if (url == null)
@@ -303,7 +303,7 @@ const StatusLine = Module("statusline", {
                     url = services.get("textToSubURI").unEscapeURIForUI(buffer.charset, buffer.URL);
 
                 // make it even more Vim-like
-                if (url == "about:blank") {
+                if (url === "about:blank") {
                     if (!buffer.title)
                         url = "[No Name]";
                 }
@@ -328,7 +328,7 @@ const StatusLine = Module("statusline", {
             });
         statusline.addField("bookmark", "The bookmark indicator (heart)", "liberator-status-bookmark",
             function updateBookmark (node, url) {
-                if (typeof(buffer) == "undefined") // quick hack to make the muttator compose work, needs more thought
+                if (typeof(buffer) === "undefined") // quick hack to make the muttator compose work, needs more thought
                     return;
 
                 // if no url is given as the argument, use the current page
@@ -370,18 +370,18 @@ const StatusLine = Module("statusline", {
              * @param {number} percent The position, as a percentage. @optional
              */
             function updateBufferPosition (node, percent) {
-                if (!percent || typeof percent != "number") {
+                if (!percent || typeof percent !== "number") {
                     let win = document.commandDispatcher.focusedWindow;
                     if (!win)
                         return;
-                    percent = win.scrollMaxY == 0 ? -1 : win.scrollY / win.scrollMaxY;
+                    percent = win.scrollMaxY === 0 ? -1 : win.scrollY / win.scrollMaxY;
                 }
 
                 let bufferPositionStr = "";
                 percent = Math.round(percent * 100);
                 if (percent < 0)
                     bufferPositionStr = "All";
-                else if (percent == 0)
+                else if (percent === 0)
                     bufferPositionStr = "Top";
                 else if (percent < 10)
                     bufferPositionStr = " " + percent + "%";
@@ -401,14 +401,14 @@ const StatusLine = Module("statusline", {
              * @param {boolean} full True if full zoom is in operation. @optional
              */
             function updateZoomLevel (node, percent, full) {
-                if (typeof(buffer) == "undefined")
+                if (typeof(buffer) === "undefined")
                     return;
 
-                if (!percent || typeof percent != "number") {
+                if (!percent || typeof percent !== "number") {
                     percent = buffer.zoomLevel;
                 }
 
-                if (percent == 100)
+                if (percent === 100)
                     node.value = "";
                 else {
                     percent = ("  " + Math.round(percent)).substr(-3);

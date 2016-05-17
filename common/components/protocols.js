@@ -32,7 +32,7 @@ delete channel;
 
 function dataURL(type, data) "data:" + (type || "application/xml;encoding=UTF-8") + "," + encodeURIComponent(data);
 function makeChannel(url, orig) {
-    if (typeof url == "function")
+    if (typeof url === "function")
         url = dataURL.apply(null, url());
     let uri = ioService.newURI(url, null, null);
     let channel = ioService.newChannelFromURI(uri);
@@ -80,7 +80,7 @@ ChromeData.prototype = {
 
     newChannel: function (uri) {
         try {
-            if (uri.scheme == this.scheme)
+            if (uri.scheme === this.scheme)
                 return makeChannel(uri.spec.replace(/^.*?:\/*(.*)(?:#.*)?/, "data:$1"), uri);
         }
         catch (e) {}

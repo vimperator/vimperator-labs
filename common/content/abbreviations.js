@@ -15,7 +15,7 @@ const Abbreviation = Class("Abbreviation", {
     },
 
     equals: function (other) {
-        return this.lhs == other.lhs && this.rhs == other.rhs;
+        return this.lhs === other.lhs && this.rhs === other.rhs;
     },
 
     modesEqual: function (modes) {
@@ -26,7 +26,7 @@ const Abbreviation = Class("Abbreviation", {
     get text() (this.rhs instanceof Function ? this.rhs() : this.rhs).toString(),
 
     inMode: function (mode) {
-        return this.modes.some(function (_mode) _mode == mode);
+        return this.modes.some(function (_mode) _mode === mode);
     },
 
     inModes: function (modes) {
@@ -35,7 +35,7 @@ const Abbreviation = Class("Abbreviation", {
     },
 
     removeMode: function (mode) {
-        this.modes = this.modes.filter(function (m) m != mode);
+        this.modes = this.modes.filter(function (m) m !== mode);
     },
 
     get modeChar() Abbreviation.modeChar(this.modes)
@@ -160,7 +160,7 @@ const Abbreviations = Module("abbreviations", {
 
         if (!list.length)
             liberator.echomsg("No abbreviations found");
-        else if (list.length == 1) {
+        else if (list.length === 1) {
             let head = list[0];
             liberator.echo(head.modeChar + "  " + head.lhs + "   " + head.rhs, commandline.FORCE_SINGLELINE); // 2 spaces, 3 spaces
         }
@@ -209,7 +209,7 @@ const Abbreviations = Module("abbreviations", {
     completion: function () {
         // TODO: shouldn't all of these have a standard signature (context, args, ...)? --djk
         completion.abbreviation = function abbreviation(context, args, modes) {
-            if (args.completeArg == 0) {
+            if (args.completeArg === 0) {
                 let abbrevs = abbreviations.merged.filter(function (abbr) abbr.inModes(modes));
                 context.completions = abbrevs.map(abbr => [abbr.lhs, abbr.rhs]);
             }

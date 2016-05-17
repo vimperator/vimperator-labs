@@ -54,8 +54,8 @@ var TabGroup = Module("tabGroup", {
             count = 1;
 
         let test;
-        if (typeof name == "number")
-            test = function (g) g.id == name;
+        if (typeof name === "number")
+            test = function (g) g.id === name;
         else {
             name = name.toLowerCase();
             let id;
@@ -65,15 +65,15 @@ var TabGroup = Module("tabGroup", {
 
             if (id) {
                 id = parseInt(id, 10);
-                test = function (g) g.id == id;
+                test = function (g) g.id === id;
             }
             else
-                test = function (g) g.getTitle().toLowerCase() == name;
+                test = function (g) g.getTitle().toLowerCase() === name;
         }
         for (let group of this.tabView.GroupItems.groupItems) {
             if (test(group)) {
                 i++;
-                if (i == count)
+                if (i === count)
                     return group;
             }
         }
@@ -101,7 +101,7 @@ var TabGroup = Module("tabGroup", {
             offset = buf >= 0 ? 1 : -1;
             relative = true;
         }
-        else if (spec != "") {
+        else if (spec !== "") {
             let targetGroup = tabGroup.getGroup(spec);
             if (targetGroup)
                 index = groups.indexOf(targetGroup);
@@ -176,7 +176,7 @@ var TabGroup = Module("tabGroup", {
                 tabGroup.tabView.GroupItems.setActiveGroupItem(group);
                 tabGroup.tabView.UI.goToTab(child.tab);
             }
-            else if (appTabs.length == 0)
+            else if (appTabs.length === 0)
                 group.newTab();
             else {
                 tabGroup.tabView.GroupItems.setActiveGroupItem(group);
@@ -229,7 +229,7 @@ var TabGroup = Module("tabGroup", {
                 tabGroup.switchTo("+1", true);
             else {
                 let appTabs = tabGroup.appTabs;
-                if (appTabs.length == 0)
+                if (appTabs.length === 0)
                     gb.loadOnTab(window.BROWSER_NEW_TAB_URL || "about:blank", { inBackground: false, relatedToCurrent: false });
                 else
                     gb.mTabContainer.selectedIndex = appTabs.length - 1;
@@ -312,7 +312,7 @@ var TabGroup = Module("tabGroup", {
                         return;
 
                     let tabItems = tabs.getTabsFromBuffer(buffer);
-                    if (tabItems.length == 0) {
+                    if (tabItems.length === 0) {
                         liberator.echoerr("No matching buffer for: " + buffer);
                         return;
                     } else if (tabItems.length > 1) {
@@ -443,7 +443,7 @@ var TabGroup = Module("tabGroup", {
             if (excludeActiveGroup) {
                 let activeGroup = GI.getActiveGroupItem();
                 if (activeGroup)
-                    groupItems = groupItems.filter(function(group) group.id != activeGroup.id);
+                    groupItems = groupItems.filter(function(group) group.id !== activeGroup.id);
             }
             context.completions = groupItems.map(function(group) {
                 let title = group.id + ": " + (group.getTitle() || "(Untitled)");

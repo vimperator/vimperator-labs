@@ -24,7 +24,7 @@ const Editor = Module("editor", {
         let line = 1;
         let text = Editor.getEditor().value;
         for (let i = 0; i < Editor.getEditor().selectionStart; i++)
-            if (text[i] == "\n")
+            if (text[i] === "\n")
                 line++;
         return line;
     },
@@ -34,7 +34,7 @@ const Editor = Module("editor", {
         let text = Editor.getEditor().value;
         for (let i = 0; i < Editor.getEditor().selectionStart; i++) {
             col++;
-            if (text[i] == "\n")
+            if (text[i] === "\n")
                 col = 1;
         }
         return col;
@@ -100,7 +100,7 @@ const Editor = Module("editor", {
             return false;
         }
 
-        if (typeof count != "number" || count < 1)
+        if (typeof count !== "number" || count < 1)
             count = 1;
 
         let didCommand = false;
@@ -125,10 +125,10 @@ const Editor = Module("editor", {
     // cmd = y, d, c
     // motion = b, 0, gg, G, etc.
     executeCommandWithMotion: function (cmd, motion, count) {
-        if (typeof count != "number" || count < 1)
+        if (typeof count !== "number" || count < 1)
             count = 1;
 
-        if (cmd == motion) {
+        if (cmd === motion) {
             motion = "j";
             count--;
         }
@@ -220,7 +220,7 @@ const Editor = Module("editor", {
             do { // TODO: test code for endless loops
                 this.executeCommand("cmd_selectCharNext", 1);
             }
-            while (Editor.getEditor().selectionEnd != pos);
+            while (Editor.getEditor().selectionEnd !== pos);
         }
         else {
             if (pos >= Editor.getEditor().selectionStart || pos < 0)
@@ -229,7 +229,7 @@ const Editor = Module("editor", {
             do { // TODO: test code for endless loops
                 this.executeCommand("cmd_selectCharPrevious", 1);
             }
-            while (Editor.getEditor().selectionStart != pos);
+            while (Editor.getEditor().selectionStart !== pos);
         }
     },
 
@@ -242,15 +242,15 @@ const Editor = Module("editor", {
         this._lastFindCharFunc = this.findCharForward;
 
         let text = Editor.getEditor().value;
-        if (!typeof count == "number" || count < 1)
+        if (!typeof count === "number" || count < 1)
             count = 1;
 
         for (let i = Editor.getEditor().selectionEnd + 1; i < text.length; i++) {
-            if (text[i] == "\n")
+            if (text[i] === "\n")
                 break;
-            if (text[i] == ch)
+            if (text[i] === ch)
                 count--;
-            if (count == 0)
+            if (count === 0)
                 return i + 1; // always position the cursor after the char
         }
 
@@ -267,15 +267,15 @@ const Editor = Module("editor", {
         this._lastFindCharFunc = this.findCharBackward;
 
         let text = Editor.getEditor().value;
-        if (!typeof count == "number" || count < 1)
+        if (!typeof count === "number" || count < 1)
             count = 1;
 
         for (let i = Editor.getEditor().selectionStart - 1; i >= 0; i--) {
-            if (text[i] == "\n")
+            if (text[i] === "\n")
                 break;
-            if (text[i] == ch)
+            if (text[i] === ch)
                 count--;
-            if (count == 0)
+            if (count === 0)
                 return i;
         }
 
@@ -317,7 +317,7 @@ const Editor = Module("editor", {
             }
         }
 
-        if (!forceEditing && textBox && textBox.type == "password") {
+        if (!forceEditing && textBox && textBox.type === "password") {
             commandline.input("Editing a password field externally will reveal the password. Would you like to continue? (yes/[no]): ",
                 function (resp) {
                     if (resp && resp.match(/^y(es)?$/i))
@@ -362,7 +362,7 @@ const Editor = Module("editor", {
 
                 let lastUpdate = Date.now();
                 function update (force) {
-                    if (force != true && tmpfile.lastModifiedTime <= lastUpdate)
+                    if (force !== true && tmpfile.lastModifiedTime <= lastUpdate)
                         return;
                     lastUpdate = Date.now();
 
@@ -407,7 +407,7 @@ const Editor = Module("editor", {
                 update(true);
 
             }, this);
-            if (res == false)
+            if (res === false)
                 throw Error("Couldn't create temporary file");
         }
         catch (e) {
@@ -548,7 +548,7 @@ const Editor = Module("editor", {
 
             mappings.add([modes.CARET], keys, "",
                 function (count) {
-                    if (typeof count != "number" || count < 1)
+                    if (typeof count !== "number" || count < 1)
                         count = 1;
 
                     let controller = buffer.selectionController;
@@ -559,13 +559,13 @@ const Editor = Module("editor", {
 
             mappings.add([modes.VISUAL], keys, "",
                 function (count) {
-                    if (typeof count != "number" || count < 1 || !hasCount)
+                    if (typeof count !== "number" || count < 1 || !hasCount)
                         count = 1;
 
                     let controller = buffer.selectionController;
                     while (count--) {
                         if (modes.extended & modes.TEXTAREA) {
-                            if (typeof visualTextareaCommand == "function")
+                            if (typeof visualTextareaCommand === "function")
                                 visualTextareaCommand();
                             else
                                 editor.executeCommand(visualTextareaCommand);
@@ -578,7 +578,7 @@ const Editor = Module("editor", {
 
             mappings.add([modes.TEXTAREA], keys, "",
                 function (count) {
-                    if (typeof count != "number" || count < 1)
+                    if (typeof count !== "number" || count < 1)
                         count = 1;
 
                     editor.executeCommand(textareaCommand, count);
@@ -604,12 +604,12 @@ const Editor = Module("editor", {
         }
         function selectPreviousLine() {
             editor.executeCommand("cmd_selectLinePrevious");
-            if (editor.getVisualMode() == "LINE" && !editor.selectedText())
+            if (editor.getVisualMode() === "LINE" && !editor.selectedText())
                 editor.executeCommand("cmd_selectLinePrevious");
         }
         function selectNextLine() {
             editor.executeCommand("cmd_selectLineNext");
-            if (editor.getVisualMode() == "LINE" && !editor.selectedText())
+            if (editor.getVisualMode() === "LINE" && !editor.selectedText())
                 editor.executeCommand("cmd_selectLineNext");
         }
 
@@ -838,7 +838,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharForward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos - 1, true, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos - 1, true, liberator.mode === modes.VISUAL);
             },
             { arg: true, count: true });
 
@@ -847,7 +847,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharBackward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos, false, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos, false, liberator.mode === modes.VISUAL);
             },
             { arg: true, count: true });
 
@@ -856,7 +856,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharForward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos - 2, true, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos - 2, true, liberator.mode === modes.VISUAL);
             },
             { arg: true, count: true });
 
@@ -865,7 +865,7 @@ const Editor = Module("editor", {
             function (count, arg) {
                 let pos = editor.findCharBackward(arg, count);
                 if (pos >= 0)
-                    editor.moveToPosition(pos + 1, false, liberator.mode == modes.VISUAL);
+                    editor.moveToPosition(pos + 1, false, liberator.mode === modes.VISUAL);
             },
             { arg: true, count: true });
 
@@ -873,9 +873,9 @@ const Editor = Module("editor", {
         mappings.add([modes.TEXTAREA, modes.VISUAL],
             ["~"], "Switch case of the character under the cursor and move the cursor to the right",
             function (count) {
-                if (modes.main == modes.VISUAL)
+                if (modes.main === modes.VISUAL)
                     count = Editor.getEditor().selectionEnd - Editor.getEditor().selectionStart;
-                if (typeof count != "number" || count < 1)
+                if (typeof count !== "number" || count < 1)
                     count = 1;
 
                 while (count-- > 0) {
@@ -885,7 +885,7 @@ const Editor = Module("editor", {
 
                     let chr = text[pos];
                     Editor.getEditor().value = text.substring(0, pos) +
-                        (chr == chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
+                        (chr === chr.toLocaleLowerCase() ? chr.toLocaleUpperCase() : chr.toLocaleLowerCase()) +
                         text.substring(pos + 1);
                     editor.moveToPosition(pos + 1, true, false);
                 }

@@ -108,7 +108,7 @@ const Command = Class("Command", {
         for (let spec of this.specs) {
             let fullName = spec.replace(/\[(\w+)]$/, "$1");
             let index = spec.indexOf("[");
-            let min = index == -1 ? fullName.length : index;
+            let min = index === -1 ? fullName.length : index;
 
             if (fullName.startsWith(name) && name.length >= min)
                 return true;
@@ -502,7 +502,7 @@ const Commands = Module("commands", {
     parseArgs: function (str, options, subCommands, argCount, allowUnknownOptions, literal, complete, extra) {
         function getNextArg(str) {
             let [count, arg, quote] = Commands.parseArg(str);
-            if (quote == "\\" && !complete)
+            if (quote === "\\" && !complete)
                 return [,,,"Trailing \\"];
             if (quote && !complete)
                 return [,,,"Missing quote: " + quote];
@@ -545,7 +545,7 @@ const Commands = Module("commands", {
 
         var invalid = false;
         // FIXME: best way to specify these requirements?
-        var onlyArgumentsRemaining = allowUnknownOptions || (options.length == 0 && subCommands.length == 0) || false; // after a -- has been found
+        var onlyArgumentsRemaining = allowUnknownOptions || (options.length === 0 && subCommands.length === 0) || false; // after a -- has been found
         var arg = null;
         var count = 0; // the length of the argument
         var quote = null;
@@ -587,7 +587,7 @@ const Commands = Module("commands", {
             // skip whitespace
             while (/\s/.test(str[i]) && i < str.length)
                 i++;
-            if (i == str.length && !complete)
+            if (i === str.length && !complete)
                 break;
 
             if (complete)
@@ -610,17 +610,17 @@ const Commands = Module("commands", {
                             quote = null;
                             count = 0;
                             let sep = sub[optname.length];
-                            if (sep == "=" || /\s/.test(sep) && opt[1] != this.OPTION_NOARG) {
+                            if (sep === "=" || /\s/.test(sep) && opt[1] !== this.OPTION_NOARG) {
                                 [count, arg, quote, error] = getNextArg(sub.substr(optname.length + 1));
                                 liberator.assert(!error, error);
 
                                 // if we add the argument to an option after a space, it MUST not be empty
-                                if (sep != "=" && !quote && arg.length == 0)
+                                if (sep !== "=" && !quote && arg.length === 0)
                                     arg = null;
 
                                 count++; // to compensate the "=" character
                             }
-                            else if (!/\s/.test(sep) && sep != undefined) // this isn't really an option as it has trailing characters, parse it as an argument
+                            else if (!/\s/.test(sep) && sep !== undefined) // this isn't really an option as it has trailing characters, parse it as an argument
                                 invalid = true;
 
                             let context = null;
@@ -640,8 +640,8 @@ const Commands = Module("commands", {
                                 if (type && (!complete || arg != null)) {
                                     let orig = arg;
                                     arg = type.parse(arg);
-                                    if (arg == null || (typeof arg == "number" && isNaN(arg))) {
-                                        if (!complete || orig != "" || args.completeStart != str.length)
+                                    if (arg == null || (typeof arg === "number" && isNaN(arg))) {
+                                        if (!complete || orig !== "" || args.completeStart !== str.length)
                                             echoerr("Invalid argument for " + type.description + " option: " + optname);
                                         if (complete)
                                             complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
@@ -651,8 +651,8 @@ const Commands = Module("commands", {
                                 }
 
                                 // we have a validator function
-                                if (typeof opt[2] == "function") {
-                                    if (opt[2].call(this, arg) == false) {
+                                if (typeof opt[2] === "function") {
+                                    if (opt[2].call(this, arg) === false) {
                                         echoerr("Invalid argument for option: " + optname);
                                         if (complete)
                                             complete.highlight(args.completeStart, count - 1, "SPELLCHECK");
@@ -665,10 +665,10 @@ const Commands = Module("commands", {
                                 if (!!opt[4])
                                     args[opt[0][0]] = (args[opt[0][0]] || []).concat(arg);
                                 else
-                                    args[opt[0][0]] = opt[1] == this.OPTION_NOARG || arg;
+                                    args[opt[0][0]] = opt[1] === this.OPTION_NOARG || arg;
 
                                 i += optname.length + count;
-                                if (i == str.length)
+                                if (i === str.length)
                                     break outer;
                                 continue outer;
                             }
@@ -681,11 +681,11 @@ const Commands = Module("commands", {
             matchOpts(sub);
 
             if (complete) {
-                if (argCount == "0" || args.length > 0  && (/[1?]/.test(argCount)))
+                if (argCount === "0" || args.length > 0  && (/[1?]/.test(argCount)))
                     complete.highlight(i, sub.length, "SPELLCHECK");
             }
 
-            if (args.length == literal) {
+            if (args.length === literal) {
                 if (complete)
                     args.completeArg = args.length;
                 args.literalArg = sub;
@@ -703,7 +703,7 @@ const Commands = Module("commands", {
                 args.quote = Commands.complQuote[quote] || Commands.complQuote[""];
                 args.completeFilter = arg || "";
             }
-            else if (count == -1) {
+            else if (count === -1) {
                 liberator.echoerr("Error parsing arguments: " + arg);
                 return null;
             }    // if /^\s*-/ is NOT TRUE, "-" be quoted.
@@ -741,7 +741,7 @@ const Commands = Module("commands", {
                 args.completeArg = args.length - 1;
 
             i += count;
-            if (count <= 0 || i == str.length)
+            if (count <= 0 || i === str.length)
                 break;
         }
 
@@ -757,7 +757,7 @@ const Commands = Module("commands", {
                 let opt = args.completeOpt;
                 let context = complete.fork(opt[0][0], args.completeStart);
                 context.filter = args.completeFilter;
-                if (typeof opt[3] == "function")
+                if (typeof opt[3] === "function")
                     var compl = opt[3](context, args);
                 else {
                     if (opt[1] === commands.OPTION_LIST) {
@@ -778,14 +778,14 @@ const Commands = Module("commands", {
         }
 
         // check for correct number of arguments
-        if (args.length == 0 && /^[1+]$/.test(argCount) ||
+        if (args.length === 0 && /^[1+]$/.test(argCount) ||
                 literal != null && /[1+]/.test(argCount) && !/\S/.test(args.literalArg || "")) {
             if (!complete) {
                 liberator.echoerr("Argument required");
                 return null;
             }
         }
-        else if (args.length == 1 && (argCount == "0") ||
+        else if (args.length === 1 && (argCount === "0") ||
                  args.length > 1  && /^[01?]$/.test(argCount)) {
             echoerr("Trailing characters");
             return null;
@@ -823,7 +823,7 @@ const Commands = Module("commands", {
 
         // parse count
         if (count)
-            count = count == "%" ? this.COUNT_ALL : parseInt(count, 10);
+            count = count === "%" ? this.COUNT_ALL : parseInt(count, 10);
         else
             count = this.COUNT_NONE;
 
@@ -862,12 +862,12 @@ const Commands = Module("commands", {
      */
     replaceTokens: function replaceTokens(str, tokens) {
         return str.replace(/<((?:q-)?)([a-zA-Z]+)?>/g, function (match, quote, token) {
-            if (token == "lt") // Don't quote, as in Vim (but, why so in Vim? You'd think people wouldn't say <q-lt> if they didn't want it)
+            if (token === "lt") // Don't quote, as in Vim (but, why so in Vim? You'd think people wouldn't say <q-lt> if they didn't want it)
                 return "<";
             let res = tokens[token];
-            if (res == undefined) // Ignore anything undefined
+            if (res === undefined) // Ignore anything undefined
                 res = "<" + token + ">";
-            if (quote && typeof res != "number")
+            if (quote && typeof res !== "number")
                 return Commands.quoteArg['"'](res);
             return res;
         });
@@ -1098,7 +1098,7 @@ const Commands = Module("commands", {
                     function completerToString(completer) {
                         if (completer) {
                             return Object.keys(completeOptionMap)
-                                         .filter(k => (completer == completion[completeOptionMap[k]]))[0] ||
+                                         .filter(k => (completer === completion[completeOptionMap[k]]))[0] ||
                                    "custom";
                         } else {
                             return "";
@@ -1130,7 +1130,7 @@ const Commands = Module("commands", {
             }, {
                 bang: true,
                 completer: function (context, args) {
-                    if (args.completeArg == 0)
+                    if (args.completeArg === 0)
                         completion.userCommand(context);
                     else
                         completion.ex(context);
@@ -1167,8 +1167,8 @@ const Commands = Module("commands", {
                                     };
 
                                     return Object.keys(options)
-                                                 .filter(k => k in cmd && cmd[k] != "0" && cmd[k] != "User-defined command")
-                                                 .map(k => [options[k], typeof cmd[k] == "boolean" ? null : cmd[k]]);
+                                                 .filter(k => k in cmd && cmd[k] !== "0" && cmd[k] !== "User-defined command")
+                                                 .map(k => [options[k], typeof cmd[k] === "boolean" ? null : cmd[k]]);
                                 }())
                             ),
                             arguments: [cmd.name],

@@ -148,14 +148,14 @@ const Hints = Module("hints", {
                             if (elem.selectedIndex >= 0)
                                 return [elem.item(elem.selectedIndex).text.toLowerCase(), false];
                         }
-                        else if (type == "image") {
+                        else if (type === "image") {
                             if (elem.alt)
                                 return [elem.alt.toLowerCase(), true];
                         }
-                        else if (elem.value && type != "password") {
+                        else if (elem.value && type !== "password") {
                             // radio's and checkboxes often use internal ids as values - maybe make this an option too...
-                            if (! ((type == "radio" || type == "checkbox") && !isNaN(elem.value)))
-                                return [elem.value.toLowerCase(), (type == "radio" || type == "checkbox")];
+                            if (! ((type === "radio" || type === "checkbox") && !isNaN(elem.value)))
+                                return [elem.value.toLowerCase(), (type === "radio" || type === "checkbox")];
                         }
                         break;
                     case "label":
@@ -195,15 +195,15 @@ const Hints = Module("hints", {
             coordStr = coordStr.replace(/\s+[;,]\s+/g, ",").replace(/\s+/g, ",");
             let coords = coordStr.split(",").map(Number);
 
-            if ((shape == "rect" || shape == "rectangle") && coords.length == 4) {
+            if ((shape === "rect" || shape === "rectangle") && coords.length === 4) {
                 leftPos += coords[0];
                 topPos += coords[1];
             }
-            else if (shape == "circle" && coords.length == 3) {
+            else if (shape === "circle" && coords.length === 3) {
                 leftPos += coords[0] - coords[2] / Math.sqrt(2);
                 topPos += coords[1] - coords[2] / Math.sqrt(2);
             }
-            else if ((shape == "poly" || shape == "polygon") && coords.length % 2 == 0) {
+            else if ((shape === "poly" || shape === "polygon") && coords.length % 2 === 0) {
                 let leftBound = Infinity;
                 let topBound = Infinity;
 
@@ -278,7 +278,7 @@ const Hints = Module("hints", {
         let computedStyle = doc.defaultView.getComputedStyle(elem, null);
         // visibility and display style are misleading for area tags and they get "display: none" by default.
         // See https://github.com/vimperator/vimperator-labs/issues/236
-        if (elem.nodeName.toLowerCase() != "area" && (computedStyle.getPropertyValue("visibility") != "visible" || computedStyle.getPropertyValue("display") == "none"))
+        if (elem.nodeName.toLowerCase() !== "area" && (computedStyle.getPropertyValue("visibility") !== "visible" || computedStyle.getPropertyValue("display") === "none"))
             return false;
 
         return true;
@@ -342,15 +342,15 @@ const Hints = Module("hints", {
             // If the rect has a zero dimension, it may contain
             // floated children. In that case, the children's rects
             // are most probably where the hints should be at.
-            if (rect.width == 0 || rect.height == 0) {
+            if (rect.width === 0 || rect.height === 0) {
                 let hasFloatChild = false;
                 for (let i = 0; i < elem.childNodes.length; i++) {
-                    if (elem.childNodes[i].nodeType != 1) // nodeType 1: elem_NODE
+                    if (elem.childNodes[i].nodeType !== 1) // nodeType 1: elem_NODE
                       continue;
 
                     // getComputedStyle returns null, if the owner frame is not visible.
                     let computedStyle = doc.defaultView.getComputedStyle(elem.childNodes[i], null);
-                    if (computedStyle && computedStyle.getPropertyValue('float') != 'none'
+                    if (computedStyle && computedStyle.getPropertyValue('float') !== 'none'
                         && this._isVisible(elem.childNodes[i], screen)) {
                       makeHint(elem.childNodes[i]);
                       hasFloatChild = true;
@@ -450,8 +450,8 @@ const Hints = Module("hints", {
                 let valid = validHint(hint.text);
                 let hintnumchars = this._num2chars(hintnum);
                 let display = valid && (
-                    this._hintNumber == 0 ||
-                    hintnumchars.indexOf(String(activeHintChars)) == 0
+                    this._hintNumber === 0 ||
+                    hintnumchars.indexOf(String(activeHintChars)) === 0
                 );
 
                 hint.span.style.display = (display ? "" : "none");
@@ -469,7 +469,7 @@ const Hints = Module("hints", {
                     continue inner;
                 }
 
-                if (hint.text == "" && hint.elem.firstChild && hint.elem.firstChild instanceof HTMLImageElement) {
+                if (hint.text === "" && hint.elem.firstChild && hint.elem.firstChild instanceof HTMLImageElement) {
                     if (!hint.imgSpan) {
                         let rect = hint.elem.firstChild.getBoundingClientRect();
                         if (!rect)
@@ -482,14 +482,14 @@ const Hints = Module("hints", {
                         hint.imgSpan.style.height = (rect.bottom - rect.top) + "px";
                         hint.span.parentNode.appendChild(hint.imgSpan);
                     }
-                    this._setClass(hint.imgSpan, activeHint == hintnum);
+                    this._setClass(hint.imgSpan, activeHint === hintnum);
                 }
 
                 hint.span.setAttribute("number", hint.showText ? hintnumchars + ": " + hint.text.substr(0, 50) : hintnumchars);
                 if (hint.imgSpan)
                     hint.imgSpan.setAttribute("number", hintnumchars);
                 else
-                    this._setClass(hint.elem, activeHint == hintnum);
+                    this._setClass(hint.elem, activeHint === hintnum);
                 this._validHints.push(hint.elem);
 
                 // Set up tab navigation for valid hints
@@ -552,7 +552,7 @@ const Hints = Module("hints", {
                 elem.parentNode.removeChild(elem);
             for (let i in util.range(start, end + 1)) {
                 let hint = this._pageHints[i];
-                if (!timeout || hint.elem != firstElem)
+                if (!timeout || hint.elem !== firstElem)
                     hint.elem.removeAttributeNS(NS.uri, "highlight");
             }
 
@@ -600,7 +600,7 @@ const Hints = Module("hints", {
      *
      */
     _processHints: function (followFirst) {
-        if (this._validHints.length == 0) {
+        if (this._validHints.length === 0) {
             liberator.beep();
             return false;
         }
@@ -613,13 +613,13 @@ const Hints = Module("hints", {
 
             // OK. return hit. But there's more than one hint, and
             // there's no tab-selected current link. Do not follow in mode 2
-            liberator.assert(options["followhints"] != 2 || this._validHints.length == 1 || this._hintNumber)
+            liberator.assert(options["followhints"] !== 2 || this._validHints.length === 1 || this._hintNumber)
         }
 
         if (!followFirst) {
             let firstHref = this._validHints[0].getAttribute("href") || null;
             if (firstHref) {
-                if (this._validHints.some(function (e) e.getAttribute("href") != firstHref))
+                if (this._validHints.some(function (e) e.getAttribute("href") !== firstHref))
                     return false;
             }
             else if (this._validHints.length > 1)
@@ -631,7 +631,7 @@ const Hints = Module("hints", {
         let elem = this._validHints[activeIndex];
         this._removeHints(timeout);
 
-        if (timeout == 0)
+        if (timeout === 0)
             // force a possible mode change, based on whether an input field has focus
             events.onFocusChange();
 
@@ -644,7 +644,7 @@ const Hints = Module("hints", {
     },
 
     _checkUnique: function () {
-        if (this._hintNumber == 0)
+        if (this._hintNumber === 0)
             return;
         liberator.assert(this._hintNumber <= this._validHints.length);
 
@@ -680,7 +680,7 @@ const Hints = Module("hints", {
         this._hintString = commandline.command;
         this._updateStatusline();
         this._showHints();
-        if (this._validHints.length == 1)
+        if (this._validHints.length === 1)
             this._processHints(false);
     },
 
@@ -753,10 +753,10 @@ const Hints = Module("hints", {
              */
             function charsAtBeginningOfWords(chars, words, allowWordOverleaping) {
                 function charMatches(charIdx, chars, wordIdx, words, inWordIdx, allowWordOverleaping) {
-                    let matches = (chars[charIdx] == words[wordIdx][inWordIdx]);
-                    if ((matches == false && allowWordOverleaping) || words[wordIdx].length == 0) {
+                    let matches = (chars[charIdx] === words[wordIdx][inWordIdx]);
+                    if ((matches === false && allowWordOverleaping) || words[wordIdx].length === 0) {
                         let nextWordIdx = wordIdx + 1;
-                        if (nextWordIdx == words.length)
+                        if (nextWordIdx === words.length)
                             return false;
 
                         return charMatches(charIdx, chars, nextWordIdx, words, 0, allowWordOverleaping);
@@ -764,21 +764,21 @@ const Hints = Module("hints", {
 
                     if (matches) {
                         let nextCharIdx = charIdx + 1;
-                        if (nextCharIdx == chars.length)
+                        if (nextCharIdx === chars.length)
                             return true;
 
                         let nextWordIdx = wordIdx + 1;
-                        let beyondLastWord = (nextWordIdx == words.length);
+                        let beyondLastWord = (nextWordIdx === words.length);
                         let charMatched = false;
-                        if (beyondLastWord == false)
+                        if (beyondLastWord === false)
                             charMatched = charMatches(nextCharIdx, chars, nextWordIdx, words, 0, allowWordOverleaping);
 
                         if (charMatched)
                             return true;
 
-                        if (charMatched == false || beyondLastWord == true) {
+                        if (charMatched === false || beyondLastWord === true) {
                             let nextInWordIdx = inWordIdx + 1;
-                            if (nextInWordIdx == words[wordIdx].length)
+                            if (nextInWordIdx === words[wordIdx].length)
                                 return false;
 
                             return charMatches(nextCharIdx, chars, wordIdx, words, nextInWordIdx, allowWordOverleaping);
@@ -809,32 +809,32 @@ const Hints = Module("hints", {
             function stringsAtBeginningOfWords(strings, words, allowWordOverleaping) {
                 let strIdx = 0;
                 for (let word of words) {
-                    if (word.length == 0)
+                    if (word.length === 0)
                         continue;
 
                     let str = strings[strIdx];
-                    if (str.length == 0 || indexOf(word, str) == 0)
+                    if (str.length === 0 || indexOf(word, str) === 0)
                         strIdx++;
                     else if (!allowWordOverleaping)
                         return false;
 
-                    if (strIdx == strings.length)
+                    if (strIdx === strings.length)
                         return true;
                 }
 
                 for (; strIdx < strings.length; strIdx++) {
-                    if (strings[strIdx].length != 0)
+                    if (strings[strIdx].length !== 0)
                         return false;
                 }
                 return true;
             }
 
             return function (linkText) {
-                if (hintStrings.length == 1 && hintStrings[0].length == 0)
+                if (hintStrings.length === 1 && hintStrings[0].length === 0)
                     return true;
 
                 let words = tokenize(wordSplitRegex, linkText);
-                if (hintStrings.length == 1)
+                if (hintStrings.length === 1)
                     return charsAtBeginningOfWords(hintStrings[0], words, allowWordOverleaping);
                 else
                     return stringsAtBeginningOfWords(hintStrings, words, allowWordOverleaping);
@@ -872,7 +872,7 @@ const Hints = Module("hints", {
             var re = new RegExp(expression, 'i');
 
             return function(linkText) {
-                var found = linkText.search(re) != -1;
+                var found = linkText.search(re) !== -1;
 
                 return found;
             };
@@ -939,11 +939,11 @@ const Hints = Module("hints", {
         this._canUpdate = true;
         this._showHints();
 
-        if (this._validHints.length == 0) {
+        if (this._validHints.length === 0) {
             liberator.beep();
             modes.reset();
         }
-        else if (this._validHints.length == 1)
+        else if (this._validHints.length === 1)
             this._processHints(false);
         else // Ticket #185
             this._checkUnique();
@@ -1006,11 +1006,11 @@ const Hints = Module("hints", {
         case "<Tab>":
         case "<S-Tab>":
             this._usedTabKey = true;
-            if (this._hintNumber == 0)
+            if (this._hintNumber === 0)
                 this._hintNumber = 1;
 
             let oldId = this._hintNumber;
-            if (key == "<Tab>")
+            if (key === "<Tab>")
                 this._hintNumber = this._tabNavigation[this._hintNumber].next;
             else
                 this._hintNumber = this._tabNavigation[this._hintNumber].prev;
@@ -1022,7 +1022,7 @@ const Hints = Module("hints", {
         case "<BS>":
             if (this._hintNumber > 0 && !this._usedTabKey) {
                 this._hintNumber = Math.floor(this._hintNumber / 10);
-                if (this._hintNumber == 0)
+                if (this._hintNumber === 0)
                     this._prevInput = "text";
             }
             else {
@@ -1046,7 +1046,7 @@ const Hints = Module("hints", {
                 this._prevInput = "number";
 
                 let oldHintNumber = this._hintNumber;
-                if (this._hintNumber == 0 || this._usedTabKey) {
+                if (this._hintNumber === 0 || this._usedTabKey) {
                     this._usedTabKey = false;
                     this._hintNumber = this._chars2num(key);
                 }
@@ -1058,13 +1058,13 @@ const Hints = Module("hints", {
                 if (!this._canUpdate)
                     return;
 
-                if (this._docs.length == 0) {
+                if (this._docs.length === 0) {
                     this._generate();
                     this._showHints();
                 }
                 this._showActiveHint(this._hintNumber, oldHintNumber || 1);
 
-                liberator.assert(this._hintNumber != 0);
+                liberator.assert(this._hintNumber !== 0);
 
                 this._checkUnique();
             }
@@ -1073,7 +1073,7 @@ const Hints = Module("hints", {
         this._updateStatusline();
 
         if (this._canUpdate) {
-            if (this._docs.length == 0 && this._hintString.length > 0)
+            if (this._docs.length === 0 && this._hintString.length > 0)
                 this._generate();
 
             this._showHints();
@@ -1184,7 +1184,7 @@ const Hints = Module("hints", {
             [0xff21, 0xff3a, "A"],
             [0xff41, 0xff5a, "a"],
         ].map(function (a) {
-            if (typeof a[2] == "string")
+            if (typeof a[2] === "string")
                 a[3] = function (chr) String.fromCharCode(this[2].charCodeAt(0) + chr - this[0]);
             else
                 a[3] = function (chr) this[2][(chr - this[0]) % this[2].length];
@@ -1200,7 +1200,7 @@ const Hints = Module("hints", {
                 var t = table[i + m];
                 if (c >= t[0] && c <= t[1])
                     return t[3](c);
-                if (c < t[0] || m == 0)
+                if (c < t[0] || m === 0)
                     n = m;
                 else {
                     i += m;
@@ -1212,7 +1212,7 @@ const Hints = Module("hints", {
 
         return function indexOf(dest, src) {
             var end = dest.length - src.length;
-            if (src.length == 0)
+            if (src.length === 0)
                 return 0;
         outer:
             for (var i = 0; i < end; i++) {
@@ -1220,9 +1220,9 @@ const Hints = Module("hints", {
                     for (var k = 0; k < src.length;) {
                         var s = translate(dest[j++]);
                         for (var l = 0; l < s.length; l++, k++) {
-                            if (s[l] != src[k])
+                            if (s[l] !== src[k])
                                 continue outer;
-                            if (k == src.length - 1)
+                            if (k === src.length - 1)
                                 return i;
                         }
                     }
@@ -1264,7 +1264,7 @@ const Hints = Module("hints", {
         const DEFAULT_HINTTAGS =
             util.makeXPath(["input[not(@type='hidden' or @disabled)]", "a", "area", "iframe", "textarea", "button", "select"])
                 + " | //*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @role='link'or @role='button' or @role='checkbox' or @role='combobox' or @role='listbox' or @role='listitem' or @role='menuitem' or @role='menuitemcheckbox' or @role='menuitemradio' or @role='option' or @role='radio' or @role='scrollbar' or @role='slider' or @role='spinbutton' or @role='tab' or @role='textbox' or @role='treeitem' or @tabindex]"
-                + (config.name == "Muttator" ?
+                + (config.name === "Muttator" ?
                     " | //xhtml:div[@class='wrappedsender']/xhtml:div[contains(@class,'link')]" :
                     "");
 
@@ -1341,7 +1341,7 @@ const Hints = Module("hints", {
                     let prev;
                     let list = arg.split("");
                     list.sort();
-                    let ret = list.some(function (n) prev == (prev=n));
+                    let ret = list.some(function (n) prev === (prev=n));
 
                     return !ret && arg.length > 1;
                 }

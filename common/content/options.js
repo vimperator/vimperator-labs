@@ -40,13 +40,13 @@ const Option = Class("Option", {
             update(this, extraInfo);
 
         // add no{option} variant of boolean {option} to this.names
-        if (this.type == "boolean") {
+        if (this.type === "boolean") {
             this.names = array(Object.keys(names)
                 .map(k => [names[k], "no" + names[k]]))
                 .flatten().__proto__;
         }
 
-        if (this.globalValue == undefined)
+        if (this.globalValue === undefined)
             this.globalValue = this.defaultValue;
     },
 
@@ -62,9 +62,9 @@ const Option = Class("Option", {
      * @returns {value|string[]}
      */
     parseValues: function (value) {
-        if (this.type == "stringlist")
+        if (this.type === "stringlist")
             return (value === "") ? [] : value.split(",");
-        if (this.type == "charlist")
+        if (this.type === "charlist")
             return Array.slice(value);
         return value;
     },
@@ -77,9 +77,9 @@ const Option = Class("Option", {
      * @returns {value}
      */
     joinValues: function (values) {
-        if (this.type == "stringlist")
+        if (this.type === "stringlist")
             return values.join(",");
-        if (this.type == "charlist")
+        if (this.type === "charlist")
             return values.join("");
         return values;
     },
@@ -120,7 +120,7 @@ const Option = Class("Option", {
      */
     get: function (scope) {
         if (scope) {
-            if ((scope & this.scope) == 0) // option doesn't exist in this scope
+            if ((scope & this.scope) === 0) // option doesn't exist in this scope
                 return null;
         }
         else
@@ -133,7 +133,7 @@ const Option = Class("Option", {
 
         if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             value = tabs.options[this.name];
-        if ((scope & Option.SCOPE_GLOBAL) && (value == undefined))
+        if ((scope & Option.SCOPE_GLOBAL) && (value === undefined))
             value = this.globalValue;
 
         return value;
@@ -150,7 +150,7 @@ const Option = Class("Option", {
      */
     set: function (newValue, scope) {
         scope = scope || this.scope;
-        if ((scope & this.scope) == 0) // option doesn't exist in this scope
+        if ((scope & this.scope) === 0) // option doesn't exist in this scope
             return;
 
         if (this.setter)
@@ -158,7 +158,7 @@ const Option = Class("Option", {
 
         if (liberator.has("tabs") && (scope & Option.SCOPE_LOCAL))
             tabs.options[this.name] = newValue;
-        if ((scope & Option.SCOPE_GLOBAL) && newValue != this.globalValue)
+        if ((scope & Option.SCOPE_GLOBAL) && newValue !== this.globalValue)
             this.globalValue = newValue;
 
         this.hasChanged = true;
@@ -224,7 +224,7 @@ const Option = Class("Option", {
 
         switch (this.type) {
         case "boolean":
-            if (operator != "=")
+            if (operator !== "=")
                 break;
 
             if (invert)
@@ -269,13 +269,13 @@ const Option = Class("Option", {
                 newValue = util.Array.uniq(Array.concat(values, this.values), true);
                 break;
             case "-":
-                newValue = this.values.filter(function (item) values.indexOf(item) == -1);
+                newValue = this.values.filter(function (item) values.indexOf(item) === -1);
                 break;
             case "=":
                 newValue = values;
                 if (invert) {
-                    let keepValues = this.values.filter(function (item) values.indexOf(item) == -1);
-                    let addValues  = values.filter(function (item) self.values.indexOf(item) == -1);
+                    let keepValues = this.values.filter(function (item) values.indexOf(item) === -1);
+                    let addValues  = values.filter(function (item) self.values.indexOf(item) === -1);
                     newValue = addValues.concat(keepValues);
                 }
                 break;
@@ -426,7 +426,7 @@ const Option = Class("Option", {
         let res = context.fork("", 0, this, this.completer);
         if (!res)
             res = context.allItems.items.map(function (item) [item.text]);
-        return Array.concat(values).every(function (value) res.some(function (item) item[0] == value));
+        return Array.concat(values).every(function (value) res.some(function (item) item[0] === value));
     }
 });
 
@@ -456,7 +456,7 @@ const Options = Module("options", {
         if (!/keypress/.test(popupAllowedEvents)) {
             this._storePreference("dom.popup_allowed_events", popupAllowedEvents + " keypress");
             liberator.registerObserver("shutdown", function () {
-                if (this._loadPreference("dom.popup_allowed_events", "") == popupAllowedEvents + " keypress")
+                if (this._loadPreference("dom.popup_allowed_events", "") === popupAllowedEvents + " keypress")
                     this._storePreference("dom.popup_allowed_events", popupAllowedEvents);
             });
         }
@@ -464,7 +464,7 @@ const Options = Module("options", {
         function optionObserver(key, event, option) {
             // Trigger any setters.
             let opt = options.get(option);
-            if (event == "change" && opt)
+            if (event === "change" && opt)
                 opt.set(opt.globalValue, Option.SCOPE_GLOBAL);
         }
 
@@ -501,7 +501,7 @@ const Options = Module("options", {
         },
 
         observe: function (subject, topic, data) {
-            if (topic != "nsPref:changed")
+            if (topic !== "nsPref:changed")
                 return;
 
             // subject is the nsIPrefBranch we're observing (after appropriate QI)
@@ -597,7 +597,7 @@ const Options = Module("options", {
         function opts(opt) {
             for (let opt in options) {
                 let option = {
-                    isDefault: opt.value == opt.defaultValue,
+                    isDefault: opt.value === opt.defaultValue,
                     name:      opt.name,
                     default:   opt.defaultValue,
                     pre:       "\u00a0\u00a0", // Unicode nonbreaking space.
@@ -609,7 +609,7 @@ const Options = Module("options", {
                 if (!(opt.scope & scope))
                     continue;
 
-                if (opt.type == "boolean") {
+                if (opt.type === "boolean") {
                     if (!opt.value)
                         option.pre = "no";
                     option.default = (option.default ? "" : "no") + opt.name;
@@ -643,7 +643,7 @@ const Options = Module("options", {
         function prefs() {
             for (let pref of prefArray) {
                 let userValue = services.get("prefs").prefHasUserValue(pref);
-                if (onlyNonDefault && !userValue || pref.indexOf(filter) == -1)
+                if (onlyNonDefault && !userValue || pref.indexOf(filter) === -1)
                     continue;
 
                 value = options.getPref(pref);
@@ -693,11 +693,11 @@ const Options = Module("options", {
         ret.prefix = prefix;
         ret.postfix = postfix;
 
-        ret.all = (ret.name == "all");
-        ret.get = (ret.all || postfix == "?" || (ret.option && ret.option.type != "boolean" && !valueGiven));
-        ret.invert = (prefix == "inv" || postfix == "!");
-        ret.reset = (postfix == "&");
-        ret.unsetBoolean = (prefix == "no");
+        ret.all = (ret.name === "all");
+        ret.get = (ret.all || postfix === "?" || (ret.option && ret.option.type !== "boolean" && !valueGiven));
+        ret.invert = (prefix === "inv" || postfix === "!");
+        ret.reset = (postfix === "&");
+        ret.unsetBoolean = (prefix === "no");
 
         ret.scope = modifiers && modifiers.scope;
 
@@ -754,7 +754,7 @@ const Options = Module("options", {
         let val = this._loadPreference(name, null, false);
         let def = this._loadPreference(name, null, true);
         let lib = this._loadPreference(Options.SAVED + name);
-        if (lib == null && val != def || val != lib) {
+        if (lib == null && val !== def || val !== lib) {
             let msg = "Warning: setting preference " + name + ", but it's changed from its default value.";
             if (message)
                 msg += " " + message;
@@ -794,7 +794,7 @@ const Options = Module("options", {
      * @param {string} name The preference name.
      */
     invertPref: function (name) {
-        if (services.get("prefs").getPrefType(name) == Ci.nsIPrefBranch.PREF_BOOL)
+        if (services.get("prefs").getPrefType(name) === Ci.nsIPrefBranch.PREF_BOOL)
             this.setPref(name, !this.getPref(name));
         else
             liberator.echoerr("Trailing characters: " + name + "!");
@@ -850,26 +850,26 @@ const Options = Module("options", {
         let type = services.get("prefs").getPrefType(name);
         switch (typeof value) {
         case "string":
-            if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_STRING) {
+            if (type === Ci.nsIPrefBranch.PREF_INVALID || type === Ci.nsIPrefBranch.PREF_STRING) {
                 let supportString = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
                 supportString.data = value;
                 services.get("prefs").setComplexValue(name, Ci.nsISupportsString, supportString);
             }
-            else if (type == Ci.nsIPrefBranch.PREF_INT)
+            else if (type === Ci.nsIPrefBranch.PREF_INT)
                 liberator.echoerr("Number required after =: " + name + "=" + value);
             else
                 liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         case "number":
-            if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_INT)
+            if (type === Ci.nsIPrefBranch.PREF_INVALID || type === Ci.nsIPrefBranch.PREF_INT)
                 services.get("prefs").setIntPref(name, value);
             else
                 liberator.echoerr("Invalid argument: " + name + "=" + value);
             break;
         case "boolean":
-            if (type == Ci.nsIPrefBranch.PREF_INVALID || type == Ci.nsIPrefBranch.PREF_BOOL)
+            if (type === Ci.nsIPrefBranch.PREF_INVALID || type === Ci.nsIPrefBranch.PREF_BOOL)
                 services.get("prefs").setBoolPref(name, value);
-            else if (type == Ci.nsIPrefBranch.PREF_INT)
+            else if (type === Ci.nsIPrefBranch.PREF_INT)
                 liberator.echoerr("Number required after =: " + name + "=" + value);
             else
                 liberator.echoerr("Invalid argument: " + name + "=" + value);
@@ -931,26 +931,26 @@ const Options = Module("options", {
                     let reset = false;
                     let invertBoolean = false;
 
-                    if (args[0] == "") {
+                    if (args[0] === "") {
                         var name = "all";
                         onlyNonDefault = true;
                     }
                     else {
                         var [matches, name, postfix, valueGiven, operator, value] =
                         arg.match(/^\s*?([a-zA-Z0-9\.\-_{}]+)([?&!])?\s*(([-+^]?)=(.*))?\s*$/);
-                        reset = (postfix == "&");
-                        invertBoolean = (postfix == "!");
+                        reset = (postfix === "&");
+                        invertBoolean = (postfix === "!");
                     }
 
-                    if (name == "all" && reset)
+                    if (name === "all" && reset)
                         commandline.input("Warning: Resetting all preferences may make " + config.hostApplication + " unusable. Continue (yes/[no]): ",
                             function (resp) {
-                                if (resp == "yes")
+                                if (resp === "yes")
                                     for (let pref in values(options.allPrefs()))
                                         options.resetPref(pref);
                             },
                             { promptHighlight: "WarningMsg" });
-                    else if (name == "all")
+                    else if (name === "all")
                         options.listPrefs(onlyNonDefault, "");
                     else if (reset)
                         options.resetPref(name);
@@ -1001,7 +1001,7 @@ const Options = Module("options", {
                     if (opt.all)
                         options.list(opt.onlyNonDefault, opt.scope);
                     else {
-                        if (option.type == "boolean")
+                        if (option.type === "boolean")
                             var msg = (opt.optionValue ? "  " : "no") + option.name;
                         else
                             msg = "  " + option.name + "=" + opt.optionValue;
@@ -1019,7 +1019,7 @@ const Options = Module("options", {
                 else {
                     option.setFrom = modifiers.setFrom || null;
 
-                    if (option.type == "boolean") {
+                    if (option.type === "boolean") {
                         if (opt.unsetBoolean) {
                             opt.values = false;
                         } else {
@@ -1047,7 +1047,7 @@ const Options = Module("options", {
             let filter = context.filter;
 
             if (args.bang) { // list completions for about:config entries
-                if (filter[filter.length - 1] == "=") {
+                if (filter[filter.length - 1] === "=") {
                     context.advance(filter.length);
                     filter = filter.substr(0, filter.length - 1);
                     context.completions = [
@@ -1063,12 +1063,12 @@ const Options = Module("options", {
             let opt = options.parseOpt(filter, modifiers);
             let prefix = opt.prefix;
 
-            if (context.filter.indexOf("=") == -1) {
+            if (context.filter.indexOf("=") === -1) {
                 if (prefix)
-                    context.filters.push(function ({ item: opt }) opt.type == "boolean" || prefix == "inv" && opt.values instanceof Array);
+                    context.filters.push(function ({ item: opt }) opt.type === "boolean" || prefix === "inv" && opt.values instanceof Array);
                 return completion.option(context, opt.scope);
             }
-            else if (prefix == "no")
+            else if (prefix === "no")
                 return null;
 
             let option = opt.option;
@@ -1088,11 +1088,11 @@ const Options = Module("options", {
                     [option.value, "Current value"],
                     [option.defaultValue, "Default value"]
                 ];
-                if (option.type == "boolean") {
+                if (option.type === "boolean") {
                     completions.push([!option.value, "Inverted current value"]);
                     context.completions = completions;
                 } else {
-                    context.completions = completions.filter(function (f) f[0] != "");
+                    context.completions = completions.filter(function (f) f[0] !== "");
                 }
             });
 
@@ -1110,8 +1110,8 @@ const Options = Module("options", {
                         xml`<table>
                         ${
                             template.map2(xml, liberator.globalVariables, function ([i, value]) {
-                                let prefix = typeof value == "number"   ? "#" :
-                                             typeof value == "function" ? "*" :
+                                let prefix = typeof value === "number"   ? "#" :
+                                             typeof value === "function" ? "*" :
                                                                           " ";
                                 if (!hasRow) hasRow = true;
                                 return xml`<tr>
@@ -1140,18 +1140,18 @@ const Options = Module("options", {
                         liberator.assert(expr !== undefined, "Invalid expression: " + expr);
 
                         if (!reference[0]) {
-                            if (reference[2] == "g")
+                            if (reference[2] === "g")
                                 reference[0] = liberator.globalVariables;
                             else
                                 return; // for now
                         }
 
                         if (stuff) {
-                            if (stuff == "+")
+                            if (stuff === "+")
                                 reference[0][reference[1]] += expr;
-                            else if (stuff == "-")
+                            else if (stuff === "-")
                                 reference[0][reference[1]] -= expr;
-                            else if (stuff == ".")
+                            else if (stuff === ".")
                                 reference[0][reference[1]] += expr.toString();
                         }
 
@@ -1165,8 +1165,8 @@ const Options = Module("options", {
                     liberator.assert(reference[0], "Undefined variable: " + matches[1]);
 
                     let value = reference[0][reference[1]];
-                    let prefix = typeof value == "number"   ? "#" :
-                                 typeof value == "function" ? "*" :
+                    let prefix = typeof value === "number"   ? "#" :
+                                 typeof value === "function" ? "*" :
                                                               " ";
                     liberator.echo(reference[1] + "\t\t" + prefix + value);
                 }
@@ -1218,10 +1218,10 @@ const Options = Module("options", {
                 },
                 serial: function () {
                     return Array.from(iter(options))
-                        .filter(opt => !opt.getter && opt.value != opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
+                        .filter(opt => !opt.getter && opt.value !== opt.defaultValue && (opt.scope & Option.SCOPE_GLOBAL))
                         .map(opt => ({
                             command: this.name,
-                            arguments: [opt.type == "boolean" ? (opt.value ? "" : "no") + opt.name
+                            arguments: [opt.type === "boolean" ? (opt.value ? "" : "no") + opt.name
                                                               : opt.name + "=" + opt.value]
                         }));
                 }
@@ -1291,10 +1291,10 @@ const Options = Module("options", {
             // Not Vim compatible, but is a significant enough improvement
             // that it's worth breaking compatibility.
             if (newValues instanceof Array) {
-                completions = completions.filter(function (val) newValues.indexOf(val[0]) == -1);
+                completions = completions.filter(function (val) newValues.indexOf(val[0]) === -1);
                 switch (op) {
                 case "+":
-                    completions = completions.filter(function (val) curValues.indexOf(val[0]) == -1);
+                    completions = completions.filter(function (val) curValues.indexOf(val[0]) === -1);
                     break;
                 case "-":
                     completions = completions.filter(function (val) curValues.indexOf(val[0]) > -1);
