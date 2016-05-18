@@ -17,8 +17,7 @@ const History = Module("history", {
 
         if (typeof filter == "string")
             filter = { searchTerms: filter };
-        for (let [k, v] in Iterator(filter))
-            query[k] = v;
+
         options.sortingMode = options.SORT_BY_DATE_DESCENDING;
         options.resultType = options.RESULTS_AS_URI;
         if (maxItems > 0)
