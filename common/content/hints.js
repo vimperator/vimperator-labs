@@ -933,7 +933,13 @@ const Hints = Module("hints", {
         this._hintString = filter || "";
         this._resetInput();
 
-        this._generate(win);
+        try {
+            this._generate(win);
+        } catch (e) {
+            setTimeout(function() {
+                hints._generate(win);
+            }, 0)
+        }
 
         // get all keys from the input queue
         liberator.threadYield(true);
