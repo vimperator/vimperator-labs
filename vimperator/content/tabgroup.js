@@ -70,6 +70,7 @@ var TabGroup = Module("tabGroup", {
             else
                 test = function (g) g.getTitle().toLowerCase() == name;
         }
+        // Using shim, iterate tabView.GroupItems itself
         for (let group of this.tabView.GroupItems.groupItems) {
             if (test(group)) {
                 i++;
@@ -90,8 +91,9 @@ var TabGroup = Module("tabGroup", {
             return;
 
         const GI = tabGroup.tabView.GroupItems;
-        let current = GI.getActiveGroupItem() || GI.getActiveOrphanTab();
-        let groups = GI.groupItems;
+        // getActiveOrphanTab no longer exists in Tab Groups 2
+        let current = GI.getActiveGroupItem() || (GI.getActiveOrphanTab && GI.getActiveOrphanTab());
+        let groups = GI.groupItems; // Using shim, use GroupItems.sortBySlot()
         let offset = 1, relative = false, index;
         if (typeof spec === "number")
             index = parseInt(spec, 10);
@@ -159,11 +161,7 @@ var TabGroup = Module("tabGroup", {
         if (!tabGroup.TV)
             return null;
 
-        let pageBounds = tabGroup.tabView.Items.getPageBounds();
-        pageBounds.inset(20, 20);
-        let box = new tabGroup.tabView.Rect(pageBounds);
-        box.width = 125;
-        box.height = 110;
+        let box = new tabGroup.tabView.Rect(20, 20, 125, 110);
         let group = new tabGroup.tabView.GroupItem([], { bounds: box, title: name });
 
         if (tab && !tab.pinned)
@@ -439,7 +437,7 @@ var TabGroup = Module("tabGroup", {
             }
 
             const GI = tabGroup.tabView.GroupItems;
-            let groupItems = GI.groupItems;
+            let groupItems = GI.groupItems; // Using shim, use GroupItems.sortBySlot()
             if (excludeActiveGroup) {
                 let activeGroup = GI.getActiveGroupItem();
                 if (activeGroup)
@@ -447,7 +445,7 @@ var TabGroup = Module("tabGroup", {
             }
             context.completions = groupItems.map(function(group) {
                 let title = group.id + ": " + (group.getTitle() || "(Untitled)");
-                let desc = "Tabs: " + group.getChildren().length;
+                let desc = "Tabs: " + group.getChildren().length; // Using shim, use group.children
 
                 return [title, desc];
             });
