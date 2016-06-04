@@ -157,7 +157,7 @@ var Config = Module("config", ConfigBase, {
             function (args) {
                 if (args.bang) { // open Firefox settings GUI dialog
                     liberator.open("about:config",
-                        (options["newtab"] && options.get("newtab").has("all", "prefs"))
+                        (options.newtab && options.get("newtab").has("all", "prefs"))
                                 ? liberator.NEW_TAB : liberator.CURRENT_TAB);
                 }
                 else

@@ -130,13 +130,13 @@ const Services = Module("services", {
         if (!this.services.hasOwnProperty(name))
             throw Error("Could not get service: " + name);
 
-        if (!this.services[name]["reference"]) {
+        if (!this.services[name].reference) {
             var currentService = this.services[name];
 
-            this.services[name]["reference"] = this._create(currentService["class_"], currentService["iface"], currentService["meth"]);
+            this.services[name].reference = this._create(currentService.class_, currentService.iface, currentService.meth);
         }
 
-        return this.services[name]["reference"];
+        return this.services[name].reference;
     },
 
     /**

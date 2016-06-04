@@ -364,7 +364,7 @@ const Bookmarks = Module("bookmarks", {
     // @returns the url for the search string
     //          if the search also requires a postData, [url, postData] is returned
     getSearchURL: function getSearchURL(text, useDefsearch) {
-        let searchString = (useDefsearch ? options["defsearch"] + " " : "") + text;
+        let searchString = (useDefsearch ? options.defsearch + " " : "") + text;
 
         // we need to make sure our custom alias have been set, even if the user
         // did not :open <tab> once before
@@ -762,7 +762,7 @@ const Bookmarks = Module("bookmarks", {
             if (!context.filter)
                 return;
 
-            let engineList = (engineAliases || options["suggestengines"] || "google").split(",");
+            let engineList = (engineAliases || options.suggestengines || "google").split(",");
 
             engineList.forEach(function (name) {
                 let engine = services.get("search").getEngineByAlias(name);

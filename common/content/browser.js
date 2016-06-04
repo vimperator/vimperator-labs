@@ -37,7 +37,7 @@ const Browser = Module("browser", {
                 scope: Option.SCOPE_LOCAL,
                 getter: function () config.browser.docShell.QueryInterface(Ci.nsIDocCharset).charset,
                 setter: function (val) {
-                    if (options["encoding"] == val)
+                    if (options.encoding == val)
                         return val;
 
                     // Stolen from browser.jar/content/browser/browser.js, more or less.

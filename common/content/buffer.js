@@ -193,7 +193,7 @@ const Buffer = Module("buffer", {
             if (doc == config.browser.contentDocument) {
                 // we want to stay in command mode after a page has loaded
                 // TODO: move somewhere else, as focusing can already happen earlier than on "load"
-                if (options["focuscontent"]) {
+                if (options.focuscontent) {
                     setTimeout(function () {
                         let focused = liberator.focus;
                         if (focused && (focused.value != null) && focused.value.length == 0)
@@ -282,7 +282,7 @@ const Buffer = Module("buffer", {
             asyncUpdateUI.superapply(this, arguments);
         },
         setOverLink: function setOverLink(link, b) {
-            let ssli = options["showstatuslinks"];
+            let ssli = options.showstatuslinks;
 
             if (ssli == 3) {
                 setOverLink.superapply(this, arguments);
@@ -768,15 +768,15 @@ const Buffer = Module("buffer", {
         count = count || 1;
         let elem = Buffer.findScrollable(direction, false);
 
-        if (options["scroll"] > 0)
-            this.scrollLines(options["scroll"] * direction);
+        if (options.scroll > 0)
+            this.scrollLines(options.scroll * direction);
         else // scroll half a page down in pixels
             elem.scrollTop += Buffer.findScrollableWindow().innerHeight / 2 * direction;
     },
 
     _scrollByScrollSize: function _scrollByScrollSize(count, direction) {
         if (count > 0)
-            options["scroll"] = count;
+            options.scroll = count;
         buffer.scrollByScrollSize(direction);
     },
 
@@ -932,7 +932,7 @@ const Buffer = Module("buffer", {
             return;
         }
 
-        let option = sections || options["pageinfo"];
+        let option = sections || options.pageinfo;
         let list = template.map2(xml, option, function (option) {
             let opt = buffer.pageInfo[option];
             return opt ? template.table2(xml, opt[1], opt[0](true)) : undefined;
@@ -1253,8 +1253,8 @@ const Buffer = Module("buffer", {
                 liberator.assert(!arg || titles.indexOf(arg) >= 0,
                     "Invalid argument: " + arg);
 
-                if (options["usermode"])
-                    options["usermode"] = false;
+                if (options.usermode)
+                    options.usermode = false;
 
                 window.stylesheetSwitchAll(config.browser.contentWindow, arg);
             },
@@ -1532,7 +1532,7 @@ const Buffer = Module("buffer", {
             "Start caret mode",
             function () {
                 if (Editor.windowIsEditable()) {
-                    if (options["insertmode"])
+                    if (options.insertmode)
                         modes.set(modes.INSERT);
                     else if (Buffer.focusedWindow.getSelection().toString() != "")
                         modes.set(modes.VISUAL, modes.TEXTAREA);

@@ -117,7 +117,7 @@ const AutoCommands = Module("autocommands", {
 
         for (let autoCmd of autoCmds) {
             if (autoCmd.pattern.test(url)) {
-                if (options["verbose"] >= 9 && (!lastPattern || lastPattern.source != autoCmd.pattern.source))
+                if (options.verbose >= 9 && (!lastPattern || lastPattern.source != autoCmd.pattern.source))
                     liberator.echomsg("Executing " + event + " Auto commands for \"" + autoCmd.pattern.source + "\"");
 
                 lastPattern = autoCmd.pattern;

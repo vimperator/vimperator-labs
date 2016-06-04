@@ -106,7 +106,7 @@ const File = Class("File", {
         let icstream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 
         if (!encoding)
-            encoding = options["fileencoding"];
+            encoding = options.fileencoding;
 
         ifstream.init(this, -1, 0, 0);
         icstream.init(ifstream, encoding, 4096, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER); // 4096 bytes buffering
@@ -154,7 +154,7 @@ const File = Class("File", {
         }
 
         if (!encoding)
-            encoding = options["fileencoding"];
+            encoding = options.fileencoding;
 
         if (mode == ">>")
             mode = File.MODE_WRONLY | File.MODE_CREATE | File.MODE_APPEND;
@@ -474,7 +474,7 @@ const IO = Module("io", {
      * @returns {nsIFile[])
      */
     getRuntimeDirectories: function (name) {
-        let dirs = File.getPathsFromPathList(options["runtimepath"]);
+        let dirs = File.getPathsFromPathList(options.runtimepath);
 
         dirs = dirs.map(function (dir) File.joinPaths(dir, name))
                    .filter(function (dir) dir.exists() && dir.isDirectory() && dir.isReadable());
@@ -604,10 +604,10 @@ lookup:
      * @param {boolean} all Whether all found files should be sourced.
      */
     sourceFromRuntimePath: function (paths, all) {
-        let dirs = File.getPathsFromPathList(options["runtimepath"]);
+        let dirs = File.getPathsFromPathList(options.runtimepath);
         let found = false;
 
-        liberator.log("Searching for \"" + paths.join(" ") + "\" in \"" + options["runtimepath"] + "\"");
+        liberator.log("Searching for \"" + paths.join(" ") + "\" in \"" + options.runtimepath + "\"");
 
         outer:
         for (let dir of dirs) {
@@ -778,18 +778,18 @@ lookup:
 
             // TODO: implement 'shellredir'
             if (liberator.has("Windows")) {
-                if (options["shell"] == "cmd.exe") {
+                if (options.shell == "cmd.exe") {
                     command = "cd /D " + this._cwd.path + " && " + command + " > " + stdout.path + " 2>&1" + " < " + stdin.path;
                 } else {
                     // in this case, assume the shell is unix-like
                     command = "cd " + escape(this._cwd.path) + " && " + command + " > " + escape(stdout.path) + " 2>&1" + " < " + escape(stdin.path);
                 }
-                var res = this.run(options["shell"], options["shellcmdflag"].split(/\s+/).concat(command), true);
+                var res = this.run(options.shell, options.shellcmdflag.split(/\s+/).concat(command), true);
             }
             else {
                 cmd.write("cd " + escape(this._cwd.path) + "\n" +
                         ["exec", ">" + escape(stdout.path), "2>&1", "<" + escape(stdin.path),
-                         escape(options["shell"]), options["shellcmdflag"], escape(command)].join(" "));
+                         escape(options.shell), options.shellcmdflag, escape(command)].join(" "));
                 res = this.run("/bin/sh", ["-e", cmd.path], true);
             }
 
@@ -873,7 +873,7 @@ lookup:
                     if (io.setCurrentDirectory(arg))
                         liberator.echomsg(io.getCurrentDirectory().path);
                 } else {
-                    let dirs = File.getPathsFromPathList(options["cdpath"]);
+                    let dirs = File.getPathsFromPathList(options.cdpath);
                     let found = false;
 
                     for (let dir of dirs) {

@@ -494,9 +494,9 @@ const Mail = Module("mail", {
             where = liberator.NEW_TAB;
 
         if ("from" in params) {
-            if (!("where" in params) && options["newtab"] && options.get("newtab").has("all", params.from))
+            if (!("where" in params) && options.newtab && options.get("newtab").has("all", params.from))
                 where = liberator.NEW_TAB;
-            if (options["activate"] && !options.get("activate").has("all", params.from)) {
+            if (options.activate && !options.get("activate").has("all", params.from)) {
                 if (where == liberator.NEW_TAB)
                     where = liberator.NEW_BACKGROUND_TAB;
                 else if (where == liberator.NEW_BACKGROUND_TAB)

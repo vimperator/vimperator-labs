@@ -698,8 +698,8 @@ const Util = Module("util", {
     stringToURLArray: function stringToURLArray(str) {
         let urls;
 
-        if (options["urlseparator"])
-            urls = util.splitLiteral(str, RegExp("\\s*" + options["urlseparator"] + "\\s*"));
+        if (options.urlseparator)
+            urls = util.splitLiteral(str, RegExp("\\s*" + options.urlseparator + "\\s*"));
         else
             urls = [str];
 

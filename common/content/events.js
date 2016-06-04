@@ -61,7 +61,7 @@ const Events = Module("events", {
         // HACK: as Gecko does not include an event for <, we must add this in manually.
         if (!("<" in this._key_code)) {
             this._key_code["<"] = 60;
-            this._key_code["lt"] = 60;
+            this._key_code.lt = 60;
             this._code_key[60] = "lt";
         }
 
@@ -707,7 +707,7 @@ const Events = Module("events", {
             }
 
             if (elem instanceof HTMLTextAreaElement || (elem && elem.contentEditable == "true")) {
-                if (options["insertmode"])
+                if (options.insertmode)
                     modes.set(modes.INSERT);
                 else if (elem.selectionEnd - elem.selectionStart > 0)
                     modes.set(modes.VISUAL, modes.TEXTAREA);
@@ -719,7 +719,7 @@ const Events = Module("events", {
             }
 
             if (Editor.windowIsEditable(win)) {
-                if (options["insertmode"])
+                if (options.insertmode)
                     modes.set(modes.INSERT);
                 else if (win.getSelection().toString() != "")
                     modes.set(modes.VISUAL, modes.TEXTAREA);
@@ -756,7 +756,7 @@ const Events = Module("events", {
             if (couldCopy) {
                 if ((liberator.mode == modes.TEXTAREA ||
                      (modes.extended & modes.TEXTAREA))
-                        && !options["insertmode"])
+                        && !options.insertmode)
                     modes.set(modes.VISUAL, modes.TEXTAREA);
                 else if (liberator.mode == modes.CARET)
                     modes.set(modes.VISUAL, modes.CARET);
@@ -834,7 +834,7 @@ const Events = Module("events", {
                     return (elem instanceof HTMLInputElement && !/image/.test(elem.type));
                 }
 
-                if (options["insertmode"] || isInputField())
+                if (options.insertmode || isInputField())
                     liberator.mode = modes.INSERT;
                 else
                     modes.reset();
@@ -1147,7 +1147,7 @@ const Events = Module("events", {
             return;
         }
 
-        if (!options['passthrough'])
+        if (!options.passthrough)
             event.stopPropagation();
 
         // liberator.echo ("key: " + key + "\nkeycode: " + event.keyCode + "\nchar: " + event.charCode + "\ntype: " + event.type + "\nwhich: " + event.which);

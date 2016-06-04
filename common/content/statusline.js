@@ -167,7 +167,7 @@ const StatusLine = Module("statusline", {
             sv.isVisible = true;
         };
 
-        let mode = options["statuslinevisibility"];
+        let mode = options.statuslinevisibility;
 
         switch (request) {
             case sv.UPDATE:
@@ -201,9 +201,9 @@ const StatusLine = Module("statusline", {
 
             case sv.TOGGLE:
                 switch (mode) {
-                    case "auto":    options["statuslinevisibility"] = "visible"; break;
-                    case "visible": options["statuslinevisibility"] = "hidden";  break;
-                    case "hidden":  options["statuslinevisibility"] = "auto";    break;
+                    case "auto":    options.statuslinevisibility = "visible"; break;
+                    case "visible": options.statuslinevisibility = "hidden";  break;
+                    case "hidden":  options.statuslinevisibility = "auto";    break;
                 }
                 break;
         }

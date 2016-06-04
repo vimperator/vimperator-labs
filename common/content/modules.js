@@ -117,7 +117,7 @@ window.addEventListener("load", function onload() {
         }
     }
     Module.list.forEach(load);
-    deferredInit["load"].forEach(call);
+    deferredInit.load.forEach(call);
 
     for (let module of Module.list)
         delete module.INIT;
