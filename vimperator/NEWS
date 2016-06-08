@@ -1,5 +1,13 @@
 201x-xx-xx:
 
+2016-06-07:
+    * @gkatsev removed usage of FUEL Application variable
+    * @gineadai deleted deprecated template code
+    * changed bracket notation to dotnotation in a lot of places
+    * @gkatsev removed unnecessary iterator loop in history.get
+    * removed unnecessary semicolons
+    * @Quicksaver updated tabgroups with some notes and updates for Tab Groups 2 support
+
 2016-05-04:
     * @sirzerator fixed a typoeerror triggered in completion.js
     * @gineadai fixed a highlight typo
