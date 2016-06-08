@@ -306,7 +306,7 @@ const CommandLine = Module("commandline", {
         liberator.triggerObserver("echoLine", str, highlightGroup, forceSingle);
 
         //if (!this._commandShown())
-            ;//commandline.hide();
+            //commandline.hide();
 
         /*let field = this._messageBox.inputField;
         if (!forceSingle && field.editor.rootElement.scrollWidth > field.scrollWidth)
@@ -1370,7 +1370,7 @@ const CommandLine = Module("commandline", {
                 try {
                     this.waiting = true;
                     for (let context of list) {
-                        function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length);
+                        function done() !(idx >= n + context.items.length || idx == -2 && !context.items.length)
                         while (context.incomplete && !done())
                             liberator.threadYield(false, true);
 
@@ -1799,7 +1799,7 @@ const ItemList = Class("ItemList", {
         let off = 0;
         let end = this._startIndex + options.maxitems;
         function getRows(context) {
-            function fix(n) util.Math.constrain(n, 0, len);
+            function fix(n) util.Math.constrain(n, 0, len)
             let len = context.items.length;
             let start = off;
             end -= !!context.message + context.incomplete;

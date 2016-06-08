@@ -383,7 +383,7 @@ const JavaScript = Module("javascript", {
                 //  Constants are unsorted, and appear before other non-null strings.
                 //  Other strings are sorted in the default manner.
                 let compare = context.compare;
-                function isnan(item) item != '' && isNaN(item);
+                function isnan(item) item != '' && isNaN(item)
                 context.compare = function (a, b) {
                     if (!isnan(a.item.key) && !isnan(b.item.key))
                         return a.item.key - b.item.key;

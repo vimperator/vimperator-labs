@@ -39,6 +39,6 @@ AboutHandler.prototype = {
 if(XPCOMUtils.generateNSGetFactory)
     var NSGetFactory = XPCOMUtils.generateNSGetFactory([AboutHandler]);
 else
-    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler]);
+    function NSGetModule(compMgr, fileSpec) XPCOMUtils.generateModule([AboutHandler])
 
 // vim: set fdm=marker sw=4 ts=4 et:

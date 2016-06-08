@@ -381,7 +381,7 @@ const Commands = Module("commands", {
      */
     commandToString: function (args) {
         let res = [args.command + (args.bang ? "!" : "")];
-        function quote(str) Commands.quoteArg[/[\s"'\\]|^$/.test(str) ? '"' : ""](str);
+        function quote(str) Commands.quoteArg[/[\s"'\\]|^$/.test(str) ? '"' : ""](str)
 
         for (let [opt, val] in Iterator(args.options || {})) {
             let chr = /^-.$/.test(opt) ? " " : "=";
@@ -1214,9 +1214,9 @@ const Commands = Module("commands", {
     function quote(q, list) {
         let re = RegExp("[" + list + "]", "g");
         return function (str) q + String.replace(str, re, function ($0) $0 in Commands.quoteMap ? Commands.quoteMap[$0] : ("\\" + $0)) + q;
-    };
+    }
     function vimSingleQuote(s)
-        s.replace(/'/g, "''");
+        s.replace(/'/g, "''")
     Commands.complQuote = { // FIXME
         '"': ['"', quote("", '\n\t"\\\\'), '"'],
         "'": ["'", vimSingleQuote, "'"],

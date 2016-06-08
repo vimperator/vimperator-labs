@@ -83,20 +83,20 @@ function resetEnvironment() {
     modes.reset();
 }
 
-function getOutput()            multilineOutput.contentDocument.body.textContent || singlelineOutput.value;
-function getMultilineOutput()   multilineOutput.contentDocument.body.textContent;
-function getSinglelineOutput()  singlelineOutput.value;
+function getOutput()            multilineOutput.contentDocument.body.textContent || singlelineOutput.value
+function getMultilineOutput()   multilineOutput.contentDocument.body.textContent
+function getSinglelineOutput()  singlelineOutput.value
 
-function getTabIndex() getBrowser().mTabContainer.selectedIndex;
-function getTabCount() getBrowser().mTabs.length;
+function getTabIndex() getBrowser().mTabContainer.selectedIndex
+function getTabCount() getBrowser().mTabs.length
 
 function getBufferPosition() {
     let win = window.content;
     return { x: win.scrollMaxX ? win.pageXOffset / win.scrollMaxX : 0,
              y: win.scrollMaxY ? win.pageYOffset / win.scrollMaxY : 0 }
-};
+}
 
-function getLocation() window.content.document.location.href;
+function getLocation() window.content.document.location.href
 
 function echoLine(str, group) {
     if (!doc)

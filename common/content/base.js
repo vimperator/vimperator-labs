@@ -184,7 +184,7 @@ function curry(fn, length, self, acc) {
         return fn;
 
     // Close over function with 'this'
-    function close(self, fn) function () fn.apply(self, Array.slice(arguments));
+    function close(self, fn) function () fn.apply(self, Array.slice(arguments))
 
     if (acc == null)
         acc = [];
@@ -366,7 +366,7 @@ Class.prototype = {
      */
     setTimeout: function (callback, timeout) {
         const self = this;
-        function target() callback.call(self);
+        function target() callback.call(self)
         return window.setTimeout(target, timeout);
     }
 };

@@ -512,7 +512,7 @@ const Liberator = Module("liberator", {
         let items = completion._runCompleter("help", topic, null, unchunked).items;
         let partialMatch = null;
 
-        function format(item) item.description + "#" + encodeURIComponent(item.text);
+        function format(item) item.description + "#" + encodeURIComponent(item.text)
 
         for (let item of items) {
             if (item.text == topic)
@@ -1470,7 +1470,7 @@ const Liberator = Module("liberator", {
                             e.original.uninstall();
                         else
                             e.original.userDisabled = command.action == "disableItem";
-                    };
+                    }
 
                     if (args.bang)
                         liberator.extensions.forEach(function (e) { action(e); });
