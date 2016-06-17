@@ -1,4 +1,4 @@
-div.main {
+.main {
     font-family: -moz-fixed;
     white-space: -moz-pre-wrap;
     width: 800px;
@@ -10,7 +10,7 @@ h1 {
     text-align: center;
 }
 
-p.tagline {
+.tagline {
     text-align: center;
     font-weight: bold;
 }
@@ -25,7 +25,7 @@ table.vimperator td {
     border: none;
     padding: 3px;
 }
-tr.separator {
+.separator {
     height: 10px;
 }
 hr {
@@ -53,28 +53,28 @@ td.usage code {
 td.taglist code {
     margin-left: 2em;
 }
-code.tag {
+.tag {
     font-weight: bold;
     color: rgb(255, 0, 255); /* magenta */
     padding-left: 5px;
 }
-tr.description {
+.description {
     margin-bottom: 4px;
 }
-table.commands {
+.commands {
     background-color: rgb(250, 240, 230);
     color: black;
 }
-table.mappings {
+.mappings {
     background-color: rgb(230, 240, 250);
     color: black;
 }
-table.options {
+.options {
     background-color: rgb(240, 250, 230);
     color: black;
 }
 
-fieldset.paypal {
+.paypal {
     border: none;
 }
 
