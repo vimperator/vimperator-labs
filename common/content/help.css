@@ -42,10 +42,10 @@ td.taglist {
 }
 td.taglist td {
     width: 100px;
-    padding: 3px 0px;
+    padding: 3px 0;
 }
 tr.taglist code, td.usage code {
-    margin: 0px 2px;
+    margin: 0 2px;
 }
 td.usage code {
     white-space: nowrap;
