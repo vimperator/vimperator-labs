@@ -617,7 +617,7 @@ const CompletionContext = Class("CompletionContext", {
      * @param {boolean} interruptible When true, the call may be interrupted
      *    via <C-c>, in which case, "Interrupted" may be thrown.
      * @param {number} timeout The maximum time, in milliseconds, to wait.
-     *    If 0 or null, wait indefinately.
+     *    If 0 or null, wait indefinitely.
      */
     wait: function wait(interruptable, timeout) {
         let end = Date.now() + timeout;

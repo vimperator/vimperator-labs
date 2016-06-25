@@ -253,7 +253,7 @@ var Finder = Module("finder", {
     },
 
     /**
-     * Highlights all occurances of <b>str</b> in the buffer.
+     * Highlights all occurrences of <b>str</b> in the buffer.
      */
     highlight: function () {
         this.setupFindbar();
