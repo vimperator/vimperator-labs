@@ -741,7 +741,7 @@ const Liberator = Module("liberator", {
      *       ["url1", "url2", "url3", ...]
      *     or:
      *       [["url1", postdata1], ["url2", postdata2], ...]
-     * @param {number|Object} where If ommited, CURRENT_TAB is assumed but NEW_TAB
+     * @param {number|Object} where If omitted, CURRENT_TAB is assumed but NEW_TAB
      *     is set when liberator.forceNewTab is true.
      * @param {boolean} force Don't prompt whether to open more than 20
      *     tabs.

@@ -1233,7 +1233,7 @@
 
         <p>This option is designed to allow full UI customization with Firefox's capabilities,
             as well as with Vimperator's. Therefore the default value <ex>:set gui=</ex> just
-            means that we don't touch any GUI elements by default. If you want a truely minimal
+            means that we don't touch any GUI elements by default. If you want a truly minimal
             GUI, you can - however - just use <ex>:set gui=none</ex> in your .vimperatorrc file.</p>
 
         <p>Individual elements can be shown with <ex>:set toolbars=&lt;toolbar&gt;</ex> and hidden with
