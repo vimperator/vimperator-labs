@@ -107,16 +107,17 @@ const Sanitizer = Module("sanitizer", {
 
                     let items = args.map(Sanitizer.argToPref);
                     for (let item of items) {
-                        if (sanitizer.canClearItem(item, function () {})) {
-                            try {
-                                sanitizer.clearItem(item);
-                            }
-                            catch (e) {
-                                liberator.echoerr("Error sanitizing " + item + ": " + e);
-                            }
-                        }
-                        else
-                            liberator.echomsg("Cannot sanitize " + item);
+
+                          if (services.get("vc").compare(VERSION, "45.*") != 1) {
+                              sanitizer.canClearItem(item, function () {});
+                          }
+
+                          try {
+                              sanitizer.clearItem(item);
+                          }
+                          catch (e) {
+                              liberator.echoerr("Error sanitizing " + item + ": " + e);
+                          }
                     }
                 }
             },
