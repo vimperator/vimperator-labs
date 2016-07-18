@@ -210,7 +210,6 @@ Testing/Optimization
 **TODO:**
 
 - Add some information here about testing/validation/etc.
-- Information about how/when to use `:regressions` might be nice.
 - Additionally, maybe there should be some benchmark information here,
   something to let a developer know what's "too" slow...? Or general guidelines
   about optimization?
