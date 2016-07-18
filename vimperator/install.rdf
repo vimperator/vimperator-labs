@@ -7,6 +7,7 @@
         <em:version>###VERSION###</em:version>
         <em:type>2</em:type> <!-- extension -->
         <em:unpack>false</em:unpack>
+        <em:multiprocessCompatible>false</em:multiprocessCompatible>
         <em:description>Vimperator adds an efficient, Vim-inspired user interface on top of Firefox</em:description>
         <em:creator>Martin Stubenschrott</em:creator>
         <em:homepageURL>http://vimperator.org</em:homepageURL>
