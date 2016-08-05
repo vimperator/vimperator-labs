@@ -1,5 +1,5 @@
 DIRS = muttator vimperator
-TARGETS = clean help info xpi
+TARGETS = clean help info xpi sign
 .SILENT:
 
 all: xpi ;
