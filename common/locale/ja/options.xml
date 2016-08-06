@@ -917,8 +917,8 @@
 
 
 <item>
-    <tags>'previouspattern'</tags>
-    <spec>'previouspattern'</spec>
+    <tags>'prevpattern' 'previouspattern'</tags>
+    <spec>'prevpattern' 'previouspattern'</spec>
     <type>stringlist</type>
     <default><![CDATA[\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$]]></default>
     <description>

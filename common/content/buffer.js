@@ -1648,7 +1648,7 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["[["],
             "Follow the link labeled 'prev', 'previous' or '<' if it exists",
-            function (count) { buffer.followDocumentRelationship("previous"); },
+            function (count) { buffer.followDocumentRelationship("prev"); },
             { count: true });
 
         mappings.add(myModes, ["gf"],
@@ -1789,7 +1789,7 @@ const Buffer = Module("buffer", {
             "Patterns to use when guessing the 'next' page in a document sequence",
             "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 
-        options.add(["previouspattern"], // \u00AB is « (<< in a single char)
+        options.add(["prevpattern", "previouspattern"], // \u00AB is « (<< in a single char)
             "Patterns to use when guessing the 'previous' page in a document sequence",
             "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 

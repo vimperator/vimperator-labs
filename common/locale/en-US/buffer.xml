@@ -327,7 +327,7 @@
             Follow the link labeled <str>prev</str>,
             <str>previous</str> or <str>&lt;</str> if it exists. Useful
             when browsing forums or documentation. Change
-            <o>previouspattern</o> to modify its behavior. It
+            <o>prevpattern</o> to modify its behavior. It
             follows relations between files too.
         </p>
     </description>

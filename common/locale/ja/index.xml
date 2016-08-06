@@ -414,7 +414,7 @@
     <dt><o>online</o></dt> <dd>'オフライン作業' にするかどうかを設定します</dd>
     <dt><o>pageinfo</o></dt> <dd><ex>:pageinfo</ex> で表示したい情報を設定します</dd>
     <dt><o>popups</o></dt> <dd>ポップアップウィンドウを表示する場所を設定します</dd>
-    <dt><o>previouspattern</o></dt> <dd>現在のページの '前' のページを推測するためのパターンを設定します</dd>
+    <dt><o>prevpattern</o></dt> <dd>現在のページの '前' のページを推測するためのパターンを設定します</dd>
     <dt><o>private</o></dt> <dd>'プライベートブラウジング'に設定します</dd>
     <dt><o>runtimepath</o></dt> <dd>ランタイムファイルが存在するディレクトリの一覧を設定します</dd>
     <dt><o>sanitizeitems</o></dt> <dd>個人データを削除するアイテムを設定します</dd>
