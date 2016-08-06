@@ -70,6 +70,11 @@ const Editor = Module("editor", {
                 return;
             }
     
+            // Clear completion preview so it does not get turned into regular text.
+            if (commandline._completions) {
+                commandline._completions.previewClear();
+            }
+
             let elem = liberator.focus;
     
             if (elem.setSelectionRange && util.readFromClipboard()) {
@@ -91,6 +96,10 @@ const Editor = Module("editor", {
                 elem.scrollTop = curTop;
                 elem.scrollLeft = curLeft;
             }
+
+            // Update completion preview as would happen with Ctrl+v or mouse paste.
+            if (commandline._completions && options.autocomplete)
+                commandline._completions.complete(true, false);
     },
 
     // count is optional, defaults to 1
