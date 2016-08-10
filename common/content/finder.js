@@ -181,6 +181,10 @@ var Finder = Module("finder", {
         this.findbar._vimp_keepClosed = true;
 
         this.findbar.onFindAgainCommand(reverse);
+
+        if (options.hlsearch) {
+            this.highlight();
+        }
     },
 
     /**
@@ -260,6 +264,11 @@ var Finder = Module("finder", {
         let findbar = this.findbar;
 
         let btn = findbar.getElement("highlight");
+
+        if (btn.checked) {
+            return;
+        }
+
         btn.checked = true;
 
         findbar._setHighlightTimeout();
