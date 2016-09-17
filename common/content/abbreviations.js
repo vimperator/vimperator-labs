@@ -199,8 +199,7 @@ const Abbreviations = Module("abbreviations", {
         for (let mode of modes) {
             if (!(mode in this.abbrevs))
                 return;
-            for (let [, abbr] in this.abbrevs[mode])
-                abbr.removeMode(mode);
+            Object.values(this.abbrevs[mode]).forEach(abbr => abbr.removeMode(mode));
             delete this.abbrevs[mode];
         }
     }
