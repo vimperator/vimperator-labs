@@ -27,8 +27,8 @@
 <dl tag="autocommand-args" replace="autocommand-args">
     <dt>&lt;url></dt>       <dd>イベントが適用された URL です。</dd>
     <dt>&lt;title></dt>     <dd>ページ、ブックマークのタイトルもしくはダウンロードしたファイル名です。</dd>
-    <dt>&lt;doc></dt>       <dd>イベントが発生したドキュメントです。<em>DOMLoad</em>, <em>PageLoad</em> と <em>PageLoadPre</em> 専用です。</dd>
-    <dt>&lt;tab></dt>       <dd>イベントが発生したタブです。<em>DOMLoad</em>, <em>PageLoad</em> と <em>PageLoadPre</em> 専用です。</dd>
+    <dt>&lt;doc></dt>       <dd>イベントが発生したドキュメントです。<em>DOMLoad</em> と <em>PageLoad</em> 専用です。</dd>
+    <dt>&lt;tab></dt>       <dd>イベントが発生したタブです。<em>DOMLoad</em> と <em>PageLoad</em> 専用です。</dd>
     <dt>&lt;tags></dt>      <dd>&lt;url> につけられたタグ名です。 <em>BookmarkAdd</em> 専用です。</dd>
     <dt>&lt;keyword></dt>   <dd>ブックマークにつけられたキーワードです。<em>BookmarkAdd</em> 専用です。</dd>
     <dt>&lt;icon></dt>      <dd>&lt;url> に関連づけられたアイコンです。 <em>BookmarkAdd</em> 専用です。</dd>

@@ -27,8 +27,8 @@
 <dl tag="autocommand-args" replace="autocommand-args">
     <dt>&lt;url></dt>       <dd>The URL against which the event was selected.</dd>
     <dt>&lt;title></dt>     <dd>The page, bookmark or download title.</dd>
-    <dt>&lt;doc></dt>       <dd>The document for which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
-    <dt>&lt;tab></dt>       <dd>The tab in which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
+    <dt>&lt;doc></dt>       <dd>The document for which the event occurred. Only for <em>DOMLoad</em> and <em>PageLoad</em>.</dd>
+    <dt>&lt;tab></dt>       <dd>The tab in which the event occurred. Only for <em>DOMLoad</em> and <em>PageLoad</em>.</dd>
     <dt>&lt;tags></dt>      <dd>The tags applied to &lt;url>. Only for <em>BookmarkAdd</em>.</dd>
     <dt>&lt;keyword></dt>   <dd>The keywords applied to the bookmark. Only for <em>BookmarkAdd</em>.</dd>
     <dt>&lt;icon></dt>      <dd>The icon associated with &lt;url>. Only for <em>BookmarkAdd</em>.</dd>
