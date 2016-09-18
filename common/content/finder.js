@@ -181,6 +181,10 @@ var Finder = Module("finder", {
         this.findbar._vimp_keepClosed = true;
 
         this.findbar.onFindAgainCommand(reverse);
+
+        if (options.hlsearch) {
+            this.highlight();
+        }
     },
 
     /**
@@ -253,13 +257,18 @@ var Finder = Module("finder", {
     },
 
     /**
-     * Highlights all occurances of <b>str</b> in the buffer.
+     * Highlights all occurrences of <b>str</b> in the buffer.
      */
     highlight: function () {
         this.setupFindbar();
         let findbar = this.findbar;
 
         let btn = findbar.getElement("highlight");
+
+        if (btn.checked) {
+            return;
+        }
+
         btn.checked = true;
 
         findbar._setHighlightTimeout();

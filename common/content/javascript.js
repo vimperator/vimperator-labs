@@ -432,7 +432,7 @@ const JavaScript = Module("javascript", {
     _getKey: function () {
         if (this._last == "")
             return "";
-        // After the opening [ upto the opening ", plus '' to take care of any operators before it
+        // After the opening [ up to the opening ", plus '' to take care of any operators before it
         let key = this._str.substring(this._get(-2, 0, "statements"), this._get(-1, null, "offset")) + "''";
         // Now eval the key, to process any referenced variables.
         return this.eval(key);
@@ -496,7 +496,7 @@ const JavaScript = Module("javascript", {
                  if (this._get(-3, 0, "statements") == this._get(-2).offset)
                     return null;
 
-                // Beginning of the statement upto the opening [
+                // Beginning of the statement up to the opening [
                 let obj = this._getObj(-3, this._get(-2).offset);
 
                 return this._complete(obj, this._getKey(), null, string, this._last);

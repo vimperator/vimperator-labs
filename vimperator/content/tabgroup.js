@@ -357,7 +357,7 @@ var TabGroup = Module("tabGroup", {
             /**
              * Panorama SubCommand remove
              * remove {group}.
-             * remove the current group if {group} is ommited.
+             * remove the current group if {group} is omitted.
              */
             new Command(["remove", "rm"], "Close the tab group (including all tabs!)",
                 function (args) { if (tabGroup.TV) tabGroup.remove(args.literalArg); },
@@ -368,7 +368,7 @@ var TabGroup = Module("tabGroup", {
             /**
              * Panorama SubCommand rename
              * rename {name}.
-             * clear the name of the current group if bang(!) specified and {name} is ommited.
+             * clear the name of the current group if bang(!) specified and {name} is omitted.
              */
             new Command(["rename", "mv"], "Rename current tab group (or reset to '(Untitled)').",
                 function (args) {

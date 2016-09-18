@@ -16,7 +16,7 @@
     * @reepush changed all array and generator comprehensions to iterators and standards compliant javascript thus making vimeprator work with firefox 46
     * @amlitzer made iabbr work in contenteditable text boxes
     * @amlitzer add *PluginsLoadPost* autocmd event
-    * @timss Split Vimperator syntax highlighting to seperate repo:
+    * @timss Split Vimperator syntax highlighting to separate repo:
       https://github.com/vimperator/vimperator.vim
     * @pale3 add mapping <S-Insert> for pasting from clipboard or primary selection. This action is operating
       system dependent. On linux it will paste from primary selection, but on other systems it will paste from
@@ -175,7 +175,7 @@
     * Url links in :jump list are clickable again
     * Gracefully handle unescaped regex characters in 'urlseparator' option
     * :sanitize now respects timespan values
-    * add '-select' option to :tabclose command for specifiying which tab is selected after closing the current one
+    * add '-select' option to :tabclose command for specifying which tab is selected after closing the current one
     * Deleting local marks with :delmarks[!] command is working now
     * Editing password fields with the external editor works again (thanks Gianni)
 
@@ -196,7 +196,7 @@
       but also error messages (apart from a few very early loading errors,
       which are still dump'ed to the console since the :messages mechanism
       might be broken/unavailable in this case).
-      Also show StackTraces on internal errors to faciliate debugging
+      Also show StackTraces on internal errors to facilitate debugging
     * More consistent messages after (un)successful commands
     * Remove CSS hack to get rid of tab scrolling when you have many tabs because some
       users complained about this change. If you want to allow your tabs to shrink
@@ -734,7 +734,7 @@
     * hints work on xhtml pages now (you need to reset the 'hinttags' and
       'extendedhinttags' settings with [c]:set hinttags&[c] and [c]:set extendedhinttags&[c])
     * [c]:set option&[c] resets the option to the default value
-    * added [c]:tabonly[c] and [c]:tabrewind[c] and [c]:tablast[c] commands and some futher aliases [c]:tabNext[c], etc. (by Doug Kearns)
+    * added [c]:tabonly[c] and [c]:tabrewind[c] and [c]:tablast[c] commands and some further aliases [c]:tabNext[c], etc. (by Doug Kearns)
     * added vimparator.vim for .vimperatorrc syntax highlighting in the XPI (by Doug Kearns)
     * Added keyword support for bookmarks to the [c]:[tab]open[c] commands
     * many small bug fixes and enhancements
@@ -771,7 +771,7 @@
       also changed [c]:exec[c] to behave more Vim like
     * fixed saving of session
     * fixed hints display when zooming in/out of a web page
-    * added [m]B[m] command for continous buffer display
+    * added [m]B[m] command for continuous buffer display
     * changed 'hintsize' to 12px by default
     * 'previewheight' setting to set the maximum size for the preview window
     * showmode setting which shows the current mode in the command line (patch from Виктор Кожухаров)
@@ -802,4 +802,3 @@
     * version 0.2
     * first public release
 
-// vim: set filetype=asciidoc expandtab:

@@ -41,7 +41,7 @@
     .td-span {
         display: inline-block;
         overflow: visible;
-        width: 0px;
+        width: 0;
         height: 1.5em;
         line-height: 1.5em !important;
     }
@@ -49,7 +49,7 @@
         display: inline-block;
         vertical-align: middle;
         height: 16px;
-        width: 0px;
+        width: 0;
     }
 
     .extra-info { color: gray; }
@@ -91,7 +91,7 @@
     #liberator-completions {
         -moz-user-focus: ignore;
         overflow: -moz-scrollbars-none !important;
-        border-width: 0px !important;
+        border-width: 0 !important;
     }
 
     #liberator-bottombar:-moz-lwtheme {
@@ -101,20 +101,20 @@
     /* all elements in the statusline and commandline need some padding to look good */
     #liberator-statusline {
         font-family: monospace;
-        margin: 0px;
+        margin: 0;
         -moz-appearance: none;
         border: none !important;
         min-height: 16px !important;
     }
     #liberator-statusline:not([customizing="true"]) :-moz-any(toolbarbutton) {
         border: none !important;
-        padding: 0 0px !important;
+        padding: 0 0 !important;
         background: transparent !important;
         height: 16px !important;
     }
     #liberator-statusline > *,
     #liberator-commandline > * {
-        padding: 0px 2px;
+        padding: 0 2px;
         font-family: monospace;
     }
 
@@ -170,15 +170,15 @@
 
     #liberator-commandline-prompt {
         background-color: inherit;
-        margin: 0px;
+        margin: 0;
     }
     #liberator-commandline-command {
         background-color: inherit;
         color: inherit;
-        margin: 0px;
+        margin: 0;
     }
     #liberator-message {
-        margin: 0px;
+        margin: 0;
     }
     .liberator-hiding {
         opacity: 0;
@@ -206,7 +206,7 @@
     #liberator-multiline-input {
         white-space: pre;
         font-family: -moz-fixed;
-        margin: 0px;
+        margin: 0;
     }
 
     #liberator-completions-content *,
@@ -225,19 +225,19 @@
     #liberator-completions-content table,
     #liberator-multiline-output-content table {
         white-space: inherit;
-        border-spacing: 0px;
+        border-spacing: 0;
     }
 
     #liberator-completions-content td,
     #liberator-multiline-output-content td,
     #liberator-completions-content th,
     #liberator-multiline-output-content th {
-        padding: 0px 2px;
+        padding: 0 2px;
     }
 
     /* for muttator's composer */
     #content-frame, #appcontent {
-        border: 0px;
+        border: 0;
     }
 
     #liberator-commandline-command .textbox-search-icons {

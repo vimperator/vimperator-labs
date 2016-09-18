@@ -1270,7 +1270,7 @@ const CommandLine = Module("commandline", {
             this._lastSubstring = substring;
 
             let value = this.completion;
-            if (util.compareIgnoreCase(value, substring.substr(0, value.length)))
+            if (value.length == substring.length || util.compareIgnoreCase(value, substring.substr(0, value.length)))
                 return;
             substring = substring.substr(value.length);
             this.removeSubstring = substring;
