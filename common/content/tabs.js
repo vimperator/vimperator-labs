@@ -879,6 +879,7 @@ const Tabs = Module("tabs", {
                         liberator.open("", { where: where });
                 }, {
                     bang: true,
+                    canonicalize: function (cmd) cmd.replace(/^(to?|tope?|topen|tabopen|tabnew)\b/, 'open'),
                     completer: function (context) completion.url(context),
                     literal: 0,
                     privateData: true

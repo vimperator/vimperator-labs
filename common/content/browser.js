@@ -238,6 +238,7 @@ const Browser = Module("browser", {
                 else
                     liberator.open("");
             }, {
+                canonicalize: function (cmd) cmd.replace(/^(op?|open?)\b/, 'open'),
                 completer: function (context) completion.url(context),
                 literal: 0,
                 privateData: true

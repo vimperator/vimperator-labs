@@ -22,15 +22,16 @@
  * @param {function} action The action invoked by this command when executed.
  * @param {Object} extraInfo An optional extra configuration hash. The
  *     following properties are supported.
- *         argCount    - see {@link Command#argCount}
- *         bang        - see {@link Command#bang}
- *         completer   - see {@link Command#completer}
- *         count       - see {@link Command#count}
- *         heredoc     - see {@link Command#heredoc}
- *         literal     - see {@link Command#literal}
- *         options     - see {@link Command#options}
- *         serial      - see {@link Command#serial}
- *         privateData - see {@link Command#privateData}
+ *         argCount     - see {@link Command#argCount}
+ *         bang         - see {@link Command#bang}
+ *         canonicalize - see {@link Command#canonicalize}
+ *         completer    - see {@link Command#completer}
+ *         count        - see {@link Command#count}
+ *         heredoc      - see {@link Command#heredoc}
+ *         literal      - see {@link Command#literal}
+ *         options      - see {@link Command#options}
+ *         serial       - see {@link Command#serial}
+ *         privateData  - see {@link Command#privateData}
  * @optional
  * @private
  */
@@ -158,6 +159,13 @@ const Command = Class("Command", {
      * @see Commands#parseArgs
      */
     argCount: 0,
+    /**
+     * @property {function (string)} Transforms command line string to its
+     * canonical form.
+     */
+    canonicalize: function(cmd) {
+        return cmd.replace(new RegExp('^(' + this.names.join('|') + ')\\b'), this.name);
+    },
     /**
      * @property {function (CompletionContext, Args)} This command's completer.
      * @see CompletionContext
