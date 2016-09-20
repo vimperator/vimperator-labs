@@ -27,8 +27,8 @@
 <dl tag="autocommand-args" replace="autocommand-args">
     <dt>&lt;url></dt>       <dd>The URL against which the event was selected.</dd>
     <dt>&lt;title></dt>     <dd>The page, bookmark or download title.</dd>
-    <dt>&lt;doc></dt>       <dd>The document for which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
-    <dt>&lt;tab></dt>       <dd>The tab in which the event occurred. Only for <em>DOMLoad</em>, <em>PageLoad</em> and <em>PageLoadPre</em>.</dd>
+    <dt>&lt;doc></dt>       <dd>The document for which the event occurred. Only for <em>DOMLoad</em> and <em>PageLoad</em>.</dd>
+    <dt>&lt;tab></dt>       <dd>The tab in which the event occurred. Only for <em>DOMLoad</em> and <em>PageLoad</em>.</dd>
     <dt>&lt;size></dt>      <dd>The size of a downloaded file. Only for <em>DownloadPost</em>.</dd>
     <dt>&lt;file></dt>      <dd>The target destination of a download. Only for <em>DownloadPost</em>.</dd>
     <dt>&lt;name></dt>      <dd>The name of the item. Only for <em>ColorScheme</em> and <em>Sanitize</em>.</dd>
