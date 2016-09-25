@@ -50,10 +50,10 @@ var Config = Module("config", ConfigBase, {
             /*function () { window.checkForUpdates(); }],*/
         ["cleardata",        "Clear private data",
             function () { Cc["@mozilla.org/browser/browserglue;1"].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],
-        ["cookies",          "List your cookies",
-            function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["console",          "JavaScript console",
             function () { window.toJavaScriptConsole(); }],
+        ["cookies",          "List your cookies",
+            function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["customizetoolbar", "Customize the Toolbar",
             function () { window.BrowserCustomizeToolbar(); }],
         ["dominspector",     "DOM Inspector",
