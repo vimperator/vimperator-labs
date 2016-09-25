@@ -62,8 +62,10 @@
             <dt>addbookmark</dt>     <dd>Add bookmark for the current page</dd>
             <dt>addons</dt>          <dd>Manage Add-ons</dd>
             <dt>bookmarks</dt>       <dd>List your bookmarks</dd>
+            <dt>certmgr</dt>         <dd>Show certificate manager</dd>
             <dt>checkupdates</dt>    <dd>Check for updates</dd>
             <dt>cleardata</dt>       <dd>Clear private data</dd>
+            <dt>connectionprefs</dt> <dd>Show connection settings</dd>
             <dt>console</dt>         <dd>JavaScript console</dd>
             <dt>cookies</dt>         <dd>List your cookies</dd>
             <dt>customizetoolbar</dt><dd>Customize the Toolbar</dd>

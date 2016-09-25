@@ -12,8 +12,10 @@
     <dt>addbookmark</dt>     <dd>現在のページをブックマークに追加 ( ブックマーク -> このページをブックマーク )</dd>
     <dt>addons</dt>          <dd>アドオン ( ツール -> アドオン )</dd>
     <dt>bookmarks</dt>       <dd>ブックマーク ( 表示 -> サイドバー -> ブックマーク )</dd>
+    <dt>certmgr</dt>         <dd>Show certificate manager</dd>
     <dt>checkupdates</dt>    <dd>ソフトウェアの更新を確認 ( ヘルプ -> ソフトウェアの更新を確認 )</dd>
     <dt>cleardata</dt>       <dd>プライバシー情報の消去 ( ツール -> プライバシー情報の消去 )</dd>
+    <dt>connectionprefs</dt> <dd>Show connection settings</dd>
     <dt>console</dt>         <dd>エラーコンソール ( ツール -> エラーコンソール )</dd>
     <dt>cookies</dt>         <dd>クッキー一覧 ( ツール -> オプションからプライバシータブの「 Cookie を表示」をクリック )</dd>
     <dt>customizetoolbar</dt><dd>ツールバーのカスタマイズ ( 表示 -> ツールバー -> カスタマイズ )</dd>

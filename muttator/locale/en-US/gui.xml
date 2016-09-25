@@ -11,7 +11,9 @@
     <dt>about</dt>           <dd>About &liberator.host;</dd>
     <dt>addons</dt>          <dd>Manage Add-ons</dd>
     <dt>addressbook</dt>     <dd>Address book</dd>
+    <dt>certmgr</dt>         <dd>Show certificate manager</dd>
     <dt>checkupdates</dt>    <dd>Check for updates</dd>
+    <dt>connectionprefs</dt> <dd>Show connection settings</dd>
     <dt>console</dt>         <dd>JavaScript console</dd>
     <dt>dominspector</dt>    <dd>DOM Inspector</dd>
     <dt>downloads</dt>       <dd>Manage Downloads</dd>

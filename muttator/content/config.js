@@ -66,12 +66,16 @@ var Config = Module("config", ConfigBase, {
             function () { window.toAddressBook(); }],
         ["accounts",      "Account Manager",
             function () { MsgAccountManager(); }],
+        ["certmgr",          "Show certificate manager",
+            function () { window.openDialog("chrome://pippki/content/certManager.xul", "Certificate Manager", "dialog,centerscreen,width=700,height=600"); }],
         ["checkupdates",     "Check for updates",
             function () { var s = "checkForUpdates"; window[window[s] ? s: "openAboutDialog"]()}],
         /*["cleardata",        "Clear private data",
          function () { Cc[GLUE_CID].getService(Ci.nsIBrowserGlue).sanitize(window || null); }],*/
         ["console",          "JavaScript console",
             function () { window.toJavaScriptConsole(); }],
+        ["connectionprefs",  "Show connection settings",
+            function () { window.openDialog("chrome://messenger/content/preferences/connection.xul", "Connection Settings", "dialog,centerscreen,width=487,height=402"); }],
         /*["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],*/
         ["dominspector",     "DOM Inspector",
