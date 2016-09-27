@@ -11,6 +11,7 @@
  * @constructor
  */
 const Services = Module("services", {
+    ABOUT: "@mozilla.org/network/protocol/about;1?what=",
     init: function () {
         this.classes = {};
         this.jsm = window.Services;
