@@ -23,9 +23,6 @@ contract @mozilla.org/network/protocol;1?name=chrome-data {c1b67a07-18f7-4e13-b3
 component {9c8f2530-51c8-4d41-b356-319e0b155c44} components/protocols.js
 contract @mozilla.org/network/protocol;1?name=liberator {9c8f2530-51c8-4d41-b356-319e0b155c44}
 
-component {81495d80-89ee-4c36-a88d-ea7c4e5ac63f} components/about-handler.js
-contract @mozilla.org/network/protocol/about;1?what=muttator {81495d80-89ee-4c36-a88d-ea7c4e5ac63f}
-
 component {16dc34f7-6d22-4aa4-a67f-2921fb5dcb69} components/commandline-handler.js
 contract @mozilla.org/commandlinehandler/general-startup;1?type=muttator {16dc34f7-6d22-4aa4-a67f-2921fb5dcb69}
 
