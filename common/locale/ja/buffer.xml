@@ -338,7 +338,7 @@
         <p>
             <str>prev</str> 、<str>previous</str> や <str>&lt;</str> という名前のリンクが存在する場合、それを辿ります。
             掲示板や説明書を読むときに便利です。
-            <o>previouspattern</o> オプションで挙動を変更できます。
+            <o>prevpattern</o> オプションで挙動を変更できます。
             ファイル間の関連も辿ることができます。
         </p>
     </description>

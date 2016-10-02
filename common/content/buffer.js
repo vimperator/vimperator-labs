@@ -556,15 +556,17 @@ const Buffer = Module("buffer", {
      *     "pattern", and finds the last link matching that
      *     RegExp.
      */
-    followDocumentRelationship: function (rel) {
+    followDocumentRelationship: function (rel, ...synonyms) {
         let regexes = options.get(rel + "pattern").values
                              .map(function (re) RegExp(re, "i"));
+        synonyms.unshift(rel);
 
         function followFrame(frame) {
             function iter(elems) {
                 for (let i = 0; i < elems.length; i++)
-                    if (elems[i].rel.toLowerCase() == rel || elems[i].rev.toLowerCase() == rel)
-                        yield elems[i];
+                    for (let rel of synonyms)
+                        if (elems[i].rel.toLowerCase() == rel || elems[i].rev.toLowerCase() == rel)
+                            yield elems[i];
             }
 
             // <link>s have higher priority than normal <a> hrefs
@@ -1648,7 +1650,7 @@ const Buffer = Module("buffer", {
 
         mappings.add(myModes, ["[["],
             "Follow the link labeled 'prev', 'previous' or '<' if it exists",
-            function (count) { buffer.followDocumentRelationship("previous"); },
+            function (count) { buffer.followDocumentRelationship("prev", "previous"); },
             { count: true });
 
         mappings.add(myModes, ["gf"],
@@ -1789,7 +1791,7 @@ const Buffer = Module("buffer", {
             "Patterns to use when guessing the 'next' page in a document sequence",
             "stringlist", "\\bnext\\b,^>$,^(>>|\u00BB)$,^(>|\u00BB),(>|\u00BB)$,\\bmore\\b");
 
-        options.add(["previouspattern"], // \u00AB is « (<< in a single char)
+        options.add(["prevpattern", "previouspattern"], // \u00AB is « (<< in a single char)
             "Patterns to use when guessing the 'previous' page in a document sequence",
             "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
