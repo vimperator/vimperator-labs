@@ -249,6 +249,7 @@ var Config = Module("config", ConfigBase, {
                 options: [
                     [["-private", "-p"], commands.OPTION_NOARG],
                 ],
+                canonicalize: function (cmd) cmd.replace(/^(winop?|winopen?)\b/, 'open'),
                 completer: function (context) completion.url(context),
                 literal: 0,
                 privateData: true

@@ -1088,6 +1088,21 @@ const CommandLine = Module("commandline", {
             this.store.truncate(options.history, true);
         },
         /**
+         * @property {function} Returns a canonical form of the argument that
+         * can be used for comparison.
+         */
+        canonicalize: function (str) {
+            // Not really the ideal place for this check.
+            if (this.mode != "command")
+                return str;
+
+            let cmd = (commands.get(commands.parseCommand(str)[1]) || {});
+            if (cmd.canonicalize != undefined)
+                return cmd.canonicalize(str);
+
+            return str;
+        },
+        /**
          * @property {function} Returns whether a data item should be
          * considered private.
          */
@@ -1140,6 +1155,7 @@ const CommandLine = Module("commandline", {
 
             // search the this._history for the first item matching the current
             // commandline string
+            let canonical_original = this.canonicalize(this.original);
             while (true) {
                 this.index += diff;
                 if (this.index < 0 || this.index > this.store.length) {
@@ -1162,8 +1178,10 @@ const CommandLine = Module("commandline", {
                 else
                     hist = (hist.value || hist);
 
-                if (!matchCurrent || hist.substr(0, this.original.length) == this.original) {
-                    this.replace(hist);
+                let canonical_hist = this.canonicalize(hist);
+                if (!matchCurrent ||
+                    canonical_hist.substr(0, canonical_original.length) == canonical_original) {
+                    this.replace(this.original + canonical_hist.substr(canonical_original.length));
                     break;
                 }
             }
