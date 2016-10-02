@@ -62,10 +62,12 @@
             <dt>addbookmark</dt>     <dd>Add bookmark for the current page</dd>
             <dt>addons</dt>          <dd>Manage Add-ons</dd>
             <dt>bookmarks</dt>       <dd>List your bookmarks</dd>
+            <dt>certmgr</dt>         <dd>Show certificate manager</dd>
             <dt>checkupdates</dt>    <dd>Check for updates</dd>
             <dt>cleardata</dt>       <dd>Clear private data</dd>
-            <dt>cookies</dt>         <dd>List your cookies</dd>
+            <dt>connectionprefs</dt> <dd>Show connection settings</dd>
             <dt>console</dt>         <dd>JavaScript console</dd>
+            <dt>cookies</dt>         <dd>List your cookies</dd>
             <dt>customizetoolbar</dt><dd>Customize the Toolbar</dd>
             <dt>dominspector</dt>    <dd>DOM Inspector</dd>
             <dt>downloads</dt>       <dd>Manage Downloads</dd>
@@ -76,9 +78,9 @@
             <dt>pagesource</dt>      <dd>View page source</dd>
             <dt>places</dt>          <dd>Places Organizer: Manage your bookmarks and history</dd>
             <dt>preferences</dt>     <dd>Show &liberator.host; preferences dialog</dd>
+            <dt>print</dt>           <dd>Show print dialog</dd>
             <dt>printpreview</dt>    <dd>Preview the page before printing</dd>
             <dt>printsetup</dt>      <dd>Setup the page size and orientation before printing</dd>
-            <dt>print</dt>           <dd>Show print dialog</dd>
             <dt>saveframe</dt>       <dd>Save frame to disk</dd>
             <dt>savepage</dt>        <dd>Save page to disk</dd>
             <dt>searchengines</dt>   <dd>Manage installed search engines</dd>

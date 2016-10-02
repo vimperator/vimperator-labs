@@ -12,10 +12,12 @@
     <dt>addbookmark</dt>     <dd>現在のページをブックマークに追加 ( ブックマーク -> このページをブックマーク )</dd>
     <dt>addons</dt>          <dd>アドオン ( ツール -> アドオン )</dd>
     <dt>bookmarks</dt>       <dd>ブックマーク ( 表示 -> サイドバー -> ブックマーク )</dd>
+    <dt>certmgr</dt>         <dd>Show certificate manager</dd>
     <dt>checkupdates</dt>    <dd>ソフトウェアの更新を確認 ( ヘルプ -> ソフトウェアの更新を確認 )</dd>
     <dt>cleardata</dt>       <dd>プライバシー情報の消去 ( ツール -> プライバシー情報の消去 )</dd>
-    <dt>cookies</dt>         <dd>クッキー一覧 ( ツール -> オプションからプライバシータブの「 Cookie を表示」をクリック )</dd>
+    <dt>connectionprefs</dt> <dd>Show connection settings</dd>
     <dt>console</dt>         <dd>エラーコンソール ( ツール -> エラーコンソール )</dd>
+    <dt>cookies</dt>         <dd>クッキー一覧 ( ツール -> オプションからプライバシータブの「 Cookie を表示」をクリック )</dd>
     <dt>customizetoolbar</dt><dd>ツールバーのカスタマイズ ( 表示 -> ツールバー -> カスタマイズ )</dd>
     <dt>dominspector</dt>    <dd>DOM Inspector ( ツール -> DOM Inspector )</dd>
     <dt>downloads</dt>       <dd>ダウンロードマネージャ ( ツール -> ダウンロード )</dd>
@@ -27,9 +29,9 @@
     <dt>passwords</dt>       <dd>保存されているパスワード ( ツール -> オプション -> セキュリテイ )</dd>
     <dt>places</dt>          <dd>履歴とブックマークの管理 ( 履歴とブックマークの管理 )</dd>
     <dt>preferences</dt>     <dd>&liberator.host; の設定ダイアログ ( ツール -> オプション )</dd>
+    <dt>print</dt>           <dd>印刷ダイアログ ( ファイル -> 印刷 )</dd>
     <dt>printpreview</dt>    <dd>印刷プレビュー ( ファイル -> 印刷プレビュー )</dd>
     <dt>printsetup</dt>      <dd>ページ設定ダイアログ ( ファイル -> ページ設定 )</dd>
-    <dt>print</dt>           <dd>印刷ダイアログ ( ファイル -> 印刷 )</dd>
     <dt>saveframe</dt>       <dd>名前を付けて保存 ( ファイル -> 名前を付けてフレームを保存 )</dd>
     <dt>savepage</dt>        <dd>名前を付けて保存 ( ファイル -> 名前を付けてページを保存 )</dd>
     <dt>searchengines</dt>   <dd>サーチエンジンの管理 ( 検索バーの左側にある下向き矢印 -> 検索バーの管理 )</dd>
