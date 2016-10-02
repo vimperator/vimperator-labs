@@ -717,6 +717,17 @@ const Completion = Module("completion", {
         if (options.urlseparator)
             skip = context.filter.match("^.*" + options.urlseparator); // start after the last 'urlseparator'
 
+        if (/^about:/.test(context.filter))
+            context.fork("about", 6, this, function fork_(context) {
+                context.title = ["about:"];
+                context.generate = function generate_() {
+                    return Object.keys(Cc).filter(k => k.startsWith(services.ABOUT))
+                        .map(k => [k.substr(services.ABOUT.length),
+                            ""]);
+                };
+            });
+
+
         if (skip)
             context.advance(skip[0].length);
 
