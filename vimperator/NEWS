@@ -1,5 +1,23 @@
 201x-xx-xx:
 
+2016-10-05:
+    * update and fix css related issues
+    * fix some mispellings
+    * fix command prompt selection getting cleared
+    * remove asciidoc.conf and regressions.js
+    * use sanitizer based on version
+    * fix shift-insert on linux
+    * honor hlsearch on n/N
+    * fix typeerror on :abclear
+    * fix smart completions on fx 49
+    * removed unused css
+    * change option from 'previouspattern' to 'prevpattern'. The old 'previouspattern' still works.
+    * canonicalize commandline history during matching
+    * fix alphabetic ordering of some doc items and add :dialog items
+    * add autocompletion for about:* urls
+    * fix `[[` with "preview" buttons
+
+
 2016-06-07:
     * @gkatsev removed usage of FUEL Application variable
     * @gineadai deleted deprecated template code
