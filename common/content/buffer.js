@@ -1793,7 +1793,7 @@ const Buffer = Module("buffer", {
 
         options.add(["prevpattern", "previouspattern"], // \u00AB is « (<< in a single char)
             "Patterns to use when guessing the 'previous' page in a document sequence",
-            "stringlist", "\\bprev|previous\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
+            "stringlist", "\\bprev\\b|\\bprevious\\b,^<$,^(<<|\u00AB)$,^(<|\u00AB),(<|\u00AB)$");
 
         options.add(["pageinfo", "pa"],
             "Desired info in the :pageinfo output",

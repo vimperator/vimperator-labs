@@ -920,7 +920,7 @@
     <tags>'prevpattern' 'previouspattern'</tags>
     <spec>'prevpattern' 'previouspattern'</spec>
     <type>stringlist</type>
-    <default><![CDATA[\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$]]></default>
+    <default><![CDATA[\bprev\b|\bprevious\b,^<$,^(<<|«)$,^(<|«),(<|«)$]]></default>
     <description>
         <p>
             ページに分割されている文書において <o>前</o> のページを推測するために使われるパターンです。
