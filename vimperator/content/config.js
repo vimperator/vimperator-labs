@@ -323,6 +323,29 @@ var Config = Module("config", ConfigBase, {
                 },
                 getter: function () !services.get("io").offline
             });
+
+        options.add(["newtaburl", "ntu"],
+            "Set the default page for new tabs",
+            "string", "about:newtab",
+            {
+                setter: function (value) {
+                    if (services.get("vc").compare(VERSION, "41.*") == -1) {
+                        options.setPref("browser.newtab.url", value);
+                    } else {
+                        Components.utils.import("resource:///modules/NewTabURL.jsm");
+                        NewTabURL.override(value);
+                    }
+                    return value;
+                },
+                getter: function () {
+                    if (services.get("vc").compare(VERSION, "41.*") == -1) {
+                        return options.getPref("browser.newtab.url");
+                    } else {
+                        Components.utils.import("resource:///modules/NewTabURL.jsm");
+                        return NewTabURL.get();
+                    }
+                }
+            });
     }
 });
 
