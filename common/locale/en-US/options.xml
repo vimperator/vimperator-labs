@@ -744,6 +744,27 @@
 
 
 <item>
+    <tags>'slv' 'statuslinevisibility'</tags>
+    <spec>'statuslinevisibility' 'slv'</spec>
+    <type>string</type>
+    <default>auto</default>
+    <description>
+        <p>Controls the visibility of the statusline.</p>
+
+        <p>Possible values:</p>
+
+        <dl>
+            <dt>auto</dt>      <dd>Hide statusline in fullscreen automatically</dd>
+            <dt>hidden</dt>    <dd>Never show the statusline</dd>
+            <dt>visible</dt>   <dd>Always show the statusline</dd>
+        </dl>
+
+        <note>The statusline is always visible when a command is entered.</note>
+    </description>
+</item>
+
+
+<item>
     <tags>'nolks' 'nolinksearch'</tags>
     <tags>'lks' 'linksearch'</tags>
     <spec>'linksearch' 'lks'</spec>
