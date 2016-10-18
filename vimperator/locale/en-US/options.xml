@@ -62,5 +62,17 @@
     </description>
 </item>
 
+<item insertafter="'newtab'">
+    <tags>'ntu' 'newtaburl'</tags>
+    <spec>'newtaburl' 'ntu'</spec>
+    <type>string</type>
+    <default>about:newtab</default>
+    <description>
+        <p>
+            The URL that will be opened in new tabs.
+        </p>
+    </description>
+</item>
+
 </overlay>
 <!-- vim:se sts=4 sw=4 et: -->
