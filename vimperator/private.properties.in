@@ -13,3 +13,4 @@ VERSION       := $(VERSION).$(shell date '+%Y%m%d%H%M%S')
 UUID           = <your UUID>
 AMO_API_KEY    = <your API key>
 AMO_API_SECRET = <your API secret>
+UPDATE_URL     = <your updateURL if available>

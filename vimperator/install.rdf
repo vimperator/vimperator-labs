@@ -13,6 +13,7 @@
         <em:homepageURL>http://vimperator.org</em:homepageURL>
         <em:iconURL>chrome://vimperator/skin/icon.png</em:iconURL>
         <em:optionsURL>chrome://liberator/content/preferences.xul</em:optionsURL>
+        <em:updateURL>###UPDATEURL###</em:updateURL>
         <em:targetApplication>
             <Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>

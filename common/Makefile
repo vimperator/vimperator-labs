@@ -115,11 +115,16 @@ xpi:
 	sed -i -e 's# ./locale/# locale/#' $(XPI_PATH)/chrome.manifest
 	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
 
-	@echo "Replacing UUID, VERSION and DATE tags"
+	@echo "Replacing UUID, VERSION, DATE and UPDATEURL tags"
 	for file in `grep -rl -e "###UUID###" -e "###VERSION###" -e "###DATE###" $(XPI_PATH)`; do \
 		sed -i -e "s,###UUID###,$(UUID),g" $${file}; \
 		sed -i -e "s,###VERSION###,$(VERSION),g" $${file}; \
 		sed -i -e "s,###DATE###,$(BUILD_DATE),g" $${file}; \
+		if [ -n "$(UPDATE_URL)" ]; then \
+		    sed -i -e "s,###UPDATEURL###,$(UPDATE_URL),g" $${file}; \
+		else \
+		    sed -i "/###UPDATEURL###/d" $${file}; \
+		fi; \
 	done
 
 	# Delete unknown file types
