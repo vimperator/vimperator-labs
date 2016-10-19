@@ -14,6 +14,7 @@ XPI_NAME      = $(NAME)-$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
 XPI           = $(XPI_PATH).xpi
 XPI_SIGNED    = $(XPI_PATH)-signed.xpi
+UPD_RDF_PATH  = ../downloads/$(NAME)-update.rdf
 
 ifeq ($(TOPLEVEL),)
 	XPI_FILE = $(XPI)
@@ -74,6 +75,9 @@ xpi:
 	mkdir -p $(XPI_PATH)/common/locale
 	mkdir -p $(XPI_PATH)/locale
 
+	# Copy updateURL.rdf template
+	cp -Lf ../common/updateURL.rdf.in $(UPD_RDF_PATH)
+
 	# Copy top level files
 	cp -L $(XPI_FILES) $(XPI_PATH)
 
@@ -116,10 +120,13 @@ xpi:
 	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
 
 	@echo "Replacing UUID, VERSION, DATE and UPDATEURL tags"
-	for file in `grep -rl -e "###UUID###" -e "###VERSION###" -e "###DATE###" $(XPI_PATH)`; do \
+	for file in `grep -rl -e "###UUID###" -e "###VERSION###" -e "###DATE###" $(XPI_PATH)` $(UPD_RDF_PATH); do \
 		sed -i -e "s,###UUID###,$(UUID),g" $${file}; \
 		sed -i -e "s,###VERSION###,$(VERSION),g" $${file}; \
+		sed -i -e "s,###MINVERSION###,$(MIN_VERSION),g" $${file}; \
+		sed -i -e "s,###MAXVERSION###,$(MAX_VERSION),g" $${file}; \
 		sed -i -e "s,###DATE###,$(BUILD_DATE),g" $${file}; \
+		sed -i -e "s,###UPDATEXPI###,$(UPDATE_URL_XPI),g" $${file}; \
 		if [ -n "$(UPDATE_URL)" ]; then \
 		    sed -i -e "s,###UPDATEURL###,$(UPDATE_URL),g" $${file}; \
 		else \
