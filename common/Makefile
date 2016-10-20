@@ -13,6 +13,8 @@ COMMON_CHROME_DIRS   = content skin modules
 XPI_NAME      = $(NAME)-$(VERSION)
 XPI_PATH      = ../downloads/$(XPI_NAME)
 XPI           = $(XPI_PATH).xpi
+XPI_SIGNED    = $(XPI_PATH)-signed.xpi
+UPD_RDF_PATH  = ../downloads/$(NAME)-update.rdf
 
 ifeq ($(TOPLEVEL),)
 	XPI_FILE = $(XPI)
@@ -39,7 +41,7 @@ LOCALE_MAP = . locale $(NAME)\n.. common/locale liberator\n
 
 #### rules
 
-TARGETS = all help info xpi clean
+TARGETS = all help info xpi clean sign
 $(TARGETS:%=\%.%):
 	@echo MAKE $* $(@:$*.%=%)
 	$(MAKE) -C $* $(@:$*.%=%)
@@ -54,6 +56,7 @@ help:
 	@echo "  make info      - show some info about the system"
 	@echo "  make xpi       - build an XPI ($(XPI_NAME))"
 	@echo "  make clean     - clean up"
+	@echo "  make sign      - sign XPI (requires private.properties)"
 
 info:
 	@echo "version             $(VERSION)"
@@ -71,6 +74,9 @@ xpi:
 	# Create folder structure
 	mkdir -p $(XPI_PATH)/common/locale
 	mkdir -p $(XPI_PATH)/locale
+
+	# Copy updateURL.rdf template
+	cp -Lf ../common/updateURL.rdf.in $(UPD_RDF_PATH)
 
 	# Copy top level files
 	cp -L $(XPI_FILES) $(XPI_PATH)
@@ -113,10 +119,19 @@ xpi:
 	sed -i -e 's# ./locale/# locale/#' $(XPI_PATH)/chrome.manifest
 	sed -i -e 's#../common/#common/#' $(XPI_PATH)/chrome.manifest
 
-	@echo "Replacing ###VERSION### and ###DATE### tags"
-	for file in `grep -rl -e "###VERSION###" -e "###DATE###" $(XPI_PATH)`; do \
+	@echo "Replacing UUID, VERSION, DATE and UPDATEURL tags"
+	for file in `grep -rl -e "###UUID###" -e "###VERSION###" -e "###DATE###" $(XPI_PATH)` $(UPD_RDF_PATH); do \
+		sed -i -e "s,###UUID###,$(UUID),g" $${file}; \
 		sed -i -e "s,###VERSION###,$(VERSION),g" $${file}; \
+		sed -i -e "s,###MINVERSION###,$(MIN_VERSION),g" $${file}; \
+		sed -i -e "s,###MAXVERSION###,$(MAX_VERSION),g" $${file}; \
 		sed -i -e "s,###DATE###,$(BUILD_DATE),g" $${file}; \
+		sed -i -e "s,###UPDATEXPI###,$(UPDATE_URL_XPI),g" $${file}; \
+		if [ -n "$(UPDATE_URL)" ]; then \
+		    sed -i -e "s,###UPDATEURL###,$(UPDATE_URL),g" $${file}; \
+		else \
+		    sed -i "/###UPDATEURL###/d" $${file}; \
+		fi; \
 	done
 
 	# Delete unknown file types
@@ -150,3 +165,14 @@ xpi:
 	rm -rf ../downloads/common
 
 	@echo "SUCCESS: $(XPI_FILE)"
+
+sign: xpi
+	@echo "Signing XPI"
+	jpm sign --api-key $(AMO_API_KEY) --api-secret $(AMO_API_SECRET) --xpi $(XPI)
+
+	# Move downloaded file, see https://github.com/mozilla-jetpack/jpm/pull/544
+	if [ `ls *-fx.xpi 2>/dev/null | wc -l` -eq 1 ]; then \
+		mv *-fx.xpi $(XPI_SIGNED); \
+	else \
+		exit 1; \
+	fi

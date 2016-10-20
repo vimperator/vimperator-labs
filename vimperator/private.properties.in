@@ -1,0 +1,17 @@
+#### private configuration
+
+################################################################################
+# 1. Register at AMO (addons.mozilla.org)
+# 2. Create your API key
+#    (https://addons.mozilla.org/de/developers/addon/api/key/)
+# 3. Manually add your add-on as "unlisted" at AMO
+# 4. Copy this file to private.properties
+# 5. Edit at least UUID, AMO_API_KEY and AMO_API_SECRET.
+################################################################################
+
+VERSION       := $(VERSION).$(shell date '+%Y%m%d%H%M%S')
+UUID           = <your UUID>
+AMO_API_KEY    = <your API key>
+AMO_API_SECRET = <your API secret>
+UPDATE_URL     = <your updateURL if available>
+UPDATE_URL_XPI = <link to update XPI>
