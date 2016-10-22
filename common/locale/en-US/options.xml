@@ -581,6 +581,16 @@
     </description>
 </item>
 
+<item>
+    <tags>'sth' 'showtexthints'</tags>
+    <spec>'showtexthints' 'sth'</spec>
+    <type>boolean</type>
+    <default>on</default>
+    <description>
+        <p>Whether to show text picked by <ex>:hintinputs</ex> after the hint label.</p>
+    </description>
+</item>
+
 
 <item>
     <tags>'hm' 'hintmatching'</tags>
