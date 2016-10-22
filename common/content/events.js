@@ -878,14 +878,15 @@ const Events = Module("events", {
         let url = typeof(buffer) != "undefined" ? buffer.URL : "";
 
         if (modes.isRecording) {
-            if (key == "q" && liberator.mode != modes.INSERT && liberator.mode != modes.TEXTAREA) { // TODO: should not be hardcoded
+            if (key == "q" && !(liberator.mode & (modes.INSERT | modes.TEXTAREA | modes.COMMAND_LINE))) { // TODO: should not be hardcoded
                 modes.isRecording = false;
                 liberator.echomsg("Recorded macro '" + this._currentMacro + "'");
                 killEvent();
                 return;
             }
-            else if (!mappings.hasMap(liberator.mode, this._input.buffer + key, url))
+            else if (!mappings.hasMap(liberator.mode, this._input.buffer + key, url)) {
                 this._macros.set(this._currentMacro, this._macros.get(this._currentMacro) + key);
+            }
         }
 
         if (key == "<C-c>")
@@ -966,14 +967,9 @@ const Events = Module("events", {
                     throw killEvent();
                 }
 
-                // All of these special cases for hint mode are driving
-                // me insane! -Kris
                 if (modes.extended & modes.HINTS) {
                     // under HINT mode, certain keys are redirected to hints.onEvent
-                    if (key == "<Return>" || key == "<Tab>" || key == "<S-Tab>"
-                        || key == mappings.getMapLeader()
-                        || (key == "<BS>" && hints.previnput == "number")
-                        || (hints._isHintNumber(key) && !hints.escNumbers)) {
+                    if (hints.canHandleKey(key)) {
                         hints.onEvent(event);
                         this._input.buffer = "";
                         throw killEvent();

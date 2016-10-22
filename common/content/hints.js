@@ -11,25 +11,11 @@ const Hints = Module("hints", {
     requires: ["config"],
 
     init: function () {
-
         this._hintMode = null;
-        this._submode    = "";           // used for extended mode, can be "o", "t", "y", etc.
-        this._hintString = "";           // the typed string part of the hint is in this string
-        this._hintNumber = 0;            // only the numerical part of the hint
-        this._usedTabKey = false;        // when we used <Tab> to select an element
-        this._prevInput = "";            // record previous user input type, "text" || "number"
+        this._submode  = "";             // used for extended mode, can be "o", "t", "y", etc.
         this._extendedhintCount = null;  // for the count argument of Mode#action (extended hint only)
 
-        this._pageHints = [];
-        this._validHints = [];           // store the indices of the "hints" array with valid elements
-        this._tabNavigation = {};        // for navigating between valid hints when TAB key is pressed
-
-        this._activeTimeout = null;  // needed for hinttimeout > 0
-        this._canUpdate = false;
-
-        // keep track of the documents which we generated the hints for
-        // this._docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
-        this._docs = [];
+        this._reset();
 
         const Mode = Hints.Mode;
         Mode.defaultValue("tags", function () function () options.hinttags);
@@ -88,18 +74,30 @@ const Hints = Module("hints", {
      * Reset hints, so that they can be cleanly used again.
      */
     _reset: function () {
-        statusline.updateField("input", "");
-        this._hintString = "";
-        this._hintNumber = 0;
-        this._usedTabKey = false;
-        this._prevInput = "";
+        this._hintString = "";           // the typed string part of the hint is in this string
         this._pageHints = [];
-        this._validHints = [];
-        this._tabNavigation = {};
-        this._canUpdate = false;
-        this._docs = [];
-        hints.escNumbers = false;
+        this._validHints = [];           // store the indices of the "hints" array with valid elements
+        this._tabNavigation = {};        // for navigating between valid hints when TAB key is pressed
 
+        this._resetInput();
+
+        // keep track of the documents which we generated the hints for
+        // this._docs = { doc: document, start: start_index in hints[], end: end_index in hints[] }
+        this._docs = [];
+
+        this._clearTimeout();
+    },
+
+    _resetInput: function() {
+        this._hintNumber = null;         // only the numerical part of the hint
+        this._usedTabKey = false;        // when we used <Tab> to select an element
+        this._prevInput = "";            // record previous user input type, "text" || "number"
+    },
+
+    /**
+     * Clear _activeTimeout, a handle to delayed event (setTimeout)
+     */
+    _clearTimeout: function() {
         if (this._activeTimeout)
             clearTimeout(this._activeTimeout);
         this._activeTimeout = null;
@@ -109,7 +107,11 @@ const Hints = Module("hints", {
      * Display the current status to the user.
      */
     _updateStatusline: function () {
-        statusline.updateField("input", (hints.escNumbers ? mappings.getMapLeader() : "") + (this._hintNumber ? this._num2chars(this._hintNumber) : ""));
+        statusline.updateField(
+            "input",
+            (hints.escNumbers ? mappings.getMapLeader() : "") +
+            (this._hintNumber !== null ? this._num2chars(this._hintNumber) : "")
+        );
     },
 
     /**
@@ -450,7 +452,7 @@ const Hints = Module("hints", {
                 let valid = validHint(hint.text);
                 let hintnumchars = this._num2chars(hintnum);
                 let display = valid && (
-                    this._hintNumber == 0 ||
+                    this._hintNumber === null ||
                     hintnumchars.indexOf(String(activeHintChars)) == 0
                 );
 
@@ -563,6 +565,8 @@ const Hints = Module("hints", {
         styles.removeSheet(true, "hint-positions");
 
         this._reset();
+        statusline.updateField("input", "");
+        hints.escNumbers = false;
     },
 
     _num2chars: function (num) {
@@ -644,9 +648,13 @@ const Hints = Module("hints", {
     },
 
     _checkUnique: function () {
-        if (this._hintNumber == 0)
+        if (
+            this._hintNumber === null ||
+            this._hintNumber === this._chars2num(options.hintchars[0]) ||
+            this._hintNumber > this._validHints.length
+        ) {
             return;
-        liberator.assert(this._hintNumber <= this._validHints.length);
+        }
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
         // the hint after a timeout, as the user might have wanted to follow link 34
@@ -671,12 +679,9 @@ const Hints = Module("hints", {
         this._prevInput = "text";
 
         // clear any timeout which might be active after pressing a number
-        if (this._activeTimeout) {
-            clearTimeout(this._activeTimeout);
-            this._activeTimeout = null;
-        }
+        this._clearTimeout();
 
-        this._hintNumber = 0;
+        this._hintNumber = null;
         this._hintString = commandline.command;
         this._updateStatusline();
         this._showHints();
@@ -926,17 +931,19 @@ const Hints = Module("hints", {
 
         this._submode = minor;
         this._hintString = filter || "";
-        this._hintNumber = 0;
-        this._usedTabKey = false;
-        this._prevInput = "";
-        this._canUpdate = false;
+        this._resetInput();
 
-        this._generate(win);
+        try {
+            this._generate(win);
+        } catch (e) {
+            setTimeout(function() {
+                hints._generate(win);
+            }, 0)
+        }
 
         // get all keys from the input queue
         liberator.threadYield(true);
 
-        this._canUpdate = true;
         this._showHints();
 
         if (this._validHints.length == 0) {
@@ -984,13 +991,27 @@ const Hints = Module("hints", {
     },
 
     /**
+     * Return true if key is a valid entry point for hints handling
+     */
+    canHandleKey: function(key) {
+        return (
+            ["<Return>", "<Tab>", "<S-Tab>", mappings.getMapLeader()].indexOf(key) > -1 ||
+            (key == "<BS>" && hints._prevInput === "number") ||
+            (
+                hints._isHintNumber(key) &&
+                !hints.escNumbers &&
+                (key !== options.hintchars[0] || this._prevInput === "number")
+            )
+        );
+    },
+
+    /**
      * Handle a hint mode event.
      *
      * @param {Event} event The event to handle.
      */
     onEvent: function (event) {
         let key = events.toString(event);
-        let followFirst = false;
 
         // clear any timeout which might be active after pressing a number
         if (this._activeTimeout) {
@@ -1000,13 +1021,12 @@ const Hints = Module("hints", {
 
         switch (key) {
         case "<Return>":
-            followFirst = true;
-            break;
-
+            this._processHints(true);
+            return;
         case "<Tab>":
         case "<S-Tab>":
             this._usedTabKey = true;
-            if (this._hintNumber == 0)
+            if (this._hintNumber === null)
                 this._hintNumber = 1;
 
             let oldId = this._hintNumber;
@@ -1020,14 +1040,14 @@ const Hints = Module("hints", {
             return;
 
         case "<BS>":
-            if (this._hintNumber > 0 && !this._usedTabKey) {
+            if (this._hintNumber !== null && !this._usedTabKey) {
                 this._hintNumber = Math.floor(this._hintNumber / 10);
-                if (this._hintNumber == 0)
-                    this._prevInput = "text";
+                if (this._hintNumber === 0)
+                    this._resetInput();
             }
             else {
                 this._usedTabKey = false;
-                this._hintNumber = 0;
+                this._hintNumber = null;
                 liberator.beep();
                 return;
             }
@@ -1036,49 +1056,35 @@ const Hints = Module("hints", {
        case mappings.getMapLeader():
            hints.escNumbers = !hints.escNumbers;
            if (hints.escNumbers && this._usedTabKey) // this._hintNumber not used normally, but someone may wants to toggle
-               this._hintNumber = 0;            // <tab>s ? this._reset. Prevent to show numbers not entered.
+               this._hintNumber = null;            // <tab>s ? this._reset. Prevent to show numbers not entered.
 
            this._updateStatusline();
            return;
 
         default:
-            if (this._isHintNumber(key)) {
-                this._prevInput = "number";
-
-                let oldHintNumber = this._hintNumber;
-                if (this._hintNumber == 0 || this._usedTabKey) {
-                    this._usedTabKey = false;
-                    this._hintNumber = this._chars2num(key);
-                }
-                else
-                    this._hintNumber = this._chars2num(this._num2chars(this._hintNumber) + key);
-
-                this._updateStatusline();
-
-                if (!this._canUpdate)
-                    return;
-
-                if (this._docs.length == 0) {
-                    this._generate();
-                    this._showHints();
-                }
-                this._showActiveHint(this._hintNumber, oldHintNumber || 1);
-
-                liberator.assert(this._hintNumber != 0);
-
-                this._checkUnique();
+            if (this._hintNumber !== null) {
+                this._hintNumber = this._chars2num(this._num2chars(this._hintNumber) + key);
             }
+            else {
+                this._usedTabKey = false;
+                this._hintNumber = this._chars2num(key);
+            }
+            this._prevInput = "number";
+
+            let oldHintNumber = this._hintNumber;
+
+            this._showActiveHint(this._hintNumber, oldHintNumber || 1);
+
+            this._checkUnique();
         }
 
         this._updateStatusline();
 
-        if (this._canUpdate) {
-            if (this._docs.length == 0 && this._hintString.length > 0)
-                this._generate();
-
-            this._showHints();
-            this._processHints(followFirst);
+        if (this._docs.length == 0 && this._hintString.length > 0) {
+            this._generate();
         }
+        this._showHints();
+        this._processHints(false);
     }
 
     // FIXME: add resize support
