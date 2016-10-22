@@ -487,7 +487,7 @@ const Hints = Module("hints", {
                     this._setClass(hint.imgSpan, activeHint == hintnum);
                 }
 
-                hint.span.setAttribute("number", hint.showText ? hintnumchars + ": " + hint.text.substr(0, 50) : hintnumchars);
+                hint.span.setAttribute("number", hint.showText && options.showtexthints ? hintnumchars + ": " + hint.text.substr(0, 50) : hintnumchars);
                 if (hint.imgSpan)
                     hint.imgSpan.setAttribute("number", hintnumchars);
                 else
@@ -1367,6 +1367,10 @@ const Hints = Module("hints", {
                     ["name",  "Match against the name of an input field, only if neither a name or value could be found."]
                 ]
             });
+
+        options.add(["showtexthints", "sth"],
+            "Whether to show text picked by :hintinputs",
+            "boolean", true);
     }
 });
 

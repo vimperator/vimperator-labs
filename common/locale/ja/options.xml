@@ -570,6 +570,16 @@
     </description>
 </item>
 
+<item>
+    <tags>'sth' 'showtexthints'</tags>
+    <spec>'showtexthints' 'sth'</spec>
+    <type>boolean</type>
+    <default>off</default>
+    <description>
+        <p><ex>:hintinputs</ex>のテクストを見せますかどうか。</p>
+    </description>
+</item>
+
 
 <item>
     <tags>'hm' 'hintmatching'</tags>
