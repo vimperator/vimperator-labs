@@ -69,20 +69,20 @@ const Editor = Module("editor", {
                 this.executeCommand("cmd_paste");
                 return;
             }
-    
+
             // clear completion preview so it does not get turned into regular text
             if (commandline._completions)
                 commandline._completions.previewClear();
 
             let elem = liberator.focus;
-    
+
             if (elem.setSelectionRange && util.readFromClipboard()) {
                 // readFromClipboard would return 'undefined' if not checked
                 // dunno about .setSelectionRange
                 // This is a hacky fix - but it works.
                 let curTop = elem.scrollTop;
                 let curLeft = elem.scrollLeft;
-    
+
                 let rangeStart = elem.selectionStart; // caret position
                 let rangeEnd = elem.selectionEnd;
                 let tempStr1 = elem.value.substring(0, rangeStart);
@@ -91,7 +91,7 @@ const Editor = Module("editor", {
                 elem.value = tempStr1 + tempStr2 + tempStr3;
                 elem.selectionStart = rangeStart + tempStr2.length;
                 elem.selectionEnd = elem.selectionStart;
-    
+
                 elem.scrollTop = curTop;
                 elem.scrollLeft = curLeft;
             }
