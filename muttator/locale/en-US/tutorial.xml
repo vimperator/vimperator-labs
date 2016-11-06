@@ -38,11 +38,11 @@
 
 <p>
     &liberator.appname;'s power, like Vim's, comes from it's modal interface. Keys have
-    different meanings depending on which mode &liberator.host; is in. &liberator.appname; has four basic modes: 
+    different meanings depending on which mode &liberator.host; is in. &liberator.appname; has four basic modes:
     Normal mode and Message mode when viewing messages and Insert mode as well as Compose mode when writing a new message.
 </p>
 
-<p>You can always use <ex>:usage</ex> for a quick reference 
+<p>You can always use <ex>:usage</ex> for a quick reference
 about available mappings, commands and options. When in Message mode
 (activated by <k>m</k>), most mappings from Vimperator are also available.</p>
 
@@ -57,7 +57,7 @@ about available mappings, commands and options. When in Message mode
     There you can use <k>h</k>, <k>j</k>, <k>k</k>, <k>l</k> etc. to navigate the message body.
     You can also press <k>f</k> to start hinting mode (which works similar to Vimperator).
     Pressing <k>Esc</k> brings you back to Normal mode.
-</p> 
+</p>
 
 <p>
     When opening up the compose window (i.e. for writing a new message, triggered by <k>c</k> or <ex>:compose</ex>),
@@ -189,7 +189,7 @@ about available mappings, commands and options. When in Message mode
 
 <p>
     The most common hint mode is called <t>quick-hints</t>.
-    To activate QuickHint mode, press <k>f</k>. 
+    To activate QuickHint mode, press <k>f</k>.
 </p>
 
 <h2 tag="quitting-without-menus">Find the exit nearest you</h2>

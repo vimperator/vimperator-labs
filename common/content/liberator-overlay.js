@@ -31,7 +31,7 @@
     let prefix = [BASE];
 
     Components.utils.import("resource://liberator/template-tag.js", modules);
-    
+
     // TODO: This list is much too long, we should try to minimize
     // the number of required components for easier porting to new applications
     ["base.js",
