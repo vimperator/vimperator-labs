@@ -40,7 +40,7 @@ FEATURES:
 8 use the storage module for autocommands
 8 middleclick in content == p, and if command line is open, paste there the clipboard buffer
 8 all search commands should start searching from the top of the visible viewport
-8 :bmark -keyword wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s 
+8 :bmark -keyword wikpedia http://en.wikipedia.org/wiki/Special:Search?search=%s
   should overwrite existing keywords. This allows saving of quick searches in the RC file.
 8 <C-o>/<C-i> should work as in vim (i.e., save page positions as well as
   locations in the history list).

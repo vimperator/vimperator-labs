@@ -328,7 +328,7 @@
             <xsl:apply-templates select="@*"/>
             <div style="clear: both;"/>
             <span liberator:highlight="HelpNote">Note:</span>
-            <xsl:text> </xsl:text> 
+            <xsl:text> </xsl:text>
             <xsl:apply-templates select="node()"/>
         </p>
     </xsl:template>
@@ -337,7 +337,7 @@
             <xsl:apply-templates select="@*"/>
             <div style="clear: both;"/>
             <span liberator:highlight="HelpWarning">Warning:</span>
-            <xsl:text> </xsl:text> 
+            <xsl:text> </xsl:text>
             <xsl:apply-templates select="node()"/>
         </p>
     </xsl:template>

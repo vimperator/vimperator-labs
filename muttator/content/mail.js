@@ -375,7 +375,7 @@ const Mail = Module("mail", {
                     reverse ? (i >= 0) : (i < gDBView.rowCount);
                     reverse ? i-- : i++) {
                 let key = gDBView.getKeyAt(i);
-                let folder = gDBView.getFolderForViewIndex(i); 
+                let folder = gDBView.getFolderForViewIndex(i);
                 let msg = folder.msgDatabase.GetMsgHdrForKey(key);
 
                 // a closed thread
@@ -482,7 +482,7 @@ const Mail = Module("mail", {
         let tabmail = document.getElementById("tabmail");
 
         if (!(targets instanceof Array))
-            targets = [targets]; 
+            targets = [targets];
 
         if (!params)
             params = {};

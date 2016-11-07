@@ -187,7 +187,7 @@ const History = Module("history", {
 
         commands.add(["hist[ory]", "hs"],
             "Show recently visited URLs",
-            function (args) { 
+            function (args) {
                 if (args["-remove"]) {
                     let items = completion.runCompleter("history", args.join(" "), args["-max"] || 1000);
                     if (items.length == 0)
@@ -203,7 +203,7 @@ const History = Module("history", {
                         else
                             liberator.echo("Removed " + urls.length + " history items matching " + args.join(" "));
                     }
-                } else 
+                } else
                     history.list(args.join(" "), args.bang, args["-max"] || 1000);
             }, {
                 bang: true,

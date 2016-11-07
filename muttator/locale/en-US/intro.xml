@@ -35,7 +35,7 @@ hitting the back button in the toolbar.
     its command line interface more consistent and easier to use, while still
     being a powerful extension for advanced users.
 </p>
-        
+
 <p>
     But &liberator.appname; is more than just a simple command interface to &liberator.host; — it is a
     complete development environment as well. If you are a web developer, you can
@@ -52,7 +52,7 @@ hitting the back button in the toolbar.
     Stubenschrott</link> but has found many other
     <link topic="http://vimperator-labs.googlecode.com/hg/muttator/AUTHORS/">invaluable contributors</link>
     who helped out fixing bugs and adding new features.
-    
+
     If you appreciate the work on &liberator.appname; and want to
     encourage us working on it more, you can send us greetings, patches, or
     donations:
@@ -76,7 +76,7 @@ hitting the back button in the toolbar.
     documentation available yet. However, the <link
         topic="tutorial">Tutorial</link> should provide some basic information
     to help you get up and running for now.
-</p> 
+</p>
 
 <p> Please also note that navigation in this help screen is quite limited yet -
     <em>using the links within the help system will not always work</em> as

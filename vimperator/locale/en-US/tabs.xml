@@ -104,7 +104,7 @@
                     Move the current tab to a group named <a>groupName</a>.
                 </p>
                 <p>
-                    If the group does not exist, you can use <oa>!</oa> 
+                    If the group does not exist, you can use <oa>!</oa>
                     to automatically create a new group named <a>groupName</a> and
                     move the tab there.
                 </p>

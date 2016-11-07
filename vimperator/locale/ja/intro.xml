@@ -31,7 +31,7 @@
     これは、新しいグラフィカルな機能だけでなく高速なコンピュータを使うことを意味します。
     その上、上級講座のパワフルなアドオンでありながら、より矛盾なく容易にコマンドラインインターフェイスを使用できるように細心の注意が払われています。
 </p>
-        
+
 <p>
     しかし、Vimperator は単なる Firefox のコマンドインターフェイスではなく、完全な開発環境でもあります。
     あなたが Web 開発者であれば、補完機能をもったインタラクティブな JavaScript Shell を満喫できるでしょう。
@@ -45,7 +45,7 @@
 <tags>author donaton sponsor</tags>
 <strut/>
 <p>
-    &liberator.appname; は <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link> 
+    &liberator.appname; は <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link>
     により開発が始まり、今では多くの<link topic="http://vimperator.org/trac/wiki/&liberator.appname;/Authors">貢献者</link>
     によって開発されています。
     &liberator.appname; をいいな、開発を応援したいなと思ってくれた方はぜひはげましのおたよりやパッチ、寄付を送ってください。
