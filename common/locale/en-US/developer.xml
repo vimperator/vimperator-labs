@@ -181,7 +181,7 @@
 </p>
 
 <code><![CDATA[
-var INFO =
+var INFO = 
 <plugin name="flashblock" version="1.0"
         href="http://ticket.vimperator.org/9"
         summary="Flash Blocker"
