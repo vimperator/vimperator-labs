@@ -420,7 +420,7 @@ const StatusLine = Module("statusline", {
     options: function () {
         options.add(["status"],
             "Define which information to show in the status bar",
-            "stringlist", "input,location,bookmark,history,tabcount,position",
+            "stringlist", "input,location,bookmark,history,ssl,tabcount,position",
             {
                 setter: function setter(value) {
                     statusline.sortFields(this.values);
