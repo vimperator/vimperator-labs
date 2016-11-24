@@ -736,7 +736,7 @@
     <tags>'status'</tags>
     <spec>'status'</spec>
     <type>stringlist</type>
-    <default>input,location,bookmark,history,tabcount,position</default>
+    <default>input,location,bookmark,history,ssl,tabcount,position</default>
     <description>
         <p>ステータスラインに表示する要素を示します。</p>
 
