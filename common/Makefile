@@ -130,7 +130,7 @@ xpi:
 		if [ -n "$(UPDATE_URL)" ]; then \
 		    sed -i -e "s,###UPDATEURL###,$(UPDATE_URL),g" $${file}; \
 		else \
-		    sed -i "/###UPDATEURL###/d" $${file}; \
+		    sed -i -e "/###UPDATEURL###/d" $${file}; \
 		fi; \
 	done
 
