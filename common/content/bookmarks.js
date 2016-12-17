@@ -506,12 +506,12 @@ const Bookmarks = Module("bookmarks", {
             function () {
                 let sh = history.session;
                 let jumps = Array.from(iter(sh))
-                                 .map(function(val,idx) { return [
+                                 .map((val,idx) => [
                                      idx == sh.index ? ">" : "",
                                      Math.abs(idx - sh.index),
                                      val.title,
                                      xml`<a highlight="URL" href=${val.URI.spec}>${val.URI.spec}</a>`
-                                 ]});
+                                 ]);
                 let list = template.tabular([{ header: "Jump", style: "color: red", colspan: 2 },
                     { header: "", style: "text-align: right", highlight: "Number" },
                     { header: "Title", style: "width: 250px; max-width: 500px; overflow: hidden" },
