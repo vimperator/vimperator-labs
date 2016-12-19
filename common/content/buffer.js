@@ -533,6 +533,13 @@ const Buffer = Module("buffer", {
         else {
             elem.focus();
 
+            // put the cursor at the end of the content inside an input element
+            // when focused (unless a part of it was selected previously)
+            if ((elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement) &&
+                elem.value && elem.selectionStart !== undefined &&
+                elem.selectionStart === elem.selectionEnd)
+                elem.selectionStart = elem.selectionEnd = elem.value.length;
+
             // for imagemap
             if (elem instanceof HTMLAreaElement) {
                 let doc = config.browser.contentDocument;
