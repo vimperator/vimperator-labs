@@ -737,7 +737,7 @@ const Bookmarks = Module("bookmarks", {
                     context.generate = function () {
                         let [begin, end] = item.url.split("%s");
 
-                        return history.get({ domain: window.makeURI(begin).hostname, domainIsHost: true }).filter(function (item) {
+                        return history.get({ domain: window.makeURI(begin).host, domainIsHost: true }).filter(function (item) {
                             return item.url.startsWith(begin);
                         }).map(function (item) {
                             let rest = item.url.length - end.length;
