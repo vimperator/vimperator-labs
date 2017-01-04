@@ -18,6 +18,16 @@ const History = Module("history", {
         if (typeof filter == "string")
             filter = { searchTerms: filter };
 
+        try {
+            for (let k in filter) {
+                if (filter.hasOwnProperty(k)) {
+                    query[k] = filter[k];
+                }
+            }
+        } catch (e) {
+            // ?
+        }
+
         options.sortingMode = options.SORT_BY_DATE_DESCENDING;
         options.resultType = options.RESULTS_AS_URI;
         if (maxItems > 0)
