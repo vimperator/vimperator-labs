@@ -663,6 +663,9 @@ const Util = Module("util", {
         try {
             const clipboard = Cc["@mozilla.org/widget/clipboard;1"].getService(Ci.nsIClipboard);
             const transferable = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
+            if("init" in transferable) {
+                transferable.init(null);
+            }
 
             transferable.addDataFlavor("text/unicode");
 
