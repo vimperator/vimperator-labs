@@ -506,7 +506,7 @@ const Bookmarks = Module("bookmarks", {
             function () {
                 let sh = history.session;
                 let jumps = Array.from(iter(sh))
-                                 .map(([idx, val]) => [
+                                 .map((val,idx) => [
                                      idx == sh.index ? ">" : "",
                                      Math.abs(idx - sh.index),
                                      val.title,
