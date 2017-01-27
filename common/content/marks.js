@@ -276,7 +276,7 @@ const Marks = Module("marks", {
 
                     // check for illegal ranges - only allow a-z A-Z
                     if (matches = args.match(/[a-zA-Z]-[a-zA-Z]/g)) {
-                        for (let match in values(matches)) {
+                        for (let match of values(matches)) {
                             liberator.assert(/[a-z]-[a-z]|[A-Z]-[A-Z]/.test(match) &&
                                     match[0] <= match[2],
                                     "Invalid argument: " + args.match(match + ".*")[0]);

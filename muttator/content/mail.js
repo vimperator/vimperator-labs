@@ -211,21 +211,20 @@ const Mail = Module("mail", {
      *           ...
      *         ]
      */
-    getAllFolderRowMap: function (includeServers, includeMsgFolders) {
+    getAllFolderRowMap: function* (includeServers, includeMsgFolders) {
         if (includeServers === undefined)
             includeServers = false;
         if (includeMsgFolders === undefined)
             includeMsgFolders = true;
 
-        function walkChildren(children, prefix) {
+        function* walkChildren(children, prefix) {
             for (let [, row] in Iterator(children)) {
                 let folder = row._folder;
                 let folderString = prefix + "/" +
                                    (row.useServerNameOnly ? folder.server.prettyName : folder.abbreviatedName);
                 yield [row, folderString];
                 if (row.children.length > 0)
-                    for (let child in walkChildren(row.children, folderString))
-                        yield child;
+                    yield* walkChildren(row.children, folderString);
             }
         }
         for (let i = 0; i < gFolderTreeView.rowCount; i++) {
@@ -241,8 +240,7 @@ const Mail = Module("mail", {
                 yield [row, folderString];
 
             if (includeMsgFolders && row.children.length > 0)
-                for (let child in walkChildren(row.children, folderString))
-                    yield child;
+                yield* walkChildren(row.children, folderString);
         }
     },
 
@@ -254,7 +252,7 @@ const Mail = Module("mail", {
         else
             filter = filter.toLowerCase();
 
-        for (let [row, name] in this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
+        for (let [row, name] of this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
             let folder = row._folder;
             // XXX: row._folder.prettyName is needed ? -- teramako
             if (name.toLowerCase().indexOf(filter) >= 0)
@@ -270,7 +268,7 @@ const Mail = Module("mail", {
 
         filter = filter.toLowerCase();
 
-        for (let [row, name] in this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
+        for (let [row, name] of this.getAllFolderRowMap(includeServers, includeMsgFolders)) {
             let folder = row._folder;
             // XXX: row._folder.prettyName is needed ? -- teramako
             if (name.toLowerCase() == filter)
@@ -288,7 +286,8 @@ const Mail = Module("mail", {
      */
     getFoldersWithFlag: function (flag) {
         if (flag) {
-            return [row._folder for ([row] in this.getAllFolderRowMap(true,true)) if (row._folder.flags & flag)]
+            return Array.from(this.getAllFolderRowMap(true, true), ([row]) => row._folder)
+                        .filter(folder => folder.flags & flag);
         }
         return [];
     },
@@ -699,8 +698,9 @@ const Mail = Module("mail", {
         completion.mailFolder = function mailFolder(context) {
             context.anchored = false;
             context.quote = false;
-            context.completions = [[row[1], "Unread: " + row[0]._folder.getNumUnread(false)]
-                                   for (row in mail.getAllFolderRowMap(true,true))];
+            context.completions = Array.from(
+                mail.getAllFolderRowMap(true, true),
+                row => [row[1], "Unread: " + row[0]._folder.getNumUnread(false)]);
         };
     },
     mappings: function () {
@@ -1179,7 +1179,9 @@ const Mail = Module("mail", {
                     services.get("smtpService").defaultServer = server;
                     return value;
                 },
-                completer: function (context) [[s.key, s.serverURI] for ([, s] in Iterator(mail.smtpServers))],
+                completer: function (context) {
+                    return mail.smtpServers.map(s => [s.key, s.serverURI]);
+                },
                 validator: Option.validateCompleter
             });
 

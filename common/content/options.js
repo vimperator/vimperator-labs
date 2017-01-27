@@ -946,7 +946,7 @@ const Options = Module("options", {
                         commandline.input("Warning: Resetting all preferences may make " + config.hostApplication + " unusable. Continue (yes/[no]): ",
                             function (resp) {
                                 if (resp == "yes")
-                                    for (let pref in values(options.allPrefs()))
+                                    for (let pref of values(options.allPrefs()))
                                         options.resetPref(pref);
                             },
                             { promptHighlight: "WarningMsg" });
