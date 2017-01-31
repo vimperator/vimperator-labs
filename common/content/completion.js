@@ -495,7 +495,7 @@ const CompletionContext = Class("CompletionContext", {
         return util.map(util.range(start, end, step), function (i) items[i]);
     },
 
-    getRows: function getRows(start, end, doc) {
+    getRows: function* getRows(start, end, doc) {
         let self = this;
         let items = this.items;
         let cache = this.cache.rows;

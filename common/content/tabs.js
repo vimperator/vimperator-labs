@@ -49,13 +49,15 @@ const Tabs = Module("tabs", {
     },
 
     /**
-     * @property {Iterator(Object)} A genenerator that returns all browsers
+     * @property {Generator} A genenerator that returns all browsers
      *     in the current window.
      */
     get browsers() {
-        let browsers = config.tabbrowser.browsers;
-        for (let i = 0; i < browsers.length; i++)
-            yield [i, browsers[i]];
+        return (function* () {
+            let browsers = config.tabbrowser.browsers;
+            for (let i = 0; i < browsers.length; i++)
+                yield [i, browsers[i]];
+        })();
     },
 
     /**
@@ -130,7 +132,7 @@ const Tabs = Module("tabs", {
     //      : unused? Remove me.
     get: function () {
         let buffers = [];
-        for (let [i, browser] in this.browsers) {
+        for (let [i, browser] of this.browsers) {
             let title = browser.contentTitle || "(Untitled)";
             let uri = browser.currentURI.spec;
             let number = i + 1;
@@ -147,7 +149,7 @@ const Tabs = Module("tabs", {
      */
     // FIXME: Only called once...necessary?
     getContentIndex: function (content) {
-        for (let [i, browser] in this.browsers) {
+        for (let [i, browser] of this.browsers) {
             if (browser.contentWindow == content || browser.contentDocument == content)
                 return i;
         }
@@ -387,7 +389,7 @@ const Tabs = Module("tabs", {
      * Stops loading all tabs.
      */
     stopAll: function () {
-        for (let [, browser] in this.browsers)
+        for (let [, browser] of this.browsers)
             browser.stop();
     },
 
@@ -424,7 +426,7 @@ const Tabs = Module("tabs", {
         let lowerBuffer = buffer.toLowerCase();
         let first = tabs.index();
         let nbrowsers = config.tabbrowser.browsers.length;
-        for (let [i, ] in tabs.browsers) {
+        for (let [i, ] of tabs.browsers) {
             let index = (i + first) % nbrowsers;
             let browser = config.tabbrowser.browsers[index];
             let tab = tabs.getTab(index);

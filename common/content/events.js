@@ -82,7 +82,7 @@ const Events = Module("events", {
                     for (let dir of dirs) {
                          liberator.log("Sourcing macros directory: " + dir.path);
 
-                        for (let file in dir.iterDirectory()) {
+                        for (let file of dir.iterDirectory()) {
                             if (file.exists() && !file.isDirectory() && file.isReadable() &&
                                 /^[\w_-]+(\.vimp)?$/i.test(file.leafName)) {
                                 let name = file.leafName.replace(/\.vimp$/i, "");
@@ -134,7 +134,7 @@ const Events = Module("events", {
 
     destroy: function () {
         liberator.log("Removing all event listeners");
-        for (let args in values(this.sessionListeners))
+        for (let args of values(this.sessionListeners))
             args[0].removeEventListener.apply(args[0], args.slice(1));
     },
 

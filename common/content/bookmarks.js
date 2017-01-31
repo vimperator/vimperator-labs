@@ -471,7 +471,7 @@ const Bookmarks = Module("bookmarks", {
         return node;
 
         function getFolderFromNode (node, title) {
-            for (let child in Bookmarks.iterateFolderChildren(node)) {
+            for (let child of Bookmarks.iterateFolderChildren(node)) {
                 if (child.title == title && child instanceof Ci.nsINavHistoryContainerResultNode) {
                     node.containerOpen = false;
                     return child;
@@ -480,7 +480,7 @@ const Bookmarks = Module("bookmarks", {
             return null;
         }
     },
-    iterateFolderChildren: function (node, onlyFolder, onlyWritable) {
+    iterateFolderChildren: function* (node, onlyFolder, onlyWritable) {
         if (!node.containerOpen)
             node.containerOpen = true;
 
@@ -809,7 +809,7 @@ const Bookmarks = Module("bookmarks", {
                 results.push(["TOOLBAR", "Bookmarks Toolbar"]);
             }
             if (folder) {
-                for (let child in Bookmarks.iterateFolderChildren(folder, onlyFolder, onlyWritable)) {
+                for (let child of Bookmarks.iterateFolderChildren(folder, onlyFolder, onlyWritable)) {
                     if (PlacesUtils.nodeIsSeparator(child))
                         continue;
 

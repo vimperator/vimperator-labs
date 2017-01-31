@@ -446,7 +446,7 @@ const Hints = Module("hints", {
                 continue;
 
         inner:
-            for (let i in (util.interruptibleRange(start, end + 1, 500))) {
+            for (let i of (util.interruptibleRange(start, end + 1, 500))) {
                 let hint = this._pageHints[i];
 
                 let valid = validHint(hint.text);

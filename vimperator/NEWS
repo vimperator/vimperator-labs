@@ -1,5 +1,6 @@
 201x-xx-xx:
     * add option 'newtaburl' to set default URL in new tabs
+    * fix loading the tabs module
 
 2016-10-05:
     * update and fix css related issues

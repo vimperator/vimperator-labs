@@ -562,7 +562,7 @@ const Buffer = Module("buffer", {
         synonyms.unshift(rel);
 
         function followFrame(frame) {
-            function iter(elems) {
+            function* iter(elems) {
                 for (let i = 0; i < elems.length; i++)
                     for (let rel of synonyms)
                         if (elems[i].rel.toLowerCase() == rel || elems[i].rev.toLowerCase() == rel)
@@ -571,14 +571,14 @@ const Buffer = Module("buffer", {
 
             // <link>s have higher priority than normal <a> hrefs
             let elems = frame.document.getElementsByTagName("link");
-            for (let elem in iter(elems)) {
+            for (let elem of iter(elems)) {
                 liberator.open(elem.href);
                 return true;
             }
 
             // no links? ok, look for hrefs
             elems = frame.document.getElementsByTagName("a");
-            for (let elem in iter(elems)) {
+            for (let elem of iter(elems)) {
                 buffer.followLink(elem, liberator.CURRENT_TAB);
                 return true;
             }
@@ -1408,7 +1408,7 @@ const Buffer = Module("buffer", {
             };
         }
 
-        function generateTabs (tabs) {
+        function* generateTabs (tabs) {
             for (let i = 0, tab; tab = tabs[i]; i++) {
                 let indicator = getIndicator(tab) + (tab.pinned ? "@" : " "),
                     label = tab.label || UNTITLED_LABEL,
@@ -1425,7 +1425,7 @@ const Buffer = Module("buffer", {
                 yield item;
             }
         }
-        function generateGroupList (group, groupName) {
+        function* generateGroupList (group, groupName) {
             let hasName = !!groupName;
             for (let [i, tabItem] in Iterator(group.getChildren())) {
                 let index = (tabItem.tab._tPos + 1) + ": ",
@@ -1524,7 +1524,7 @@ const Buffer = Module("buffer", {
             "Repeat the last key event",
             function (count) {
                 if (mappings.repeat) {
-                    for (let i in util.interruptibleRange(0, Math.max(count, 1), 100))
+                    for (let i of util.interruptibleRange(0, Math.max(count, 1), 100))
                         mappings.repeat();
                 }
             },

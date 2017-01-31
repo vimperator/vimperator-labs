@@ -69,7 +69,7 @@ const File = Class("File", {
     /**
      * Iterates over the objects in this directory.
      */
-    iterDirectory: function () {
+    iterDirectory: function* () {
         if (!this.isDirectory())
             throw Error("Not a directory");
         let entries = this.directoryEntries;

@@ -16,25 +16,20 @@ function array(obj) {
     return util.Array(obj);
 }
 
-function allkeys(obj) {
+function* allkeys(obj) {
     for(; obj; obj = obj.__proto__)
         for (let prop of Object.getOwnPropertyNames(obj))
             yield prop;
 }
 
-function keys(obj) {
+function* keys(obj) {
     for (let prop of Object.getOwnPropertyNames(obj))
         yield prop;
 }
 
-function values(obj) {
-    for (var k of Object.keys(obj))
+function* values(obj) {
+    for (let k of Object.keys(obj))
         yield obj[k];
-}
-
-function foreach(iter, fn, self) {
-    for (let val in iter)
-        fn.call(self, val);
 }
 
 function dict(ary) {
@@ -227,7 +222,7 @@ function update(target, ...sources) {
         if (!src)
             continue;
 
-        foreach(keys(src), function (k) {
+        for (let k of keys(src)) {
             let desc = Object.getOwnPropertyDescriptor(src, k);
             Object.defineProperty(target, k, desc);
             if (("value" in desc) && callable(desc.value)) {
@@ -243,7 +238,7 @@ function update(target, ...sources) {
                 } else
                     v.superapply = v.supercall = function dummy() {};
             }
-        });
+        }
     }
     return target;
 }
@@ -457,8 +452,8 @@ const StructBase = Class("StructBase", {
 });
 // Add no-sideeffect array methods. Can't set new Array() as the prototype or
 // get length() won't work.
-for (let k in values(["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
-                      "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"]))
+for (let k of ["concat", "every", "filter", "forEach", "indexOf", "join", "lastIndexOf",
+               "map", "reduce", "reduceRight", "reverse", "slice", "some", "sort"])
     StructBase.prototype[k] = Array.prototype[k];
 
 // vim: set fdm=marker sw=4 ts=4 et:

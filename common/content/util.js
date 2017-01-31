@@ -638,7 +638,7 @@ const Util = Module("util", {
      * @param {number} time The time in milliseconds between thread yields.
      * @returns {Iterator(Object)}
      */
-    interruptibleRange: function interruptibleRange(start, end, time) {
+    interruptibleRange: function* interruptibleRange(start, end, time) {
         let endTime = Date.now() + time;
         while (start < end) {
             if (Date.now() > endTime) {

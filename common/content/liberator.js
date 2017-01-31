@@ -1639,7 +1639,7 @@ const Liberator = Module("liberator", {
                         let each, eachUnits, totalUnits;
                         let total = 0;
 
-                        for (let i in util.interruptibleRange(0, count, 500)) {
+                        for (let i of util.interruptibleRange(0, count, 500)) {
                             let now = Date.now();
                             method();
                             total += Date.now() - now;

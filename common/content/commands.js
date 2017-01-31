@@ -945,7 +945,7 @@ const Commands = Module("commands", {
             ["@:"], "Repeat the last Ex command",
             function (count) {
                 if (commands.repeat) {
-                    for (let i in util.interruptibleRange(0, Math.max(count, 1), 100))
+                    for (let i of util.interruptibleRange(0, Math.max(count, 1), 100))
                         liberator.execute(commands.repeat);
                 }
                 else

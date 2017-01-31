@@ -1842,7 +1842,7 @@ const ItemList = Class("ItemList", {
             nodes.message.style.display = context.message ? "block" : "none";
             nodes.waiting.style.display = waiting ? "block" : "none";
 
-            for (let [i, row] in Iterator(context.getRows(start, end, this._doc)))
+            for (let [i, row] of context.getRows(start, end, this._doc))
                 nodes[i] = row;
             for (let [i, row] in util.Array.iteritems(nodes)) {
                 if (!row)

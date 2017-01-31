@@ -32,14 +32,14 @@ const JavaScript = Module("javascript", {
         }
     },
 
-    iter: function iter(obj, toplevel) {
+    iter: function* iter(obj, toplevel) {
         toplevel = !!toplevel;
         let seen = {};
 
         try {
             let orig = obj;
 
-            function iterObj(obj, toplevel) {
+            function* iterObj(obj, toplevel) {
                 if (Cu.isXrayWrapper(obj)) {
                     if (toplevel) {
                         yield {get wrappedJSObject() 0};
@@ -62,7 +62,7 @@ const JavaScript = Module("javascript", {
                         yield o;
             }
 
-            for (let obj in iterObj(orig, toplevel)) {
+            for (let obj of iterObj(orig, toplevel)) {
                 try {
                     for (let k of Object.getOwnPropertyNames(obj)) {
                         let name = "|" + k;
