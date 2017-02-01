@@ -1,6 +1,22 @@
 201x-xx-xx:
+
+
+2017-02-01:
     * add option 'newtaburl' to set default URL in new tabs
     * fix loading the tabs module
+    * update max version
+    * add help for statuslinevisiblity
+    * extend Makefile for signing
+    * fixes and refactors in hints module
+    * showtexthints option
+    * delete trailing whitespace
+    * cleanup SVG files
+    * add ssl by default to statusline
+    * fix 'make xpi'
+    * fix :jumps
+    * fix <P> by initializing nsITransferable before usage
+    * remove uriIsPrefix, unsupported
+
 
 2016-10-05:
     * update and fix css related issues
