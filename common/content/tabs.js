@@ -204,7 +204,7 @@ const Tabs = Module("tabs", {
      * @param {number} count How many tabs to remove.
      * @param {number} orientation Focus orientation
      *         1  - Focus the tab to the right of the remove tab.
-     *         0  - Focus the altanate tab of the remove tab. if alternate tab is none, same as 1
+     *         0  - Focus the alternate tab of the remove tab. if alternate tab is none, same as 1
      *         -1 - Focus the tab to the left of the remove tab.
      * @param {number} forceQuitOnLastTab Whether to quit if the tab being
      *     deleted is the only tab in the tab list:

@@ -291,7 +291,7 @@ const File = Class("File", {
         let path = this(head);
         try {
             path.appendRelativePath(this.expandPath(tail, true)); // FIXME: should only expand env vars and normalise path separators
-            // TODO: This code breaks the external editor at least in ubuntu
+            // TODO: This code breaks the external editor at least in Ubuntu
             // because /usr/bin/gvim becomes /usr/bin/vim.gnome normalized and for
             // some strange reason it will start without a gui then (which is not
             // optimal if you don't start firefox from a terminal ;)
@@ -843,7 +843,7 @@ lookup:
     },
 
     /**
-     * @property {string} The current platform's path seperator.
+     * @property {string} The current platform's path separator.
      */
     get PATH_SEP() {
         delete this.PATH_SEP;

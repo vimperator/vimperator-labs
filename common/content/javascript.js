@@ -49,7 +49,7 @@ const JavaScript = Module("javascript", {
                     // run in page context, not in chrome context.
                     // However, as we really need to make sure, values coming
                     // from content scope are never used in unsecured eval(),
-                    // we dissallow unwrapping objects for now, unless the user
+                    // we disallow unwrapping objects for now, unless the user
                     // uses an (undocumented) option 'unwrapjsobjects'
                     else if (options.inspectcontentobjects) {
                         obj = obj.wrappedJSObject;

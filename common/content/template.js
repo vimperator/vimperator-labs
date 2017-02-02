@@ -273,7 +273,7 @@ const Template = Module("template", {
 
     // This is a generic function which can display tabular data in a nice way.
     // @param {string|array(string|object)} columns: Can either be:
-    //        a) A string which is the only column header, streching the whole width
+    //        a) A string which is the only column header, stretching the whole width
     //        b) An array of strings: Each string is the header of a column
     //        c) An array of objects: An object has optional properties "header", "style"
     //           and "highlight" which define the columns appearance

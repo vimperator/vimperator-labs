@@ -5,7 +5,7 @@
 " Version:      0.7.5
 " Changes:      1, Get the vimdiff problem fixed finally.
 "                Matthew Gallant reported the problem and test the fix. ;)
-"               2, Follow the suggestioin from Ingo Karkat.
+"               2, Follow the suggestion from Ingo Karkat.
 "                The 'foldtext' and 'foldlevel' settings should only be
 "                changed if the file being edited is pure JavaScript,
 "                not if JavaScript syntax is embedded inside other syntaxes.
@@ -36,7 +36,7 @@ unlet b:current_syntax
 syn include @cssTop syntax/css.vim
 unlet b:current_syntax
 
-"" dollar sigh is permittd anywhere in an identifier
+"" dollar sign is permitted anywhere in an identifier
 setlocal iskeyword+=$
 
 syntax sync fromstart
@@ -114,7 +114,7 @@ syntax keyword javaScriptFutureKeys     abstract enum int short boolean export i
   syntax keyword javaScriptHtmlEvents     onblur onclick oncontextmenu ondblclick onfocus onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup onresize
   syntax case match
 
-" Follow stuff should be highligh within a special context
+" Follow stuff should be highlighted within a special context
 " While it can't be handled with context depended with Regex based highlight
 " So, turn it off by default
 if exists("javascript_enable_domhtmlcss")

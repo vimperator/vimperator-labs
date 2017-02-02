@@ -402,7 +402,7 @@ const Events = Module("events", {
      * .liberatorShift these are set for characters that can never by
      * typed, but may appear in mappings, for example <Nop> is passed as
      * liberatorString, and liberatorShift is set when a user specifies
-     * <S-@> where @ is a non-case-changable, non-space character.
+     * <S-@> where @ is a non-case-changeable, non-space character.
      *
      * @param {string} keys The string to parse.
      * @returns {Array[Object]}
@@ -551,7 +551,7 @@ const Events = Module("events", {
                     }
                 }
 
-                if (!key) { // For alphabetical caracters
+                if (!key) { // For alphabetical characters
                     key = String.fromCharCode(event.keyCode); // Gives by default the uppercased version for keydown/keyup of normal keys
                     if (!event.shiftKey)
                         key = key.toLowerCase();
