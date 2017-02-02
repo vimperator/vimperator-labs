@@ -525,7 +525,7 @@ const Options = Module("options", {
      * @param {Object} extra An optional extra configuration hash (see
      *     {@link Map#extraInfo}).
      * @optional
-     * @returns {Option} Returns the instace of Option, if the option was created.
+     * @returns {Option} Returns the instance of Option, if the option was created.
      */
     add: function (names, description, type, defaultValue, extraInfo) {
         if (!extraInfo)
@@ -719,7 +719,7 @@ const Options = Module("options", {
      * Remove the option with matching <b>name</b>.
      *
      * @param {string} name The name of the option to remove. This can be
-     *     any of the options's names.
+     *     any of the options' names.
      */
     remove: function (name) {
         for (let option of this._optionHash) {

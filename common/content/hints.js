@@ -1318,11 +1318,11 @@ const Hints = Module("hints", {
             {
                 completer: function (context) [
                     ["contains",       "The typed characters are split on whitespace. The resulting groups must all appear in the hint."],
-                    ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginings of words, in order."],
+                    ["wordstartswith", "The typed characters are split on whitespace. The resulting groups must all match the beginnings of words, in order."],
                     ["firstletters",   "Behaves like wordstartswith, but all groups much match a sequence of words."],
                     ["fuzzy",          "Hints are matched according to the fuzzy search algorithm."],
                     ["custom",         "Delegate to a custom function: liberator.plugins.customHintMatcher(hintString)"],
-                    ["transliterated", "When true, special latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"]
+                    ["transliterated", "When true, special Latin characters are translated to their ascii equivalent (e.g., \u00e9 -> e)"]
                 ]
             });
 

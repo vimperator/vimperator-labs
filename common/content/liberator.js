@@ -315,7 +315,7 @@ const Liberator = Module("liberator", {
             if (str instanceof Error) {
                 let stackTrace = xml``;
                 let stackItems = new Error().stack.split('\n');
-                // ignore the first element intenationally!
+                // ignore the first element intentionally!
                 stackTrace = template.map2(xml, stackItems.slice(1), function (stackItema) {
                     let atIndex = stackItem.lastIndexOf("@");
                     if (n === 0 || atIndex < 0)
@@ -553,7 +553,7 @@ const Liberator = Module("liberator", {
             return {responseXML: res};
         }
 
-        // Left as an XPCOM instantiation so it can easilly be moved
+        // Left as an XPCOM instantiation so it can easily be moved
         // into XPCOM code.
         function XSLTProcessor(sheet) {
             let xslt = Cc["@mozilla.org/document-transformer;1?type=xslt"].createInstance(Ci.nsIXSLTProcessor);

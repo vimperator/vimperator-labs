@@ -48,7 +48,7 @@
             events="select"
             oncommandupdate="if (window.liberator &and; liberator.modules.events != undefined) liberator.modules.events.onSelectionChange(event);"/>
 
-        <!-- a visual seperator between the content and our command line -->
+        <!-- a visual separator between the content and our command line -->
         <html:div id="liberator-separator" liberator:highlight="ContentSeparator"/>
 
         <!-- As of Firefox 3.1pre, <iframe>.height changes do not seem to have immediate effect,

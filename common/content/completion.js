@@ -347,7 +347,7 @@ const CompletionContext = Class("CompletionContext", {
     get ignoreCase() {
         if ("_ignoreCase" in this)
             return this._ignoreCase;
-        // smart case by default unless overriden above
+        // smart case by default unless overridden above
         return this._ignoreCase = !/[A-Z]/.test(this.filter);
     },
     set ignoreCase(val) this._ignoreCase = val,
