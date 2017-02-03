@@ -224,7 +224,7 @@ const Browser = Module("browser", {
             "Show progress of current downloads",
             function () {
                 liberator.open("chrome://browser/content/downloads/contentAreaDownloadsView.xul",
-                    { from: "downloads"});
+                    { from: "downloads", where: liberator.NEW_TAB });
             },
             { argCount: "0" });
 
