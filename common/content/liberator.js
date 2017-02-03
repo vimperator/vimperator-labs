@@ -821,6 +821,7 @@ const Liberator = Module("liberator", {
                 else
                     [url, postdata] = Array.concat(urls);
 
+                newtab = !url;
                 if (!url)
                     url = window.BROWSER_NEW_TAB_URL || "about:blank";
 
@@ -839,7 +840,8 @@ const Liberator = Module("liberator", {
 
                     options.withContext(function () {
                         options.setPref("browser.tabs.loadInBackground", true);
-                        browser.loadOneTab(url, null, null, postdata, where == liberator.NEW_BACKGROUND_TAB);
+                        // This may not be exactly right, but it works well enough for me.
+                        browser.loadOneTab(url, { referrerURI: null, charset: null, postData: postdata, inBackground: where == liberator.NEW_BACKGROUND_TAB, relatedToCurrent: newtab ? options.getPref("extensions.tabmix.openNewTabNext") : options.getPref("extensions.tabmix.openTabNext") } );
                     });
                     break;
 
