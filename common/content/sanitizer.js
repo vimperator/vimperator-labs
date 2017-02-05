@@ -43,7 +43,7 @@ const Sanitizer = Module("sanitizer", {
         for (let itemName in this.items) {
             let item = this.items[itemName];
 
-            if ("clear" in item && item.canClear && prefSet(itemName)) {
+            if ("clear" in item && prefSet(itemName)) {
                 liberator.echomsg("Sanitizing " + itemName + " items...");
                 // Some of these clear() may raise exceptions (see bug #265028)
                 // to sanitize as much as possible, we catch and store them,
@@ -176,7 +176,6 @@ const Sanitizer = Module("sanitizer", {
                 options.setPref(pref, false);
 
             self.items[item.name] = {
-                canClear: true,
                 clear: item.action
             };
         });
