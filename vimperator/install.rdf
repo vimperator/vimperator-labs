@@ -12,7 +12,8 @@
         <em:creator>Martin Stubenschrott</em:creator>
         <em:homepageURL>http://vimperator.org</em:homepageURL>
         <em:iconURL>chrome://vimperator/skin/icon.png</em:iconURL>
-        <em:optionsURL>chrome://liberator/content/preferences.xul</em:optionsURL>
+        <em:optionsType>3</em:optionsType>
+        <em:optionsURL>liberator://help/options</em:optionsURL>
         <em:updateURL>###UPDATEURL###</em:updateURL>
         <em:targetApplication>
             <Description>
