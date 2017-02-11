@@ -45,7 +45,7 @@ const StatusField = Class("StatusField", {
      */
     get position () {
         if (this.node.hasAttribute("liberatorPosition"))
-            return parseInt(this.node.getAttribute("libeatorPosition"), 10);
+            return parseInt(this.node.getAttribute("liberatorPosition"), 10);
 
         this.node.setAttribute("liberatorPosition", -1);
         return -1;
