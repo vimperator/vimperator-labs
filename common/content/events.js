@@ -356,12 +356,19 @@ const Events = Module("events", {
                 ctrlKey: false, altKey: false, shiftKey: false, metaKey: false,
                 button: 0,
                 relatedTarget: null
+            },
+            UI: {
+                type: type,
+                bubbles: true, cancelable: true,
+                view: doc.defaultView,
+                detail: 1
             }
         };
         const TYPES = {
             click: "Mouse", mousedown: "Mouse", mouseup: "Mouse",
             mouseover: "Mouse", mouseout: "Mouse",
-            keypress: "Key", keyup: "Key", keydown: "Key"
+            keypress: "Key", keyup: "Key", keydown: "Key",
+            change: "UI"
         };
         var t = TYPES[type];
         var evt = doc.createEvent(t + "Events");
