@@ -74,6 +74,14 @@ const StatusLine = Module("statusline", {
         this._statuslineWidget = document.getElementById("liberator-status");
         // initialize setVisibility static variables
         this.setVisibility(-1);
+        // In case of insecure login forms, connection icon is updated after page load.
+        const VERSION = Services.appinfo.platformVersion;
+        if (services.get("vc").compare(VERSION, "51") >= 0) {
+            gBrowser.addEventListener("InsecureLoginFormsStateChange",
+                                      function () {
+                                          statusline.updateField('ssl', null);
+                                      });
+        }
     },
 
     /**
@@ -241,37 +249,53 @@ const StatusLine = Module("statusline", {
             });
         statusline.addField("ssl", "The currently SSL status", "liberator-status-ssl",
             function updateSSLState (node, state) {
-                var className = "notSecure";
-                var tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
-                if (!state) {
-                    let securityUI = config.tabbrowser.securityUI;
-                    if (securityUI)
-                        state = securityUI.state || 0;
-                }
-                const WPL = Components.interfaces.nsIWebProgressListener;
-                if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL) {
-                    className = "verifiedIdentity";
-                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
-                        className = "mixedActiveBlocked";
-                    tooltip = gNavigatorBundle.getFormattedString(
-                        "identity.identified.verifier",
-                        [gIdentityHandler.getIdentityData().caOrg]);
-                } else if (state & WPL.STATE_IS_SECURE) {
-                    className = "verifiedDomain";
-                    if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
-                        className = "mixedActiveBlocked";
-                    tooltip = gNavigatorBundle.getFormattedString(
-                        "identity.identified.verifier",
-                        [gIdentityHandler.getIdentityData().caOrg]);
-                } else if (state & WPL.STATE_IS_BROKEN) {
-                    if (state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT)
-                        className = "mixedActiveContent";
+                const VERSION = Services.appinfo.platformVersion;
+                if (services.get("vc").compare(VERSION, "51") >= 0) {
+                    conn_icon = document.getElementById("connection-icon");
+                    node.style.listStyleImage = window.getComputedStyle(conn_icon).getPropertyValue("list-style-image");
+                    if (node.style.listStyleImage === "none")
+                        node.style.listStyleImage = "url(chrome://browser/skin/identity-icon.svg#normal)";
+
+                    node.style.visibility = "visible";
+
+                    var tooltip = conn_icon.tooltipText;
+                    if (tooltip)
+                        node.setAttribute("tooltiptext", tooltip);
                     else
-                        className = "mixedDisplayContent";
-                    tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
+                        node.removeAttribute("tooltiptext");
+                } else {
+                    var className = "notSecure";
+                    var tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
+                    if (!state) {
+                        let securityUI = config.tabbrowser.securityUI;
+                        if (securityUI)
+                            state = securityUI.state || 0;
+                    }
+                    const WPL = Components.interfaces.nsIWebProgressListener;
+                    if (state & WPL.STATE_IDENTITY_EV_TOPLEVEL) {
+                        className = "verifiedIdentity";
+                        if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                            className = "mixedActiveBlocked";
+                        tooltip = gNavigatorBundle.getFormattedString(
+                            "identity.identified.verifier",
+                            [gIdentityHandler.getIdentityData().caOrg]);
+                    } else if (state & WPL.STATE_IS_SECURE) {
+                        className = "verifiedDomain";
+                        if (state & WPL.STATE_BLOCKED_MIXED_ACTIVE_CONTENT)
+                            className = "mixedActiveBlocked";
+                        tooltip = gNavigatorBundle.getFormattedString(
+                            "identity.identified.verifier",
+                            [gIdentityHandler.getIdentityData().caOrg]);
+                    } else if (state & WPL.STATE_IS_BROKEN) {
+                        if (state & WPL.STATE_LOADED_MIXED_ACTIVE_CONTENT)
+                            className = "mixedActiveContent";
+                        else
+                            className = "mixedDisplayContent";
+                        tooltip = gNavigatorBundle.getString("identity.unknown.tooltip");
+                    }
+                    node.className = className;
+                    node.setAttribute("tooltiptext", tooltip);
                 }
-                node.className = className;
-                node.setAttribute("tooltiptext", tooltip);
             }, {
                 openPopup: function (anchor) {
                     var handler = window.gIdentityHandler;
