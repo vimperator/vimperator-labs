@@ -647,13 +647,19 @@ const Hints = Module("hints", {
         return true;
     },
 
+    /**
+     * Checks whether the current _hintNumber uniquely identifies a hint and if yes, follows it.
+     * If not, but options.hinttimeout is set, follows the hint after a timeout.
+     *
+     * @return whether a unique hint was found and followed without a timeout.
+     */
     _checkUnique: function () {
         if (
             this._hintNumber === null ||
             this._hintNumber === 0 ||
             this._hintNumber > this._validHints.length
         ) {
-            return;
+            return false;
         }
 
         // if we write a numeric part like 3, but we have 45 hints, only follow
@@ -662,9 +668,12 @@ const Hints = Module("hints", {
             let timeout = options.hinttimeout;
             if (timeout > 0)
                 this._activeTimeout = this.setTimeout(function () { this._processHints(true); }, timeout);
+            return false;
         }
-        else // we have a unique hint
+        else { // we have a unique hint
             this._processHints(true);
+            return true;
+        }
     },
 
     /**
@@ -1075,7 +1084,9 @@ const Hints = Module("hints", {
 
             this._showActiveHint(this._hintNumber, oldHintNumber || 1);
 
-            this._checkUnique();
+            if (this._checkUnique()) {
+                return;
+            }
         }
 
         this._updateStatusline();
