@@ -530,6 +530,9 @@ const Buffer = Module("buffer", {
             Buffer.openUploadPrompt(elem);
             buffer.lastInputField = elem;
         }
+        else if (elem instanceof HTMLLabelElement && elem.control) {
+            Buffer.focusElement(elem.control);
+        }
         else {
             elem.focus();
 
@@ -635,6 +638,10 @@ const Buffer = Module("buffer", {
         }
         else if (elem instanceof HTMLInputElement && elem.type == "file") {
             Buffer.openUploadPrompt(elem);
+            return;
+        }
+        else if (elem instanceof HTMLLabelElement && elem.control) {
+            buffer.followLink(elem.control, where);
             return;
         }
 
