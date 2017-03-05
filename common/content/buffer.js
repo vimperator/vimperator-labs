@@ -1192,6 +1192,7 @@ const Buffer = Module("buffer", {
             liberator.assert(file.exists());
 
             elem.value = file.path;
+            elem.dispatchEvent(events.create(elem.ownerDocument, 'change', {}));
         }, {
             completer: completion.file,
             default: elem.value
