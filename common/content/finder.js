@@ -270,8 +270,6 @@ var Finder = Module("finder", {
         }
 
         btn.checked = true;
-
-        findbar._setHighlightTimeout();
     },
 
     /**
