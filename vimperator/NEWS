@@ -1,6 +1,7 @@
 201x-xx-xx:
     * create README.md
     * fix search highlighting (hlsearch) in firefox 51
+    * allow passing a <directory> to `:w` instead of a complete <file>
 
 
 2017-02-01:

@@ -1293,6 +1293,15 @@ const Buffer = Module("buffer", {
                 if (filename) {
                     let file = io.File(filename);
 
+                    if (file.exists() && file.isDirectory()) {
+                        if (doc.doctype !== null) {
+                            filename = OS.Path.join(filename, document.title + ".html");
+                        } else {
+                            filename = OS.Path.join(filename, filename = doc.location.pathname.split("/").pop());
+                        }
+                        file = io.File(filename)
+                    }
+
                     liberator.assert(!file.exists() || args.bang, "File exists (add ! to override)");
 
                     chosenData = { file: file, uri: window.makeURI(doc.location.href, doc.characterSet) };
