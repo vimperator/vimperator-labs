@@ -271,7 +271,10 @@ var Finder = Module("finder", {
 
         btn.checked = true;
 
-        findbar._setHighlightTimeout();
+        if ("toggleHighlight" in findbar) /* Firefox >= v51 */
+            findbar.toggleHighlight(true);
+        else
+            findbar._setHighlightTimeout();
     },
 
     /**
