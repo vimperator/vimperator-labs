@@ -255,6 +255,8 @@ const StatusLine = Module("statusline", {
                     node.style.listStyleImage = window.getComputedStyle(conn_icon).getPropertyValue("list-style-image");
                     if (node.style.listStyleImage === "none")
                         node.style.listStyleImage = "url(chrome://browser/skin/identity-icon.svg#normal)";
+                    else
+                        node.style.listStyleImage = node.style.listStyleImage.replace(/-white/, "");
 
                     node.style.visibility = "visible";
 
