@@ -264,7 +264,7 @@ const StatusLine = Module("statusline", {
                     let bbBackgroundLuminance = 0.2126*bbBackgroundColor[0] + 0.7152*bbBackgroundColor[1] + 0.0722*bbBackgroundColor[2];
                     // Arbitrary threshold to switch to white-on-black icon
                     let iconcolor = bbBackgroundLuminance < 128 ? "white" : "black";
-                    node.style.listStyleImage = node.style.listStyleImage.replace(/(#[a-zA-Z-]+)(-white|-black)?/, "$1-" + iconcolor);
+                    node.style.listStyleImage = node.style.listStyleImage.replace(/(#[\w-]+)(-white|-black)|(#[\w-]+)/, "$1$3-" + iconcolor);
 
                     node.style.visibility = "visible";
 
