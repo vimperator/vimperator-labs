@@ -255,8 +255,16 @@ const StatusLine = Module("statusline", {
                     node.style.listStyleImage = window.getComputedStyle(conn_icon).getPropertyValue("list-style-image");
                     if (node.style.listStyleImage === "none")
                         node.style.listStyleImage = "url(chrome://browser/skin/identity-icon.svg#normal)";
-                    else
-                        node.style.listStyleImage = node.style.listStyleImage.replace(/-white/, "");
+
+                    // Get color of bottombar set by ":highlight Normal background: …" as rgb() string
+                    let bbBackgroundColorRGB = window.getComputedStyle(document.getElementById("liberator-bottombar").firstChild).getPropertyValue("background-color");
+                    // Split string into RGB array
+                    let bbBackgroundColor = bbBackgroundColorRGB.substring(4, bbBackgroundColorRGB.length-1).replace(/ /g, '').split(',');
+                    // Calculate (standard) luminance
+                    let bbBackgroundLuminance = 0.2126*bbBackgroundColor[0] + 0.7152*bbBackgroundColor[1] + 0.0722*bbBackgroundColor[2];
+                    // Arbitrary threshold to switch to white-on-black icon
+                    let iconcolor = bbBackgroundLuminance < 128 ? "white" : "black";
+                    node.style.listStyleImage = node.style.listStyleImage.replace(/(#[a-zA-Z-]+)(-white|-black)?/, "$1-" + iconcolor);
 
                     node.style.visibility = "visible";
 
