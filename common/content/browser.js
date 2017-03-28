@@ -57,7 +57,7 @@ const Browser = Module("browser", {
 
         options.add(["urlseparator"],
             "Set the separator regex used to separate multiple URL args",
-            "string", ",\\s");
+            "string", "");
 
         options.add(["yankencodedurl"],
             "Set the yank mode copying encoded URL",

@@ -1,7 +1,7 @@
 201x-xx-xx:
     * create README.md
     * fix search highlighting (hlsearch) in firefox 51
-
+    * disable urlseparator by default as its unexpected behaviour irritates users
 
 2017-02-01:
     * add option 'newtaburl' to set default URL in new tabs
