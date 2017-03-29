@@ -1,6 +1,10 @@
 201x-xx-xx:
     * create README.md
+    * new: support <label> for <input type=file>
+    * new: fire 'change' event on file upload
     * fix search highlighting (hlsearch) in firefox 51
+    * fix ssl icon in statusbar
+    * fix "preferences" button in Firefox add-ons page
     * disable urlseparator by default as its unexpected behaviour irritates users
 
 2017-02-01:
