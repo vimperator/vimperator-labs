@@ -3,6 +3,7 @@
     * new: support <label> for <input type=file>
     * new: fire 'change' event on file upload
     * fix search highlighting (hlsearch) in firefox 51
+    * allow passing a <directory> to `:w` instead of a complete <file>
     * fix ssl icon in statusbar
     * fix "preferences" button in Firefox add-ons page
     * disable urlseparator by default as its unexpected behaviour irritates users

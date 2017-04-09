@@ -470,11 +470,12 @@ have the following possibilities:
 
 <item>
     <tags>:w :write :sav :saveas</tags>
-    <spec>:sav<oa>eas</oa><oa>!</oa> <oa>file</oa></spec>
+    <spec>:sav<oa>eas</oa><oa>!</oa> <oa>file|directory</oa></spec>
     <description>
         <p>
-            Save current web page to disk. If <oa>file</oa> is omitted, save to the page's
-            default filename. Existing documents will only be overwritten if <oa>!</oa> is given.
+            Save current web page to disk. If <oa>file</oa> is omitted, or a <oa>directory</oa>
+            is given save to the page's default filename. Existing documents will only be overwritten
+            if <oa>!</oa> is given.
         </p>
     </description>
 </item>
