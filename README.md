@@ -119,7 +119,7 @@ Build own version
 
 ### Unsigned (for Unbranded Builds)
 
-See http://www.vimperator.org/developerinfo.
+See http://www.vimperator.org/developer_info.
 
 ### Signed (for Firefox 48+)
 
