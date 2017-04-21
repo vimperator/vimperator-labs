@@ -27,21 +27,32 @@ Pull requests
 - For any new or changed feature, AsciiDoc documentation and an entry in the
   NEWS file is required for the patch to be accepted.
 
-Development installation
-------------------------
+Firefox Aurora/Development
+--------------------------
 
-Creating and installing a new XPI file after each update is cumbersome.
-Instead, create an extension linking to the vimperator directory, for example
-of a Git clone.
+### Electrolysis
 
-1. Find the location your [Firefox profile](http://kb.mozillazine.org/Profile_folder_-_Firefox)
-    - E.g. `/home/user/.mozilla/firefox/<hash>.default`
-2. Go into the `extensions` directory
-3. Delete `vimperator@mozdev.org.xpi`
-4. Create a `vimperator@mozdev.org` text file
-    - Add the absolute path to your Vimperator directory
-    - E.g. `/home/user/code/vimperator-labs/vimperator`
-5. Restart Firefox
+If you use Firefox Aurora/Development together with Vimperator,
+you have to disable Electrolysis (e10s).
+e10s is multi-processing for Firefox and Vimperator is not compatible with
+e10s.
+
+To do so, open `about:config` and set all these to `false`:
+
+- `browser.tabs.remote.autostart`
+- `browser.tabs.remote.autostart.1`
+- `browser.tabs.remote.autostart.2`
+
+### Unsigned XPI
+
+In Firefox Auora/Development, you can still install unsigned XPIs.
+To enable this option, open `about:config` and set:
+
+- `xpinstall.signatures.required` to `false`
+
+Afterwards, you can install the XPI that you created with `make xpi`.
+It is located in the `downloads` directory of the `vimperator-labs` repository
+root.
 
 Hacking
 -------
