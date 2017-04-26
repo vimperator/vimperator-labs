@@ -265,7 +265,7 @@ const CommandLine = Module("commandline", {
     _setPrompt: function (val, highlightGroup) {
         this._promptWidget.value = val;
         this._promptWidget.collapsed = (val == "");
-        this._promptWidget.style.maxWidth = "-moz-calc(1em * " + val.length + ")";
+        this._promptWidget.style.maxWidth = "calc(1em * " + val.length + ")";
     },
 
     /**
