@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="intro"
+    title="&liberator.appname; 绍介"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<html:p style="text-align: center; font-weight: bold;">
+最初，世上有 Navigator，然后才有 Explorer，继而则 Konqueror 的时代，而现在，该 Imperator 登场了，这独一无二的 VIMperator :)
+</html:p>
+
+<h1 tag="intro">绍介</h1>
+
+<p>
+<link topic="http://vimperator.org">&liberator.appname;</link> 是一个
+<link topic="http://www.mozilla.com/firefox/">Firefox</link>
+浏览器扩展，它从 Vim 文本编辑器吸收大量灵感，希望创造更快、更高效的冲浪体验。Vimperator 的键绑定与 Vim 类似，你可以把它叫做模式 web 浏览器，因为在不同模式下会有不同的键绑定。比方说，它有个特别的 Hint 模式，该模式下，只需键盘，你就可以轻松跟踪链接。几乎所有的功能都能通过命令完成，键入 <ex>:back</ex> 会在当前网页历史里后退，就跟你点击工具栏上的后退按钮一样。
+</p>
+
+<p>
+    不过，&liberator.appname; 不打算百分百复制 Vim，毋宁说，它是把 Vim 的思想带进 21 世纪。这意味着充分利用新图形处理能力，以及更快的计算机能力。另外，我们也仔细斟酌，使得 Vimperator 在命令行界面更为统一、更加易用的同时，不失为高级用户的一个有力扩展。
+</p>
+        
+<p>
+    但 &liberator.appname; 不仅仅只是个简单的 Firefox 命令界面 - 它同时还是完整的开发环境。如果你是 web 开发者，你就可以享受到一个交互式 JavaScript shell - 甚至支持补全。又或你想扩展 &liberator.appname;，要做的很简单，只是拖动 JavaScript 文件到 plugin 目录。
+</p>
+
+<tags>捐款支持作者</tags>
+<strut/>
+<p>
+	&liberator.appname; 最初由
+    <link topic="mailto:stubenschrott@vimperator.org">Martin Stubenschrott</link> 开发，但有许多<link topic="http://vimperator-labs.googlecode.com/hg/vimperator/AUTHORS/">不可估值的贡献者</link>帮忙解决问题、添加新特性。
+	如果你欣赏我们在 &liberator.appname; 上的成果，并打算鼓励我们为它做得更多，则可以给我们发发感谢，或者补丁，又或捐款：
+</p>
+
+<pan><handle/></pan>
+
+<p>
+	如果你更愿意给你的钱整点好玩意儿，你也可以购买一些新潮<link topic="http://www.zazzle.com/maxauthority*">小物品</link>比如 T 恤或杯子，这样也能支持到我们。当然，如我们所信仰的自由、开源软件一样，请仅在你真的非常喜欢 &liberator.appname; 并且谈钱不伤感情的时候资助我们 - 否则请用它，推荐它，并且喜欢它吧：）
+</p>
+
+<h2 tag="overview">帮助主题</h2>
+
+<ol>
+    <li>
+        <link topic="tutorial">快速入门教程</link>：
+	给新用户准备的快速入门教程。
+    </li>
+    <li>
+        <link topic="starting">启动 &liberator.appname;</link>：
+	&liberator.appname; 如何启动，在哪儿读取的配置文件...
+    </li>
+    <li>
+        <link topic="browsing">浏览</link>：
+	浏览会话所需的基本键映射与命令（如何打开一个网页，又或在历史记录中后退）。
+    </li>
+    <li>
+        <link topic="buffer">Buffer</link>：
+	操作当前页面，譬如滚动，又或拷贝文本。
+    </li>
+    <li>
+        <link topic="cmdline">命令行模式</link>：
+	命令行下的编辑。
+    </li>
+    <li>
+        <link topic="insert">插入模式</link>：
+	插入模式下的编辑。
+    </li>
+    <li>
+        <link topic="options">选项</link>：
+	所有选项的描述。
+    </li>
+    <li>
+        <link topic="pattern">文本搜索命令</link>：
+	在当前 buffer 搜索文本。
+    </li>
+    <li>
+        <link topic="tabs">标签页</link>：
+	借助标签页管理你的浏览会话。
+    </li>
+    <li>
+        <link topic="hints">Hints</link>：
+	选择超链接及其他页面元素。
+    </li>
+    <li>
+        <link topic="map">键映射，缩略词，及用户定义命令</link>：
+	定义新的键映射、缩略词及用户命令。
+    </li>
+    <li>
+        <link topic="eval">表达式计算</link>：
+	执行 JavaScript。
+    </li>
+    <li>
+        <link topic="marks">标记</link>：
+	使用书签、快速标记、历史记录及本地标记。
+    </li>
+    <li>
+        <link topic="repeat">重做命令</link>：
+	使用宏执行重复任务。
+    </li>
+    <li>
+        <link topic="autocommands">自动化命令</link>：
+	在某些事件发生时自动执行代码。
+    </li>
+    <li>
+        <link topic="print">打印</link>：
+	打印页面。
+    </li>
+    <li>
+        <link topic="gui">&liberator.appname; 图形用户界面</link>：
+	访问 &liberator.host; 菜单、对话框及侧边栏。
+    </li>
+    <li>
+        <link topic="styling">样式化 GUI 和网页</link>：
+	修改内容页面的样式及 &liberator.appname; 本身的样式。
+    </li>
+    <li>
+        <link topic="message">错误及消息</link>：
+	消息及错误的说明。
+    </li>
+    <li>
+        <link topic="developer">开发者信息</link>：
+	如何编写文档或是插件。
+    </li>
+    <li>
+        <link topic="various">其余命令</link>：
+	其他不属于以上任一分类的帮助内容。
+    </li>
+    <li>
+        <link topic="plugins">插件</link>：
+	你可能安装的任何插件的文档。
+    </li>
+</ol>
+
+<p>
+你也可以通过 <ex>:help o</ex> 或 <ex>:help :set</ex> 直接访问某一指定命令的帮助。
+</p>
+
+<h2 tag="features">特性</h2>
+
+<ul>
+    <li>类似 Vim 的键绑定 (<k>h</k>, <k>j</k>, <k>k</k>, <k>l</k>, <k>gg</k>, <k>G</k>, <k>0</k>, <k>$</k>, <k>ZZ</k>, <k name="C-f"/>, 等等)</li>
+    <li>Ex 命令 (<ex>:quit</ex>, <ex>:open www.foo.com</ex>, …)，借由一个适手的命令行</li>
+    <li>所有命令均支持按 Tab 补全，在你键入时会显示建议内容</li>
+    <li>Hint 模式 (按 <k>f</k> 启动，用于跟踪链接)</li>
+    <li>扩展！是的，你可以使用<link href="http://ticket.vimperator.org/Vimperator/plugin/">脚本</link>扩展 Vimperator 的功能，就如你使用扩展组件来扩展 Firefox 一样</li>
+    <li>使用 <ex>:echo window</ex> 命令探查 JavaScript 对象，甚至还有上下文关联的 tab 补全</li>
+    <li>可轻松自定义的 GUI (使用命令 <ex>:set gui=none</ex> 轻松隐藏所有 GUI 元素)</li>
+    <li><ex>:source</ex> 能执行 JavaScript 文件，如果你安装 vimperator.vim，则可以高亮 <em>~/.vimperatorrc</em> 文件语法</li>
+    <li>简易快捷的搜索（<ex>:open foo</ex> 在 google 中搜索 "foo"，<ex>:open ebay terminator</ex> 在 ebay 上搜索 "terminator"），支持 &liberator.host; 智能关键字书签与搜索引擎</li>
+    <li>许多命令可以结合数字使用 (<em>3</em><k name="C-o"/> 将在历史记录中后退 3 页)</li>
+    <li>错误蜂鸣</li>
+    <li>支持标记 (<k>m</k><em>a</em> 在网页上设置一个标记，<k>'</k><em>a</em> 跳转到标记位置)</li>
+    <li>支持快速标记 (使用命令<k>go</k><a>a-zA-Z0-9</a>)，可以快速访问之前标记过的网页</li>
+    <li>支持 <ex>:map</ex> 和 <ex>:command</ex> (脚本编写者则可以用 feedkeys())</li>
+    <li><ex>:time</ex> 命令用于查看代码执行概况</li>
+    <li>在可视模式下，使用 Vim 按键移动文本光标、选择文本</li>
+    <li>支持外部编辑器</li>
+    <li>宏命令重放键操作</li>
+    <li>自动命令，用于在某些事件发生时执行动作</li>
+    <li>完善的帮助系统，解释所有的命令、映射与选项</li>
+</ul>
+
+<h2 tag="changelog version">版本变化记录</h2>
+我们在<link topic="http://vimperator-labs.googlecode.com/hg/vimperator/NEWS">这儿</link>保存了一份清单，记录各个版本间的变化。
+
+<h2 tag="contact bugs patches">联系</h2>
+<p>
+    请使用项目的 <link topic="http://code.google.com/p/vimperator-labs/issues/list">bug 追踪系统</link>报告任何 bug 或特性请求。你也可以在那儿附上补丁。另一个办法是使用<link topic="https://groups.google.com/forum/?fromgroups=#%21forum/vimperator-labs">邮件列表</link>。你还可以在 <link topic="http://www.freenode.net/">Freenode</link> 的 IRC 频道 <link topic="irc://irc.freenode.neet/vimperator">#vimperator</link> 上找到我们。更多的信息或贴士可以在 <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">Wiki</link> 上的<link topic="http://code.google.com/p/vimperator-labs/wiki/&liberator.appname;FAQ">常见问题 (FAQ) </link> 上找到。请确保你已经看过<link topic="http://vimperator-labs.googlecode.com/hg/vimperator/TODO">待办事项</link>文件，我们知道有许多可以改进的地方，只要我们有时间，又或收到了补丁，就会做出改进。
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

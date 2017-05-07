@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="tutorial"
+    title="&liberator.appname; Tutorial"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<!-- Initial revision: Sun Jun  8 10:07:05 UTC 2008 (penryu) -->
+
+<h1 tag="tutorial">Quick-start tutorial</h1>
+
+<html:p style="text-align: center">
+    This is a quickstart tutorial to help get new users up and running
+    in &liberator.appname;. It is not intended as a full reference explaining all
+    features.
+</html:p>
+
+<h2 tag="modal">&liberator.appname;'s modal interface</h2>
+
+<p>
+    &liberator.appname;'s power, like Vim's, comes from it's modal interface. Keys have
+    different meanings depending on which mode the browser is in. &liberator.appname; has
+    several modes, but the 2 most important are <em>Normal</em> mode and
+    <em>Command-line</em> mode.
+</p>
+
+<p>
+    When &liberator.appname; starts, it is in Normal mode by default. This is probably where
+    you will spend the majority of your time.
+</p>
+
+<p>
+    The other core mode of &liberator.appname;, Command-line mode, can be entered from
+    Normal mode by typing a <k>:</k> (colon). You will frequently see &liberator.appname;
+    commands start with a <k>:</k>, indicating that what follows is a command.
+</p>
+
+<p>
+    To return to Normal mode from Command-line mode, type <k name="Esc"/>. Pressing
+    <k name="Esc"/> will also return you to Normal mode from most other modes in
+    &liberator.appname;.
+</p>
+
+<h2 tag="getting-help">Getting help</h2>
+
+<p>
+    Vim is a great editor but it's not much of a web browser. So even seasoned Vim
+    users will probably have to look at &liberator.appname; documentation sooner or later.
+    Most of the documentation for &liberator.appname;'s features are easily found using the
+    <ex>:help</ex> command. For example, you can find help on the <ex>:help</ex> command
+    by typing
+</p>
+
+<code><ex>:help :help<key name="CR"/></ex></code>
+
+<p>
+    Similarly, help on configurable options is available with
+    <ex>:help '<a>option_name</a>'</ex>. (Note the single quotes
+    around the option name as in Vim.) Information on all available
+    options is, predictably, <ex>:help options</ex>.
+</p>
+
+<p>
+    And you can find out about the <k>gt</k> and <k>gT</k> mapping with
+</p>
+
+<code>
+<ex>:help gt<key name="CR"/></ex>
+<ex>:help gT<key name="CR"/></ex>
+</code>
+
+<p>
+    Finally, in addition to the help system itself, <ex>:exusage</ex>, <ex>:viusage</ex>
+    and <ex>:optionusage</ex> are useful quick-reference commands.
+</p>
+
+<h2 tag="living-mouseless">Mouseless</h2>
+
+<em>– or how I learned to stop worrying and love the 80+ buttons I already have.</em>
+
+<p>
+    The efficiency of &liberator.appname;, as with the legendary editor it was inspired by,
+    relies on the user being able to keep his fingers on the keyboard where they
+    can do the most good. While there are some areas where the mouse is clearly
+    superior at, such as GUI design or some games, &liberator.appname; acts on the
+    assumption that a web browser doesn't have to be one of those. However,
+    the mouse is of course fully supported if you prefer moving this little rodent.
+</p>
+
+<h2 tag="keyboard-scrolling">Scrolling</h2>
+
+<p>
+    Scrolling the browser window is done with simple keystrokes:
+</p>
+
+<ul>
+    <li><k>j</k>/<k>k</k> –
+        scroll window down/up by one line, respectively
+    </li>
+    <li><k>h</k>/<k>l</k> –
+        scroll window left/right
+    </li>
+    <li><k name="Space"/>/<k name="C-b"/> –
+        scroll down/up by one page
+    </li>
+    <li><k name="C-d"/>/<k name="C-u"/> –
+        scroll down/up by 1/2 page
+    </li>
+</ul>
+
+<p>
+    Your standard buttons (<k name="Up"/>/<k name="Down"/>/<k name="PgUp"/>/<k name="PgDn"/>) will
+    also work as expected.
+</p>
+
+<h2 tag="history-navigation tab-navigation">History and tabs</h2>
+
+<p>
+    History navigation (e.g., <em>Back</em>, <em>Forward</em>) are done similarly to
+    scrolling.
+</p>
+
+<ul>
+    <li><k name="C-o"/>/<k name="C-i"/> –
+        move Back/Forward in the current window/tab's history, respectively
+    </li>
+</ul>
+
+<p>
+    Move between tabs using these keystrokes which may also be familiar to tabbing
+    Vimmers.
+</p>
+
+<ul>
+    <li><k>gt</k>/<k name="C-n"/> –
+        go to the next tab
+    </li>
+    <li><k>gT</k>/<k name="C-p"/> –
+        go to the previous tab
+    </li>
+    <li><k>g0</k>/<k>g$</k> –
+        go to the first/last tab
+    </li>
+    <li><k>d</k> –
+        close the active tab (delete the buffer)
+    </li>
+</ul>
+
+<p>
+    To open a web page in a new tab, use the <ex>:tabopen <a>url</a></ex>. To open a URL in
+    the current tab, use <ex>:open</ex>. The Normal mode mappings <k>t</k> and <k>o</k>,
+    respectively, map to these commands, so the following pairs of sequences are
+    equivalent:
+</p>
+
+<code>
+<ex>:open my.webmail.com<key name="CR"/></ex>
+<k>o</k>my.webmail.com<key name="CR"/>
+
+<ex>:tabopen vimperator.org<key name="CR"/></ex>
+<k>t</k>vimperator.org<key name="CR"/>
+</code>
+
+<h2 tag="hints-tutorial">Some hints about surfing…</h2>
+
+<p>
+    So now you can navigate around in &liberator.appname;. But wait… how do you <em>open</em> a
+    page or tab linked in a web page? How do you <em>click</em> on all those links
+    without your tailed friend?
+</p>
+
+<p>
+    The answer is <em>hints</em>. Activating hints displays a number next to every link
+    &liberator.appname; can find. To follow the link, simply type the number corresponding
+    to the hint, a white number inside a red square by default.
+</p>
+
+<p>
+    For text links, there's an additional shortcut; you can type some text
+    contained in the link and &liberator.appname; will search all the links it can find and
+    only hint the matching links, further narrowing down the list. If the text you
+    type uniquely identifies any given link, &liberator.appname; will follow that link
+    immediately without any further user input.
+</p>
+
+<p>
+    Whichever way you choose to indicate your target link, once &liberator.appname; has
+    highlighted the link you want, simply hit <k name="Enter"/> to open it.
+</p>
+
+<p>
+    The most common hint mode is called <t>quick-hints</t>.
+    To activate QuickHint mode, press either <k>f</k> or <k>F</k>. The lower-case
+    <k>f</k> will open the resulting link in the current tab, while the upper-case
+    <k>F</k> will open it in a new tab.
+</p>
+
+<p>
+    To test it, try this link: <link topic="http://vimperator.org/">&liberator.appname; Homepage</link>.
+    Activate QuickHint mode with <k>f</k> or <k>F</k> to highlight all currently
+    visible links. Then start typing the text of the link. The link should be
+    uniquely identified soon, and &liberator.appname; will open it. Once you're done,
+    remember to use <k name="C-o"/> (<em>History Back</em>) or <k>d</k> (<em>Delete Buffer</em>)
+    to return here, depending on which key you used to activate QuickHint mode.
+</p>
+
+<h2 tag="common-issues">Common issues</h2>
+
+<p>
+    Say you get half-way done typing in a new URL, only to remember that you've
+    already got that page open in the previous tab. Your command line might look
+    something like this:
+</p>
+
+<code><ex>:open my.partial.url/fooba</ex></code>
+
+<p>
+    You can exit the command line and access the already loaded page with the
+    following:
+</p>
+
+<code><k name="Esc"/></code>
+
+<h2 tag="vimperatorrc">Saving for posterity - vimperatorrc</h2>
+
+<p>
+    Once you get &liberator.appname; set up with your desired options, maps, and commands,
+    you'll probably want them to be available the next time you open &liberator.appname;.
+    Continuing the Vim theme, this is done with a vimperatorrc file.
+</p>
+
+<p>
+    To save your current settings and allow them to be loaded automatically
+    next time you start &liberator.appname;, issue the <ex>:mkv</ex> command.
+</p>
+
+<p>
+    This will create the file <em>$HOME/.vimperatorrc</em> containing your settings.
+    It is a simple text file, just like a vimrc file and can be easily
+    edited to suit your preferences.
+</p>
+
+<h2 tag="quitting-without-menus">Find the exit nearest you</h2>
+
+<p>
+    &liberator.appname; supports all of Vim's classic methods of exiting.
+</p>
+
+<ul>
+    <li><ex>:xall</ex> – command to quit and save the current browsing
+        session for next time; the default.
+    </li>
+    <li><ex>:qall</ex> – command to quit <em>without</em> saving the session
+    </li>
+    <li><k>ZZ</k> – Normal mode mapping equivalent to <ex>:xall</ex>
+    </li>
+    <li><k>ZQ</k> – Normal mode mapping equivalent to <ex>:qall</ex>
+    </li>
+</ul>
+
+<h2 tag="whither-&liberator.host;">Where did &liberator.host; go?</h2>
+
+<p>
+    You might feel pretty disoriented now. Don't worry. This is still &liberator.host;
+    underneath. Here are some ways &liberator.appname; allows &liberator.host; to shine through. See
+    the <ex>:help</ex> for these commands and mappings for more information on how to
+    make the best use of them.
+</p>
+
+<ul>
+    <li><ex>:dialog</ex> –
+        To access some of &liberator.host;'s many dialog windows, you can use the
+        <ex>:dialog</ex> command. See <ex>:help :dialog</ex>.
+    </li>
+    <li><ex>:bmarks</ex> –
+        &liberator.appname; provides a new interface to bookmarks, but they're still your
+        standard &liberator.host; bookmarks under the hood. <ex>:bmark</ex> will add a new
+        bookmark, while <ex>:bmarks</ex> will list the bookmarks currently defined.
+    </li>
+    <li><ex>:history</ex> –
+        It's exactly what it sounds like. This command will display a colorized,
+        scrollable and clickable list of the locations in &liberator.appname;'s history.
+    </li>
+    <li><ex>:emenu</ex> –
+        Access the &liberator.host; menus through the &liberator.appname; command line.
+    </li>
+</ul>
+
+<p>
+    Feel free to explore at this point. If you use the <ex>:tabopen</ex> command,
+    remember to use the <k>gt</k>/<k>gT</k> mappings to get back to this page. If
+    using the <ex>:open</ex> command, use the history keys (e.g., <k>H</k>) to return.
+    If you get hopelessly lost, just type <ex>:help<key name="CR"/></ex> and click the
+    <em>Tutorial</em> link to return.
+</p>
+
+
+<!-- TODO: other sections? -->
+
+
+<h2 tag="removal">Get me out of here!</h2>
+
+<p>
+    If you've given it a fair shot and determined … TODO
+</p>
+
+<p>
+    The &liberator.appname; way to do this is with the command <ex>:addons</ex>. Issuing this
+    command brings up the &liberator.host; Add-ons dialog window; you can then remove it as
+    normal, selecting &liberator.appname; from the list and clicking (yes, clicking)
+    <em>Uninstall</em>.
+</p>
+
+<p>
+    Alternatively, you can do this the old-fashioned way: re-enable the menubar,
+    as above, with <ex>:set toolbars=menu</ex>, and select <em>Add-ons</em> from the <em>Tools</em> menu.
+</p>
+
+
+<h2 tag="support">I'm interested… but lost!</h2>
+
+<p>
+    &liberator.appname; has an energetic and growing user base. If you've run into a problem
+    that you can't seem to solve with &liberator.appname;, or if you think you might have
+    found a bug, please let us know! There is support available on the
+    <link topic="http://code.google.com/p/vimperator-labs/w/list?q=label%3Aproject-vimperator">wiki</link>
+    or in the <link topic="irc://irc.freenode.net/vimperator">#vimperator</link> IRC
+    channel on <link topic="http://freenode.net/">freenode</link>.
+</p>
+
+<p>
+    If you have any feature requests or (even better) offers to help, we'd love to
+    hear from you as well. Developers work on &liberator.appname; whenever possible, but we
+    are neither infinite nor omnipotent; please bear with us. If you can't wait for
+    us to get around to it, rest assured patches are welcome! See the
+    <t>developer</t> page for more information.
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

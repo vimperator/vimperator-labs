@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<!--item replace="'go'">
+ <tags>'go' 'guioptions'</tags>
+ <spec>'guioptions' 'go'</spec>
+ <type>charlist</type>
+ <default>Tbr</default>
+ <description>
+ <p>Show or hide certain GUI elements like the menu or toolbar.</p>
+
+ <p>Supported characters:</p>
+
+ <dl>
+ <dt>m</dt> <dd>Menubar</dd>
+ <dt>T</dt> <dd>Toolbar</dd>
+ <dt>B</dt> <dd>Bookmark bar</dd>
+ <dt>A</dt> <dd>Add-on bar</dd>
+ <dt>n</dt> <dd>Tab number</dd>
+ <dt>b</dt> <dd>Bottom scrollbar</dd>
+ <dt>r</dt> <dd>Right scrollbar</dd>
+ <dt>l</dt> <dd>Left scrollbar (<em>l</em> and <em>r</em> are mutually exclusive)</dd>
+ </dl>
+
+ <p>You can also hide the tab bar with <ex>:set showtabline=0</ex>.</p>
+
+ <note>Scrollbar changes require a page reload to take effect.</note>
+ </description>
+</item-->
+
+<!--item insertbefore=":set">
+    <tags>:seg :way</tags>
+    <spec>:se[a]</spec>
+    <description>
+        <p>Show all options that differ from their default value.</p>
+    </description>
+</item>
+
+<item insertafter=":set-default">
+    <tags>:sturm :drang</tags>
+    <spec>:und</spec>
+    <description>
+        <p>Show all options that differ from their default value.</p>
+    </description>
+</item-->
+
+<item insertafter="'enc'">
+    <tags>'app' 'apptab'</tags>
+    <spec>'apptab' 'app'</spec>
+    <type>boolean</type>
+    <default>false</default>
+    <description>
+        <p>Transform the current tab into an app tab. Firefox always displays
+            app tabs at the left of all tabs and minimizes it to its favicon.
+        </p>
+    </description>
+</item>
+
+</overlay>
+<!-- vim:se sts=4 sw=4 et: -->

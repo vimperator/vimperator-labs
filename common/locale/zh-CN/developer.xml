@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd" [
+    <!ENTITY tab "&#xa0;&#xa0;&#xa0;">
+]>
+
+<document
+    name="developer"
+    title="&liberator.appname; Developer information"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="developer-information">Developer information</h1>
+<toc start="2"/>
+
+<h2 tag="writing-docs documentation">Writing documentation</h2>
+
+<p>
+    For every new feature, writing documentation is <em>mandatory</em> for the
+    patch to be accepted. The docs are written in an XML dialect similar to
+    XHTML, with a few tags specific to our documentation. For example:
+</p>
+
+<code><![CDATA[
+<item>
+    <tags><![CDATA[<F1> :help :h help]]]]><![CDATA[></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]]]><![CDATA[></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+]]></code>
+
+<p>
+    creates a new help section for the command <ex>:help</ex> and for
+    the related key binding, <k name="F1"/>. It also creates help tags
+    for the command, its shortcuts, the key binding, and the general
+    topic, 'help'. These tags enable linking to this section from
+    other mentions of the topic and from the <ex>:help</ex> command.
+    The above code displays as:
+</p>
+
+<html:div style="margin: 2em;">
+<item>
+    <tags><![CDATA[<F1> :help :h help]]></tags>
+    <spec>:h<oa>elp</oa> <a>subject</a></spec>
+    <spec><![CDATA[<F1>]]></spec>
+    <description>
+        <p>
+            Open help window.
+            The default section is shown unless <a>subject</a> is specified.
+            If you need help for a specific topic, try <ex>:help overview</ex>.
+        </p>
+    </description>
+</item>
+</html:div>
+
+<p>
+    If you don't know in which file/section you should put some
+    documentation, ask on the mailing list or on
+    <link topic="irc://irc.freenode.net/vimperator">#vimperator</link>.
+</p>
+
+<h3 tag="help-tags help-xml">Help tags</h3>
+
+<p>
+    The following is a list of the more common XML tags used in help pages,
+    along with their highlight groups.
+</p>
+
+<dl>
+    <dt>Layout</dt><dd/>
+    <dt>p</dt>         <dd>A paragraph (HelpParagraph)</dd>
+    <dt>h1</dt>        <dd>A first-level heading (HelpHead)</dd>
+    <dt>h2</dt>        <dd>A second-level heading (HelpSubhead)</dd>
+    <dt>h3</dt>        <dd>A third-level heading (HelpSubsubhead)</dd>
+    <dt>code</dt>      <dd>A pre-formatted code block. (HelpCode)</dd>
+    <dt>note</dt>      <dd><note style="margin: 0;">A note paragraph. (HelpNote)</note></dd>
+    <dt>warning</dt>   <dd><warning style="margin: 0;">A warning paragraph. (HelpWarning)</warning></dd>
+</dl>
+<dl>
+    <dt>Generic</dt><dd/>
+    <dt>link</dt>         <dd>A generic link. (HelpLink)</dd>
+    <dt>&tab;@topic</dt>  <dd>The topic of the link. Either a help topic or a fully-qualified URI.</dd>
+    <dt>em</dt>           <dd><em>Emphasized</em> text. (HelpEm)</dd>
+    <dt>str</dt>          <dd>A <str>string</str>, with its contents wrapped in quotes. (HelpString)</dd>
+    <dt>logo</dt>         <dd>&liberator.appname;'s logo. (Logo)</dd>
+</dl>
+<dl>
+    <dt>Items</dt><dd/>
+    <dt>item</dt>       <dd>A help entry (HelpItem)</dd>
+    <dt>&tab;tags</dt>  <dd>See the 'Tagging' section (HelpTags)</dd>
+    <dt>&tab;spec</dt>  <dd>The specification for this item, such as an example command-line. (HelpSpec)</dd>
+    <dt>&tab;type</dt>  <dd>For options, the type of the option.
+                            <em>number</em>, <em>boolean</em>, <em>string</em>, <em>string</em>, <em>stringlist</em>, or <em>charlist</em>.
+                            (HelpType)
+                        </dd>
+    <dt>&tab;default</dt>     <dd>For options, the default value. (HelpDefault)</dd>
+    <dt>&tab;description</dt> <dd>The description of this help item. (HelpDescription)</dd>
+    <dt>a</dt>  <dd>Required <a>argument</a>. (HelpArg)</dd>
+    <dt>oa</dt> <dd>Optional <oa>argument</oa>. (HelpOptionalArg)</dd>
+</dl>
+<dl>
+    <dt>Tagging</dt><dd/>
+    <dt>tags</dt>   <dd>Space-separated list of strings to tag. Displayed right-aligned, and used for cross-linking. (HelpTags)</dd>
+    <dt>@tag</dt>   <dd>The tag attribute. Applied to any element, generates a &lt;tags> element with its value for its contents. (HelpTag)</dd>
+</dl>
+<dl>
+    <dt>Linking</dt><dd/>
+    <dt>o</dt>          <dd>Link to an option. (HelpOpt)</dd>
+    <dt>ex</dt>         <dd>Link to an ex command. (HelpEx)</dd>
+    <dt>k</dt>          <dd>Link to a key. (HelpKey)</dd>
+    <dt>&tab;@name</dt> <dd>The name attribute to &lt;k>. When provided, &lt;<a>value</a>> is prepended to
+                            the element's contents, i.e., <em>&lt;k name="F1"/></em> becomes <em><k name="F1"/></em>.
+                        </dd>
+    <dt>t</dt>          <dd>Links to an arbitrary help topic. (HelpTopic)</dd>
+</dl>
+<dl>
+    <dt>Plugins</dt><dd/>
+    <dt>plugin</dt>            <dd>The container tag used for describing a plugin.</dd>
+    <dt>&tab;@name</dt>        <dd>The name of the plugin. Used as the plugin's help tag.</dd>
+    <dt>&tab;@version</dt>     <dd>The plugin's version number.</dd>
+    <dt>&tab;@href</dt>        <dd>The plugin's home page.</dd>
+    <dt>&tab;@summary</dt>     <dd>A short description of the plugin, shown in its section head.</dd>
+
+    <dt>project</dt>           <dd>The project for which this plugin was intended.</dd>
+    <dt>&tab;@name</dt>        <dd>The name of the project (i.e., <str>&liberator.name;</str>)</dd>
+    <dt>&tab;@minVersion</dt>  <dd>The minimum version of the project for which this plugin is intended to work.</dd>
+    <dt>&tab;@maxVersion</dt>  <dd>The maximum version of the project for which this plugin is intended to work.</dd>
+
+    <dt>author</dt>            <dd>The plugin's author. May appear more than once.</dd>
+    <dt>&tab;@href</dt>        <dd>The author's home page.</dd>
+    <dt>&tab;@email</dt>       <dd>The author's email address.</dd>
+
+    <dt>license</dt>           <dd>The plugin's license. May appear more than once.</dd>
+    <dt>&tab;@href</dt>        <dd>The URI of a page which shows or explains the license.</dd>
+</dl>
+
+<!-- FIXME this is no longer true after XMLization
+<h2 tag="generating-docs">Generating documentation</h2>
+
+<p>
+    You can also autogenerate most of the XML help after you have
+    written a new command, mapping or option.
+</p>
+
+<example><ex>:echo util.generateHelp(commands.get(<str>addons</str>), <![CDATA[<p>Extra text</p>]]>)</ex></example>
+-->
+
+<h2 tag="writing-plugins">Writing plugins</h2>
+
+<p>
+    Writing &liberator.appname; plugins is incredibly simple.
+    Plugins are simply JavaScript files which run with full chrome
+    privileges and have full access to the &liberator.appname; and
+    &liberator.host; APIs. Each plugin has its own global object,
+    which means that the variables and functions that you create
+    won't pollute the global <em>window</em> or private
+    <em>liberator</em> namespaces. This means that there's no need
+    to wrap your plugin in a closure, as is often the practice in
+    JavaScript development. Furthermore, any plugin which is
+    installed in your <o>runtimepath</o><em>/plugin</em> directory
+    will find its context stored in
+    <em>plugins.&lt;pluginName></em>, which is often invaluable
+    during development and testing.
+</p>
+
+<h3 tag="plugin-documentation">Plugin documentation</h3>
+
+<p>
+    Plugins may provide inline documentation, which will appear on
+    the <ex>:help plugins</ex> page. The markup for help entries
+    is the same as the above, with a few more plugin specific
+    entries. Here is an example from the popular
+    <em>flashblock</em> extension:
+</p>
+
+<code><![CDATA[
+var INFO = 
+<plugin name="flashblock" version="1.0"
+        href="http://ticket.vimperator.org/9"
+        summary="Flash Blocker"
+        xmlns="http://vimperator.org/namespaces/liberator">
+    <author email="maglione.k@gmail.com">Kris Maglione</author>
+    <license href="http://opensource.org/licenses/mit-license.php">MIT</license>
+    <project name="Vimperator" minVersion="2.0"/>
+    <p>
+        This plugin provides the same features as the ever popular FlashBlock
+        Firefox addon. Flash animations are substituted with place holders which
+        play the original animation when clicked. Additionally, this plugin provides
+        options to control which sites can play animations without restrictions, and
+        triggers to toggle the playing of animation on the current page.
+	commandline from the data in a given form.
+    </p>
+    <item>
+	<tags>'flashblock' 'fb'</tags>
+	<spec>'flashblock' 'fb'</spec>
+        <type>boolean</type>
+        <default>true</default>
+	<description>
+            <p>
+                Controls the blocking of flash animations. When true, place
+                holders are substituted for flash animations on untrusted sites.
+            </p>
+	</description>
+    </item>]]>
+    <em>…</em><![CDATA[
+</plugin>;
+]]>
+</code>
+
+<p>
+    The inline XML is made possible by
+    <link topic="https://developer.mozilla.org/en/E4X">E4X</link>.
+    It's important that the documentation be assigned to the
+    <em>INFO</em> variable, or &liberator.appname; will not be able
+    to find it. The documentation that you provide behaves exactly
+    as other &liberator.appname; documentation, which means that
+    the tags you provide are available via <ex>:help</ex> with
+    full tag completion and cross-referencing support. Although
+    documentation is not required, we strongly recommend that all
+    plugin authors provide at least basic documentation of the
+    functionality of their plugins and of each of the options,
+    commands, and especially mappings that they provide.
+</p>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="pattern"
+    title="&liberator.appname; Patterns"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="text-search-commands">Text search commands</h1>
+<toc start="2"/>
+
+<p>
+    &liberator.appname; provides a Vim-like interface to &liberator.host;'s standard text search
+    functionality. There is no support for using regular expressions in search
+    commands as &liberator.host; does not provide native regex support. It is unlikely that
+    this will ever be available.
+</p>
+
+<item>
+    <tags>/</tags>
+    <spec>/<a>pattern</a>[/]&lt;CR></spec>
+    <description>
+        <p>Search forward for the first occurrence of <a>pattern</a>.</p>
+
+        <p>
+            If <str>\c</str> appears anywhere in the pattern the whole pattern is handled as though
+            <o>ignorecase</o> is on. <str>\C</str> forces case-sensitive matching for the whole pattern.
+        </p>
+        <p>
+            If <str>\l</str> appears in the pattern only the text of links is searched for a
+            match as though <o>linksearch</o> is on. <str>\L</str> forces the entire page to be searched
+            for a match.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>?</tags>
+    <spec>?<a>pattern</a>[?]&lt;CR></spec>
+    <description>
+        <p>Search backwards for <a>pattern</a>.</p>
+
+        <p><a>pattern</a> can use the same modifiers as for <k>/</k>.</p>
+
+        <note>Incremental searching currently only works in the forward direction.</note>
+    </description>
+</item>
+
+
+<item>
+    <tags>n</tags>
+    <spec>n</spec>
+    <description>
+        <p>Find next. Repeat the last search 1 time (until count is supported).</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>N</tags>
+    <spec>N</spec>
+    <description>
+        <p>
+            Find previous. Repeat the last search 1 time (until count is supported) in the
+            opposite direction.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>*</tags>
+    <spec>*</spec>
+    <description>
+        <p>Search forward for the next word under the cursor.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>#</tags>
+    <spec>#</spec>
+    <description>
+        <p>Search backward for the previous word under the cursor.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:noh :nohlsearch</tags>
+    <spec>:noh<oa>lsearch</oa></spec>
+    <description>
+        <p>
+            Remove the search highlighting. The document highlighting is turned back on
+            when another search command is used or the <o>hlsearch</o> option is set.
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

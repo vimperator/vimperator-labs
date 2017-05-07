@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<item insertafter="ignore-key">
+<tags>I</tags>
+<spec>I</spec>
+<description>
+    <p>
+        Opens an <k>:ignorekeys add </k> command to quickly add the current host or URL to the
+        list of pages with ignored keys.
+    </p>
+</description>
+</item>
+
+<item insertafter="I">
+<tags>:ignorekeys</tags>
+<spec>:ignorekeys <oa>sub-command</oa></spec>
+<description>
+    <p>
+        Always pass all (or most) keys to the underlying web page (or &liberator.host;) when
+        the current URL matches a specific filter.
+        If the <oa>sub-command</oa> is not specified, <k>:ignorekeys</k> lists
+        all currently affected sites.  The list of ignored pages is
+        automatically saved to disc, so it can persist across restarts.
+    </p>
+
+        <h3 tag="ignorekeys-subcommands">Sub commands</h3>
+
+        <item>
+            <tags>ignorekeys-add</tags>
+            <spec>add <oa>-except=key1,key2,...</oa> <a>url-regexp</a></spec>
+            <description>
+                <p>
+                    Add a new URL (anyone matching the <a>url-regexp</a> regular expression
+                    to the list of sites which automatically turn on IGNORE ALL KEYS mode.
+                    If <oa>-except</oa> is specified, allow those specified keys to still be handled
+                    by &liberator.appname;.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>ignorekeys-clear</tags>
+            <spec>clear</spec>
+            <description>
+                <p>
+                    Clear the list of web sites with ignored keys.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>ignorekeys-list</tags>
+            <spec>list <oa>filter</oa></spec>
+            <description>
+                <p>
+                    List current web sites affected by :ignorekeys (optionally matching <oa>filter</oa>).
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>ignorekeys-remove ignorekeys-rm</tags>
+            <spec>remove <a>url-regexp</a></spec>
+            <spec>rm <a>url-regexp</a></spec>
+            <description>
+                <p>
+                    Remove the regexps matching <a>url-regexp</a> from the list of :ignorekeys.
+                </p>
+            </description>
+        </item>
+
+    </description>
+</item>
+
+</overlay>
+<!-- vim:se sts=4 sw=4 et: -->

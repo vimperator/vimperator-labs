@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="repeat"
+    title="&liberator.appname; Repeating Commands"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="repeating">Repeating commands</h1>
+<toc start="2"/>
+
+<p>&liberator.appname; can repeat a number of commands and record macros.</p>
+
+<h2 tag="single-repeat">Single repeats</h2>
+
+<item>
+    <tags>.</tags>
+    <spec><oa>count</oa>.</spec>
+    <description>
+        <p>
+            Repeat the last keyboard mapping <oa>count</oa> times. Note that, unlike in Vim, this
+            does not apply solely to editing commands, mainly because &liberator.appname; doesn't
+            have them.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@:</tags>
+    <spec><oa>count</oa>@:</spec>
+    <description>
+        <p>Repeat the last Ex command <oa>count</oa> times.</p>
+    </description>
+</item>
+
+
+
+<h2 tag="macros complex-repeat">Macros</h2>
+
+<item>
+    <tags>q</tags>
+    <spec>q<a>0-9a-zA-Z</a></spec>
+    <description>
+        <p>
+            Record a key sequence into a macro.
+            Available macros are {0-9a-zA-Z} (uppercase to append).
+            Type <k>q</k> to stop recording.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:macros</tags>
+    <spec>:mac<oa>ros</oa> <oa>pat</oa></spec>
+    <description>
+        <p>
+            List recorded macros matching the optional regular expression <oa>pat</oa>. If
+            no regex is given, list all macros.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:delmac :delmacros</tags>
+    <spec>:delmac<oa>ros</oa> <a>args</a></spec>
+    <spec>:delmac<oa>ros</oa>!</spec>
+    <description>
+        <p>
+            Delete recorded macros matching the regular expression <a>args</a>. If <oa>!</oa> is given
+            all macros are deleted.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@ :play</tags>
+    <spec>:pl<oa>ay</oa> <a>arg</a></spec>
+    <spec><oa>count</oa>@<a>arg</a></spec>
+    <description>
+        <p>
+            Plays the contents of macro with name <a>arg</a> <oa>count</oa> times. The <k>@</k> mapping
+            only accepts {0-9a-z} as <a>arg</a>.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>@@</tags>
+    <spec><oa>count</oa>@@</spec>
+    <description>
+        <p>Replay the last executed macro <oa>count</oa> times.</p>
+    </description>
+</item>
+
+
+
+<h2 tag="using-scripts">Using scripts</h2>
+
+<item>
+    <tags>:so :source</tags>
+    <spec>:so<oa>urce</oa><oa>!</oa> <a>file</a></spec>
+    <description>
+        <p>
+            Read Ex commands, JavaScript, or CSS from <a>file</a>. You can either source files
+            which mostly contain Ex commands like <ex>map &lt; gt</ex> and put JavaScript code
+            within a:
+        </p>
+
+        <code><![CDATA[
+js <<EOF
+hello = function () {
+   alert("Hello world");
+}
+EOF
+]]></code>
+
+        <p>
+            Or you can alternatively source a file which ends in <tt>.js</tt>. These files are
+            automatically sourced as pure JavaScript files.
+        </p>
+
+        <p>
+            Note: In both cases you must add functions to the global window object like
+            shown above, functions written as:
+        </p>
+
+<code><![CDATA[
+function hello2() {
+    alert("Hello world");
+}
+]]></code>
+        <p>are only available within the scope of the script.</p>
+
+        <p>
+            The <tt>.&liberator.name;rc</tt> file in your home directory and any
+            files in <tt>~/.&liberator.name;/plugin/</tt> are always
+            sourced at startup. <tt>~</tt> is supported as a
+            shortcut for the <tt>$HOME</tt> directory. If <oa>!</oa> is
+            specified, errors are not printed.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:lpl :loadplugins</tags>
+    <spec>:loadplugins</spec>
+    <description>
+        <p>
+            Load all unloaded plugins immediately. Because plugins are automatically
+            loaded after &liberator.name;rc is sourced, this command must be placed early
+            in the &liberator.name;rc file if &liberator.name;rc also includes commands that are
+            implemented by plugins. Additionally, this command allows for sourcing
+            new plugins without restarting &liberator.appname;.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:ru :runtime</tags>
+    <spec>:runt<oa>ime</oa><oa>!</oa> <a>file</a> …</spec>
+    <description>
+        <p>
+            Source the specified file from each directory in <o>runtimepath</o>. Example:
+        </p>
+        <code><ex>:runtime plugin/foobar.vimp</ex></code>
+        <p>
+            Only the first found file is sourced. When <oa>!</oa> is given, all found files are
+            sourced.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:scrip :scriptnames</tags>
+    <spec>:scrip<oa>tnames</oa></spec>
+    <description>
+        <p>List all sourced script names, in the order they were first sourced.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:fini :finish</tags>
+    <spec>:fini<oa>sh</oa></spec>
+    <description>
+        <p>
+            Stop sourcing a script file. This can only be called from within a &liberator.appname;
+            script file.
+        </p>
+    </description>
+</item>
+
+
+<h2 tag="profile profiling">Profiling</h2>
+
+<item>
+    <tags>:time</tags>
+    <spec>:<oa>count</oa>time<oa>!</oa> <a>code|:command</a></spec>
+    <description>
+        <p>
+            Profile a piece of code or a command. Run <a>code</a> <oa>count</oa> times (default: 1)
+            and returns the elapsed time. <a>code</a> is always passed to JavaScript's eval(),
+            which might be slow, so take the results with a grain of salt.
+        </p>
+
+        <p>If <a>code</a> starts with a <ex>:</ex>, it is executed as a &liberator.appname; command.</p>
+
+        <p>
+            Use the special version with <oa>!</oa> if you just want to run any command multiple
+            times without showing profiling statistics.
+        </p>
+    </description>
+</item>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

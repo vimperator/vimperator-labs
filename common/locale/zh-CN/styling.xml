@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="styling"
+    title="&liberator.appname; Styling"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="styling">Styling the GUI and web pages</h1>
+<toc start="2"/>
+
+<p>
+    &liberator.appname; allows you to style both the browser and any web pages you view. All
+    styling is specified via CSS. Although you may style any user interface element
+    via the <ex>:style</ex> command, most &liberator.appname; elements can be styled with the
+    <ex>:highlight</ex> command, for convenience.
+</p>
+
+<item>
+    <tags>:colo :colorscheme</tags>
+    <spec>:colo<oa>rscheme</oa> <a>name</a></spec>
+    <description>
+        <p>
+            Load a color scheme. <a>name</a> is found by searching the <o>runtimepath</o> for the
+            first file matching colors/<a>name</a>.vimp.
+        </p>
+
+        <p>
+            The ColorScheme autocommand is triggered after the color scheme has been
+            sourced.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:hi :highlight</tags>
+    <spec>:hi<oa>ghlight</oa><oa>!</oa> <oa>-append</oa> <a>group</a> [[<a>selector</a>] <a>css</a>]</spec>
+    <description>
+        <p>
+            Highlight <a>group</a> with <a>css</a>. <a>css</a> is one or more comma separated CSS
+            declarations (E.g. <em>color: blue; background-color: red</em>). Normally, <a>css</a> is
+            checked for valid syntax before it's applied. Once you're certain it's valid,
+            <oa>!</oa> can be used to skip the check to speed up &liberator.appname; startup. <a>selector</a>
+            can be any valid CSS selector, such as <ex>:hover</ex>, and, if provided, will
+            restrict the match to matching elements.
+        </p>
+
+        <p>Common highlight groups are:</p>
+
+        <dl>
+            <dt>Bell</dt>              <dd>&liberator.appname;'s visual bell</dd>
+            <dt>Boolean</dt>           <dd>A JavaScript Boolean object</dd>
+            <dt>CmdLine</dt>           <dd>The command line</dd>
+            <dt>CmdOutput</dt>         <dd></dd>
+            <dt>CompDesc</dt>          <dd>The description column of the completion list</dd>
+            <dt>CompGroup</dt>         <dd></dd>
+            <dt>CompIcon</dt>          <dd>The favicon of a completion row</dd>
+            <dt>CompItem</dt>          <dd>A row of completion list</dd>
+            <dt>CompItem[selected]</dt><dd>A selected row of completion list</dd>
+            <dt>CompMsg</dt>           <dd></dd>
+            <dt>CompResult</dt>        <dd>The result column of the completion list</dd>
+            <dt>CompTitle</dt>         <dd>Completion row titles</dd>
+            <dt>ErrorMsg</dt>          <dd>Error messages</dd>
+            <dt>Filter</dt>            <dd>The matching text in a completion list</dd>
+            <dt>FrameIndicator</dt>    <dd>The indicator shown when a new frame is selected</dd>
+            <dt>Function</dt>          <dd>A JavaScript Function object</dd>
+            <dt>Hint</dt>              <dd>A hint indicator. See <ex>:help hints</ex></dd>
+            <dt>HintActive</dt>        <dd>The hint element of link which will be followed by <k name="Return"/></dd>
+            <dt>HintElem</dt>          <dd>The hintable element</dd>
+            <dt>HintImage</dt>         <dd>The indicator which floats above hinted images</dd>
+            <dt>Indicator</dt>         <dd></dd>
+            <dt>InfoMsg</dt>           <dd>Information messages</dd>
+            <dt>Keyword</dt>           <dd>A bookmark keyword for a URL</dd>
+            <dt>LineNr</dt>            <dd>The line number of an error</dd>
+            <dt>Message</dt>           <dd></dd>
+            <dt>ModeMsg</dt>           <dd>The mode indicator in the command line</dd>
+            <dt>MoreMsg</dt>           <dd>The indicator that there is more text to view</dd>
+            <dt>NonText</dt>           <dd></dd>
+            <dt>Normal</dt>            <dd>Normal text in the command line</dd>
+            <dt>Null</dt>              <dd>A JavaScript Null object</dd>
+            <dt>Number</dt>            <dd>A JavaScript Number object</dd>
+            <dt>Object</dt>            <dd>A JavaScript Object</dd>
+            <dt>Preview</dt>           <dd></dd>
+            <dt>Question</dt>          <dd>A prompt for a decision</dd>
+            <dt>StatusLine</dt>        <dd>The status bar</dd>
+            <dt>String</dt>            <dd>A JavaScript String object</dd>
+            <dt>TabClose</dt>          <dd>The close button of a browser tab</dd>
+            <dt>TabIcon</dt>           <dd>The icon of a browser tab</dd>
+            <dt>TabIconNumber</dt>     <dd>The number of a browser tab, over its icon</dd>
+            <dt>TabNumber</dt>         <dd>The number of a browser tab, next to its icon</dd>
+            <dt>TabText</dt>           <dd>The text of a browser tab</dd>
+            <dt>Tag</dt>               <dd>A bookmark tag for a URL</dd>
+            <dt>Title</dt>             <dd>The title of a listing, including <ex>:pageinfo</ex>, <ex>:jumps</ex></dd>
+            <dt>URL</dt>               <dd>A URL</dd>
+            <dt>WarningMsg</dt>        <dd>A warning message</dd>
+        </dl>
+
+        <p>
+            The full list of supported highlight groups and there current values can be seen by calling <ex>:highlight</ex> without any arguments.
+        </p>
+
+        <p>
+            Every invocation completely replaces the styling of any previous invocation,
+            unless <em>-append</em> (short option: <em>-a</em>) is provided, in which case <a>css</a> is
+            appended to its current value. If <a>css</a> is not provided, any styles matching
+            <a>group</a> are listed, or all styles if no <a>group</a> provided.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:highlight-clear</tags>
+    <spec>:hi<oa>ghlight</oa> clear <oa><a>group</a> <oa><a>selector</a></oa></oa></spec>
+    <description>
+        <p>
+            Reset the highlighting for <a>group</a> to its default value. If
+            <a>group</a> is not given, reset all highlighting groups.
+        </p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:sty :style</tags>
+    <spec>:sty<oa>le</oa><oa>!</oa> <oa>-name=<a>name</a></oa> <oa>-append</oa> <a>filter</a> [<a>css</a>]</spec>
+    <description>
+        <p>
+            Add CSS styles to the browser or to web pages. <a>filter</a> is a comma separated
+            list of URLs to match. URLs ending with <em>*</em> are matched as prefixes, URLs not
+            containing any <em>:</em> or <em>/</em> characters are matched as domains. <a>css</a> is a full
+            CSS rule set (e.g., <tt>body { color: blue; }</tt>).
+        </p>
+
+        <p>
+            If <a>name</a> (short option: <em>-n</em>) is provided, any existing style with the same
+            name is overridden, and the style may later be deleted using <a>name</a>. If
+            <em>-append</em> (short option: <em>-a</em>) is provided along with <em>-name</em>, <a>css</a> and
+            <a>filter</a> are appended to its current value.
+        </p>
+
+        <p>If <a>css</a> isn't provided, matching styles are listed.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:dels :delstyle</tags>
+    <spec>:dels<oa>tyle</oa> [-name=<a>name</a>] [-index=<a>index</a>] [<a>filter</a>] [<a>css</a>]</spec>
+    <description>
+        <p>
+            Delete any matching styles. If <a>filter</a> is provided, only matching elements of
+            the filter are disabled. For instance, a filter <str>mozilla.org</str>, given a
+            style for <str>www.google.com,mozilla.org</str>, will result in a style for
+            <str>www.google.com</str>. The available options are:
+        </p>
+
+        <ul>
+            <li><em>-name</em>:  The name provided to <ex>:style</ex> (short option: <em>-n</em>)</li>
+            <li><em>-index</em>: For unnamed styles, the index listed by <ex>:style</ex>
+                (short option: <em>-i</em>)</li>
+        </ul>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styleenable :stylee</tags>
+    <tags>:styenable :stye</tags>
+    <spec>:styled<oa>isable</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>Enable any matching styles. Arguments are the same as for <ex>:delstyle</ex>.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styledisable :styled</tags>
+    <tags>:stydisable :styd</tags>
+    <spec>:stylee<oa>nable</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>Disable any matching styles. Arguments are the same as for <ex>:delstyle</ex>.</p>
+    </description>
+</item>
+
+
+<item>
+    <tags>:styletoggle :stylet</tags>
+    <tags>:stytoggle :styt</tags>
+    <spec>:stylet<oa>oggle</oa> <oa>-name=<a>name</a></oa> <oa>-index=<a>index</a></oa> <a>filter</a> <a>css</a></spec>
+    <description>
+        <p>Toggle any matching styles. Arguments are the same as for <ex>:delstyle</ex>.</p>
+    </description>
+</item>
+
+
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->

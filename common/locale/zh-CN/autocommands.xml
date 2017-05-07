@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="autocommands"
+    title="&liberator.appname; Autocommands"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+<h1 tag="autocommands">Automatic commands</h1>
+<toc start="2"/>
+
+<p>
+    Autocommands are a way to automatically execute code when
+    certain events happen.
+</p>
+
+<item>
+    <tags>:au :autocmd</tags>
+    <spec>:au[tocmd]</spec>
+    <description>
+        <p>Execute commands automatically on events.</p>
+
+        <p><ex>:au[tocmd]</ex> <a>event</a> <a>pat</a> <a>cmd</a></p>
+
+        <p>
+            If the <em>-javascript</em> (short name <em>-js</em>)
+            option is specified, <a>cmd</a> is executed as JavaScript
+            code, with any supplied arguments available as
+            variables.
+        </p>
+
+        <p>Add <a>cmd</a> to the list of commands &liberator.appname; will execute on <a>event</a> for a URL matching <a>pat</a>:</p>
+
+        <ul>
+            <li><ex>:autocmd[!]</ex> <a>events</a> <a>pat</a>: list/remove autocommands filtered by <a>events</a> and <a>pat</a></li>
+            <li><ex>:autocmd[!]</ex> <a>events</a>: list/remove autocommands matching <a>events</a></li>
+            <li><ex>:autocmd[!]</ex> <a>pat</a>: list/remove autocommands matching <a>pat</a></li>
+            <li><ex>:autocmd[!]</ex>: list/remove all autocommands</li>
+        </ul>
+
+        <p>Available <a>events</a>:</p>
+
+        <dl tag="autocommand-list"/>
+
+        <p><a>pat</a> is a regular expression, use <tt>.*</tt> if you want to match all URLs.</p>
+
+        <note>This differs from Vim which uses a glob rather than a regex for <a>pat</a>.</note>
+
+        <p>The following keywords are available where relevant:</p>
+
+        <dl tag="autocommand-args"/>
+    </description>
+</item>
+
+<item>
+    <tags>:doautoa :doautoall</tags>
+    <spec>:doautoa[ll] <a>event</a> <oa>url</oa></spec>
+    <description>
+        <p>
+            Apply the autocommands matching the specified URL to all buffers. If no
+            <oa>url</oa> is specified use the current URL.
+        </p>
+    </description>
+</item>
+
+<item>
+    <tags>:do :doautocmd</tags>
+    <spec>:do[autocmd] <a>event</a> <oa>url</oa></spec>
+    <description>
+        <p>
+            Apply the autocommands matching the specified URL to the current buffer. If no
+            <oa>url</oa> is specified use the current URL.
+        </p>
+    </description>
+</item>
+<h2 tag="autocmd-examples">Examples</h2>
+
+<p>Enable <em>passthrough</em> mode on all Google sites:</p>
+
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /google\.com/.test(buffer.URL)</ex></code>
+
+<p>Enable <em>passthrough</em> mode on <em>some</em> Google sites:</p>
+
+<code><ex>:autocmd LocationChange .* js modes.passAllKeys = /(www|mail)\.google\.com/.test(buffer.URL)</ex></code>
+
+<p>
+    Set the filetype to mail when editing email at Gmail:
+</p>
+
+<code><!-- Why is the XSLT processor mangling newlines? -->
+<ex>:autocmd LocationChange .* :set editor=<str>gvim -f</str></ex>
+<ex>:autocmd LocationChange mail\\.google\\.com :set editor=<str>gvim -f -c 'set ft=mail'</str></ex>
+</code>
+
+</document>
+
+<!-- vim:se sts=4 sw=4 et: -->

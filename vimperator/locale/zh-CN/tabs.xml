@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<overlay
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<item insertbefore=":bn">
+    <tags>g@</tags>
+    <spec><oa>count</oa>g@</spec>
+    <description>
+        <p>
+            Go to the first app tab. Go to the next app tab when already an app tab is selected.
+            And cycles to the first app tab when the last app tab is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th app tab.
+        </p>
+    </description>
+</item>
+
+<item insertbefore=":bn">
+    <tags><![CDATA[<C-S-n> <C-S-PageDown>]]></tags>
+    <spec><oa>count</oa>&lt;C-S-n></spec>
+    <description>
+        <p>
+            Go to the next group. Cycles to the fist group when the last is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th next group.
+        </p>
+    </description>
+</item>
+
+<item insertbefore=":bn">
+    <tags><![CDATA[<C-S-p> <C-S-PageUp>]]></tags>
+    <spec><oa>count</oa>&lt;C-S-p></spec>
+    <description>
+        <p>
+            Go to the previous group. Cycles to the fist group when the first is selected.
+            If <oa>count</oa> is specified go to the <oa>count</oa>th previous group.
+        </p>
+    </description>
+</item>
+
+<div insertafter=":tabd">
+
+<h2 tag="tabgroups">Tab group management</h2>
+
+<item>
+    <tags>:tabgroups :panorama</tags>
+    <spec>:tabgroups <oa>sub-command</oa></spec>
+    <spec>:panorama <oa>sub-command</oa></spec>
+    <description>
+        <p>
+            Manage tab groups (also called Panorama in Firefox).
+            If the <oa>sub-command</oa> is not specified, it lists all current tab groups.
+        </p>
+
+        <h3 tag="tabgroups-subcommands">Sub commands</h3>
+
+        <item>
+            <tags>tabgroups-add</tags>
+            <spec>add<oa>group</oa><oa>!</oa> <oa>groupName</oa></spec>
+            <description>
+                <p>
+                    Create a tab group and switches to the group.
+                    If <oa>groupName</oa> is specified, also sets the name of the group.
+                </p>
+                <p>
+                    The selected tab is moved to the group if used with <oa>!</oa>.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>tabgroups-list</tags>
+            <spec>list</spec>
+            <description>
+                <p>
+                    List current tab groups.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>tabgroups-pulltab tabgroups-pull</tags>
+            <spec>pulltab<oa>tab</oa><oa>!</oa> <a>url|index</a></spec>
+            <description>
+                <p>
+                    Pull the tab from another group.
+                    The argument <a>url|index</a> is the same as <ex>:buffer</ex>'s argument.
+                </p>
+                <p>
+                    Also switch to the tab if <oa>!</oa> is specified.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>tabgroups-pushtab tabgroups-push tabgroups-stash</tags>
+            <spec>pushtab<oa>!</oa> <a>groupName</a></spec>
+            <spec>stash<oa>!</oa> <a>groupName</a></spec>
+            <description>
+                <p>
+                    Move the current tab to a group named <a>groupName</a>.
+                </p>
+                <p>
+                    If the group does not exist, you can use <oa>!</oa> 
+                    to automatically create a new group named <a>groupName</a> and
+                    move the tab there.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>tabgroups-remove tabgroups-rm</tags>
+            <spec>remove<oa>group</oa> <oa>groupName</oa></spec>
+            <spec>rm<oa>group</oa> <oa>groupName</oa></spec>
+            <description>
+                <p>
+                    Close all tabs in the group named <oa>groupName</oa>.
+                    When <oa>groupName</oa> is omitted, close the current group.
+                </p>
+            </description>
+        </item>
+
+        <item>
+            <tags>tabgroups-switch</tags>
+            <spec><oa>count</oa>switch <a>groupName</a></spec>
+            <description>
+                <p>
+                    Switch to a group named <a>groupName</a>.
+                </p>
+                <p>
+                    Switch to <oa>count</oa>th next group if <oa>count</oa> is specified.
+                </p>
+            </description>
+        </item>
+    </description>
+</item>
+
+</div>
+
+</overlay>
+<!-- vim:se sts=4 sw=4 et: -->
