@@ -592,6 +592,19 @@ const Buffer = Module("buffer", {
                     let elem = res.snapshotItem(i);
                     if (regex.test(elem.textContent) || regex.test(elem.title) ||
                             Array.some(elem.childNodes, function (child) regex.test(child.alt))) {
+                        if (elem.href
+                            && typeof history.session[history.session.index - 1] !== "undefined"
+                            && history.session[history.session.index - 1].URI.spec === elem.href) {
+                            history.stepTo(-1);
+                            return true;
+                        }
+                        if (elem.href
+                            && typeof history.session[history.session.index + 1] !== "undefined"
+                            && history.session[history.session.index + 1].URI.spec === elem.href) {
+                            history.stepTo(1);
+                            return true;
+                        }
+
                         buffer.followLink(elem, liberator.CURRENT_TAB);
                         return true;
                     }
