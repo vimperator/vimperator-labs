@@ -75,7 +75,7 @@ var Config = Module("config", ConfigBase, {
         ["console",          "JavaScript console",
             function () { window.toJavaScriptConsole(); }],
         ["connectionprefs",  "Show connection settings",
-            function () { window.openDialog("chrome://messenger/content/preferences/connection.xul", "Connection Settings", "dialog,centerscreen,width=487,height=402"); }],
+            function () { window.openURL("chrome://browser/content/preferences/connection.xul"); }],
         /*["customizetoolbar", "Customize the Toolbar",
             function () { BrowserCustomizeToolbar(); }],*/
         ["dominspector",     "DOM Inspector",

@@ -57,7 +57,7 @@ var Config = Module("config", ConfigBase, {
         ["cookies",          "List your cookies",
             function () { window.toOpenWindowByType("Browser:Cookies", "chrome://browser/content/preferences/cookies.xul", "chrome,dialog=no,resizable"); }],
         ["connectionprefs",  "Show connection settings",
-            function () { window.openDialog("chrome://browser/content/preferences/connection.xul", "Connection Settings", "dialog,centerscreen,width=488,height=535"); }],
+            function () { window.openURL("chrome://browser/content/preferences/connection.xul"); }],
         ["customizetoolbar", "Customize the Toolbar",
             function () { window.BrowserCustomizeToolbar(); }],
         ["dominspector",     "DOM Inspector",
