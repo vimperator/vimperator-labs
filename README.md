@@ -66,7 +66,7 @@ Features (Vimperator)
 - Advanced completion of bookmark and history URLs (searching also in title,
   not only URL)
 - Vim-like statusline with a wget-like progress bar
-- Minimal GUI (easily hide useless menubar and toolbar with `:set guioptions=`)
+- Minimal GUI (easily hide useless menubar and toolbar with `:set gui=`)
 - Ability to `:source` JavaScript files, and to use a `~/.vimperatorrc` file
 - Easy quick searches (`:open foo` will search for "foo" in google, `:open ebay
   terminator` will search for "terminator" on ebay) with support for Firefox
