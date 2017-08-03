@@ -838,9 +838,9 @@ const Liberator = Module("liberator", {
                     }
 
                     options.withContext(function () {
-                        browser.addTab(url, { postData: postdata });
+                        var newTab = browser.addTab(url, { postData: postdata });
                         if (where != liberator.NEW_BACKGROUND_TAB)
-                            browser.selectTabAtIndex(-1);
+                            browser.selectedTab = newTab;
                     });
                     break;
 
