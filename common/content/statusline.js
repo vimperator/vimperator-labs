@@ -77,7 +77,7 @@ const StatusLine = Module("statusline", {
         // In case of insecure login forms, connection icon is updated after page load.
         const VERSION = Services.appinfo.platformVersion;
         if (services.get("vc").compare(VERSION, "51") >= 0) {
-            gBrowser.addEventListener("InsecureLoginFormsStateChange",
+            config.browser.addEventListener("InsecureLoginFormsStateChange",
                                       function () {
                                           statusline.updateField('ssl', null);
                                       });
