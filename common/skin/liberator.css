@@ -240,7 +240,7 @@
         border: 0;
     }
 
-    #liberator-commandline-command .textbox-search-icons {
+    #liberator-commandline-command .textbox-search-icons, #liberator-commandline-command .textbox-search-sign {
         display: none !important;
     }
 }
