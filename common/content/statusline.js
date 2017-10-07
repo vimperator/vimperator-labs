@@ -266,6 +266,10 @@ const StatusLine = Module("statusline", {
                     let iconcolor = bbBackgroundLuminance < 128 ? "white" : "black";
                     node.style.listStyleImage = node.style.listStyleImage.replace(/(#[\w-]+)(-white|-black)|(#[\w-]+)/, "$1$3-" + iconcolor);
 
+                    if (services.get("vc").compare(VERSION, "56") >= 0) {
+                        node.style.fill = window.getComputedStyle(document.getElementById("liberator-status")).getPropertyValue("color");
+                    }
+
                     node.style.visibility = "visible";
 
                     var tooltip = conn_icon.tooltipText;

@@ -142,6 +142,7 @@
         height: 16px;
         visibility: collapse;
         -moz-image-region: rect(0, 16px, 16px, 0);
+        -moz-context-properties: fill;
     }
     #liberator-status-ssl.verifiedIdentity {
         visibility: visible;
