@@ -312,11 +312,11 @@ const StatusLine = Module("statusline", {
                     if (typeof handler === "undefiend") // Thunderbird has none
                         return;
 
+                    handler._identityPopup.hidden = false;
                     if (handler.refreshIdentityPopup)
                         handler.refreshIdentityPopup();
                     else
                         handler.setPopupMessages(handler._identityBox.className);
-                    handler._identityPopup.hidden = false;
                     handler._identityPopup.openPopup(anchor);
                 },
             });
