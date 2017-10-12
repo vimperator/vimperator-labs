@@ -13,8 +13,9 @@ Vimperator-labs
 End of Life and Alternatives
 ----------------------------
 
-Vimperator will stop working in up-to-date copies of Firefox with the release of Firefox 57 on November 14th due to a large breaking change in how extensions and add-ons are written.
-It's not all doom and gloom, though! Here are your options:
+Vimperator will stop working in up-to-date copies of Firefox with the release of Firefox 57 on November 14th due to a large breaking change in how extensions and add-ons are written ([#705](https://github.com/vimperator/vimperator-labs/issues/705)).
+
+It's not all doom and gloom, though! Here are your options ([#729](https://github.com/vimperator/vimperator-labs/issues/729)):
 
  - Stay with vimperator, but use an older release of Firefox or a Firefox fork
     - The [Extended Service Release (ESR) of Firefox](https://www.mozilla.org/en-US/firefox/organizations/) is still on Firefox 52 and will be vimperator compatible [until May 2018](https://wiki.mozilla.org/RapidRelease/Calendar).
@@ -22,23 +23,23 @@ It's not all doom and gloom, though! Here are your options:
 
  - Use an add-on compatible with the new webextension API
     - It is not currently possible to match the vimperator feature list in a WebExtension. Some work is being done to rectify this[[1]](https://github.com/cmcaine/keyboard-api)[[2]](https://github.com/Koushien/keyboard-shortcut-api)
-    - [cVim](https://github.com/1995eaton/chromium-vim) (Chrome/Chromium only) features regex search, commandline with completion, autocmds (via `site` in the config), custom commands through javascript eval
-    - [Tridactyl](https://github.com/cmcaine/tridactyl) (Firefox only) aims to eventually match the vimperator experience with a first release planned for early November
+    - [cVim](https://github.com/1995eaton/chromium-vim) (Chrome/Chromium only) - features regex search, commandline with completion, autocmds (via `site` in the config), custom commands through javascript eval
+    - [Tridactyl](https://github.com/cmcaine/tridactyl) (Firefox only) - aims to eventually match the vimperator experience with a first release planned for early November
 
  - Use a less fully-featured add-on compatible with the new WebExtension API
     - These add-ons provide great, configurable, vim-like shortcuts and hints mode
     - By design they do not offer insert or command mode, custom commands, autocmds, vim-style maps and so on
-    - [Vimium](https://addons.mozilla.org/en-US/firefox/addon/vimium-ff/) "The Hacker's Browser. Vimium provides keyboard shortcuts for navigation and control in the spirit of Vim."
-    - [Saka-key](https://key.saka.io/) "Put away your mouse. Saka Key lets you control your browser with keyboard shortcuts."
+    - [Vimium](https://addons.mozilla.org/en-US/firefox/addon/vimium-ff/) - "The Hacker's Browser. Vimium provides keyboard shortcuts for navigation and control in the spirit of Vim."
+    - [Saka-key](https://key.saka.io/) - "Put away your mouse. Saka Key lets you control your browser with keyboard shortcuts."
 
  - Surrender your other add-ons and use a browser with built-in vim bindings
     - Tabbed
-        - [Qutebrowser](https://www.qutebrowser.org/) "A keyboard-driven, vim-like browser based on PyQt5 and Qt."
-        - [Luakit](https://luakit.github.io/) "A fast, simple to use micro-browser framework extensible by Lua using the WebKit engine and the GTK+ toolkit."
+        - [Qutebrowser](https://www.qutebrowser.org/) - "A keyboard-driven, vim-like browser based on PyQt5 and Qt."
+        - [Luakit](https://luakit.github.io/) - "A fast, simple to use micro-browser framework extensible by Lua using the WebKit engine and the GTK+ toolkit."
     - Not tabbed (Use a tabbed window manager or something that supports XEmbed)
-        - [vimb](https://fanglingsu.github.io/vimb/) "A fast and lightweight vim-like web browser based on the webkit engine and the GTK toolkit."
-        - [surf](https://surf.suckless.org/) "A simple web browser based on WebKit2/GTK+."
-        - [uzbl](https://www.uzbl.org/) "A web browser that adheres to the unix philosophy."
+        - [vimb](https://fanglingsu.github.io/vimb/) - "A fast and lightweight vim-like web browser based on the webkit engine and the GTK toolkit."
+        - [surf](https://surf.suckless.org/) - "A simple web browser based on WebKit2/GTK+."
+        - [uzbl](https://www.uzbl.org/) - "A web browser that adheres to the unix philosophy."
 
 Muttator is not affected by these changes.
 
