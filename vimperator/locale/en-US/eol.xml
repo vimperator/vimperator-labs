@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="chrome://liberator/content/help.xsl"?>
+
+<!DOCTYPE document SYSTEM "chrome://liberator/content/liberator.dtd">
+
+<document
+    name="eol"
+    title="&liberator.appname; Vimperator End of Life"
+    xmlns="http://vimperator.org/namespaces/liberator"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+
+<h1 tag="eol">Vimperator End of Life</h1>
+
+<p>
+    <em>NOTE:</em> Vimperator will stop functioning with Firefox 57!
+</p>
+
+<p>
+    Firefox 57 will change its add-on ecosystem to be exclusively based on
+    <link topic="https://blog.mozilla.org/addons/2016/11/23/add-ons-in-2017/">WebExtensions</link>.
+    While this offers (some) compatibility with extensions written for Chrome
+    and Microsoft Edge, it removes the possibility to do many advanced stuff
+    which Vimperator does. Additionally, it would require a full rewrite of
+    Vimperator, which nobody has volunteered for. Therefore we will stop
+    supporting any Firefox version later than Firefox 56. Head over to our
+    GitHub page for
+    <link topic="https://github.com/vimperator/vimperator-labs#end-of-life-and-alternatives">a list of alternatives</link>
+    or <link topic="https://github.com/vimperator/vimperator-labs/issues/705">a detailed discussion</link>.
+</p>
+
+<p>
+    If you want to have famous last words, you can take a survey <link
+    topic="https://goo.gl/forms/OIIHHrDymNI1p44T2">here</link> to inspire
+    future add-on authors what you actually liked about Vimperator.
+</p>
+
+</document>
+<!-- vim:se sts=4 sw=4 et: -->
