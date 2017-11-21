@@ -24,13 +24,14 @@ It's not all doom and gloom, though! Here are your options ([#729](https://githu
  - Use an add-on compatible with the new webextension API
     - It is not currently possible to match the vimperator feature list in a WebExtension. Some work is being done to rectify this[[1]](https://github.com/cmcaine/keyboard-api)[[2]](https://github.com/Koushien/keyboard-shortcut-api)
     - [cVim](https://github.com/1995eaton/chromium-vim) (Chrome/Chromium only) - features regex search, commandline with completion, autocmds (via `site` in the config), custom commands through javascript eval
-    - [Tridactyl](https://github.com/cmcaine/tridactyl) (Firefox only) - aims to eventually match the vimperator experience with a first release planned for early November
+    - [Tridactyl](https://github.com/cmcaine/tridactyl) (Firefox only) - aims to eventually match the vimperator experience with working beta versions currently available on [AMO](https://addons.mozilla.org/en-US/firefox/addon/tridactyl-vim/)
 
  - Use a less fully-featured add-on compatible with the new WebExtension API
     - These add-ons provide great, configurable, vim-like shortcuts and hints mode
     - By design they do not offer insert or command mode, custom commands, autocmds, vim-style maps and so on
     - [Vimium](https://addons.mozilla.org/en-US/firefox/addon/vimium-ff/) - "The Hacker's Browser. Vimium provides keyboard shortcuts for navigation and control in the spirit of Vim."
     - [Saka-key](https://key.saka.io/) - "Put away your mouse. Saka Key lets you control your browser with keyboard shortcuts."
+    - [Vim Vixen](https://addons.mozilla.org/en-US/firefox/addon/vim-vixen/) - "An add-on which allows you to navigate with vim-like bindings."
 
  - Surrender your other add-ons and use a browser with built-in vim bindings
     - Tabbed
