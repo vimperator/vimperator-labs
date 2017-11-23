@@ -1836,6 +1836,10 @@ const Liberator = Module("liberator", {
         if (options.getPref(firstTime, true)) {
             setTimeout(function () {
                 liberator.help();
+
+                // TODO: only for vimperator
+                liberator.open("liberator://help/eol")
+
                 options.setPref(firstTime, false);
             }, 1000);
         }
