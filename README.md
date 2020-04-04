@@ -18,8 +18,7 @@ Vimperator will stop working in up-to-date copies of Firefox with the release of
 It's not all doom and gloom, though! Here are your options ([#729](https://github.com/vimperator/vimperator-labs/issues/729)):
 
  - Stay with vimperator, but use an older release of Firefox or a Firefox fork
-    - The [Extended Service Release (ESR) of Firefox](https://www.mozilla.org/en-US/firefox/organizations/) is still on Firefox 52 and will be vimperator compatible [until May 2018](https://wiki.mozilla.org/RapidRelease/Calendar).
-    - [Waterfox](https://www.waterfoxproject.org/) is a firefox fork that merges security patches and intends to maintain compatibility with XPCOM/XUL plugins like vimperator. Note that Firefox is due to undergo rapid internal change and that waterfox will be more and more on their own as time goes on.
+    - [Waterfox](https://www.waterfoxproject.org/) is a firefox fork that merges security patches and intends to maintain compatibility with XPCOM/XUL plugins like vimperator. Note that Firefox is due to undergo rapid internal change and that Waterfox will be more and more on their own as time goes on.
 
  - Use an add-on compatible with the new webextension API
     - It is not currently possible to match the vimperator feature list in a WebExtension. Some work is being done to rectify this[[1]](https://github.com/cmcaine/keyboard-api)[[2]](https://github.com/Koushien/keyboard-shortcut-api)
