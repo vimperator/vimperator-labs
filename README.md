@@ -18,7 +18,15 @@ Vimperator will stop working in up-to-date copies of Firefox with the release of
 It's not all doom and gloom, though! Here are your options ([#729](https://github.com/vimperator/vimperator-labs/issues/729)):
 
  - Stay with vimperator, but use an older release of Firefox or a Firefox fork
-    - [Waterfox](https://www.waterfoxproject.org/) is a firefox fork that merges security patches and intends to maintain compatibility with XPCOM/XUL plugins like vimperator. Note that Firefox is due to undergo rapid internal change and that Waterfox will be more and more on their own as time goes on.
+    - [Basilisk](https://www.basilisk-browser.org/),
+      [Pale Moon](https://www.palemoon.org/), and
+      [Waterfox Classic](https://www.waterfox.net/)
+      are community-maintained forks of Firefox that merge security patches and
+      intend to maintain compatibility with XUL/XPCOM add-ons like vimperator.
+      A similar add-on, Pentadactyl, specifically targets
+      [Basilisk](https://addons.basilisk-browser.org/addon/pentadactyl-community/)
+      and [Pale Moon](https://addons.palemoon.org/addon/pentadactyl-community/)
+      and sees more development.
 
  - Use an add-on compatible with the new webextension API
     - It is not currently possible to match the vimperator feature list in a WebExtension. Some work is being done to rectify this[[1]](https://github.com/cmcaine/keyboard-api)[[2]](https://github.com/Koushien/keyboard-shortcut-api)
