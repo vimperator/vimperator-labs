@@ -22,9 +22,7 @@ const nsIProtocolHandler = Ci.nsIProtocolHandler;
 
 const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
-let channel = Components.classesByID["{61ba33c0-3031-11d3-8cd0-0060b0fc14a3}"]
-                        .getService(Ci.nsIProtocolHandler)
-                        .newChannel(ioService.newURI("chrome://liberator/content/data", null, null))
+let channel = ioService.newChannel("chrome://liberator/content/data", null, null)
                         .QueryInterface(Ci.nsIRequest);
 const systemPrincipal = channel.owner;
 channel.cancel(NS_BINDING_ABORTED);
